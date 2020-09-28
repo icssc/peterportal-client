@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1dc8b16f.chunk.css",
+    "main.js": "/static/js/main.3c693c24.chunk.js",
+    "main.js.map": "/static/js/main.3c693c24.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.f1889a16.js",
+    "runtime-main.js.map": "/static/js/runtime-main.f1889a16.js.map",
+    "static/css/2.409b48d6.chunk.css": "/static/css/2.409b48d6.chunk.css",
+    "static/js/2.9ea13ce5.chunk.js": "/static/js/2.9ea13ce5.chunk.js",
+    "static/js/2.9ea13ce5.chunk.js.map": "/static/js/2.9ea13ce5.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.b5fd780d9dc5b8a6276175e2efdf9ebd.js": "/precache-manifest.b5fd780d9dc5b8a6276175e2efdf9ebd.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.409b48d6.chunk.css.map": "/static/css/2.409b48d6.chunk.css.map",
+    "static/css/main.1dc8b16f.chunk.css.map": "/static/css/main.1dc8b16f.chunk.css.map",
+    "static/js/2.9ea13ce5.chunk.js.LICENSE.txt": "/static/js/2.9ea13ce5.chunk.js.LICENSE.txt",
+    "static/media/arrow.48ae6434.svg": "/static/media/arrow.48ae6434.svg",
+    "static/media/cog.993f0cc0.svg": "/static/media/cog.993f0cc0.svg",
+    "static/media/peterportal-banner-logo.svg": "/static/media/peterportal-banner-logo.5c2d806f.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f1889a16.js",
+    "static/css/2.409b48d6.chunk.css",
+    "static/js/2.9ea13ce5.chunk.js",
+    "static/css/main.1dc8b16f.chunk.css",
+    "static/js/main.3c693c24.chunk.js"
+  ]
+}

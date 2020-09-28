@@ -1,0 +1,34 @@
+body {
+  margin: 0;
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; */
+    font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root {
+  --peterportal-primary-color-1: #2484C6;
+  --peterportal-primary-color-2: #74D1F6;
+  --peterportal-light-gray: #EBEBEB;
+  --peterportal-mid-gray: #8d8d8d;
+  --peterportal-uci-gold: #FFD200;
+}
+
+::-moz-selection { 
+  background: var(--peterportal-uci-gold);
+  color: black;
+  opacity: 1;
+}
+
+::selection { 
+  background: var(--peterportal-uci-gold); 
+  color: black;
+  opacity: 1;
+}
