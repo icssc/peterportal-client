@@ -10,34 +10,34 @@ const CourseHitItem = (props) => (
         <a href={"/course/" + props.result._id}>
           <h3>
             <span
-              className={props.bemBlocks.item("id_department")}
+              className={props.bemBlocks.item("department")}
               dangerouslySetInnerHTML={{
                 __html: get(
                   props.result,
-                  "highlight.id_department",
-                  props.result._source.id_department
+                  "highlight.department",
+                  props.result._source.department
                 ),
               }}
             ></span>
             &nbsp;
             <span
-              className={props.bemBlocks.item("id_number")}
+              className={props.bemBlocks.item("number")}
               dangerouslySetInnerHTML={{
                 __html: get(
                   props.result,
-                  "highlight.id_number",
-                  props.result._source.id_number
+                  "highlight.number",
+                  props.result._source.number
                 ),
               }}
             ></span>
             &nbsp;
             <span
-              className={props.bemBlocks.item("name")}
+              className={props.bemBlocks.item("title")}
               dangerouslySetInnerHTML={{
                 __html: get(
                   props.result,
-                  "highlight.name",
-                  props.result._source.name
+                  "highlight.title",
+                  props.result._source.title
                 ),
               }}
             ></span>
@@ -63,14 +63,14 @@ const CourseHitItem = (props) => (
           ),
         }}
       ></p>
-      {props.result._source.prerequisite !== "" && (
+      {props.result._source.prerequisite_text !== "" && (
         <p>
-          <b>Prerequisite: </b> {props.result._source.prerequisite}
+          <b>Prerequisite: </b> {props.result._source.prerequisite_text}
         </p>
       )}
 
       <p className={"course-department_unit"}>
-        {props.result._source.ge_string}
+        {props.result._source.ge_text}
       </p>
 
       <br />

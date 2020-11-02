@@ -1,12 +1,15 @@
 const express = require('express')
 const app = express()
 const passport = require('passport')
+const path = require('path')
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
 
 const {
   users
 } = require('./controllers')
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 
 /**
  * Inference:
@@ -54,6 +57,10 @@ const asyncHandler = fn => (req, res, next) => {
 
 app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
+
+app.use('/about', (req, res) => {
+  res.render('about');
+});
 
 /**
  * Routes - Public

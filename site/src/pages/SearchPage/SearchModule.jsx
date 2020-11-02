@@ -6,11 +6,11 @@ import "./SearchModule.scss";
 // Modify this will affect search result.
 const queryFieldValues = {
     "courses": [
-        "id_department^10",
-        "id_number^10",
+        "department^10",
+        "number^10",
         "description",
-        "dept_alias^10",
-        "name^3",
+        "department_alias^10",
+        "title^3",
     ],
     "professors": [
         "name^10",
