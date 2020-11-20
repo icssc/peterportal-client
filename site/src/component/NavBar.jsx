@@ -15,20 +15,20 @@ class NavBar extends React.Component {
   constructor(props) {
     super(props);
     // const [cookies, setCookie] = useCookies(['name']);
-    fetch("/users/getName", { method: "GET" })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        this.setState({ name: data.name, picture: data.picture });
-      });
+    // fetch("/users/getName", { method: "GET" })
+    //   .then((res) => {
+    //     return res.json();
+    //   })
+    //   .then((data) => {
+    //     this.setState({ name: data.name, picture: data.picture });
+    //   });
 
   }
 
   componentDidMount() {
-    fetch(process.env.REACT_APP_PUBLIC_API + "schedule/getWeek", { method: "GET" })
-      .then((res) => res.text())
-      .then((text) => this.setState({ week: text }));
+    fetch("/schedule/api/currentWeek", { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => this.setState({ week: "Week " + data.week + ", " + data.quarter }));
   }
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -60,7 +60,7 @@ class NavBar extends React.Component {
           </div>
 
           <div style={{margin: "auto 12px"}}>
-          <Popup style={{padding: "36px", width: "400px"}} position='bottom right' trigger={<Label as='a' color='yellow' image>alpha<Label.Detail>v1.1</Label.Detail></Label>} flowing  hoverable >
+          <Popup style={{padding: "36px", width: "400px"}} position='bottom right' trigger={<Label as='a' color='yellow' image>alpha<Label.Detail>v0</Label.Detail></Label>} flowing  hoverable >
               <Grid centered columns={1}>
                 <Grid.Column textAlign='left'>
                   <Header as='h4'>Alpha Disclaimer</Header>
@@ -78,9 +78,9 @@ class NavBar extends React.Component {
                 </Grid>
               </Popup>
               </div>
-          <NavItem userPicture={this.state.picture} icon={<Icon name="user outline" />}>
+          {/* <NavItem userPicture={this.state.picture} icon={<Icon name="user outline" />}>
             <DropdownMenu name={this.state.name} picture={this.state.picture}/>
-          </NavItem>
+          </NavItem> */}
         </div>
       </nav>
     );

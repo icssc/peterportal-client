@@ -1,5 +1,5 @@
 {
-  "name": "serverless-fullstack-app-website",
+  "name": "peterportal-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

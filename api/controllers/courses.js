@@ -3,7 +3,7 @@ var router = express.Router();
 var fetch = require("node-fetch");
 
 router.post('/_search', function(req, res, next) {
-  r = fetch("https://admin:esN6YPBYvFQ9fhAk@@search-peterportal-main-es-yduwhcbsc6oys5bps3wtlgbnvm.us-west-2.es.amazonaws.com/courses/_search", 
+  r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
   {
     method: 'POST',
     headers: {
@@ -25,8 +25,7 @@ router.get('/api/:courseID', function(req, res, next) {
 
 
 router.get('/api/grades/:department/:number', function(req, res, next) {
-  console.log(process.env.PUBLIC_API_URL + "grades?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number);
-  r = fetch(process.env.PUBLIC_API_URL + "grades?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number);
+  r = fetch(process.env.PUBLIC_API_URL + "grades/raw?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number);
   
   r.then((response) => response.json())
   .then((data) => res.send(data))

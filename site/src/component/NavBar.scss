@@ -17,7 +17,6 @@
 }
 
 .peterportal-logo-container {
-  margin-left: 40px;
   max-width: 100px;
   margin-right: 12px;
 }
@@ -51,7 +50,8 @@ ul {
 }
 
 .navbar-nav {
-  max-width: 100%;
+  max-width: 1200px;
+  margin: auto;
   height: 100%;
   display: flex;
   justify-content: flex-end;

@@ -3,6 +3,7 @@ import InfoHeader from '../../component/InfoHeader';
 import axios from 'axios';
 import AdditionalInfo from '../../component/AdditionalInfo';
 import GradeDist from '../../component/GradeDist';
+import PrereqTree from '../../component/PrereqTree';
 import "./CoursePage.scss";
 
 class CoursePage extends React.Component {
@@ -31,7 +32,7 @@ class CoursePage extends React.Component {
                         <InfoHeader {...this.state.courseData}/>
                         <div className="course_page">
                             <AdditionalInfo {...this.state.courseData}/>
-
+                            <PrereqTree {...this.state.courseData}/>
                             <GradeDist {...this.state.courseData}/>
                         </div>
 

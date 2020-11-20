@@ -38,13 +38,18 @@ export default class GradeDist extends React.Component {
       method: "GET"
     };
 
-    console.log(`/courses/api/grades/${this.props.department}/${this.props.number}`)
-
     fetch(`/courses/api/grades/${this.props.department}/${this.props.number}`, HEADER)
       .then(response => response.json())
       .then(data => {
-        this.setState({ gradeDistData: data }, () => {console.log(this.state.gradeDistData); this.createProfEntries()});
-        this.createQuarterEntries();
+        this.setState({ gradeDistData: data }, () => {
+          if (this.state.gradeDistData.length !== 0) {
+            this.createProfEntries();
+          } 
+        });
+
+        if (this.state.gradeDistData.length !== 0) {
+          this.createQuarterEntries();
+        } 
       });
 
     
@@ -55,7 +60,7 @@ export default class GradeDist extends React.Component {
    * @return a JSX block rendering the GradeDist block
    */
   render() {
-    if (this.state.gradeDistData !== null) { 
+    if (this.state.gradeDistData !== null && this.state.gradeDistData.length !== 0) { 
       return (
         <div id="gradedist-module-container">
           <Grid.Row>
@@ -126,7 +131,7 @@ export default class GradeDist extends React.Component {
 
     this.state.gradeDistData
       .filter(entry => entry.instructor === this.state.currentProf)
-      .forEach(data => quarters.add(data.AcadTerm));
+      .forEach(data => quarters.add(data.quarter + " " + data.year));
     quarters.forEach(quarter => result.push({ value: quarter, text: quarter }));
 
     this.setState({quarterEntries: result, currentQuarter: result[0].value});

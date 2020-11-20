@@ -19,6 +19,7 @@ code {
   --peterportal-light-gray: #EBEBEB;
   --peterportal-mid-gray: #8d8d8d;
   --peterportal-uci-gold: #FFD200;
+  --gray-light: #aeb1b5
 }
 
 ::-moz-selection { 

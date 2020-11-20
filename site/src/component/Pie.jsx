@@ -29,25 +29,22 @@ export default class Pie extends React.Component {
         
 
         this.props.gradeData.forEach(data => {
-          if (data.AcadTerm === this.props.quarter
+          if (data.quarter + " " + data.year === this.props.quarter
             && data.instructor === this.props.professor) {
-                console.log(data);
-              gradeACount += data.a_count;
-              gradeBCount += data.b_count;
-              gradeCCount += data.c_count;
-              gradeDCount += data.d_count;
-              gradeFCount += data.f_count;
-              gradePCount += data.p_count;
-              gradeNPCount += data.np_count;
-              sum += ((4.0 * data.a_count) + (3.0 * data.b_count) + (2.0 * data.c_count) + (1.0 * data.d_count))
-              this.total += data.a_count + data.b_count + data.c_count
-              + data.d_count + data.f_count + data.p_count + data.np_count;
-              this.totalPNP += data.p_count + data.np_count;
+              gradeACount += data.gradeACount;
+              gradeBCount += data.gradeBCount;
+              gradeCCount += data.gradeCCount;
+              gradeDCount += data.gradeDCount;
+              gradeFCount += data.gradeFCount;
+              gradePCount += data.gradePCount;
+              gradeNPCount += data.gradeNPCount;
+              sum += ((4.0 * data.gradeACount) + (3.0 * data.gradeBCount) + (2.0 * data.gradeCCount) + (1.0 * data.gradeDCount))
+              this.total += data.gradeACount + data.gradeBCount + data.gradeCCount
+              + data.gradeDCount + data.gradeFCount + data.gradePCount + data.gradeNPCount;
+              this.totalPNP += data.gradePCount + data.gradeNPCount;
           }
         });
 
-        console.log(this.total);
-        console.log(this.totalPNP);
         this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1)
         this.gpaToGradeConverter(this.averageGPA);
 

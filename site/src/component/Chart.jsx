@@ -33,19 +33,20 @@ export default class Chart extends React.Component {
   getClassData() {
     let gradeACount = 0, gradeBCount = 0, gradeCCount = 0, gradeDCount = 0,
       gradeFCount = 0, gradePCount = 0, gradeNPCount = 0;
-    
+
     this.props.gradeData.forEach(data => {
-      if (data.AcadTerm === this.props.quarter
+      if (data.quarter + " " + data.year === this.props.quarter
         && data.instructor === this.props.professor) {
-          gradeACount += data.a_count;
-          gradeBCount += data.b_count;
-          gradeCCount += data.c_count;
-          gradeDCount += data.d_count;
-          gradeFCount += data.f_count;
-          gradePCount += data.p_count;
-          gradeNPCount += data.np_count;
+          gradeACount += data.gradeACount;
+          gradeBCount += data.gradeBCount;
+          gradeCCount += data.gradeCCount;
+          gradeDCount += data.gradeDCount;
+          gradeFCount += data.gradeFCount;
+          gradePCount += data.gradePCount;
+          gradeNPCount += data.gradeNPCount;
       }
     });
+
     
     return [
       {

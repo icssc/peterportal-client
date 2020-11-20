@@ -1,15 +1,14 @@
 const express = require('express')
 const app = express()
-const passport = require('passport')
 const path = require('path')
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
+var scheduleRouter = require('./controllers/schedule')
 
-const {
-  users
-} = require('./controllers')
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static(path.join(__dirname, 'build')));
 
 /**
  * Inference:
@@ -20,12 +19,6 @@ app.use(express.static(path.join(__dirname, 'public')));
  * That is why some things have try/catch blocks around them when they are required.
  */
 
-/**
- * Configure Passport
- */
-
-try { require('./config/passport')(passport) }
-catch (error) { console.log(error) }
 
 /**
  * Configure Express.js Middleware
@@ -40,10 +33,6 @@ app.use(function (req, res, next) {
   next()
 })
 
-// Initialize Passport and restore authentication state, if any, from the session
-app.use(passport.initialize())
-app.use(passport.session())
-
 // Enable JSON use
 app.use(express.json())
 
@@ -55,8 +44,11 @@ const asyncHandler = fn => (req, res, next) => {
     .catch(next);
 };
 
+
+
 app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
+app.use("/schedule", scheduleRouter);
 
 app.use('/about', (req, res) => {
   res.render('about');
@@ -70,27 +62,18 @@ app.options(`*`, (req, res) => {
   res.status(200).send()
 })
 
-app.post(`/users/register`, asyncHandler(users.register))
-
-app.post(`/users/login`, asyncHandler(users.login))
-
 app.get(`/test/`, (req, res) => {
   res.status(200).send('Request received')
 })
 
-/**
- * Routes - Protected
- */
-
-app.post(`/user`, passport.authenticate('jwt', { session: false }), asyncHandler(users.get))
 
 /**
  * Routes - Catch-All
  */
 
-app.get(`/*`, (req, res) => {
-  res.status(404).send('Route not found')
-})
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/build/index.html'));
+});
 
 /**
  * Error Handler

@@ -1,6 +1,6 @@
 {
-  "short_name": "Serverless Fullstack Application",
-  "name": "Serverless Fullstack Application",
+  "short_name": "PeterPortal",
+  "name": "PeterPortal - Your One-Stop-Shop for course discovery at UC Irvine",
   "icons": [
     {
       "src": "favicon.ico",

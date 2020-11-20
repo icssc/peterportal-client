@@ -1,0 +1,157 @@
+.dependency-list-branch {
+    margin: auto;
+}
+
+.prereq {
+    display: flex;
+    flex-direction: column;
+}
+
+.prereq-clump {
+    display: flex;
+    position: relative;
+    margin-left: 20px;
+    &::before {
+        content: '';
+        position: absolute;
+        background: blue;
+        top: 50%;
+        left: -1.5rem;
+        width: .75rem;
+        height: 1px;
+    }
+}
+
+.prereq-branch, .dependency-branch{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .125rem .25rem;
+    margin: 0 .25rem 1px .25rem;
+    border-radius: .25rem;
+    flex: 0 0 auto;
+    border: 0;
+}
+
+.course-node {
+    margin: auto 1rem auto 0.4rem;
+}
+
+.dependency-node {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    margin: auto;
+    margin-right: 0;
+
+    &:first-child:last-child{
+        &::after {
+            height: 0 !important;
+        }
+    }
+
+    &:first-child {
+        &::after{
+            width: 1px;
+            height: 50%;
+            right: -11px;
+            content: '';
+            background: blue;
+            position: absolute;
+            bottom: 0;
+            top: auto;
+        }
+    }
+
+    &:last-child {
+        &::after{
+            width: 1px;
+            height: 50%;
+            right: -11px;
+            content: '';
+            background: blue;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    &::after{
+        width: 1px;
+        height: 100%;
+        right: -11px;
+        content: '';
+        background: blue;
+        position: absolute;
+        top: 0;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        background: blue;
+        top: 50%;
+        right: -.75rem;
+        width: .75rem;
+        height: 1px;
+    }
+
+}
+
+.prerequisite-node {
+    position: relative;
+    display: flex;
+    width: fit-content;
+
+    &:first-child:last-child{
+        &::after {
+            height: 0 !important;
+        }
+    }
+
+    &:first-child {
+        &::after{
+            width: 1px;
+            height: 50%;
+            left: -11px;
+            content: '';
+            background: blue;
+            position: absolute;
+            bottom: 0;
+            top: auto;
+        }
+    }
+
+    &:last-child {
+        &::after{
+            width: 1px;
+            height: 50%;
+            left: -11px;
+            content: '';
+            background: blue;
+            position: absolute;
+            top: 0;
+        }
+    }
+
+    &::after{
+        width: 1px;
+        height: 100%;
+        left: -11px;
+        content: '';
+        background: blue;
+        position: absolute;
+        top: 0;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        background: blue;
+        top: 50%;
+        left: -.75rem;
+        width: .75rem;
+        height: 1px;
+    }
+
+}
