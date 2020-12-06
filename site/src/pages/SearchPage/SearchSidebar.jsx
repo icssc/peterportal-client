@@ -3,7 +3,7 @@ import CourseFilter from "./CourseFilter.jsx";
 import ProfessorFilter from "./ProfessorFilter.jsx";
 import {Menu} from "semantic-ui-react";
 
-function SearchSidebar(props) {
+export default function SearchSidebar(props) {
     return(
         <div className="sidebar-container">
             <Menu secondary vertical className="mode-switcher">
@@ -29,5 +29,3 @@ function SearchSidebar(props) {
         </div>
     )
 }
-
-export default SearchSidebar;

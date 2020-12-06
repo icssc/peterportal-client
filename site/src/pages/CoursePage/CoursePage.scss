@@ -7,3 +7,17 @@
         margin: auto;
     }
 }
+
+.twemoji {
+    width: 3rem;
+}
+
+article {
+    .row {
+        margin-bottom: 4rem;
+        .twemoji {
+            width: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    }
+}

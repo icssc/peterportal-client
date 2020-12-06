@@ -1,7 +1,6 @@
 import React from 'react'
 import ProfessorHitItem from "./ProfessorHitItem.jsx"
 import CourseHitItem from "./CourseHitItem.jsx"
-import { Icon, Label } from "semantic-ui-react"
 import { Pagination, Hits, InitialLoader, SelectedFilters } from "searchkit"
 import './SearchHitContainer.scss'
 
@@ -23,21 +22,12 @@ const highlightFieldValues = {
 }
 
 // Custom rendering of InitialLoader component
-const InitialLoaderComponent = props => <div style={{fontSize: "100pt"}}>Fetching course data...</div>;
+const InitialLoaderComponent = props => <div style={{fontSize: "12pt"}}>Fetching course data...</div>;
 
-// Custom rendering of SelectedFilter component
-const SelectedFilter = (props) => (
-    <Label color='blue' onClick={props.removeFilter}     as='a'>
-        <span style={{marginRight: "0.8rem"}}>{props.labelValue}</span>
-        <Icon name='close'/>
-    </Label>
-)
-
-function SearchHitContainer(props) {
+export default function SearchHitContainer(props) {
     return(
-        <div className="search-hit-container">
+        <article className="search-hit-container">
             <div style={{ minHeight: "100vh", marginLeft: "34px" }}>
-                <SelectedFilters itemComponent={SelectedFilter} />
                 <Hits
                     itemComponent={props.query === "courses" ? CourseHitItem : ProfessorHitItem}
                     hitsPerPage={20}
@@ -50,8 +40,6 @@ function SearchHitContainer(props) {
             </div>
             <InitialLoader component={InitialLoaderComponent} />
             <Pagination showNumbers={true} />
-        </div>
+        </article>
     )
 }
-
-export default SearchHitContainer

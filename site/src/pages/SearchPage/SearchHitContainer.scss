@@ -1,15 +1,5 @@
 @import "./width.config.scss";
 
 .search-hit-container {
-    margin-left: 320px;
-    .sk-selected-filters {
-        max-width: 100%;
-        margin-bottom: 1.5rem;
-        display: flex;
-        flex-flow: wrap;
-        margin-right: 0 !important;
-        .ui.blue.label{
-            margin-bottom: 0.5rem;
-        }
-    }
+    max-width: $content-max-width;
 }

@@ -1,5 +1,6 @@
 import React from 'react'
-import { HitsStats, SearchBox} from "searchkit";
+import { Icon, Label } from "semantic-ui-react"
+import { HitsStats, SearchBox, SelectedFilters} from "searchkit";
 import "./SearchModule.scss";
 
 // An array of elasticsearch fields to search within. Can specify boosting on particular fields.
@@ -28,10 +29,17 @@ const customHitStats = props => (
     </div>
 )
 
+// Custom rendering of SelectedFilter component
+const SelectedFilter = (props) => (
+    <Label color='blue' onClick={props.removeFilter} as='a'>
+        <span style={{marginRight: "0.8rem"}}>{props.labelValue}</span>
+        <Icon name='close'/>
+    </Label>
+)
 
-function SearchModule(props) {
+export default function SearchModule(props) {
     return(
-        <div className="search-module">
+        <section className="search-module">
         {/* <h1 className="search-title">Search by </h1> */}
             <SearchBox
                 autofocus={true}
@@ -41,8 +49,7 @@ function SearchModule(props) {
                 placeholder={props.query === "courses" ? "Course number, title and description" : "Professor name, title, and department"}
             />
             <HitsStats component={customHitStats} />
-        </div>
+            <SelectedFilters itemComponent={SelectedFilter} />
+        </section>
     );
 }
-
-export default SearchModule;

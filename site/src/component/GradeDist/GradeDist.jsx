@@ -63,14 +63,6 @@ export default class GradeDist extends React.Component {
     if (this.state.gradeDistData !== null && this.state.gradeDistData.length !== 0) { 
       return (
         <div id="gradedist-module-container">
-          <Grid.Row>
-            <h2 id="grade-dist-label">
-              <span role="img" aria-label="chart">📊</span> Grade Distribution
-            </h2>
-            
-            <Divider />
-          </Grid.Row>
-
           <Grid.Row columns={2} id="menu">
             <Grid.Column style={{marginRight: "1rem"}}>
               <Dropdown

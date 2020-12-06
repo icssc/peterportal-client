@@ -1,32 +1,13 @@
 @import "~searchkit/theming/theme.scss";
 @import "./width.config.scss";
 
-.search-page {
-  width: 100%;
-  margin-top: 60px;
+// index.jsx
+.sidebar-container {
+  position: sticky;
+  top: 4rem;
+}
 
-  .searchbox-container {
-    position: fixed;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background: rgb(36,132,198);
-    background: radial-gradient(circle, var(--peterportal-primary-color-1) 0%, var(--peterportal-primary-color-2) 100%);
-    z-index: 200;
-  }
-
-  .sidebar-container {
-    position: fixed;
-    height: 90%;
-    display: flex;
-    flex-direction: column;
-  }  
-
-  .search-content-container {
-    max-width: $content-max-width;
-    width: $content-width;
-    min-width: $content-min-width;
-    margin: auto;
-    margin-top: 215px;
-  }
+// SearchHitContainer.jsx
+.search-hit-container {
+  max-width: $content-max-width;
 }

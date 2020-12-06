@@ -2,7 +2,7 @@ import React from "react";
 import "./PrereqTree.scss";
 import { Grid, Divider,Popup } from "semantic-ui-react";
 
-const horizontalStyle = { display: "inline-flex", flexDirection: "row" };
+const horizontalStyle = { display: "inline-flex", flexDirection: "row", marginLeft: "0.5rem" };
 
 function Node(props) {
     return (
@@ -53,24 +53,21 @@ function Tree(props) {
 }
   
 
-function PrereqTree(props) {
+export default function PrereqTree(props) {
     let hasPrereqs = props.prerequisite_tree !== "";
     let hasDependencies = Object.keys(props.dependencies).length !== 0;
 
     if (props.id === undefined) return "";
     else if (!hasPrereqs && !hasDependencies)
       return (
-        <div>
-          <span>No Dependencies or Prerequisites!</span>
+        <div style={{padding: "1em", backgroundColor: "#f5f5f5", marginTop: "2em"}}>
+          <p>
+          No Dependencies or Prerequisites!
+          </p>
         </div>
       );
     return (
       <div>
-        <Grid.Row className="feature-label">
-          <h2><span role="img" aria-label="seedling">🌱</span> Prerequisite Tree</h2>
-          <Divider />
-        </Grid.Row>
-
         <Grid.Row className="prereq">
           <div
             style={{
@@ -82,7 +79,7 @@ function PrereqTree(props) {
             {/* Display dependencies */}
             {hasDependencies && (
               <>
-               
+    
                   <ul style={{ padding: "0", display: "flex"}}>
                     <div className="dependency-list-branch">
                       {Object.keys(props.dependencies).map(
@@ -96,9 +93,9 @@ function PrereqTree(props) {
                   </ul>
                 
                 <div style={horizontalStyle}>
-                  <span style={{ margin: "auto 11px" }}>
-                    <div className="dependency-node dependency-branch">
-                      <p>needs</p>
+                  <span style={{ margin: "auto 1rem" }}>
+                    <div className="dependency-needs dependency-branch">
+                      needs
                     </div>
                   </span>
                 </div>
@@ -137,5 +134,3 @@ function PrereqTree(props) {
       </div>
     );
 }
-
-export default PrereqTree;

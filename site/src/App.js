@@ -1,71 +1,34 @@
-import React, { Component } from 'react'
+import React from 'react'; 
 import {
   BrowserRouter as Router,
   Switch, Redirect,
-  Route,
-} from 'react-router-dom'
-import NavBar from './component/NavBar.jsx'
-import Footer from './component/Footer.jsx'
-import SearchPage from "./pages/SearchPage/SearchPage.jsx";
+  Route
+} from 'react-router-dom';
+import AppHeader from './component/AppHeader/AppHeader.jsx';
+import Footer from './component/Footer/Footer';
+
+import SearchPage from "./pages/SearchPage";
 import CoursePage from "./pages/CoursePage/CoursePage.jsx";
-// import { getSession } from './utils'
+import ErrorPage from "./pages/ErrorPage";
 
-export default class App extends Component {
+export default function App() {
+  return (
+    <Router>
+    <AppHeader/>  
+        <div style={{display: "flex", padding: "4rem 3rem"}}>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/search/courses" />
+            </Route>
 
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
-  async componentDidMount() {
-    // console.log(getSession())
-  }
-
-  render() {
-    return (
-      <Router>
-        <NavBar />
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/search/courses" />
-          </Route>
-
-          <Route path="/search/:index" component={SearchPage} />
-          <Route path="/course/:id" component={CoursePage} />
+              <Route path="/search/:index" component={SearchPage} />
+              <Route path="/course/:id" component={CoursePage} />
+              <Route component={ErrorPage} />
+          </Switch>
+        </div>
 
 
-          {/* <Route path='/register'>
-            <Auth />
-          </Route>
-
-          <Route path='/login'>
-            <Auth />
-          </Route>
-
-          <PrivateRoute
-            exact
-            path='/'
-            component={Dashboard}
-          /> */}
-
-        </Switch>
-
-        <Footer />
-      </Router>
-
-
-    )
-  }
+      <Footer/>
+    </Router>
+  )
 }
-
-/**
- * A component to protect routes.
- * Shows Auth page if the user is not authenticated
- */
-// const PrivateRoute = ({ component, ...options }) => {
-
-//   const session = getSession()
-
-//   const finalComponent = session ? Dashboard : Home
-//   return <Route {...options} component={finalComponent} />
-// }

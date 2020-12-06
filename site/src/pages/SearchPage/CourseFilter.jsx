@@ -5,16 +5,16 @@ import { RefinementListFilter, Select, TermQuery, CheckboxFilter, MenuFilter } f
 
 const GEForm = (
   <div>
-    <CheckboxFilter title="ge-Ia" id="ge-Ia" label="GE Ia: Lower Division Writing" filter={TermQuery("ge_types.keyword", "GE Ia: Lower Division Writing")} />
-    <CheckboxFilter title="ge-Ib" id="ge-Ib" label="GE Ib: Upper Division Writing" filter={TermQuery("ge_types.keyword", "GE Ib: Upper Division Writing")} />
-    <CheckboxFilter title="ge-II" id="ge-II" label="GE II: Science and Technology" filter={TermQuery("ge_types.keyword", "GE II: Science and Technology")} />
-    <CheckboxFilter title="ge-III" id="ge-III" label="GE III: Social & Behavioral Sciences" filter={TermQuery("ge_types.keyword", "GE III: Social & Behavioral Sciences")} />
-    <CheckboxFilter title="ge-IV" id="ge-IV" label="GE IV: Arts and Humanities" filter={TermQuery("ge_types.keyword", "GE IV: Arts and Humanities")} />
-    <CheckboxFilter title="ge-Va" id="ge-Va" label="GE Va: Quantitative Literacy" filter={TermQuery("ge_types.keyword", "GE Va: Quantitative Literacy")} />
-    <CheckboxFilter title="ge-Vb" id="ge-Vb" label="GE Vb: Formal Reasoning" filter={TermQuery("ge_types.keyword", "GE Vb: Formal Reasoning")} />
-    <CheckboxFilter title="ge-VI" id="ge-VI" label="GE VI: Language Other Than English" filter={TermQuery("ge_types.keyword", "GE VI: Language Other Than English")} />
-    <CheckboxFilter title="ge-VII" id="ge-VII" label="GE VII: Multicultural Studies" filter={TermQuery("ge_types.keyword", "GE VII: Multicultural Studies")} />
-    <CheckboxFilter title="ge-VII" id="ge-VIII" label="GE VIII: International/Global Issues" filter={TermQuery("ge_types.keyword", "GE VIII: International/Global Issues")} />
+    <CheckboxFilter title="ge-Ia" id="ge-Ia" label="GE Ia: Lower Division Writing" filter={TermQuery("ge_list.keyword", "GE Ia: Lower Division Writing")} />
+    <CheckboxFilter title="ge-Ib" id="ge-Ib" label="GE Ib: Upper Division Writing" filter={TermQuery("ge_list.keyword", "GE Ib: Upper Division Writing")} />
+    <CheckboxFilter title="ge-II" id="ge-II" label="GE II: Science and Technology" filter={TermQuery("ge_list.keyword", "GE II: Science and Technology")} />
+    <CheckboxFilter title="ge-III" id="ge-III" label="GE III: Social & Behavioral Sciences" filter={TermQuery("ge_list.keyword", "GE III: Social & Behavioral Sciences")} />
+    <CheckboxFilter title="ge-IV" id="ge-IV" label="GE IV: Arts and Humanities" filter={TermQuery("ge_list.keyword", "GE IV: Arts and Humanities")} />
+    <CheckboxFilter title="ge-Va" id="ge-Va" label="GE Va: Quantitative Literacy" filter={TermQuery("ge_list.keyword", "GE Va: Quantitative Literacy")} />
+    <CheckboxFilter title="ge-Vb" id="ge-Vb" label="GE Vb: Formal Reasoning" filter={TermQuery("ge_list.keyword", "GE Vb: Formal Reasoning")} />
+    <CheckboxFilter title="ge-VI" id="ge-VI" label="GE VI: Language Other Than English" filter={TermQuery("ge_list.keyword", "GE VI: Language Other Than English")} />
+    <CheckboxFilter title="ge-VII" id="ge-VII" label="GE VII: Multicultural Studies" filter={TermQuery("ge_list.keyword", "GE VII: Multicultural Studies")} />
+    <CheckboxFilter title="ge-VII" id="ge-VIII" label="GE VIII: International/Global Issues" filter={TermQuery("ge_list.keyword", "GE VIII: International/Global Issues")} />
   </div>
 )
 
@@ -26,12 +26,11 @@ const CourseLevelForm = (
   </div>
 )
 
-class CourseFilter extends React.Component {
+export default class CourseFilter extends React.Component {
   state = {
     activeIndex: 0,
     terms: []
   }
-
 
   constructor(props) {
     super(props);
@@ -99,7 +98,7 @@ class CourseFilter extends React.Component {
                 index={3}
                 onClick={this.handleClick}
               />
-              <Accordion.Content active={activeIndex === 3} content={<RefinementListFilter id="school" field="id_school.keyword" operator="OR" title="" />} />
+              <Accordion.Content active={activeIndex === 3} content={<RefinementListFilter id="school" field="school.keyword" operator="OR" title="" />} />
             </Menu.Item>
 
             <Menu.Item>
@@ -109,7 +108,7 @@ class CourseFilter extends React.Component {
                 index={4}
                 onClick={this.handleClick}
               />
-              <Accordion.Content active={activeIndex === 4} content={<RefinementListFilter id="depts" field="id_department.keyword" operator="OR" size={200} title="" />} />
+              <Accordion.Content active={activeIndex === 4} content={<RefinementListFilter id="depts" field="department.keyword" operator="OR" size={200} title="" />} />
             </Menu.Item>
           </Accordion>
         </div>
@@ -120,4 +119,3 @@ class CourseFilter extends React.Component {
   }
 }
 
-export default CourseFilter;

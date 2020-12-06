@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Icon, Popup, Grid, Label, Header } from "semantic-ui-react";
 // import {useCookies} from 'react-cookie';
 
-import { ReactComponent as CogIcon } from "../asset/cog.svg";
-import { ReactComponent as ArrowIcon } from "../asset/arrow.svg";
+import { ReactComponent as CogIcon } from "../../asset/cog.svg";
+import { ReactComponent as ArrowIcon } from "../../asset/arrow.svg";
 import { CSSTransition } from "react-transition-group";
 
-import Logo from "../asset/peterportal-banner-logo.svg";
-import "./NavBar.scss";
+import Logo from "../../asset/peterportal-banner-logo.svg";
+import "./AppHeader.scss";
 
-class NavBar extends React.Component {
+export default class AppHeader extends React.Component {
   state = { activeItem: "search", week: "" };
   // cookies = useCookies(['name']);
   constructor(props) {
@@ -35,7 +35,7 @@ class NavBar extends React.Component {
 
   render() {
     return (
-      <nav className="navbar">
+      <header className="navbar">
         <div className="navbar-nav">
           <div
             style={{
@@ -82,7 +82,7 @@ class NavBar extends React.Component {
             <DropdownMenu name={this.state.name} picture={this.state.picture}/>
           </NavItem> */}
         </div>
-      </nav>
+      </header>
     );
   }
 }
@@ -199,4 +199,3 @@ function DropdownMenu(props) {
   );
 }
 
-export default NavBar;

@@ -13,13 +13,21 @@ code {
     monospace;
 }
 
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
 :root {
   --peterportal-primary-color-1: #2484C6;
   --peterportal-primary-color-2: #74D1F6;
-  --peterportal-light-gray: #EBEBEB;
+  --peterportal-secondary-green: #81C284;
+  --peterportal-secondary-yellow: #F5D77F;
+  --peterportal-secondary-orange: #ECAD6D;
+  --peterportal-secondary-red: #E7966D;
+  --peterportal-light-gray: #EEEEEE;
   --peterportal-mid-gray: #8d8d8d;
   --peterportal-uci-gold: #FFD200;
-  --gray-light: #aeb1b5
 }
 
 ::-moz-selection { 

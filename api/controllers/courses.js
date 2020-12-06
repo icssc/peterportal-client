@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var fetch = require("node-fetch");
+const websoc = require("websoc-api");
 
 router.post('/_search', function(req, res, next) {
   r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
@@ -29,6 +30,18 @@ router.get('/api/grades/:department/:number', function(req, res, next) {
   
   r.then((response) => response.json())
   .then((data) => res.send(data))
+});
+
+router.get('/api/schedule/:term/:department/:number', async function(req, res, next) {
+  r = await websoc.callWebSocAPI({
+    term: req.params.term,
+    department: req.params.department,
+    courseNumber: req.params.number
+  })
+  
+  res.send(r);
+  // r.then((response) => response.json())
+  // .then((data) => res.send(data))
 });
 
 module.exports = router;
