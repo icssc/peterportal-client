@@ -41,8 +41,8 @@ export default function Review(props) {
     } else {
         return (
             <div>
-                {reviewData.map(review => (
-                    <SubReview review={review}/>
+                {reviewData.map((review, i) => (
+                    <SubReview review={review} key={i}/>
                 ))}
             </div>
         )

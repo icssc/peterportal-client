@@ -3,17 +3,16 @@ import { Grid, Image } from "semantic-ui-react";
 import "./Review.scss"
 
 const SubReview = ({review}) => {
-  const numWords = ["", "one", "two", "three", "four", "five"];
   return (
     <Grid>
-      <Grid.Column width={1}  className="pfp">
+      <Grid.Column width={1}  className="avatar">
           <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lol_circle.png/479px-Lol_circle.png"/>
       </Grid.Column>
       <Grid.Column width={12}>
-          <Grid className="review">
+          <Grid className="content">
               <h3 className="reviewer">Anonymous Anteater</h3>
               {/* the inline style is to fix the css in CoursePage.scss */}
-              <Grid.Row columns={3} style={{ margin: "0" }}>
+              <Grid.Row columns="equal" style={{ margin: "0" }}>
                   <Grid.Column><p><b>Taken With: </b>{review.takenWith}</p></Grid.Column>
                   <Grid.Column textAlign="center"><p><b>Quarter Taken: </b>{review.quarterTaken}</p></Grid.Column>
                   <Grid.Column textAlign="right"><p><b>Grade Received: </b>{review.gradeReceived}</p></Grid.Column>

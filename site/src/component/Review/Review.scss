@@ -1,8 +1,10 @@
+// inline elements in column
 .inline {
   display: flex;
   flex-direction: row;
   grid-gap: 5px;
 }
+// helpful score buttons
 .upvote,
 .downvote {
   outline: none;
@@ -17,14 +19,33 @@
 .downvote {
   color: var(--peterportal-secondary-red);
 }
+// content in second column of grid
+.content {
+  padding-top: 15px !important;
+  padding-right: 15px !important;
+}
+// name of the reviewer (aka Anonymous Petr)
 .reviewer {
   margin: 0;
   color: var(--peterportal-primary-color-1);
 }
-.review {
-  padding-top: 15px !important;
-  padding-right: 15px !important;
+// avatar profile picture
+.avatar {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
 }
+// rating boxes (quality and difficulty)
+.rating {
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: white;
+  margin: 0 auto;
+}
+// color scheme for numerical ratings
 .r1 {
   background-color: var(--peterportal-secondary-red);
 }
@@ -39,18 +60,4 @@
 }
 .r5 {
   background-color: var(--peterportal-primary-color-1);
-}
-.rating {
-  width: 75px;
-  height: 75px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: white;
-  margin: 0 auto;
-}
-.pfp {
-  padding-right: 0 !important;
-  padding-left: 0 !important;
 }
