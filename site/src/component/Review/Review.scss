@@ -46,6 +46,7 @@
   margin: 0 auto;
 }
 // color scheme for numerical ratings
+// reversed for difficulty so 1 => r5, etc.
 .r1 {
   background-color: var(--peterportal-secondary-red);
 }

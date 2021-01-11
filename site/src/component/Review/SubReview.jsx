@@ -34,7 +34,7 @@ const SubReview = ({review}) => {
       <Grid.Column width={2} textAlign="center">
           <div className={"r" + review.quality.toString() + " rating"}><p>{review.quality}</p></div>
           <p><b>QUALITY</b></p>
-          <div className={"r" + review.difficulty.toString() + " rating"}><p>{review.difficulty}</p></div>
+          <div className={"r" + (6-review.difficulty).toString() + " rating"}><p>{review.difficulty}</p></div>
           <p><b>DIFFICULTY</b></p>
       </Grid.Column>
   </Grid>
