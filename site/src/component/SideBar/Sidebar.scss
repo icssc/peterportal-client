@@ -1,0 +1,18 @@
+.sidebar {
+  position: sticky;
+  top: 4rem;
+  width: 280px;
+  // background-color: red;
+  height: fit-content;
+  ul li {
+    margin: 15px 5px;
+    a {
+      color: black;
+      display: flex;
+      grid-gap: 10px;
+    }
+  }
+}
+.sidebar-active {
+  color: var(--peterportal-primary-color-1) !important;
+}

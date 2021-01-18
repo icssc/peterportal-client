@@ -10,14 +10,12 @@ export default function SearchSidebar(props) {
                 <a href="/search/courses">
                     <Menu.Item
                         name="courses"
-                        icon="book"
                         active={props.query === "courses"}
                     />
                 </a>
                 <a href="/search/professors">
                     <Menu.Item
                         name="professors"
-                        icon="graduation cap"
                         active={props.query === "professors"}
                     />
                 </a>
