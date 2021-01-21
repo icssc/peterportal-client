@@ -2,14 +2,18 @@
   position: sticky;
   top: 4rem;
   width: 280px;
-  // background-color: red;
   height: fit-content;
   ul li {
-    margin: 15px 5px;
     a {
       color: black;
       display: flex;
       grid-gap: 10px;
+      margin-right: 10px;
+      padding: 10px;
+    }
+    a:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 5px;
     }
   }
 }
