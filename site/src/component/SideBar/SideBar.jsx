@@ -13,36 +13,36 @@ const SideBar = ({children}) => {
           </div>
           Catalogue
         </NavLink></li>
-        <li><NavLink to="/schedule" activeClassName="sidebar-active">
+        {/* <li><NavLink to="/schedule" activeClassName="sidebar-active">
           <div> 
             <Icon name="clock outline" />
           </div>
           Schedule of Classes
-        </NavLink></li>
-        <li><NavLink to="/zotistics" activeClassName="sidebar-active">
+        </NavLink></li> */}
+        {/* <li><NavLink to="/zotistics" activeClassName="sidebar-active">
           <div> 
             <Icon name="chart bar outline" />
           </div>
           Zotistics
-        </NavLink></li>
-        <li><NavLink to="/antalmanac" activeClassName="sidebar-active">
+        </NavLink></li> */}
+        {/* <li><NavLink to="/antalmanac" activeClassName="sidebar-active">
           <div> 
             <Icon name="calendar outline" />
           </div>
           AntAlmanac
-        </NavLink></li>
+        </NavLink></li> */}
         <li><NavLink to="/roadmap" activeClassName="sidebar-active">
           <div> 
             <Icon name="map outline" />
           </div>
           Peter's Roadmap
         </NavLink></li>
-        <li><NavLink to="/reviews" activeClassName="sidebar-active">
+        {/* <li><NavLink to="/reviews" activeClassName="sidebar-active">
           <div> 
             <Icon name="thumbs up outline"/>
           </div>
           Reviews
-        </NavLink></li>
+        </NavLink></li> */}
       </ul>
       {children}
     </div>
