@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SubReview from "./SubReview";
 
 var DUMMY_DATA = [
     {
@@ -40,7 +41,9 @@ export default function Review(props) {
     } else {
         return (
             <div>
-                {/* TODO: Implement UI design for review */}
+                {reviewData.map((review, i) => (
+                    <SubReview review={review} key={i}/>
+                ))}
             </div>
         )
 

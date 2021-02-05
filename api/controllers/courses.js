@@ -18,7 +18,11 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:courseID', function(req, res, next) {
-  r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID);
+  r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID, {
+    headers: {
+      'x-api-key': process.env.PPAPI_KEY
+    }
+  });
   
   r.then((response) => response.json())
   .then((data) => res.send(data))
@@ -26,7 +30,11 @@ router.get('/api/:courseID', function(req, res, next) {
 
 
 router.get('/api/grades/:department/:number', function(req, res, next) {
-  r = fetch(process.env.PUBLIC_API_URL + "grades/raw?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number);
+  r = fetch(process.env.PUBLIC_API_URL + "grades/raw?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number, {
+    headers: {
+      'x-api-key': process.env.PPAPI_KEY
+    }
+  });
   
   r.then((response) => response.json())
   .then((data) => res.send(data))
