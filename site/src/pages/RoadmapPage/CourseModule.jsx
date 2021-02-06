@@ -1,11 +1,10 @@
 import React from 'react'
+import "./CourseModule.scss";
 
-function CourseModule() {
-  return (
-    <div>
-      <h1>Course Module</h1>
-    </div>
-  )
-}
+const CourseModule = () => (
+  <div className="course-module">
+    <h1>Course Module</h1>
+  </div>
+)
 
 export default CourseModule
