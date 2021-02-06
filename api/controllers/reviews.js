@@ -1,10 +1,28 @@
 var express = require('express');
 var router = express.Router();
 var fetch = require("node-fetch");
+var fs = require('fs');
+var path = require('path');
 
 const FAUNA_GQL_ENDPOINT = 'https://graphql.fauna.com/graphql';
+const FAUNA_IMPORT_ENDPOINT = 'https://graphql.fauna.com/import';
 
 // REST IMPLEMENTATIONS
+router.get('/schema', function (req, res, next) {
+  let headers = { 'Content-Type': 'text/plain', 'Authorization': 'Bearer ' + process.env.FAUNA_SECRET };
+  let schemaPath = path.resolve(__dirname, '../schema.gql');
+  let body = fs.readFileSync(schemaPath, 'utf8');
+  
+  fetch(FAUNA_IMPORT_ENDPOINT, {
+    method: 'POST',
+    headers: headers,
+    body: body
+  })
+    .then(response => response.text())
+    .then(text => res.send(text))
+    .catch(err => res.send(err));
+});
+
 router.get('/', function (req, res, next) {
   let courseID = req.query.courseID;
   let professorID = req.query.professorID;
@@ -22,6 +40,7 @@ router.get('/', function (req, res, next) {
     professorID
     courseID
     userID
+    quarter
     reviewContent
     rating
     difficulty
@@ -97,6 +116,7 @@ router.patch('/vote', async function (req, res) {
       professorID
       courseID
       userID
+      quarter
       reviewContent
       rating
       difficulty
