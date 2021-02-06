@@ -1,13 +1,22 @@
-import React, { FC } from 'react'
+import React from 'react'
+import "./index.scss";
+import PlannerPage from "./PlannerPage.jsx"
 import SearchSidebar from "./SearchSidebar.jsx"
-import PlannerModule from "./PlannerModule.jsx"
+import { Grid } from 'semantic-ui-react'
 
-const RoadmapPage: FC = () => {
+function RoadmapPage() {
   return (
-    <div>
-      <h1>Peter's Roadmap</h1>
-      <SearchSidebar/>
-      <PlannerModule />
+    <div className="roadmap-page">
+      <Grid columns={2}>
+        <Grid.Row>
+          <Grid.Column style={{ width: "60vw" }}>
+            <PlannerPage />
+          </Grid.Column>
+          <Grid.Column style={{ width: "20vw" }}>
+            <SearchSidebar />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     </div>
   )
 }
