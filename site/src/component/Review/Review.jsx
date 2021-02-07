@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import SubReview from "./SubReview";
 
 var DUMMY_DATA = [
@@ -32,7 +33,16 @@ var DUMMY_DATA = [
 ]
 
 export default function Review(props) {
-    const [reviewData, setReviewData] = useState(DUMMY_DATA);
+    const [reviewData, setReviewData] = useState([]);
+
+    const getReviews = async () => {
+        const res = await axios.get('/reviews');
+        setReviewData(res.data.data.allReviews.data);
+    }
+
+    useEffect(() => {
+        getReviews();
+    }, [])
 
     // TODO: connect with backend api and query database
 
