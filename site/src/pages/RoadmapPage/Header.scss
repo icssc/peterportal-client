@@ -1,5 +1,35 @@
+* {
+  --zot-blue: #2484c6;
+  --aldrich-blue: #74d1f6;
+  --ring-road-white: #ffffff;
+  --petr-gray: #808080;
+}
+
 .header {
-  background: gray;
-  height: 6vh;
+  background: linear-gradient(to right, var(--zot-blue), var(--aldrich-blue));
+  height: 3rem;
+  color: var(--ring-road-white);
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.planner-stats {
+  margin-left: 1rem;
+}
+
+#course-count,
+#unit-count {
+  font-weight: bold;
+}
+
+.ui.button.header-btn {
+  color: var(--ring-road-white);
+  background-color: transparent;
+}
+
+.download.icon,
+.undo.icon {
+  padding-right: 20px;
 }
