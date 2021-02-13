@@ -33,7 +33,7 @@ var DUMMY_DATA = [
 ]
 
 export default function Review(props) {
-    const [reviewData, setReviewData] = useState([]);
+    const [reviewData, setReviewData] = useState(null);
 
     const getReviews = async () => {
         const res = await axios.get('/reviews');
@@ -51,9 +51,13 @@ export default function Review(props) {
     } else {
         return (
             <div>
-                {reviewData.map((review, i) => (
-                    <SubReview review={review} key={i}/>
-                ))}
+                {reviewData.map((review, i) => {
+                    if (review !== null) {
+                        return (
+                            <SubReview review={review} key={i}/>
+                        )
+                    }
+                })}
             </div>
         )
 
