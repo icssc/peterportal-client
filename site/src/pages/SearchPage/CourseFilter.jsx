@@ -41,7 +41,6 @@ export default class CourseFilter extends React.Component {
     fetch(`/api/v1/schedule/getTerms`)
       .then(res => res.json())
       .then(terms => {
-        // terms.reverse();
         this.setState({ terms: terms })
       });
   }

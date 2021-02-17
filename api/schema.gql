@@ -1,0 +1,20 @@
+type Review {
+    professorID: String!
+    courseID: String!
+    userID: String!
+    quarter: String!
+    reviewContent: String!
+    rating: Float!
+    difficulty: Float!
+    timestamp: String!
+    gradeReceived: String!
+    forCredit: Boolean!
+    score: Int!
+}
+
+type Query {
+    allReviews: [Review!]!
+    reviewsByCourseID(courseID: String!): [Review!]!
+    reviewsByProfessorID(professorID: String!): [Review!]!
+    reviewsByUserID(userID: String!): [Review!]!
+}
