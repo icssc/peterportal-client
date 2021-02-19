@@ -1,0 +1,66 @@
+* {
+  --zot-blue: #2484c6;
+  --aldrich-blue: #74d1f6;
+  --ring-road-white: #ffffff;
+  --petr-gray: #808080;
+}
+
+.year-module {
+  margin: 1rem;
+  align-items: center;
+  background-color: var(--ring-road-white);
+}
+
+.ui.button.accordion,
+.accordion-content {
+  background-color: var(--ring-road-white);
+}
+
+.ui.button.accordion {
+  padding-right: 0;
+}
+
+.accordion-title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: normal;
+}
+
+#year-number,
+#course-count,
+#unit-count {
+  font-weight: bold;
+}
+
+#year-stats {
+  color: var(--petr-gray);
+}
+
+#year-title {
+  font-size: 1.2rem;
+  color: black;
+}
+
+#accordion-icon {
+  display: inline;
+  padding-right: 1rem;
+}
+
+.ui.button.accordion {
+  width: 93%;
+}
+
+.ui.button.edit-btn {
+  background-color: var(--ring-road-white);
+  float: right;
+}
+
+.ui.button.year-settings-btn {
+  display: block;
+  background: transparent;
+  padding: 0;
+}
+
+#remove-btn {
+  color: red;
+}
