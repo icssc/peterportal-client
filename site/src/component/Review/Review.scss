@@ -1,8 +1,24 @@
+$avatarWidth: 65px;
+.subreview {
+  display: grid;
+  grid-template-columns: $avatarWidth auto 80px;
+  max-width: 800px;
+  grid-gap: 15px;
+  padding: 15px;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+}
 // inline elements in column
 .inline {
   display: flex;
+  margin-top: auto;
   flex-direction: row;
   grid-gap: 5px;
+  a {
+    margin-left: auto;
+  }
 }
 // helpful score buttons
 .upvote,
@@ -19,22 +35,26 @@
 .downvote {
   color: var(--peterportal-secondary-red);
 }
-// content in second column of grid
-.content {
-  padding-top: 15px !important;
-  padding-right: 15px !important;
-}
 // name of the reviewer (aka Anonymous Petr)
 .reviewer {
   margin: 0;
   color: var(--peterportal-primary-color-1);
 }
+.review-info {
+  display: flex;
+  justify-content: space-between;
+}
 // avatar profile picture
 .avatar {
-  padding-right: 0 !important;
-  padding-left: 0 !important;
+  width: $avatarWidth;
+  align-self: flex-start;
 }
 // rating boxes (quality and difficulty)
+.ratings {
+  margin-left: auto;
+  text-align: center;
+  justify-self: flex-end;
+}
 .rating {
   width: 75px;
   height: 75px;
@@ -43,7 +63,6 @@
   justify-content: center;
   font-size: 3rem;
   color: white;
-  margin: 0 auto;
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -61,4 +80,20 @@
 }
 .r5 {
   background-color: var(--peterportal-primary-color-1);
+}
+.add-review-btn {
+  border: none;
+  outline: none;
+  background-color: var(--peterportal-primary-color-1);
+  color: white;
+  border-radius: 20px;
+  padding: 10px 25px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 auto;
+  font-size: 1.25rem;
+}
+.reviews {
+  display: flex;
+  flex-direction: column;
 }
