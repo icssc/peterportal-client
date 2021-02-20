@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SubReview from "./SubReview";
+import './Review.scss'
 
 var DUMMY_DATA = [
     {
@@ -33,6 +34,7 @@ var DUMMY_DATA = [
 ]
 
 export default function Review(props) {
+    console.log(props);
     const [reviewData, setReviewData] = useState(null);
 
     const getReviews = async () => {
@@ -50,14 +52,11 @@ export default function Review(props) {
         return <p>Loading reviews..</p>;
     } else {
         return (
-            <div>
+            <div className="reviews">
                 {reviewData.map((review, i) => {
-                    if (review !== null) {
-                        return (
-                            <SubReview review={review} key={i}/>
-                        )
-                    }
+                    if (review !== null) return (<SubReview review={review} key={i}/>)
                 })}
+                <button type="button" className="add-review-btn">+ Add Review</button>
             </div>
         )
 
