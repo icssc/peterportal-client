@@ -4,6 +4,7 @@ const path = require('path')
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
 var scheduleRouter = require('./controllers/schedule')
+var reviewsRouter = require('./controllers/reviews')
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -49,6 +50,7 @@ const asyncHandler = fn => (req, res, next) => {
 app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
 app.use("/schedule", scheduleRouter);
+app.use("/reviews", reviewsRouter);
 
 app.use('/about', (req, res) => {
   res.render('about');
