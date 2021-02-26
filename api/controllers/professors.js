@@ -3,7 +3,7 @@ var router = express.Router();
 var fetch = require("node-fetch");
 
 router.post('/_search', function(req, res, next) {
-  r = fetch(process.env.PETERPORTAL_MAIN_ES + "/professors/_search", 
+  r = fetch(process.env.PETERPORTAL_MAIN_ES + "professors/_search", 
   {
     method: 'POST',
     headers: {
