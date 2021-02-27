@@ -5,6 +5,9 @@
   grid-gap: 35px;
   width: 700px;
   height: 400px;
+  position: fixed;
+  top: calc(100vh - 600px);
+  left: calc(100vw - 1050px);
 }
 .submit-input {
   display: grid;
@@ -16,12 +19,15 @@
     select {
       padding: 5px 20px;
       outline: none;
-      border-radius: none;
-      border: #cccccc, 100% 1px solid;
       width: fit-content;
+      max-width: 150px;
     }
-    h4 {
+    option {
+      background-color: red;
+    }
+    h5 {
       margin: 0 0 5px 0;
+      font-weight: bold;
     }
   }
   p {
@@ -52,6 +58,13 @@
     align-items: center;
     justify-content: center;
   }
+  h5 {
+    margin: 0 0 5px 0;
+    font-weight: bold;
+  }
+}
+.form-ratings {
+  margin-bottom: 20px;
 }
 .active-rating::after {
   content: "";
@@ -70,7 +83,7 @@
   padding: 15px 25px;
   font-size: 1.25rem;
   font-weight: bold;
-  border-radius: 25px;
+  border-radius: 30px;
   margin: auto auto 25px auto;
   cursor: pointer;
 }

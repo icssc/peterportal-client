@@ -6,7 +6,6 @@ const RoadmapPage = () => {
   return (
     <div>
       <h1>Peter's Roadmap</h1>
-      <ReviewForm />
     </div>
   )
 }

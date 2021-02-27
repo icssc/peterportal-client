@@ -1,31 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './ReviewForm.scss'
+import axios from 'axios'
 import { Icon } from "semantic-ui-react";
 
-const DUMMY_DATA = {
-  "instructors": [
-    "R. Pattis",
-    "M. Shindler",
-    "A. Thornton"
-  ],
-  "quarters": [
-    "Winter 2020",
-    "Fall 2020",
-    "Spring 2020"
-  ],
-  "grades": [
+const ReviewForm = (props) => {
+  const grades = [
     "A+", "A", "A-",
     "B+", "B", "B-",
     "C+", "C", "C-",
     "D+", "D", "D-",
     "F"
-  ]
-};
+  ];
 
-const ReviewForm = () => {
-  const [instructors, setInstructors] = useState(DUMMY_DATA.instructors);
-  const [quarters, setQuarters] = useState(DUMMY_DATA.quarters);
-  const [grades, setGrades] = useState(DUMMY_DATA.grades);
+  const [instructors, setInstructors] = useState([])
 
   const [professor, setProfessor] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
@@ -35,6 +22,23 @@ const ReviewForm = () => {
   const [difficulty, setDifficulty] = useState(null);
 
   const [submitted, setSubmitted] = useState(false);
+
+  const fetchProfNames = async () => {
+    const temp = []
+    for (let i=0; i < props.professor_history.length; i+=1) {
+      const res = await axios.get(`/professors/api/${props.professor_history[i]}`);
+      const prof = {
+        name: res.data.name,
+        id: props.professor_history[i]
+      }
+      temp.push(prof)
+    }
+    setInstructors(temp)
+  }
+
+  useEffect(() => {
+    fetchProfNames();
+  }, [])
 
   const reviewRate = (e) => {
     const rating = document.getElementById(e.target.id).nextElementSibling;
@@ -51,26 +55,34 @@ const ReviewForm = () => {
     }
   }
 
-  const submitReview = () => {
+  const postReview = async (review) => {
+    const res = axios.post('/reviews', review);
+  }
+
+  const submitForm = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (1 + date.getMonth()).toString();
+    const day = date.getDate().toString();
     const review = {
       professorID: professor,
-      courseID: '',
+      courseID: props.id,
       userID: 'Anonymous Peter',
       reviewContent: content,
       rating: quality,
       difficulty: difficulty,
-      timestamp: new Date(),
+      timestamp: month + '/' + day + '/' + year,
       gradeReceived: gradeReceived,
       forCredit: true,
       quarter: quarterTaken,
       score: 0
     };
-    console.log(review);
+    postReview(review);
     setSubmitted(true);
   }
 
   const ratings = (rating) => (
-    <>
+    <div className="form-ratings">
       <input type="radio" name={rating} id={rating+"1"} onChange={reviewRate}/>
       <label htmlFor={rating+"1"} className="r1">1</label>
       <input type="radio" name={rating} id={rating+"2"} onChange={reviewRate}/>
@@ -81,36 +93,40 @@ const ReviewForm = () => {
       <label htmlFor={rating+"4"} className="r4">4</label>
       <input type="radio" name={rating} id={rating+"5"} onChange={reviewRate}/>
       <label htmlFor={rating+"5"} className="r5">5</label>
-    </>
+    </div>
   )
 
   const reviewForm = (
     <>
       <div className="submit-input">
-        <label for="instructor">
-          <h4>Taken with:</h4>
-          <select name="instructor" id="instructor" onChange={(e) => setProfessor(e.target.value)}>
-            <option disabled={true} selected="selected" >Instructor</option>
-            {instructors.map((instructor) => (
-              <option>{instructor}</option>
-            ))}
+        <label htmlFor="instructor">
+          <h5>Taken with:</h5>
+          <select name="instructor" id="instructor" onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
+            <option disabled={true} selected >Instructor</option>
+            {instructors.map((instructor, i) => {
+              const arr = instructor.name.split(' ');
+              const name = `${arr[0][0]}. ${arr[arr.length - 1]}`
+              return (
+                <option key={i} name={name} id={instructor.id}>{name}</option>
+              )
+            })}
           </select>
         </label>
-        <label for="quarter">
-          <h4>Quarter taken:</h4>
+        <label htmlFor="quarter">
+          <h5>Quarter taken:</h5>
           <select name="quarter" id="quarter"  onChange={(e) => setQuarterTaken(e.target.value)}>
-            <option disabled={true} selected="selected" >Quarter</option>
-            {quarters.map((quarter) => (
-              <option>{quarter}</option>
+            <option disabled={true} selected >Quarter</option>
+            {props.terms.map((quarter, i) => (
+              <option key={i}>{quarter}</option>
             ))}
           </select>
         </label>
-        <label for="grade">
-          <h4>Grade:</h4>
+        <label htmlFor="grade">
+          <h5>Grade:</h5>
           <select name="grade" id="grade"  onChange={(e) => setGradeReceived(e.target.value)}>
-            <option disabled={true} selected="selected" >Grade</option>
-            {grades.map((grade) => (
-              <option>{grade}</option>
+            <option disabled={true} selected >Grade</option>
+            {grades.map((grade, i) => (
+              <option key={i}>{grade}</option>
             ))}
           </select>
         </label>
@@ -119,12 +135,12 @@ const ReviewForm = () => {
       </div>
       <div className="submit-rating">
         <div>
-          <h4>Quality</h4>
+          <h5>Quality</h5>
           {ratings("q")}
-          <h4>Difficulty</h4>
+          <h5>Difficulty</h5>
           {ratings("d")}
         </div>
-        <button type="button" className="rating-form-btn" onClick={submitReview}>Submit Review</button>
+        <button type="button" className="rating-form-btn" onClick={submitForm}>Submit Review</button>
       </div>
     </>
   )

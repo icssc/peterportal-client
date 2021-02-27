@@ -43,6 +43,7 @@ $avatarWidth: 65px;
 .review-info {
   display: flex;
   justify-content: space-between;
+  grid-gap: 10px;
 }
 // avatar profile picture
 .avatar {
@@ -96,4 +97,14 @@ $avatarWidth: 65px;
 .reviews {
   display: flex;
   flex-direction: column;
+}
+
+.blur-bg {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
