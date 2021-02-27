@@ -77,8 +77,13 @@ const ReviewForm = (props) => {
       quarter: quarterTaken,
       score: 0
     };
-    postReview(review);
-    setSubmitted(true);
+    if (content.length > 500) {
+      alert("Your review is over the 500 character limit!")
+    }
+    else {
+      postReview(review);
+      setSubmitted(true);
+    }
   }
 
   const ratings = (rating) => (
