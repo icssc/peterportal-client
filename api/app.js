@@ -73,8 +73,8 @@ app.get(`/test/`, (req, res) => {
  * Routes - Catch-All
  */
 
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+'/build/index.html'));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../site/build/index.html'));
 });
 
 /**
