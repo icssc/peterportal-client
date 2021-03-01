@@ -22,8 +22,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "ls && cd ../site && npm install && npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC"
