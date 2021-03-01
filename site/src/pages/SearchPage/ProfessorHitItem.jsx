@@ -29,9 +29,9 @@ const ProfessorHitItem = (props) => (
         </h4>  
 
        
-        {props.result._source.courseHistory.length > 0 &&
+        {props.result._source.course_history.length > 0 &&
          <p><b>Recently taught:&nbsp;</b>
-         {props.result._source.courseHistory.map((item, index) => <span>{(index ? ', ': '')}<a style={{color: "black"}} href={"/course/" + item.replace(/\s+/g, '')}>{item}</a></span>)}
+         {props.result._source.course_history.map((item, index) => <span>{(index ? ', ': '')}<a style={{color: "black"}} href={"/course/" + item.replace(/\s+/g, '')}>{item}</a></span>)}
         </p>
         }
       </div>

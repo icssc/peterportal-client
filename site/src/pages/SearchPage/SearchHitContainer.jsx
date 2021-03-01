@@ -9,15 +9,15 @@ import './SearchHitContainer.scss'
 const highlightFieldValues = {
     "courses": [
         "name",
-        "id_department",
-        "id_number",
+        "department",
+        "number",
         "description",
     ],
     "professors": [
         "name",
         "title",
         "department",
-        "courseHistory"
+        "course_history"
     ]
 }
 

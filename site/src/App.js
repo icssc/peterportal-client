@@ -5,6 +5,7 @@ import {
   Switch, Redirect,
   Route
 } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import AppHeader from './component/AppHeader/AppHeader.jsx';
 import Footer from './component/Footer/Footer';
