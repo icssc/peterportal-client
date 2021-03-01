@@ -17,7 +17,7 @@ const queryFieldValues = {
         "name^10",
         "ucinetid^10",
         "title^3",
-        "courseHistory",
+        "course_history",
         "department^3",
     ]
 }
