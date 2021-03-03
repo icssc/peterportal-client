@@ -23,7 +23,7 @@ export default function Review(props) {
     }, [])
 
     useEffect(() => {
-        if (addedReview) {
+        if (addedReview && !openForm) {
             window.location.reload();
         }
     }, [addedReview])
