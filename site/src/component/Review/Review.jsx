@@ -13,9 +13,7 @@ export default function Review(props) {
     const getReviews = async () => {
         axios.get('/reviews').then((res) => {
             const data = res.data.data.allReviews.data.filter((review) => review !== null && review.courseID === props.id)
-            console.log('hello');
             setReviewData(data);
-            console.log(reviewData);
         });
         
     }
