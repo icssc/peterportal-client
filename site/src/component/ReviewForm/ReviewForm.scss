@@ -6,8 +6,11 @@
   width: 700px;
   height: 400px;
   position: fixed;
-  top: calc(100vh - 600px);
-  left: calc(100vw - 1050px);
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto auto;
 }
 .submit-input {
   display: grid;
@@ -30,9 +33,15 @@
       font-weight: bold;
     }
   }
-  p {
-    grid-column: 3;
+  .char-limit {
+    grid-column: auto / span 3;
     margin-left: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .chars {
+      margin-left: auto;
+    }
   }
   textarea {
     margin-top: 15px;
