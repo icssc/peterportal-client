@@ -22,6 +22,7 @@ const ReviewForm = (props) => {
   const [difficulty, setDifficulty] = useState(null);
 
   const [submitted, setSubmitted] = useState(false);
+  const [overCharLimit, setOverCharLimit] = useState(false);
 
   const fetchProfNames = async () => {
     const temp = []
@@ -56,7 +57,7 @@ const ReviewForm = (props) => {
   }
 
   const postReview = async (review) => {
-    const res = axios.post('/reviews', review);
+    const res = await axios.post('/reviews', review);
   }
 
   const submitForm = () => {
@@ -78,10 +79,12 @@ const ReviewForm = (props) => {
       score: 0
     };
     if (content.length > 500) {
-      alert("Your review is over the 500 character limit!")
+      setOverCharLimit(true);
     }
     else {
+      setOverCharLimit(false);
       postReview(review);
+      props.setAddedReview(true);
       setSubmitted(true);
     }
   }
@@ -135,8 +138,16 @@ const ReviewForm = (props) => {
             ))}
           </select>
         </label>
-        <textarea rows={15} onChange={(e) => setContent(e.target.value)} />
-        <p style={content.length > 500 ? {color: "red"} : {}}>{content.length}/500</p>
+        <textarea rows={15} onChange={(e) => {
+          setContent(e.target.value);
+          if (overCharLimit && e.target.value.length < 500) {
+            setOverCharLimit(false)
+          }
+          }} />
+        <div className="char-limit">
+          {overCharLimit ? (<p style={{ color: "red" }}>Your review exceeds the character limit</p>) : null}
+          <p style={content.length > 500 ? {color: "red"} : {}} className="chars">{content.length}/500</p>
+        </div>
       </div>
       <div className="submit-rating">
         <div>

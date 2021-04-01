@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Grid, Image } from "semantic-ui-react";
 import "./Review.scss"
 
 const SubReview = ({review}) => {
@@ -51,7 +50,7 @@ const SubReview = ({review}) => {
       <div className="ratings">
         <div className={"r" + Math.floor(review.rating).toString() + " rating"}><p>{review.rating}</p></div>
         <p><b>QUALITY</b></p>
-        <div className={"r" + (6-Math.ceil(review.difficulty/2)).toString() + " rating"}><p>{review.difficulty}</p></div>
+        <div className={"r" + (6-Math.floor(review.difficulty)).toString() + " rating"}><p>{review.difficulty}</p></div>
         <p><b>DIFFICULTY</b></p>
       </div>
     </div>
