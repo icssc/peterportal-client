@@ -46,7 +46,6 @@ const asyncHandler = fn => (req, res, next) => {
 };
 
 
-
 app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
 app.use("/schedule", scheduleRouter);
