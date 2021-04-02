@@ -41,6 +41,7 @@ router.get('/api/grades/:department/:number', function(req, res, next) {
 });
 
 router.get('/api/schedule/:term/:department/:number', async function(req, res, next) {
+
   r = await websoc.callWebSocAPI({
     term: req.params.term,
     department: req.params.department,
@@ -48,6 +49,7 @@ router.get('/api/schedule/:term/:department/:number', async function(req, res, n
   })
   
   res.send(r);
+  
   // r.then((response) => response.json())
   // .then((data) => res.send(data))
 });
