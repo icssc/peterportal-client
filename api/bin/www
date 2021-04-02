@@ -4,10 +4,10 @@
  * Module dependencies.
  */
 
+require('dotenv').config()
 var app = require('../app');
 var debug = require('debug')('uci-catalogue-search-api:server');
 var http = require('http');
-require('dotenv').config()
 
 /**
  * Get port from environment and store in Express.
