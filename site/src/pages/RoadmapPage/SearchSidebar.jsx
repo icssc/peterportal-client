@@ -4,7 +4,7 @@ import { InputGroup, FormControl } from "react-bootstrap";
 import { Search, PlusCircle } from 'react-bootstrap-icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import produce from "immer";
-import { data } from './dummyData.js';
+import { data3 } from './dummyData.js';
 
 const dragReducer = produce((draft, action) => {
   switch (action.type) {
@@ -18,7 +18,7 @@ const dragReducer = produce((draft, action) => {
 });
 
 function SearchSidebar() {
-  const [state, dispatch] = useReducer(dragReducer, { items: data });
+  const [state, dispatch] = useReducer(dragReducer, { items: data3 });
 
   const onDragEnd = useCallback((result) => {
     if (result.reason === "DROP") {
