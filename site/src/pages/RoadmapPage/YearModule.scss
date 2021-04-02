@@ -9,11 +9,15 @@
   margin: 1rem;
   align-items: center;
   background-color: var(--ring-road-white);
+  border-radius: 10px;
+  display: inline-block;
+  width: 97%;
 }
 
 .ui.button.accordion,
 .accordion-content {
   background-color: var(--ring-road-white);
+  display: flex;
 }
 
 .ui.button.accordion {
@@ -63,4 +67,32 @@
 
 #remove-btn {
   color: red;
+}
+
+.quarter {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  padding-bottom: 1rem;
+  width: 18vw;
+
+  .quarter-title {
+    color: #202E47;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 1rem 0rem 0rem 2rem;
+  }
+
+  .quarter-units {
+    padding: 0rem 0rem 1rem 2rem;
+  }
+
+  .course {
+    box-shadow: 0px 0px 4px #2484C6;
+    background: #FFFFFF;
+    margin: 0rem 2rem 1rem 2rem;
+    border-radius: 15px;
+    height: auto;
+    font-size: 16px;
+    padding: 10px 20px;
+  }
 }
