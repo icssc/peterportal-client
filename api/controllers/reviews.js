@@ -40,6 +40,7 @@ router.get('/', function (req, res, next) {
     professorID
     courseID
     userID
+    userDisplay
     quarter
     reviewContent
     rating
@@ -116,6 +117,7 @@ router.patch('/vote', async function (req, res) {
       professorID
       courseID
       userID
+      userDisplay
       quarter
       reviewContent
       rating

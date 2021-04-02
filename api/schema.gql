@@ -2,6 +2,7 @@ type Review {
     professorID: String!
     courseID: String!
     userID: String!
+    userDisplay: String!
     quarter: String!
     reviewContent: String!
     rating: Float!

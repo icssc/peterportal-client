@@ -11,9 +11,7 @@ router.get('/', function(req, res, next) {
 
 // get the name of the logged in user
 router.get('/getName', function(req, res, next) {
-  console.log("User:", req.user);
-  res.json( {name: (req.user ? req.user.name: undefined), 
-    picture: (req.user ? req.user.picture: undefined) });
+  res.json(req.user ? req.user : {})
 });
 
 // get whether or not a user is logged in

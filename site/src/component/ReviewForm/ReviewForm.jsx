@@ -17,7 +17,8 @@ const ReviewForm = (props) => {
   const [professor, setProfessor] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
   const [gradeReceived, setGradeReceived] = useState('');
-  const [user, setUser] = useState('Anonymous Peter');
+  const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
+  const [userName, setUserName] = useState('Anonymous Peter');
   const [content, setContent] = useState("");
   const [quality, setQuality] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
@@ -41,8 +42,10 @@ const ReviewForm = (props) => {
   const fetchUser = async () => {
     // get the username
     const res = await axios.get(`/users/getName`);
+    console.log(res.data)
     if (res.data.name) {
-      setUser(res.data.name);
+      setUserEmail(res.data.email);
+      setUserName(res.data.name);
     }
   }
 
@@ -78,7 +81,8 @@ const ReviewForm = (props) => {
     const review = {
       professorID: professor,
       courseID: props.id,
-      userID: user,
+      userID: userEmail,
+      userDisplay: userName,
       reviewContent: content,
       rating: quality,
       difficulty: difficulty,
