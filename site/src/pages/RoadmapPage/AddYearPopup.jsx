@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./AddYearPopup.scss";
 import { Button, Popup, Form, Input } from "semantic-ui-react";
 
-function AddYearPopup({ handleAddYear, setPopUp, popUp }) {
+function AddYearPopup({ addYearToPlanner, setPopUp, popUp }) {
   const placeholderYear = new Date().getFullYear();
   const [year, setYear] = useState(placeholderYear);
 
@@ -21,7 +21,7 @@ function AddYearPopup({ handleAddYear, setPopUp, popUp }) {
       content={
         <Form
           onSubmit={() => {
-            handleAddYear(year);
+            addYearToPlanner(year);
             setYear(placeholderYear);
           }}
         >
