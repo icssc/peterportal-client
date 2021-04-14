@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useReducer } from "react";
 import "./index.scss";
 import PlannerPage from "./PlannerPage.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
+import { DragDropContext } from "react-beautiful-dnd";
+import { data, data1, data2 } from "./dummyData.js";
+
+const dragReducer = (state, action) => {
+  return state;
+};
 
 function RoadmapPage() {
   const [yearPlans, setYearPlans] = useState([]);
+  const [state, dispatch] = useReducer(dragReducer, {
+    items: data,
+    items1: data1,
+    items2: data2,
+  });
 
   const handleAddYear = (year) => {
     const newIndex =
@@ -23,18 +34,22 @@ function RoadmapPage() {
     setYearPlans(filteredPlans);
   };
 
+  const onDragEnd = useCallback((result) => {}, []);
+
   return (
     <div className="roadmap-page">
-      <div className="main-wrapper">
-        <PlannerPage
-          yearPlans={yearPlans}
-          handleAddYear={handleAddYear}
-          removeYear={removeYear}
-        />
-      </div>
-      <div className="sidebar-wrapper">
-        <SearchSidebar />
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="main-wrapper">
+          <PlannerPage
+            yearPlans={yearPlans}
+            handleAddYear={handleAddYear}
+            removeYear={removeYear}
+          />
+        </div>
+        <div className="sidebar-wrapper">
+          <SearchSidebar />
+        </div>
+      </DragDropContext>
     </div>
   );
 }
