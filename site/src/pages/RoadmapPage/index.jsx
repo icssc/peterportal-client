@@ -3,7 +3,7 @@ import "./index.scss";
 import PlannerPage from "./PlannerPage.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
-import { data, data1, data2 } from "./dummyData.js";
+import { data, data1, data2, data3 } from "./dummyData.js";
 import produce from "immer";
 
 const dragReducer = produce((draft, action) => {
@@ -23,6 +23,7 @@ function RoadmapPage() {
     "1-fall": data,
     "1-winter": data1,
     "2-spring": data2,
+    search: data3,
   });
 
   const handleAddYear = (year) => {
@@ -47,8 +48,11 @@ function RoadmapPage() {
       if (!result.destination) {
         return;
       }
-      if (result.destination.droppableId.includes("search")) {
-        // Don't move courses back into search area
+      if (
+        result.destination.droppableId === "search" &&
+        result.source.droppableId != "search"
+      ) {
+        // Don't move courses back into search area from a quarter
         return;
       }
       dispatch({
@@ -73,7 +77,7 @@ function RoadmapPage() {
           />
         </div>
         <div className="sidebar-wrapper">
-          <SearchSidebar />
+          <SearchSidebar state={state} />
         </div>
       </DragDropContext>
     </div>
