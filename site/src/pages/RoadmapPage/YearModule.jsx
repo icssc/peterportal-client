@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useReducer } from "react";
+import React, { useState } from "react";
 import "./YearModule.scss";
 import { Button, Icon, Popup } from "semantic-ui-react";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "react-beautiful-dnd";
 import produce from "immer";
-import { data, data1, data2 } from "./dummyData.js";
 
-function YearModule({ index, startYear, courses, units, removeYear }) {
+function YearModule({ index, startYear, courses, units, removeYear, state }) {
   const [showContent, setShowContent] = useState(false);
 
   return (
@@ -55,48 +54,138 @@ function YearModule({ index, startYear, courses, units, removeYear }) {
       />
       {showContent && (
         <div className="accordion-content">
-          <Droppable droppableId={index + "-fall"} type="COURSE">
-            {(provided) => {
-              return (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="quarter"
-                >
-                  <h2 className="quarter-title">Fall {startYear}</h2>
-                  <div className="quarter-units">{units} units</div>
-                </div>
-              );
-            }}
-          </Droppable>
-          <Droppable droppableId={index + "-winter"} type="COURSE">
-            {(provided) => {
-              return (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="quarter"
-                >
-                  <h2 className="quarter-title">Winter {startYear + 1}</h2>
-                  <div className="quarter-units">{units} units</div>
-                </div>
-              );
-            }}
-          </Droppable>
-          <Droppable droppableId={index + "-spring"} type="COURSE">
-            {(provided) => {
-              return (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="quarter"
-                >
-                  <h2 className="quarter-title">Spring {startYear + 1}</h2>
-                  <div className="quarter-units">{units} units</div>
-                </div>
-              );
-            }}
-          </Droppable>
+          {index === 1 && (
+            <Droppable droppableId={index + "-fall"} type="COURSE">
+              {(provided) => {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="quarter"
+                  >
+                    <h2 className="quarter-title">Fall {startYear}</h2>
+                    <div className="quarter-units">{units} units</div>
+                    {state["1-fall"]?.map((course, index) => {
+                      return (
+                        <Draggable
+                          key={course.id}
+                          draggableId={course.id}
+                          index={index}
+                        >
+                          {(provided) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <div className="course">
+                                  <div className="name">{course.name}</div>
+                                  <div className="title">{course.title}</div>
+                                  <div className="units">
+                                    {course.units} units
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
+            </Droppable>
+          )}
+          {index === 1 && (
+            <Droppable droppableId={index + "-winter"} type="COURSE">
+              {(provided) => {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="quarter"
+                  >
+                    <h2 className="quarter-title">Winter {startYear + 1}</h2>
+                    <div className="quarter-units">{units} units</div>
+                    {state["1-winter"]?.map((course, index) => {
+                      return (
+                        <Draggable
+                          key={course.id}
+                          draggableId={course.id}
+                          index={index}
+                        >
+                          {(provided) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <div className="course">
+                                  <div className="name">{course.name}</div>
+                                  <div className="title">{course.title}</div>
+                                  <div className="units">
+                                    {course.units} units
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
+            </Droppable>
+          )}
+          {index === 2 && (
+            <Droppable droppableId={index + "-spring"} type="COURSE">
+              {(provided) => {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="quarter"
+                  >
+                    <h2 className="quarter-title">Spring {startYear + 1}</h2>
+                    <div className="quarter-units">{units} units</div>
+                    {state["2-spring"]?.map((course, index) => {
+                      return (
+                        <Draggable
+                          key={course.id}
+                          draggableId={course.id}
+                          index={index}
+                        >
+                          {(provided) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <div className="course">
+                                  <div className="name">{course.name}</div>
+                                  <div className="title">{course.title}</div>
+                                  <div className="units">
+                                    {course.units} units
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
+            </Droppable>
+          )}
         </div>
       )}
     </div>

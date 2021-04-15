@@ -4,7 +4,7 @@ import Header from "./Header.jsx";
 import AddYearPopup from "./AddYearPopup.jsx";
 import YearModule from "./YearModule";
 
-function PlannerPage({ yearPlans, handleAddYear, removeYear }) {
+function PlannerPage({ yearPlans, handleAddYear, removeYear, state }) {
   const [courseCount, setCourseCount] = useState(0);
   const [unitCount, setUnitCount] = useState(0);
   const [popUp, setPopUp] = useState(false);
@@ -20,7 +20,12 @@ function PlannerPage({ yearPlans, handleAddYear, removeYear }) {
       <section className="year-modules">
         {yearPlans.map((year) => {
           return (
-            <YearModule key={year.index} removeYear={removeYear} {...year} />
+            <YearModule
+              key={year.index}
+              removeYear={removeYear}
+              {...year}
+              state={state}
+            />
           );
         })}
       </section>
