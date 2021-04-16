@@ -10,18 +10,18 @@ import Logo from "../../asset/peterportal-banner-logo.svg";
 import "./AppHeader.scss";
 
 export default class AppHeader extends React.Component {
-  state = { activeItem: "search", week: "" };
+  state = { activeItem: "search", week: "", name: "", picture: "" };
   // cookies = useCookies(['name']);
   constructor(props) {
     super(props);
     // const [cookies, setCookie] = useCookies(['name']);
-    // fetch("/users/getName", { method: "GET" })
-    //   .then((res) => {
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     this.setState({ name: data.name, picture: data.picture });
-    //   });
+    fetch("/users/getName", { method: "GET" })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        this.setState({ name: data.name, picture: data.picture });
+      });
 
   }
 
@@ -78,9 +78,9 @@ export default class AppHeader extends React.Component {
                 </Grid>
               </Popup>
               </div>
-          {/* <NavItem userPicture={this.state.picture} icon={<Icon name="user outline" />}>
+          <NavItem userPicture={this.state.picture} icon={<Icon name="user outline" />}>
             <DropdownMenu name={this.state.name} picture={this.state.picture}/>
-          </NavItem> */}
+          </NavItem>
         </div>
       </header>
     );
@@ -122,7 +122,7 @@ function DropdownMenu(props) {
   }
 
   return (
-    <div className="dropdown-menu">
+    <div className="settings-menu">
       <CSSTransition
         in={activeMenu === "main"}
         unmountOnExit
@@ -167,14 +167,14 @@ function DropdownMenu(props) {
               Log In using Google
             </DropdownItem>
           </a>
-          <a href="/users/auth/facebook"> 
+          {/* <a href="/users/auth/facebook"> 
             <DropdownItem
               className="facebook-login"
               leftIcon={<Icon name="facebook f" />}
             >
               Log In using Facebook
             </DropdownItem>
-          </a>
+          </a> */}
           <p style={{color: "gray", textAlign: "center", padding: "0.5rem 1rem"}}>By logging in, you agree to our <a href="/legal">privacy policy</a>.</p>
         </div>
       </CSSTransition>

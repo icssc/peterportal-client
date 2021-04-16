@@ -31,7 +31,7 @@ const SubReview = ({review}) => {
     <div className="subreview">
       <img className="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lol_circle.png/479px-Lol_circle.png" />
       <div className="content">
-        <h3 className="reviewer">{review.userID}</h3>
+        <h3 className="reviewer">{review.userDisplay}</h3>
         <div className="review-info">
           <p><b>Taken With: </b>{review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1)}</p>
           <p><b>Quarter Taken: </b>{review.quarter}</p>
