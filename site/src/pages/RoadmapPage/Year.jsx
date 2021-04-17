@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import "./YearModule.scss";
+import "./Year.scss";
 import { Button, Icon, Popup } from "semantic-ui-react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
+import Quarter from "./Quarter.jsx";
 
-function YearModule({ index, startYear, courses, units, removeYear, state }) {
+const Year = ({ index, startYear, courses, units, removeYear, state }) => {
   const [showContent, setShowContent] = useState(false);
 
   return (
-    <div className="year-module">
+    <div className="year">
       <Button
         className="accordion"
         onClick={() => {
@@ -191,4 +192,4 @@ function YearModule({ index, startYear, courses, units, removeYear, state }) {
   );
 }
 
-export default YearModule;
+export default Year;
