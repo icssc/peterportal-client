@@ -1,10 +1,10 @@
-import React, { useCallback, useReducer } from "react";
+import React from "react";
 import "./SearchSidebar.scss";
 import { InputGroup, FormControl } from "react-bootstrap";
 import { Search, PlusCircle } from "react-bootstrap-icons";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
-function SearchSidebar({ state }) {
+const SearchSidebar = ({ state }) => {
   return (
     <div className="search-sidebar">
       <h1 className="title">Add a course</h1>

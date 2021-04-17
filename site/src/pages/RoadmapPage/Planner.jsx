@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "./PlannerPage.scss";
+import "./Planner.scss";
 import Header from "./Header.jsx";
 import AddYearPopup from "./AddYearPopup.jsx";
-import YearModule from "./YearModule";
+import Year from "./Year.jsx";
 
-function PlannerPage({ yearPlans, handleAddYear, removeYear, state }) {
+const Planner = ({ yearPlans, handleAddYear, removeYear, state }) => {
   const [courseCount, setCourseCount] = useState(0);
   const [unitCount, setUnitCount] = useState(0);
   const [popUp, setPopUp] = useState(false);
@@ -15,12 +15,12 @@ function PlannerPage({ yearPlans, handleAddYear, removeYear, state }) {
   };
 
   return (
-    <div className="planner-page">
+    <div className="planner">
       <Header courseCount={courseCount} unitCount={unitCount} />
-      <section className="year-modules">
+      <section className="years">
         {yearPlans.map((year) => {
           return (
-            <YearModule
+            <Year
               key={year.index}
               removeYear={removeYear}
               {...year}
@@ -38,4 +38,4 @@ function PlannerPage({ yearPlans, handleAddYear, removeYear, state }) {
   );
 }
 
-export default PlannerPage;
+export default Planner;

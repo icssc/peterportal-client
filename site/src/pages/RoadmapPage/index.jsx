@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useReducer } from "react";
 import "./index.scss";
-import PlannerPage from "./PlannerPage.jsx";
+import Planner from "./Planner.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
 import { data, data1, data2, data3 } from "./dummyData.js";
@@ -17,7 +17,7 @@ const dragReducer = produce((draft, action) => {
   }
 });
 
-function RoadmapPage() {
+const RoadmapPage = () => {
   const [yearPlans, setYearPlans] = useState([]);
   const [state, dispatch] = useReducer(dragReducer, {
     "1-fall": data,
@@ -50,7 +50,7 @@ function RoadmapPage() {
       }
       if (
         result.destination.droppableId === "search" &&
-        result.source.droppableId != "search"
+        result.source.droppableId !== "search"
       ) {
         // Don't move courses back into search area from a quarter
         return;
@@ -69,7 +69,7 @@ function RoadmapPage() {
     <div className="roadmap-page">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="main-wrapper">
-          <PlannerPage
+          <Planner
             yearPlans={yearPlans}
             handleAddYear={handleAddYear}
             removeYear={removeYear}
