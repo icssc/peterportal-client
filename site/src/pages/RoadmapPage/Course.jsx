@@ -1,10 +1,17 @@
 import React from 'react'
 import "./Course.scss";
 
-const Course = () => (
-  <div className="course">
-    <h1>Course Module</h1>
-  </div>
-)
+const Course = ({ course }) => {
+
+  return (
+    <div className="course">
+      <div className="name">{course.name}</div>
+      <div className="title">{course.title}</div>
+      <div className="units">
+        {course.units} units
+      </div>
+    </div>
+  );
+}
 
 export default Course
