@@ -55,7 +55,7 @@ function Tree(props) {
 
 export default function PrereqTree(props) {
     let hasPrereqs = props.prerequisite_tree !== "";
-    let hasDependencies = Object.keys(props.dependencies).length !== 0;
+    let hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
 
     if (props.id === undefined) return "";
     else if (!hasPrereqs && !hasDependencies)
@@ -82,10 +82,10 @@ export default function PrereqTree(props) {
     
                   <ul style={{ padding: "0", display: "flex"}}>
                     <div className="dependency-list-branch">
-                      {Object.keys(props.dependencies).map(
+                      {Object.keys(props.prerequisite_for).map(
                         (dependency, index) => (
                             <li key={props.index} className={"dependency-node"}>
-                              <Node label={props.dependencies[dependency]} node={"dependency-node"}/>
+                              <Node label={props.prerequisite_for[dependency]} node={"dependency-node"}/>
                             </li>
                         )
                       )}
