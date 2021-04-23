@@ -12,6 +12,7 @@ import Footer from './component/Footer/Footer';
 
 import SearchPage from "./pages/SearchPage";
 import CoursePage from "./pages/CoursePage/CoursePage.jsx";
+import ProfessorPage from './pages/ProfessorPage';
 import ErrorPage from "./pages/ErrorPage";
 import RoadmapPage from "./pages/RoadmapPage";
 import ZotisticsPage from "./pages/ZotisticsPage";
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/search/:index" component={SearchPage} />
             <Route path="/course/:id" component={CoursePage} />
             <Route path="/schedule" component = {Schedule}></Route>
+            <Route path="/professor/:id" component={ProfessorPage} />
             <Route component={ErrorPage} />
           </Switch>
         </div>
