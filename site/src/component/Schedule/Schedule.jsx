@@ -26,10 +26,18 @@ export default function Schedule(props) {
      const currentQuarter = '2020 Winter';
 
      const fetchScheduleDataFromAPI = async (currentQuarter) => {
-        const res = await axios.get(`/courses/api/${props.id}`);
-        const department = res.data.department;
-        const courseNum = res.data.number;
-        const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${courseNum}`)
+         let department;
+         let number;
+         if (props.id) {
+            const res = await axios.get(`/courses/api/${props.id}`);
+            department = res.data.department;
+            number = res.data.number;
+         } else if (props.course) {
+             const str = props.course.split(" ");
+             number = str[str.length-1];
+             department = str.slice(0, str.length-1).join(" ");
+         }
+        const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${number}`)
         setScheduleData(apiResponse.data);
      }
 
