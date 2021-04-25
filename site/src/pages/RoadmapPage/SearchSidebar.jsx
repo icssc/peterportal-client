@@ -3,6 +3,7 @@ import "./SearchSidebar.scss";
 import { InputGroup, FormControl } from "react-bootstrap";
 import { Search, PlusCircle } from "react-bootstrap-icons";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import Course from "./Course.jsx";
 
 const SearchSidebar = ({ state }) => {
   return (
@@ -39,11 +40,7 @@ const SearchSidebar = ({ state }) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <div className="course">
-                            <div className="name">{course.name}</div>
-                            <div className="title">{course.title}</div>
-                            <div className="units">{course.units} units</div>
-                          </div>
+                          <Course {...course} />
                         </div>
                       );
                     }}
@@ -57,6 +54,6 @@ const SearchSidebar = ({ state }) => {
       </Droppable>
     </div>
   );
-}
+};
 
 export default SearchSidebar;

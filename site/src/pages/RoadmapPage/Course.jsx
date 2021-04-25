@@ -1,17 +1,14 @@
-import React from 'react'
+import React from "react";
 import "./Course.scss";
 
-const Course = ({ course }) => {
-
+const Course = ({ name, title, units }) => {
   return (
     <div className="course">
-      <div className="name">{course.name}</div>
-      <div className="title">{course.title}</div>
-      <div className="units">
-        {course.units} units
-      </div>
+      <div className="name">{name}</div>
+      <div className="title">{title}</div>
+      <div className="units">{units} units</div>
     </div>
   );
-}
+};
 
-export default Course
+export default Course;

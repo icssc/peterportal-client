@@ -3,6 +3,7 @@ import "./Year.scss";
 import { Button, Icon, Popup } from "semantic-ui-react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter.jsx";
+import Course from "./Course.jsx";
 
 const Year = ({ index, startYear, courses, units, removeYear, state }) => {
   const [showContent, setShowContent] = useState(false);
@@ -80,13 +81,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <div className="course">
-                                    <div className="name">{course.name}</div>
-                                    <div className="title">{course.title}</div>
-                                    <div className="units">
-                                      {course.units} units
-                                    </div>
-                                  </div>
+                                  <Course {...course} />
                                 </div>
                               );
                             }}
@@ -126,13 +121,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <div className="course">
-                                    <div className="name">{course.name}</div>
-                                    <div className="title">{course.title}</div>
-                                    <div className="units">
-                                      {course.units} units
-                                    </div>
-                                  </div>
+                                  <Course {...course} />
                                 </div>
                               );
                             }}
@@ -172,13 +161,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <div className="course">
-                                    <div className="name">{course.name}</div>
-                                    <div className="title">{course.title}</div>
-                                    <div className="units">
-                                      {course.units} units
-                                    </div>
-                                  </div>
+                                  <Course {...course} />
                                 </div>
                               );
                             }}
@@ -218,13 +201,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                 >
-                                  <div className="course">
-                                    <div className="name">{course.name}</div>
-                                    <div className="title">{course.title}</div>
-                                    <div className="units">
-                                      {course.units} units
-                                    </div>
-                                  </div>
+                                  <Course {...course} />
                                 </div>
                               );
                             }}
