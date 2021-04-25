@@ -65,33 +65,35 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   >
                     <h2 className="quarter-title">Fall {startYear}</h2>
                     <div className="quarter-units">{units} units</div>
-                    {state["1-fall"]?.map((course, index) => {
-                      return (
-                        <Draggable
-                          key={course.id}
-                          draggableId={course.id}
-                          index={index}
-                        >
-                          {(provided) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <div className="course">
-                                  <div className="name">{course.name}</div>
-                                  <div className="title">{course.title}</div>
-                                  <div className="units">
-                                    {course.units} units
+                    {state["year-plans"][index][index + "-fall"]?.map(
+                      (course, index) => {
+                        return (
+                          <Draggable
+                            key={course.id}
+                            draggableId={course.id}
+                            index={index}
+                          >
+                            {(provided) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <div className="course">
+                                    <div className="name">{course.name}</div>
+                                    <div className="title">{course.title}</div>
+                                    <div className="units">
+                                      {course.units} units
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      );
-                    })}
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      }
+                    )}
                     {provided.placeholder}
                   </div>
                 );
@@ -109,40 +111,42 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   >
                     <h2 className="quarter-title">Winter {startYear + 1}</h2>
                     <div className="quarter-units">{units} units</div>
-                    {state["1-winter"]?.map((course, index) => {
-                      return (
-                        <Draggable
-                          key={course.id}
-                          draggableId={course.id}
-                          index={index}
-                        >
-                          {(provided) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <div className="course">
-                                  <div className="name">{course.name}</div>
-                                  <div className="title">{course.title}</div>
-                                  <div className="units">
-                                    {course.units} units
+                    {state["year-plans"][index][index + "-winter"]?.map(
+                      (course, index) => {
+                        return (
+                          <Draggable
+                            key={course.id}
+                            draggableId={course.id}
+                            index={index}
+                          >
+                            {(provided) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <div className="course">
+                                    <div className="name">{course.name}</div>
+                                    <div className="title">{course.title}</div>
+                                    <div className="units">
+                                      {course.units} units
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      );
-                    })}
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      }
+                    )}
                     {provided.placeholder}
                   </div>
                 );
               }}
             </Droppable>
           )}
-          {index === 2 && (
+          {index === 1 && (
             <Droppable droppableId={index + "-spring"} type="COURSE">
               {(provided) => {
                 return (
@@ -153,33 +157,81 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   >
                     <h2 className="quarter-title">Spring {startYear + 1}</h2>
                     <div className="quarter-units">{units} units</div>
-                    {state["2-spring"]?.map((course, index) => {
-                      return (
-                        <Draggable
-                          key={course.id}
-                          draggableId={course.id}
-                          index={index}
-                        >
-                          {(provided) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <div className="course">
-                                  <div className="name">{course.name}</div>
-                                  <div className="title">{course.title}</div>
-                                  <div className="units">
-                                    {course.units} units
+                    {state["year-plans"][index][index + "-spring"]?.map(
+                      (course, index) => {
+                        return (
+                          <Draggable
+                            key={course.id}
+                            draggableId={course.id}
+                            index={index}
+                          >
+                            {(provided) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <div className="course">
+                                    <div className="name">{course.name}</div>
+                                    <div className="title">{course.title}</div>
+                                    <div className="units">
+                                      {course.units} units
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      );
-                    })}
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      }
+                    )}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
+            </Droppable>
+          )}
+          {index === 2 && (
+            <Droppable droppableId={index + "-fall"} type="COURSE">
+              {(provided) => {
+                return (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="quarter"
+                  >
+                    <h2 className="quarter-title">Fall {startYear}</h2>
+                    <div className="quarter-units">{units} units</div>
+                    {state["year-plans"][index][index + "-fall"]?.map(
+                      (course, index) => {
+                        return (
+                          <Draggable
+                            key={course.id}
+                            draggableId={course.id}
+                            index={index}
+                          >
+                            {(provided) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <div className="course">
+                                    <div className="name">{course.name}</div>
+                                    <div className="title">{course.title}</div>
+                                    <div className="units">
+                                      {course.units} units
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      }
+                    )}
                     {provided.placeholder}
                   </div>
                 );
@@ -190,6 +242,6 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
       )}
     </div>
   );
-}
+};
 
 export default Year;
