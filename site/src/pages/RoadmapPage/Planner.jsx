@@ -4,7 +4,7 @@ import Header from "./Header.jsx";
 import AddYearPopup from "./AddYearPopup.jsx";
 import Year from "./Year.jsx";
 
-const Planner = ({ yearPlans, handleAddYear, removeYear, state }) => {
+const Planner = ({ handleAddYear, removeYear, state }) => {
   const [courseCount, setCourseCount] = useState(0);
   const [unitCount, setUnitCount] = useState(0);
   const [popUp, setPopUp] = useState(false);
@@ -13,12 +13,14 @@ const Planner = ({ yearPlans, handleAddYear, removeYear, state }) => {
     handleAddYear(year);
     setPopUp(false);
   };
+  let yearKeys = Array.from(Object.keys(state["year-plans"]));
 
   return (
     <div className="planner">
       <Header courseCount={courseCount} unitCount={unitCount} />
       <section className="years">
-        {yearPlans.map((year) => {
+        {yearKeys.map((key) => {
+          let year = state["year-plans"][key];
           return (
             <Year
               key={year.index}
@@ -36,6 +38,6 @@ const Planner = ({ yearPlans, handleAddYear, removeYear, state }) => {
       />
     </div>
   );
-}
+};
 
 export default Planner;

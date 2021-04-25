@@ -3,7 +3,7 @@ import "./index.scss";
 import Planner from "./Planner.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
-import { data, data1, data2, data3 } from "./dummyData.js";
+import { data3 } from "./dummyData.js";
 import produce from "immer";
 
 const dragReducer = produce((draft, action) => {
@@ -29,7 +29,12 @@ const dragReducer = produce((draft, action) => {
       let fall = action.index + "-fall";
       let winter = action.index + "-winter";
       let spring = action.index + "-spring";
-      draft["year-plans"][action.index] = {};
+      draft["year-plans"][action.index] = {
+        index: action.index,
+        startYear: action.startYear,
+        courses: action.courses,
+        units: action.units,
+      };
       draft["year-plans"][action.index][fall] = [];
       draft["year-plans"][action.index][winter] = [];
       draft["year-plans"][action.index][spring] = [];
@@ -41,31 +46,28 @@ const dragReducer = produce((draft, action) => {
 });
 
 const RoadmapPage = () => {
-  const [yearPlans, setYearPlans] = useState([]);
   const [state, dispatch] = useReducer(dragReducer, {
     "year-plans": {},
     search: data3,
   });
 
   const handleAddYear = (year) => {
+    let yearKeys = Array.from(Object.keys(state["year-plans"]));
+    yearKeys.sort();
     const newIndex =
-      yearPlans.length !== 0 ? yearPlans[yearPlans.length - 1].index + 1 : 1;
-    const newYear = {
+      yearKeys.length !== 0
+        ? state["year-plans"][yearKeys[yearKeys.length - 1]].index + 1
+        : 1;
+    dispatch({
+      type: "ADD-YEAR",
       index: newIndex,
       startYear: parseInt(year),
       courses: 0,
       units: 0,
-    };
-    setYearPlans([...yearPlans, newYear]);
-    dispatch({
-      type: "ADD-YEAR",
-      index: newIndex,
     });
   };
 
   const removeYear = (year) => {
-    const filteredPlans = yearPlans.filter((plan) => plan.index !== year);
-    setYearPlans(filteredPlans);
     dispatch({
       type: "REMOVE-YEAR",
       year: year,
@@ -99,7 +101,6 @@ const RoadmapPage = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="main-wrapper">
           <Planner
-            yearPlans={yearPlans}
             handleAddYear={handleAddYear}
             removeYear={removeYear}
             state={state}
