@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./Year.scss";
 import { Button, Icon, Popup } from "semantic-ui-react";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter.jsx";
-import Course from "./Course.jsx";
 
 const Year = ({ index, startYear, courses, units, removeYear, state }) => {
   const [showContent, setShowContent] = useState(false);
@@ -55,7 +54,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
       />
       {showContent && (
         <div className="accordion-content">
-          {index === 1 && (
+          {
             <Droppable droppableId={index + "-fall"} type="COURSE">
               {(provided) => {
                 return (
@@ -64,38 +63,20 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     {...provided.droppableProps}
                     className="quarter"
                   >
-                    <h2 className="quarter-title">Fall {startYear}</h2>
-                    <div className="quarter-units">{units} units</div>
-                    {state["year-plans"][index][index + "-fall"]?.map(
-                      (course, index) => {
-                        return (
-                          <Draggable
-                            key={course.id}
-                            draggableId={course.id}
-                            index={index}
-                          >
-                            {(provided) => {
-                              return (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Course {...course} />
-                                </div>
-                              );
-                            }}
-                          </Draggable>
-                        );
-                      }
-                    )}
-                    {provided.placeholder}
+                    <Quarter
+                      startYear={startYear}
+                      units={units}
+                      provided={provided}
+                      yearIndex={index}
+                      state={state}
+                      quarter={"fall"}
+                    />
                   </div>
                 );
               }}
             </Droppable>
-          )}
-          {index === 1 && (
+          }
+          {
             <Droppable droppableId={index + "-winter"} type="COURSE">
               {(provided) => {
                 return (
@@ -104,38 +85,20 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     {...provided.droppableProps}
                     className="quarter"
                   >
-                    <h2 className="quarter-title">Winter {startYear + 1}</h2>
-                    <div className="quarter-units">{units} units</div>
-                    {state["year-plans"][index][index + "-winter"]?.map(
-                      (course, index) => {
-                        return (
-                          <Draggable
-                            key={course.id}
-                            draggableId={course.id}
-                            index={index}
-                          >
-                            {(provided) => {
-                              return (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Course {...course} />
-                                </div>
-                              );
-                            }}
-                          </Draggable>
-                        );
-                      }
-                    )}
-                    {provided.placeholder}
+                    <Quarter
+                      startYear={startYear}
+                      units={units}
+                      provided={provided}
+                      yearIndex={index}
+                      state={state}
+                      quarter={"winter"}
+                    />
                   </div>
                 );
               }}
             </Droppable>
-          )}
-          {index === 1 && (
+          }
+          {
             <Droppable droppableId={index + "-spring"} type="COURSE">
               {(provided) => {
                 return (
@@ -144,77 +107,19 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     {...provided.droppableProps}
                     className="quarter"
                   >
-                    <h2 className="quarter-title">Spring {startYear + 1}</h2>
-                    <div className="quarter-units">{units} units</div>
-                    {state["year-plans"][index][index + "-spring"]?.map(
-                      (course, index) => {
-                        return (
-                          <Draggable
-                            key={course.id}
-                            draggableId={course.id}
-                            index={index}
-                          >
-                            {(provided) => {
-                              return (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Course {...course} />
-                                </div>
-                              );
-                            }}
-                          </Draggable>
-                        );
-                      }
-                    )}
-                    {provided.placeholder}
+                    <Quarter
+                      startYear={startYear}
+                      units={units}
+                      provided={provided}
+                      yearIndex={index}
+                      state={state}
+                      quarter={"spring"}
+                    />
                   </div>
                 );
               }}
             </Droppable>
-          )}
-          {index === 2 && (
-            <Droppable droppableId={index + "-fall"} type="COURSE">
-              {(provided) => {
-                return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="quarter"
-                  >
-                    <h2 className="quarter-title">Fall {startYear}</h2>
-                    <div className="quarter-units">{units} units</div>
-                    {state["year-plans"][index][index + "-fall"]?.map(
-                      (course, index) => {
-                        return (
-                          <Draggable
-                            key={course.id}
-                            draggableId={course.id}
-                            index={index}
-                          >
-                            {(provided) => {
-                              return (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Course {...course} />
-                                </div>
-                              );
-                            }}
-                          </Draggable>
-                        );
-                      }
-                    )}
-                    {provided.placeholder}
-                  </div>
-                );
-              }}
-            </Droppable>
-          )}
+          }
         </div>
       )}
     </div>
