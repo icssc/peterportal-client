@@ -64,7 +64,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     className="quarter"
                   >
                     <Quarter
-                      startYear={startYear}
+                      year={startYear}
                       units={units}
                       provided={provided}
                       yearIndex={index}
@@ -86,7 +86,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     className="quarter"
                   >
                     <Quarter
-                      startYear={startYear}
+                      year={startYear + 1}
                       units={units}
                       provided={provided}
                       yearIndex={index}
@@ -108,7 +108,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                     className="quarter"
                   >
                     <Quarter
-                      startYear={startYear}
+                      year={startYear + 1}
                       units={units}
                       provided={provided}
                       yearIndex={index}

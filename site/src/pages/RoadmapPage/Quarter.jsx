@@ -3,12 +3,12 @@ import "./Quarter.scss";
 import { Draggable } from "react-beautiful-dnd";
 import Course from "./Course.jsx";
 
-const Quarter = ({ startYear, units, provided, yearIndex, quarter, state }) => {
+const Quarter = ({ year, units, provided, yearIndex, quarter, state }) => {
   let quarterTitle = quarter.charAt(0).toUpperCase() + quarter.slice(1);
   return (
     <div className="quarter">
       <h2 className="quarter-title">
-        {quarterTitle} {startYear}
+        {quarterTitle} {year}
       </h2>
       <div className="quarter-units">{units} units</div>
       {state &&
