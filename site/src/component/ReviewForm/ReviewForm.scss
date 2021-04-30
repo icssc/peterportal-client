@@ -1,0 +1,112 @@
+.submit-review {
+  background-color: var(--peterportal-light-gray);
+  padding: 20px;
+  display: flex;
+  grid-gap: 35px;
+  width: 700px;
+  height: 400px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto auto;
+}
+.submit-input {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  column-gap: 15px;
+  label {
+    display: flex;
+    flex-direction: column;
+    select {
+      padding: 5px 20px;
+      outline: none;
+      width: fit-content;
+      max-width: 150px;
+    }
+    option {
+      background-color: red;
+    }
+    h5 {
+      margin: 0 0 5px 0;
+      font-weight: bold;
+    }
+  }
+  .char-limit {
+    grid-column: auto / span 3;
+    margin-left: auto;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .chars {
+      margin-left: auto;
+    }
+  }
+  textarea {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    resize: none;
+    grid-column: span 3;
+    padding: 10px;
+  }
+}
+.submit-rating {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  input[type="radio"] {
+    display: none;
+  }
+  label {
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h5 {
+    margin: 0 0 5px 0;
+    font-weight: bold;
+  }
+}
+.form-ratings {
+  margin-bottom: 20px;
+}
+.active-rating::after {
+  content: "";
+  position: absolute;
+  background-color: black;
+  width: 40px;
+  height: 2px;
+  margin-top: 45px;
+}
+.rating-form-btn {
+  border: none;
+  outline: none;
+  display: block;
+  background-color: var(--peterportal-primary-color-1);
+  color: white;
+  padding: 15px 25px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-radius: 30px;
+  margin: auto auto 25px auto;
+  cursor: pointer;
+}
+.submitted-form {
+  text-align: center;
+  width: 100%;
+  margin-top: 15%;
+  i {
+    color: var(--peterportal-secondary-green);
+  }
+  h1 {
+    margin: 15px 0;
+  }
+  p {
+    font-size: 1.25rem;
+  }
+}

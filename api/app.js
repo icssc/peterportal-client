@@ -1,9 +1,25 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+var passport = require('passport');
+var session = require('express-session')
+
+// Custom Routes
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
 var scheduleRouter = require('./controllers/schedule')
+var reviewsRouter = require('./controllers/reviews')
+var usersRouter = require('./controllers/users')
+
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+  cookie: {maxAge: 1000 * 60 * 60 * 24}
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+require("./config/passport.js")
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,10 +61,11 @@ const asyncHandler = fn => (req, res, next) => {
 };
 
 
-
 app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
 app.use("/schedule", scheduleRouter);
+app.use("/reviews", reviewsRouter);
+app.use("/users", usersRouter);
 
 app.use('/about', (req, res) => {
   res.render('about');
@@ -71,8 +88,8 @@ app.get(`/test/`, (req, res) => {
  * Routes - Catch-All
  */
 
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+'/build/index.html'));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './build/index.html'));
 });
 
 /**

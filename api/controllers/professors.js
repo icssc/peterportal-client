@@ -3,7 +3,7 @@ var router = express.Router();
 var fetch = require("node-fetch");
 
 router.post('/_search', function(req, res, next) {
-  r = fetch(process.env.ELASTIC_ENDPOINT_URL + "/professors/_search", 
+  r = fetch(process.env.PETERPORTAL_MAIN_ES + "professors/_search", 
   {
     method: 'POST',
     headers: {
@@ -11,6 +11,17 @@ router.post('/_search', function(req, res, next) {
     },
     body: JSON.stringify(req.body)
   })
+  r.then((response) => response.json())
+  .then((data) => res.send(data))
+});
+
+router.get('/api/:ucinetid', function(req, res, next) {
+  r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
+    headers: {
+      'x-api-key': process.env.PPAPI_KEY
+    }
+  });
+  
   r.then((response) => response.json())
   .then((data) => res.send(data))
 });
