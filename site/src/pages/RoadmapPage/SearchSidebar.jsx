@@ -24,7 +24,6 @@ const SearchSidebar = ({ state }) => {
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="quarter"
             >
               {state["search"]?.map((course, index) => {
                 return (
