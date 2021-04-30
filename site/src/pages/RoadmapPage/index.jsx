@@ -5,6 +5,7 @@ import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
 import { data3 } from "./dummyData.js";
 import produce from "immer";
+import ReviewForm from '../../component/ReviewForm/ReviewForm'
 
 const dragReducer = produce((draft, action) => {
   switch (action.type) {
@@ -44,8 +45,6 @@ const dragReducer = produce((draft, action) => {
     }
   }
 });
-
-import ReviewForm from '../../component/ReviewForm/ReviewForm'
 
 const RoadmapPage = () => {
   const [state, dispatch] = useReducer(dragReducer, {
