@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useReducer } from "react";
+import React, { useCallback, useReducer } from "react";
 import "./index.scss";
 import Planner from "./Planner.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
-import { data3 } from "./dummyData.js";
+import { data } from "./dummyData.js";
 import produce from "immer";
-import ReviewForm from '../../component/ReviewForm/ReviewForm'
 
 const dragReducer = produce((draft, action) => {
   switch (action.type) {
@@ -25,6 +24,7 @@ const dragReducer = produce((draft, action) => {
         draft["year-plans"][toYear][action.to] || [];
       const [removed] = start[action.from].splice(action.fromIndex, 1);
       draft["year-plans"][toYear][action.to].splice(action.toIndex, 0, removed);
+      break;
     }
     case "ADD-YEAR": {
       let fall = action.index + "-fall";
@@ -39,17 +39,21 @@ const dragReducer = produce((draft, action) => {
       draft["year-plans"][action.index][fall] = [];
       draft["year-plans"][action.index][winter] = [];
       draft["year-plans"][action.index][spring] = [];
+      break;
     }
     case "REMOVE-YEAR": {
       delete draft["year-plans"][action.year];
+      break;
     }
+    default:
+      return;
   }
 });
 
 const RoadmapPage = () => {
   const [state, dispatch] = useReducer(dragReducer, {
     "year-plans": {},
-    search: data3,
+    search: data,
   });
 
   const handleAddYear = (year) => {
