@@ -9,49 +9,51 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
 
   return (
     <div className="year">
-      <Button
-        className="accordion"
-        onClick={() => {
-          setShowContent(!showContent);
-        }}
-      >
-        <span className="accordion-title">
-          <span id="year-title">
-            <Icon
-              id="accordion-icon"
-              name={showContent ? "triangle down" : "triangle right"}
-            />
-            <span id="year-number">Year {index} </span>
-            <span id="year-range">
-              ({startYear} - {startYear + 1})
+      <div className="yearTitleBar">
+        <Button
+          className="accordion"
+          onClick={() => {
+            setShowContent(!showContent);
+          }}
+        >
+          <span className="accordion-title">
+            <span id="year-title">
+              <Icon
+                id="accordion-icon"
+                name={showContent ? "triangle down" : "triangle right"}
+              />
+              <span id="year-number">Year {index} </span>
+              <span id="year-range">
+                ({startYear} - {startYear + 1})
+              </span>
+            </span>
+            <span id="year-stats">
+              <span id="course-count">{courses}</span> courses,{" "}
+              <span id="unit-count">{units}</span> units
             </span>
           </span>
-          <span id="year-stats">
-            <span id="course-count">{courses}</span> courses,{" "}
-            <span id="unit-count">{units}</span> units
-          </span>
-        </span>
-      </Button>
-      <Popup
-        content={
-          <div>
-            <Button className="year-settings-btn">Edit Year</Button>
-            <Button
-              className="year-settings-btn"
-              id="remove-btn"
-              onClick={() => {
-                removeYear(index);
-              }}
-            >
-              Remove
-            </Button>
-          </div>
-        }
-        className="year-settings-popup"
-        on="click"
-        trigger={<Button className="edit-btn" icon="ellipsis horizontal" />}
-        position="bottom center"
-      />
+        </Button>
+        <Popup
+          content={
+            <div>
+              <Button className="year-settings-btn">Edit Year</Button>
+              <Button
+                className="year-settings-btn"
+                id="remove-btn"
+                onClick={() => {
+                  removeYear(index);
+                }}
+              >
+                Remove
+              </Button>
+            </div>
+          }
+          className="year-settings-popup"
+          on="click"
+          trigger={<Button className="edit-btn" icon="ellipsis horizontal" />}
+          position="bottom center"
+        />
+      </div>
       {showContent && (
         <div className="accordion-content">
           {
