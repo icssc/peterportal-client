@@ -31,7 +31,6 @@ export default function Schedule(props) {
      const fetchScheduleDataFromAPI = async () => {
         const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${courseNum}`)
         setScheduleData(apiResponse.data);
-        console.log(apiResponse.data);
      }
 
     

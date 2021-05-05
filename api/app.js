@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
+const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const path = require('path')
+const schema = require('./schema');
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
 var scheduleRouter = require('./controllers/schedule')
 var reviewsRouter = require('./controllers/reviews')
-
+const cors = require('cors');
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -34,6 +36,8 @@ app.use(function (req, res, next) {
   next()
 })
 
+app.use(cors());
+
 // Enable JSON use
 app.use(express.json())
 
@@ -54,6 +58,12 @@ app.use("/reviews", reviewsRouter);
 app.use('/about', (req, res) => {
   res.render('about');
 });
+
+//sakshi for graphql
+app.use('/graphql', graphqlHTTP({
+  schema,
+  graphiql: true
+}));
 
 /**
  * Routes - Public
