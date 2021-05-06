@@ -14,6 +14,11 @@
   width: 97%;
 }
 
+.yearTitleBar {
+  display: flex;
+  justify-content: space-between;
+}
+
 .ui.button.accordion,
 .accordion-content {
   background-color: var(--ring-road-white);
@@ -51,12 +56,16 @@
 }
 
 .ui.button.accordion {
-  width: 93%;
+  width: 95%;
+}
+
+.accordion-title {
+  width: 100%; 
 }
 
 .ui.button.edit-btn {
   background-color: var(--ring-road-white);
-  float: right;
+  width: 5%;
 }
 
 .ui.button.year-settings-btn {
