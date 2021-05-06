@@ -58,6 +58,7 @@ export default function PrereqTree(props) {
     let hasPrereqs = props.prerequisite_tree !== "";
     let hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
     
+
     if (props.id === undefined) return "";
     else if (!hasPrereqs && !hasDependencies)
       return (

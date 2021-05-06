@@ -3,6 +3,7 @@ var router = express.Router();
 var fetch = require("node-fetch");
 const websoc = require("websoc-api");
 
+//Sakshi: cancel all the APIs
 router.post('/_search', function(req, res, next) {
   r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
   {

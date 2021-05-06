@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.15",
-    "@nivo/bar": "^0.67.0",
-    "@nivo/core": "^0.67.0",
-    "@nivo/pie": "^0.67.0",
+    "@nivo/bar": "^0.69.1",
+    "@nivo/core": "^0.69.0",
+    "@nivo/pie": "^0.69.0",
     "@sentry/browser": "^5.21.4",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

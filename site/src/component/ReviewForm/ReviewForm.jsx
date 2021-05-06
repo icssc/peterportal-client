@@ -17,6 +17,8 @@ const ReviewForm = (props) => {
   const [professor, setProfessor] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
   const [gradeReceived, setGradeReceived] = useState('');
+  const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
+  const [userName, setUserName] = useState('Anonymous Peter');
   const [content, setContent] = useState("");
   const [quality, setQuality] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
@@ -26,7 +28,7 @@ const ReviewForm = (props) => {
 
   const fetchProfNames = async () => {
     const temp = []
-    for (let i=0; i < props.professor_history.length; i+=1) {
+    for (let i = 0; i < props.professor_history.length; i += 1) {
       const res = await axios.get(`/professors/api/${props.professor_history[i]}`);
       const prof = {
         name: res.data.name,
@@ -37,18 +39,29 @@ const ReviewForm = (props) => {
     setInstructors(temp)
   }
 
+  const fetchUser = async () => {
+    // get the username
+    const res = await axios.get(`/users/getName`);
+    console.log(res.data)
+    if (res.data.name) {
+      setUserEmail(res.data.email);
+      setUserName(res.data.name);
+    }
+  }
+
   useEffect(() => {
     fetchProfNames();
+    fetchUser();
   }, [])
 
   const reviewRate = (e) => {
     const rating = document.getElementById(e.target.id).nextElementSibling;
     const ratings = document.getElementsByName(e.target.name)
-    for (let i=0; i < ratings.length; i+=1) {
+    for (let i = 0; i < ratings.length; i += 1) {
       ratings[i].nextElementSibling.classList.remove('active-rating');
     }
     rating.classList.add('active-rating');
-    
+
     if (e.target.name === 'q') {
       setQuality(parseInt(e.target.id[1]));
     } else if (e.target.name === 'd') {
@@ -68,7 +81,8 @@ const ReviewForm = (props) => {
     const review = {
       professorID: professor,
       courseID: props.id,
-      userID: 'Anonymous Peter',
+      userID: userEmail,
+      userDisplay: userName,
       reviewContent: content,
       rating: quality,
       difficulty: difficulty,
@@ -91,16 +105,16 @@ const ReviewForm = (props) => {
 
   const ratings = (rating) => (
     <div className="form-ratings">
-      <input type="radio" name={rating} id={rating+"1"} onChange={reviewRate}/>
-      <label htmlFor={rating+"1"} className="r1">1</label>
-      <input type="radio" name={rating} id={rating+"2"} onChange={reviewRate}/>
-      <label htmlFor={rating+"2"} className="r2">2</label>
-      <input type="radio" name={rating} id={rating+"3"} onChange={reviewRate}/>
-      <label htmlFor={rating+"3"} className="r3">3</label>
-      <input type="radio" name={rating} id={rating+"4"} onChange={reviewRate}/>
-      <label htmlFor={rating+"4"} className="r4">4</label>
-      <input type="radio" name={rating} id={rating+"5"} onChange={reviewRate}/>
-      <label htmlFor={rating+"5"} className="r5">5</label>
+      <input type="radio" name={rating} id={rating + "1"} onChange={reviewRate} />
+      <label htmlFor={rating + "1"} className="r1">1</label>
+      <input type="radio" name={rating} id={rating + "2"} onChange={reviewRate} />
+      <label htmlFor={rating + "2"} className="r2">2</label>
+      <input type="radio" name={rating} id={rating + "3"} onChange={reviewRate} />
+      <label htmlFor={rating + "3"} className="r3">3</label>
+      <input type="radio" name={rating} id={rating + "4"} onChange={reviewRate} />
+      <label htmlFor={rating + "4"} className="r4">4</label>
+      <input type="radio" name={rating} id={rating + "5"} onChange={reviewRate} />
+      <label htmlFor={rating + "5"} className="r5">5</label>
     </div>
   )
 
@@ -122,7 +136,7 @@ const ReviewForm = (props) => {
         </label>
         <label htmlFor="quarter">
           <h5>Quarter taken:</h5>
-          <select name="quarter" id="quarter"  onChange={(e) => setQuarterTaken(e.target.value)}>
+          <select name="quarter" id="quarter" onChange={(e) => setQuarterTaken(e.target.value)}>
             <option disabled={true} selected >Quarter</option>
             {props.terms.map((quarter, i) => (
               <option key={i}>{quarter}</option>
@@ -131,7 +145,7 @@ const ReviewForm = (props) => {
         </label>
         <label htmlFor="grade">
           <h5>Grade:</h5>
-          <select name="grade" id="grade"  onChange={(e) => setGradeReceived(e.target.value)}>
+          <select name="grade" id="grade" onChange={(e) => setGradeReceived(e.target.value)}>
             <option disabled={true} selected >Grade</option>
             {grades.map((grade, i) => (
               <option key={i}>{grade}</option>
@@ -143,10 +157,10 @@ const ReviewForm = (props) => {
           if (overCharLimit && e.target.value.length < 500) {
             setOverCharLimit(false)
           }
-          }} />
+        }} />
         <div className="char-limit">
           {overCharLimit ? (<p style={{ color: "red" }}>Your review exceeds the character limit</p>) : null}
-          <p style={content.length > 500 ? {color: "red"} : {}} className="chars">{content.length}/500</p>
+          <p style={content.length > 500 ? { color: "red" } : {}} className="chars">{content.length}/500</p>
         </div>
       </div>
       <div className="submit-rating">
@@ -165,7 +179,7 @@ const ReviewForm = (props) => {
     <div className="submit-review">
       {submitted ? (
         <div className="submitted-form">
-          <Icon name="check circle" size="huge"/>
+          <Icon name="check circle" size="huge" />
           <h1>Thank You</h1>
           <p>Your form has been submitted successfully.</p>
         </div>

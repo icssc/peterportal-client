@@ -3,11 +3,27 @@ const app = express()
 const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const path = require('path')
 const schema = require('./schema');
+var passport = require('passport');
+var session = require('express-session')
+
+// Custom Routes
 var coursesRouter = require('./controllers/courses')
 var professorsRouter = require('./controllers/professors')
 var scheduleRouter = require('./controllers/schedule')
 var reviewsRouter = require('./controllers/reviews')
 const cors = require('cors');
+var usersRouter = require('./controllers/users')
+
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: false,
+  cookie: {maxAge: 1000 * 60 * 60 * 24}
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+require("./config/passport.js")
+
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -54,6 +70,7 @@ app.use("/courses", coursesRouter);
 app.use("/professors", professorsRouter);
 app.use("/schedule", scheduleRouter);
 app.use("/reviews", reviewsRouter);
+app.use("/users", usersRouter);
 
 app.use('/about', (req, res) => {
   res.render('about');
@@ -83,7 +100,7 @@ app.get(`/test/`, (req, res) => {
  */
 
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../site/build/index.html'));
+  res.sendFile(path.resolve(__dirname, './build/index.html'));
 });
 
 /**

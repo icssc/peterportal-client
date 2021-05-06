@@ -108,3 +108,7 @@ dist
 
 api/build
 site/build
+
+api/package-lock.json
+site/package-lock.json
+package-lock.json
