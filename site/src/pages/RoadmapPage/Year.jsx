@@ -9,7 +9,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
 
   return (
     <div className="year">
-      <div className="yearTitleBar">
+      <div className="yearTitleBar"> 
         <Button
           className="accordion"
           onClick={() => {
