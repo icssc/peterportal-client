@@ -18,12 +18,14 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:ucinetid', function(req, res, next) {
-  r = fetch("https://api.peterportal.org/rest/v0/" + "instructors/" + req.params.ucinetid, {
+  console.log("Hi i do come here")
+  r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
     headers: {
-      'x-api-key': "PeterPortal-293094452aaaaefd3c5ebb7dd1ad4874fb3b4d20e79be6422b9e09611f01589a"
+      'x-api-key': process.env.PPAPI_KEY,
     }
   });
-  
+
+  console.log("successful");
   r.then((response) => response.json())
   .then((data) => res.send(data))
 });

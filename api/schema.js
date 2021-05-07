@@ -56,7 +56,7 @@ const RootQuery = new GraphQLObjectType({
 			},
 				resolve(parent,args){
 					var data = JSON.stringify({
-						"query": `query{ course(id: "${args.id}" ){ instructor_history {name}}}`
+						"query": `query{ course(id: "${args.id}" ){ instructor_history {name ucinetid}}}`
 					});
 					config.data = data;
 					return axios(config).then((res) => res.data.data.course);

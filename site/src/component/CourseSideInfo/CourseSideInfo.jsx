@@ -11,6 +11,7 @@ export default function CourseSideInfo(props) {
         query GetIntstructor {
             course(id: "${props.id}"){
                 instructor_history{
+                    ucinetid
                     name
                 }
             }
@@ -59,11 +60,11 @@ export default function CourseSideInfo(props) {
                 {props.professor_history.length != 0 && <div>
                     <h5>Instructor History</h5>
                         
-                        <p>{data.course.instructor_history.map((e) => 
+                        <p>{data.course.instructor_history.map((prof) => 
                             <div>
                                 <span>
-                                    <Link to={{pathname: `/professor/${e.name}`}}>
-                                    {e.name}
+                                    <Link to={{pathname: `/professor/${prof.ucinetid}`}}>
+                                    {prof.name}
                                     </Link>
                                 </span>
                             </div>
