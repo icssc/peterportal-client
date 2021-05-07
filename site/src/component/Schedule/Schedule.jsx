@@ -17,19 +17,27 @@ export default function Schedule(props) {
 
 
     // For fetching data from API
-    
     const [scheduleData, setScheduleData] = useState(null);
 
     useEffect(() => {
-         fetchScheduleDataFromAPI();
+         fetchScheduleDataFromAPI(currentQuarter);
      }, [])
 
      const currentQuarter = '2020 Winter';
-     const department = 'I&C SCI';
-     const courseNum = '139W';
 
-     const fetchScheduleDataFromAPI = async () => {
-        const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${courseNum}`)
+     const fetchScheduleDataFromAPI = async (currentQuarter) => {
+         let department;
+         let number;
+         if (props.id) {
+            const res = await axios.get(`/courses/api/${props.id}`);
+            department = res.data.department;
+            number = res.data.number;
+         } else if (props.course) {
+             const str = props.course.split(" ");
+             number = str[str.length-1];
+             department = str.slice(0, str.length-1).join(" ");
+         }
+        const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${number}`)
         setScheduleData(apiResponse.data);
      }
 
