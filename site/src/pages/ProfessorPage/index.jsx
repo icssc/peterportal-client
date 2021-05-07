@@ -9,6 +9,7 @@ const ProfessorPage = (props) => {
   const [profData, setProfData] = useState(null);
   const [schedCourse, setSchedCourse] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [gradeCourse, setGradeCourse] = useState(null);
   const [gradeCourseData, setGradeCourseData] = useState(null);
 
     const fetchDataFromApi = async () => {
@@ -23,6 +24,7 @@ const ProfessorPage = (props) => {
     const fetchCourseData = async (courseID) => {
       const id = courseID.replace(/\s/g,'');
       const res = await axios.get(`/courses/api/${id}`);
+      setGradeCourse(id);
       setGradeCourseData(res.data);
     }
 
@@ -63,7 +65,7 @@ const ProfessorPage = (props) => {
           )}
         </select>
       </>}
-      {gradeCourseData && <GradeDist {...gradeCourseData} currentProf={"THORNTON, A."}/>}
+      {gradeCourseData && <GradeDist key={gradeCourse} {...gradeCourseData} currentProf={"THORNTON, A."}/>}
       <h3>Reviews</h3>
       {reviews.map((review, i) => {
           if (review !== null) return (<SubReview review={review} key={i}/>)
