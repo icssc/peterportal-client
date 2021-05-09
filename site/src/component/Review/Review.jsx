@@ -11,11 +11,10 @@ export default function Review(props) {
     const [addedReview, setAddedReview] = useState(false);
 
     const getReviews = async () => {
-        axios.get('/reviews').then((res) => {
-            const data = res.data.data.allReviews.data.filter((review) => review !== null && review.courseID === props.id)
+        axios.get(`/reviews?courseID=${props.id}`).then((res) => {
+            const data = res.data.filter((review) => review !== null)
             setReviewData(data);
-        });
-        
+        });        
     }
 
     useEffect(() => {

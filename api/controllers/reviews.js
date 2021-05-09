@@ -3,172 +3,51 @@ var router = express.Router();
 var fetch = require("node-fetch");
 var fs = require('fs');
 var path = require('path');
+const ObjectID = require('mongodb').ObjectID;
+let { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } = require('../helpers/mongo');
 
-const FAUNA_GQL_ENDPOINT = 'https://graphql.fauna.com/graphql';
-const FAUNA_IMPORT_ENDPOINT = 'https://graphql.fauna.com/import';
-
-// REST IMPLEMENTATIONS
-router.get('/schema', function (req, res, next) {
-  let headers = { 'Content-Type': 'text/plain', 'Authorization': 'Bearer ' + process.env.FAUNA_SECRET };
-  let schemaPath = path.resolve(__dirname, '../schema.gql');
-  let body = fs.readFileSync(schemaPath, 'utf8');
-  
-  fetch(FAUNA_IMPORT_ENDPOINT, {
-    method: 'POST',
-    headers: headers,
-    body: body
-  })
-    .then(response => response.text())
-    .then(text => res.send(text))
-    .catch(err => res.send(err));
-});
-
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   let courseID = req.query.courseID;
   let professorID = req.query.professorID;
   let userID = req.query.userID;
-  let queryType = 'all';
-  let query = '';
 
-  // determine what to filter by
-  if (courseID) queryType = "courseID";
-  else if (professorID) queryType = "professorID";
-  else if (userID) queryType = "userID";
+  let query = {
+    courseID, professorID, userID
+  };
 
-  let queryFields = `data{
-    _id
-    professorID
-    courseID
-    userID
-    userDisplay
-    quarter
-    reviewContent
-    rating
-    difficulty
-    timestamp
-    gradeReceived
-    forCredit
-    score
-  }`;
-
-  if (queryType == 'all') {
-    query = `
-    {
-      allReviews{
-        ${queryFields}
-      }
+  // remove null params
+  for (var param in query) {
+    if (query[param] === null || query[param] === undefined) {
+      delete query[param];
     }
-    `
-  }
-  else {
-    query = `
-    query Course($${queryType}: String!) {
-      reviewsBy${queryType.charAt(0).toUpperCase() + queryType.slice(1)}(${queryType}: $${queryType}){
-        ${queryFields}
-      }
-    }
-    `;
   }
 
-  variables = req.query;
+  let reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
 
-  // execute query an forward result/error
-  queryFauna(query, variables)
-    .then(result => res.json(result))
-    .catch(error => res.json(error));
+  res.json(reviews);
 });
 
-router.post('/', function (req, res, next) {
-  // construct graphql query from request body
-  let query = `
-  mutation {
-      createReview(data: {
-        ${Object.keys(req.body).map(field => {
-    // transform js object to query format
-    let value = req.body[field];
+router.post('/', async function (req, res, next) {
+  console.log(`Adding Review: ${JSON.stringify(req.body)}`)
 
-    // wrap string in quotes
-    if (typeof value == "string") {
-      value = '"' + value + '"';
-    }
+  // add review to mongo
+  await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
 
-    return field + ':' + value;
-  }).join("\n")}
-      }){
-        ${Object.keys(req.body).join("\n")}
-      }
-    }
-  `;
-
-  // execute query an forward result/error
-  queryFauna(query)
-    .then(result => res.json(result))
-    .catch(error => res.json(error));
+  // echo back body
+  res.json(req.body);
 });
 
 router.patch('/vote', async function (req, res) {
   let id = req.body["id"];
   let deltaScore = req.body["upvote"] ? 1 : -1;
 
-  // retreive the review's current score
-  let query = `
-  query ($id: ID!){
-    findReviewByID(id: $id) {
-      professorID
-      courseID
-      userID
-      userDisplay
-      quarter
-      reviewContent
-      rating
-      difficulty
-      timestamp
-      gradeReceived
-      forCredit
-      score
-    }
-  }
-  `
-  let review = await queryFauna(query, req.body);
-  review = review["data"]["findReviewByID"];
+  console.log(`Voting Review ${id} with delta ${deltaScore}`)
 
-  // if review does not exist
-  if (!review) {
-    res.json({ error: "Review Does Not Exist" });
-  }
-  else {
-    review["score"] += deltaScore;
-    // mutate the review's score
-    query = `
-    mutation ($data: ReviewInput!, $id: ID!) {
-      updateReview (data: $data
-        id: $id){
-        score
-      }
-    }
-    `
-    let updatedReview = await queryFauna(query, { id: id, data: review });
-    res.json(updatedReview);
-  }
+  let status = await updateDocument(COLLECTION_NAMES.REVIEWS,
+    { _id: new ObjectID(id) },
+    { $inc: { score: deltaScore } });
+
+  res.json(status);
 });
-
-function queryFauna(query, variables) {
-  return new Promise((resolve, reject) => {
-    let headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.FAUNA_SECRET };
-    let body = {
-      query: query,
-      variables: variables
-    }
-
-    fetch(FAUNA_GQL_ENDPOINT, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(body)
-    })
-      .then(response => response.json())
-      .then(json => resolve(json))
-      .catch(err => reject(err));
-  })
-}
 
 module.exports = router;
