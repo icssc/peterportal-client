@@ -3,6 +3,7 @@ const client = new MongoClient(process.env.MONGO_URL, { useNewUrlParser: true, u
 
 const DB_NAME = 'peterPortalDB';
 const COLLECTION_NAMES = {
+    SESSIONS: 'sessions',
     REVIEWS: 'reviews'
 }
 let db = undefined;
@@ -110,4 +111,4 @@ function updateDocument(collectionName, query, update) {
     });
 }
 
-module.exports = { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument };
+module.exports = { DB_NAME, COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument };

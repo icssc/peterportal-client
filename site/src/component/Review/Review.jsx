@@ -11,10 +11,15 @@ export default function Review(props) {
     const [addedReview, setAddedReview] = useState(false);
 
     const getReviews = async () => {
-        axios.get(`/reviews?courseID=${props.id}`).then((res) => {
-            const data = res.data.filter((review) => review !== null)
-            setReviewData(data);
-        });        
+        axios.get(`/reviews`, {
+            params: {
+                courseID: props.id
+            }
+        })
+            .then((res) => {
+                const data = res.data.filter((review) => review !== null)
+                setReviewData(data);
+            });
     }
 
     useEffect(() => {
@@ -45,14 +50,14 @@ export default function Review(props) {
             <>
                 <div className="reviews">
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i}/>)
+                        if (review !== null) return (<SubReview review={review} key={i} />)
                     })}
                     <button type="button" className="add-review-btn" onClick={openReviewForm}>+ Add Review</button>
                 </div>
                 {openForm ? (
                     <>
-                    <div className="blur-bg" onClick={closeForm}/>
-                    <ReviewForm {...props} setAddedReview={setAddedReview}/>
+                        <div className="blur-bg" onClick={closeForm} />
+                        <ReviewForm {...props} setAddedReview={setAddedReview} />
                     </>
                 ) : null}
             </>

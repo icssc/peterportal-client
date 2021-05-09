@@ -6,6 +6,7 @@
   "dependencies": {
     "aws-sdk": "^2.739.0",
     "bcryptjs": "^2.4.3",
+    "connect-mongodb-session": "^2.4.1",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
