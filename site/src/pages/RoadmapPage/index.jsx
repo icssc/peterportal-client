@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useEffect } from "react";
 import "./index.scss";
 import Planner from "./Planner.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
@@ -51,10 +51,22 @@ const dragReducer = produce((draft, action) => {
 });
 
 const RoadmapPage = () => {
-  const [state, dispatch] = useReducer(dragReducer, {
-    "year-plans": {},
-    search: data,
-  });
+  let savedState = JSON.parse(localStorage.getItem("roadmap-state"));
+  let defaultState = savedState;
+  if (savedState !== null) {
+    defaultState = savedState;
+  } else {
+    defaultState = {
+      "year-plans": {},
+      search: data,
+    };
+  }
+
+  const [state, dispatch] = useReducer(dragReducer, defaultState);
+
+  useEffect(() => {
+    localStorage.setItem("roadmap-state", JSON.stringify(state));
+  }, [state]);
 
   const handleAddYear = (year) => {
     let yearKeys = Array.from(Object.keys(state["year-plans"]));
