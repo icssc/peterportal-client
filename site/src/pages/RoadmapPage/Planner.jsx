@@ -7,11 +7,9 @@ import Year from "./Year.jsx";
 const Planner = ({ handleAddYear, removeYear, state }) => {
   const [courseCount, setCourseCount] = useState(0);
   const [unitCount, setUnitCount] = useState(0);
-  const [popUp, setPopUp] = useState(false);
 
   const addYearToPlanner = (year) => {
     handleAddYear(year);
-    setPopUp(false);
   };
   let yearKeys = Array.from(Object.keys(state["year-plans"]));
 
@@ -31,11 +29,7 @@ const Planner = ({ handleAddYear, removeYear, state }) => {
           );
         })}
       </section>
-      <AddYearPopup
-        addYearToPlanner={addYearToPlanner}
-        setPopUp={setPopUp}
-        popUp={popUp}
-      />
+      <AddYearPopup addYearToPlanner={addYearToPlanner} />
     </div>
   );
 };

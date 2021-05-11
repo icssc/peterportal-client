@@ -13,11 +13,11 @@ const Header = ({ courseCount, unitCount }) => (
       <h2>Peter's Roadmap</h2>
     </span>
     <ButtonGroup>
-      <Button className="header-btn">
+      <Button variant="light" className="header-btn">
         Undo
         <ArrowCounterclockwise className="header-icon" />
       </Button>
-      <Button className="header-btn">
+      <Button variant="light" className="header-btn">
         Export
         <Download className="header-icon" />
       </Button>
