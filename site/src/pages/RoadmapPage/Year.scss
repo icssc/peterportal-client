@@ -19,14 +19,13 @@
   justify-content: space-between;
 }
 
-.ui.button.accordion,
+.caret-icon {
+  margin-right: 10px;
+}
+.accordion,
 .accordion-content {
   background-color: var(--ring-road-white);
   display: flex;
-}
-
-.ui.button.accordion {
-  padding-right: 0;
 }
 
 .accordion-title {
@@ -55,20 +54,33 @@
   padding-right: 1rem;
 }
 
-.ui.button.accordion {
+.accordion {
   width: 95%;
+  padding-right: 0;
+}
+
+.accordion:hover,
+.accordion:active,
+.accordion:focus {
+  text-decoration: none;
+  box-shadow: none;
 }
 
 .accordion-title {
-  width: 100%; 
+  width: 100%;
 }
 
-.ui.button.edit-btn {
+.edit-btn {
   background-color: var(--ring-road-white);
   width: 5%;
+  margin-top: 10px;
 }
 
-.ui.button.year-settings-btn {
+.edit-btn:hover {
+  cursor: pointer;
+}
+
+.year-settings-btn {
   display: block;
   background: transparent;
   padding: 0;
@@ -77,5 +89,3 @@
 #remove-btn {
   color: red;
 }
-
-

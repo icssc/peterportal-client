@@ -1,6 +1,7 @@
 import React from "react";
 import "./Header.scss";
-import { Button } from "semantic-ui-react";
+import { Button, ButtonGroup } from "react-bootstrap";
+import { ArrowCounterclockwise, Download } from "react-bootstrap-icons";
 
 const Header = ({ courseCount, unitCount }) => (
   <div className="header">
@@ -11,10 +12,16 @@ const Header = ({ courseCount, unitCount }) => (
     <span id="title">
       <h2>Peter's Roadmap</h2>
     </span>
-    <Button.Group>
-      <Button className="header-btn" icon="undo" content="Undo" />
-      <Button className="header-btn" icon="download" content="Export" />
-    </Button.Group>
+    <ButtonGroup>
+      <Button variant="light" className="header-btn">
+        Undo
+        <ArrowCounterclockwise className="header-icon" />
+      </Button>
+      <Button variant="light" className="header-btn">
+        Export
+        <Download className="header-icon" />
+      </Button>
+    </ButtonGroup>
   </div>
 );
 
