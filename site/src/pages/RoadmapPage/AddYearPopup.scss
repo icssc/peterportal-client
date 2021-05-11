@@ -1,15 +1,21 @@
-.ui.button.add-year-btn {
+.add-year-btn {
   background-color: transparent;
-  font-weight: normal;
-  font-size: 1.2rem;
+  color: var(--petr-gray);
+  border: none;
+}
+
+.add-year-btn:hover,
+.add-year-btn:focus,
+.add-year-btn:active {
+  background-color: transparent;
   color: var(--petr-gray);
 }
 
-.plus.circle.icon {
-  padding-right: 25px;
+.add-year-icon {
+  margin-right: 10px;
 }
 
-.ui.button.popup-btn {
+.popup-btn {
   text-transform: uppercase;
   background-color: var(--peterportal-primary-color-1);
   color: var(--ring-road-white);
