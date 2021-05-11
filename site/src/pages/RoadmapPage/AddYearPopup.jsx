@@ -56,45 +56,6 @@ function AddYearPopup({ addYearToPlanner }) {
       </Overlay>
     </div>
   );
-
-  // return (
-  //   <Popup
-  //     trigger={
-  //       <Button variant="light" className="add-year-btn">
-  //         <PlusCircleFill className="add-year-icon" />
-  //         Add year
-  //       </Button>
-  //     }
-  //     open={popUp}
-  //     onOpen={() => setPopUp(true)}
-  //     onClose={() => setPopUp(false)}
-  //     content={
-  //       <Form
-  //         onSubmit={() => {
-  //           addYearToPlanner(year);
-  //           setYear(placeholderYear);
-  //         }}
-  //       >
-  //         <Form.Group>
-  //           <Form.Label>Start Year</Form.Label>
-  //           <Form.Control
-  //             type="number"
-  //             name="year"
-  //             value={year}
-  //             onChange={(e) => {
-  //               setYear(e.target.value);
-  //             }}
-  //             min={1000}
-  //             max={9999}
-  //             placeholder={placeholderYear.toString()}
-  //           ></Form.Control>
-  //         </Form.Group>
-  //         <Button className="popup-btn">Add Year</Button>
-  //       </Form>
-  //     }
-  //     on="click"
-  //   />
-  // );
 }
 
 export default AddYearPopup;
