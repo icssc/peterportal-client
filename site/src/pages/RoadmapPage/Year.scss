@@ -63,6 +63,7 @@
 .accordion:active,
 .accordion:focus {
   text-decoration: none;
+  box-shadow: none;
 }
 
 .accordion-title {
@@ -73,6 +74,10 @@
   background-color: var(--ring-road-white);
   width: 5%;
   margin-top: 10px;
+}
+
+.edit-btn:hover {
+  cursor: pointer;
 }
 
 .year-settings-btn {
