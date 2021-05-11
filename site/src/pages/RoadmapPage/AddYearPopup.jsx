@@ -25,7 +25,9 @@ function AddYearPopup({ addYearToPlanner }) {
           <Popover.Content>
             <Form>
               <Form.Group>
-                <Form.Label>Start Year</Form.Label>
+                <Form.Label className="add-year-form-label">
+                  Start Year
+                </Form.Label>
                 <Form.Control
                   type="number"
                   name="year"
