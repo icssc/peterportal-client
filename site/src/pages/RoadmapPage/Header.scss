@@ -24,12 +24,18 @@
   font-weight: bold;
 }
 
-.ui.button.header-btn {
+.header-btn {
   color: var(--ring-road-white);
+  background-color: transparent;
+  font-weight: bold;
+  border: none;
+}
+
+.header-btn:hover,
+.header-btn:focus {
   background-color: transparent;
 }
 
-.download.icon,
-.undo.icon {
-  padding-right: 20px;
+.header-icon {
+  margin-left: 10px;
 }
