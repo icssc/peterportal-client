@@ -18,7 +18,7 @@ function AddYearPopup({ addYearToPlanner }) {
     <div>
       <Button variant="light" className="add-year-btn" onClick={handleClick}>
         <PlusCircleFill className="add-year-icon" />
-        Add year
+        <div className="add-year-text">Add year</div>
       </Button>
       <Overlay show={show} target={target} placement="bottom">
         <Popover>

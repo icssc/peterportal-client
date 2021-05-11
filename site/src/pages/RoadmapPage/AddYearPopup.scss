@@ -2,6 +2,8 @@
   background-color: transparent;
   color: var(--petr-gray);
   border: none;
+  display: block;
+  margin: 0.5rem;
 }
 
 .add-year-btn:hover,
@@ -13,6 +15,11 @@
 
 .add-year-icon {
   margin-right: 10px;
+}
+
+.add-year-text {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .add-year-form-label {
