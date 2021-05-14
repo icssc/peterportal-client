@@ -116,7 +116,7 @@ const RoadmapPage = () => {
   return (
     <div className="roadmap-page">
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="main-wrapper">
+        <div className="main-wrapper" id="screenshot">
           <Planner
             handleAddYear={handleAddYear}
             removeYear={removeYear}
