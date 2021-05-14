@@ -2,7 +2,31 @@
   position: sticky;
   right: 0;
   top: 0;
-  padding: 1rem;
+  padding: 0.5rem;
+
+.title {
+  color: #4D4D4D;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: inline-block;
+  padding-right: 11rem;
+}
+
+.custom-button{
+  color: var(--petr-gray);
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: inline-block;
+  padding-left: 0.5rem;
+}
+
+.plus-circle{
+  color: var(--petr-gray);
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
 
   .search {
     padding-bottom: 2rem;
