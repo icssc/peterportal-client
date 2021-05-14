@@ -79,7 +79,6 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
@@ -97,7 +96,6 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear + 1}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
@@ -115,7 +113,6 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear + 1}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
