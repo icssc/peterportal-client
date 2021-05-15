@@ -9,7 +9,7 @@ import {
 import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter.jsx";
 
-const Year = ({ index, startYear, courses, units, removeYear, state }) => {
+const Year = ({ index, startYear, removeYear, state, plannerStats }) => {
   const [showContent, setShowContent] = useState(false);
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState(null);
@@ -18,6 +18,21 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
     setShow(!show);
     setTarget(event.target);
   };
+
+  const calculateYearStats = () => {
+    let unitCount = 0;
+    let courseCount = 0;
+    let quarterKeys = Array.from(Object.keys(plannerStats[index]));
+    for (let quarterKey of quarterKeys) {
+      unitCount += plannerStats[index][quarterKey][0];
+      courseCount += plannerStats[index][quarterKey][1];
+    }
+    return [unitCount, courseCount];
+  };
+
+  let yearStats = calculateYearStats();
+  let unitCount = yearStats[0];
+  let courseCount = yearStats[1];
 
   return (
     <div className="year">
@@ -42,8 +57,10 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
               </span>
             </span>
             <span id="year-stats">
-              <span id="course-count">{courses}</span> courses,{" "}
-              <span id="unit-count">{units}</span> units
+              <span id="course-count">{courseCount}</span>{" "}
+              {courseCount === 1 ? "course" : "courses"},{" "}
+              <span id="unit-count">{unitCount}</span>{" "}
+              {unitCount === 1 ? "unit" : "units"}
             </span>
           </span>
         </Button>
@@ -83,6 +100,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                       yearIndex={index}
                       state={state}
                       quarter={"fall"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );
@@ -100,6 +118,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                       yearIndex={index}
                       state={state}
                       quarter={"winter"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );
@@ -117,6 +136,7 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
                       yearIndex={index}
                       state={state}
                       quarter={"spring"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );
