@@ -33,8 +33,6 @@ const dragReducer = produce((draft, action) => {
       draft["year-plans"][action.index] = {
         index: action.index,
         startYear: action.startYear,
-        courses: action.courses,
-        units: action.units,
       };
       draft["year-plans"][action.index][fall] = [];
       draft["year-plans"][action.index][winter] = [];
