@@ -1,75 +1,106 @@
 import React, { useState } from "react";
 import "./Year.scss";
-import { Button, Icon, Popup } from "semantic-ui-react";
+import { Button, Popover, Overlay } from "react-bootstrap";
+import {
+  CaretRightFill,
+  CaretDownFill,
+  ThreeDots,
+} from "react-bootstrap-icons";
 import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter.jsx";
 
-const Year = ({ index, startYear, courses, units, removeYear, state }) => {
+const Year = ({ index, startYear, removeYear, state, plannerStats }) => {
   const [showContent, setShowContent] = useState(false);
+  const [show, setShow] = useState(false);
+  const [target, setTarget] = useState(null);
+
+  const handleEditClick = (event) => {
+    setShow(!show);
+    setTarget(event.target);
+  };
+
+  const calculateYearStats = () => {
+    let unitCount = 0;
+    let courseCount = 0;
+    let quarterKeys = Array.from(Object.keys(plannerStats[index]));
+    for (let quarterKey of quarterKeys) {
+      unitCount += plannerStats[index][quarterKey][0];
+      courseCount += plannerStats[index][quarterKey][1];
+    }
+    return [unitCount, courseCount];
+  };
+
+  let yearStats = calculateYearStats();
+  let unitCount = yearStats[0];
+  let courseCount = yearStats[1];
 
   return (
     <div className="year">
-      <Button
-        className="accordion"
-        onClick={() => {
-          setShowContent(!showContent);
-        }}
-      >
-        <span className="accordion-title">
-          <span id="year-title">
-            <Icon
-              id="accordion-icon"
-              name={showContent ? "triangle down" : "triangle right"}
-            />
-            <span id="year-number">Year {index} </span>
-            <span id="year-range">
-              ({startYear} - {startYear + 1})
+      <div className="yearTitleBar">
+        <Button
+          variant="link"
+          className="accordion"
+          onClick={() => {
+            setShowContent(!showContent);
+          }}
+        >
+          <span className="accordion-title">
+            <span id="year-title">
+              {showContent ? (
+                <CaretDownFill className="caret-icon" />
+              ) : (
+                <CaretRightFill className="caret-icon" />
+              )}
+              <span id="year-number">Year {index} </span>
+              <span id="year-range">
+                ({startYear} - {startYear + 1})
+              </span>
+            </span>
+            <span id="year-stats">
+              <span id="course-count">{courseCount}</span>{" "}
+              {courseCount === 1 ? "course" : "courses"},{" "}
+              <span id="unit-count">{unitCount}</span>{" "}
+              {unitCount === 1 ? "unit" : "units"}
             </span>
           </span>
-          <span id="year-stats">
-            <span id="course-count">{courses}</span> courses,{" "}
-            <span id="unit-count">{units}</span> units
-          </span>
-        </span>
-      </Button>
-      <Popup
-        content={
-          <div>
-            <Button className="year-settings-btn">Edit Year</Button>
-            <Button
-              className="year-settings-btn"
-              id="remove-btn"
-              onClick={() => {
-                removeYear(index);
-              }}
-            >
-              Remove
-            </Button>
-          </div>
-        }
-        className="year-settings-popup"
-        on="click"
-        trigger={<Button className="edit-btn" icon="ellipsis horizontal" />}
-        position="bottom center"
-      />
+        </Button>
+        <ThreeDots onClick={handleEditClick} className="edit-btn" />
+        <Overlay show={show} target={target} placement="bottom">
+          <Popover>
+            <Popover.Content className="year-settings-popup">
+              <div>
+                <Button variant="light" className="year-settings-btn">
+                  Edit Year
+                </Button>
+                <Button
+                  variant="light"
+                  className="year-settings-btn"
+                  id="remove-btn"
+                  onClick={() => {
+                    removeYear(index);
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            </Popover.Content>
+          </Popover>
+        </Overlay>
+      </div>
       {showContent && (
         <div className="accordion-content">
           {
             <Droppable droppableId={index + "-fall"} type="COURSE">
               {(provided) => {
                 return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="quarter"
-                  >
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
                       quarter={"fall"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );
@@ -80,18 +111,14 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
             <Droppable droppableId={index + "-winter"} type="COURSE">
               {(provided) => {
                 return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="quarter"
-                  >
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear + 1}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
                       quarter={"winter"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );
@@ -102,18 +129,14 @@ const Year = ({ index, startYear, courses, units, removeYear, state }) => {
             <Droppable droppableId={index + "-spring"} type="COURSE">
               {(provided) => {
                 return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className="quarter"
-                  >
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
                     <Quarter
                       year={startYear + 1}
-                      units={units}
                       provided={provided}
                       yearIndex={index}
                       state={state}
                       quarter={"spring"}
+                      plannerStats={plannerStats}
                     />
                   </div>
                 );

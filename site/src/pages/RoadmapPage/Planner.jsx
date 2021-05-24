@@ -7,17 +7,67 @@ import Year from "./Year.jsx";
 const Planner = ({ handleAddYear, removeYear, state }) => {
   const [courseCount, setCourseCount] = useState(0);
   const [unitCount, setUnitCount] = useState(0);
-  const [popUp, setPopUp] = useState(false);
 
   const addYearToPlanner = (year) => {
     handleAddYear(year);
-    setPopUp(false);
   };
   let yearKeys = Array.from(Object.keys(state["year-plans"]));
 
+  const buildQuarterStats = (quarter, yearPlan) => {
+    let quarterKey = yearPlan.index + "-" + quarter;
+    let unitCount = 0;
+    let courseCount = 0;
+    if (quarterKey in yearPlan) {
+      let courses = yearPlan[quarterKey];
+      for (let course of courses) {
+        unitCount += course.units;
+        courseCount += 1;
+      }
+    }
+    return [unitCount, courseCount];
+  };
+
+  const buildYearStats = (yearPlan) => {
+    let fallStats = buildQuarterStats("fall", yearPlan);
+    let winterStats = buildQuarterStats("winter", yearPlan);
+    let springStats = buildQuarterStats("spring", yearPlan);
+    let yearStats = {
+      fall: fallStats,
+      winter: winterStats,
+      spring: springStats,
+    };
+    return yearStats;
+  };
+
+  const buildPlannerStats = () => {
+    let plannerStats = {};
+    for (let yearKey of yearKeys) {
+      let year = state["year-plans"][yearKey];
+      plannerStats[yearKey] = buildYearStats(year);
+    }
+    return plannerStats;
+  };
+
+  const calculatePlannerOverviewStats = (plannerStats) => {
+    let unitCount = 0;
+    let courseCount = 0;
+    let yearKeys = Array.from(Object.keys(plannerStats));
+    for (let yearKey of yearKeys) {
+      let quarterKeys = Array.from(Object.keys(plannerStats[yearKey]));
+      for (let quarterKey of quarterKeys) {
+        unitCount += plannerStats[yearKey][quarterKey][0];
+        courseCount += plannerStats[yearKey][quarterKey][1];
+      }
+    }
+    return [unitCount, courseCount];
+  };
+
+  let plannerStats = buildPlannerStats();
+  let overallStats = calculatePlannerOverviewStats(plannerStats);
+
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} />
+      <Header courseCount={overallStats[1]} unitCount={overallStats[0]} />
       <section className="years">
         {yearKeys.map((key) => {
           let year = state["year-plans"][key];
@@ -27,15 +77,12 @@ const Planner = ({ handleAddYear, removeYear, state }) => {
               removeYear={removeYear}
               {...year}
               state={state}
+              plannerStats={plannerStats}
             />
           );
         })}
       </section>
-      <AddYearPopup
-        addYearToPlanner={addYearToPlanner}
-        setPopUp={setPopUp}
-        popUp={popUp}
-      />
+      <AddYearPopup addYearToPlanner={addYearToPlanner} />
     </div>
   );
 };

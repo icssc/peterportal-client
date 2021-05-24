@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useReducer } from "react";
+import React, { useCallback, useReducer, useEffect } from "react";
 import "./index.scss";
 import Planner from "./Planner.jsx";
 import SearchSidebar from "./SearchSidebar.jsx";
 import { DragDropContext } from "react-beautiful-dnd";
-import { data3 } from "./dummyData.js";
+import { data } from "./dummyData.js";
 import produce from "immer";
-import ReviewForm from '../../component/ReviewForm/ReviewForm'
 
 const dragReducer = produce((draft, action) => {
   switch (action.type) {
@@ -25,6 +24,7 @@ const dragReducer = produce((draft, action) => {
         draft["year-plans"][toYear][action.to] || [];
       const [removed] = start[action.from].splice(action.fromIndex, 1);
       draft["year-plans"][toYear][action.to].splice(action.toIndex, 0, removed);
+      break;
     }
     case "ADD-YEAR": {
       let fall = action.index + "-fall";
@@ -33,24 +33,38 @@ const dragReducer = produce((draft, action) => {
       draft["year-plans"][action.index] = {
         index: action.index,
         startYear: action.startYear,
-        courses: action.courses,
-        units: action.units,
       };
       draft["year-plans"][action.index][fall] = [];
       draft["year-plans"][action.index][winter] = [];
       draft["year-plans"][action.index][spring] = [];
+      break;
     }
     case "REMOVE-YEAR": {
       delete draft["year-plans"][action.year];
+      break;
     }
+    default:
+      return;
   }
 });
 
 const RoadmapPage = () => {
-  const [state, dispatch] = useReducer(dragReducer, {
-    "year-plans": {},
-    search: data3,
-  });
+  let savedState = JSON.parse(localStorage.getItem("roadmap-state"));
+  let defaultState = savedState;
+  if (savedState !== null) {
+    defaultState = savedState;
+  } else {
+    defaultState = {
+      "year-plans": {},
+      search: data,
+    };
+  }
+
+  const [state, dispatch] = useReducer(dragReducer, defaultState);
+
+  useEffect(() => {
+    localStorage.setItem("roadmap-state", JSON.stringify(state));
+  }, [state]);
 
   const handleAddYear = (year) => {
     let yearKeys = Array.from(Object.keys(state["year-plans"]));
