@@ -20,6 +20,7 @@ export default function CoursePage(props) {
     const fetchDataFromApi = async () => {
         const apiResponse = await axios.get('/courses/api/' + props.match.params.id);
         setCourseData(apiResponse.data);
+        console.log(courseData);
     }
 
     useEffect(() => {

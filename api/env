@@ -1,0 +1,8 @@
+PUBLIC_API_URL=https://api.peterportal.org/rest/v0/
+PETERPORTAL_MAIN_ES=https://admin:esN6YPBYvFQ9fhAk@@search-peterportal-main-es-yduwhcbsc6oys5bps3wtlgbnvm.us-west-2.es.amazonaws.com/
+FAUNA_SECRET=fnAEBQXWtHACCE8Mb6bvYkh2NEIWZdf73OdypkqQ
+MONGO_URL=mongodb+srv://peter:anteater@cluster0.xgx05.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+PPAPI_KEY=PeterPortal-f8c3eb3da6a2d766f99090e5b8b83eb85b5fbe92230ccc88dd3af7f8001f14cf
+SESSION_SECRET=anteaterkeyboard
+GOOGLE_CLIENT=504752420371-u6vmpcg1grkd9iftq2i9236vl2sjmib6.apps.googleusercontent.com
+GOOGLE_SECRET=eYflWTjEiUb3dsYpR6ZHfuWA

@@ -18,7 +18,7 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:ucinetid', function(req, res, next) {
-  console.log("Hi i do come here")
+
   r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,

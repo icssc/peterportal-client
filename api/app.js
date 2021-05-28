@@ -4,7 +4,9 @@ const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const path = require('path')
 const schema = require('./schema');
 var passport = require('passport');
-var session = require('express-session')
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
+let { DB_NAME, COLLECTION_NAMES } = require('./helpers/mongo');
 
 // Custom Routes
 var coursesRouter = require('./controllers/courses')
@@ -14,11 +16,23 @@ var reviewsRouter = require('./controllers/reviews')
 const cors = require('cors');
 var usersRouter = require('./controllers/users')
 
+// setup mongo store for sessions
+var store = new MongoDBStore({
+  uri: process.env.MONGO_URL,
+  databaseName: DB_NAME,
+  collection: COLLECTION_NAMES.SESSIONS
+});
+// Catch errors
+store.on('error', function (error) {
+  console.log(error);
+});
+
 app.use(session({
-	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: false,
-  cookie: {maxAge: 1000 * 60 * 60 * 24}
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  store: store
 }));
 app.use(passport.initialize());
 app.use(passport.session());

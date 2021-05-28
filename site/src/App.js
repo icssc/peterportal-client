@@ -15,7 +15,7 @@ import CoursePage from "./pages/CoursePage/CoursePage.jsx";
 import ProfessorPage from './pages/ProfessorPage';
 import ErrorPage from "./pages/ErrorPage";
 import RoadmapPage from "./pages/RoadmapPage";
-import ProfessorPage from "./pages/ProfessorPage";
+
 import ZotisticsPage from "./pages/ZotisticsPage";
 import Schedule from "./component/Schedule/Schedule";
 import Sidebar from "./component/SideBar/SideBar";

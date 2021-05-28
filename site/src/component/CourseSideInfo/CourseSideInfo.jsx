@@ -5,8 +5,7 @@ import {Link } from "react-router-dom";
 
 
 export default function CourseSideInfo(props) {
-    //send this to course page and fetch all the data over there
-    //Do the error Handling down there
+
     const PROFESSOR_QUERY = gql`
         query GetIntstructor {
             course(id: "${props.id}"){
@@ -17,7 +16,7 @@ export default function CourseSideInfo(props) {
             }
         }
     `;
-    console.log(" The props that came to pre-req tree are: ", props);
+
     const { loading, error, data } = useQuery(PROFESSOR_QUERY);
 
     if (loading) return 'Loading...';
