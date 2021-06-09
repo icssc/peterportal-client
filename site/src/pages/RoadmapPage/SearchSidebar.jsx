@@ -8,10 +8,17 @@ import Course from "./Course.jsx";
 const SearchSidebar = ({ state }) => {
   return (
     <div className="search-sidebar">
-      <h1 className="title">Add a course</h1>
-      <PlusCircle /> Custom
+      <div>
+        <h1 className="search-title">Add a course</h1>
+        <PlusCircle className="plus-circle"/> 
+        <h1 className="custom-button">Custom</h1>
+      </div>
       <InputGroup className="search">
-        <Search />
+        <InputGroup.Prepend>
+            <InputGroup.Text>
+              <Search />
+            </InputGroup.Text>
+        </InputGroup.Prepend>
         <FormControl
           placeholder="Search"
           aria-label="Search"
