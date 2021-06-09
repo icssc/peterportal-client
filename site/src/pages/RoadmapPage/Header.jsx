@@ -12,7 +12,7 @@ const Header = ({ courseCount, unitCount }) => {
     }).then((canvas) => {
       const img = canvas.toDataURL('image/png');
       const lnk = document.createElement('a');
-      lnk.download = 'Planner.png';
+      lnk.download = 'PetersRoadmap.png';
       lnk.href = img;
 
       if (document.createEvent) {
