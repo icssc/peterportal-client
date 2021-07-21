@@ -30,19 +30,18 @@ const CourseType = new GraphQLObjectType({
 
 //Configuration Details that need to be passed
 var config = {
-  method: 'get',
-  url: 'https://api.peterportal.org/graphql/',
-  headers: { 
-    'Accept-Encoding': 'gzip, deflate, br', 
-    'Content-Type': 'application/json', 
-    'Accept': 'application/json', 
-    'Connection': 'keep-alive', 
-    'DNT': '1', 
-    'Origin': 'https://api.peterportal.org', 
-    'x-api-key': 'PeterPortal-293094452aaaaefd3c5ebb7dd1ad4874fb3b4d20e79be6422b9e09611f01589a'
-  },
-  data: ""
-};
+	method: 'get',
+	url: process.env.PUBLIC_API_GRAPHQL_URL,
+	headers: { 
+	  'Accept-Encoding': 'gzip, deflate, br', 
+	  'Content-Type': 'application/json', 
+	  'Accept': 'application/json', 
+	  'Connection': 'keep-alive', 
+	  'DNT': '1', 
+	  'x-api-key': process.env.PPAPI_KEY
+	},
+	data: ""
+  };
 
 
 //The Root Query

@@ -21,7 +21,7 @@ class ProfessorFilter extends React.Component {
     const { activeIndex } = this.state;
     return (
       <div className="filter-list-container">
-        <a href="https://forms.gle/Y5SjHoHM7iW4bes17"><h5 style={{margin: 0}}><span role="img" aria-label="thinking face">🤔</span> Can't find your professor?</h5></a>
+        <a href="https://forms.gle/qAhCng7Ygua7SZ358"><h5 style={{margin: 0}}><span role="img" aria-label="thinking face">🤔</span> Can't find your professor?</h5></a>
         <h4>Search Filter</h4>
         <div style={{ overflowY: "auto" }}>
           <Accordion vertical>

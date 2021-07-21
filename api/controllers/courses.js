@@ -3,7 +3,6 @@ var router = express.Router();
 var fetch = require("node-fetch");
 const websoc = require("websoc-api");
 
-//Sakshi: cancel all the APIs
 router.post('/_search', function(req, res, next) {
   r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
   {
@@ -19,7 +18,6 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:courseID', function(req, res, next) {
-  console.log("I do come here");
   r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,

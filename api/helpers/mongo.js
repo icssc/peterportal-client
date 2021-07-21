@@ -4,7 +4,8 @@ const client = new MongoClient(process.env.MONGO_URL, { useNewUrlParser: true, u
 const DB_NAME = 'peterPortalDB';
 const COLLECTION_NAMES = {
     SESSIONS: 'sessions',
-    REVIEWS: 'reviews'
+    REVIEWS: 'reviews',
+    SCHEDULE: 'schedule'
 }
 let db = undefined;
 
@@ -62,6 +63,20 @@ function getCollection(collectionName) {
     });
 }
 
+// checks if id exists in result collection
+function containsID(collectionName, id) {
+	return new Promise(async (resolve, reject) => {
+		await getDB();
+		getCollection(collectionName)
+			.then(async (collection) => {
+				resolve(await collection.find({
+					"_id": id
+				}).count() > 0);
+			})
+			.catch(err => reject(err));
+	});
+}
+
 // adds a document to a collection
 function addDocument(collectionName, document) {
     return new Promise(async (resolve, reject) => {
@@ -111,4 +126,4 @@ function updateDocument(collectionName, query, update) {
     });
 }
 
-module.exports = { DB_NAME, COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument };
+module.exports = { DB_NAME, COLLECTION_NAMES, getDB, containsID, addDocument, getDocuments, updateDocument };

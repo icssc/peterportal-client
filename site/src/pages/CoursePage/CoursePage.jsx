@@ -12,7 +12,7 @@ import Review from '../../component/Review/Review';
 import "./CoursePage.scss";
 import {
     Grid,
-  } from 'semantic-ui-react'
+} from 'semantic-ui-react'
 
 export default function CoursePage(props) {
     const [courseData, setCourseData] = useState(null);
@@ -29,32 +29,37 @@ export default function CoursePage(props) {
 
 
     if (!courseData) {
-        return <LoadingPage/>;
+        return <LoadingPage />;
+    }
+    else if (courseData.hasOwnProperty('error')) {
+        return <div>
+            Course Does Not Exist!
+        </div>
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
-                <div style={{display: "flex"}}>
-                    <section style={{position: "sticky", top: "4rem", height: "min-content", width: "340px", border: "1px solid #EEEEEE", borderRadius: "10px"}}>
+                <div style={{ display: "flex" }}>
+                    <section style={{ position: "sticky", top: "4rem", height: "min-content", width: "340px", border: "1px solid #EEEEEE", borderRadius: "10px" }}>
                         <CourseSideInfo {...courseData} />
-                        
+
                     </section>
-                    <article style={{marginLeft: "4rem", width:"900px"}}>
+                    <article style={{ marginLeft: "4rem", width: "900px" }}>
                         <Grid.Row>
                             <h2>🌲 Prerequisite Tree</h2>
-                                <Divider /> 
-                            <PrereqTree {...courseData}/>
+                            <Divider />
+                            <PrereqTree {...courseData} />
                         </Grid.Row>
 
                         <Grid.Row>
                             <h2>🗓️ Schedule of Classes</h2>
-                                <Divider />
-                            <Schedule {...courseData}/>
+                            <Divider />
+                            <Schedule {...courseData} />
                         </Grid.Row>
 
                         <Grid.Row>
                             <h2 id="grade-dist-label">📊 Grade Distribution</h2>
-                                <Divider />
-                            <GradeDist {...courseData}/>
+                            <Divider />
+                            <GradeDist {...courseData} />
                         </Grid.Row>
 
                         {/* <Grid.Row>
@@ -63,7 +68,7 @@ export default function CoursePage(props) {
                             <Review {...courseData}/>
                         </Grid.Row> */}
                     </article>
-                </div> 
+                </div>
             </Twemoji>
         )
 

@@ -1,38 +1,9 @@
 {
-  "name": "peterportal-core-api",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "dependencies": {
-    "aws-sdk": "^2.739.0",
-    "bcryptjs": "^2.4.3",
-    "connect-mongodb-session": "^2.4.1",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "ejs": "^3.1.5",
-    "express": "^4.17.1",
-    "express-graphql": "^0.12.0",
-    "express-session": "^1.17.1",
-    "faunadb": "^4.0.0",
-    "graphql": "^15.5.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.6.6",
-    "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.6",
-    "passport": "^0.4.1",
-    "passport-google-oauth": "^2.0.0",
-    "passport-jwt": "^4.0.0",
-    "path": "^0.12.7",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
-    "shortid": "^2.2.15",
-    "websoc-api": "^1.0.0"
-  },
-  "devDependencies": {},
+  "name": "peterportal-root",
+  "version": "0.1.0",
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+    "postinstall": "npm install --prefix api && npm install --prefix site",
+    "heroku-postbuild": "cd site && npm run build && cp -r build ../api/",
+    "start": "npm start --prefix api"
+  }
 }

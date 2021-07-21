@@ -16,11 +16,10 @@ const ProfessorPage = (props) => {
         const apiResponse = await axios.get('/professors/api/' + props.match.params.id);
         setProfData(apiResponse.data);
         profName = apiResponse.data.name
-        console.log(profName)
     }
     const fetchReviews = async () => {
       const res = await axios.get(`/reviews/?professorID=${profData.ucinetid}`);
-      const data = res.data.data.reviewsByProfessorID.data.filter((review) => review !== null);
+      const data = res.data.filter((review) => review !== null);
       setReviews(data);
     }
     const fetchCourseData = async (courseID) => {
@@ -46,24 +45,24 @@ const ProfessorPage = (props) => {
       </section>
       <h3>Schedule of Classes</h3>
       {profData && profData.course_history.length != 0 && <>
-        <select name="courses" id="courses" onChange={(event) => {
+        <select name="courses" id="courses" defaultValue="" onChange={(event) => {
           setSchedCourse(event.target.value);
         }}>
-          <option value="" selected disabled hidden>Course:</option>
+          <option value="" disabled hidden>Course:</option>
           {profData.course_history.map((e) => 
-            <option value={e}>{e}</option>
+            <option key={`prof-hist-${e}`} value={e}>{e}</option>
           )}
         </select>
       </>}
       {schedCourse && <Schedule key={schedCourse} course={schedCourse} />}
       <h3>Grade Distribution</h3>
       {profData && profData.course_history.length != 0 && <>
-        <select name="courses" id="courses" onChange={(event) => {
+        <select name="courses" id="courses" defaultValue="" onChange={(event) => {
           fetchCourseData(event.target.value);
         }}>
-          <option value="" selected disabled hidden>Course:</option>
+          <option value="" disabled hidden>Course:</option>
           {profData.course_history.map((e) => 
-            <option value={e}>{e}</option>
+            <option key={`course-hist-${e}`} value={e}>{e}</option>
           )}
         </select>
       </>}
