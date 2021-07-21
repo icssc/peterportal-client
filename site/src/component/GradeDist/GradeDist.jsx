@@ -15,7 +15,7 @@ export default class GradeDist extends React.Component {
     this.state = {
       gradeDistData: null,
       currentQuarter: "",
-      currentProf: "",
+      currentProf: this.props.currentProf || "",
       profEntries: null,
       quarterEntries: null
     };
@@ -161,6 +161,7 @@ export default class GradeDist extends React.Component {
    * @param status details about the status in the dropdown menu
    */
   updateCurrentProf(event, status) {
+    console.log(status.value);
     this.setState({currentProf: status.value}, () => {this.createQuarterEntries()})
   }
 }

@@ -20,7 +20,9 @@ router.post('/_search', function(req, res, next) {
 router.get('/api/:courseID', function(req, res, next) {
   r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID, {
     headers: {
-      'x-api-key': process.env.PPAPI_KEY
+      'x-api-key': process.env.PPAPI_KEY,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   });
   

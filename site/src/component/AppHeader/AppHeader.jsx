@@ -28,7 +28,7 @@ export default class AppHeader extends React.Component {
   componentDidMount() {
     fetch("/schedule/api/currentWeek", { method: "GET" })
       .then((res) => res.json())
-      .then((data) => this.setState({ week: "Week " + data.week + ", " + data.quarter }));
+      .then((data) => this.setState({ week: data["display"] }));
   }
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });

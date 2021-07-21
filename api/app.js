@@ -1,10 +1,16 @@
 const express = require('express')
+var logger = require('morgan')
 const app = express()
+const graphqlHTTP = require('express-graphql').graphqlHTTP;
 const path = require('path')
 var passport = require('passport');
 var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
+const cors = require('cors');
+
+// Configs
 let { DB_NAME, COLLECTION_NAMES } = require('./helpers/mongo');
+const schema = require('./schema');
 
 // Custom Routes
 var coursesRouter = require('./controllers/courses')
@@ -35,9 +41,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 require("./config/passport.js")
 
+app.use(logger('dev'))
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(express.static(path.join(__dirname, 'build')));
 
 /**
@@ -63,6 +69,8 @@ app.use(function (req, res, next) {
   next()
 })
 
+app.use(cors());
+
 // Enable JSON use
 app.use(express.json())
 
@@ -84,6 +92,12 @@ app.use("/users", usersRouter);
 app.use('/about', (req, res) => {
   res.render('about');
 });
+
+// for graphql
+app.use('/graphql', graphqlHTTP({
+  schema,
+  graphiql: true
+}));
 
 /**
  * Routes - Public

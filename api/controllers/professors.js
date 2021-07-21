@@ -1,3 +1,4 @@
+const { text } = require('express');
 var express = require('express');
 var router = express.Router();
 var fetch = require("node-fetch");
@@ -16,14 +17,16 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:ucinetid', function(req, res, next) {
+
   r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
     headers: {
-      'x-api-key': process.env.PPAPI_KEY
+      'x-api-key': process.env.PPAPI_KEY,
     }
   });
-  
+
   r.then((response) => response.json())
   .then((data) => res.send(data))
 });
+
 
 module.exports = router;

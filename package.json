@@ -5,9 +5,5 @@
     "postinstall": "npm install --prefix api && npm install --prefix site",
     "heroku-postbuild": "cd site && npm run build && cp -r build ../api/",
     "start": "npm start --prefix api"
-  },
-  "dependencies": {
-    "axios": "^0.21.1"
-  },
-  "proxy": "https://localhost:3000"
+  }
 }
