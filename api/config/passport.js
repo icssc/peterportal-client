@@ -13,11 +13,6 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
-    // let sql = `SELECT * FROM users AS r WHERE r.email = ${escape(user.email)}`
-    // executeQuery(sql, function(results) {
-    //     user.userID = results[0].user_id;
-    //     done(null, user);
-    // });
     done(null, user);
 });
 
