@@ -62,11 +62,11 @@ export default function CoursePage(props) {
                             <GradeDist {...courseData} />
                         </Grid.Row>
 
-                        {/* <Grid.Row>
+                        <Grid.Row>
                             <h2 id="grade-dist-label">💬 Reviews</h2>
                                 <Divider />
                             <Review {...courseData}/>
-                        </Grid.Row> */}
+                        </Grid.Row>
                     </article>
                 </div>
             </Twemoji>

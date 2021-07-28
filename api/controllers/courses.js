@@ -15,6 +15,7 @@ router.post('/_search', function(req, res, next) {
 
   r.then((response) => response.json())
   .then((data) => res.send(data))
+  .catch(err => console.log("Error:", err))
 });
 
 router.get('/api/:courseID', function(req, res, next) {
@@ -51,9 +52,6 @@ router.get('/api/schedule/:term/:department/:number', async function(req, res, n
   })
   
   res.send(r);
-  
-  // r.then((response) => response.json())
-  // .then((data) => res.send(data))
 });
 
 module.exports = router;
