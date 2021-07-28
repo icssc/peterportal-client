@@ -10,7 +10,7 @@ MISSING='index_not_found_exception' # string to look for if doesnt exist
 if [[ "$COURSES" == *"$MISSING"* ]]
 then
     echo "Courses index not found!"
-    curl -L https://drive.google.com/uc?id=1tE2hGUfav3zz4YbD80UJgxRZvV7SAUmx > courses.json
+    curl -L https://drive.google.com/uc?id=1eostVGdUhqZcd02RgqVV2EiazUeQPufQ > courses.json
     curl -H 'Content-Type: application/x-ndjson' -XPOST 'es:9200/courses/_bulk?pretty' --data-binary @courses.json
 else
     echo "Courses index already exists."
@@ -20,7 +20,7 @@ fi
 if [[ "$PROFESSORS" == *"$MISSING"* ]]
 then
     echo "Professors index not found!"
-    curl -L https://drive.google.com/uc?id=1N-lVuqbiNosZRaDkOhlKgG_-XjJiQtE4 > professors.json
+    curl -L https://drive.google.com/uc?id=1tN5OzrhaZiwgElkOrT9URMog8YVLRbbO > professors.json
     curl -H 'Content-Type: application/x-ndjson' -XPOST 'es:9200/professors/_bulk?pretty' --data-binary @professors.json
 else
     echo "Professors index already exists."

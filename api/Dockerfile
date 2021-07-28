@@ -8,5 +8,5 @@ RUN npm install
 # Copy source code
 COPY . ./
 
-# Start local
-CMD ["npm", "start"]
+# Start local (using legacy -L flag for hot reloading in docker)
+CMD ["nodemon", "-L", " ./bin/www"]
