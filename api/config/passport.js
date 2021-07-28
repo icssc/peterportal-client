@@ -13,11 +13,6 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
-    // let sql = `SELECT * FROM users AS r WHERE r.email = ${escape(user.email)}`
-    // executeQuery(sql, function(results) {
-    //     user.userID = results[0].user_id;
-    //     done(null, user);
-    // });
     done(null, user);
 });
 
@@ -26,7 +21,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT,
             clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: "/users/auth/google/callback"
+            callbackURL: (process.env.NODE_ENV == "production" ? process.env.PRODUCTION_DOMAIN : "") + "/users/auth/google/callback"
         },
         function(accessToken, refreshToken, profile, done) {
             var userData = {
