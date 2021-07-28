@@ -26,7 +26,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT,
             clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: "/users/auth/google/callback"
+            callbackURL: (process.env.NODE_ENV == "production?" ? process.env.PRODUCTION_DOMAIN : "") + "/users/auth/google/callback"
         },
         function(accessToken, refreshToken, profile, done) {
             var userData = {
