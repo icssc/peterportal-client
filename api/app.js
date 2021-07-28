@@ -10,7 +10,7 @@ const cors = require('cors');
 
 // Configs
 let { DB_NAME, COLLECTION_NAMES } = require('./helpers/mongo');
-const schema = require('./schema');
+const schema = require('./helpers/schema');
 
 // Custom Routes
 var coursesRouter = require('./controllers/courses')
@@ -116,9 +116,9 @@ app.get(`/test/`, (req, res) => {
  * Routes - Catch-All
  */
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './build/index.html'));
-});
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, './build/index.html'));
+// });
 
 /**
  * Error Handler

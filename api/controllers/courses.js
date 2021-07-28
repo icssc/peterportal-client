@@ -51,9 +51,6 @@ router.get('/api/schedule/:term/:department/:number', async function(req, res, n
   })
   
   res.send(r);
-  
-  // r.then((response) => response.json())
-  // .then((data) => res.send(data))
 });
 
 module.exports = router;

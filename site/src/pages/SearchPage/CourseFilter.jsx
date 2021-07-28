@@ -28,21 +28,7 @@ const CourseLevelForm = (
 
 export default class CourseFilter extends React.Component {
   state = {
-    activeIndex: 0,
-    terms: []
-  }
-
-  constructor(props) {
-    super(props);
-    this.getTerms();
-  }
-
-  getTerms = () => {
-    fetch(`/api/v1/schedule/getTerms`)
-      .then(res => res.json())
-      .then(terms => {
-        this.setState({ terms: terms })
-      });
+    activeIndex: 0
   }
 
   handleClick = (e, titleProps) => {
