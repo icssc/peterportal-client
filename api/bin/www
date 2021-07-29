@@ -4,8 +4,7 @@
  * Module dependencies.
  */
 
-require('dotenv').config()
-var app = require('../app');
+var app = require('../dist/app');
 var debug = require('debug')('uci-catalogue-search-api:server');
 var http = require('http');
 

@@ -1,4 +1,5 @@
-const MongoClient = require('mongodb').MongoClient;
+import { MongoClient, Db, Collection } from 'mongodb'
+import { GenericObject } from '../types/types'
 const client = new MongoClient(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const DB_NAME = 'peterPortalDB';
@@ -7,9 +8,9 @@ const COLLECTION_NAMES = {
     REVIEWS: 'reviews',
     SCHEDULE: 'schedule'
 }
-let db = undefined;
+let db: Db = undefined!;
 
-function getDB() {
+function getDB(): Promise<Db> {
     return new Promise((resolve, reject) => {
         // if not connected yet, initiate connection
         if (!db) {
@@ -23,9 +24,9 @@ function getDB() {
                     // get existing mongo collection
                     let collectionNames = Object.values(COLLECTION_NAMES);
                     let collections = await db.listCollections().toArray();
-                    let existingCollectionNames = [];
+                    let existingCollectionNames: string[] = [];
                     collections.forEach(collection => {
-                        existingCollectionNames.push(collection["name"])
+                        existingCollectionNames.push(collection["name"]);
                     })
 
                     // create collections that dont exist
@@ -46,7 +47,7 @@ function getDB() {
 }
 
 // gets collection object by name
-function getCollection(collectionName) {
+function getCollection(collectionName: string): Promise<Collection<any>> {
     return new Promise(async (resolve, reject) => {
         await getDB();
         // check if collection exists
@@ -54,7 +55,7 @@ function getCollection(collectionName) {
             .next(function (err, collection) {
                 if (err) reject(err);
                 if (collection) {
-                    resolve(db.collection(collectionName));
+                    resolve(db.collection(collectionName)!);
                 }
                 else {
                     reject(`Collection ${collectionName} does not exist!`);
@@ -64,21 +65,21 @@ function getCollection(collectionName) {
 }
 
 // checks if id exists in result collection
-function containsID(collectionName, id) {
-	return new Promise(async (resolve, reject) => {
-		await getDB();
-		getCollection(collectionName)
-			.then(async (collection) => {
-				resolve(await collection.find({
-					"_id": id
-				}).count() > 0);
-			})
-			.catch(err => reject(err));
-	});
+function containsID(collectionName: string, id: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        getCollection(collectionName)
+            .then(async (collection) => {
+                resolve(await collection.find({
+                    "_id": id
+                }).count() > 0);
+            })
+            .catch(err => reject(err));
+    });
 }
 
 // adds a document to a collection
-function addDocument(collectionName, document) {
+function addDocument(collectionName: string, document: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
         await getDB();
         // get collection
@@ -98,7 +99,7 @@ function addDocument(collectionName, document) {
 }
 
 // gets a document from a collection
-function getDocuments(collectionName, query) {
+function getDocuments(collectionName: string, query: GenericObject): Promise<GenericObject[]> {
     return new Promise(async (resolve, reject) => {
         await getDB();
         // get collection
@@ -113,7 +114,7 @@ function getDocuments(collectionName, query) {
 }
 
 // updates a document from a collection
-function updateDocument(collectionName, query, update) {
+function updateDocument(collectionName: string, query: GenericObject, update: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
         await getDB();
         getCollection(collectionName)
@@ -126,4 +127,4 @@ function updateDocument(collectionName, query, update) {
     });
 }
 
-module.exports = { DB_NAME, COLLECTION_NAMES, getDB, containsID, addDocument, getDocuments, updateDocument };
+export { DB_NAME, COLLECTION_NAMES, getDB, containsID, addDocument, getDocuments, updateDocument };
