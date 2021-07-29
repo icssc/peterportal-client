@@ -32,6 +32,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "shortid": "^2.2.15",
+    "tsc": "^2.0.3",
     "websoc-api": "^1.0.0"
   },
   "devDependencies": {
