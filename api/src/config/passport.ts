@@ -1,18 +1,14 @@
-const dotenv = require('dotenv');
-const path = require('path')
-var passport = require("passport");
-// var {executeQuery, escape} = require("../config/database.js")
-var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+import path from 'path';
+import passport from 'passport';
+import { OAuth2Strategy as GoogleStrategy, VerifyOptions } from 'passport-google-oauth'
 // var FacebookStrategy = require('passport-facebook').Strategy;
 // var GitHubStrategy = require('passport-github').Strategy;
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
-
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user: any, done) {
     done(null, user);
 });
 
@@ -23,9 +19,13 @@ passport.use(
             clientSecret: process.env.GOOGLE_SECRET,
             callbackURL: (process.env.NODE_ENV == "production" ? process.env.PRODUCTION_DOMAIN : "") + "/users/auth/google/callback"
         },
-        function(accessToken, refreshToken, profile, done) {
+        function (accessToken, refreshToken, profile, done) {   
+            let email = '';
+            for (let profileEmail in profile.emails) {
+                console.log(profileEmail)
+            }         
             var userData = {
-                email: profile.emails[0].value,
+                email: email,
                 name: profile.displayName,
                 picture: profile._json.picture
             };

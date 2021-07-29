@@ -1,10 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var fetch = require("node-fetch");
+import express from 'express';
+import fetch from 'node-fetch';
 const websoc = require("websoc-api");
+var router = express.Router();
 
 router.post('/_search', function(req, res, next) {
-  r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
+  let r = fetch(process.env.PETERPORTAL_MAIN_ES + "courses/_search", 
   {
     method: 'POST',
     headers: {
@@ -19,7 +19,7 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:courseID', function(req, res, next) {
-  r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID, {
+  let r = fetch(process.env.PUBLIC_API_URL + "courses/" + req.params.courseID, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,
       'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ router.get('/api/:courseID', function(req, res, next) {
 
 
 router.get('/api/grades/:department/:number', function(req, res, next) {
-  r = fetch(process.env.PUBLIC_API_URL + "grades/raw?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number, {
+  let r = fetch(process.env.PUBLIC_API_URL + "grades/raw?department=" + encodeURIComponent(req.params.department) + "&number=" + req.params.number, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY
     }
@@ -45,7 +45,7 @@ router.get('/api/grades/:department/:number', function(req, res, next) {
 
 router.get('/api/schedule/:term/:department/:number', async function(req, res, next) {
 
-  r = await websoc.callWebSocAPI({
+  let r = await websoc.callWebSocAPI({
     term: req.params.term,
     department: req.params.department,
     courseNumber: req.params.number
@@ -54,4 +54,4 @@ router.get('/api/schedule/:term/:department/:number', async function(req, res, n
   res.send(r);
 });
 
-module.exports = router;
+export default router;

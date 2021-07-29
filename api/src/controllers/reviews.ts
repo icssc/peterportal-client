@@ -1,24 +1,28 @@
-var express = require('express');
+import express from 'express';
+import { ObjectID } from 'mongodb';
+import { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } from '../helpers/mongo';
+
 var router = express.Router();
-var fetch = require("node-fetch");
-var fs = require('fs');
-var path = require('path');
-const ObjectID = require('mongodb').ObjectID;
-let { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } = require('../helpers/mongo');
 
 router.get('/', async function (req, res, next) {
-  let courseID = req.query.courseID;
-  let professorID = req.query.professorID;
-  let userID = req.query.userID;
+  let courseID = req.query.courseID as string;
+  let professorID = req.query.professorID as string;
+  let userID = req.query.userID as string;
 
-  let query = {
+  interface ReviewFilter {
+    courseID: string,
+    professorID: string,
+    userID: string
+  }
+
+  let query: ReviewFilter = {
     courseID, professorID, userID
   };
 
-  // remove null params
-  for (var param in query) {
-    if (query[param] === null || query[param] === undefined) {
-      delete query[param];
+  // remove null params 
+  for (var param in Object.keys(query)) {
+    if (query[param as keyof ReviewFilter] === null || query[param as keyof ReviewFilter] === undefined) {
+      delete query[param as keyof ReviewFilter];
     }
   }
 
@@ -50,4 +54,4 @@ router.patch('/vote', async function (req, res) {
   res.json(status);
 });
 
-module.exports = router;
+export default router;

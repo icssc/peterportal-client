@@ -1,10 +1,10 @@
-const { text } = require('express');
-var express = require('express');
+import express from 'express';
+import fetch from 'node-fetch';
+
 var router = express.Router();
-var fetch = require("node-fetch");
 
 router.post('/_search', function(req, res, next) {
-  r = fetch(process.env.PETERPORTAL_MAIN_ES + "professors/_search", 
+  let r = fetch(process.env.PETERPORTAL_MAIN_ES + "professors/_search", 
   {
     method: 'POST',
     headers: {
@@ -17,8 +17,7 @@ router.post('/_search', function(req, res, next) {
 });
 
 router.get('/api/:ucinetid', function(req, res, next) {
-
-  r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
+  let r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,
     }
@@ -28,5 +27,4 @@ router.get('/api/:ucinetid', function(req, res, next) {
   .then((data) => res.send(data))
 });
 
-
-module.exports = router;
+export default router;

@@ -1,34 +1,33 @@
-var express = require('express');
-var passport = require("passport");
-// var {executeQuery, escape} = require("../config/database.js")
-var router = express.Router();
-const path = require('path')
+import express, { Request, Response } from 'express';
+import passport from 'passport';
+
+let router = express.Router();
 
 // get the logged in user
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.json(req.session)
 });
 
 // get the name of the logged in user
-router.get('/getName', function(req, res, next) {
+router.get('/getName', function (req, res, next) {
   res.json(req.user ? req.user : {})
 });
 
 // get whether or not a user is logged in
-router.get('/loggedIn', function(req, res, next) {
-  res.json({status: req.user ? true: false});
+router.get('/loggedIn', function (req, res, next) {
+  res.json({ status: req.user ? true : false });
 });
 
 // get whether or not a user is an admin
-router.get('/isAdmin', function(req, res, next) {
-  res.json({admin: req.session.passport.admin ? true: false});
+router.get('/isAdmin', function (req, res, next) {
+  res.json({ admin: req.session.passport!.admin ? true : false });
 });
 
 // route to login with google
 router.get("/auth/google",
-  function(req, res) {
+  function (req, res) {
     req.session.returnTo = req.headers.referer;
-    passport.authenticate("google", { scope: ["profile", "email"]})(req, res);
+    passport.authenticate("google", { scope: ["profile", "email"] })(req, res);
   }
 );
 
@@ -40,10 +39,10 @@ router.get("/auth/google/callback",
 
 // route to login with facebook
 router.get('/auth/facebook',
-  function(req, res){
+  function (req, res) {
     req.session.returnTo = req.headers.referer;
-    passport.authenticate('facebook', { scope : ['email'] })(req, res);
-});
+    passport.authenticate('facebook', { scope: ['email'] })(req, res);
+  });
 
 // facebook callback
 router.get('/auth/facebook/callback',
@@ -53,43 +52,41 @@ router.get('/auth/facebook/callback',
 
 // route to login with github
 router.get('/auth/github',
-  function(req, res){
+  function (req, res) {
     console.log("START AUTH GITHUB")
     req.session.returnTo = req.headers.referer;
     passport.authenticate('github')(req, res);
-});
+  });
 
 // github callback
 router.get('/auth/github/callback',
-  function(req, res){
+  function (req, res) {
     passport.authenticate('github', { failureRedirect: '/', session: true },
       // provides user information to determine whether or not to authenticate
-      function (err, user, info){
+      function (err, user, info) {
         console.log("Logging with Github!")
         if (err) console.log(err);
         else if (!user) console.log("Invalid login data");
-        else{
+        else {
           // check if user is an admin
-          allowedUsers = JSON.parse(process.env.GITHUB_ADMIN_USERNAMES)
-          if (allowedUsers.includes(user.username))
-          {
+          let allowedUsers = JSON.parse(process.env.GITHUB_ADMIN_USERNAMES)
+          if (allowedUsers.includes(user.username)) {
             console.log("GITHUB AUTHORIZED!")
             // manually login
-            req.login(user, function(err) {
+            req.login(user, function (err) {
               if (err) console.log(err);
-              else
-              {
-                req.session.passport.admin = true;
+              else {
+                req.session.passport!.admin = true;
                 successLogin(req, res)
               }
             });
           }
-          else{
+          else {
             console.log(`INVALID USER! Expected ${allowedUsers}, Got ${user.username}`)
             // failed login
             let returnTo = req.session.returnTo;
-            delete req.session.returnTo;    
-            res.redirect(returnTo);
+            delete req.session.returnTo;
+            res.redirect(returnTo!);
           }
         }
       }
@@ -98,35 +95,19 @@ router.get('/auth/github/callback',
 );
 
 // call after successful authentication
-function successLogin(req, res){
-  // check if user is in the database
-  // let sql = `SELECT * FROM users AS r WHERE r.email = ${escape(req.user.email)}`
-  // executeQuery(sql, function(results) {
-  //   // if not in the database
-  //   if (results.length == 0) {
-  //     // add them
-  //     let sql = `INSERT INTO users (email, full_name) VALUES('${req.user.email}', '${req.user.name}')`
-  //     executeQuery(sql, function(results) {
-  //       console.log(results)
-  //     });
-  //   } else {
-  //     console.log(results)
-  //     req.user['userID'] = results[0].user_id;
-      
-  //   }
-  // });
+function successLogin(req: Request, res: Response) {
   // redirect browser to the page they came from
   let returnTo = req.session.returnTo;
-  delete req.session.returnTo;    
-  res.redirect(returnTo);
+  delete req.session.returnTo;
+  res.redirect(returnTo!);
 }
 
 // endpoint to logout
-router.get('/logout', function(req, res){
+router.get('/logout', function (req, res) {
   req.session.destroy(function (err) {
     if (err) console.log(err)
     res.redirect('back');
   });
 });
 
-module.exports = router;
+export default router;
