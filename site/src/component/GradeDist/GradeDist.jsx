@@ -1,8 +1,8 @@
 import React from 'react';
-import { Divider, Dropdown, Grid } from "semantic-ui-react";
+import { Divider, Dropdown, Grid } from 'semantic-ui-react';
 import Chart from './Chart.jsx';
 import Pie from './Pie.jsx';
-import "./GradeDist.scss"
+import './GradeDist.scss'
 
 
 export default class GradeDist extends React.Component {
@@ -14,8 +14,8 @@ export default class GradeDist extends React.Component {
     super(props);
     this.state = {
       gradeDistData: null,
-      currentQuarter: "",
-      currentProf: this.props.currentProf || "",
+      currentQuarter: '',
+      currentProf: this.props.currentProf || '',
       profEntries: null,
       quarterEntries: null
     };
@@ -32,10 +32,10 @@ export default class GradeDist extends React.Component {
   componentDidMount() {
     const HEADER = {
       headers: new Headers({
-        "content-type": "application/json; charset=UTF-8",
-        "content-length": 140
+        'content-type': 'application/json; charset=UTF-8',
+        'content-length': 140
       }),
-      method: "GET"
+      method: 'GET'
     };
 
     fetch(`/courses/api/grades/${this.props.department}/${this.props.number}`, HEADER)
@@ -62,9 +62,9 @@ export default class GradeDist extends React.Component {
   render() {
     if (this.state.gradeDistData !== null && this.state.gradeDistData.length !== 0) { 
       return (
-        <div id="gradedist-module-container">
-          <Grid.Row columns={2} id="menu">
-            <Grid.Column style={{marginRight: "1rem"}}>
+        <div id='gradedist-module-container'>
+          <Grid.Row columns={2} id='menu'>
+            <Grid.Column style={{marginRight: '1rem'}}>
               <Dropdown
                 placeholder='Professor'
                 scrolling
@@ -77,7 +77,7 @@ export default class GradeDist extends React.Component {
 
             <Grid.Column>
               <Dropdown
-                placeholder="Quarter"
+                placeholder='Quarter'
                 scrolling
                 selection
                 options={this.state.quarterEntries}
@@ -87,15 +87,15 @@ export default class GradeDist extends React.Component {
             </Grid.Column>
           </Grid.Row>
               
-          <Grid.Row id="chart">
-            <div className={"grade_distribution_chart-container chart"}>
+          <Grid.Row id='chart'>
+            <div className={'grade_distribution_chart-container chart'}>
               <Chart
                 gradeData={this.state.gradeDistData}
                 quarter={this.state.currentQuarter}
                 professor={this.state.currentProf}
               />
             </div>
-            <div className={"grade_distribution_chart-container pie"}>
+            <div className={'grade_distribution_chart-container pie'}>
               <Pie
                 gradeData={this.state.gradeDistData}
                 quarter={this.state.currentQuarter}
@@ -123,7 +123,7 @@ export default class GradeDist extends React.Component {
 
     this.state.gradeDistData
       .filter(entry => entry.instructor === this.state.currentProf)
-      .forEach(data => quarters.add(data.quarter + " " + data.year));
+      .forEach(data => quarters.add(data.quarter + ' ' + data.year));
     quarters.forEach(quarter => result.push({ value: quarter, text: quarter }));
 
     this.setState({quarterEntries: result, currentQuarter: result[0].value});

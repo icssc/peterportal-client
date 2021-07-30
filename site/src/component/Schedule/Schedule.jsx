@@ -1,21 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import configData from "../../config.json";
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/ProgressBar';
 import Col from 'react-bootstrap/Col';
 
-
-
-
 export default function Schedule(props) {
-    // For developing only
-    //const [scheduleData, setScheduleData] = useState(DUMMY_DATA);
-
-
     // For fetching data from API
     const [scheduleData, setScheduleData] = useState(null);
 
@@ -33,9 +25,9 @@ export default function Schedule(props) {
             department = res.data.department;
             number = res.data.number;
          } else if (props.course) {
-             const str = props.course.split(" ");
+             const str = props.course.split(' ');
              number = str[str.length-1];
-             department = str.slice(0, str.length-1).join(" ");
+             department = str.slice(0, str.length-1).join(' ');
          }
         const apiResponse = await axios.get(`/schedule/api/${currentQuarter}/${department}/${number}`)
         setScheduleData(apiResponse.data);
@@ -44,20 +36,20 @@ export default function Schedule(props) {
     
 
     const renderButton = (course) =>{
-        //Renders the button which displays the status of the course. e.g: "OPEN", "FULL", "WAITLISTED"
-        if (course.status == "OPEN"){
+        //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'
+        if (course.status == 'OPEN'){
            return(
-            <Button variant="light" size='lg' className="btn-status-button-open"> OPEN </Button>
+            <Button variant='light' size='lg' className='btn-status-button-open'> OPEN </Button>
            )
         }
-        else if (course.status == "WAITL"){
+        else if (course.status == 'WAITL'){
             return (
-                <Button variant="light" size='lg' className="btn-status-button-waitl"> WAITLIST </Button>
+                <Button variant='light' size='lg' className='btn-status-button-waitl'> WAITLIST </Button>
             )
         }
         else{
             return (
-                <Button variant="light" size='lg' className="btn-status-button-full"> FULL </Button>
+                <Button variant='light' size='lg' className='btn-status-button-full'> FULL </Button>
             )
         }
     }
@@ -66,24 +58,24 @@ export default function Schedule(props) {
 
     const renderProgressBar = (course) => {
         //This function returns the progress Bar for the enrollment into the class.
-        if (course.status == "OPEN"){
+        if (course.status == 'OPEN'){
             return (
-                <div className="progress-bar">
-                    <ProgressBar variant= "success" now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
+                <div className='progress-bar'>
+                    <ProgressBar variant= 'success' now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
                 </div>
             )
         }
-        else if (course.status == "WAITL"){
+        else if (course.status == 'WAITL'){
            return (
-                    <div className="progress-bar">
-                        <ProgressBar variant= "warning" now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
+                    <div className='progress-bar'>
+                        <ProgressBar variant= 'warning' now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
                     </div>                    
             )
         }
         else{
             return (
-                <div className="progress-bar">
-                    <ProgressBar variant="danger" now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
+                <div className='progress-bar'>
+                    <ProgressBar variant='danger' now={course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity} />
                 </div>
             )
         }
@@ -94,27 +86,27 @@ export default function Schedule(props) {
         //This function returns the data for a dynamic table after accessing the API
         return (
             <tr key ={index}>
-                <td className = "data-col">{course.sectionCode}</td>
-                <td className = "data-col">{course.sectionType} {course.sectionNum}</td>
-                <td className = "data-col">{4}</td>
-                <td className = "data-col">{course.instructors[0]}</td>
-                <td className = "data-col">{course.meetings[0].time}</td>
-                <td className = "data-col">{course.meetings[0].bldg}</td>
+                <td className = 'data-col'>{course.sectionCode}</td>
+                <td className = 'data-col'>{course.sectionType} {course.sectionNum}</td>
+                <td className = 'data-col'>{4}</td>
+                <td className = 'data-col'>{course.instructors[0]}</td>
+                <td className = 'data-col'>{course.meetings[0].time}</td>
+                <td className = 'data-col'>{course.meetings[0].bldg}</td>
 
-                <td className = "enrollment-col">
-                    <span className = "enrollment-info-text"> 
+                <td className = 'enrollment-col'>
+                    <span className = 'enrollment-info-text'> 
                         {course.numCurrentlyEnrolled.totalEnrolled} / {course.maxCapacity} 
                     </span>
-                    <span className = "enrollment-percentage">
+                    <span className = 'enrollment-percentage'>
                         {(course.numCurrentlyEnrolled.totalEnrolled *100 / course.maxCapacity) >> 0}%
                     </span>
 
                     {renderProgressBar(course)}
                 </td>
                     
-                <td className = "data-col">{course.numOnWaitlist}</td>
-                <td className = "data-col">{course.restrictions}</td>
-                <td className = "data-col">
+                <td className = 'data-col'>{course.numOnWaitlist}</td>
+                <td className = 'data-col'>{course.restrictions}</td>
+                <td className = 'data-col'>
                     {renderButton(course)}
                 </td>
             </tr>
@@ -126,8 +118,8 @@ export default function Schedule(props) {
     }else{
         return (
             <div>
-                <Col className="col-tableHolder">
-                <Table responsive borderless className="schedule-table">
+                <Col className='col-tableHolder'>
+                <Table responsive borderless className='schedule-table'>
                  <thead>
                      <tr>
                      <th> Code </th>
@@ -136,7 +128,7 @@ export default function Schedule(props) {
                      <th> Instructor </th>
                      <th> Time </th>
                      <th> Place </th>
-                     <th className = "enrollment-col"> Enrollment </th>
+                     <th className = 'enrollment-col'> Enrollment </th>
                      <th> WL </th>
                      <th> Rstr </th>
                      <th> Status </th>

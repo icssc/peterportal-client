@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar'
 
-const colors = { 'A': "#60A3D1", 'B': "#81C284", 'C': "#F5D77F", 'D': "#ECAD6D", 'F': "#E8966D", 'P': "#EBEBEB", 'NP': "#EBEBEB"  }
+const colors = { 'A': '#60A3D1', 'B': '#81C284', 'C': '#F5D77F', 'D': '#ECAD6D', 'F': '#E8966D', 'P': '#EBEBEB', 'NP': '#EBEBEB'  }
 const getColor = bar => colors[bar.id]
 
 export default class Chart extends React.Component {
@@ -13,10 +13,10 @@ export default class Chart extends React.Component {
     super(props);
     this.theme = {
       tooltip: {
-        container: { background: "rgba(0,0,0,.87)",
-                     color: "#ffffff",
-                     fontSize: "1.2rem",
-                     outline: "none",
+        container: { background: 'rgba(0,0,0,.87)',
+                     color: '#ffffff',
+                     fontSize: '1.2rem',
+                     outline: 'none',
                      margin: 0,
                    }
       }
@@ -35,7 +35,7 @@ export default class Chart extends React.Component {
       gradeFCount = 0, gradePCount = 0, gradeNPCount = 0;
 
     this.props.gradeData.forEach(data => {
-      if (data.quarter + " " + data.year === this.props.quarter
+      if (data.quarter + ' ' + data.year === this.props.quarter
         && data.instructor === this.props.professor) {
           gradeACount += data.gradeACount;
           gradeBCount += data.gradeBCount;
@@ -50,46 +50,46 @@ export default class Chart extends React.Component {
     
     return [
       {
-        "id": "A",
-        "label": "A",
-        "A": gradeACount,
-        "color": "#2484C6"
+        'id': 'A',
+        'label': 'A',
+        'A': gradeACount,
+        'color': '#2484C6'
       },
       {
-        "id": "B",
-        "label": "B",
-        "B": gradeBCount,
-        "color": "#54B058"
+        'id': 'B',
+        'label': 'B',
+        'B': gradeBCount,
+        'color': '#54B058'
       },
       {
-        "id": "C",
-        "label": "C",
-        "C": gradeCCount,
-        "color": "#F9CE50"
+        'id': 'C',
+        'label': 'C',
+        'C': gradeCCount,
+        'color': '#F9CE50'
       },
       {
-        "id": "D",
-        "label": "D",
-        "D": gradeDCount,
-        "color": "#ED9237"
+        'id': 'D',
+        'label': 'D',
+        'D': gradeDCount,
+        'color': '#ED9237'
       },
       {
-        "id": "F",
-        "label": "F",
-        "F": gradeFCount,
-        "color": "#E67237"
+        'id': 'F',
+        'label': 'F',
+        'F': gradeFCount,
+        'color': '#E67237'
       },
       {
-        "id": "P",
-        "label": "P",
-        "P": gradePCount,
-        "color": "#4AB486"
+        'id': 'P',
+        'label': 'P',
+        'P': gradePCount,
+        'color': '#4AB486'
       },
       {
-        "id": "NP",
-        "label": "NP",
-        "NP": gradeNPCount,
-        "color": "#E36436"
+        'id': 'NP',
+        'label': 'NP',
+        'NP': gradeNPCount,
+        'color': '#E36436'
       },
     ];
   }
@@ -105,7 +105,7 @@ export default class Chart extends React.Component {
     return (
       <div style={this.theme.tooltip.container}>
         <strong>
-          {event.data.label}: {eval("event.data." + event.data.label)}
+          {event.data.label}: {eval('event.data.' + event.data.label)}
         </strong>
       </div>
     );
@@ -119,21 +119,21 @@ export default class Chart extends React.Component {
     return (
       <ResponsiveBar
         data={this.getClassData()}
-        keys={ ["A", "B", "C", "D", "F", "P", "NP"] }
-        indexBy="label"
+        keys={ ['A', 'B', 'C', 'D', 'F', 'P', 'NP'] }
+        indexBy='label'
         margin={{
           top: 50,
           right: 30,
           bottom: 50,
           left: 30
         }}
-        layout="vertical"
+        layout='vertical'
         axisBottom={{
           tickSize: 10,
           tickPadding: 5,
           tickRotation: 0,
-          legend: "Grade",
-          legendPosition: "middle",
+          legend: 'Grade',
+          legendPosition: 'middle',
           legendOffset: 36
         }}
         enableLabel={false}

@@ -3,14 +3,17 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { COLLECTION_NAMES, containsID, getDocuments, addDocument, updateDocument } from './mongo';
 import { QuarterMapping, WeekData } from '../types/types';
 
-// CACHE FUNCTIONS 
-// retrieve cached value from key
+/**
+ * Retrieve mongo's cached value by key
+ * @param key Key to look up the cache
+ * @returns Cached value
+ */
 async function getValue(key: string): Promise<any> {
     return new Promise(async resolve => {
         let value = await getDocuments(COLLECTION_NAMES.SCHEDULE, { _id: key });
         // cache hit
         if (value.length > 0) {
-            resolve(value[0]["value"]);
+            resolve(value[0]['value']);
         }
         // cache miss
         else {
@@ -19,7 +22,12 @@ async function getValue(key: string): Promise<any> {
     })
 }
 
-// cache a value given a key
+/**
+ * Put a cache value given a key
+ * @param key Key to use in cache
+ * @param value Value to store in cache
+ * @returns Promise that is resolved when value is cached
+ */
 async function setValue(key: string, value: any): Promise<void> {
     return new Promise(async resolve => {
         // if already in cache, update doc
@@ -34,7 +42,9 @@ async function setValue(key: string, value: any): Promise<void> {
     })
 }
 
-// main function (only function to export)
+/**
+ * Get the current week and quarter. A display string is also provided.
+ */
 export function getWeek(): Promise<WeekData> {
     return new Promise(async resolve => {
         // current date
@@ -62,21 +72,24 @@ export function getWeek(): Promise<WeekData> {
             resolve({
                 week: 0,
                 quarter: 'Break Time',
-                display: "Enjoy your break!",
+                display: 'Enjoy your break!',
             });
         }
     })
 }
 
-// date: current date
-// quarterMapping: the quarterMapping
-// returns the week description if it lies within the quarter mapping
+/**
+ * 
+ * @param date Today's date
+ * @param quarterMapping Maps a quarter to its start and end date 
+ * @returns Week description if it lies within the quarter
+ */
 function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
     let result: WeekData = undefined!;
     // iterate through each quarter
     Object.keys(quarterMapping).forEach(function (quarter) {
-        let begin = new Date(quarterMapping[quarter]["begin"])
-        let end = new Date(quarterMapping[quarter]["end"])
+        let begin = new Date(quarterMapping[quarter]['begin'])
+        let end = new Date(quarterMapping[quarter]['end'])
         // check if the date lies within the start/end range
         if (date >= begin && date <= end) {
             let week = Math.floor(dateSubtract(begin, date) / 7) + 1;
@@ -100,9 +113,11 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
     return result;
 }
 
-// year: the academic year to search for
-// quarterMapping: {quarter:{start:Date, end:Date}}
-// given a year, get quarter to date range mapping
+/**
+ * Given a year, get quarter to date range mapping
+ * @param year Academic year to search for
+ * @returns Mapping of quarters to its start and end date 
+ */
 async function getQuarterMapping(year: number): Promise<QuarterMapping> {
     return new Promise(async resolve => {
         // check if is in the cache
@@ -131,79 +146,105 @@ async function getQuarterMapping(year: number): Promise<QuarterMapping> {
     })
 }
 
-// finds the table labels and process each row
-// table: the cherio table element
-// $: cherio command
-// quarterToDayMapping: the mapping to store data into
-// year: the beginning academic year
-// finds and assigns the beginning and end date for a table
+/**
+ * Parses the quarter names from table labels and processes each row to find the start and end dates
+ * @param table Cherio table element
+ * @param $ Cherio command
+ * @param quarterToDayMapping Mapping to store data into
+ * @param year Beginning academic year
+ */
 function processTable(table: Element, $: CheerioAPI, quarterToDayMapping: QuarterMapping, year: number) {
     // find the tbody
     let tbody = $(table).find('tbody');
     // reference all rows in the table
-    let rows = tbody.find("tr").toArray() as Element[];
+    let rows = tbody.find('tr').toArray() as Element[];
     // the first row has all the labels for the table
-    let tableLabels = $(rows[0]).find("td").toArray() as Element[];
+    let tableLabels = $(rows[0]).find('td').toArray() as Element[];
     rows.forEach(row => {
         // process each row
         processRow(row, $, quarterToDayMapping, tableLabels, year)
     });
 }
 
-// process a row
-// row: the cherio row element
-// $: cherio command
-// quarterToDayMapping: the mapping to store data into
-// tableLabels: the cherio table label element
-// year: the beginning academic year
-// checks if is a row is a beginning or end date
+/**
+ * Checks if a row contains info on beginning or end date
+ * @param row Cherio row element
+ * @param $ Cherio command
+ * @param quarterToDayMapping Mapping to store data into
+ * @param tableLabels Column labels in the current table 
+ * @param year Beginning academic year
+ */
 function processRow(row: Element, $: CheerioAPI, quarterToDayMapping: QuarterMapping, tableLabels: Element[], year: number) {
     // get all information from row
-    let rowInfo = $(row).find("td").toArray()
+    let rowInfo = $(row).find('td').toArray()
     // start date
-    if ($(rowInfo[0]).text() == "Instruction begins") {
+    if ($(rowInfo[0]).text() == 'Instruction begins') {
         // for each season
         for (let i = 1; i < 4; i++) {
             let dateEntry = $(rowInfo[i]).text()
             let dateLabel = strip($(tableLabels[i]).text());
-            quarterToDayMapping[dateLabel] = { "begin": processDate(dateEntry, dateLabel, year), "end": new Date() };
+            quarterToDayMapping[dateLabel] = { 'begin': processDate(dateEntry, dateLabel, year), 'end': new Date() };
         }
     }
     // end date
-    else if ($(rowInfo[0]).text() == "Instruction ends") {
+    else if ($(rowInfo[0]).text() == 'Instruction ends') {
         // for each season
         for (let i = 1; i < 4; i++) {
             let dateEntry = $(rowInfo[i]).text()
             let dateLabel = strip($(tableLabels[i]).text());
-            quarterToDayMapping[dateLabel]["end"] = processDate(dateEntry, dateLabel, year);
+            quarterToDayMapping[dateLabel]['end'] = processDate(dateEntry, dateLabel, year);
         }
     }
 }
 
-// dateEntry: a date entry on the calendar (eg. Jan 17)
-// dateLabel: a date label on the calendar (eg. Winter 2020 or Summer Session 10WK)
-// year: the beginning academic year (eg. 2019)
-// returns a Date for the corresponding table entry
+/**
+ * Form a date object based on data from the calendar
+ * @example 
+ * // returns Date(1/17/2020)
+ * processDate('Jan 17', 'Winter 2020', 2019)
+ * @example 
+ * // returns Date(7/30/2021)
+ * processDate('July 30', 'Summer Session 10WK', 2020)
+ * @param dateEntry Date entry on the calendar
+ * @param dateLabel Date label on the calendar
+ * @param year Beginning academic year
+ * @returns Date for the corresponding table entry
+ */
 function processDate(dateEntry: string, dateLabel: string, year: number): Date {
-    let splitDateEntry = dateEntry.split(" ");
+    let splitDateEntry = dateEntry.split(' ');
     let month = splitDateEntry[0];
     let day = splitDateEntry[1];
-    let labelYear = dateLabel.split(" ")[1];
+    let labelYear = dateLabel.split(' ')[1];
+    // 'Winter 2020' => 2020, but 'Summer Session I' => Session
+    // Exception for Summer Session
     let correctYear = isInteger(labelYear) ? labelYear : year + 1;
     return new Date(`${month}/${day}/${correctYear}`)
 }
 
-// helper functions
+/**
+ * Remove trailing/leading whitespace from string
+ * @param str Original string
+ * @returns New string with whitespace removed
+ */
 function strip(str: string): string {
     return str.replace(/^\s+|\s+$/g, '');
 }
 
-// if is integer or not
+/**
+ * Determine if a number is an integer or not
+ * @param num Number to test
+ * @returns True if is an integer
+ */
 function isInteger(num: string): boolean {
     return !isNaN(parseInt(num, 10))
 }
 
-// get the number of days between two dates
+/**
+ * Get the number of days between two dates
+ * @param date1 Earlier date
+ * @param date2 Later date
+ * @returns Number of days between date1 and date2
+ */
 function dateSubtract(date1: Date, date2: Date): number {
     // To calculate the time difference of two dates 
     let Difference_In_Time = date2.getTime() - date1.getTime();
@@ -211,7 +252,12 @@ function dateSubtract(date1: Date, date2: Date): number {
     return Difference_In_Time / (1000 * 3600 * 24);
 }
 
-// add days to a date
+/**
+ * Add days to a date
+ * @param date Date to add days to
+ * @param days Number of days to add
+ * @returns Same date as the one passed in
+ */
 function addDays(date: Date, days: number): Date {
     date.setDate(date.getDate() + days);
     return date;

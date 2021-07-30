@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import './ReviewForm.scss'
 import axios from 'axios'
-import { Icon } from "semantic-ui-react";
+import { Icon } from 'semantic-ui-react';
 
 const ReviewForm = (props) => {
   const grades = [
-    "A+", "A", "A-",
-    "B+", "B", "B-",
-    "C+", "C", "C-",
-    "D+", "D", "D-",
-    "F"
+    'A+', 'A', 'A-',
+    'B+', 'B', 'B-',
+    'C+', 'C', 'C-',
+    'D+', 'D', 'D-',
+    'F'
   ];
 
   const [instructors, setInstructors] = useState([])
@@ -19,7 +19,7 @@ const ReviewForm = (props) => {
   const [gradeReceived, setGradeReceived] = useState('');
   const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
   const [userName, setUserName] = useState('Anonymous Peter');
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [quality, setQuality] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
 
@@ -104,26 +104,26 @@ const ReviewForm = (props) => {
   }
 
   const ratings = (rating) => (
-    <div className="form-ratings">
-      <input type="radio" name={rating} id={rating + "1"} onChange={reviewRate} />
-      <label htmlFor={rating + "1"} className="r1">1</label>
-      <input type="radio" name={rating} id={rating + "2"} onChange={reviewRate} />
-      <label htmlFor={rating + "2"} className="r2">2</label>
-      <input type="radio" name={rating} id={rating + "3"} onChange={reviewRate} />
-      <label htmlFor={rating + "3"} className="r3">3</label>
-      <input type="radio" name={rating} id={rating + "4"} onChange={reviewRate} />
-      <label htmlFor={rating + "4"} className="r4">4</label>
-      <input type="radio" name={rating} id={rating + "5"} onChange={reviewRate} />
-      <label htmlFor={rating + "5"} className="r5">5</label>
+    <div className='form-ratings'>
+      <input type='radio' name={rating} id={rating + '1'} onChange={reviewRate} />
+      <label htmlFor={rating + '1'} className='r1'>1</label>
+      <input type='radio' name={rating} id={rating + '2'} onChange={reviewRate} />
+      <label htmlFor={rating + '2'} className='r2'>2</label>
+      <input type='radio' name={rating} id={rating + '3'} onChange={reviewRate} />
+      <label htmlFor={rating + '3'} className='r3'>3</label>
+      <input type='radio' name={rating} id={rating + '4'} onChange={reviewRate} />
+      <label htmlFor={rating + '4'} className='r4'>4</label>
+      <input type='radio' name={rating} id={rating + '5'} onChange={reviewRate} />
+      <label htmlFor={rating + '5'} className='r5'>5</label>
     </div>
   )
 
   const reviewForm = (
     <>
-      <div className="submit-input">
-        <label htmlFor="instructor">
+      <div className='submit-input'>
+        <label htmlFor='instructor'>
           <h5>Taken with:</h5>
-          <select name="instructor" id="instructor" onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
+          <select name='instructor' id='instructor' onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
             <option disabled={true} selected >Instructor</option>
             {instructors.map((instructor, i) => {
               const arr = instructor.name.split(' ');
@@ -134,18 +134,18 @@ const ReviewForm = (props) => {
             })}
           </select>
         </label>
-        <label htmlFor="quarter">
+        <label htmlFor='quarter'>
           <h5>Quarter taken:</h5>
-          <select name="quarter" id="quarter" onChange={(e) => setQuarterTaken(e.target.value)}>
+          <select name='quarter' id='quarter' onChange={(e) => setQuarterTaken(e.target.value)}>
             <option disabled={true} selected >Quarter</option>
             {props.terms.map((quarter, i) => (
               <option key={i}>{quarter}</option>
             ))}
           </select>
         </label>
-        <label htmlFor="grade">
+        <label htmlFor='grade'>
           <h5>Grade:</h5>
-          <select name="grade" id="grade" onChange={(e) => setGradeReceived(e.target.value)}>
+          <select name='grade' id='grade' onChange={(e) => setGradeReceived(e.target.value)}>
             <option disabled={true} selected >Grade</option>
             {grades.map((grade, i) => (
               <option key={i}>{grade}</option>
@@ -158,28 +158,28 @@ const ReviewForm = (props) => {
             setOverCharLimit(false)
           }
         }} />
-        <div className="char-limit">
-          {overCharLimit ? (<p style={{ color: "red" }}>Your review exceeds the character limit</p>) : null}
-          <p style={content.length > 500 ? { color: "red" } : {}} className="chars">{content.length}/500</p>
+        <div className='char-limit'>
+          {overCharLimit ? (<p style={{ color: 'red' }}>Your review exceeds the character limit</p>) : null}
+          <p style={content.length > 500 ? { color: 'red' } : {}} className='chars'>{content.length}/500</p>
         </div>
       </div>
-      <div className="submit-rating">
+      <div className='submit-rating'>
         <div>
           <h5>Quality</h5>
-          {ratings("q")}
+          {ratings('q')}
           <h5>Difficulty</h5>
-          {ratings("d")}
+          {ratings('d')}
         </div>
-        <button type="button" className="rating-form-btn" onClick={submitForm}>Submit Review</button>
+        <button type='button' className='rating-form-btn' onClick={submitForm}>Submit Review</button>
       </div>
     </>
   )
 
   return (
-    <div className="submit-review">
+    <div className='submit-review'>
       {submitted ? (
-        <div className="submitted-form">
-          <Icon name="check circle" size="huge" />
+        <div className='submitted-form'>
+          <Icon name='check circle' size='huge' />
           <h1>Thank You</h1>
           <p>Your form has been submitted successfully.</p>
         </div>

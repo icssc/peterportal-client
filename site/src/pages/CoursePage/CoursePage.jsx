@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
-import { Divider } from "semantic-ui-react";
+import { Divider } from 'semantic-ui-react';
 import axios from 'axios';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
@@ -9,7 +9,7 @@ import PrereqTree from '../../component/PrereqTree/PrereqTree';
 import CourseSideInfo from '../../component/CourseSideInfo/CourseSideInfo';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
-import "./CoursePage.scss";
+import './CoursePage.scss';
 import {
     Grid,
 } from 'semantic-ui-react'
@@ -27,7 +27,6 @@ export default function CoursePage(props) {
         fetchDataFromApi();
     }, []);
 
-
     if (!courseData) {
         return <LoadingPage />;
     }
@@ -38,12 +37,11 @@ export default function CoursePage(props) {
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
-                <div style={{ display: "flex" }}>
-                    <section style={{ position: "sticky", top: "4rem", height: "min-content", width: "340px", border: "1px solid #EEEEEE", borderRadius: "10px" }}>
+                <div style={{ display: 'flex' }}>
+                    <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
                         <CourseSideInfo {...courseData} />
-
                     </section>
-                    <article style={{ marginLeft: "4rem", width: "900px" }}>
+                    <article style={{ marginLeft: '4rem', width: '900px' }}>
                         <Grid.Row>
                             <h2>🌲 Prerequisite Tree</h2>
                             <Divider />
@@ -57,15 +55,15 @@ export default function CoursePage(props) {
                         </Grid.Row>
 
                         <Grid.Row>
-                            <h2 id="grade-dist-label">📊 Grade Distribution</h2>
+                            <h2 id='grade-dist-label'>📊 Grade Distribution</h2>
                             <Divider />
                             <GradeDist {...courseData} />
                         </Grid.Row>
 
                         <Grid.Row>
-                            <h2 id="grade-dist-label">💬 Reviews</h2>
-                                <Divider />
-                            <Review {...courseData}/>
+                            <h2 id='grade-dist-label'>💬 Reviews</h2>
+                            <Divider />
+                            <Review {...courseData} />
                         </Grid.Row>
                     </article>
                 </div>

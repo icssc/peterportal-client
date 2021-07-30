@@ -12,7 +12,7 @@
     position: relative;
     margin-left: 20px;
     &::before {
-        content: "";
+        content: '';
         position: absolute;
         background: var(--peterportal-mid-gray);
         top: 50%;
@@ -37,7 +37,7 @@
 
 .dependency-needs {
     &::before {
-        content: "";
+        content: '';
         position: absolute;
         background: var(--peterportal-mid-gray);
         top: 50%;
@@ -47,7 +47,7 @@
     }
 
     &::after {
-        content: "";
+        content: '';
         position: absolute;
         background: var(--peterportal-mid-gray);
         top: 50%;
@@ -83,7 +83,7 @@
             width: 1px;
             height: 50%;
             right: -1rem;
-            content: "";
+            content: '';
             background: var(--peterportal-mid-gray);
             position: absolute;
             bottom: 0;
@@ -96,7 +96,7 @@
             width: 1px;
             height: 50%;
             right: -1rem;
-            content: "";
+            content: '';
             background: var(--peterportal-mid-gray);
             position: absolute;
             top: 0;
@@ -107,14 +107,14 @@
         width: 1px;
         height: 100%;
         right: -1rem;
-        content: "";
+        content: '';
         background: var(--peterportal-mid-gray);
         position: absolute;
         top: 0;
     }
 
     &::before {
-        content: "";
+        content: '';
         position: absolute;
         background: var(--peterportal-mid-gray);
         top: 50%;
@@ -140,7 +140,7 @@
             width: 1px;
             height: 50%;
             left: -1rem;
-            content: "";
+            content: '';
             background: var(--peterportal-mid-gray);
             position: absolute;
             bottom: 0;
@@ -153,7 +153,7 @@
             width: 1px;
             height: 50%;
             left: -1rem;
-            content: "";
+            content: '';
             background: var(--peterportal-mid-gray);
             position: absolute;
             top: 0;
@@ -164,14 +164,14 @@
         width: 1px;
         height: 100%;
         left: -1rem;
-        content: "";
+        content: '';
         background: var(--peterportal-mid-gray);
         position: absolute;
         top: 0;
     }
 
     &::before {
-        content: "";
+        content: '';
         position: absolute;
         background: var(--peterportal-mid-gray);
         top: 50%;

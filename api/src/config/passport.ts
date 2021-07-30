@@ -1,4 +1,3 @@
-import path from 'path';
 import passport from 'passport';
 import { OAuth2Strategy as GoogleStrategy, VerifyOptions } from 'passport-google-oauth'
 // var FacebookStrategy = require('passport-facebook').Strategy;
@@ -12,12 +11,15 @@ passport.deserializeUser(function (user: any, done) {
     done(null, user);
 });
 
+/**
+ * Configuration for Google Strategy
+ */
 passport.use(
     new GoogleStrategy(
         {
             clientID: process.env.GOOGLE_CLIENT,
             clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: (process.env.NODE_ENV == "production" ? process.env.PRODUCTION_DOMAIN : "") + "/users/auth/google/callback"
+            callbackURL: (process.env.NODE_ENV == 'production' ? process.env.PRODUCTION_DOMAIN : '') + '/users/auth/google/callback'
         },
         function (accessToken, refreshToken, profile, done) {   
             let email = '';
@@ -37,7 +39,7 @@ passport.use(
 // passport.use(new FacebookStrategy({
 //     clientID: process.env.FACEBOOK_CLIENT,
 //     clientSecret: process.env.FACEBOOK_SECRET,
-//     callbackURL: (process.env.NODE_ENV == "development" ? "" : `https://${process.env.DOMAIN}`) + "/users/auth/facebook/callback",
+//     callbackURL: (process.env.NODE_ENV == 'development' ? '' : `https://${process.env.DOMAIN}`) + '/users/auth/facebook/callback',
 //     profileFields: ['id', 'emails', 'displayName', 'photos']
 //   },
 //   function(accessToken, refreshToken, profile, done) {
@@ -53,7 +55,7 @@ passport.use(
 // passport.use(new GitHubStrategy({
 //     clientID: process.env.GITHUB_CLIENT,
 //     clientSecret: process.env.GITHUB_SECRET,
-//     callbackURL: (process.env.NODE_ENV == "development" ? "" : `https://${process.env.DOMAIN}`) + "/users/auth/github/callback",
+//     callbackURL: (process.env.NODE_ENV == 'development' ? '' : `https://${process.env.DOMAIN}`) + '/users/auth/github/callback',
 //     scope: [ 'user:email', 'user:displayName' ]
 //   },
 //   function(accessToken, refreshToken, profile, done) {

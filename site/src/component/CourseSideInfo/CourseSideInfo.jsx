@@ -1,7 +1,7 @@
 import React from 'react';
 import { min, max } from 'lodash';
 import { useQuery, gql } from '@apollo/client';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 
 export default function CourseSideInfo(props) {
@@ -24,17 +24,17 @@ export default function CourseSideInfo(props) {
 
     return (
         <div>
-            <div style={{ display: "flex", backgroundColor: "#EEEEEE", padding: "1rem" }}>
+            <div style={{ display: 'flex', backgroundColor: '#EEEEEE', padding: '1rem' }}>
                 <div>
                     💻
                 </div>
-                <div style={{ marginLeft: "1.5rem" }}>
-                    <h2 style={{ marginBottom: "0.2rem" }}>{props.id}</h2>
+                <div style={{ marginLeft: '1.5rem' }}>
+                    <h2 style={{ marginBottom: '0.2rem' }}>{props.id}</h2>
                     <h5 style={{ margin: 0 }}>{props.title}</h5>
                 </div>
             </div>
 
-            <div style={{ padding: "1.5rem" }}>
+            <div style={{ padding: '1.5rem' }}>
                 <p>{props.school}&nbsp;･&nbsp;
                     {min(props.units) === max(props.units) ?
                         <span>{props.units[0]} units</span> :

@@ -55,7 +55,7 @@
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  input[type="radio"] {
+  input[type='radio'] {
     display: none;
   }
   label {
@@ -76,7 +76,7 @@
   margin-bottom: 20px;
 }
 .active-rating::after {
-  content: "";
+  content: '';
   position: absolute;
   background-color: black;
   width: 40px;

@@ -4,6 +4,9 @@ import { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } fr
 
 var router = express.Router();
 
+/**
+ * Query reviews
+ */
 router.get('/', async function (req, res, next) {
   let courseID = req.query.courseID as string;
   let professorID = req.query.professorID as string;
@@ -20,7 +23,7 @@ router.get('/', async function (req, res, next) {
   };
 
   // remove null params 
-  for (var param in Object.keys(query)) {
+  for (var param in query) {
     if (query[param as keyof ReviewFilter] === null || query[param as keyof ReviewFilter] === undefined) {
       delete query[param as keyof ReviewFilter];
     }
@@ -31,6 +34,9 @@ router.get('/', async function (req, res, next) {
   res.json(reviews);
 });
 
+/**
+ * Add a review
+ */
 router.post('/', async function (req, res, next) {
   console.log(`Adding Review: ${JSON.stringify(req.body)}`)
 
@@ -41,9 +47,12 @@ router.post('/', async function (req, res, next) {
   res.json(req.body);
 });
 
+/**
+ * Upvote or downvote a review
+ */
 router.patch('/vote', async function (req, res) {
-  let id = req.body["id"];
-  let deltaScore = req.body["upvote"] ? 1 : -1;
+  let id = req.body['id'];
+  let deltaScore = req.body['upvote'] ? 1 : -1;
 
   console.log(`Voting Review ${id} with delta ${deltaScore}`)
 

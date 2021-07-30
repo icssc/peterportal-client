@@ -11,7 +11,7 @@ const ProfessorPage = (props) => {
   const [reviews, setReviews] = useState([]);
   const [gradeCourse, setGradeCourse] = useState(null);
   const [gradeCourseData, setGradeCourseData] = useState(null);
-  var profName = ""
+  var profName = ''
     const fetchDataFromApi = async () => {
         const apiResponse = await axios.get('/professors/api/' + props.match.params.id);
         setProfData(apiResponse.data);
@@ -40,15 +40,15 @@ const ProfessorPage = (props) => {
 
   return (
     <div>
-      <section style={{position: "sticky", top: "4rem", height: "min-content", width: "340px", border: "1px solid #EEEEEE", borderRadius: "10px"}}>
+      <section style={{position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px'}}>
           <ProfSideInfo {...profData} />
       </section>
       <h3>Schedule of Classes</h3>
       {profData && profData.course_history.length != 0 && <>
-        <select name="courses" id="courses" defaultValue="" onChange={(event) => {
+        <select name='courses' id='courses' defaultValue='' onChange={(event) => {
           setSchedCourse(event.target.value);
         }}>
-          <option value="" disabled hidden>Course:</option>
+          <option value='' disabled hidden>Course:</option>
           {profData.course_history.map((e) => 
             <option key={`prof-hist-${e}`} value={e}>{e}</option>
           )}
@@ -57,10 +57,10 @@ const ProfessorPage = (props) => {
       {schedCourse && <Schedule key={schedCourse} course={schedCourse} />}
       <h3>Grade Distribution</h3>
       {profData && profData.course_history.length != 0 && <>
-        <select name="courses" id="courses" defaultValue="" onChange={(event) => {
+        <select name='courses' id='courses' defaultValue='' onChange={(event) => {
           fetchCourseData(event.target.value);
         }}>
-          <option value="" disabled hidden>Course:</option>
+          <option value='' disabled hidden>Course:</option>
           {profData.course_history.map((e) => 
             <option key={`course-hist-${e}`} value={e}>{e}</option>
           )}

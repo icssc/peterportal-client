@@ -1,5 +1,8 @@
 declare global {
     namespace NodeJS {
+        /**
+         * Define schema for environment variables
+         */
         interface ProcessEnv {
             MONGO_URL: string;
             NODE_ENV: 'development' | 'production';
@@ -18,4 +21,5 @@ declare global {
     }
 }
 
+// need to export something to be considered a 'module'
 export {}

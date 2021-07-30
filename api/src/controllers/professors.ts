@@ -3,8 +3,11 @@ import fetch from 'node-fetch';
 
 var router = express.Router();
 
+/**
+ * Elasticsearch proxy for professor index
+ */
 router.post('/_search', function(req, res, next) {
-  let r = fetch(process.env.PETERPORTAL_MAIN_ES + "professors/_search", 
+  let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'professors/_search', 
   {
     method: 'POST',
     headers: {
@@ -16,8 +19,11 @@ router.post('/_search', function(req, res, next) {
   .then((data) => res.send(data))
 });
 
+/**
+ * PPAPI proxy for professor data 
+ */
 router.get('/api/:ucinetid', function(req, res, next) {
-  let r = fetch(process.env.PUBLIC_API_URL + "instructors/" + req.params.ucinetid, {
+  let r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.params.ucinetid, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,
     }

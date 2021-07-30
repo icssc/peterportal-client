@@ -1,45 +1,45 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Icon } from "semantic-ui-react";
-import "./Sidebar.scss"
+import { Icon } from 'semantic-ui-react';
+import './Sidebar.scss'
 
 const SideBar = ({children}) => {
   return (
-    <div className="sidebar">
+    <div className='sidebar'>
       <ul>
-        <li><NavLink to="/search/courses" activeClassName="sidebar-active">
+        <li><NavLink to='/search/courses' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="list alternate outline" />
+            <Icon name='list alternate outline' />
           </div>
           Catalogue
         </NavLink></li>
-        {/* <li><NavLink to="/schedule" activeClassName="sidebar-active">
+        {/* <li><NavLink to='/schedule' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="clock outline" />
+            <Icon name='clock outline' />
           </div>
           Schedule of Classes
         </NavLink></li> */}
-        {/* <li><NavLink to="/zotistics" activeClassName="sidebar-active">
+        {/* <li><NavLink to='/zotistics' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="chart bar outline" />
+            <Icon name='chart bar outline' />
           </div>
           Zotistics
         </NavLink></li> */}
-        {/* <li><NavLink to="/antalmanac" activeClassName="sidebar-active">
+        {/* <li><NavLink to='/antalmanac' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="calendar outline" />
+            <Icon name='calendar outline' />
           </div>
           AntAlmanac
         </NavLink></li> */}
-        <li><NavLink to="/roadmap" activeClassName="sidebar-active">
+        <li><NavLink to='/roadmap' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="map outline" />
+            <Icon name='map outline' />
           </div>
           Peter's Roadmap
         </NavLink></li>
-        {/* <li><NavLink to="/reviews" activeClassName="sidebar-active">
+        {/* <li><NavLink to='/reviews' activeClassName='sidebar-active'>
           <div> 
-            <Icon name="thumbs up outline"/>
+            <Icon name='thumbs up outline'/>
           </div>
           Reviews
         </NavLink></li> */}

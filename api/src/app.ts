@@ -1,3 +1,8 @@
+/**
+ * Configuration for Express server.
+ * @module
+ */
+
 import express from 'express';
 import logger from 'morgan';
 import { graphqlHTTP } from 'express-graphql';
@@ -8,7 +13,7 @@ import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-console.log("Starting server...")
+console.log('Starting server...')
 
 // load env
 dotenv.config();
@@ -49,7 +54,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-require("./config/passport")
+require('./config/passport')
 
 /**
  * Configure Express.js Middleware
@@ -76,11 +81,11 @@ app.use(cors());
  */
 
 // Enable custom routes
-app.use("/courses", coursesRouter);
-app.use("/professors", professorsRouter);
-app.use("/schedule", scheduleRouter);
-app.use("/reviews", reviewsRouter);
-app.use("/users", usersRouter);
+app.use('/courses', coursesRouter);
+app.use('/professors', professorsRouter);
+app.use('/schedule', scheduleRouter);
+app.use('/reviews', reviewsRouter);
+app.use('/users', usersRouter);
 app.use('/about', (req, res) => {
   res.render('about');
 });
@@ -112,7 +117,7 @@ app.get('*', (req, res) => {
  */
 app.use(function (req, res, next) {
   console.error(req)
-  res.status(500).json({ error: `Internal Serverless Error - "${req}"` })
+  res.status(500).json({ error: `Internal Serverless Error - '${req}'` })
 })
 
-module.exports = app
+export default app

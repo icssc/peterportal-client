@@ -1,11 +1,10 @@
 import { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema } from 'graphql';
 import axios, { AxiosRequestConfig } from 'axios';
 
-//Launch type
-// This is the Professor Type
-//More types can be added like: C
+/**
+ * Professor Query type
+ */
 const ProfessorType = new GraphQLObjectType({
-	//Sakshi: add more fields
 	name: 'Professor',
 	fields: () => ({
 		ucinetid: { type: GraphQLString },
@@ -13,9 +12,10 @@ const ProfessorType = new GraphQLObjectType({
 	})
 })
 
-//This is the Object for Course Type
+/**
+ * Course Query type
+ */
 const CourseType = new GraphQLObjectType({
-	//Sakshi: add more fields
 	name: 'Course',
 	fields: () => ({
 		id: { type: GraphQLString },
@@ -24,7 +24,9 @@ const CourseType = new GraphQLObjectType({
 })
 
 
-//Configuration Details that need to be passed
+/**
+ * Configuration Details that need to be passed
+ */
 var config: AxiosRequestConfig = {
 	method: 'get',
 	url: process.env.PUBLIC_API_GRAPHQL_URL,
@@ -36,11 +38,12 @@ var config: AxiosRequestConfig = {
 		'DNT': '1',
 		'x-api-key': process.env.PPAPI_KEY
 	},
-	data: ""
+	data: ''
 };
 
-
-//The Root Query
+/**
+ * The Root Query
+ */
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
 	fields: {
@@ -51,7 +54,14 @@ const RootQuery = new GraphQLObjectType({
 			},
 			resolve(parent, args) {
 				var data = JSON.stringify({
-					"query": `query{ course(id: "${args.id}" ){ instructor_history {name ucinetid}}}`
+					'query': `query {
+						course (id: "${args.id}"){ 
+							instructor_history {
+								name 
+								ucinetid
+							}
+						}
+					}`
 				});
 				config.data = data;
 				return axios(config).then((res) => res.data.data.course);
@@ -62,7 +72,12 @@ const RootQuery = new GraphQLObjectType({
 			type: new GraphQLList(ProfessorType),
 			resolve(parent, args) {
 				var data = JSON.stringify({
-					"query": "query{allInstructors{ ucinetid  name}}"
+					'query': `query {
+						allInstructors{ 
+							ucinetid  
+							name
+						}
+					}`
 				});
 				config.data = data;
 				return axios(config).then((res) => res.data.data.allInstructors);
@@ -75,7 +90,11 @@ const RootQuery = new GraphQLObjectType({
 			},
 			resolve(parent, args) {
 				var data = JSON.stringify({
-					"query": `query{ instructor(ucinetid: "${args.ucinetid}" ){ name}}`
+					'query': `query { 
+						instructor(ucinetid: "${args.ucinetid}" ) { 
+							name
+						}
+					}`
 				});
 				config.data = data;
 				return axios(config).then((response) => response.data.data.instructor)
