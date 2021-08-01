@@ -1,28 +1,23 @@
 
 .schedule-table{
 	display: center;
-	margin-left: auto !important;
-	margin-right: auto !important;
+	margin-left: auto;
+	margin-right: auto;
 }
 .enrollment-col{
 	width: 250px;
 	height: 60px;
-	vertical-align: bottom !important;
 	padding-top: 30px;
-
 }
 
 .data-col{
-	vertical-align: bottom !important;
 	height:60px;
-
 }
 
 .progress-bar{
 	position: relative;
 	border-radius: 50px;
 	height: 10px;
-
 }
 
 .enrollment-percentage{
@@ -34,59 +29,39 @@
 }
 .enrollment-info-text{
 	display: inline;
+}
 
+.btn-status {
+	height: 40px;
+	width: 80px;
+	border-radius: 90px;
+	justify-content: center;
+	font-weight: bold;
+	font-size: inherit;
 }
 
 .btn-status-button-open{
 	background-color: #D5FFD4 !important;
 	color: green;
-	height: 25px !important;
-	width: 80px !important;
-	border-radius: 90px !important;
-    padding-top: 15px;
-	padding-bottom: 15px;
-	justify-content: center;
-
-	font-weight: bold;
-	font-size: 1px;
 }
 
 .btn-status-button-waitl{
 	background-color: #FFF2D8 !important;
 	color: #FFAE1C;
-	height: 25px !important;
-	width: 80px !important;
-	border-radius: 90px !important;
-    padding-top: 15px;
-	padding-bottom: 15px;
-	justify-content: center;
-
-	font-weight: bold;
-	font-size: 1px;
 }
 
 .btn-status-button-full{
 	background-color: #FFE4E4 !important;
 	color: #FA5252;
-	height: 25px !important;
-	width: 80px !important;
-	border-radius: 90px !important;
-    padding-top: 15px;
-	padding-bottom: 15px;
-	justify-content: center;
-	font-weight: bold;
-	font-size: 1px;
 }
 
 .progress-bar>div{
 	position: relative;
-	background-color:#D5FFD4 !important;
+	background-color:#D5FFD4;
 	border-radius: 50px;
 	height: 10px;
-
 }
 
 .col-tableHolder{
-
 	margin-left: 50px;
 }

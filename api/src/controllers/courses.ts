@@ -1,6 +1,5 @@
 import express from 'express';
 import fetch from 'node-fetch';
-const websoc = require('websoc-api');
 var router = express.Router();
 
 /**

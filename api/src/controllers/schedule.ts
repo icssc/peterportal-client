@@ -20,17 +20,7 @@ router.get('/api/:term/:department/:number', async function (req, res) {
     department: req.params.department,
     courseNumber: req.params.number
   });
-  console.log(result)
-  try {
-    console.log(result.schools[0].departments[0].courses[0].sections);
-  }
-  catch (error) {
-    // No school/department/course
-    if (error instanceof TypeError) {
-      res.send([]);
-    }
-  }
-  res.send(result.schools[0].departments[0].courses[0].sections);
+  res.send(result);
 });
 
 export default router;
