@@ -1,0 +1,6 @@
+api/.env
+api/node_modules/
+site/node_modules/
+api/build/
+site/build/
+api/dist
