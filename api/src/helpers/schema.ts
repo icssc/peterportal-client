@@ -1,3 +1,7 @@
+/**
+ @module GraphQLHelper
+*/
+
 import { GraphQLObjectType, GraphQLString, GraphQLList, GraphQLSchema } from 'graphql';
 import axios, { AxiosRequestConfig } from 'axios';
 

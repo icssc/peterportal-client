@@ -1,3 +1,7 @@
+/**
+ @module MongoHelper
+*/
+
 import { MongoClient, Db, Collection } from 'mongodb'
 import { GenericObject } from '../types/types'
 

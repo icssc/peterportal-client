@@ -1,3 +1,7 @@
+/**
+ @module WeekHelper
+*/
+
 import fetch from 'node-fetch';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { COLLECTION_NAMES, containsID, getDocuments, addDocument, updateDocument } from './mongo';

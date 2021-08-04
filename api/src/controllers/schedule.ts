@@ -1,3 +1,7 @@
+/**
+ @module ScheduleRoute
+*/
+
 import express from 'express';
 import { getWeek } from '../helpers/week';
 

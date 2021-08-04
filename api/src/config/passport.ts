@@ -1,3 +1,7 @@
+/**
+ @module PassportConfig
+*/
+
 import passport from 'passport';
 import { OAuth2Strategy as GoogleStrategy, VerifyOptions } from 'passport-google-oauth'
 // var FacebookStrategy = require('passport-facebook').Strategy;

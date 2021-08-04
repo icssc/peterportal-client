@@ -1,3 +1,7 @@
+/**
+ @module ReviewRoute
+*/
+
 import express from 'express';
 import { ObjectID } from 'mongodb';
 import { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } from '../helpers/mongo';

@@ -1,3 +1,7 @@
+/**
+ @module UsersRoute
+*/
+
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 
