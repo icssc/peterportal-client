@@ -51,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+        
       - name: Deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:
