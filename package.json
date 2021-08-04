@@ -6,12 +6,6 @@
     "heroku-postbuild": "cd api && npm run build && cd .. && cd site && npm run build && cp -r build ../api/",
     "start": "npm start --prefix api"
   },
-  "dependencies": {
-    "react-redux": "^7.2.4",
-    "redux": "^4.1.1"
-  },
-  "devDependencies": {
-    "@types/react-redux": "^7.1.18",
-    "@types/redux": "^3.6.0"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
