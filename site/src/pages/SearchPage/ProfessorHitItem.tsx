@@ -3,7 +3,7 @@ import './Hit.scss';
 import { get } from 'lodash';
 import { RenderComponentType, HitItemProps } from 'searchkit';
 
-import { ProfessorData } from 'src/types/types';
+import { ProfessorData } from '../../types/types';
 
 interface ProfessorHitItemProps extends HitItemProps {
   result: {

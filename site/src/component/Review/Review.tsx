@@ -4,13 +4,16 @@ import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss'
 
-import { CourseData, ReviewData } from 'src/types/types';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { CourseData, ReviewData } from '../../types/types';
 
 export interface ReviewProps extends CourseData {
 }
 
 const Review: FC<ReviewProps> = (props) => {
-    const [reviewData, setReviewData] = useState<ReviewData[]>(null!);
+    const dispatch = useAppDispatch();
+    const reviewData = useAppSelector(selectReviews); 
     const [openForm, setOpenForm] = useState(false);
 
     const getReviews = async () => {
@@ -21,7 +24,7 @@ const Review: FC<ReviewProps> = (props) => {
         })
             .then((res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null)
-                setReviewData(data);
+                dispatch(setReviews(data));
             });
     }
 

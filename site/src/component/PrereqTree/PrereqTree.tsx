@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
 
-import { PrerequisiteJSONNode, PrerequisiteJSON, CourseData } from 'src/types/types';
+import { PrerequisiteJSONNode, PrerequisiteJSON, CourseData } from '../../types/types';
 
 interface NodeProps {
   node: string;

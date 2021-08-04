@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
 
-import { CourseData } from 'src/types/types';
+import { CourseData } from '../../types/types';
 
 interface CourseHitItemProps extends HitItemProps {
   result: {
