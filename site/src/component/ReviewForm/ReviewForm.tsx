@@ -3,8 +3,10 @@ import './ReviewForm.scss'
 import axios from 'axios'
 import { Icon } from 'semantic-ui-react';
 
+import { addReview } from '../../store/slices/reviewSlice';
+import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import { ReviewData } from 'src/types/types';
+import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
 }
@@ -15,6 +17,7 @@ interface Professor {
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
+  const dispatch = useAppDispatch();
   const grades = [
     'A+', 'A', 'A-',
     'B+', 'B', 'B-',
@@ -80,7 +83,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post('/reviews', review);
+    const res = await axios.post<ReviewData>('/reviews', review);
+    dispatch(addReview(res.data));
   }
 
   const submitForm = () => {

@@ -3,7 +3,7 @@ import CourseFilter from './CourseFilter';
 import ProfessorFilter from './ProfessorFilter';
 import { Menu } from 'semantic-ui-react';
 
-import { ElasticSearchIndex } from 'src/types/types';
+import { ElasticSearchIndex } from '../../types/types';
 
 interface SearchSidebarProps {
     query: ElasticSearchIndex;

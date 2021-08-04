@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 
 import { WebsocResponse, Section } from 'websoc-api';
-import { CourseData } from 'src/types/types';
+import { CourseData } from '../../types/types';
 
 interface ScheduleProps {
     courseID?: string;

@@ -6,7 +6,7 @@ import Schedule from '../../component/Schedule/Schedule';
 import SubReview from '../../component/Review/SubReview';
 import GradeDist from '../../component/GradeDist/GradeDist';
 
-import { ProfessorData, CourseData, ReviewData } from 'src/types/types';
+import { ProfessorData, CourseData, ReviewData } from '../../types/types';
 
 const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
   const [profData, setProfData] = useState<ProfessorData>(null!);

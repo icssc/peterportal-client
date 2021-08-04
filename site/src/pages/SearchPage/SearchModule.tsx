@@ -3,7 +3,7 @@ import { Icon, Label } from 'semantic-ui-react'
 import { HitsStats, SearchBox, SelectedFilters, FilterItemProps, HitsStatsDisplayProps } from 'searchkit';
 import './SearchModule.scss';
 
-import { ElasticSearchIndex } from 'src/types/types';
+import { ElasticSearchIndex } from '../../types/types';
 
 // An array of elasticsearch fields to search within. Can specify boosting on particular fields.
 // Modify this will affect search result.

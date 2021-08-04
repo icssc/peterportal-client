@@ -2,7 +2,7 @@ import React, { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
 
-import { ReviewData, VoteRequest } from 'src/types/types';
+import { ReviewData, VoteRequest } from '../../types/types';
 
 interface SubReviewProps {
   review: ReviewData;

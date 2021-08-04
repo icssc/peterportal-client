@@ -7,7 +7,7 @@ import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
 import Sidebar from '../../component/SideBar/SideBar'
 
-import { ElasticSearchIndex } from 'src/types/types';
+import { ElasticSearchIndex } from '../../types/types';
 
 interface SearchPageProps extends RouteComponentProps<{ index: ElasticSearchIndex }>, SearchkitComponentProps {
 }

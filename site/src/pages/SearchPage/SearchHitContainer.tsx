@@ -4,7 +4,7 @@ import CourseHitItem from './CourseHitItem'
 import { Pagination, Hits, InitialLoader, SelectedFilters, InitialViewDisplayProps } from 'searchkit'
 import './SearchHitContainer.scss'
 
-import { ElasticSearchIndex } from 'src/types/types'
+import { ElasticSearchIndex } from '../../types/types'
 
 // Array of highlighted fields. Any highlight matches will be render
 // as <highlight> html element

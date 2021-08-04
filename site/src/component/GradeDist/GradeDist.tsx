@@ -4,7 +4,7 @@ import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss'
 
-import { CourseData, GradeDistData } from 'src/types/types';
+import { CourseData, GradeDistData } from '../../types/types';
 
 interface GradeDistProps extends CourseData {
   currentProf?: string
