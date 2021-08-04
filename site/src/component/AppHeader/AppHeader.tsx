@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component, FC } from 'react';
 import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
-// import {useCookies} from 'react-cookie';
+import { useCookies } from 'react-cookie';
 
 import { ReactComponent as CogIcon } from '../../asset/cog.svg';
 import { ReactComponent as ArrowIcon } from '../../asset/arrow.svg';
@@ -14,19 +14,21 @@ const AppHeader: FC<{}> = props => {
   const [week, setWeek] = useState('');
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
+  const [cookies, setCookie] = useCookies(['user']);
 
-  // const [cookies, setCookie] = useCookies(['name']);
-  fetch('/users/getName')
-    .then(res => res.json())
-    .then((data: PassportData) => {
-      setName(data.name);
-      setPicture(data.picture);
-    });
+  console.log('Cookies: ', cookies);
 
   useEffect(() => {
+    // Get the current week data
     fetch('/schedule/api/currentWeek')
       .then(res => res.json())
       .then((data: WeekData) => setWeek(data.display));
+
+    // if the user is logged in
+    if (cookies.hasOwnProperty('user')) {
+      setName(cookies.user.name);
+      setPicture(cookies.user.picture);
+    }
   })
 
   return (

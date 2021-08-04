@@ -5,6 +5,7 @@
 
 import express from 'express';
 import logger from 'morgan';
+import cookieParser from 'cookie-parser';
 import { graphqlHTTP } from 'express-graphql';
 import path from 'path';
 import passport from 'passport';
@@ -62,6 +63,7 @@ require('./config/passport')
 
 app.use(express.json());
 app.use(logger('dev'))
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..', 'build')));

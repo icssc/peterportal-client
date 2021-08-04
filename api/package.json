@@ -9,6 +9,7 @@
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0-rc.10",
     "connect-mongodb-session": "^2.4.1",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",

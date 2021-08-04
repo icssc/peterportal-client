@@ -21,11 +21,12 @@ passport.use(
             clientSecret: process.env.GOOGLE_SECRET,
             callbackURL: (process.env.NODE_ENV == 'production' ? process.env.PRODUCTION_DOMAIN : '') + '/users/auth/google/callback'
         },
-        function (accessToken, refreshToken, profile, done) {   
+        function (accessToken, refreshToken, profile, done) {
             let email = '';
-            for (let profileEmail in profile.emails) {
-                console.log(profileEmail)
-            }         
+            // get the first registered email
+            if (profile.emails && profile.emails.length! > 0) {
+                email = profile.emails[0].value;
+            }
             var userData = {
                 email: email,
                 name: profile.displayName,
