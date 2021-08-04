@@ -1,6 +1,7 @@
 import React, { FC, ChangeEvent, useState, useEffect } from 'react'
 import './ReviewForm.scss'
 import axios from 'axios'
+import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
 
 import { addReview } from '../../store/slices/reviewSlice';
@@ -37,6 +38,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [difficulty, setDifficulty] = useState<number>(null!);
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
+  const [cookies, setCookie] = useCookies(['user']);
 
   const fetchProfNames = async () => {
     const temp = []
@@ -51,19 +53,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     setInstructors(temp)
   }
 
-  const fetchUser = async () => {
-    // get the username
-    const res = await axios.get(`/users/getName`);
-    console.log(res.data)
-    if (res.data.name) {
-      setUserEmail(res.data.email);
-      setUserName(res.data.name);
-    }
-  }
-
   useEffect(() => {
     fetchProfNames();
-    fetchUser();
+
+    // get user info from cookie
+    if (cookies.hasOwnProperty('user')) {
+      setUserEmail(cookies.user.email);
+      setUserName(cookies.user.name);
+    }  
   }, [])
 
   const reviewRate = (e: ChangeEvent) => {

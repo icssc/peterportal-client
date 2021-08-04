@@ -4,24 +4,10 @@ import passport from 'passport';
 let router = express.Router();
 
 /**
- * Get the logged in user
+ * Get the user's session data
  */
 router.get('/', function (req, res, next) {
   res.json(req.session)
-});
-
-/**
- * Get the name of the logged in user
- */
-router.get('/getName', function (req, res, next) {
-  res.json(req.user ? req.user : {})
-});
-
-/**
- * Get whether or not a user is logged 
- */
-router.get('/loggedIn', function (req, res, next) {
-  res.json({ status: req.user ? true : false });
 });
 
 /**
@@ -37,7 +23,10 @@ router.get('/isAdmin', function (req, res, next) {
 router.get('/auth/google',
   function (req, res) {
     req.session.returnTo = req.headers.referer;
-    passport.authenticate('google', { scope: ['profile', 'email'] })(req, res);
+    passport.authenticate('google', {
+      scope: ['https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email']
+    })(req, res);
   }
 );
 
@@ -120,6 +109,9 @@ router.get('/auth/github/callback',
  * @param res Express Response Object
  */
 function successLogin(req: Request, res: Response) {
+  console.log('Logged in', req.user);
+  // set the user cookie
+  res.cookie('user', req.user);
   // redirect browser to the page they came from
   let returnTo = req.session.returnTo;
   delete req.session.returnTo;
@@ -130,8 +122,11 @@ function successLogin(req: Request, res: Response) {
  * Endpoint to logout
  */
 router.get('/logout', function (req, res) {
+  console.log('Logging out', req.user);
   req.session.destroy(function (err) {
-    if (err) console.log(err)
+    if (err) console.log(err);
+    // clear the user cookie
+    res.clearCookie('user');
     res.redirect('back');
   });
 });
