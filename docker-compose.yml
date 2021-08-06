@@ -1,6 +1,5 @@
 version: "3.3"
 services:
-  # TODO: Express and React not hot reloading on Windows.
   # Build express server
   api:
     build: ./api
@@ -13,6 +12,7 @@ services:
     env_file:
       - ./docker/api.env
     environment:
+      - CHOKIDAR_USEPOLLING=true
       - PORT=5000
       # Point to local databases
       - PETERPORTAL_MAIN_ES=http://es:9200/
@@ -36,6 +36,7 @@ services:
       # For hot reloading
       - "35729:35729"
     environment:
+      - CHOKIDAR_USEPOLLING=true
       - PORT=3000
     # Map to host directory for hot reloading
     volumes:

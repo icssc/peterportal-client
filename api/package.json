@@ -54,6 +54,7 @@
   "scripts": {
     "start": "nodemon bin/www",
     "dev": "tsc-watch --onSuccess \"npm start\"",
+    "docker-dev": "tsc-watch --onSuccess \"nodemon -L bin/www\"",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
