@@ -62,7 +62,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://api:5000/",
+  "proxy": "http://localhost:5000/",
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.7",
