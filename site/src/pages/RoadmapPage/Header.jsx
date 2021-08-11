@@ -29,8 +29,10 @@ const Header = ({ courseCount, unitCount }) => {
   return (
     <div className="header">
       <span id="planner-stats">
-        Total: <span id="course-count">{courseCount}</span> courses,{" "}
-        <span id="unit-count">{unitCount}</span> units
+        Total: <span id="course-count">{courseCount}</span>{" "}
+        {courseCount === 1 ? "course" : "courses"},{" "}
+        <span id="unit-count">{unitCount}</span>{" "}
+        {unitCount === 1 ? "unit" : "units"}
       </span>
       <span id="title">
         <h2>Peter's Roadmap</h2>

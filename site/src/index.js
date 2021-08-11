@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import App from './App';
 import './index.css';
+// import 'bootstrap/dist/css/bootstrap.css';
 
 // Import Global Store
 import { store } from './store/store';
