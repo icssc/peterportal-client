@@ -39,12 +39,12 @@ const Year = ({ index, startYear, removeYear, state, plannerStats }) => {
       <div className="yearTitleBar">
         <Button
           variant="link"
-          className="accordion"
+          className="year-accordion"
           onClick={() => {
             setShowContent(!showContent);
           }}
         >
-          <span className="accordion-title">
+          <span className="year-accordion-title">
             <span id="year-title">
               {showContent ? (
                 <CaretDownFill className="caret-icon" />
@@ -88,7 +88,7 @@ const Year = ({ index, startYear, removeYear, state, plannerStats }) => {
         </Overlay>
       </div>
       {showContent && (
-        <div className="accordion-content">
+        <div className="year-accordion-content">
           {
             <Droppable droppableId={index + "-fall"} type="COURSE">
               {(provided) => {

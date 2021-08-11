@@ -22,13 +22,13 @@
 .caret-icon {
   margin-right: 10px;
 }
-.accordion,
-.accordion-content {
+.year-accordion,
+.year-accordion-content {
   background-color: var(--ring-road-white);
   display: flex;
 }
 
-.accordion-title {
+.year-accordion-title {
   display: flex;
   justify-content: space-between;
   font-weight: normal;
@@ -49,24 +49,24 @@
   color: black;
 }
 
-#accordion-icon {
+#year-accordion-icon {
   display: inline;
   padding-right: 1rem;
 }
 
-.accordion {
+.year-accordion {
   width: 95%;
   padding-right: 0;
 }
 
-.accordion:hover,
-.accordion:active,
-.accordion:focus {
+.year-accordion:hover,
+.year-accordion:active,
+.year-accordion:focus {
   text-decoration: none;
   box-shadow: none;
 }
 
-.accordion-title {
+.year-accordion-title {
   width: 100%;
 }
 
