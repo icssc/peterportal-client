@@ -6,6 +6,7 @@
   height: auto;
   font-size: 16px;
   padding: 10px 20px;
+  position: relative;
 
   .name {
     font-weight: bold;
@@ -20,5 +21,46 @@
   .units {
     color: #808080;
     font-size: 14px;
+  }
+}
+
+.course-card-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-circle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+.course-popover {
+  background: #FFFFFF;
+  padding: 5%;
+
+  .popover-name {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+  }
+
+  .popover-units {
+    color: #c4c4c4;
+
+    .popover-units-value {
+      font-weight: bold;
+    }
+  }
+
+  .popover-description {
+    padding-top: 5%;
+  }
+
+  .popover-prerequisites {
+    padding-top: 5%;
+  }
+  .popover-prerequisites-prefix {
+      font-weight: bold;
   }
 }
