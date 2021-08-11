@@ -3,6 +3,8 @@ import './ReviewForm.scss'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
+import { useQuery } from '@apollo/client';
+import { getProfessorNamesFromCourse, GetProfessorNameData } from '../../helpers/util';
 
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -10,11 +12,6 @@ import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
-}
-
-interface Professor {
-  name: string;
-  id: string;
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
@@ -27,8 +24,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'F'
   ];
 
-  const [instructors, setInstructors] = useState<Professor[]>([])
-  const [professor, setProfessor] = useState('');
+  const { loading, error, data } = useQuery<GetProfessorNameData>(getProfessorNamesFromCourse(props.course?.id));
+  const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
+  const [course, setCourse] = useState(props.course?.id || '');
   const [quarterTaken, setQuarterTaken] = useState('');
   const [gradeReceived, setGradeReceived] = useState('');
   const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
@@ -39,28 +37,21 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
+  const [terms, setTerms] = useState<string[]>([]);
 
-  const fetchProfNames = async () => {
-    const temp = []
-    for (let i = 0; i < props.professor_history.length; i += 1) {
-      const res = await axios.get(`/professors/api/${props.professor_history[i]}`);
-      const prof = {
-        name: res.data.name,
-        id: props.professor_history[i]
-      }
-      temp.push(prof)
-    }
-    setInstructors(temp)
+  const fetchTerms = async () => {
+    const res = await axios.get<string[]>('/schedule/getTerms?years=3');
+    setTerms(res.data);
   }
 
   useEffect(() => {
-    fetchProfNames();
+    fetchTerms();
 
     // get user info from cookie
     if (cookies.hasOwnProperty('user')) {
       setUserEmail(cookies.user.email);
       setUserName(cookies.user.name);
-    }  
+    }
   }, [])
 
   const reviewRate = (e: ChangeEvent) => {
@@ -91,7 +82,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     const day = date.getDate().toString();
     const review = {
       professorID: professor,
-      courseID: props.id,
+      courseID: course,
       userID: userEmail,
       userDisplay: userName,
       reviewContent: content,
@@ -128,28 +119,46 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     </div>
   )
 
+  // select instructor if in course context
+  const instructorSelect = <label htmlFor='instructor'>
+    <h5>Taken with:</h5>
+    <select name='instructor' id='instructor' onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
+      <option disabled={true} selected >Instructor</option>
+      {data && data.course && data.course.instructor_history.map((instructor, i) => {
+        const arr = instructor.name.split(' ');
+        const name = `${arr[0][0]}. ${arr[arr.length - 1]}`
+        return (
+          // @ts-ignore name attribute isn't supported
+          <option key={'review-form-professor-' + i} name={name} id={instructor.ucinetid}>{name}</option>
+        )
+      })}
+    </select>
+  </label>
+
+  // select course if in professor context
+  const courseSelect = <label htmlFor='course'>
+    <h5>Course taken:</h5>
+    <select name='course' id='course' onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
+      <option disabled={true} selected >Course</option>
+      {props.professor?.course_history.map((courseID, i) => {
+        return (
+          // @ts-ignore name attribute isn't supported
+          <option key={'review-form-course-' + i} name={courseID} id={courseID.replace(/\s+/g, '')}>{courseID}</option>
+        )
+      })}
+    </select>
+  </label>
+
   const reviewForm = (
     <>
       <div className='submit-input'>
-        <label htmlFor='instructor'>
-          <h5>Taken with:</h5>
-          <select name='instructor' id='instructor' onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
-            <option disabled={true} selected >Instructor</option>
-            {instructors.map((instructor, i) => {
-              const arr = instructor.name.split(' ');
-              const name = `${arr[0][0]}. ${arr[arr.length - 1]}`
-              return (
-                // @ts-ignore name attribute isn't supported
-                <option key={'review-form-professor-' + i} name={name} id={instructor.id}>{name}</option>
-              )
-            })}
-          </select>
-        </label>
+        {props.course && instructorSelect}
+        {props.professor && courseSelect}
         <label htmlFor='quarter'>
           <h5>Quarter taken:</h5>
           <select name='quarter' id='quarter' onChange={(e) => setQuarterTaken(e.target.value)}>
             <option disabled={true} selected >Quarter</option>
-            {props.terms.map((quarter, i) => (
+            {terms.map((quarter, i) => (
               <option key={i}>{quarter}</option>
             ))}
           </select>

@@ -21,7 +21,6 @@ dotenv.config();
 
 // Configs
 import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
-import schema from './helpers/schema';
 
 // Custom Routes
 import coursesRouter from './controllers/courses';
@@ -29,6 +28,7 @@ import professorsRouter from './controllers/professors';
 import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
+import graphqlRouter from './controllers/graphql';
 
 // instantiate app
 const app = express();
@@ -88,15 +88,10 @@ app.use('/professors', professorsRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/reviews', reviewsRouter);
 app.use('/users', usersRouter);
+app.use('/graphql', graphqlRouter);
 app.use('/about', (req, res) => {
   res.render('about');
 });
-
-// for graphql
-app.use('/graphql', graphqlHTTP({
-  schema,
-  graphiql: true
-}));
 
 app.options(`*`, (req, res) => {
   res.status(200).send()

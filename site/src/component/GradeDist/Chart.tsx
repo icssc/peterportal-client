@@ -22,7 +22,8 @@ interface Bar {
 interface ChartProps {
   gradeData: GradeDistData;
   quarter: string;
-  professor: string;
+  professor?: string;
+  course?: string;
 }
 
 export default class Chart extends React.Component<ChartProps> {
@@ -50,8 +51,8 @@ export default class Chart extends React.Component<ChartProps> {
       gradeFCount = 0, gradePCount = 0, gradeNPCount = 0;
 
     this.props.gradeData.forEach(data => {
-      if (data.quarter + ' ' + data.year === this.props.quarter
-        && data.instructor === this.props.professor) {
+      if ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL')
+        && (data.instructor === this.props.professor || (data.department + ' ' + data.number) === this.props.course)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;

@@ -4,31 +4,13 @@ import { useQuery, gql } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import { CourseData } from '../../types/types';
 
+import { getProfessorNamesFromCourse, GetProfessorNameData } from '../../helpers/util';
+
 interface CourseSideInfoProps extends CourseData {
 }
 
-interface GetInstructorData {
-    course: {
-        instructor_history: Array<{
-            ucinetid: string,
-            name: string
-        }>
-    }
-}
-
 const CourseSideInfo: FC<CourseSideInfoProps> = (props) => {
-    const PROFESSOR_QUERY = gql`
-        query GetInstructor {
-            course(id: "${props.id}"){
-                instructor_history{
-                    ucinetid
-                    name
-                }
-            }
-        }
-    `;
-
-    const { loading, error, data } = useQuery<GetInstructorData>(PROFESSOR_QUERY);
+    const { loading, error, data } = useQuery<GetProfessorNameData>(getProfessorNamesFromCourse(props.id));
 
     if (loading) return <>'Loading...'</>;
     else if (error) return <>`Error! ${error.message}`</>;

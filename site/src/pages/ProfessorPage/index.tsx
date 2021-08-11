@@ -1,81 +1,72 @@
 import React, { FC, useState, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom';
+import LoadingPage from '../LoadingPage';
+import Twemoji from 'react-twemoji';
+import { Divider } from 'semantic-ui-react';
 import axios from 'axios';
 import ProfSideInfo from '../../component/ProfSideInfo/ProfSideInfo';
 import Schedule from '../../component/Schedule/Schedule';
-import SubReview from '../../component/Review/SubReview';
+import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
+import {
+    Grid,
+} from 'semantic-ui-react'
 
 import { ProfessorData, CourseData, ReviewData } from '../../types/types';
 
 const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
-  const [profData, setProfData] = useState<ProfessorData>(null!);
-  const [schedCourse, setSchedCourse] = useState<string>(null!);
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
-  const [gradeCourse, setGradeCourse] = useState<string>(null!);
-  const [gradeCourseData, setGradeCourseData] = useState<CourseData>(null!);
-  var profName = ''
-  const fetchDataFromApi = async () => {
-    const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
-    setProfData(apiResponse.data);
-    profName = apiResponse.data.name;
-  }
-  const fetchReviews = async () => {
-    const res = await axios.get<ReviewData[]>(`/reviews/?professorID=${profData.ucinetid}`);
-    const data = res.data.filter((review) => review !== null);
-    setReviews(data);
-  }
-  const fetchCourseData = async (courseID: string) => {
-    const id = courseID.replace(/\s/g, '');
-    const res = await axios.get<CourseData>(`/courses/api/${id}`);
-    setGradeCourse(id);
-    setGradeCourseData(res.data);
-  }
-
-  useEffect(() => {
-    fetchDataFromApi();
-  }, []);
-  useEffect(() => {
-    if (profData) {
-      fetchReviews();
+    const [profData, setProfData] = useState<ProfessorData>(null!);
+    const [profWebsoc, setProfWebsoc] = useState('');
+    const fetchDataFromApi = async () => {
+        const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
+        let profName = apiResponse.data.name;
+        console.log(profName)
+        let arr = profName.split(' ');
+        const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
+        setProfWebsoc(name);
+        setProfData(apiResponse.data);
     }
-  }, [profData])
 
-  return (
-    <div>
-      <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
-        <ProfSideInfo {...profData} />
-      </section>
-      <h3>Schedule of Classes</h3>
-      {profData && profData.course_history.length != 0 && <>
-        <select name='courses' id='courses' defaultValue='' onChange={(event) => {
-          setSchedCourse(event.target.value);
-        }}>
-          <option value='' disabled hidden>Course:</option>
-          {profData.course_history.map((e) =>
-            <option key={`prof-hist-${e}`} value={e}>{e}</option>
-          )}
-        </select>
-      </>}
-      {schedCourse && <Schedule key={schedCourse} courseID={schedCourse} />}
-      <h3>Grade Distribution</h3>
-      {profData && profData.course_history.length != 0 && <>
-        <select name='courses' id='courses' defaultValue='' onChange={(event) => {
-          fetchCourseData(event.target.value);
-        }}>
-          <option value='' disabled hidden>Course:</option>
-          {profData.course_history.map((e) =>
-            <option key={`course-hist-${e}`} value={e}>{e}</option>
-          )}
-        </select>
-      </>}
-      {gradeCourseData && <GradeDist key={gradeCourse} {...gradeCourseData} currentProf={profName} />}
-      <h3>Reviews</h3>
-      {reviews.map((review, i) => {
-        if (review !== null) return (<SubReview review={review} key={i} />)
-      })}
-    </div>
-  )
+    useEffect(() => {
+        fetchDataFromApi();
+    }, []);
+
+    if (!profData) {
+        return <LoadingPage />;
+    }
+    else if (profData.hasOwnProperty('error')) {
+        return <div>
+            Course Does Not Exist!
+        </div>
+    } else {
+        return (
+            <Twemoji options={{ className: 'twemoji' }}>
+                <div style={{ display: 'flex' }}>
+                    <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
+                        <ProfSideInfo {...profData} />
+                    </section>
+                    <article style={{ marginLeft: '4rem', width: '900px' }}>
+                        <Grid.Row>
+                            <h2>🗓️ Schedule of Classes</h2>
+                            <Divider />
+                            <Schedule professorID={profWebsoc} />
+                        </Grid.Row>
+
+                        <Grid.Row>
+                            <h2 id='grade-dist-label'>📊 Grade Distribution</h2>
+                            <Divider />
+                            <GradeDist professor={profData} />
+                        </Grid.Row>                      
+                        <Grid.Row>
+                            <h2 id='grade-dist-label'>💬 Reviews</h2>
+                            <Divider />
+                            <Review professor={profData} />
+                        </Grid.Row>
+                    </article>
+                </div>
+            </Twemoji>
+        )
+    }
 }
 
 export default ProfessorPage

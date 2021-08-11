@@ -8,52 +8,71 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 
 import { WebsocResponse, Section } from 'websoc-api';
-import { CourseData } from '../../types/types';
+import { CourseData, GenericObject } from '../../types/types';
 
 interface ScheduleProps {
     courseID?: string;
+    professorID?: string;
+}
+
+interface ScheduleData {
+    [key: string]: Section[];
 }
 
 const Schedule: FC<ScheduleProps> = (props) => {
     // For fetching data from API
-    const [scheduleData, setScheduleData] = useState<Section[]>(null!);
+    const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
 
     const currentQuarter = '2020 Winter';
     useEffect(() => {
         fetchScheduleDataFromAPI(currentQuarter);
     }, [])
 
+    console.log('Schedule Props', props);
 
     const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
-        let department;
-        let number;
+        let url = '';
         if (props.courseID) {
+            let department;
+            let number;
             const str = props.courseID.split(' ');
             department = str.slice(0, str.length - 1).join(' ');
             number = str[str.length - 1];
+            url = `/schedule/api/${currentQuarter}/${department}/${number}`;
         }
-        const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(`/schedule/api/${currentQuarter}/${department}/${number}`);
+        else if (props.professorID) {
+            url = `/schedule/api/${currentQuarter}/${props.professorID}`;
+        }
+
+        const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);
         try {
-            let sections = apiResponse.data.schools[0].departments[0].courses[0].sections;
-            setScheduleData(sections);
+            let data: ScheduleData = {};
+            apiResponse.data.schools.forEach(school => {
+                school.departments.forEach(department => {
+                    department.courses.forEach(course => {
+                        data[department.deptCode + course.courseNumber] = course.sections
+                    })
+                })
+            })
+            setScheduleData(data);
         }
         catch (error) {
             // No school/department/course
             if (error instanceof TypeError) {
-                setScheduleData([]);
+                setScheduleData({});
             }
         }
     }
 
-    const renderButton = (course: Section) => {
+    const renderButton = (section: Section) => {
         //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'
-        if (course.status == 'OPEN') {
+        if (section.status == 'OPEN') {
             return (
                 // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-open btn-status' disabled={true}> OPEN </Button>
             )
         }
-        else if (course.status == 'WAITL') {
+        else if (section.status == 'WAITL') {
             return (
                 // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-waitl btn-status' disabled={true}> WAITLIST </Button>
@@ -69,17 +88,17 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
 
 
-    const renderProgressBar = (course: Section) => {
+    const renderProgressBar = (section: Section) => {
         //This function returns the progress Bar for the enrollment into the class.
-        let percentage = Number(course.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(course.maxCapacity);
-        if (course.status == 'OPEN') {
+        let percentage = Number(section.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(section.maxCapacity);
+        if (section.status == 'OPEN') {
             return (
                 <div className='progress-bar'>
                     <ProgressBar variant='success' now={percentage} />
                 </div>
             )
         }
-        else if (course.status == 'WAITL') {
+        else if (section.status == 'WAITL') {
             return (
                 <div className='progress-bar'>
                     <ProgressBar variant='warning' now={percentage} />
@@ -95,32 +114,33 @@ const Schedule: FC<ScheduleProps> = (props) => {
         }
     }
 
-    const renderData = (course: Section, index: number) => {
+    const renderData = (courseID: string, section: Section, index: number) => {
         //This function returns the data for a dynamic table after accessing the API
         return (
             <tr key={index}>
-                <td className='data-col'>{course.sectionCode}</td>
-                <td className='data-col'>{course.sectionType} {course.sectionNum}</td>
-                <td className='data-col'>{course.units}</td>
-                <td className='data-col'>{course.instructors[0]}</td>
-                <td className='data-col'>{course.meetings[0].time}</td>
-                <td className='data-col'>{course.meetings[0].bldg}</td>
+                {props.professorID && <td className='data-col'>{courseID}</td>}
+                <td className='data-col'>{section.sectionCode}</td>
+                <td className='data-col'>{section.sectionType} {section.sectionNum}</td>
+                <td className='data-col'>{section.units}</td>
+                <td className='data-col'>{section.instructors[0]}</td>
+                <td className='data-col'>{section.meetings[0].time}</td>
+                <td className='data-col'>{section.meetings[0].bldg}</td>
 
                 <td className='enrollment-col'>
                     <span className='enrollment-info-text'>
-                        {Number(course.numCurrentlyEnrolled.totalEnrolled)} / {Number(course.maxCapacity)}
+                        {Number(section.numCurrentlyEnrolled.totalEnrolled)} / {Number(section.maxCapacity)}
                     </span>
                     <span className='enrollment-percentage'>
-                        {(Number(course.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(course.maxCapacity)) >> 0}%
+                        {(Number(section.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(section.maxCapacity)) >> 0}%
                     </span>
 
-                    {renderProgressBar(course)}
+                    {renderProgressBar(section)}
                 </td>
 
-                <td className='data-col'>{course.numOnWaitlist}</td>
-                <td className='data-col'>{course.restrictions}</td>
+                <td className='data-col'>{section.numOnWaitlist}</td>
+                <td className='data-col'>{section.restrictions}</td>
                 <td className='data-col'>
-                    {renderButton(course)}
+                    {renderButton(section)}
                 </td>
             </tr>
         )
@@ -129,29 +149,35 @@ const Schedule: FC<ScheduleProps> = (props) => {
     if (!scheduleData) {
         return <p> Loading Schedule..</p>;
     } else {
+        let sectionElements: JSX.Element[] = [];
+        Object.keys(scheduleData).forEach(courseID => {
+            scheduleData[courseID].forEach((section, i) => {
+                sectionElements.push(renderData(courseID, section, i))
+            })
+        })
+
         return (
             <div>
-                <Col className='col-tableHolder'>
-                    <Table responsive borderless className='schedule-table'>
-                        <thead>
-                            <tr>
-                                <th> Code </th>
-                                <th> Section </th>
-                                <th> Units </th>
-                                <th> Instructor </th>
-                                <th> Time </th>
-                                <th> Place </th>
-                                <th className='enrollment-col'> Enrollment </th>
-                                <th> WL </th>
-                                <th> Rstr </th>
-                                <th> Status </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {scheduleData.map(renderData)}
-                        </tbody>
-                    </Table>
-                </Col>
+                <Table responsive borderless className='schedule-table'>
+                    <thead>
+                        <tr>
+                            {props.professorID && <th> Course </th>}
+                            <th> Code </th>
+                            <th> Section </th>
+                            <th> Units </th>
+                            <th> Instructor </th>
+                            <th> Time </th>
+                            <th> Place </th>
+                            <th className='enrollment-col'> Enrollment </th>
+                            <th> WL </th>
+                            <th> Rstr </th>
+                            <th> Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {sectionElements}
+                    </tbody>
+                </Table>
             </div>
         )
     }

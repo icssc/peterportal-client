@@ -4,10 +4,11 @@ import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss'
 
-import { CourseData, GradeDistData } from '../../types/types';
+import { CourseData, ProfessorData, GradeDistData } from '../../types/types';
 
-interface GradeDistProps extends CourseData {
-  currentProf?: string
+interface GradeDistProps {
+  course?: CourseData;
+  professor?: ProfessorData;
 }
 
 interface Entry {
@@ -23,34 +24,52 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   const [gradeDistData, setGradeDistData] = useState<GradeDistData>(null!);
   const [currentQuarter, setCurrentQuarter] = useState('');
-  const [currentProf, setCurrentProf] = useState(props.currentProf || '');
+  const [currentProf, setCurrentProf] = useState('');
   const [profEntries, setProfEntries] = useState<Entry[]>(null!);
+  const [currentCourse, setCurrentCourse] = useState('');
+  const [courseEntries, setCourseEntries] = useState<Entry[]>(null!);
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   // initial request to get grade dist data
   useEffect(() => {
     if (gradeDistData == null) {
-      fetch(`/courses/api/grades/${props.department}/${props.number}`)
+      let url = '';
+      // course context
+      if (props.course) {
+        url = `/courses/api/grades/${props.course.department}/${props.course.number}`;
+      }
+      else if (props.professor) {
+        const arr = props.professor.name.split(' ');
+        const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
+        url = `/professors/api/grades/${name}`;
+      }
+      fetch(url)
         .then(response => response.json())
         .then(data => {
+          console.log(data);
           setGradeDistData(data);
         });
     }
   })
 
-  // update list of professors when new course is detected
+  // update list of professors/courses when new course/professor is detected
   useEffect(() => {
     if (gradeDistData && gradeDistData.length !== 0) {
-      createProfEntries();
+      if (props.course) {
+        createProfEntries();
+      }
+      else if (props.professor) {
+        createCourseEntries();
+      }
     }
   }, [gradeDistData])
 
-  // update list of quarters when new professor is chosen
+  // update list of quarters when new professor/course is chosen
   useEffect(() => {
-    if (currentProf && gradeDistData.length !== 0) {
+    if ((currentProf || currentCourse) && gradeDistData.length !== 0) {
       createQuarterEntries();
     }
-  }, [currentProf])
+  }, [currentProf, currentCourse])
 
   /*
    * Create an array of objects to feed into the quarter dropdown menu.
@@ -58,14 +77,21 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createQuarterEntries = () => {
     let quarters: Set<string> = new Set()
-    let result: Entry[] = [];
+    let result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
 
     gradeDistData
-      .filter(entry => entry.instructor === currentProf)
+      .filter(entry => {
+        if (props.course && entry.instructor === currentProf) {
+          return true;
+        }
+        if (props.professor && (entry.department + ' ' + entry.number) == currentCourse) {
+          return true;
+        }
+        return false;
+      })
       .forEach(data => quarters.add(data.quarter + ' ' + data.year));
     quarters.forEach(quarter => result.push({ value: quarter, text: quarter }));
 
-    console.log(currentProf, quarters, result)
     setQuarterEntries(result);
     setCurrentQuarter(result[0].value);
   }
@@ -90,6 +116,25 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   }
 
   /*
+ * Create an array of objects to feed into the course dropdown menu.
+ * @return an array of JSON objects recording course's names
+ */
+  const createCourseEntries = () => {
+    let courses: Set<string> = new Set()
+    let result: Entry[] = [];
+
+    gradeDistData
+      .forEach(match => courses.add(match.department + ' ' + match.number));
+
+    courses.forEach(course => result.push(
+      { value: course, text: course }
+    ));
+
+    setCourseEntries(result);
+    setCurrentCourse(result[0].value);
+  }
+
+  /*
    * Record what is in the quarter dropdown menu at the moment.
    * @param event an event object recording the mouse movement, etc.
    * @param status details about the status in the dropdown menu
@@ -107,18 +152,33 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     setCurrentProf(status.value as string);
   }
 
+  /*
+ * Record what is in the course dropdown menu at the moment.
+ * @param event an event object recording the mouse movement, etc.
+ * @param status details about the status in the dropdown menu
+ */
+  const updateCurrentCourse = (event: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
+    setCurrentCourse(status.value as string);
+  }
+
   if (gradeDistData !== null && gradeDistData.length !== 0) {
+    let graphProps = {
+      gradeData: gradeDistData,
+      quarter: currentQuarter,
+      course: currentCourse,
+      professor: currentProf
+    }
     return (
       <div id='gradedist-module-container'>
         <Grid.Row columns={2} id='menu'>
           <Grid.Column style={{ marginRight: '1rem' }}>
             <Dropdown
-              placeholder='Professor'
+              placeholder={props.course ? 'Professor' : 'Course'}
               scrolling
               selection
-              options={profEntries}
-              value={currentProf}
-              onChange={updateCurrentProf}
+              options={props.course ? profEntries : courseEntries}
+              value={props.course ? currentProf : currentCourse}
+              onChange={props.course ? updateCurrentProf : updateCurrentCourse}
             />
           </Grid.Column>
 
@@ -136,18 +196,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
         <Grid.Row id='chart'>
           <div className={'grade_distribution_chart-container chart'}>
-            <Chart
-              gradeData={gradeDistData}
-              quarter={currentQuarter}
-              professor={currentProf}
-            />
+            <Chart {...graphProps} />
           </div>
           <div className={'grade_distribution_chart-container pie'}>
-            <Pie
-              gradeData={gradeDistData}
-              quarter={currentQuarter}
-              professor={currentProf}
-            />
+            <Pie {...graphProps} />
           </div>
         </Grid.Row>
       </div>

@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { ObjectID } from 'mongodb';
-import { COLLECTION_NAMES, getDB, addDocument, getDocuments, updateDocument } from '../helpers/mongo';
+import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, updateDocument } from '../helpers/mongo';
 
 var router = express.Router();
 
@@ -66,5 +66,12 @@ router.patch('/vote', async function (req, res) {
 
   res.json(status);
 });
+
+router.get('/clear', async function (req, res) {
+  let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
+  let status = await reviewsCollection.deleteMany({});
+
+  res.json(status);
+})
 
 export default router;

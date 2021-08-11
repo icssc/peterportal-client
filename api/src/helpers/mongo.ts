@@ -172,4 +172,4 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
     });
 }
 
-export { DB_NAME, COLLECTION_NAMES, getDB, containsID, addDocument, getDocuments, updateDocument };
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument };

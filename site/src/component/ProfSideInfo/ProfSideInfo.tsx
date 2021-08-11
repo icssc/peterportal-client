@@ -28,7 +28,7 @@ const ProfessorSideInfo: FC<ProfessorSideInfoProps> = (props) => {
                         {props.course_history.map((e) =>
                             <div key={`side-course-${e}`}>
                                 <span>
-                                    <Link to={{ pathname: `/course/${e.replace(/\s/g,'')}` }}>
+                                    <Link to={{ pathname: `/course/${e.replace(/\s+/g,'')}` }}>
                                         {e}
                                     </Link>
                                 </span>

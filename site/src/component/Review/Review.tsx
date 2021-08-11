@@ -6,21 +6,28 @@ import './Review.scss'
 
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseData, ReviewData } from '../../types/types';
+import { CourseData, ProfessorData, ReviewData } from '../../types/types';
 
-export interface ReviewProps extends CourseData {
+export interface ReviewProps {
+    course?: CourseData;
+    professor?: ProfessorData;
 }
 
 const Review: FC<ReviewProps> = (props) => {
     const dispatch = useAppDispatch();
-    const reviewData = useAppSelector(selectReviews); 
+    const reviewData = useAppSelector(selectReviews);
     const [openForm, setOpenForm] = useState(false);
 
     const getReviews = async () => {
+        interface paramsProps {
+            courseID?: string;
+            professorID?: string;
+        }
+        let params: paramsProps = {};
+        if (props.course) params['courseID'] = props.course.id;
+        if (props.professor) params['professorID'] = props.professor.ucinetid;
         axios.get(`/reviews`, {
-            params: {
-                courseID: props.id
-            }
+            params: params
         })
             .then((res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null)
@@ -48,7 +55,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} />)
+                        if (review !== null) return (<SubReview review={review} key={i} showCourse={props.professor ? true : false} />)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>

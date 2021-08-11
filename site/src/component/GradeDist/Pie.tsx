@@ -16,7 +16,8 @@ interface Slice {
 interface PieProps {
   gradeData: GradeDistData;
   quarter: string;
-  professor: string;
+  professor?: string;
+  course?: string;
 }
 
 export default class Pie extends React.Component<PieProps> {
@@ -37,8 +38,8 @@ export default class Pie extends React.Component<PieProps> {
     var sum = 0
 
     this.props.gradeData.forEach(data => {
-      if (data.quarter + ' ' + data.year === this.props.quarter
-        && data.instructor === this.props.professor) {
+      if ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL')
+        && (data.instructor === this.props.professor || (data.department + ' ' + data.number) === this.props.course)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;
@@ -119,8 +120,8 @@ export default class Pie extends React.Component<PieProps> {
             left: 15,
             right: 15
           }}
-          enableArcLabels={true}
-          enableArcLinkLabels={true}
+          enableArcLabels={false}
+          enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
           colors={['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D']}

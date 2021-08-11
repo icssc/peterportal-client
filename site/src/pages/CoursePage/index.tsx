@@ -58,19 +58,18 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                         <Grid.Row>
                             <h2 id='grade-dist-label'>📊 Grade Distribution</h2>
                             <Divider />
-                            <GradeDist {...courseData} />
+                            <GradeDist course={courseData} />
                         </Grid.Row>
 
                         <Grid.Row>
                             <h2 id='grade-dist-label'>💬 Reviews</h2>
                             <Divider />
-                            <Review {...courseData} />
+                            <Review course={courseData} />
                         </Grid.Row>
                     </article>
                 </div>
             </Twemoji>
         )
-
     }
 }
 

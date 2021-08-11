@@ -6,9 +6,10 @@ import { ReviewData, VoteRequest } from '../../types/types';
 
 interface SubReviewProps {
   review: ReviewData;
+  showCourse: boolean;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review }) => {
+const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
   const [score, setScore] = useState(review.score);
 
   const voteReq = async (vote: VoteRequest) => {
@@ -39,7 +40,8 @@ const SubReview: FC<SubReviewProps> = ({ review }) => {
       <div className='content'>
         <h3 className='reviewer'>{review.userDisplay}</h3>
         <div className='review-info'>
-          <p><b>Taken With: </b>{review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1)}</p>
+          {!showCourse && <p><b>Taken With: </b>{review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1)}</p>}
+          {showCourse && <p><b>Course Taken: </b>{review.courseID}</p>}
           <p><b>Quarter Taken: </b>{review.quarter}</p>
           <p><b>Grade Received: </b>{review.gradeReceived}</p>
         </div>
