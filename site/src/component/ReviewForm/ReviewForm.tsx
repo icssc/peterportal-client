@@ -4,7 +4,7 @@ import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
 import { useQuery } from '@apollo/client';
-import { getProfessorNamesFromCourse, GetProfessorNameData } from '../../helpers/util';
+import { useProfessorNames } from '../../hooks/professorNames';
 
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -24,7 +24,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'F'
   ];
 
-  const { loading, error, data } = useQuery<GetProfessorNameData>(getProfessorNamesFromCourse(props.course?.id));
+  const { loading, error, professorNames } = useProfessorNames(props.course?.id);
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [quarterTaken, setQuarterTaken] = useState('');
@@ -124,7 +124,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <h5>Taken with:</h5>
     <select name='instructor' id='instructor' onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected >Instructor</option>
-      {data && data.course && data.course.instructor_history.map((instructor, i) => {
+      {professorNames.map((instructor, i) => {
         const arr = instructor.name.split(' ');
         const name = `${arr[0][0]}. ${arr[arr.length - 1]}`
         return (

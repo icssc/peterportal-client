@@ -1,16 +1,15 @@
 import React, { FC } from 'react';
 import { min, max } from 'lodash';
-import { useQuery, gql } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import { CourseData } from '../../types/types';
 
-import { getProfessorNamesFromCourse, GetProfessorNameData } from '../../helpers/util';
+import { useProfessorNames } from '../../hooks/professorNames';
 
 interface CourseSideInfoProps extends CourseData {
 }
 
 const CourseSideInfo: FC<CourseSideInfoProps> = (props) => {
-    const { loading, error, data } = useQuery<GetProfessorNameData>(getProfessorNamesFromCourse(props.id));
+    const { loading, error, professorNames } = useProfessorNames(props.id);
 
     if (loading) return <>'Loading...'</>;
     else if (error) return <>`Error! ${error.message}`</>;
@@ -50,7 +49,7 @@ const CourseSideInfo: FC<CourseSideInfoProps> = (props) => {
 
             {props.professor_history.length != 0 && <div>
                 <h5>Instructor History</h5>
-                {data!.course.instructor_history.map((prof) =>
+                {professorNames.map((prof) =>
                     <div key={`instr-hist-${prof.ucinetid}`}>
                         <span>
                             <Link to={{ pathname: `/professor/${prof.ucinetid}` }}>

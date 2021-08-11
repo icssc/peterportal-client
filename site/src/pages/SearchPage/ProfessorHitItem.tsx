@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Hit.scss';
 import { get } from 'lodash';
 import { RenderComponentType, HitItemProps } from 'searchkit';
+import { useAppDispatch } from '../../store/hooks';
+import { setProfessor } from '../../store/slices/popupSlice';
 
 import { ProfessorData } from '../../types/types';
 
@@ -16,19 +18,26 @@ interface ProfessorHitItemProps extends HitItemProps {
 }
 
 const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
 
+  const onClickName = () => {
+    dispatch(setProfessor(props.result._source))
+  }
+
   return (
     <div style={{ display: 'flex', margin: '0 0 42px' }}>
-      <a href={'/professor/' + props.result._id}><div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
-        <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
-          {props.result._source.name.split(' ').map((x: string) => x[0])}
-        </h3>
-      </div></a>
+      <a href='#' onClick={onClickName}>
+        <div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
+          <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
+            {props.result._source.name.split(' ').map((x: string) => x[0])}
+          </h3>
+        </div></a>
       <div style={{ width: '100%' }}>
-        <a href={'/professor/' + props.result._id}>
+        <a href='#' onClick={onClickName} >
           <h3>
             <span
               className={props.bemBlocks.item('prof_name')}

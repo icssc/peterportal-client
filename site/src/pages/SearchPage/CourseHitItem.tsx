@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
+import { useAppDispatch } from '../../store/hooks';
+import { setCourse } from '../../store/slices/popupSlice';
 
 import { CourseData } from '../../types/types';
 
@@ -16,6 +18,8 @@ interface CourseHitItemProps extends HitItemProps {
 }
 
 const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHitItemProps) => {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
@@ -24,7 +28,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
     <div>
       <div style={{ display: 'flex' }}>
         <div>
-          <a href={'/course/' + props.result._id}>
+          <a href='#' onClick={() => { dispatch(setCourse(props.result._source)) }}>
             <h3>
               <span
                 className={props.bemBlocks.item('department')}

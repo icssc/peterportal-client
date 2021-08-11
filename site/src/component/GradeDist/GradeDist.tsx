@@ -30,27 +30,37 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [courseEntries, setCourseEntries] = useState<Entry[]>(null!);
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
+  const fetchGradeDistData = () => {
+    let url = '';
+    // course context
+    if (props.course) {
+      url = `/courses/api/grades/${props.course.department}/${props.course.number}`;
+    }
+    else if (props.professor) {
+      const arr = props.professor.name.split(' ');
+      const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
+      url = `/professors/api/grades/${name}`;
+    }
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setGradeDistData(data);
+      });
+  }
+
   // initial request to get grade dist data
   useEffect(() => {
     if (gradeDistData == null) {
-      let url = '';
-      // course context
-      if (props.course) {
-        url = `/courses/api/grades/${props.course.department}/${props.course.number}`;
-      }
-      else if (props.professor) {
-        const arr = props.professor.name.split(' ');
-        const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
-        url = `/professors/api/grades/${name}`;
-      }
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          setGradeDistData(data);
-        });
+      fetchGradeDistData();
     }
   })
+
+  // get new data if choose a new course or professor
+  useEffect(() => {
+    setGradeDistData([]);
+    fetchGradeDistData();
+  }, [props.course?.id, props.professor?.ucinetid])
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {

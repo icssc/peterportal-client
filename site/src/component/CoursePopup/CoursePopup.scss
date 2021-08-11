@@ -1,0 +1,25 @@
+.course-popup-missing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100vh;
+    text-align: center;
+}
+
+.course-popup {
+    background-color: #EEEEEE;
+    padding: 1rem;
+}
+
+.course-popup-id {
+    margin-bottom: 0.2rem;
+}
+
+.course-popup-title {
+    margin: 0;
+}
+
+.course-popup-info {
+    display: flex;
+}

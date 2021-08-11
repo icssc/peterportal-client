@@ -6,6 +6,8 @@ import SearchSidebar from './SearchSidebar'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
 import Sidebar from '../../component/SideBar/SideBar'
+import CoursePopup from '../../component/CoursePopup/CoursePopup'
+import ProfessorPopup from '../../component/ProfessorPopup/ProfessorPopup'
 
 import { ElasticSearchIndex } from '../../types/types';
 
@@ -27,9 +29,15 @@ export default class SearchPage extends SearchkitComponent<SearchPageProps, {}> 
                             <SearchSidebar query={this.props.match.params.index} />
                         </aside>
                     </Sidebar>
-                    <div>
-                        <SearchModule query={this.props.match.params.index} />
-                        <SearchHitContainer query={this.props.match.params.index} />
+                    <div style={{ display: 'flex', flexGrow: 1 }}>
+                        <div style={{ overflow: 'scroll', height: '100vh', width: '55vw', overflowX: 'hidden' }}>
+                            <SearchModule query={this.props.match.params.index} />
+                            <SearchHitContainer query={this.props.match.params.index} />
+                        </div>
+                        <div style={{ flexGrow: 1 }}>
+                            {this.props.match.params.index == 'courses' && <CoursePopup />}
+                            {this.props.match.params.index == 'professors' && <ProfessorPopup />}
+                        </div>
                     </div>
                 </>
             </SearchkitProvider>
