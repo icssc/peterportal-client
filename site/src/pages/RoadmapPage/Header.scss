@@ -1,0 +1,42 @@
+* {
+  --zot-blue: #2484c6;
+  --aldrich-blue: #74d1f6;
+  --ring-road-white: #ffffff;
+  --petr-gray: #808080;
+}
+
+.header {
+  background: linear-gradient(to right, var(--zot-blue), var(--aldrich-blue));
+  height: 3rem;
+  color: var(--ring-road-white);
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#planner-stats {
+  margin-left: 1rem;
+}
+
+#course-count,
+#unit-count {
+  font-weight: bold;
+}
+
+.header-btn {
+  color: var(--ring-road-white);
+  background-color: transparent;
+  font-weight: bold;
+  border: none;
+}
+
+.header-btn:hover,
+.header-btn:focus {
+  background-color: transparent;
+  color: var(--ring-road-white);
+}
+
+.header-icon {
+  margin-left: 10px;
+}

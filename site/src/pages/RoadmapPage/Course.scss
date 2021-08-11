@@ -1,0 +1,66 @@
+.course {
+  box-shadow: 0px 0px 4px #2484C6;
+  background: #FFFFFF;
+  margin: 0rem 2rem 1rem 2rem;
+  border-radius: 15px;
+  height: auto;
+  font-size: 16px;
+  padding: 10px 20px;
+  position: relative;
+
+  .name {
+    font-weight: bold;
+    color: #2484C6;
+    font-size: 18px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .units {
+    color: #808080;
+    font-size: 14px;
+  }
+}
+
+.course-card-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-circle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+.course-popover {
+  background: #FFFFFF;
+  padding: 5%;
+
+  .popover-name {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+  }
+
+  .popover-units {
+    color: #c4c4c4;
+
+    .popover-units-value {
+      font-weight: bold;
+    }
+  }
+
+  .popover-description {
+    padding-top: 5%;
+  }
+
+  .popover-prerequisites {
+    padding-top: 5%;
+  }
+  .popover-prerequisites-prefix {
+      font-weight: bold;
+  }
+}

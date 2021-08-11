@@ -1,0 +1,91 @@
+* {
+  --zot-blue: #2484c6;
+  --aldrich-blue: #74d1f6;
+  --ring-road-white: #ffffff;
+  --petr-gray: #808080;
+}
+
+.year {
+  margin: 1rem;
+  align-items: center;
+  background-color: var(--ring-road-white);
+  border-radius: 10px;
+  display: inline-block;
+  width: 97%;
+}
+
+.yearTitleBar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.caret-icon {
+  margin-right: 10px;
+}
+.year-accordion,
+.year-accordion-content {
+  background-color: var(--ring-road-white);
+  display: flex;
+}
+
+.year-accordion-title {
+  display: flex;
+  justify-content: space-between;
+  font-weight: normal;
+}
+
+#year-number,
+#course-count,
+#unit-count {
+  font-weight: bold;
+}
+
+#year-stats {
+  color: var(--petr-gray);
+}
+
+#year-title {
+  font-size: 1.2rem;
+  color: black;
+}
+
+#year-accordion-icon {
+  display: inline;
+  padding-right: 1rem;
+}
+
+.year-accordion {
+  width: 95%;
+  padding-right: 0;
+}
+
+.year-accordion:hover,
+.year-accordion:active,
+.year-accordion:focus {
+  text-decoration: none;
+  box-shadow: none;
+}
+
+.year-accordion-title {
+  width: 100%;
+}
+
+.edit-btn {
+  background-color: var(--ring-road-white);
+  width: 5%;
+  margin-top: 10px;
+}
+
+.edit-btn:hover {
+  cursor: pointer;
+}
+
+.year-settings-btn {
+  display: block;
+  background: transparent;
+  padding: 0;
+}
+
+#remove-btn {
+  color: red;
+}

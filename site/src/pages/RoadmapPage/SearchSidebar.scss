@@ -1,0 +1,40 @@
+.search-sidebar {
+  position: sticky;
+  right: 0;
+  top: 0;
+  padding: 0.5rem;
+}
+
+.search-title {
+  color: #4D4D4D;
+  font-size: 28px;
+  font-weight: bold;
+  display: inline-block;
+  padding-right: 3rem;
+  padding-left: 1rem;
+}
+
+.custom-button{
+  color: var(--petr-gray);
+  font-size: 20px;
+  font-weight: bold;
+  display: inline-block;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.plus-circle{
+  color: var(--petr-gray);
+  font-size: 1.35rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.search {
+  padding: 2rem;
+}
+
+.search-header{
+  display:flex;
+}
