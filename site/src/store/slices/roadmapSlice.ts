@@ -42,7 +42,7 @@ interface CourseIdentifier extends QuarterIdentifier {
     courseIndex: number;
 }
 
-export const reviewSlice = createSlice({
+export const roadmapSlice = createSlice({
     name: 'roadmap',
     // `createSlice` will infer the state type from the `initialState` argument
     initialState,
@@ -88,9 +88,9 @@ export const reviewSlice = createSlice({
     },
 })
 
-export const { moveCourse, addYear, deleteYear, setActiveCourse, setYearPlans } = reviewSlice.actions
+export const { moveCourse, addYear, deleteYear, setActiveCourse, setYearPlans } = roadmapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectYearPlans = (state: RootState) => state.roadmap.yearPlans;
 
-export default reviewSlice.reducer
+export default roadmapSlice.reducer
