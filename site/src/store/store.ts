@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import reviewReducer from './slices/reviewSlice';
 import uiReducer from './slices/uiSlice';
 import popupReducer from './slices/popupSlice';
+import roadmapReducer from './slices/roadmapSlice';
 
 export const store = configureStore({
     reducer: {
         review: reviewReducer,
         ui: uiReducer,
         popup: popupReducer,
+        roadmap: roadmapReducer
     }
 })
 

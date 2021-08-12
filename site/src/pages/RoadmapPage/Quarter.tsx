@@ -1,26 +1,28 @@
-import React from "react";
+import React, { FC } from "react";
 import "./Quarter.scss";
-import { Draggable } from "react-beautiful-dnd";
-import Course from "./Course.jsx";
+import { Draggable, DroppableProvided } from "react-beautiful-dnd";
+import Course from "./Course";
 
-const Quarter = ({
-  year,
-  provided,
-  yearIndex,
-  quarter,
-  state,
-  plannerStats,
-}) => {
-  let quarterTitle = quarter.charAt(0).toUpperCase() + quarter.slice(1);
-  let quarterContents = null;
-  let quarterKey = yearIndex + "-" + quarter;
-  if (quarterKey in state["year-plans"][yearIndex]) {
-    quarterContents = state["year-plans"][yearIndex][quarterKey];
-  }
+import { PlannerQuarterData } from '../../types/types';
+
+interface QuarterProps {
+  year: number;
+  provided: DroppableProvided;
+  yearIndex: number;
+  quarterIndex: number;
+  data: PlannerQuarterData
+}
+
+const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, data }) => {
+  let quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
 
   const calculateQuarterStats = () => {
-    let unitCount = plannerStats[yearIndex][quarter][0];
-    let courseCount = plannerStats[yearIndex][quarter][1];
+    let unitCount = 0;
+    let courseCount = 0;
+    data.courses.forEach(course => {
+      unitCount += course.units[0];
+      courseCount += 1;
+    })
     return [unitCount, courseCount];
   };
 
@@ -34,10 +36,9 @@ const Quarter = ({
       <div className="quarter-units">
         {unitCount} {unitCount === 1 ? "unit" : "units"}
       </div>
-      {state &&
-        quarterContents?.map((course, index) => {
+      {data.courses.map((course, index) => {
           return (
-            <Draggable key={course.id} draggableId={course.id} index={index}>
+            <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
               {(provided) => {
                 return (
                   <div

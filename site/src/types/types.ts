@@ -9,7 +9,7 @@ export interface CourseData {
     units: number[];
     description: string;
     department_name: string;
-    professor_history: string;
+    professor_history: string[];
     prerequisite_tree: string;
     prerequisite_list: string[];
     prerequisite_text: string;
@@ -117,4 +117,20 @@ export interface GenericObject {
      * Can have any key string and any value type
      */
     [key: string]: any;
+}
+
+
+/**
+ * Peter's Roadmaps Type Definitions
+ */
+export type PlannerData = PlannerYearData[]; 
+
+export interface PlannerYearData {
+    startYear: number;
+    quarters: PlannerQuarterData[];
+}
+
+export interface PlannerQuarterData {
+    name: string;
+    courses: CourseData[];
 }
