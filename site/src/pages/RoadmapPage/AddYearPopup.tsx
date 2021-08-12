@@ -1,27 +1,29 @@
-import React, { useState, useRef } from "react";
+import React, { FC, useState, useRef } from "react";
 import "./AddYearPopup.scss";
 import { PlusCircleFill } from "react-bootstrap-icons";
 import { Button, Form, Popover, Overlay } from "react-bootstrap";
+import { addYear } from '../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../store/hooks';
 
-function AddYearPopup({ addYearToPlanner }) {
+const AddYearPopup: FC = () => {
+  const dispatch = useAppDispatch();
   const placeholderYear = new Date().getFullYear();
   const [year, setYear] = useState(placeholderYear);
   const [show, setShow] = useState(false);
-  const [target, setTarget] = useState(null);
+  const target = useRef(null);
 
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent) => {
     setShow(!show);
-    setTarget(event.target);
   };
 
   return (
     <div>
-      <Button variant="light" className="add-year-btn" onClick={handleClick}>
+      <Button variant="light" ref={target} className="add-year-btn" onClick={handleClick}>
         <PlusCircleFill className="add-year-icon" />
         <div className="add-year-text">Add year</div>
       </Button>
       <Overlay show={show} target={target} placement="bottom">
-        <Popover>
+        <Popover id=''>
           <Popover.Content>
             <Form>
               <Form.Group>
@@ -33,7 +35,13 @@ function AddYearPopup({ addYearToPlanner }) {
                   name="year"
                   value={year}
                   onChange={(e) => {
-                    setYear(e.target.value);
+                    setYear(parseInt(e.target.value));
+                  }}
+                  onKeyDown={(e: React.KeyboardEvent) => {
+                    // prevent submitting form (reloads the page)
+                    if (e.key === 'Enter'){
+                      e.preventDefault();
+                    }
                   }}
                   min={1000}
                   max={9999}
@@ -44,7 +52,14 @@ function AddYearPopup({ addYearToPlanner }) {
                 className="popup-btn"
                 onClick={() => {
                   setShow(!show);
-                  addYearToPlanner(year);
+                  dispatch(addYear(
+                    {
+                      yearData: {
+                        startYear: year,
+                        quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
+                      }
+                    }
+                  ));
                   setYear(placeholderYear);
                 }}
               >
@@ -54,7 +69,7 @@ function AddYearPopup({ addYearToPlanner }) {
           </Popover.Content>
         </Popover>
       </Overlay>
-    </div>
+    </div >
   );
 }
 
