@@ -67,15 +67,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           SLS_DEBUG: 1      
 
-  deployHeroku:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Out Repo
-        uses: actions/checkout@v2
+  # deployHeroku:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check Out Repo
+  #       uses: actions/checkout@v2
         
-      - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "peterportal" #Must be unique in Heroku
-          heroku_email: "peterportal.dev@gmail.com"
+  #     - name: Deploy to heroku
+  #       uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+  #       with:
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #         heroku_app_name: "peterportal" #Must be unique in Heroku
+  #         heroku_email: "peterportal.dev@gmail.com"
