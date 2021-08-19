@@ -27,15 +27,6 @@ jobs:
       - name: Check Out Repo
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: |
-          npm install
-          npm run postinstall
-
-      - name: Build Frontend and Backend
-        run: |
-          npm run heroku-postbuild
-
       - name: Dump Environment Variables
         run: |
           cd api && printf "PUBLIC_API_URL=$PUBLIC_API_URL\n \
@@ -47,7 +38,22 @@ jobs:
             GOOGLE_CLIENT=$GOOGLE_CLIENT\n \
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
-            PORT=$PORT"
+            PORT=$PORT" > .env
+          cat .env
+          ls
+
+      - name: Install dependencies
+        run: |
+          ls
+          npm install
+          npm run postinstall
+          ls
+
+      - name: Build Frontend and Backend
+        run: |
+          ls
+          npm run heroku-postbuild
+          ls
 
       - name: Deploy to serverless
         uses: serverless/github-action@v1.53.0
