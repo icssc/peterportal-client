@@ -12,6 +12,8 @@ jobs:
   deployAWS:
     runs-on: ubuntu-latest
     env:
+      # need to set to false, otherwise react warnings will be treated as errors
+      CI: false
       PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
       PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
       PETERPORTAL_MAIN_ES: ${{secrets.PETERPORTAL_MAIN_ES}}
@@ -40,20 +42,21 @@ jobs:
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
             PORT=$PORT" > .env
           cat .env
-          ls
+          ls -a
 
       - name: Install dependencies
         run: |
-          ls
-          npm install
           npm run postinstall
-          ls
+          ls -a api
+          ls -a site
 
       - name: Build Frontend and Backend
         run: |
-          ls
+          ls -a api
+          ls -a site
           npm run heroku-postbuild
-          ls
+          ls -a api
+          ls -a site
 
       - name: Deploy to serverless
         uses: serverless/github-action@v1.53.0
