@@ -1,0 +1,30 @@
+service: peterportal-core
+useDotenv: true
+
+plugins:
+  - serverless-domain-manager
+  - serverless-dotenv-plugin
+
+custom:
+  customDomain:
+    domainName: peterportal.org
+    certificateName: 'peterportal.org'
+    basePath: ''
+    createRoute53Record: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: prod
+
+functions:
+  app:
+    handler: dist/app.handler
+    events: 
+      - http: 
+          path: /
+          method: ANY
+      - http: 
+          path: /{proxy+}
+          method: ANY

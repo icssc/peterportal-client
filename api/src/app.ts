@@ -13,6 +13,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import serverless from 'serverless-http';
 
 console.log('Starting server...')
 
@@ -117,4 +118,7 @@ app.use(function (req, res, next) {
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` })
 })
 
+// export for local dev
 export default app
+// export for serverless
+exports.handler = serverless(app);

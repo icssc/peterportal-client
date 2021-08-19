@@ -107,7 +107,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   return (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                       <Quarter
-                        year={data.startYear}
+                        year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
                         provided={provided}
                         yearIndex={yearIndex}
                         quarterIndex={quarterIndex}
