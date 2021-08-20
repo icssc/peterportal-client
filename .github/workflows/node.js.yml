@@ -61,7 +61,8 @@ jobs:
       - name: Deploy to serverless
         uses: serverless/github-action@v1.53.0
         with:
-          args: -c "cd api && serverless deploy"
+          args: -c "cd api && ls -a && cat .env && serverless deploy"
+          entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID:  ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
