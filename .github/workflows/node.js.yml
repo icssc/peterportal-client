@@ -41,24 +41,16 @@ jobs:
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
             PORT=$PORT" > .env
-          cat .env
-          ls -a
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           npm run postinstall
-          ls -a api
-          ls -a site
 
       - name: Build Frontend and Backend
         run: |
-          ls -a api
-          ls -a site
           npm run heroku-postbuild
-          ls -a api
-          ls -a site
 
-      - name: Deploy to serverless
+      - name: Deploy to Serverless
         uses: serverless/github-action@v1.53.0
         with:
           args: -c "cd api && ls -a && cat .env && serverless deploy"
@@ -68,15 +60,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           SLS_DEBUG: 1      
 
-  # deployHeroku:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check Out Repo
-  #       uses: actions/checkout@v2
+  deployHeroku:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
         
-  #     - name: Deploy to heroku
-  #       uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-  #       with:
-  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-  #         heroku_app_name: "peterportal" #Must be unique in Heroku
-  #         heroku_email: "peterportal.dev@gmail.com"
+      - name: Deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "peterportal" #Must be unique in Heroku
+          heroku_email: "peterportal.dev@gmail.com"
