@@ -45,7 +45,7 @@ const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
 
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
-            <div style={{ overflow: 'scroll', width: '55vw', overflowX: 'hidden' }}>
+            <div style={{ overflow: 'scroll', width: '50vw', overflowX: 'hidden' }}>
                 <Collapse in={filterOpen}>
                     <div>
                         <SearchFilter query={index} />

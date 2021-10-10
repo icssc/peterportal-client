@@ -90,18 +90,18 @@ const SideBar: FC = ({ children }) => {
 
       {/* Login/Logout */}
       <div className='sidebar-login'>
-        {isLoggedIn && <Button variant='light'>
-          <FaSignOutAlt className='sidebar-login-icon' />
-          <a href='/users/logout'>
+        {isLoggedIn && <a href='/users/logout'>
+          <Button variant='light'>
+            <FaSignOutAlt className='sidebar-login-icon' />
             Log Out
-          </a>
-        </Button>}
-        {!isLoggedIn && <Button variant='light'>
-          <FaSignInAlt className='sidebar-login-icon' />
-          <a href='/users/auth/google'>
+          </Button>
+        </a>}
+        {!isLoggedIn && <a href='/users/auth/google'>
+          <Button variant='light'>
+            <FaSignInAlt className='sidebar-login-icon' />
             Log In
-          </a>
-        </Button>}
+          </Button>
+        </a>}
       </div>
     </div>
   )

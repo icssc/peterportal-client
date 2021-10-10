@@ -1,17 +1,13 @@
 @import './width.config.scss';
 
 .search-module {
-    max-width: $content-max-width;
-    min-width: $content-min-width;
-    width: $content-width;
     margin: 0 2rem;
     position: sticky;
     padding-bottom: 1rem;
 
     .search-bar {
-      position: sticky;
-      top: 0;
       display: flex;
+      justify-content: space-between;
 
       .search-filter-button {
         background-color: var(--peterportal-primary-color-1);
