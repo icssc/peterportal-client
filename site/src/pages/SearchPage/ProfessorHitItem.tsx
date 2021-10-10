@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import './Hit.scss';
 import { get } from 'lodash';
 import { RenderComponentType, HitItemProps } from 'searchkit';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 
 import { ProfessorData } from '../../types/types';
@@ -19,13 +20,22 @@ interface ProfessorHitItemProps extends HitItemProps {
 
 const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
+  const activeProfessor = useAppSelector(state => state.popup.professor);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [])
 
   const onClickName = () => {
-    dispatch(setProfessor(props.result._source))
+    // if click on a professor that is already in popup
+    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid) {
+      history.push(`/professor/${activeProfessor.ucinetid}`)
+    }
+    // click on new or different professor than popup
+    else {
+      dispatch(setProfessor(props.result._source))
+    }
   }
 
   return (

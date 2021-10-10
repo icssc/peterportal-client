@@ -10,12 +10,15 @@ import { CourseData, ProfessorData, GradeDistData } from '../../types/types';
 interface GradeDistProps {
   course?: CourseData;
   professor?: ProfessorData;
+  minify?: boolean;
 }
 
 interface Entry {
   value: string;
   text: string;
 }
+
+type ChartTypes = 'bar' | 'pie';
 
 const GradeDist: FC<GradeDistProps> = (props) => {
   /*
@@ -24,6 +27,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
  */
 
   const [gradeDistData, setGradeDistData] = useState<GradeDistData>(null!);
+  const [chartType, setChartType] = useState<ChartTypes>('bar');
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
   const [profEntries, setProfEntries] = useState<Entry[]>(null!);
@@ -185,8 +189,21 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     }
     return (
       <div id='gradedist-module-container'>
-        <Grid.Row columns={2} id='menu'>
-          <Grid.Column style={{ marginRight: '1rem' }}>
+        <Grid.Row id='menu'>
+          {
+            props.minify && <Grid.Column className='gradedist-filter'>
+              <Dropdown
+                placeholder='Chart Type'
+                scrolling
+                selection
+                options={[{ text: 'Bar', value: 'bar' }, { text: 'Pie', value: 'pie' }]}
+                value={chartType}
+                onChange={(e, s) => setChartType(s.value as ChartTypes)}
+              />
+            </Grid.Column>
+          }
+
+          <Grid.Column className='gradedist-filter'>
             <Dropdown
               placeholder={props.course ? 'Professor' : 'Course'}
               scrolling
@@ -197,7 +214,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             />
           </Grid.Column>
 
-          <Grid.Column>
+          <Grid.Column className='gradedist-filter'>
             <Dropdown
               placeholder='Quarter'
               scrolling
@@ -210,12 +227,16 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         </Grid.Row>
 
         <Grid.Row id='chart'>
-          <div className={'grade_distribution_chart-container chart'}>
-            <Chart {...graphProps} />
-          </div>
-          <div className={'grade_distribution_chart-container pie'}>
-            <Pie {...graphProps} />
-          </div>
+          {
+            (props.minify && chartType == 'bar' || !props.minify) && <div className={'grade_distribution_chart-container chart'}>
+              <Chart {...graphProps} />
+            </div>
+          }
+          {
+            (props.minify && chartType == 'pie' || !props.minify) && <div className={'grade_distribution_chart-container pie'}>
+              <Pie {...graphProps} />
+            </div>
+          }
         </Grid.Row>
       </div>
     );

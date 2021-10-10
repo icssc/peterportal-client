@@ -31,7 +31,7 @@ const ProfessorPopup: FC<ProfessorPopupPros> = (props) => {
                 <a href={'/professor/' + props.professor.ucinetid}>More Information</a>
             </div>
             <div>
-                <GradeDist professor={props.professor} />
+                <GradeDist professor={props.professor} minify={true} />
                 <div>
                     <h5>Courses Taught</h5>
                     {props.professor.course_history.map((course) =>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 
 import { CourseData } from '../../types/types';
@@ -19,6 +20,8 @@ interface CourseHitItemProps extends HitItemProps {
 
 const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
+  const activeCourse = useAppSelector(state => state.popup.course);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -28,7 +31,16 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
     <div>
       <div style={{ display: 'flex' }}>
         <div>
-          <a href='#' onClick={() => { dispatch(setCourse(props.result._source)) }}>
+          <a href='#' onClick={() => {
+            // if click on a course that is already in popup
+            if (activeCourse && props.result._source.id == activeCourse.id) {
+              history.push(`/course/${activeCourse.id}`)
+            }
+            // click on new or different course than popup
+            else {
+              dispatch(setCourse(props.result._source))
+            }
+          }}>
             <h3>
               <span
                 className={props.bemBlocks.item('department')}

@@ -39,7 +39,7 @@ const CoursePopup: FC<CoursePopupPros> = (props) => {
                         Prerequisite: {props.course.prerequisite_text}
                     </p>
                 </div>
-                <GradeDist course={props.course} />
+                <GradeDist course={props.course} minify={true} />
                 <div>
                     <h5>Instructor History</h5>
                     {professorNames.map((prof) =>
