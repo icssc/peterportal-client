@@ -1,22 +1,73 @@
 .sidebar {
-  position: sticky;
-  top: 4rem;
-  width: 280px;
-  height: fit-content;
-  ul li {
-    a {
-      color: black;
-      display: flex;
-      grid-gap: 10px;
-      margin-right: 10px;
-      padding: 10px;
+  position: fixed;
+  width: 15vw;
+  height: 100%;
+  z-index: 400;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  .sidebar-close {
+    padding: 2vw;
+    width: 100%;
+
+    .sidebar-close-icon {
+      width: 3vh;
+      height: 3vh;
+      float: right;
+      cursor: pointer;
     }
-    a:hover {
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 5px;
+  }
+
+  .sidebar-profile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 50%;
+      border-radius: 50%;
+    }
+
+    p {
+      margin-top: 1vh;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  }
+
+  .sidebar-links {
+    width: 60%;
+    margin-bottom: 20vh;
+
+    ul li {
+      a {
+        color: black;
+        display: flex;
+        grid-gap: 10px;
+        margin-right: 10px;
+        padding: 10px;
+      }
+      a:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+      }
+    }
+  }
+
+  .sidebar-login {
+    margin-bottom: 5vh;
+
+    .sidebar-login-icon {
+      margin-right: 1vw;
     }
   }
 }
+
 .sidebar-active {
   color: var(--peterportal-primary-color-1) !important;
 }
