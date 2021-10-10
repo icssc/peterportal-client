@@ -19,11 +19,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const [profWebsoc, setProfWebsoc] = useState('');
     const fetchDataFromApi = async () => {
         const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
-        let profName = apiResponse.data.name;
-        console.log(profName)
-        let arr = profName.split(' ');
-        const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
-        setProfWebsoc(name);
+        setProfWebsoc(apiResponse.data.shortened_name);
         setProfData(apiResponse.data);
     }
 
@@ -36,7 +32,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     }
     else if (profData.hasOwnProperty('error')) {
         return <div>
-            Course Does Not Exist!
+            Professor Does Not Exist!
         </div>
     } else {
         return (

@@ -32,14 +32,17 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   const fetchGradeDistData = () => {
     let url = '';
+    let params = {};
     // course context
     if (props.course) {
-      url = `/courses/api/grades/${props.course.department}/${props.course.number}`;
+      url = `/courses/api/grades`;
+      params = {
+        department: props.course.department,
+        number: props.course.number
+      }
     }
     else if (props.professor) {
-      const arr = props.professor.name.split(' ');
-      const name = `${arr[arr.length - 1]}, ${arr[0][0]}.`
-      url = `/professors/api/grades/${name}`;
+      url = `/professors/api/grades/${props.professor.shortened_name}`;
     }
     fetch(url)
       .then(response => response.json())

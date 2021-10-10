@@ -27,12 +27,13 @@ export interface CourseData {
 }
 
 export interface ProfessorData {
-    name: string,
-    ucinetid: string,
-    title: string,
-    department: string,
-    schools: string[],
-    related_departments: string[],
+    name: string;
+    shortened_name: string;
+    ucinetid: string;
+    title: string;
+    department: string;
+    schools: string[];
+    related_departments: string[];
     course_history: string[]
 }
 
@@ -75,9 +76,9 @@ export interface ReviewData {
 }
 
 export interface PassportData {
-    email: string,
-    name: string,
-    picture: string,
+    email: string;
+    name: string;
+    picture: string;
     username?: string
 }
 

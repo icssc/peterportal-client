@@ -46,7 +46,7 @@ export default function App() {
           <Route path='/roadmap' component={RoadmapPage} />
           <Route path='/zotistics' component={ZotisticsPage} />
           <Route path='/search/:index' component={SearchPage} />
-          <Route path='/course/:id' component={CoursePage} />
+          <Route path='/course/:id+' component={CoursePage} />
           <Route path='/professor/:id' component={ProfessorPage} />
           <Route component={ErrorPage} />
         </Switch>

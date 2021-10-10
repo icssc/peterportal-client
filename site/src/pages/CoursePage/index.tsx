@@ -20,7 +20,12 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const [courseData, setCourseData] = useState<CourseData>(null!);
 
     const fetchDataFromApi = async () => {
-        const apiResponse = await axios.get('/courses/api/' + props.match.params.id);
+        console.log('Viewing Course', props.match.params.id);
+        const apiResponse = await axios.get('/courses/api', {
+            params: {
+                courseID: props.match.params.id
+            }
+        });
         setCourseData(apiResponse.data);
     }
 
