@@ -3,6 +3,7 @@ import { Divider, Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss'
+import axios from 'axios'
 
 import { CourseData, ProfessorData, GradeDistData } from '../../types/types';
 
@@ -44,11 +45,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else if (props.professor) {
       url = `/professors/api/grades/${props.professor.shortened_name}`;
     }
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setGradeDistData(data);
+    const res = axios.get<GradeDistData>(url, {
+      params: params
+    })
+      .then(res => {
+        console.log(res.data);
+        setGradeDistData(res.data);
       });
   }
 

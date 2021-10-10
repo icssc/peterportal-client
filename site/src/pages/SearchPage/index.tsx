@@ -38,11 +38,8 @@ interface SearchPageContentProps {
     index: ElasticSearchIndex;
 }
 const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
-    const dispatch = useAppDispatch();
     const filterOpen = useAppSelector(state => state.ui.filterOpen);
-
-    console.log(filterOpen)
-
+    
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
             <div style={{ overflow: 'scroll', width: '50vw', overflowX: 'hidden' }}>
