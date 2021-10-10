@@ -38,11 +38,11 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
-                <div style={{ display: 'flex' }}>
+                <div className='course-page'>
                     <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
                         <CourseSideInfo {...courseData} />
                     </section>
-                    <article style={{ marginLeft: '4rem', width: '900px' }}>
+                    <article style={{ marginLeft: '4rem', width: 'auto' }}>
                         <Grid.Row>
                             <h2>🌲 Prerequisite Tree</h2>
                             <Divider />

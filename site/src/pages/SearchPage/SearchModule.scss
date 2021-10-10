@@ -9,6 +9,8 @@
     padding-bottom: 1rem;
 
     .search-bar {
+      position: sticky;
+      top: 0;
       display: flex;
 
       .search-filter-button {
