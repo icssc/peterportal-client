@@ -1,12 +1,5 @@
 #peterportal-logo {
-    width: 100%;
-  }
-  
-.school-term_container{
-  padding-left: 24px;
-  border-left: 1px solid black;
-  margin: auto 12px;
-  display: flex;
+  width: 100%;
 }
 
 .ui.segment {
@@ -16,19 +9,13 @@
   box-shadow: none !important;
 }
 
-.peterportal-logo-container {
-  max-width: 100px;
-  margin-right: 12px;
-}
-
 :root {
-  --bg:  #fff;
+  --bg: #fff;
   --bg-accent: #eee;
-  --text-color: rgba(0,0,0,.87);
-  --nav-size: 4rem;
+  --text-color: rgba(0, 0, 0, 0.87);
   --border: 1px solid #eee;
   --border-radius: 8px;
-  --speed: 500ms; 
+  --speed: 500ms;
 }
 
 ul {
@@ -38,22 +25,89 @@ ul {
 }
 
 .navbar {
-  position: fixed;
+  position: sticky;
   z-index: 300;
   width: 100%;
-  height: var(--nav-size);
+  height: 8vh;
   background-color: var(--bg);
-  padding: 0 3rem;
+  padding: 0 3vw;
+  display: flex;
+  top: 0;
+
   .navbar-nav {
     margin: auto;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-direction: row;
+
+    .navbar-left {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .navbar-menu {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      .navbar-menu-icon {
+        width: 3vh;
+        height: 3vh;
+      }
+    }
+
+    .navbar-toggle {
+      margin-left: 5vw;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background-color: #f5f6fc;
+      height: 60%;
+      border-radius: 1rem;
+      width: 12vw;
+
+      .navbar-toggle-item {
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 1rem;
+
+        a {
+          color: black;
+        }
+      }
+
+      .active {
+        background-color: var(--peterportal-secondary-orange);
+
+        a {
+          color: white;
+        }
+      }
+    }
+
+    .navbar-logo {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      width: 7vw;
+    }
   }
 }
-
 
 .nav-item {
   width: calc(var(--nav-size) * 0.8);
@@ -78,30 +132,29 @@ ul {
   transition: background-color 300ms;
 }
 
-.icon-button:hover{
+.icon-button:hover {
   cursor: pointer;
   filter: brightness(0.9);
 }
 
-.google-login:hover > .icon-button{
+.google-login:hover > .icon-button {
   background-color: #de5246;
-  i.icon{
-    color: #fff !important; 
+  i.icon {
+    color: #fff !important;
   }
 }
 
-.facebook-login:hover > .icon-button{
+.facebook-login:hover > .icon-button {
   background-color: #3b5998;
-  i.icon{
-    color: #fff !important; 
+  i.icon {
+    color: #fff !important;
   }
 }
 
-
-.dark-mode:hover > .icon-button{
-  background-color: #9146FF;
-  i.icon{
-    color: #fff !important; 
+.dark-mode:hover > .icon-button {
+  background-color: #9146ff;
+  i.icon {
+    color: #fff !important;
   }
 }
 
@@ -141,11 +194,10 @@ ul {
 .menu-item:hover {
   background-color: #f7f7f7;
   cursor: pointer;
-  .icon-button{
+  .icon-button {
     filter: brightness(0.9);
   }
 }
-
 
 .icon-right {
   margin-left: auto;

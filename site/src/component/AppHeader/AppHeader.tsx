@@ -1,62 +1,83 @@
 import React, { useState, useEffect, Component, FC } from 'react';
 import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
-import { useCookies } from 'react-cookie';
+import { useLocation } from 'react-router';
 
+import { List } from 'react-bootstrap-icons';
 import { ReactComponent as CogIcon } from '../../asset/cog.svg';
 import { ReactComponent as ArrowIcon } from '../../asset/arrow.svg';
 import { CSSTransition } from 'react-transition-group';
-import { PassportData, WeekData } from '../../types/types';
+import { WeekData } from '../../types/types';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './AppHeader.scss';
 
-const AppHeader: FC<{}> = props => {
-  const [week, setWeek] = useState('');
-  const [name, setName] = useState('');
-  const [picture, setPicture] = useState('');
-  const [cookies, setCookie] = useCookies(['user']);
+import { useAppDispatch } from '../../store/hooks';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
 
-  console.log('Cookies: ', cookies);
+const AppHeader: FC<{}> = props => {
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const [week, setWeek] = useState('');
+  const [quarter, setQuarter] = useState('');
+
+  let splitLocation = location.pathname.split('/');
+  let coursesActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses';
+  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors';
 
   useEffect(() => {
     // Get the current week data
     fetch('/schedule/api/currentWeek')
       .then(res => res.json())
-      .then((data: WeekData) => setWeek(data.display));
+      .then((data: WeekData) => {
+        setQuarter(data.quarter);
+        setWeek('Week ' + data.week);
+      });
+  }, [])
 
-    // if the user is logged in
-    if (cookies.hasOwnProperty('user')) {
-      setName(cookies.user.name);
-      setPicture(cookies.user.picture);
-    }
-  })
+  let toggleMenu = () => {
+    dispatch(setSidebarStatus(true));
+  }
 
   return (
     <header className='navbar'>
       <div className='navbar-nav'>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            marginRight: 'auto',
-            alignItems: 'center',
-          }}
-        >
-          <div className='peterportal-logo-container'>
-            <a href='/'>
-              <img alt='PeterPortal' id='peterportal-logo' src={Logo}></img>
-            </a>
+        <div className='navbar-left'>
+          {/* Hamburger Menu */}
+          <div className='navbar-menu'>
+            <List className='navbar-menu-icon' onClick={toggleMenu} />
           </div>
-          <div style={{ display: 'flex' }}>
-            <div className={'school-term_container'}>
-              <p className={'school-term'} style={{ marginBottom: '-1px' }}>
-                {week}
-              </p>
+
+          {/* Toggle Course and Professor */}
+          <div className='navbar-toggle'>
+            <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
+              <a href='/search/courses'>
+                Courses
+              </a>
+            </div>
+            <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
+              <a href='/search/professors'>
+                Professors
+              </a>
             </div>
           </div>
         </div>
 
-        <div style={{ margin: 'auto 12px' }}>
+        {/* Logo */}
+        <div className='navbar-logo'>
+          <a href='/'>
+            <img alt='PeterPortal' id='peterportal-logo' src={Logo} height='100%'></img>
+          </a>
+        </div>
+
+        {/* Week */}
+        <div style={{ display: 'flex' }}>
+          <p className='school-term' style={{ marginBottom: '-1px' }}>
+            {week} • {quarter}
+          </p>
+        </div>
+
+        {/* Login Components */}
+        {/* <div style={{ margin: 'auto 12px' }}>
           <Popup style={{ padding: '36px', width: '400px' }} position='bottom right' trigger={<Label as='a' color='yellow' image>alpha<Label.Detail>v0</Label.Detail></Label>} flowing hoverable >
             <Grid centered columns={1}>
               <Grid.Column textAlign='left'>
@@ -77,7 +98,7 @@ const AppHeader: FC<{}> = props => {
         </div>
         <NavItem userPicture={picture} icon={<Icon name='user outline' />}>
           <DropdownMenu name={name} picture={picture} />
-        </NavItem>
+        </NavItem> */}
       </div>
     </header>
   );
