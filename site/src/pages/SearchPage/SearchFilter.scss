@@ -1,0 +1,26 @@
+.search-filter {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 15vw;
+    height: 100%;
+    z-index: 400;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 8vh;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    .filter-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        .filter-close {
+            cursor: pointer;
+        }
+    }
+}

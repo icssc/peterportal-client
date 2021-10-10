@@ -2,6 +2,10 @@ import React, { FC } from 'react'
 import { Icon, Label } from 'semantic-ui-react'
 import { HitsStats, SearchBox, SelectedFilters, FilterItemProps, HitsStatsDisplayProps } from 'searchkit';
 import './SearchModule.scss';
+import { Filter } from 'react-bootstrap-icons';
+import { Button } from 'react-bootstrap';
+import { setFilterStatus } from '../../store/slices/uiSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import { ElasticSearchIndex } from '../../types/types';
 
@@ -44,19 +48,33 @@ interface SearchModuleProps {
 }
 
 const SearchModule: FC<SearchModuleProps> = (props) => {
+    const dispatch = useAppDispatch();
+    const filterOpen = useAppSelector(state => state.ui.filterOpen);
+
+    const toggleFilter = () => {
+        dispatch(setFilterStatus(!filterOpen));
+    }
+
     return (
-        <section className='search-module'>
-            {/* <h1 className='search-title'>Search by </h1> */}
-            <SearchBox
-                autofocus={true}
-                searchOnChange={true}
-                queryFields={queryFieldValues[props.query]}
-                searchThrottleTime={300}
-                placeholder={props.query === 'courses' ? 'Course number, title and description' : 'Professor name, title, and department'}
-            />
-            <HitsStats component={customHitStats} />
-            <SelectedFilters itemComponent={SelectedFilter} />
-        </section>
+        <div>
+            <section className='search-module'>
+                <div className='search-bar'>
+                    <SearchBox
+                        autofocus={true}
+                        searchOnChange={true}
+                        queryFields={queryFieldValues[props.query]}
+                        searchThrottleTime={300}
+                        placeholder={props.query === 'courses' ? 'Course number, title and description' : 'Professor name, title, and department'}
+                    />
+                    <Button className='search-filter-button' onClick={toggleFilter}>
+                        <Filter size={25} />
+                        Filter
+                    </Button>
+                </div>
+                {/* <HitsStats component={customHitStats} /> */}
+                <SelectedFilters itemComponent={SelectedFilter} />
+            </section >
+        </div >
     );
 }
 

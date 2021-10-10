@@ -1,44 +1,65 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import './SearchPage.scss';
 import SearchModule from './SearchModule'
 import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
+import { Collapse } from 'react-bootstrap';
 import CoursePopup from '../../component/CoursePopup/CoursePopup'
 import ProfessorPopup from '../../component/ProfessorPopup/ProfessorPopup'
+
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setFilterStatus } from '../../store/slices/uiSlice';
 
 import { ElasticSearchIndex } from '../../types/types';
 
 interface SearchPageProps extends RouteComponentProps<{ index: ElasticSearchIndex }>, SearchkitComponentProps {
 }
 
-export default class SearchPage extends SearchkitComponent<SearchPageProps, {}> {
+class SearchPage extends SearchkitComponent<SearchPageProps, {}> {
+    // const filterOpen = useAppSelector(state => state.ui.filterOpen);
+
     render() {
         // 'this.props.match.params.index' is used to determine which index to 
         // query via url location - i.e: (professor || courses)
-        let searchkit = new SearchkitManager('/' + this.props.match.params.index);
+        let index = this.props.match.params.index;
+        let searchkit = new SearchkitManager('/' + index);
 
         return (
             <SearchkitProvider searchkit={searchkit}>
-                <>
-                    <aside>
-                        <hr style={{ margin: '15px 0', backgroundColor: 'var(--peterportal-light-gray)', height: '1px', borderWidth: '0' }} />
-                        <SearchFilter query={this.props.match.params.index} />
-                    </aside>
-                    <div style={{ display: 'flex', flexGrow: 1 }}>
-                        <div style={{ overflow: 'scroll', height: '100vh', width: '55vw', overflowX: 'hidden' }}>
-                            <SearchModule query={this.props.match.params.index} />
-                            <SearchHitContainer query={this.props.match.params.index} />
-                        </div>
-                        <div style={{ flexGrow: 1 }}>
-                            {this.props.match.params.index == 'courses' && <CoursePopup />}
-                            {this.props.match.params.index == 'professors' && <ProfessorPopup />}
-                        </div>
-                    </div>
-                </>
+                <SearchPageContent index={index} />
             </SearchkitProvider>
         );
     }
 }
 
+interface SearchPageContentProps {
+    index: ElasticSearchIndex;
+}
+const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
+    const dispatch = useAppDispatch();
+    const filterOpen = useAppSelector(state => state.ui.filterOpen);
+
+    console.log(filterOpen)
+
+    return <>
+        <div style={{ display: 'flex', flexGrow: 1 }}>
+            <div style={{ overflow: 'scroll', height: '100vh', width: '55vw', overflowX: 'hidden' }}>
+                <Collapse in={filterOpen}>
+                    <div>
+                        <SearchFilter query={index} />
+                    </div>
+                </Collapse>
+                <SearchModule query={index} />
+                <SearchHitContainer query={index} />
+            </div>
+            <div style={{ flexGrow: 1 }}>
+                {index == 'courses' && <CoursePopup />}
+                {index == 'professors' && <ProfessorPopup />}
+            </div>
+        </div>
+    </>
+}
+
+export default SearchPage;

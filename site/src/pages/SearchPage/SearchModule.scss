@@ -6,8 +6,15 @@
     width: $content-width;
     margin: 0 2rem;
     position: sticky;
-    background-color: white;
     padding-bottom: 1rem;
+
+    .search-bar {
+      display: flex;
+
+      .search-filter-button {
+        background-color: var(--peterportal-primary-color-1);
+      }
+    }
 
     .is-focused {
         box-shadow: 0px 0px 16px -4px #fff !important;
@@ -26,8 +33,9 @@
 
     .sk-search-box {
       border: 1px solid var(--peterportal-primary-color-2);
-      background: white !important;
+      background-color: white !important;
       height: 42px;
+      margin-right: 3vw;
 
       // input.sk-search-box__text:focus {
       //   border: 1px solid var(--peterportal-primary-color-2);

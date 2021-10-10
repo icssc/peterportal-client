@@ -1,4 +1,4 @@
-import React, { MouseEvent } from 'react';
+import React, { FC, MouseEvent, useState } from 'react';
 import { Accordion, Menu, AccordionTitleProps } from 'semantic-ui-react';
 import './Filter.scss';
 import { RefinementListFilter, Select, TermQuery, CheckboxFilter, MenuFilter } from 'searchkit';
@@ -26,83 +26,71 @@ const CourseLevelForm = (
   </div>
 )
 
-interface CourseFilterState {
-  activeIndex: number;
-}
+const CourseFilter: FC = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
 
-export default class CourseFilter extends React.Component<{}, CourseFilterState> {
-  state = {
-    activeIndex: 0
-  }
-
-  handleClick = (e: MouseEvent, titleProps: AccordionTitleProps) => {
+  const handleClick = (e: MouseEvent, titleProps: AccordionTitleProps) => {
     const { index } = titleProps
-    const { activeIndex } = this.state
     const newIndex = activeIndex === index ? -1 : index
-
-    this.setState({ activeIndex: newIndex as number })
+    setActiveIndex(newIndex as number);
   }
 
-  render() {
-    const { activeIndex } = this.state;
+  return (
+    <div className='filter-list-container'>
+      <div style={{ overflowY: 'auto' }}>
+        <Accordion>
+          <Menu.Item>
+            <Accordion.Title active={activeIndex === 0}
+              content='Term Offered'
+              index={0}
+              onClick={handleClick}
+            />
+            <Accordion.Content active={activeIndex === 0} content={<MenuFilter title="Terms" field='terms.keyword' id='terms' listComponent={Select} />} />
+          </Menu.Item>
 
-    return (
-      <div className='filter-list-container'>
-        <h4>Search Filter</h4>
-        <div style={{ overflowY: 'auto' }}>
-          <Accordion>
-            <Menu.Item>
-              <Accordion.Title active={activeIndex === 0}
-                content='Term Offered'
-                index={0}
-                onClick={this.handleClick}
-              />
-              <Accordion.Content active={activeIndex === 0} content={<MenuFilter title="Terms" field='terms.keyword' id='terms' listComponent={Select} />} />
-            </Menu.Item>
+          <Menu.Item>
+            <Accordion.Title
+              active={activeIndex === 1}
+              content='General Education'
+              index={1}
+              onClick={handleClick}
+            />
+            <Accordion.Content active={activeIndex === 1} content={GEForm} />
+          </Menu.Item>
 
-            <Menu.Item>
-              <Accordion.Title
-                active={activeIndex === 1}
-                content='General Education'
-                index={1}
-                onClick={this.handleClick}
-              />
-              <Accordion.Content active={activeIndex === 1} content={GEForm} />
-            </Menu.Item>
+          <Menu.Item>
+            <Accordion.Title
+              active={activeIndex === 2}
+              content='Course Level'
+              index={2}
+              onClick={handleClick}
+            />
+            <Accordion.Content active={activeIndex === 2} content={CourseLevelForm} />
+          </Menu.Item>
 
-            <Menu.Item>
-              <Accordion.Title
-                active={activeIndex === 2}
-                content='Course Level'
-                index={2}
-                onClick={this.handleClick}
-              />
-              <Accordion.Content active={activeIndex === 2} content={CourseLevelForm} />
-            </Menu.Item>
+          <Menu.Item>
+            <Accordion.Title
+              active={activeIndex === 3}
+              content='School'
+              index={3}
+              onClick={handleClick}
+            />
+            <Accordion.Content active={activeIndex === 3} content={<RefinementListFilter id='school' field='school.keyword' operator='OR' title='' />} />
+          </Menu.Item>
 
-            <Menu.Item>
-              <Accordion.Title
-                active={activeIndex === 3}
-                content='School'
-                index={3}
-                onClick={this.handleClick}
-              />
-              <Accordion.Content active={activeIndex === 3} content={<RefinementListFilter id='school' field='school.keyword' operator='OR' title='' />} />
-            </Menu.Item>
-
-            <Menu.Item>
-              <Accordion.Title
-                active={activeIndex === 4}
-                content='Department'
-                index={4}
-                onClick={this.handleClick}
-              />
-              <Accordion.Content active={activeIndex === 4} content={<RefinementListFilter id='depts' field='department.keyword' operator='OR' size={200} title='' />} />
-            </Menu.Item>
-          </Accordion>
-        </div>
+          <Menu.Item>
+            <Accordion.Title
+              active={activeIndex === 4}
+              content='Department'
+              index={4}
+              onClick={handleClick}
+            />
+            <Accordion.Content active={activeIndex === 4} content={<RefinementListFilter id='depts' field='department.keyword' operator='OR' size={200} title='' />} />
+          </Menu.Item>
+        </Accordion>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
+export default CourseFilter;
