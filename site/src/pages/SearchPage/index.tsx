@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import './SearchPage.scss';
+import 'react-multi-carousel/lib/styles.css';
 import SearchModule from './SearchModule'
 import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
@@ -39,10 +40,10 @@ interface SearchPageContentProps {
 }
 const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     const filterOpen = useAppSelector(state => state.ui.filterOpen);
-    
+
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
-            <div style={{ overflow: 'scroll', width: '50vw', overflowX: 'hidden' }}>
+            <div style={{ width: '50vw' }}>
                 <Collapse in={filterOpen}>
                     <div>
                         <SearchFilter query={index} />
