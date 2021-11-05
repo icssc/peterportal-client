@@ -34,6 +34,7 @@ class SearchPage extends SearchkitComponent<SearchPageProps, {}> {
     }
 }
 
+
 interface SearchPageContentProps {
     index: ElasticSearchIndex;
 }
