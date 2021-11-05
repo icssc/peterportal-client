@@ -1,20 +1,21 @@
-#gradedist-module-container {
-  width: 900px;
+.gradedist-module-container {
+  width: 75%;
   display: flex;
   flex-direction: column;
-  margin: 36px auto;
+  margin: 0 auto;
 
   .gradedist-filter {
-    margin: 0 1vw;
+    margin: 1vh;
   }
 }
 
 #grade-dist-label {
-  margin: '0';
+  margin: "0";
   width: 100%;
 }
 
 #menu {
+  padding: 2vh 1vw;
   display: flex;
   justify-content: flex-end;
 }
@@ -36,4 +37,16 @@
 
 .pie {
   width: 35%;
+}
+
+.grade-dist-mini {
+  width: 100%;
+
+  #menu {
+    justify-content: flex-start;
+  }
+
+  .chart {
+    width: 80%;
+  }
 }

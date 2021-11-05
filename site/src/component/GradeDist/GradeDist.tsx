@@ -188,7 +188,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       professor: currentProf
     }
     return (
-      <div id='gradedist-module-container'>
+      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         <Grid.Row id='menu'>
           {
             props.minify && <Grid.Column className='gradedist-filter'>

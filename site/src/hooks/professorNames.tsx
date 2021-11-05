@@ -27,6 +27,9 @@ function useProfessorNames(courseID: string | undefined) {
         return { loading, error, professorNames: ([] as ProfessorName[]) };
     }
     else {
+        if (!courseID) {
+            return { loading, error, professorNames: ([] as ProfessorName[]) };
+        }
         return { loading, error, professorNames: data!.course.instructor_history.filter(x => x) };
     }
 }

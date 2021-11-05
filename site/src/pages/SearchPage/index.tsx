@@ -1,16 +1,16 @@
 import React, { FC } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import './SearchPage.scss';
+import 'react-multi-carousel/lib/styles.css';
 import SearchModule from './SearchModule'
 import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
 import { Collapse } from 'react-bootstrap';
-import CoursePopup from '../../component/CoursePopup/CoursePopup'
-import ProfessorPopup from '../../component/ProfessorPopup/ProfessorPopup'
+import CoursePopup from './CoursePopup'
+import ProfessorPopup from './ProfessorPopup'
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setFilterStatus } from '../../store/slices/uiSlice';
 
 import { ElasticSearchIndex } from '../../types/types';
 
@@ -39,10 +39,10 @@ interface SearchPageContentProps {
 }
 const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     const filterOpen = useAppSelector(state => state.ui.filterOpen);
-    
+
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
-            <div style={{ overflow: 'scroll', width: '50vw', overflowX: 'hidden' }}>
+            <div style={{ width: '50vw' }}>
                 <Collapse in={filterOpen}>
                     <div>
                         <SearchFilter query={index} />

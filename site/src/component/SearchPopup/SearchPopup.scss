@@ -1,0 +1,88 @@
+.search-popup-missing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100%;
+    text-align: center;
+    color: #9c9fac;
+    font-size: 1.5em;
+}
+
+.search-popup {
+    position: sticky;
+    background-color: #ffffff;
+    padding: 3rem;
+    margin-left: 3vw;
+    height: 95%;
+    border-radius: var(--border-radius);
+    max-width: 40vw;
+}
+
+.search-popup-header {
+    margin-bottom: 3vh;
+}
+
+.search-popup-id {
+    margin-bottom: 0.2rem;
+    font-size: 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-popup-title {
+    margin: 0;
+}
+
+.search-popup-more {
+    background-color: #ffffff;
+}
+
+.search-popup-block {
+    background-color: var(--peterportal-gray-blue);
+    border-radius: var(--border-radius);
+}
+
+.search-popup-infos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.search-popup-info {
+    display: flex;
+    flex-direction: column;
+    padding: 2vh;
+    width: 45%;
+}
+
+.search-popup-label {
+    margin: 2vh 0 1vh 0;
+}
+
+.search-popup-carousel {
+    background-color: var(--peterportal-gray-blue);
+    height: 100%;
+    margin: 0 1vw;
+    padding: 2vh 1vw;
+
+    p {
+        font-weight: bold;
+    }
+
+    div {
+        display: flex;
+    }
+
+    .search-popup-carousel-score {
+        font-size: 2em;
+    }
+
+    .search-popup-carousel-max-score {
+        margin-left: .5vw;
+        display: flex;
+        align-items: center;
+        color: var(--peterportal-mid-gray);
+    }
+}
