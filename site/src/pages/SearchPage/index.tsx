@@ -7,11 +7,10 @@ import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
 import { Collapse } from 'react-bootstrap';
-import CoursePopup from '../../component/CoursePopup/CoursePopup'
-import ProfessorPopup from '../../component/ProfessorPopup/ProfessorPopup'
+import CoursePopup from './CoursePopup'
+import ProfessorPopup from './ProfessorPopup'
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setFilterStatus } from '../../store/slices/uiSlice';
 
 import { ElasticSearchIndex } from '../../types/types';
 

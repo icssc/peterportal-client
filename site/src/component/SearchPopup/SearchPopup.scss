@@ -1,4 +1,4 @@
-.course-popup-missing {
+.search-popup-missing {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -10,7 +10,7 @@
     font-size: 1.5em;
 }
 
-.course-popup {
+.search-popup {
     position: sticky;
     background-color: #ffffff;
     padding: 3rem;
@@ -20,51 +20,48 @@
     max-width: 40vw;
 }
 
-.course-popup-header {
+.search-popup-header {
     margin-bottom: 3vh;
 }
 
-.course-popup-id {
+.search-popup-id {
     margin-bottom: 0.2rem;
     font-size: 3rem;
     display: flex;
     justify-content: space-between;
 }
 
-.course-popup-title {
+.search-popup-title {
     margin: 0;
 }
 
-.course-popup-more {
+.search-popup-more {
     background-color: #ffffff;
 }
 
-.course-popup-block {
+.search-popup-block {
     background-color: var(--peterportal-gray-blue);
     border-radius: var(--border-radius);
 }
 
-.course-popup-infos {
+.search-popup-infos {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-.course-popup-info {
+.search-popup-info {
     display: flex;
     flex-direction: column;
     padding: 2vh;
     width: 45%;
 }
 
-.course-popup-label {
+.search-popup-label {
     margin: 2vh 0 1vh 0;
 }
 
-.course-popup-professors {
-}
-
-.course-popup-professor {
+.search-popup-carousel {
     background-color: var(--peterportal-gray-blue);
     height: 100%;
     margin: 0 1vw;
@@ -78,11 +75,11 @@
         display: flex;
     }
 
-    .course-popup-professor-score {
+    .search-popup-carousel-score {
         font-size: 2em;
     }
 
-    .course-popup-professor-max-score {
+    .search-popup-carousel-max-score {
         margin-left: .5vw;
         display: flex;
         align-items: center;

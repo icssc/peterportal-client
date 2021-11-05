@@ -93,7 +93,8 @@ export interface VoteRequest {
     upvote: boolean;
 }
 
-export type ElasticSearchIndex = 'courses' | 'professors'
+export type ElasticSearchIndex = 'courses' | 'professors';
+export type SearchType = 'course' | 'professor';
 
 export interface WeekData {
     /**
