@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import './SearchPopup.scss'
-import searching from '../../asset/searching.gif';
+import searching from '../../asset/searching.jpg';
 import GradeDist from '../GradeDist/GradeDist';
 import Button from 'react-bootstrap/Button';
 import Carousel from "react-multi-carousel";
