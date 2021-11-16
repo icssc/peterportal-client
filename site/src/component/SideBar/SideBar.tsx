@@ -5,7 +5,6 @@ import { ChevronDoubleLeft } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import './Sidebar.scss'
 import DefaultAvatar from '../../asset/default-avatar.png';
-import { FaSignOutAlt, FaSignInAlt } from 'react-icons/fa';
 import { Button } from 'react-bootstrap';
 
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
@@ -56,19 +55,19 @@ const SideBar: FC = ({ children }) => {
             Catalogue
           </NavLink></li>
           {/* <li><NavLink to='/schedule' activeClassName='sidebar-active'>
-          <div> 
+          <div>
             <Icon name='clock outline' />
           </div>
           Schedule of Classes
         </NavLink></li> */}
           {/* <li><NavLink to='/zotistics' activeClassName='sidebar-active'>
-          <div> 
+          <div>
             <Icon name='chart bar outline' />
           </div>
           Zotistics
         </NavLink></li> */}
           {/* <li><NavLink to='/antalmanac' activeClassName='sidebar-active'>
-          <div> 
+          <div>
             <Icon name='calendar outline' />
           </div>
           AntAlmanac
@@ -80,7 +79,7 @@ const SideBar: FC = ({ children }) => {
             Peter's Roadmap
           </NavLink></li>
           {/* <li><NavLink to='/reviews' activeClassName='sidebar-active'>
-          <div> 
+          <div>
             <Icon name='thumbs up outline'/>
           </div>
           Reviews
@@ -92,13 +91,17 @@ const SideBar: FC = ({ children }) => {
       <div className='sidebar-login'>
         {isLoggedIn && <a href='/users/logout'>
           <Button variant='light'>
-            <FaSignOutAlt className='sidebar-login-icon' />
+            <span className='sidebar-login-icon'>
+              <Icon name='sign out' className='sidebar-login-icon' />
+            </span>
             Log Out
           </Button>
         </a>}
         {!isLoggedIn && <a href='/users/auth/google'>
           <Button variant='light'>
-            <FaSignInAlt className='sidebar-login-icon' />
+            <span className='sidebar-login-icon'>
+              <Icon name='sign in' className='sidebar-login-icon' />
+            </span>
             Log In
           </Button>
         </a>}
