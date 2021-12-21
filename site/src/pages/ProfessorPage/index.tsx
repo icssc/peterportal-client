@@ -31,6 +31,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         return <LoadingPage />;
     }
     else if (profData.hasOwnProperty('error')) {
+        console.log(profData)
         return <div>
             Professor Does Not Exist!
         </div>

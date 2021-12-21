@@ -93,6 +93,11 @@ export interface VoteRequest {
     upvote: boolean;
 }
 
+export interface ScoreData {
+    name: string;
+    score: number;
+}
+
 export type ElasticSearchIndex = 'courses' | 'professors';
 export type SearchType = 'course' | 'professor';
 

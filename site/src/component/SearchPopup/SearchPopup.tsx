@@ -1,26 +1,22 @@
 import React, { FC } from 'react';
 import './SearchPopup.scss'
-import searching from '../../asset/searching.jpg';
+import Searching from '../../asset/searching.png';
 import GradeDist from '../GradeDist/GradeDist';
 import Button from 'react-bootstrap/Button';
 import Carousel from "react-multi-carousel";
 
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
-import { CourseData, ProfessorData, SearchType } from '../../types/types';
+import { CourseData, ProfessorData, SearchType, ScoreData } from '../../types/types';
 
 interface InfoData {
     title: string;
     content: string | React.FunctionComponent;
 }
 
-interface ScoreData {
-    name: string;
-    score: number;
-}
-
 interface SearchPopupProps {
     searchType: SearchType;
+    name: string;
     id: string;
     title: string;
     infos: InfoData[];
@@ -44,7 +40,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     if (!selected) {
         return <div className='search-popup'>
             <div className='search-popup-missing'>
-                <img src={searching} alt='searching' />
+                <img src={Searching} alt='searching' />
                 <p>
                     Click on a {props.searchType} card to view more information!
                 </p>
@@ -79,7 +75,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
         <div className='search-popup'>
             <div className='search-popup-header'>
                 <h2 className='search-popup-id'>
-                    {props.id}
+                    {props.name}
                     <a href={`/${props.searchType}/${props.id}`}>
                         <Button type='button' className="search-popup-more btn btn-outline-primary">
                             More Information
@@ -116,10 +112,10 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                     <Carousel responsive={responsive} renderButtonGroupOutside>
                         {props.scores.map((score, i) => <div key={`search-popup-carousel-${i}`} className='search-popup-carousel search-popup-block'>
                             <div>
-                                <span className='search-popup-carousel-score'>{score.score}</span>
+                                <span className='search-popup-carousel-score'>{score.score == -1 ? '?' : score.score}</span>
                                 <span className='search-popup-carousel-max-score'>/ 5.0</span>
                             </div>
-                            <p>{score.name}</p>
+                            <a href={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.name}`}>{score.name}</a>
                         </div>
                         )}
                     </Carousel>

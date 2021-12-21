@@ -145,7 +145,7 @@ function getDocuments(collectionName: string, query: GenericObject): Promise<Gen
         getCollection(collectionName)
             .then(async (collection) => {
                 // get document
-                let results = await collection.find(query);
+                let results = collection.find(query);
                 let documents = await results.toArray();
                 resolve(documents);
             });
