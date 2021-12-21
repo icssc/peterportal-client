@@ -7,7 +7,7 @@ const Footer: FC = (props) => {
             <footer className='footer'>
                 <div>
                     <a href='https://github.com/icssc-projects'>Github</a>
-                    <a href='/api/v1'>API</a>
+                    <a href='https://api.peterportal.org'>API</a>
                     <a href='/about'>About</a>
                     <a href='/about#team'>Team</a>
                     <a href='/legal'>Terms</a>
