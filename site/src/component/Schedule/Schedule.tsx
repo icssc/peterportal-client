@@ -5,10 +5,8 @@ import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
 
 import { WebsocResponse, Section } from 'websoc-api';
-import { CourseData, GenericObject } from '../../types/types';
 
 interface ScheduleProps {
     courseID?: string;
@@ -23,12 +21,13 @@ const Schedule: FC<ScheduleProps> = (props) => {
     // For fetching data from API
     const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
 
-    const currentQuarter = '2020 Winter';
     useEffect(() => {
-        fetchScheduleDataFromAPI(currentQuarter);
+        // get the current quarter used in websoc
+        axios.get<string>('/schedule/api/currentQuarter')
+            .then(res => {
+                fetchScheduleDataFromAPI(res.data);
+            })
     }, [])
-
-    console.log('Schedule Props', props);
 
     const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
         let url = '';

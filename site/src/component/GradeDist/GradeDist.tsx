@@ -53,7 +53,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       params: params
     })
       .then(res => {
-        console.log(res.data);
         setGradeDistData(res.data);
       });
   }

@@ -164,7 +164,7 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
         await getDB();
         getCollection(collectionName)
             .then(async (collection) => {
-                await collection.updateOne(query, update, (err) => {
+                await collection.replaceOne(query, update, (err) => {
                     if (err) console.log(err)
                 });
                 resolve();
@@ -172,4 +172,45 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
     });
 }
 
-export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument };
+/**
+ * Retrieve mongo's cached value by key
+ * @param cache Name of cache to look up
+ * @param key Key to look up the cache
+ * @returns Cached value
+ */
+ async function getValue(cache: string, key: string): Promise<any> {
+    return new Promise(async resolve => {
+        let value = await getDocuments(cache, { _id: key });
+        // cache hit
+        if (value.length > 0) {
+            resolve(value[0]['value']);
+        }
+        // cache miss
+        else {
+            resolve(undefined);
+        }
+    })
+}
+
+/**
+ * Put a cache value given a key
+ * @param cache Name of cache to look up
+ * @param key Key to use in cache
+ * @param value Value to store in cache
+ * @returns Promise that is resolved when value is cached
+ */
+async function setValue(cache: string, key: string, value: any): Promise<void> {
+    return new Promise(async resolve => {
+        // if already in cache, update doc
+        if (await containsID(cache, key)) {
+            await updateDocument(cache, { _id: key }, { value: value })
+        }
+        // if not in cache, add doc
+        else {
+            await addDocument(cache, { _id: key, value: value })
+        }
+        resolve();
+    })
+}
+
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, setValue, getValue };

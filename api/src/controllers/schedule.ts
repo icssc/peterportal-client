@@ -4,6 +4,7 @@
 
 import express from 'express';
 import { getWeek } from '../helpers/week';
+import { getCurrentQuarter } from '../helpers/currentQuarter';
 
 const websoc = require('websoc-api');
 var router = express.Router();
@@ -32,6 +33,14 @@ router.get("/getTerms", function (req, res) {
 router.get('/api/currentWeek', function (req, res, next) {
   getWeek().then(week => res.send(week))
 });
+
+/**
+ * Get the current quarter on websoc
+ */
+ router.get('/api/currentQuarter', function (req, res, next) {
+  getCurrentQuarter().then(currentQuarter => res.send(currentQuarter))
+});
+
 
 /**
  * Proxy for WebSOC

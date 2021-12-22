@@ -4,47 +4,8 @@
 
 import fetch from 'node-fetch';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { COLLECTION_NAMES, containsID, getDocuments, addDocument, updateDocument } from './mongo';
+import { COLLECTION_NAMES, setValue, getValue } from './mongo';
 import { QuarterMapping, WeekData } from '../types/types';
-
-/**
- * Retrieve mongo's cached value by key
- * @param key Key to look up the cache
- * @returns Cached value
- */
-async function getValue(key: string): Promise<any> {
-    return new Promise(async resolve => {
-        let value = await getDocuments(COLLECTION_NAMES.SCHEDULE, { _id: key });
-        // cache hit
-        if (value.length > 0) {
-            resolve(value[0]['value']);
-        }
-        // cache miss
-        else {
-            resolve(undefined);
-        }
-    })
-}
-
-/**
- * Put a cache value given a key
- * @param key Key to use in cache
- * @param value Value to store in cache
- * @returns Promise that is resolved when value is cached
- */
-async function setValue(key: string, value: any): Promise<void> {
-    return new Promise(async resolve => {
-        // if already in cache, update doc
-        if (await containsID(COLLECTION_NAMES.SCHEDULE, key)) {
-            await updateDocument(COLLECTION_NAMES.SCHEDULE, { _id: key }, { value: value })
-        }
-        // if not in cache, add doc
-        else {
-            await addDocument(COLLECTION_NAMES.SCHEDULE, { _id: key, value: value })
-        }
-        resolve();
-    })
-}
 
 /**
  * Get the current week and quarter. A display string is also provided.
@@ -126,7 +87,7 @@ async function getQuarterMapping(year: number): Promise<QuarterMapping> {
     return new Promise(async resolve => {
         // check if is in the cache
         let cacheKey = `quarterMapping${year}`
-        let cacheValue = await getValue(cacheKey)
+        let cacheValue = await getValue(COLLECTION_NAMES.SCHEDULE, cacheKey)
         if (cacheValue) {
             resolve(cacheValue);
             return;
@@ -145,7 +106,7 @@ async function getQuarterMapping(year: number): Promise<QuarterMapping> {
         tables.forEach(table => {
             processTable(table, $, quarterToDayMapping, year);
         })
-        await setValue(cacheKey, quarterToDayMapping);
+        await setValue(COLLECTION_NAMES.SCHEDULE, cacheKey, quarterToDayMapping);
         resolve(quarterToDayMapping);
     })
 }

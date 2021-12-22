@@ -28,7 +28,6 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
     window.scrollTo(0, 0);
   }, [])
 
-  console.log(props.result._source)
   // data to be displayed in pills
   let pillData = [];
   // course level
