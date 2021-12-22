@@ -1,24 +1,24 @@
 .sk-hits-hit__id_department .sk-hits-hit__id_number .sk-hits-hit__prof_name {
-    font-weight: 900 !important;
-    color: var(--peterportal-primary-color-1);
-  }      
+  font-weight: 900 !important;
+  color: var(--peterportal-primary-color-1);
+}
 .sk-hits-hit__name {
-    font-weight: 500;
-    color: var(--peterportal-primary-color-1);
-  }     
+  font-weight: 500;
+  color: var(--peterportal-primary-color-1);
+}
 .sk-hits-hit__title {
-    font-weight: 500;
-    color: var(--peterportal-primary-color-1);
-  }      
-.course-department_unit {
-    color: gray;
-    font-weight: normal;
-    margin-top: 0px;
-  } 
+  font-weight: 500;
+  color: var(--peterportal-primary-color-1);
+}
 
-
-// highlight{
-//     font-style: normal;
-//     font-weight: bold;
-//     text-decoration: underline
-// }
+.hit-subtitle {
+  color: gray;
+  font-weight: normal;
+  margin-top: 0px;
+}
+.hit-item {
+  border-radius: var(--border-radius);
+  background-color: #ffffff;
+  padding: 2vh;
+  margin-bottom: 2vh;
+}

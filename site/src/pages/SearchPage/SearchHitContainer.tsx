@@ -33,7 +33,7 @@ interface SearchHitContainerProps {
 const SearchHitContainer: FC<SearchHitContainerProps> = (props) => {
     return (
         <article className='search-hit-container'>
-            <div style={{ minHeight: '100vh', marginLeft: '34px' }}>
+            <div style={{ minHeight: '100vh', marginLeft: '2rem' }}>
                 <Hits
                     itemComponent={props.query === 'courses' ? CourseHitItem : ProfessorHitItem}
                     hitsPerPage={20}

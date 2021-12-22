@@ -39,7 +39,7 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
   }
 
   return (
-    <div style={{ display: 'flex', margin: '0 0 42px' }}>
+    <div className='hit-item' style={{ display: 'flex' }}>
       <a href='#' onClick={onClickName}>
         <div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
           <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
@@ -62,7 +62,7 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
 
           </h3>
         </a>
-        <h4 className={'course-department_unit'}>
+        <h4 className={'hit-subtitle'}>
           {props.result._source.department}&nbsp;･&nbsp;
           {props.result._source.title}
         </h4>

@@ -3,9 +3,10 @@ import { useHistory } from 'react-router';
 import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
+import Badge from 'react-bootstrap/Badge'
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-
 import { CourseData } from '../../types/types';
 
 interface CourseHitItemProps extends HitItemProps {
@@ -27,8 +28,24 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
     window.scrollTo(0, 0);
   }, [])
 
+  console.log(props.result._source)
+  // data to be displayed in pills
+  let pillData = [];
+  // course level
+  let courseLevel = props.result._source.course_level;
+  if (courseLevel) {
+    pillData.push(`${courseLevel.substring(0, courseLevel.indexOf('('))}`);
+  }
+  // ge
+  props.result._source.ge_list.forEach(ge => {
+    pillData.push(`${ge.substring(0, ge.indexOf(':'))}`);
+  })
+  // units
+  let units = props.result._source.units[0]
+  pillData.push(`${units} unit${units != 1 ? 's' : ''}`);
+
   return (
-    <div>
+    <div className='hit-item'>
       <div style={{ display: 'flex' }}>
         <div>
           <a href='#' onClick={() => {
@@ -82,10 +99,10 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
       </div>
 
       <div>
-        <h4 className={'course-department_unit'}>
-          {props.result._source.department}&nbsp;･&nbsp;
-          {props.result._source.units[0]} units
+        <h4 className={'hit-subtitle'}>
+          {props.result._source.school}
         </h4>
+
         <p
           className={props.bemBlocks.item('description')}
           dangerouslySetInnerHTML={{
@@ -96,17 +113,14 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
             ),
           }}
         ></p>
-        {props.result._source.prerequisite_text !== '' && (
-          <p>
-            <b>Prerequisite: </b> {props.result._source.prerequisite_text}
-          </p>
-        )}
 
-        <p className={'course-department_unit'}>
-          {props.result._source.ge_text}
-        </p>
-
-        <br />
+        <div className='hit-badges'>
+          {
+            pillData.map(pill => <Badge pill className='p-2 mr-3' variant='info'>
+              {pill}
+            </Badge>)
+          }
+        </div>
       </div>
     </div>
   )
