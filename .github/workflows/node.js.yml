@@ -27,9 +27,8 @@ jobs:
 
     steps:
       - name: Print Node Version
-        run: |
-          node --version
-
+        run: node --version
+          
       - name: Check Out Repo
         uses: actions/checkout@v2
 
@@ -40,8 +39,7 @@ jobs:
           cache: 'npm'
 
       - name: Print Node Version
-        run: |
-          node --version
+        run: node --version
 
       - name: Dump Environment Variables
         run: |
