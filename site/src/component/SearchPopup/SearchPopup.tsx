@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import './SearchPopup.scss'
-import Searching from '../../asset/searching.png';
 import GradeDist from '../GradeDist/GradeDist';
 import Button from 'react-bootstrap/Button';
 import Carousel from "react-multi-carousel";
@@ -40,7 +39,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     if (!selected) {
         return <div className='search-popup'>
             <div className='search-popup-missing'>
-                <img src={Searching} alt='searching' />
+                <img src='/searching.png' alt='searching' />
                 <p>
                     Click on a {props.searchType} card to view more information!
                 </p>
