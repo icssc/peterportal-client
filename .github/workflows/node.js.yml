@@ -26,9 +26,6 @@ jobs:
       PORT: ${{secrets.PORT}}
 
     steps:
-      - name: Print Node Version
-        run: node --version
-          
       - name: Check Out Repo
         uses: actions/checkout@v2
 
@@ -37,9 +34,6 @@ jobs:
         with:
           node-version: '12'
           cache: 'npm'
-
-      - name: Print Node Version
-        run: node --version
 
       - name: Dump Environment Variables
         run: |
