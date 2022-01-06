@@ -17,6 +17,9 @@ provider:
   runtime: nodejs12.x
   region: us-east-1
   stage: prod
+  apiGateway:
+    binaryMediaTypes:
+      - 'image/*'
 
 functions:
   app:
