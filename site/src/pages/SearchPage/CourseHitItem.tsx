@@ -8,6 +8,7 @@ import Badge from 'react-bootstrap/Badge'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseData } from '../../types/types';
+import { getCourseTags } from '../../helpers/util';
 
 interface CourseHitItemProps extends HitItemProps {
   result: {
@@ -29,19 +30,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
   }, [])
 
   // data to be displayed in pills
-  let pillData = [];
-  // course level
-  let courseLevel = props.result._source.course_level;
-  if (courseLevel) {
-    pillData.push(`${courseLevel.substring(0, courseLevel.indexOf('('))}`);
-  }
-  // ge
-  props.result._source.ge_list.forEach(ge => {
-    pillData.push(`${ge.substring(0, ge.indexOf(':'))}`);
-  })
-  // units
-  let units = props.result._source.units[0]
-  pillData.push(`${units} unit${units != 1 ? 's' : ''}`);
+  let pillData = getCourseTags(props.result._source);
 
   return (
     <div className='hit-item'>
