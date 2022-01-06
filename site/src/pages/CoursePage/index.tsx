@@ -7,14 +7,13 @@ import axios from 'axios';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
-import CourseSideInfo from '../../component/CourseSideInfo/CourseSideInfo';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
+import SideInfo from '../../component/SideInfo/SideInfo';
+
+import { getCourseTags } from '../../helpers/util';
 import { CourseData } from '../../types/types';
 import './CoursePage.scss';
-import {
-    Grid,
-} from 'semantic-ui-react'
 
 const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const [courseData, setCourseData] = useState<CourseData>(null!);
@@ -44,34 +43,44 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='course-page'>
-                    <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
-                        <CourseSideInfo {...courseData} />
-                    </section>
-                    <article style={{ marginLeft: '4rem', width: 'auto' }}>
-                        <Grid.Row>
-                            <h2>🌲 Prerequisite Tree</h2>
+                    <div>
+                        <SideInfo searchType='course' name={courseData.department + ' ' + courseData.number} 
+                            title={courseData.title} school={courseData.school} description={courseData.description}
+                            tags={getCourseTags(courseData)} course={courseData}/>
+                    </div>
+                    <div className='course-page-body'>
+                        <div className='course-page-section'>
+                            <div>
+                                <h2>🌲 Prerequisite Tree</h2>
+                            </div>
                             <Divider />
                             <PrereqTree {...courseData} />
-                        </Grid.Row>
+                        </div>
 
-                        <Grid.Row>
-                            <h2>🗓️ Schedule of Classes</h2>
+                        <div className='course-page-section'>
+                            <div>
+                                <h2>🗓️ Schedule of Classes</h2>
+                            </div>
                             <Divider />
                             <Schedule courseID={courseData.department + ' ' + courseData.number} />
-                        </Grid.Row>
+                        </div>
 
-                        <Grid.Row>
-                            <h2 id='grade-dist-label'>📊 Grade Distribution</h2>
+                        <div className='course-page-section'>
+                            <div>
+                                <h2>📊 Grade Distribution</h2>
+                            </div>
                             <Divider />
                             <GradeDist course={courseData} />
-                        </Grid.Row>
+                        </div>
 
-                        <Grid.Row>
-                            <h2 id='grade-dist-label'>💬 Reviews</h2>
+                        <div className='course-page-section'>
+                            <div>
+                                <h2>💬 Reviews</h2>
+                            </div>
                             <Divider />
                             <Review course={courseData} />
-                        </Grid.Row>
-                    </article>
+                        </div>
+                    </div>
                 </div>
             </Twemoji>
         )

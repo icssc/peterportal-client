@@ -5,11 +5,13 @@ import { ReviewData } from '../../types/types';
 // Define a type for the slice state
 interface ReviewState {
     reviews: ReviewData[];
+    formOpen: boolean;
 }
 
 // Define the initial state using that type
 const initialState: ReviewState = {
-    reviews: []
+    reviews: [],
+    formOpen: false
 }
 
 export const reviewSlice = createSlice({
@@ -22,12 +24,18 @@ export const reviewSlice = createSlice({
             state.reviews.push(action.payload);
         },
         setReviews: (state, action: PayloadAction<ReviewData[]>) => {
-            state.reviews = action.payload
+            state.reviews = action.payload;
         },
+        setFormStatus: (state, action: PayloadAction<boolean>) => {
+            state.formOpen = action.payload;
+        },
+        toggleFormStatus: (state) => {
+            state.formOpen = !state.formOpen;
+        }
     },
 })
 
-export const { addReview, setReviews } = reviewSlice.actions
+export const { addReview, setReviews, setFormStatus, toggleFormStatus } = reviewSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectReviews = (state: RootState) => state.review.reviews;

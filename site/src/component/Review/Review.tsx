@@ -4,7 +4,7 @@ import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss'
 
-import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseData, ProfessorData, ReviewData } from '../../types/types';
 
@@ -16,7 +16,7 @@ export interface ReviewProps {
 const Review: FC<ReviewProps> = (props) => {
     const dispatch = useAppDispatch();
     const reviewData = useAppSelector(selectReviews);
-    const [openForm, setOpenForm] = useState(false);
+    const openForm = useAppSelector(state => state.review.formOpen);
 
     const getReviews = async () => {
         interface paramsProps {
@@ -40,11 +40,11 @@ const Review: FC<ReviewProps> = (props) => {
     }, []);
 
     const openReviewForm = () => {
-        setOpenForm(true);
+        dispatch(setFormStatus(true));
         document.body.style.overflow = 'hidden';
     }
     const closeForm = () => {
-        setOpenForm(false);
+        dispatch(setFormStatus(false));
         document.body.style.overflow = 'visible';
     }
 

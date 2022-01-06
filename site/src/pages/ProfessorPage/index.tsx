@@ -1,16 +1,14 @@
 import React, { FC, useState, useEffect } from 'react'
+import './ProfessorPage.scss';
 import { RouteComponentProps } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
 import { Divider } from 'semantic-ui-react';
 import axios from 'axios';
-import ProfSideInfo from '../../component/ProfSideInfo/ProfSideInfo';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
-import {
-    Grid,
-} from 'semantic-ui-react'
+import SideInfo from '../../component/SideInfo/SideInfo';
 
 import { ProfessorData, CourseData, ReviewData } from '../../types/types';
 
@@ -38,27 +36,36 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
-                <div style={{ display: 'flex' }}>
-                    <section style={{ position: 'sticky', top: '4rem', height: 'min-content', width: '340px', border: '1px solid #EEEEEE', borderRadius: '10px' }}>
-                        <ProfSideInfo {...profData} />
-                    </section>
-                    <article style={{ marginLeft: '4rem', width: '900px' }}>
-                        <Grid.Row>
-                            <h2>🗓️ Schedule of Classes</h2>
+                <div className='professor-page'>
+                    <div>
+                        <SideInfo searchType='professor' name={profData.name}
+                            title={profData.title} school={profData.schools[0]} description={profData.department}
+                            tags={[profData.ucinetid, profData.shortened_name]} professor={profData} />
+                    </div>
+                    <article className='professor-page-body'>
+                        <div className='professor-page-section'>
+                            <div>
+                                <h2>🗓️ Schedule of Classes</h2>
+                            </div>
                             <Divider />
                             <Schedule professorID={profWebsoc} />
-                        </Grid.Row>
+                        </div>
 
-                        <Grid.Row>
-                            <h2 id='grade-dist-label'>📊 Grade Distribution</h2>
+                        <div className='professor-page-section'>
+                            <div>
+                                <h2>📊 Grade Distribution</h2>
+                            </div>
                             <Divider />
                             <GradeDist professor={profData} />
-                        </Grid.Row>                      
-                        <Grid.Row>
-                            <h2 id='grade-dist-label'>💬 Reviews</h2>
+                        </div>
+
+                        <div className='professor-page-section'>
+                            <div>
+                                <h2>💬 Reviews</h2>
+                            </div>
                             <Divider />
                             <Review professor={profData} />
-                        </Grid.Row>
+                        </div>
                     </article>
                 </div>
             </Twemoji>
