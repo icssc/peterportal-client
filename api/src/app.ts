@@ -121,4 +121,4 @@ app.use(function (req, res, next) {
 // export for local dev
 export default app
 // export for serverless
-exports.handler = serverless(app);
+exports.handler = serverless(app, { binary: ['image/*'] });
