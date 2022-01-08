@@ -1,6 +1,7 @@
 import React, { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
+import { useCookies } from 'react-cookie';
 
 import { ReviewData, VoteRequest } from '../../types/types';
 
@@ -11,12 +12,17 @@ interface SubReviewProps {
 
 const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
   const [score, setScore] = useState(review.score);
+  const [cookies, setCookie] = useCookies(['user']);
 
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/reviews/vote', vote);
   }
 
   const upvote = (e: MouseEvent) => {
+    if (!cookies.hasOwnProperty('user')) {
+      alert('You must be logged in to vote.');
+      return;
+    }
     const votes = {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: true
@@ -26,6 +32,10 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
   }
 
   const downvote = (e: MouseEvent) => {
+    if (!cookies.hasOwnProperty('user')) {
+      alert('You must be logged in to vote.');
+      return;
+    }
     const votes = {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: false
