@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
