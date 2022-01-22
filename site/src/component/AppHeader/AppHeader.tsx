@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component, FC } from 'react';
 import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 import { List } from 'react-bootstrap-icons';
 import { ReactComponent as CogIcon } from '../../asset/cog.svg';
