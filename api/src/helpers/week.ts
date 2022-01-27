@@ -35,9 +35,9 @@ export function getWeek(): Promise<WeekData> {
         else {
             // date not in any school term, probably in break
             resolve({
-                week: 0,
-                quarter: 'Break Time',
-                display: 'Enjoy your break!',
+                week: -1,
+                quarter: 'N/A',
+                display: 'Enjoy your break!😎',
             });
         }
     })
@@ -58,7 +58,7 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
         // check if the date lies within the start/end range
         if (date >= begin && date <= end) {
             let week = Math.floor(dateSubtract(begin, date) / 7) + 1;
-            let display = `Week ${week}, ${quarter}`
+            let display = `Week ${week} • ${quarter}`
             result = {
                 week: week,
                 quarter: quarter,
@@ -67,9 +67,9 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
         }
         // check if date is 1 week after end
         else if (date > end && date <= addDays(end, 7)) {
-            let display = `Finals Week, ${quarter}. Good Luck!🤞`
+            let display = `Finals Week • ${quarter}. Good Luck!🤞`
             result = {
-                week: 11,
+                week: -1,
                 quarter: quarter,
                 display: display
             }

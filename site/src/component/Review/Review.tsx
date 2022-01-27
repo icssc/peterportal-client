@@ -62,7 +62,7 @@ const Review: FC<ReviewProps> = (props) => {
                 {openForm ? (
                     <>
                         <div className='blur-bg' onClick={closeForm} />
-                        <ReviewForm {...props} />
+                        <ReviewForm closeForm={closeForm} {...props} />
                     </>
                 ) : null}
             </>
