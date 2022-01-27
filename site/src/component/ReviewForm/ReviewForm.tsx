@@ -3,7 +3,7 @@ import './ReviewForm.scss'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
-import { useQuery } from '@apollo/client';
+import CloseButton from 'react-bootstrap/CloseButton'
 import { useProfessorNames } from '../../hooks/professorNames';
 
 import { addReview } from '../../store/slices/reviewSlice';
@@ -12,6 +12,7 @@ import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
+  closeForm: () => void;
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
@@ -21,12 +22,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'B+', 'B', 'B-',
     'C+', 'C', 'C-',
     'D+', 'D', 'D-',
-    'F'
+    'F', 'P', 'NP'
   ];
 
   const { loading, error, professorNames } = useProfessorNames(props.course?.id);
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
+  const [yearTaken, setYearTaken] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
   const [gradeReceived, setGradeReceived] = useState('');
   const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
@@ -37,16 +39,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
-  const [terms, setTerms] = useState<string[]>([]);
-
-  const fetchTerms = async () => {
-    const res = await axios.get<string[]>('/schedule/getTerms?years=3');
-    setTerms(res.data);
-  }
 
   useEffect(() => {
-    fetchTerms();
-
     // get user info from cookie
     if (cookies.hasOwnProperty('user')) {
       setUserEmail(cookies.user.email);
@@ -91,7 +85,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       timestamp: month + '/' + day + '/' + year,
       gradeReceived: gradeReceived,
       forCredit: true,
-      quarter: quarterTaken,
+      quarter: yearTaken + ' ' + quarterTaken,
       score: 0
     };
     if (content.length > 500) {
@@ -151,24 +145,36 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   const reviewForm = (
     <>
+      <div className='submit-close'>
+        <CloseButton onClick={props.closeForm} />
+      </div>
       <div className='submit-input'>
         {props.course && instructorSelect}
         {props.professor && courseSelect}
-        <label htmlFor='quarter'>
-          <h5>Quarter taken:</h5>
-          <select name='quarter' id='quarter' onChange={(e) => setQuarterTaken(e.target.value)}>
-            <option disabled={true} selected >Quarter</option>
-            {terms.map((quarter, i) => (
-              <option key={i}>{quarter}</option>
-            ))}
-          </select>
-        </label>
         <label htmlFor='grade'>
           <h5>Grade:</h5>
           <select name='grade' id='grade' onChange={(e) => setGradeReceived(e.target.value)}>
             <option disabled={true} selected >Grade</option>
             {grades.map((grade, i) => (
               <option key={i}>{grade}</option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor='year'>
+          <h5>Year taken:</h5>
+          <select name='year' id='year' onChange={(e) => setYearTaken(e.target.value)}>
+            <option disabled={true} selected >Year</option>
+            {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year, i) => (
+              <option key={i}>{year}</option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor='quarter'>
+          <h5>Quarter taken:</h5>
+          <select name='quarter' id='quarter' onChange={(e) => setQuarterTaken(e.target.value)}>
+            <option disabled={true} selected >Quarter</option>
+            {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
+              <option key={`quarter-${i}`}>{quarter}</option>
             ))}
           </select>
         </label>

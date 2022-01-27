@@ -3,8 +3,8 @@
   padding: 20px;
   display: flex;
   grid-gap: 35px;
-  width: 700px;
-  height: 400px;
+  width: fit-content;
+  height: 40vh;
   position: fixed;
   top: 0;
   right: 0;
@@ -54,7 +54,6 @@
 .submit-rating {
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
   input[type='radio'] {
     display: none;
   }
@@ -109,4 +108,9 @@
   p {
     font-size: 1.25rem;
   }
+}
+.submit-close {
+  position: absolute;
+  right: 2vh;
+  top: 2vh;
 }
