@@ -73,6 +73,10 @@ export interface ReviewData {
     forCredit: boolean;
     quarter: string;
     score: number;
+    takeAgain: boolean;
+    textbook: boolean;
+    attendance: boolean;
+    tags: string[];
 }
 
 export interface PassportData {
