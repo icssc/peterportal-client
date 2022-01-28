@@ -36,7 +36,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Lots of homework', 'So many papers', 'Lecture heavy', 'Group projects', 'Gives good feedback'
   ]
 
-  const { loading, error, professorNames } = useProfessorNames(props.course?.id);
+  const { loading, error, professorNameLookup } = useProfessorNames(props.course?.id);
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
@@ -142,12 +142,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='instructor' id='instructor' required
       onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Instructor</option>
-      {professorNames.map((instructor, i) => {
-        const arr = instructor.name.split(' ');
-        const name = `${arr[0][0]}. ${arr[arr.length - 1]}`
+      {Object.keys(professorNameLookup).map((ucinetid, i) => {
+        const name = professorNameLookup[ucinetid].shortened_name;
         return (
           // @ts-ignore name attribute isn't supported
-          <option key={'review-form-professor-' + i} name={name} id={instructor.ucinetid}>{name}</option>
+          <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
         )
       })}
     </Form.Control>

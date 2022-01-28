@@ -4,19 +4,92 @@ $avatarWidth: 65px;
   border-radius: var(--border-radius);
   padding: 2rem;
   margin-bottom: 3vh;
-  display: grid;
-  grid-template-columns: $avatarWidth auto 80px;
-  max-width: 800px;
-  grid-gap: 15px;
 }
-.content {
+// name of the class/professor
+.subreview-identifier {
+  margin: 0;
+  font-weight: bold;
+  font-size: xx-large;
+}
+// content of review
+.subreview-content {
+  display: flex;
+}
+// rating boxes (quality and difficulty)
+.subreview-ratings {
+  text-align: center;
+  justify-self: flex-end;
+  margin-right: 3vw;
+}
+.rating-label {
+  line-height: 1rem;
+  font-size: 1rem;
+}
+.rating {
+  margin: 1vh 0;
+  border-radius: var(--border-radius);
+  width: 5vw;
+  height: 5vw;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 3rem;
+  font-size: 3rem;
+  color: white;
+}
+// color scheme for numerical ratings
+// reversed for difficulty so 1 => r5, etc.
+.r1 {
+  background-color: var(--peterportal-secondary-red);
+}
+.r2 {
+  background-color: var(--peterportal-secondary-orange);
+}
+.r3 {
+  background-color: var(--peterportal-secondary-yellow);
+}
+.r4 {
+  background-color: var(--peterportal-secondary-green);
+}
+.r5 {
+  background-color: var(--peterportal-primary-color-1);
+}
+.subreview-info {
+  width: 100%;
+}
+.subreview-details {
+  margin: 1vh 0;
+  display: flex;
+  justify-content: space-between;
+}
+.subreview-detail {
+  border-radius: var(--border-radius);
+  background-color: #ffffff;
+  width: 45%;
+  padding: 1rem;
+  height: 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  p {
+    margin: 0;
+  }
+}
+.subreview-author {
+  display: flex;
+  justify-content: space-between;
+  color: var(--peterportal-mid-gray);
+
+  p {
+    margin-bottom: 1vh;
+  }
 }
 // inline elements in column
-.inline {
+.subreview-footer {
   display: flex;
-  margin-top: auto;
+  margin-top: 1vh;
   flex-direction: row;
   grid-gap: 5px;
   a {
@@ -37,53 +110,6 @@ $avatarWidth: 65px;
 }
 .downvote {
   color: var(--peterportal-secondary-red);
-}
-// name of the class/professor
-.identifier {
-  margin: 0;
-  color: var(--peterportal-primary-color-1);
-}
-.review-info {
-  display: flex;
-  justify-content: space-between;
-  grid-gap: 10px;
-}
-// avatar profile picture
-.avatar {
-  width: $avatarWidth;
-  align-self: flex-start;
-}
-// rating boxes (quality and difficulty)
-.ratings {
-  margin-left: auto;
-  text-align: center;
-  justify-self: flex-end;
-}
-.rating {
-  width: 75px;
-  height: 75px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: white;
-}
-// color scheme for numerical ratings
-// reversed for difficulty so 1 => r5, etc.
-.r1 {
-  background-color: var(--peterportal-secondary-red);
-}
-.r2 {
-  background-color: var(--peterportal-secondary-orange);
-}
-.r3 {
-  background-color: var(--peterportal-secondary-yellow);
-}
-.r4 {
-  background-color: var(--peterportal-secondary-green);
-}
-.r5 {
-  background-color: var(--peterportal-primary-color-1);
 }
 .add-review-btn {
   border: none;
