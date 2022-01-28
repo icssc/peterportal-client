@@ -1,16 +1,21 @@
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import "./AddYearPopup.scss";
 import { PlusCircleFill } from "react-bootstrap-icons";
 import { Button, Form, Popover, Overlay } from "react-bootstrap";
 import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 
-const AddYearPopup: FC = () => {
+interface AddYearPopupProps {
+  placeholderYear: number;
+}
+
+const AddYearPopup: FC<AddYearPopupProps> = ({placeholderYear}) => {
   const dispatch = useAppDispatch();
-  const placeholderYear = new Date().getFullYear();
   const [year, setYear] = useState(placeholderYear);
   const [show, setShow] = useState(false);
   const target = useRef(null);
+
+  useEffect(() => {setYear(placeholderYear)});
 
   const handleClick = (event: React.MouseEvent) => {
     setShow(!show);

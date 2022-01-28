@@ -58,7 +58,7 @@ const Planner: FC = () => {
           );
         })}
       </section>
-      <AddYearPopup />
+      <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
     </div>
   );
 };
