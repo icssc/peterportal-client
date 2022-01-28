@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
-import { CourseData, ProfessorData, SearchType, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorData, SearchType, ReviewData } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 
@@ -64,7 +64,7 @@ interface SideInfoProps {
     school: string;
     description: string;
     tags: string[];
-    course?: CourseData;
+    course?: CourseGQLData;
     professor?: ProfessorData;
 }
 

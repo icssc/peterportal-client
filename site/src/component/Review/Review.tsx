@@ -6,10 +6,10 @@ import './Review.scss'
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseData, ProfessorData, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorData, ReviewData } from '../../types/types';
 
 export interface ReviewProps {
-    course?: CourseData;
+    course?: CourseGQLData;
     professor?: ProfessorData;
 }
 

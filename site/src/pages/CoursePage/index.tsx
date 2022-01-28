@@ -10,13 +10,15 @@ import PrereqTree from '../../component/PrereqTree/PrereqTree';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
+import { useCourseGQL } from '../../hooks/courseData';
 
 import { getCourseTags } from '../../helpers/util';
-import { CourseData } from '../../types/types';
+import { CourseGQLData, CourseData } from '../../types/types';
 import './CoursePage.scss';
 
 const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const [courseData, setCourseData] = useState<CourseData>(null!);
+    const { loading, error, course: courseGQLData } = useCourseGQL(props.match.params.id);
 
     const fetchDataFromApi = async () => {
         console.log('Viewing Course', props.match.params.id);
@@ -46,7 +48,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                     <div>
                         <SideInfo searchType='course' name={courseData.department + ' ' + courseData.number} 
                             title={courseData.title} school={courseData.school} description={courseData.description}
-                            tags={getCourseTags(courseData)} course={courseData}/>
+                            tags={getCourseTags(courseData)} course={courseGQLData}/>
                     </div>
                     <div className='course-page-body'>
                         <div className='course-page-section'>
@@ -54,7 +56,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>🌲 Prerequisite Tree</h2>
                             </div>
                             <Divider />
-                            <PrereqTree {...courseData} />
+                            <PrereqTree {...courseGQLData} />
                         </div>
 
                         <div className='course-page-section'>
@@ -62,7 +64,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>🗓️ Schedule of Classes</h2>
                             </div>
                             <Divider />
-                            <Schedule courseID={courseData.department + ' ' + courseData.number} />
+                            <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.number} />
                         </div>
 
                         <div className='course-page-section'>
@@ -70,7 +72,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>📊 Grade Distribution</h2>
                             </div>
                             <Divider />
-                            <GradeDist course={courseData} />
+                            <GradeDist course={courseData as CourseData} />
                         </div>
 
                         <div className='course-page-section'>
@@ -78,7 +80,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>💬 Reviews</h2>
                             </div>
                             <Divider />
-                            <Review course={courseData} />
+                            <Review course={courseGQLData} />
                         </div>
                     </div>
                 </div>
