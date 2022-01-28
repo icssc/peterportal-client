@@ -1,6 +1,7 @@
 import React, { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
+import Badge from 'react-bootstrap/Badge';
 import { useCookies } from 'react-cookie';
 
 import { ReviewData, VoteRequest } from '../../types/types';
@@ -48,14 +49,28 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
     <div className='subreview'>
       <img className='avatar' src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lol_circle.png/479px-Lol_circle.png' />
       <div className='content'>
-        <h3 className='reviewer'>{review.userDisplay}</h3>
+        <h3 className='identifier'>{showCourse ? review.courseID : (review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1))}</h3>
         <div className='review-info'>
-          {!showCourse && <p><b>Taken With: </b>{review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1)}</p>}
-          {showCourse && <p><b>Course Taken: </b>{review.courseID}</p>}
+          <p><b>Attendance: </b>{review.attendance ? 'Mandatory' : 'Not Mandatory'}</p>
+          <p><b>Would Take Again: </b>{review.takeAgain ? 'Yes' : 'No'}</p>
+          <p><b>Textbook: </b>{review.textbook ? 'Yes' : 'No'}</p>
+        </div>
+        <div className='review-info'>
           <p><b>Quarter Taken: </b>{review.quarter}</p>
           <p><b>Grade Received: </b>{review.gradeReceived}</p>
         </div>
+        <div className='review-info'>
+          <p><b>Posted by: </b>{review.userDisplay}</p>
+          <p><b>Date Posted: </b>{review.timestamp}</p>
+        </div>
         <p>{review.reviewContent}</p>
+        <div className='review-tags'>
+          {review.tags.map((tag, i) =>
+            <Badge pill className='p-3 mr-2 mt-2' variant='info' id={`review-tag-${i}`}>
+              {tag}
+            </Badge>
+          )}
+        </div>
         <div className='inline' id={review._id}>
           <p>Helpful?</p>
           <button className='upvote' onClick={upvote}>&#9650;</button>
@@ -63,7 +78,6 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
           <button className='downvote' onClick={downvote}>&#9660;</button>
           <a href='/report'>Report</a>
         </div>
-
       </div>
       <div className='ratings'>
         <div className={'r' + Math.floor(review.rating).toString() + ' rating'}><p>{review.rating}</p></div>
