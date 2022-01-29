@@ -194,7 +194,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Rating
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].rating / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].rating / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count == 0 && '?'}
                             <span className='side-info-denominator'>
                                 / 5.0
                             </span>
@@ -206,7 +207,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Would take again
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0)}%
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0)}
+                            {averageReviews[selectedReview].count == 0 && '?'}
+                            %
                         </div>
                     </div>
 
@@ -215,7 +218,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Difficulty level
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count == 0 && '?'}
                             <span className='side-info-denominator'>
                                 / 5.0
                             </span>
