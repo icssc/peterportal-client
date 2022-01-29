@@ -148,6 +148,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         )
       })}
     </Form.Control>
+    <Form.Text muted>
+      <a href='https://forms.gle/qAhCng7Ygua7SZ358' target='_blank' rel='noopener noreferrer'>
+        Can't find your professor?
+      </a>
+    </Form.Text>
     <Form.Control.Feedback type="invalid">
       Please choose an instructor
     </Form.Control.Feedback>
