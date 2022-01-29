@@ -4,7 +4,6 @@ import axios from 'axios'
 
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse } from '../../store/slices/popupSlice';
-import { useProfessorNames } from '../../hooks/professorNames';
 import { ScoreData } from '../../types/types';
 
 const CoursePopup: FC = () => {

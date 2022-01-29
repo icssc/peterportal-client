@@ -1,38 +1,26 @@
-.submit-review {
-  background-color: var(--peterportal-light-gray);
-  padding: 20px;
+.review-form {
+  background-color: var(--peterportal-gray-blue);
+  border-radius: var(--border-radius);
+  padding: 2rem;
   display: flex;
   grid-gap: 35px;
   width: fit-content;
-  height: 40vh;
+  height: fit-content;
   position: fixed;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
   margin: auto auto;
-}
-.submit-input {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  column-gap: 15px;
-  label {
-    display: flex;
-    flex-direction: column;
-    select {
-      padding: 5px 20px;
-      outline: none;
-      width: fit-content;
-      max-width: 150px;
-    }
-    option {
-      background-color: white;
-    }
-    h5 {
-      margin: 0 0 5px 0;
-      font-weight: bold;
-    }
+
+  h5 {
+    font-weight: normal;
   }
+
+  .form-control {
+    width: auto;
+  }
+
   .char-limit {
     grid-column: auto / span 3;
     margin-left: auto;
@@ -44,43 +32,33 @@
     }
   }
   textarea {
-    margin-top: 15px;
-    margin-bottom: 5px;
+    border-radius: var(--border-radius);
+    border: 2px solid #EAEBF2;
+    padding: 1rem;
     resize: none;
-    grid-column: span 3;
-    padding: 10px;
+    width: 100%;
+    display: block;
   }
 }
-.submit-rating {
+.review-form-section {
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+}
+.review-form-row {
   display: flex;
-  flex-direction: column;
-  input[type='radio'] {
-    display: none;
-  }
-  label {
-    width: 40px;
-    height: 40px;
-    color: white;
-    font-size: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  h5 {
-    margin: 0 0 5px 0;
-    font-weight: bold;
-  }
 }
-.form-ratings {
-  margin-bottom: 20px;
+.review-form-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.active-rating::after {
-  content: '';
-  position: absolute;
-  background-color: black;
-  width: 40px;
-  height: 2px;
-  margin-top: 45px;
+.review-form-ratings {
+  width: 75vw;
+}
+.review-form-switches {
+  display: flex;
+  justify-content: space-between;
 }
 .rating-form-btn {
   border: none;
@@ -109,7 +87,7 @@
     font-size: 1.25rem;
   }
 }
-.submit-close {
+.review-form-close {
   position: absolute;
   right: 2vh;
   top: 2vh;
