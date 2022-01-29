@@ -9,6 +9,7 @@ import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
+import Error from '../../component/Error/Error';
 import { useProfessorGQL } from '../../hooks/professorData';
 
 import { ProfessorData, CourseData, ReviewData } from '../../types/types';
@@ -30,10 +31,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         return <LoadingPage />;
     }
     else if (profData.hasOwnProperty('error')) {
-        console.log(profData)
-        return <div>
-            Professor Does Not Exist!
-        </div>
+        return <Error message='Professor Does Not Exist!'/>
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>

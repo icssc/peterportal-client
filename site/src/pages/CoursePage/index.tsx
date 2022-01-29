@@ -10,6 +10,7 @@ import PrereqTree from '../../component/PrereqTree/PrereqTree';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
+import Error from '../../component/Error/Error';
 import { useCourseGQL } from '../../hooks/courseData';
 
 import { getCourseTags } from '../../helpers/util';
@@ -38,17 +39,15 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         return <LoadingPage />;
     }
     else if (courseData.hasOwnProperty('error')) {
-        return <div>
-            Course Does Not Exist!
-        </div>
+        return <Error message='Course Does Not Exist!' />
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='course-page'>
                     <div>
-                        <SideInfo searchType='course' name={courseData.department + ' ' + courseData.number} 
+                        <SideInfo searchType='course' name={courseData.department + ' ' + courseData.number}
                             title={courseData.title} school={courseData.school} description={courseData.description}
-                            tags={getCourseTags(courseData)} course={courseGQLData}/>
+                            tags={getCourseTags(courseData)} course={courseGQLData} />
                     </div>
                     <div className='course-page-body'>
                         <div className='course-page-section'>

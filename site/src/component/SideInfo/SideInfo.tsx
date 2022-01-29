@@ -139,7 +139,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         }
     }, [reviews])
 
-    console.log(props.professor)
+    // sort by number of reviews for the dropdown
+    let sortedReviews = Object.keys(averageReviews);
+    sortedReviews.sort((a, b) => averageReviews[b].count - averageReviews[a].count);
 
     return (
         <div className='side-info'>
@@ -172,10 +174,10 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                         setSelectedReview(e as string);
                     }}>
                         {
-                            Object.keys(averageReviews).map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-                                {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
-                                {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
-                            </Dropdown.Item>)
+                            sortedReviews.map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                            {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
+                            {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
+                        </Dropdown.Item>)
                         }
                     </DropdownButton>
 
@@ -185,6 +187,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                     }}>Rate {props.searchType}</Button>
                 </div>
                 {/* Show stats of selected course/professor */}
+                {selectedReview && <div className='side-info-selected-based'>Based on {averageReviews[selectedReview].count} reviews</div>}
                 {selectedReview && <div className='side-info-selected-rating'>
                     <div className='side-info-stat'>
                         <div className='side-info-stat-label'>
