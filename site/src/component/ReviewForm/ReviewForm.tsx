@@ -178,7 +178,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>It's your turn to review {props.course ? props.course?.id : props.professor?.name}</h1>
+              <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
               <h5>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</h5>
             </Col>
           </Row>

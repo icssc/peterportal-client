@@ -19,6 +19,9 @@ interface FeaturedInfoData {
 }
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
+    if (!averageReviews.hasOwnProperty(reviewKey)) {
+        return <></>
+    }
     return <div className='side-info-feature'>
         <div className='side-info-feature-title'>
             {featureType} Rated {searchType == 'course' ? 'Instructor' : 'Course'}
@@ -139,7 +142,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         }
     }, [reviews])
 
-    console.log(props.professor)
+    // sort by number of reviews for the dropdown
+    let sortedReviews = Object.keys(averageReviews);
+    sortedReviews.sort((a, b) => averageReviews[b].count - averageReviews[a].count);
 
     return (
         <div className='side-info'>
@@ -172,10 +177,10 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                         setSelectedReview(e as string);
                     }}>
                         {
-                            Object.keys(averageReviews).map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-                                {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
-                                {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
-                            </Dropdown.Item>)
+                            sortedReviews.map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                            {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
+                            {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
+                        </Dropdown.Item>)
                         }
                     </DropdownButton>
 
@@ -185,13 +190,15 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                     }}>Rate {props.searchType}</Button>
                 </div>
                 {/* Show stats of selected course/professor */}
+                {selectedReview && <div className='side-info-selected-based'>Based on {averageReviews[selectedReview].count} reviews</div>}
                 {selectedReview && <div className='side-info-selected-rating'>
                     <div className='side-info-stat'>
                         <div className='side-info-stat-label'>
                             Rating
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].rating / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].rating / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count == 0 && '?'}
                             <span className='side-info-denominator'>
                                 / 5.0
                             </span>
@@ -203,7 +210,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Would take again
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0)}%
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0) + '%'}
+                            {averageReviews[selectedReview].count == 0 && '?'}                            
                         </div>
                     </div>
 
@@ -212,7 +220,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Difficulty level
                         </div>
                         <div className='side-info-stat-value'>
-                            {(averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
+                            {averageReviews[selectedReview].count == 0 && '?'}
                             <span className='side-info-denominator'>
                                 / 5.0
                             </span>

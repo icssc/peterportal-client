@@ -78,7 +78,6 @@ interface PrereqProps extends CourseGQLData {
 }
 
 const PrereqTree: FC<PrereqProps> = (props) => {
-  console.log(' The props that came to pre-req tree are: ', props);
   let hasPrereqs = props.prerequisite_tree !== '';
   let hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
 
