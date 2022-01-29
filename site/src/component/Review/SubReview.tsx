@@ -3,15 +3,17 @@ import axios from 'axios';
 import './Review.scss'
 import Badge from 'react-bootstrap/Badge';
 import { useCookies } from 'react-cookie';
+import { Link } from 'react-router-dom';
 
-import { ReviewData, VoteRequest } from '../../types/types';
+import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 interface SubReviewProps {
   review: ReviewData;
-  showCourse: boolean;
+  course?: CourseGQLData;
+  professor?: ProfessorGQLData;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
 
@@ -48,7 +50,14 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
   return (
     <div className='subreview'>
       <div>
-        <h3 className='subreview-identifier'>{showCourse ? review.courseID : (review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1))}</h3>
+        <h3 className='subreview-identifier'>
+          {professor && <Link to={{ pathname: `/course/${review.courseID}` }}>
+            {professor.course_history[review.courseID].department + ' ' + professor.course_history[review.courseID].number}
+          </Link>}
+          {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
+            {course.instructor_history[review.professorID].name}
+          </Link>}
+        </h3>
       </div>
       <div className='subreview-content'>
         <div className='subreview-ratings'>
@@ -83,8 +92,8 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
         </div>
       </div>
       <div>
-        {review.tags.map((tag, i) =>
-          <Badge pill className='p-3 mr-2 mt-2' variant='info' id={`review-tag-${i}`}>
+        {review.tags?.map((tag, i) =>
+          <Badge pill className='p-3 mr-2 mt-2' variant='info' key={`review-tag-${review._id}-${i}`}>
             {tag}
           </Badge>
         )}

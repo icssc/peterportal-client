@@ -40,23 +40,23 @@ export interface ProfessorData {
 export type GradeDistData = GradeData[];
 
 export interface GradeData {
-  year: string;
-  quarter: string;
-  department: string;
-  number: string;
-  code: number;
-  section: string;
-  instructor: string;
-  type: string;
-  gradeACount: number;
-  gradeBCount: number;
-  gradeCCount: number;
-  gradeDCount: number;
-  gradeFCount: number;
-  gradePCount: number;
-  gradeNPCount: number;
-  gradeWCount: number;
-  averageGPA: number;
+    year: string;
+    quarter: string;
+    department: string;
+    number: string;
+    code: number;
+    section: string;
+    instructor: string;
+    type: string;
+    gradeACount: number;
+    gradeBCount: number;
+    gradeCCount: number;
+    gradeDCount: number;
+    gradeFCount: number;
+    gradePCount: number;
+    gradeNPCount: number;
+    gradeWCount: number;
+    averageGPA: number;
 }
 
 export interface ReviewData {
@@ -134,7 +134,7 @@ export interface GenericObject {
 /**
  * Peter's Roadmaps Type Definitions
  */
-export type PlannerData = PlannerYearData[]; 
+export type PlannerData = PlannerYearData[];
 
 export interface PlannerYearData {
     startYear: number;
@@ -144,4 +144,70 @@ export interface PlannerYearData {
 export interface PlannerQuarterData {
     name: string;
     courses: CourseData[];
+}
+
+/**
+ * GraphQL Definitions
+ */
+export interface CourseGQLData {
+    id: string;
+    department: string;
+    number: string;
+    school: string;
+    title: string;
+    course_level: string;
+    department_alias: string[];
+    units: number[];
+    description: string;
+    department_name: string;
+    instructor_history: ProfessorLookup;
+    prerequisite_tree: string;
+    prerequisite_list: CourseLookup;
+    prerequisite_text: string;
+    prerequisite_for: CourseLookup;
+    repeatability: string;
+    concurrent: string;
+    same_as: string;
+    restriction: string;
+    overlap: string;
+    corequisite: string;
+    ge_list: string[];
+    ge_text: string;
+    terms: string[];
+}
+
+export interface ProfessorGQLData {
+    name: string;
+    shortened_name: string;
+    ucinetid: string;
+    title: string;
+    department: string;
+    schools: string[];
+    related_departments: string[];
+    course_history: CourseLookup;
+}
+
+// maps ucinetid to subprofessor
+export interface ProfessorLookup {
+    [key: string]: SubProfessor;
+}
+
+// maps course id to subcourse
+export interface CourseLookup {
+    [key: string]: SubCourse;
+}
+
+// subset of professor details needed for display purposes
+export interface SubProfessor {
+    name: string;
+    ucinetid: string;
+    shortened_name: string;
+}
+
+// subset of course details needed for display purposes
+export interface SubCourse {
+    id: string;
+    department: string;
+    number: string;
+    title: string;
 }

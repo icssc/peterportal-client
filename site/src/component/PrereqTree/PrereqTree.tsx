@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
 
-import { PrerequisiteJSONNode, PrerequisiteJSON, CourseData } from '../../types/types';
+import { PrerequisiteJSONNode, PrerequisiteJSON, CourseGQLData, CourseLookup } from '../../types/types';
 
 interface NodeProps {
   node: string;
@@ -26,7 +26,7 @@ const Node: FC<NodeProps> = (props) => {
 }
 
 interface TreeProps {
-  prerequisiteNames: string[];
+  prerequisiteNames: CourseLookup;
   prerequisiteJSON: PrerequisiteJSONNode;
   key?: string;
   index?: number;
@@ -38,10 +38,14 @@ const Tree: FC<TreeProps> = (props) => {
 
   // if value is a string, render leaf node
   if (isValueNode) {
+    let id = (prerequisite as string).replace(/\s+/g, '');
+    let content = prerequisite;
+    if (props.prerequisiteNames.hasOwnProperty(id)) {
+      content = props.prerequisiteNames[id].title;
+    }
     return (
       <li key={props.index} className={'prerequisite-node'}>
-        {/* TODO: content is just duplicate of label, maybe do a graphql query for course names */}
-        <Node label={prerequisite as string} content={prerequisite as string} node={'prerequisite-node'} />
+        <Node label={prerequisite as string} content={content as string} node={'prerequisite-node'} />
       </li>
     )
   }
@@ -70,7 +74,7 @@ const Tree: FC<TreeProps> = (props) => {
   }
 }
 
-interface PrereqProps extends CourseData {
+interface PrereqProps extends CourseGQLData {
 }
 
 const PrereqTree: FC<PrereqProps> = (props) => {
@@ -102,11 +106,10 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             <>
               <ul style={{ padding: '0', display: 'flex' }}>
                 <div className='dependency-list-branch'>
-                  {props.prerequisite_for.map(
+                  {Object.values(props.prerequisite_for).map(
                     (dependency, index) => (
                       <li key={`dependency-node-${index}`} className={'dependency-node'}>
-                        {/* TODO: content is just duplicate of label, maybe do a graphql query for course names */}
-                        <Node label={dependency} content={dependency} node={'dependency-node'} />
+                        <Node label={dependency.department + ' ' + dependency.number} content={dependency.title} node={'dependency-node'} />
                       </li>
                     )
                   )}
