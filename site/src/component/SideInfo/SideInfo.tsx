@@ -19,6 +19,9 @@ interface FeaturedInfoData {
 }
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
+    if (!averageReviews.hasOwnProperty(reviewKey)) {
+        return <></>
+    }
     return <div className='side-info-feature'>
         <div className='side-info-feature-title'>
             {featureType} Rated {searchType == 'course' ? 'Instructor' : 'Course'}
@@ -207,9 +210,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             Would take again
                         </div>
                         <div className='side-info-stat-value'>
-                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0)}
-                            {averageReviews[selectedReview].count == 0 && '?'}
-                            %
+                            {averageReviews[selectedReview].count > 0 && (averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0) + '%'}
+                            {averageReviews[selectedReview].count == 0 && '?'}                            
                         </div>
                     </div>
 
