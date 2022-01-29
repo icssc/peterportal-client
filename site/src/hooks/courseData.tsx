@@ -9,6 +9,33 @@ interface CourseGQLResponse {
     }
 }
 
+const placeholder: CourseGQLData = {
+    id: '',
+    department: '',
+    number: '',
+    school: '',
+    title: '',
+    course_level: '',
+    department_alias: [],
+    units: [0, 0],
+    description: '',
+    department_name: '',
+    instructor_history: {},
+    prerequisite_tree: '',
+    prerequisite_list: {},
+    prerequisite_text: '',
+    prerequisite_for: {},
+    repeatability: '',
+    concurrent: '',
+    same_as: '',
+    restriction: '',
+    overlap: '',
+    corequisite: '',
+    ge_list: [],
+    ge_text: '',
+    terms: []
+}
+
 // given a course id, get the gql equivalent
 function useCourseGQL(courseID: string | undefined) {
     const query = gql`
@@ -56,11 +83,11 @@ function useCourseGQL(courseID: string | undefined) {
     }`;
     const { loading, error, data } = useQuery<CourseGQLResponse>(query);
     if (loading || error) {
-        return { loading, error, course: ({} as CourseGQLData) };
+        return { loading, error, course: placeholder };
     }
     else {
-        if (!courseID) {
-            return { loading, error, course: ({} as CourseGQLData) };
+        if (!courseID || !data?.course) {
+            return { loading, error, course: placeholder };
         }
         let instructorHistoryLookup: ProfessorLookup = {};
         let prerequisiteListLookup: CourseLookup = {};

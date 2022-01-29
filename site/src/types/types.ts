@@ -159,7 +159,7 @@ export interface CourseGQLData {
     department_alias: string[];
     units: number[];
     description: string;
-    department_name: string[];
+    department_name: string;
     instructor_history: ProfessorLookup;
     prerequisite_tree: string;
     prerequisite_list: CourseLookup;
@@ -174,6 +174,17 @@ export interface CourseGQLData {
     ge_list: string[];
     ge_text: string;
     terms: string[];
+}
+
+export interface ProfessorGQLData {
+    name: string;
+    shortened_name: string;
+    ucinetid: string;
+    title: string;
+    department: string;
+    schools: string[];
+    related_departments: string[];
+    course_history: CourseLookup;
 }
 
 // maps ucinetid to subprofessor

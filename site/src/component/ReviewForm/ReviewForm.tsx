@@ -9,7 +9,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
-import { useProfessorNames } from '../../hooks/professorNames';
 
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -36,7 +35,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Lots of homework', 'So many papers', 'Lecture heavy', 'Group projects', 'Gives good feedback'
   ]
 
-  const { loading, error, professorNameLookup } = useProfessorNames(props.course?.id);
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
@@ -137,13 +135,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }
 
   // select instructor if in course context
-  const instructorSelect = <Form.Group controlId='instructor'>
+  const instructorSelect = props.course && <Form.Group controlId='instructor'>
     <Form.Label>Taken With</Form.Label>
     <Form.Control as="select" name='instructor' id='instructor' required
       onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(professorNameLookup).map((ucinetid, i) => {
-        const name = professorNameLookup[ucinetid].shortened_name;
+      {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
+        const name = props.course?.instructor_history[ucinetid].shortened_name;
         return (
           // @ts-ignore name attribute isn't supported
           <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
@@ -156,15 +154,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   </Form.Group>
 
   // select course if in professor context
-  const courseSelect = <Form.Group controlId='course'>
+  const courseSelect = props.professor && <Form.Group controlId='course'>
     <Form.Label>Course Taken</Form.Label>
     <Form.Control as="select" name='course' id='course' required
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Course</option>
-      {props.professor?.course_history.map((courseID, i) => {
+      {Object.keys(props.professor?.course_history!).map((courseID, i) => {
+        const name = props.professor?.course_history[courseID].department + ' ' + props.professor?.course_history[courseID].number;
         return (
           // @ts-ignore name attribute isn't supported
-          <option key={'review-form-course-' + i} name={courseID} id={courseID.replace(/\s+/g, '')}>{courseID}</option>
+          <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
         )
       })}
     </Form.Control>
@@ -186,8 +185,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className='mt-4'>
             <Col>
               <div className='review-form-section review-form-row'>
-                {props.course && instructorSelect}
-                {props.professor && courseSelect}
+                {instructorSelect}
+                {courseSelect}
                 <Form.Group className='ml-3' controlId='grade'>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>

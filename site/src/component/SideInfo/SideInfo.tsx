@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
-import { CourseGQLData, ProfessorData, SearchType, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchType, ReviewData } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 
@@ -15,9 +15,10 @@ interface FeaturedInfoData {
     featureType: 'Highest' | 'Lowest';
     averageReviews: { [key: string]: AverageReview };
     reviewKey: string;
+    displayName: string;
 }
 
-const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey }) => {
+const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
     return <div className='side-info-feature'>
         <div className='side-info-feature-title'>
             {featureType} Rated {searchType == 'course' ? 'Instructor' : 'Course'}
@@ -27,7 +28,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
         </div>
         <div className='side-info-feature-name'>
             <Link to={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
-                {reviewKey}
+                {displayName}
             </Link>
         </div>
         <div className='side-info-feature-stats'>
@@ -65,13 +66,14 @@ interface SideInfoProps {
     description: string;
     tags: string[];
     course?: CourseGQLData;
-    professor?: ProfessorData;
+    professor?: ProfessorGQLData;
 }
 
 interface AverageReview {
     count: number;
     rating: number;
     difficulty: number;
+    takeAgain: number;
 }
 
 const SideInfo: FC<SideInfoProps> = (props) => {
@@ -88,7 +90,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         let allReviews = {
             count: 0,
             rating: 0,
-            difficulty: 0
+            difficulty: 0,
+            takeAgain: 0
         };
 
         reviews.forEach(review => {
@@ -106,15 +109,18 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                 newAverageReviews[key] = {
                     count: 0,
                     rating: 0,
-                    difficulty: 0
+                    difficulty: 0,
+                    takeAgain: 0
                 }
             }
             newAverageReviews[key].count += 1;
             newAverageReviews[key].rating += review.rating;
             newAverageReviews[key].difficulty += review.difficulty;
+            newAverageReviews[key].takeAgain += review.takeAgain ? 1 : 0;
             allReviews.count += 1;
             allReviews.rating += review.rating;
             allReviews.difficulty += review.difficulty;
+            allReviews.takeAgain += review.takeAgain ? 1 : 0;
         })
 
         // find highest and lowest reviews
@@ -133,6 +139,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         }
     }, [reviews])
 
+    console.log(props.professor)
+
     return (
         <div className='side-info'>
             <div className='side-info-data'>
@@ -150,7 +158,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                 </h4>
                 <div>
                     {
-                        props.tags.map(tag => <Badge pill className='p-3 mr-3' variant='info'>
+                        props.tags.map((tag, i) => <Badge pill className='p-3 mr-3' variant='info' key={`side-info-badge-${i}`}>
                             {tag}
                         </Badge>)
                     }
@@ -159,19 +167,24 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
             <div className='side-info-ratings'>
                 <div className='side-info-buttons'>
+                    {/* Dropdown to select specific course/professor */}
                     <DropdownButton title={selectedReview} variant='secondary' onSelect={(e) => {
                         setSelectedReview(e as string);
                     }}>
                         {
-                            Object.keys(averageReviews).map((key, index) => <Dropdown.Item eventKey={key}>
-                                {key}
+                            Object.keys(averageReviews).map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                                {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
+                                {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
                             </Dropdown.Item>)
                         }
                     </DropdownButton>
+
+                    {/* Add a review */}
                     <Button variant="primary" onClick={() => {
                         dispatch(toggleFormStatus());
                     }}>Rate {props.searchType}</Button>
                 </div>
+                {/* Show stats of selected course/professor */}
                 {selectedReview && <div className='side-info-selected-rating'>
                     <div className='side-info-stat'>
                         <div className='side-info-stat-label'>
@@ -187,7 +200,16 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
                     <div className='side-info-stat'>
                         <div className='side-info-stat-label'>
-                            Difficulty
+                            Would take again
+                        </div>
+                        <div className='side-info-stat-value'>
+                            {(averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count * 100).toFixed(0)}%
+                        </div>
+                    </div>
+
+                    <div className='side-info-stat'>
+                        <div className='side-info-stat-label'>
+                            Difficulty level
                         </div>
                         <div className='side-info-stat-value'>
                             {(averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
@@ -196,24 +218,19 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                             </span>
                         </div>
                     </div>
-
-                    <div className='side-info-stat'>
-                        <div className='side-info-stat-label'>
-                            Responses
-                        </div>
-                        <div className='side-info-stat-value'>
-                            {averageReviews[selectedReview].count}
-                        </div>
-                    </div>
                 </div>
                 }
             </div>
 
             <div className='side-info-featured'>
                 {highestReview && <FeaturedInfo searchType={props.searchType} featureType='Highest'
-                    averageReviews={averageReviews} reviewKey={highestReview} />}
+                    averageReviews={averageReviews} reviewKey={highestReview}
+                    displayName={props.searchType == 'course' ? props.course?.instructor_history[highestReview].shortened_name! :
+                        (props.professor?.course_history[highestReview] ? props.professor?.course_history[highestReview].department + ' ' + props.professor?.course_history[highestReview].number : highestReview)} />}
                 {lowestReview && <FeaturedInfo searchType={props.searchType} featureType='Lowest'
-                    averageReviews={averageReviews} reviewKey={lowestReview} />}
+                    averageReviews={averageReviews} reviewKey={lowestReview}
+                    displayName={props.searchType == 'course' ? props.course?.instructor_history[lowestReview].shortened_name! :
+                        (props.professor?.course_history[lowestReview] ? props.professor?.course_history[lowestReview].department + ' ' + props.professor?.course_history[lowestReview].number : lowestReview)} />}
             </div>
         </div>
     )

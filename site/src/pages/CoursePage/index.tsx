@@ -13,7 +13,7 @@ import SideInfo from '../../component/SideInfo/SideInfo';
 import { useCourseGQL } from '../../hooks/courseData';
 
 import { getCourseTags } from '../../helpers/util';
-import { CourseGQLData, CourseData } from '../../types/types';
+import { CourseData } from '../../types/types';
 import './CoursePage.scss';
 
 const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
@@ -72,7 +72,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>📊 Grade Distribution</h2>
                             </div>
                             <Divider />
-                            <GradeDist course={courseData as CourseData} />
+                            <GradeDist course={courseData} />
                         </div>
 
                         <div className='course-page-section'>
