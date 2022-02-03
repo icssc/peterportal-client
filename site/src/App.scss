@@ -1,9 +1,10 @@
 .app-content {
     display: flex;
+    flex-direction: column;
     padding-top: 3vh;
     padding-left: 3vw;
     padding-right: 3vw;
-    height: 88vh;
+    height: 92vh;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: var(--peterportal-gray-blue);
