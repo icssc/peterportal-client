@@ -8,7 +8,7 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './App.scss';
-import { Collapse, Fade } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 
 import AppHeader from './component/AppHeader/AppHeader';
 import Footer from './component/Footer/Footer';
@@ -27,11 +27,11 @@ export default function App() {
 
   return (
     <Router>
-      <Collapse in={sidebarOpen} dimension='width'>
-        <div>
+      <Fade in={sidebarOpen}>
+        <div >
           <SideBar></SideBar>
         </div>
-      </Collapse>
+      </Fade>
       <AppHeader />
       <div className='app-content'>
         <Switch>
@@ -51,8 +51,8 @@ export default function App() {
           <Route path='/professor/:id' component={ProfessorPage} />
           <Route component={ErrorPage} />
         </Switch>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   )
 }

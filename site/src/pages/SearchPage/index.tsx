@@ -6,7 +6,7 @@ import SearchModule from './SearchModule'
 import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
-import { Collapse } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 import CoursePopup from './CoursePopup'
 import ProfessorPopup from './ProfessorPopup'
 
@@ -44,15 +44,15 @@ const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
             <div style={{ width: '50vw' }}>
-                <Collapse in={filterOpen}>
+                <Fade in={filterOpen}>
                     <div>
                         <SearchFilter query={index} />
                     </div>
-                </Collapse>
+                </Fade>
                 <SearchModule query={index} />
                 <SearchHitContainer query={index} />
             </div>
-            <div style={{ flexGrow: 1 }}>
+            <div style={{ flexGrow: 1, height: 'fit-content' }}>
                 {index == 'courses' && <CoursePopup />}
                 {index == 'professors' && <ProfessorPopup />}
             </div>
