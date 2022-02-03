@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import './SearchPage.scss';
 import 'react-multi-carousel/lib/styles.css';
@@ -40,11 +40,12 @@ interface SearchPageContentProps {
 }
 const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     const filterOpen = useAppSelector(state => state.ui.filterOpen);
+    const [isShown, setIsShown] = useState(false);
 
     return <>
         <div style={{ display: 'flex', flexGrow: 1 }}>
             <div style={{ width: '50vw' }}>
-                <Fade in={filterOpen}>
+                <Fade className={`${isShown ? '' : 'hide'}`} in={filterOpen}  onEnter={() => setIsShown(true)} onExited={() => setIsShown(false)}>
                     <div>
                         <SearchFilter query={index} />
                     </div>

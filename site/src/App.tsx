@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   BrowserRouter as Router,
@@ -24,10 +24,11 @@ import { useAppSelector } from './store/hooks';
 
 export default function App() {
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
+  const [isShown, setIsShown] = useState(false);
 
   return (
     <Router>
-      <Fade in={sidebarOpen}>
+      <Fade className={`${isShown ? '' : 'hide'}`} in={sidebarOpen} onEnter={() => setIsShown(true)} onExited={() => setIsShown(false)}>
         <div >
           <SideBar></SideBar>
         </div>
