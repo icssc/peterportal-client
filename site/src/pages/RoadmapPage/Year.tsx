@@ -60,7 +60,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               ) : (
                 <CaretRightFill className="caret-icon" />
               )}
-              <span id="year-number">Year {yearIndex} </span>
+              <span id="year-number">Year {yearIndex + 1} </span>
               <span id="year-range">
                 ({data.startYear} - {data.startYear + 1})
               </span>

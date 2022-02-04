@@ -22,7 +22,7 @@ interface MoveCoursePayload {
     to: CourseIdentifier;
 }
 
-// Paylaod to pass in to add a year
+// Payload to pass in to add a year
 interface AddYearPayload {
     yearData: PlannerYearData;
 }
@@ -77,7 +77,7 @@ export const roadmapSlice = createSlice({
             state.yearPlans.splice(state.yearPlans.length, 0, action.payload.yearData);
         },
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
-            delete state.yearPlans[action.payload.yearIndex];
+            state.yearPlans.splice(action.payload.yearIndex, 1);
         },
         setActiveCourse: (state, action: PayloadAction<CourseData>) => {
             state.activeCourse = action.payload;
