@@ -2,7 +2,7 @@
   "name": "peterportal-root",
   "version": "0.1.0",
   "scripts": {
-    "postinstall": "npm install --production=false --prefix api && npm install --production=false --prefix site",
+    "postinstall": "npm install --production=false --prefix api && npm install --legacy-peer-deps --production=false --prefix site",
     "heroku-postbuild": "cd api && npm run build && cd .. && cd site && npm run build && cp -r build ../api/",
     "start": "npm start --prefix api"
   },
