@@ -9,13 +9,13 @@ interface AddYearPopupProps {
   placeholderYear: number;
 }
 
-const AddYearPopup: FC<AddYearPopupProps> = ({placeholderYear}) => {
+const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
   const dispatch = useAppDispatch();
   const [year, setYear] = useState(placeholderYear);
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  useEffect(() => {setYear(placeholderYear)}, [placeholderYear]);
+  useEffect(() => { setYear(placeholderYear) }, [placeholderYear]);
 
   const handleClick = (event: React.MouseEvent) => {
     setShow(!show);
@@ -44,7 +44,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({placeholderYear}) => {
                   }}
                   onKeyDown={(e: React.KeyboardEvent) => {
                     // prevent submitting form (reloads the page)
-                    if (e.key === 'Enter'){
+                    if (e.key === 'Enter') {
                       e.preventDefault();
                     }
                   }}
