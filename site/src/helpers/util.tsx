@@ -1,4 +1,4 @@
-import { CourseData, ProfessorData } from '../types/types';
+import { CourseData } from '../types/types';
 
 export function getCourseTags(course: CourseData) {
   // data to be displayed in pills

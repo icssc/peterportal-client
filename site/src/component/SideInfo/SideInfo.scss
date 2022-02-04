@@ -26,12 +26,18 @@
     }
 }
 
+.side-info-selected-based {
+    margin-top: 1vh;
+    color: grey;
+}
+
 .side-info-selected-rating {
     display: flex;
     justify-content: space-between;
+    margin: 1vh 0;
 
     .side-info-stat {
-        padding: 1rem;
+        padding-bottom: 1rem 0;
         width: 33%;
 
         .side-info-stat-label {
@@ -41,7 +47,8 @@
 
         .side-info-stat-value {
             font-weight: bold;
-            font-size: 4em;
+            line-height: 4rem;
+            font-size: 4rem;
         }
     }
 }
@@ -69,6 +76,9 @@
     .side-info-feature-name {
         font-weight: bold;
         font-size: 2em;
+        a {
+            color: black;
+        }
     }
 
     .side-info-feature-stats {

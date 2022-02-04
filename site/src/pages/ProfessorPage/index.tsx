@@ -9,15 +9,17 @@ import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
+import Error from '../../component/Error/Error';
+import { useProfessorGQL } from '../../hooks/professorData';
 
 import { ProfessorData, CourseData, ReviewData } from '../../types/types';
 
 const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
+    const { loading, error, professor: professorGQLData } = useProfessorGQL(props.match.params.id);
     const [profData, setProfData] = useState<ProfessorData>(null!);
-    const [profWebsoc, setProfWebsoc] = useState('');
+
     const fetchDataFromApi = async () => {
         const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
-        setProfWebsoc(apiResponse.data.shortened_name);
         setProfData(apiResponse.data);
     }
 
@@ -29,10 +31,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         return <LoadingPage />;
     }
     else if (profData.hasOwnProperty('error')) {
-        console.log(profData)
-        return <div>
-            Professor Does Not Exist!
-        </div>
+        return <Error message='Professor Does Not Exist!'/>
     } else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
@@ -40,7 +39,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                     <div>
                         <SideInfo searchType='professor' name={profData.name}
                             title={profData.title} school={profData.schools[0]} description={profData.department}
-                            tags={[profData.ucinetid, profData.shortened_name]} professor={profData} />
+                            tags={[profData.ucinetid, profData.shortened_name]} professor={professorGQLData} />
                     </div>
                     <article className='professor-page-body'>
                         <div className='professor-page-section'>
@@ -48,7 +47,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>🗓️ Schedule of Classes</h2>
                             </div>
                             <Divider />
-                            <Schedule professorID={profWebsoc} />
+                            <Schedule professorID={professorGQLData.shortened_name} />
                         </div>
 
                         <div className='professor-page-section'>
@@ -64,7 +63,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>💬 Reviews</h2>
                             </div>
                             <Divider />
-                            <Review professor={profData} />
+                            <Review professor={professorGQLData} />
                         </div>
                     </article>
                 </div>
