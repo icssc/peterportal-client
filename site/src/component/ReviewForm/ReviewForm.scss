@@ -39,6 +39,10 @@
     width: 100%;
     display: block;
   }
+
+  .badge-pill {
+    cursor: pointer;
+  }
 }
 .review-form-section {
   background-color: #ffffff;
@@ -91,4 +95,12 @@
   position: absolute;
   right: 2vh;
   top: 2vh;
+}
+
+@media only screen and (max-width: 600px) {
+  .review-form {
+    height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }

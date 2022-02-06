@@ -154,7 +154,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       </a>
     </Form.Text>
     <Form.Control.Feedback type="invalid">
-      Please choose an instructor
+      Missing instructor
     </Form.Control.Feedback>
   </Form.Group>
 
@@ -173,7 +173,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       })}
     </Form.Control>
     <Form.Control.Feedback type="invalid">
-      Please choose a course
+      Missing course
     </Form.Control.Feedback>
   </Form.Group>
 
@@ -201,7 +201,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
-                    Please choose a grade
+                    Missing grade
                   </Form.Control.Feedback>
                 </Form.Group>
               </div>
@@ -218,7 +218,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
-                      Please choose a quarter
+                      Missing quarter
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group controlId='year'>
@@ -229,7 +229,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
-                      Please choose a year
+                      Missing year
                     </Form.Control.Feedback>
                   </Form.Group>
                 </div>
@@ -267,27 +267,31 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className='mt-4'>
             <Col>
               <Form.Group className='review-form-section review-form-switches'>
-                <Form.Check
-                  inline
-                  type='switch'
-                  id='takeAgain'
-                  label='Would Take Again'
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
-                />
-                <Form.Check
-                  inline
-                  type='switch'
-                  id='textbook'
-                  label='Use Textbook'
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
-                />
-                <Form.Check
-                  inline
-                  type='switch'
-                  id='attendance'
-                  label='Mandatory Attendance'
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
-                />
+                <Row>
+                  <Col>
+                    <Form.Check
+                      inline
+                      type='switch'
+                      id='takeAgain'
+                      label='Would Take Again'
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
+                    />
+                    <Form.Check
+                      inline
+                      type='switch'
+                      id='textbook'
+                      label='Use Textbook'
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
+                    />
+                    <Form.Check
+                      inline
+                      type='switch'
+                      id='attendance'
+                      label='Mandatory Attendance'
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
+                    />
+                  </Col>
+                </Row>
               </Form.Group>
             </Col>
           </Row>
@@ -332,7 +336,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col className='mb-3'>
               <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
               <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
             </Col>
