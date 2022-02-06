@@ -6,16 +6,16 @@ export function getCurrentQuarter() {
     return new Promise(async (resolve, reject) => {
         // check if is in the cache
         let cacheKey = `currentQuarter`
-        // let cacheValue = await getValue(COLLECTION_NAMES.SCHEDULE, cacheKey)
-        // if (cacheValue) {
-        //     // how many days since last update
-        //     let age = Math.round(((new Date()).getTime() - cacheValue.date) / (1000 * 60 * 60 * 24));
-        //     // use cached value if within a day old
-        //     if (age < 1) {
-        //         resolve(cacheValue.value);
-        //         return;
-        //     }
-        // }
+        let cacheValue = await getValue(COLLECTION_NAMES.SCHEDULE, cacheKey)
+        if (cacheValue) {
+            // how many days since last update
+            let age = Math.round(((new Date()).getTime() - cacheValue.date) / (1000 * 60 * 60 * 24));
+            // use cached value if within a day old
+            if (age < 1) {
+                resolve(cacheValue.value);
+                return;
+            }
+        }
 
         // get websoc page
         let url = `https://www.reg.uci.edu/perl/WebSoc`;
