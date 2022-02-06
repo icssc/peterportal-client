@@ -16,3 +16,14 @@
 .twemoji {
     width: 3rem;
 }
+
+@media only screen and (max-width: 600px) {
+    .professor-page {
+        flex-direction: column;
+    }
+
+    .professor-page-body {
+        margin-left: 0;
+        margin-top: 3vh;
+    }
+}

@@ -98,6 +98,8 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             display: 'inline-flex',
             flexDirection: 'row',
             margin: 'auto',
+            width: '100%',
+            overflow: 'auto'
           }}
         >
           {/* Display dependencies */}
