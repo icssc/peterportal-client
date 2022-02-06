@@ -140,3 +140,30 @@ $avatarWidth: 65px;
   top: 0;
   left: 0;
 }
+
+
+@media only screen and (max-width: 600px) {
+  .subreview-content {
+    flex-direction: column;
+  }
+
+  .subreview-ratings {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .rating {
+    width: 20vw;
+    height: 20vw;
+  }
+
+  .subreview-details {
+    flex-direction: column;
+  }
+
+  .subreview-detail {
+    height: fit-content;
+    width: 100%;
+    margin-bottom: 1vh;
+  }
+}
