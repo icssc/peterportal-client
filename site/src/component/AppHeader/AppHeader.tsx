@@ -54,15 +54,33 @@ const AppHeader: FC<{}> = props => {
 
           {/* Toggle Course and Professor */}
           <div className='navbar-toggle'>
-            <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
-              <a href='/search/courses'>
-                Courses
-              </a>
+            <div className='desktop-toggle'>
+              <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
+                <a href='/search/courses'>
+                  Courses
+                </a>
+              </div>
+              <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
+                <a href='/search/professors'>
+                  Professors
+                </a>
+              </div>
             </div>
-            <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
-              <a href='/search/professors'>
-                Professors
-              </a>
+            <div className='mobile-toggle'>
+              {coursesActive === true && (
+                <div className={`navbar-toggle-item active`}>
+                  <a href='/search/professors'>
+                    Professors
+                  </a>
+                </div>
+              )}
+              {professorsActive === true && (
+                <div className={`navbar-toggle-item active`}>
+                  <a href='/search/courses'>
+                    Courses
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
