@@ -43,8 +43,8 @@ const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     const [isShown, setIsShown] = useState(false);
 
     return <>
-        <div style={{ display: 'flex', flexGrow: 1 }}>
-            <div style={{ width: '50vw' }}>
+        <div id='content-container'>
+            <div id='search-list'>
                 <Fade className={`${isShown ? '' : 'hide'}`} in={filterOpen}  onEnter={() => setIsShown(true)} onExited={() => setIsShown(false)}>
                     <div>
                         <SearchFilter query={index} />
@@ -53,7 +53,7 @@ const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
                 <SearchModule query={index} />
                 <SearchHitContainer query={index} />
             </div>
-            <div style={{ flexGrow: 1, height: 'fit-content' }}>
+            <div id="search-popup">
                 {index == 'courses' && <CoursePopup />}
                 {index == 'professors' && <ProfessorPopup />}
             </div>

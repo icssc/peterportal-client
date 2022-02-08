@@ -68,6 +68,20 @@
   }
 }
 
+@media only screen and (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+    width: 100vw;
+    height: 100%;
+    z-index: 400;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+} 
+
 .sidebar-active {
   color: var(--peterportal-primary-color-1) !important;
 }

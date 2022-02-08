@@ -49,6 +49,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
             <h3>
               <span
                 className={props.bemBlocks.item('department')}
+                style={{ display: 'inline-block' }}
                 dangerouslySetInnerHTML={{
                   __html: get(
                     props.result,
@@ -60,6 +61,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
               &nbsp;
               <span
                 className={props.bemBlocks.item('number')}
+                style={{ display: 'inline-block' }}
                 dangerouslySetInnerHTML={{
                   __html: get(
                     props.result,
@@ -71,6 +73,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
               &nbsp;
               <span
                 className={props.bemBlocks.item('title')}
+                style={{ display: 'inline-block' }}
                 dangerouslySetInnerHTML={{
                   __html: get(
                     props.result,
