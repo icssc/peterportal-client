@@ -88,7 +88,7 @@ const AppHeader: FC<{}> = props => {
         {/* Logo */}
         <div className='navbar-logo'>
           <a href='/'>
-            <img alt='PeterPortal' id='peterportal-logo' src={Logo} height='100%'></img>
+            <img alt='PeterPortal' id='peterportal-logo' src={Logo}></img>
           </a>
         </div>
 
