@@ -32,55 +32,60 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
   // data to be displayed in pills
   let pillData = getCourseTags(props.result._source);
 
+  const onClickName = () => {
+    // if click on a course that is already in popup
+    // or if on mobile
+    console.log(window.innerWidth)
+    if (activeCourse && props.result._source.id == activeCourse.id || window.innerWidth < 600) {
+      history.push(`/course/${props.result._source.id}`)
+    }
+    // click on new or different course than popup
+    else {
+      dispatch(setCourse(props.result._source))
+    }
+  }
+
   return (
-    <div className='hit-item'>
+    <div className='hit-item' style={{ cursor: 'pointer' }} onClick={onClickName}>
       <div style={{ display: 'flex' }}>
         <div>
-          <a href='#' onClick={() => {
-            // if click on a course that is already in popup
-            if (activeCourse && props.result._source.id == activeCourse.id) {
-              history.push(`/course/${activeCourse.id}`)
-            }
-            // click on new or different course than popup
-            else {
-              dispatch(setCourse(props.result._source))
-            }
-          }}>
-            <h3>
-              <span
-                className={props.bemBlocks.item('department')}
-                dangerouslySetInnerHTML={{
-                  __html: get(
-                    props.result,
-                    'highlight.department',
-                    props.result._source.department
-                  ),
-                }}
-              ></span>
-              &nbsp;
-              <span
-                className={props.bemBlocks.item('number')}
-                dangerouslySetInnerHTML={{
-                  __html: get(
-                    props.result,
-                    'highlight.number',
-                    props.result._source.number
-                  ),
-                }}
-              ></span>
-              &nbsp;
-              <span
-                className={props.bemBlocks.item('title')}
-                dangerouslySetInnerHTML={{
-                  __html: get(
-                    props.result,
-                    'highlight.title',
-                    props.result._source.title
-                  ),
-                }}
-              ></span>
-            </h3>
-          </a>
+          <h3>
+            <span
+              className={props.bemBlocks.item('department')}
+              style={{ display: 'inline-block' }}
+              dangerouslySetInnerHTML={{
+                __html: get(
+                  props.result,
+                  'highlight.department',
+                  props.result._source.department
+                ),
+              }}
+            ></span>
+            &nbsp;
+            <span
+              className={props.bemBlocks.item('number')}
+              style={{ display: 'inline-block' }}
+              dangerouslySetInnerHTML={{
+                __html: get(
+                  props.result,
+                  'highlight.number',
+                  props.result._source.number
+                ),
+              }}
+            ></span>
+            &nbsp;
+            <span
+              className={props.bemBlocks.item('title')}
+              style={{ display: 'inline-block' }}
+              dangerouslySetInnerHTML={{
+                __html: get(
+                  props.result,
+                  'highlight.title',
+                  props.result._source.title
+                ),
+              }}
+            ></span>
+          </h3>
         </div>
 
         <CourseQuarterIndicator terms={props.result._source.terms} />

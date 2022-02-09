@@ -29,8 +29,9 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
 
   const onClickName = () => {
     // if click on a professor that is already in popup
-    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid) {
-      history.push(`/professor/${activeProfessor.ucinetid}`)
+    // or if on mobile
+    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid || window.innerWidth < 600) {
+      history.push(`/professor/${props.result._source.ucinetid}`)
     }
     // click on new or different professor than popup
     else {
@@ -39,29 +40,25 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
   }
 
   return (
-    <div className='hit-item' style={{ display: 'flex' }}>
-      <a href='#' onClick={onClickName}>
-        <div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
-          <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
-            {props.result._source.name.split(' ').map((x: string) => x[0])}
-          </h3>
-        </div></a>
+    <div className='hit-item' style={{ display: 'flex', cursor: 'pointer'}} onClick={onClickName}>
+      <div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
+        <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
+          {props.result._source.name.split(' ').map((x: string) => x[0])}
+        </h3>
+      </div>
       <div style={{ width: '100%' }}>
-        <a href='#' onClick={onClickName} >
-          <h3>
-            <span
-              className={props.bemBlocks.item('prof_name')}
-              dangerouslySetInnerHTML={{
-                __html: get(
-                  props.result,
-                  'highlight.name',
-                  props.result._source.name
-                ),
-              }}
-            ></span>
-
-          </h3>
-        </a>
+        <h3>
+          <span
+            className={props.bemBlocks.item('prof_name')}
+            dangerouslySetInnerHTML={{
+              __html: get(
+                props.result,
+                'highlight.name',
+                props.result._source.name
+              ),
+            }}
+          ></span>
+        </h3>
         <h4 className={'hit-subtitle'}>
           {props.result._source.department}&nbsp;･&nbsp;
           {props.result._source.title}

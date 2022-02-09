@@ -39,7 +39,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     if (!selected) {
         return <div className='search-popup'>
             <div className='search-popup-missing'>
-                <img src='/searching.png' alt='searching' />
+                <img style={{ width: '100%' }}src='/searching.png' alt='searching' />
                 <p>
                     Click on a {props.searchType} card to view more information!
                 </p>

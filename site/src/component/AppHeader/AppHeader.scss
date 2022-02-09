@@ -1,5 +1,6 @@
 #peterportal-logo {
   width: 100%;
+  height: 100%
 }
 
 .ui.segment {
@@ -64,6 +65,14 @@ ul {
       }
     }
 
+    .desktop-toggle {
+      display: contents;
+    }
+
+    .mobile-toggle {
+      display: none;
+    }
+
     .navbar-toggle {
       margin-left: 5vw;
       display: flex;
@@ -107,6 +116,57 @@ ul {
       margin-left: auto;
       margin-right: auto;
       width: 7vw;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .desktop-toggle {
+        display: none;
+      }
+  
+      .mobile-toggle {
+        display: contents;
+      }
+
+      .navbar-toggle {
+        margin-left: 5vw;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: #f5f6fc;
+        height: 60%;
+        border-radius: 1rem;
+        width: 17vw;
+  
+        .navbar-toggle-item {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 1rem;
+
+          a {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .navbar-logo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 18vw;
+      }
+
+      .school-term {
+        font-size: 12px;
+      }
     }
   }
 }

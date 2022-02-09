@@ -20,8 +20,8 @@ const AppHeader: FC<{}> = props => {
   const [week, setWeek] = useState('');
 
   let splitLocation = location.pathname.split('/');
-  let coursesActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses';
-  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors';
+  let coursesActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses' || splitLocation.length > 1 && splitLocation[1] == 'course';
+  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors' || splitLocation.length > 1 && splitLocation[1] == 'professor';
 
   useEffect(() => {
     // Get the current week data
@@ -54,15 +54,33 @@ const AppHeader: FC<{}> = props => {
 
           {/* Toggle Course and Professor */}
           <div className='navbar-toggle'>
-            <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
-              <a href='/search/courses'>
-                Courses
-              </a>
+            <div className='desktop-toggle'>
+              <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
+                <a href='/search/courses'>
+                  Courses
+                </a>
+              </div>
+              <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
+                <a href='/search/professors'>
+                  Professors
+                </a>
+              </div>
             </div>
-            <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
-              <a href='/search/professors'>
-                Professors
-              </a>
+            <div className='mobile-toggle'>
+              {coursesActive === true && (
+                <div className={`navbar-toggle-item active`}>
+                  <a href='/search/professors'>
+                    Professors
+                  </a>
+                </div>
+              )}
+              {professorsActive === true && (
+                <div className={`navbar-toggle-item active`}>
+                  <a href='/search/courses'>
+                    Courses
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -70,7 +88,7 @@ const AppHeader: FC<{}> = props => {
         {/* Logo */}
         <div className='navbar-logo'>
           <a href='/'>
-            <img alt='PeterPortal' id='peterportal-logo' src={Logo} height='100%'></img>
+            <img alt='PeterPortal' id='peterportal-logo' src={Logo}></img>
           </a>
         </div>
 
