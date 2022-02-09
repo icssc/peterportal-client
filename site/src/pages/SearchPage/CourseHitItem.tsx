@@ -34,8 +34,10 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
 
   const onClickName = () => {
     // if click on a course that is already in popup
-    if (activeCourse && props.result._source.id == activeCourse.id) {
-      history.push(`/course/${activeCourse.id}`)
+    // or if on mobile
+    console.log(window.innerWidth)
+    if (activeCourse && props.result._source.id == activeCourse.id || window.innerWidth < 600) {
+      history.push(`/course/${props.result._source.id}`)
     }
     // click on new or different course than popup
     else {

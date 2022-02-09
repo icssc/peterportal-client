@@ -29,8 +29,9 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
 
   const onClickName = () => {
     // if click on a professor that is already in popup
-    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid) {
-      history.push(`/professor/${activeProfessor.ucinetid}`)
+    // or if on mobile
+    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid || window.innerWidth < 600) {
+      history.push(`/professor/${props.result._source.ucinetid}`)
     }
     // click on new or different professor than popup
     else {

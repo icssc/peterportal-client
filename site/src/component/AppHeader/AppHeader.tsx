@@ -20,8 +20,8 @@ const AppHeader: FC<{}> = props => {
   const [week, setWeek] = useState('');
 
   let splitLocation = location.pathname.split('/');
-  let coursesActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses';
-  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors';
+  let coursesActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses' || splitLocation.length > 1 && splitLocation[1] == 'course';
+  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors' || splitLocation.length > 1 && splitLocation[1] == 'professor';
 
   useEffect(() => {
     // Get the current week data
