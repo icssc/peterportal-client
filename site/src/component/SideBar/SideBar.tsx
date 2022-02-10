@@ -50,7 +50,7 @@ const SideBar: FC = ({ children }) => {
         <ul>
           <li><NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
             let splitLocation = location.pathname.split('/');
-            return splitLocation.length > 1 && splitLocation[1] == 'search';
+            return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
           }}>
             <div>
               <Icon name='list alternate outline' />
