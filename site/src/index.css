@@ -46,3 +46,9 @@ code {
 .hide {
   display: none;
 }
+
+@font-face {
+  font-family: "revicons"; 
+  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot"); 
+  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot?#iefix") format("embedded-opentype"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff2") format("woff2"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff") format("woff"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.ttf") format("truetype"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.svg#revicons") format("svg"); 
+}
