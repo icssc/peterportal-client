@@ -48,7 +48,7 @@ const SideBar: FC = ({ children }) => {
       {/* Links */}
       <div className='sidebar-links'>
         <ul>
-          <li><NavLink to='/search/courses' activeClassName='sidebar-active'>
+          <li><NavLink to='/' activeClassName='sidebar-active'>
             <div>
               <Icon name='list alternate outline' />
             </div>
