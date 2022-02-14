@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import { RenderComponentType, HitItemProps } from 'searchkit';
 import Badge from 'react-bootstrap/Badge'
+import { isMobile } from 'react-device-detect';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
@@ -35,8 +36,7 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
   const onClickName = () => {
     // if click on a course that is already in popup
     // or if on mobile
-    console.log(window.innerWidth)
-    if (activeCourse && props.result._source.id == activeCourse.id || window.innerWidth < 600) {
+    if (activeCourse && props.result._source.id == activeCourse.id || isMobile) {
       history.push(`/course/${props.result._source.id}`)
     }
     // click on new or different course than popup

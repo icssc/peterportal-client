@@ -5,7 +5,8 @@ import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useAppDispatch } from '../../store/hooks';
 import { moveCourse } from '../../store/slices/roadmapSlice';
-import { CourseData } from 'src/types/types';
+import Error from '../../component/Error/Error';
+import { isMobile, isBrowser } from 'react-device-detect';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -59,16 +60,23 @@ const RoadmapPage: FC = () => {
   }, []);
 
   return (
-    <div className='roadmap-page'>
-      <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => {}}>
-        <div className='main-wrapper' id='screenshot'>
-          <Planner />
+    <>
+      {isMobile &&
+        <Error message='This page is under construction for mobile!' />
+      }
+      {isBrowser &&
+        <div className='roadmap-page'>
+          <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => { }}>
+            <div className='main-wrapper' id='screenshot'>
+              <Planner />
+            </div>
+            <div className='sidebar-wrapper'>
+              <SearchSidebar />
+            </div>
+          </DragDropContext>
         </div>
-        <div className='sidebar-wrapper'>
-          <SearchSidebar />
-        </div>
-      </DragDropContext>
-    </div>
+      }
+    </>
   );
 };
 

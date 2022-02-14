@@ -105,7 +105,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               return <Droppable key={`year-quarter-${quarterIndex}`} droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
                 {(provided) => {
                   return (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
                       <Quarter
                         year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
                         provided={provided}

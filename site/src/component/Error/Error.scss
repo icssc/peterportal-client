@@ -10,3 +10,11 @@
         font-size: 5em;
     }
 }
+
+@media only screen and (max-width: 600px) {
+    .error {
+        img {
+            width: 100%;
+        }
+    }
+}
