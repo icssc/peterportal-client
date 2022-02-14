@@ -53,7 +53,7 @@ const AppHeader: FC<{}> = props => {
           </div>
 
           {/* Toggle Course and Professor */}
-          <div className='navbar-toggle'>
+          {(coursesActive || professorsActive) && <div className='navbar-toggle'>
             <div className='desktop-toggle'>
               <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
                 <a href='/search/courses'>
@@ -83,6 +83,7 @@ const AppHeader: FC<{}> = props => {
               )}
             </div>
           </div>
+          }
         </div>
 
         {/* Logo */}

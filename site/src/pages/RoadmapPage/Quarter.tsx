@@ -37,22 +37,22 @@ const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, da
         {unitCount} {unitCount === 1 ? "unit" : "units"}
       </div>
       {data.courses.map((course, index) => {
-          return (
-            <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
-              {(provided) => {
-                return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <Course key={course.id} {...course} />
-                  </div>
-                );
-              }}
-            </Draggable>
-          );
-        })}
+        return (
+          <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
+            {(provided) => {
+              return (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <Course key={course.id} {...course} />
+                </div>
+              );
+            }}
+          </Draggable>
+        );
+      })}
       {provided && provided.placeholder}
     </div>
   );

@@ -5,6 +5,7 @@ import { get } from 'lodash';
 import { RenderComponentType, HitItemProps } from 'searchkit';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
+import { isMobile } from 'react-device-detect';
 
 import { ProfessorData } from '../../types/types';
 
@@ -30,7 +31,7 @@ const ProfessorHitItem: RenderComponentType<ProfessorHitItemProps> = (props: Pro
   const onClickName = () => {
     // if click on a professor that is already in popup
     // or if on mobile
-    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid || window.innerWidth < 600) {
+    if (activeProfessor && props.result._source.ucinetid == activeProfessor.ucinetid || isMobile) {
       history.push(`/professor/${props.result._source.ucinetid}`)
     }
     // click on new or different professor than popup
