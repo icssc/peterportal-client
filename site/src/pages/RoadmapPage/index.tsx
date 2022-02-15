@@ -4,7 +4,7 @@ import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { useAppDispatch } from '../../store/hooks';
-import { moveCourse } from '../../store/slices/roadmapSlice';
+import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
 import Error from '../../component/Error/Error';
 import { isMobile, isBrowser } from 'react-device-detect';
 
@@ -15,6 +15,15 @@ const RoadmapPage: FC = () => {
     if (result.reason === 'DROP') {
       // no destination
       if (!result.destination) {
+        // removing from quarter
+        if (result.source.droppableId != 'search') {
+          let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+          dispatch(deleteCourse({
+            yearIndex: parseInt(yearIndex),
+            quarterIndex: parseInt(quarterIndex),
+            courseIndex: result.source.index
+          }))
+        }
         return;
       }
 

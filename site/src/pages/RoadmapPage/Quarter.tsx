@@ -3,6 +3,7 @@ import "./Quarter.scss";
 import { Draggable, DroppableProvided } from "react-beautiful-dnd";
 import Course from "./Course";
 
+import { useAppSelector } from "../../store/hooks";
 import { PlannerQuarterData } from '../../types/types';
 
 interface QuarterProps {
@@ -15,6 +16,7 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, data }) => {
   let quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+  const invalidCourses = useAppSelector(state => state.roadmap.invalidCourses);
 
   const calculateQuarterStats = () => {
     let unitCount = 0;
@@ -46,7 +48,8 @@ const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, da
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
                 >
-                  <Course key={course.id} {...course} />
+                  <Course key={course.id} {...course}
+                    invalid={invalidCourses.some(ic => ic.courseIndex == index && ic.quarterIndex == quarterIndex && ic.yearIndex == yearIndex)} />
                 </div>
               );
             }}

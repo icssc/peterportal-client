@@ -146,6 +146,21 @@ export interface PlannerQuarterData {
     courses: CourseData[];
 }
 
+// Specify the location of a year
+export interface YearIdentifier {
+    yearIndex: number;
+}
+
+// Specify the location of a quarter
+export interface QuarterIdentifier extends YearIdentifier {
+    quarterIndex: number;
+}
+
+// Specify the location of a course
+export interface CourseIdentifier extends QuarterIdentifier {
+    courseIndex: number;
+}
+
 /**
  * GraphQL Definitions
  */
