@@ -21,7 +21,8 @@ const COLLECTION_NAMES = {
     REVIEWS: 'reviews',
     SCHEDULE: 'schedule',
     ROADMAPS: 'roadmaps',
-    VOTES: 'votes'
+    VOTES: 'votes',
+    REPORTS: 'reports'
 }
 /**
  * Global reference to database
