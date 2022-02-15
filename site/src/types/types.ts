@@ -161,6 +161,12 @@ export interface CourseIdentifier extends QuarterIdentifier {
     courseIndex: number;
 }
 
+// Specify where the invalid course is and what courses it needs to take
+export interface InvalidCourseData {
+    location: CourseIdentifier;
+    required: string[];
+};
+
 /**
  * GraphQL Definitions
  */

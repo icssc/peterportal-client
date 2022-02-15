@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { PlannerData, PlannerYearData, CourseData, YearIdentifier, QuarterIdentifier, CourseIdentifier } from '../../types/types';
+import { PlannerData, PlannerYearData, CourseData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData } from '../../types/types';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -9,7 +9,7 @@ interface RoadmapState {
     // Store the course data of the active dragging item
     activeCourse: CourseData
     // Store the location of invalid courses (do not meet prerequisites)
-    invalidCourses: CourseIdentifier[] 
+    invalidCourses: InvalidCourseData[]
 }
 
 // Define the initial state using that type
@@ -76,7 +76,7 @@ export const roadmapSlice = createSlice({
         setYearPlans: (state, action: PayloadAction<PlannerData>) => {
             state.yearPlans = action.payload;
         },
-        setInvalidCourses: (state, action: PayloadAction<CourseIdentifier[]>) => {
+        setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
             state.invalidCourses = action.payload;
         }
     },

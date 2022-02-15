@@ -7,11 +7,11 @@ import Popover from 'react-bootstrap/Popover';
 import { CourseData } from '../../types/types';
 
 interface CourseProps extends CourseData {
-  invalid?: boolean;
+  requiredCourses?: string[];
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text, corequisite, invalid } = props;
+  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
@@ -33,12 +33,12 @@ const Course: FC<CourseProps> = (props) => {
 
   const WarningPopover = <Popover id={'warning-popover-' + id}>
     <Popover.Content>
-      You do not meet the prerequisite to take this class.
+      You do not meet the prerequisite to take this class. Here are some of the courses you are missing: {requiredCourses?.join(', ')}
     </Popover.Content>
   </Popover>
 
   return (
-    <div className={`course ${invalid ? 'invalid' : ''}`}>
+    <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="name">{department + ' ' + number}</div>
         <div className="units">{units[0]} units</div>
@@ -52,7 +52,7 @@ const Course: FC<CourseProps> = (props) => {
         delay={100}>
         <InfoCircle className="info-circle" />
       </OverlayTrigger>
-      {invalid && <OverlayTrigger
+      {requiredCourses && <OverlayTrigger
         trigger={['hover', 'focus']}
         placement="right"
         overlay={WarningPopover}
