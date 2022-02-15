@@ -42,6 +42,14 @@ const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, da
         return (
           <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
             {(provided) => {
+              let requiredCourses: string[] = null!;
+              // if this is an invalid course, set the required courses
+              invalidCourses.forEach(ic => {
+                let loc = ic.location;
+                if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
+                  requiredCourses = ic.required;
+                }
+              })
               return (
                 <div
                   ref={provided.innerRef}
@@ -49,7 +57,7 @@ const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, da
                   {...provided.dragHandleProps}
                 >
                   <Course key={course.id} {...course}
-                    invalid={invalidCourses.some(ic => ic.courseIndex == index && ic.quarterIndex == quarterIndex && ic.yearIndex == yearIndex)} />
+                    requiredCourses={requiredCourses} />
                 </div>
               );
             }}

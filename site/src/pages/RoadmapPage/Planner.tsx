@@ -4,19 +4,19 @@ import Header from "./Header";
 import AddYearPopup from "./AddYearPopup";
 import Year from "./Year";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectYearPlans, setYearPlans, setInvalidCourses } from '../../store/slices/roadmapSlice';
+import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
-import { CourseIdentifier } from '../../types/types';
+import { InvalidCourseData } from '../../types/types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
+  const transfers = useAppSelector(state => state.roadmap.transfers);
 
   useEffect(() => {
     // if is first render, load from local storage
     if (isFirstRenderer) {
-      console.log('FR', data);
       let localState = localStorage.getItem('roadmapState');
       if (localState) {
         dispatch(setYearPlans(JSON.parse(localState)))
@@ -24,15 +24,30 @@ const Planner: FC = () => {
     }
     // constantly update local storage and validate planner
     else {
-      console.log('NR', data);
       localStorage.setItem('roadmapState', JSON.stringify(data));
       validatePlanner();
     }
   }, [data]);
 
+  useEffect(() => {
+    // if is first render, load from local storage
+    if (isFirstRenderer) {
+      let localState = localStorage.getItem('roadmapTransfers');
+      if (localState) {
+        dispatch(setTransfers(JSON.parse(localState)))
+      }
+    }
+    // constantly update local storage and validate planner
+    else {
+      localStorage.setItem('roadmapTransfers', JSON.stringify(transfers));
+      validatePlanner();
+    }
+  }, [transfers]);
+
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
     let courseCount = 0;
+    // sum up all courses
     data.forEach(year => {
       year.quarters.forEach(quarter => {
         quarter.courses.forEach(course => {
@@ -41,24 +56,40 @@ const Planner: FC = () => {
         })
       })
     })
+    // add in transfer courses
+    transfers.forEach(transfer => {
+      // only count if has both name and units
+      if (transfer.units && transfer.name) {
+        unitCount += transfer.units;
+        courseCount += 1;
+      }
+    });
     return { unitCount, courseCount };
   };
 
   const validatePlanner = () => {
     // store courses that have been taken
-    let taken: Set<string> = new Set();
-    let invalidCourses: CourseIdentifier[] = [];
+    let taken: Set<string> = new Set(transfers.map(transfer => transfer.name));
+    let invalidCourses: InvalidCourseData[] = [];
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
         let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.number));
         quarter.courses.forEach((course, ci) => {
-          if (course.prerequisite_tree && !validateCourse(taken, JSON.parse(course.prerequisite_tree), taking, course.corequisite)) {
-            console.log('invalid course', course.id);
-            invalidCourses.push({
-              yearIndex: yi,
-              quarterIndex: qi,
-              courseIndex: ci
-            })
+          // if has prerequisite
+          if (course.prerequisite_tree) {
+            let required = validateCourse(taken, JSON.parse(course.prerequisite_tree), taking, course.corequisite);
+            // prerequisite not fulfilled, has some required classes to take
+            if (required.size > 0) {
+              console.log('invalid course', course.id);
+              invalidCourses.push({
+                location: {
+                  yearIndex: yi,
+                  quarterIndex: qi,
+                  courseIndex: ci
+                },
+                required: Array.from(required)
+              })
+            }
           }
         })
         // after the quarter is over, add the courses into taken
@@ -75,25 +106,50 @@ const Planner: FC = () => {
     OR?: PrerequisiteNode[];
   }
 
-  const validateCourse = (taken: Set<string>, prerequisite: PrerequisiteNode, taking: Set<string>, corequisite: string): boolean => {
+  // returns set of courses that need to be taken to fulfill requirements
+  const validateCourse = (taken: Set<string>, prerequisite: PrerequisiteNode, taking: Set<string>, corequisite: string): Set<string> => {
     // base case just a course
     if (typeof prerequisite === 'string') {
       // already taken prerequisite or is currently taking the corequisite
-      return taken.has(prerequisite) || (corequisite.includes(prerequisite) && taking.has(prerequisite));
+      if (taken.has(prerequisite) || (corequisite.includes(prerequisite) && taking.has(prerequisite))) {
+        return new Set();
+      }
+      // need to take this prerequisite still
+      else {
+        return new Set([prerequisite]);
+      }
     }
     // has nested prerequisites
     else {
       // needs to satisfy all nested
       if (prerequisite.AND) {
-        return prerequisite.AND.every(nested => validateCourse(taken, nested, taking, corequisite));
+        let required: Set<string> = new Set();
+        prerequisite.AND.forEach(nested => {
+          // combine all the courses that are required
+          validateCourse(taken, nested, taking, corequisite)
+            .forEach(course => required.add(course));
+        })
+        return required;
       }
       // only need to satisfy one nested
       else if (prerequisite.OR) {
-        return prerequisite.OR.some(nested => validateCourse(taken, nested, taking, corequisite));
+        let required: Set<string> = new Set();
+        let satisfied = false;
+        prerequisite.OR.forEach(nested => {
+          // combine all the courses that are required
+          let courses = validateCourse(taken, nested, taking, corequisite)
+          // if one is satisfied, no other courses are required
+          if (courses.size == 0) {
+            satisfied = true;
+            return;
+          }
+          courses.forEach(course => required.add(course));
+        })
+        return satisfied ? new Set() : required;
       }
       else {
         // should never reach here
-        return false;
+        return new Set();
       }
     }
   }
