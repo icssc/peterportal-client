@@ -77,7 +77,24 @@ export const roadmapSlice = createSlice({
             state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(action.payload.courseIndex, 1);
         },
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
-            state.yearPlans.splice(state.yearPlans.length, 0, action.payload.yearData);
+            let currentYears = state.yearPlans.map(e => e.startYear);
+            let newYear = action.payload.yearData.startYear;
+
+            // if duplicate year
+            if (currentYears.includes(newYear)) {
+                alert(`${newYear}-${newYear+1} has already been added as Year ${currentYears.indexOf(newYear)+1}!`);
+                return;
+            }
+            // check if where to put newYear
+            let index = currentYears.length;
+            for (let i = 0; i < currentYears.length; i++) {
+                if (currentYears[i] > newYear) {
+                    index = i;
+                    break;
+                }
+            }
+
+            state.yearPlans.splice(index, 0, action.payload.yearData);
         },
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
             state.yearPlans.splice(action.payload.yearIndex, 1);
