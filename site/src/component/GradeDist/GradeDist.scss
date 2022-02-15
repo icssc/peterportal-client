@@ -1,5 +1,5 @@
 .gradedist-module-container {
-  width: 75%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin-left: 1vw;
@@ -19,7 +19,6 @@
 }
 
 #chart {
-  height: 30em;
   display: flex;
   justify-content: space-evenly;
 }
@@ -30,11 +29,11 @@
 }
 
 .chart {
-  width: 65%;
+  width: 50%;
 }
 
 .pie {
-  width: 35%;
+  width: 50%;
 }
 
 .grade-dist-mini {
@@ -47,5 +46,19 @@
 
   .chart {
     width: 80%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #chart {
+      flex-direction: column;
+  }
+
+  .chart {
+    width: 100%;
+  }
+
+  .pie {
+    width: 100%;
   }
 }

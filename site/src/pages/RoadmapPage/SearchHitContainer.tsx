@@ -30,7 +30,7 @@ interface SearchHitContainerProps {
 
 const SearchHitContainer: FC<SearchHitContainerProps> = (props) => {
     return (
-        <article className='search-hit-container'>
+        <article>
             <div style={{ minHeight: '80vh' }}>
                 <Hits
                     itemComponent={CourseHitItem}

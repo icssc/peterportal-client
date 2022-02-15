@@ -3,6 +3,7 @@ import "./Quarter.scss";
 import { Draggable, DroppableProvided } from "react-beautiful-dnd";
 import Course from "./Course";
 
+import { useAppSelector } from "../../store/hooks";
 import { PlannerQuarterData } from '../../types/types';
 
 interface QuarterProps {
@@ -15,6 +16,7 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, data }) => {
   let quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+  const invalidCourses = useAppSelector(state => state.roadmap.invalidCourses);
 
   const calculateQuarterStats = () => {
     let unitCount = 0;
@@ -37,22 +39,31 @@ const Quarter: FC<QuarterProps> = ({ year, provided, yearIndex, quarterIndex, da
         {unitCount} {unitCount === 1 ? "unit" : "units"}
       </div>
       {data.courses.map((course, index) => {
-          return (
-            <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
-              {(provided) => {
-                return (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <Course key={course.id} {...course} />
-                  </div>
-                );
-              }}
-            </Draggable>
-          );
-        })}
+        return (
+          <Draggable key={`quarter-course-${index}`} draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`} index={index}>
+            {(provided) => {
+              let requiredCourses: string[] = null!;
+              // if this is an invalid course, set the required courses
+              invalidCourses.forEach(ic => {
+                let loc = ic.location;
+                if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
+                  requiredCourses = ic.required;
+                }
+              })
+              return (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <Course key={course.id} {...course}
+                    requiredCourses={requiredCourses} />
+                </div>
+              );
+            }}
+          </Draggable>
+        );
+      })}
       {provided && provided.placeholder}
     </div>
   );

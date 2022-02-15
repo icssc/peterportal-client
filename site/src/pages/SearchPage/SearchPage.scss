@@ -6,3 +6,30 @@
 //   position: sticky;
 //   top: 4rem;
 // }
+
+#content-container {
+    display: flex;
+    flex-grow: 1;
+
+    #search-list {
+        width: 50vw;
+    }
+
+    #search-popup {
+        flex-grow: 1;
+        height: fit-content;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #content-container {
+        
+        #search-list {
+            width: 100%;
+        }
+    
+        #search-popup {
+            display: none;
+        }
+    }
+} 

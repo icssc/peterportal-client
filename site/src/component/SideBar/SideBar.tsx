@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
-import { ChevronDoubleLeft } from 'react-bootstrap-icons';
+import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import './Sidebar.scss'
 import DefaultAvatar from '../../asset/default-avatar.png';
@@ -34,7 +34,7 @@ const SideBar: FC = ({ children }) => {
     <div className='sidebar'>
       {/* Close Button */}
       <div className='sidebar-close'>
-        <ChevronDoubleLeft className='sidebar-close-icon' onClick={toggleMenu} />
+        <XCircle className='sidebar-close-icon' onClick={toggleMenu} />
       </div>
 
       {/* Profile Icon and Name */}
@@ -48,7 +48,10 @@ const SideBar: FC = ({ children }) => {
       {/* Links */}
       <div className='sidebar-links'>
         <ul>
-          <li><NavLink to='/search/courses' activeClassName='sidebar-active'>
+          <li><NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
+            let splitLocation = location.pathname.split('/');
+            return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
+          }}>
             <div>
               <Icon name='list alternate outline' />
             </div>

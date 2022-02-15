@@ -60,7 +60,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               ) : (
                 <CaretRightFill className="caret-icon" />
               )}
-              <span id="year-number">Year {yearIndex} </span>
+              <span id="year-number">Year {yearIndex + 1} </span>
               <span id="year-range">
                 ({data.startYear} - {data.startYear + 1})
               </span>
@@ -105,7 +105,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               return <Droppable key={`year-quarter-${quarterIndex}`} droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
                 {(provided) => {
                   return (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
                       <Quarter
                         year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
                         provided={provided}

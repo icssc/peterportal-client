@@ -1,18 +1,19 @@
 import React, { FC } from "react";
 import "./Course.scss";
-import { InfoCircle } from "react-bootstrap-icons";
+import { InfoCircle, ExclamationTriangle } from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
 import { CourseData } from '../../types/types';
 
 interface CourseProps extends CourseData {
+  requiredCourses?: string[];
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text } = props;
+  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses } = props;
 
-  const HoverPopover = <Popover id={'course-popover-' + id}>
+  const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
       <div className="course-popover">
         <div className="popover-name">{department + ' ' + number} {title}</div>
@@ -20,15 +21,24 @@ const Course: FC<CourseProps> = (props) => {
           <span className="popover-units-value">{units[0]}</span> units
         </div>
         <div className="popover-description">{description}</div>
-        <div className="popover-prerequisites">
-          <span className="popover-prerequisites-prefix">Prequisite:</span> {prerequisite_text}
-        </div>
+        {prerequisite_text && <div className="popover-detail">
+          <span className="popover-detail-prefix">Prequisite:</span> {prerequisite_text}
+        </div>}
+        {corequisite && <div className="popover-detail">
+          <span className="popover-detail-prefix">Corequisite:</span> {corequisite}
+        </div>}
       </div>
     </Popover.Content>
   </Popover>
 
+  const WarningPopover = <Popover id={'warning-popover-' + id}>
+    <Popover.Content>
+      Prerequisite not met! Missing: {requiredCourses?.join(', ')}
+    </Popover.Content>
+  </Popover>
+
   return (
-    <div className="course">
+    <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="name">{department + ' ' + number}</div>
         <div className="units">{units[0]} units</div>
@@ -38,10 +48,17 @@ const Course: FC<CourseProps> = (props) => {
       <OverlayTrigger
         trigger={['hover', 'focus']}
         placement="left"
-        overlay={HoverPopover}
+        overlay={CoursePopover}
         delay={100}>
         <InfoCircle className="info-circle" />
       </OverlayTrigger>
+      {requiredCourses && <OverlayTrigger
+        trigger={['hover', 'focus']}
+        placement="right"
+        overlay={WarningPopover}
+        delay={100}>
+        <ExclamationTriangle />
+      </OverlayTrigger>}
     </div>
   );
 };

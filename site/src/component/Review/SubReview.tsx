@@ -1,16 +1,19 @@
 import React, { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
+import Badge from 'react-bootstrap/Badge';
 import { useCookies } from 'react-cookie';
+import { Link } from 'react-router-dom';
 
-import { ReviewData, VoteRequest } from '../../types/types';
+import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 interface SubReviewProps {
   review: ReviewData;
-  showCourse: boolean;
+  course?: CourseGQLData;
+  professor?: ProfessorGQLData;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
 
@@ -46,30 +49,61 @@ const SubReview: FC<SubReviewProps> = ({ review, showCourse }) => {
 
   return (
     <div className='subreview'>
-      <img className='avatar' src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Lol_circle.png/479px-Lol_circle.png' />
-      <div className='content'>
-        <h3 className='reviewer'>{review.userDisplay}</h3>
-        <div className='review-info'>
-          {!showCourse && <p><b>Taken With: </b>{review.professorID.charAt(0).toUpperCase() + review.professorID.slice(1)}</p>}
-          {showCourse && <p><b>Course Taken: </b>{review.courseID}</p>}
-          <p><b>Quarter Taken: </b>{review.quarter}</p>
-          <p><b>Grade Received: </b>{review.gradeReceived}</p>
-        </div>
-        <p>{review.reviewContent}</p>
-        <div className='inline' id={review._id}>
-          <p>Helpful?</p>
-          <button className='upvote' onClick={upvote}>&#9650;</button>
-          <p>{score}</p>
-          <button className='downvote' onClick={downvote}>&#9660;</button>
-          <a href='/report'>Report</a>
-        </div>
-
+      <div>
+        <h3 className='subreview-identifier'>
+          {professor && <Link to={{ pathname: `/course/${review.courseID}` }}>
+            {professor.course_history[review.courseID].department + ' ' + professor.course_history[review.courseID].number}
+          </Link>}
+          {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
+            {course.instructor_history[review.professorID].name}
+          </Link>}
+        </h3>
       </div>
-      <div className='ratings'>
-        <div className={'r' + Math.floor(review.rating).toString() + ' rating'}><p>{review.rating}</p></div>
-        <p><b>QUALITY</b></p>
-        <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}><p>{review.difficulty}</p></div>
-        <p><b>DIFFICULTY</b></p>
+      <div className='subreview-content'>
+        <div className='subreview-ratings'>
+          <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
+            <div className='rating-label'>QUALITY</div>
+            <div>{review.rating}</div>
+          </div>
+          <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}>
+            <div className='rating-label'>DIFFICULTY</div>
+            <div>{review.difficulty}</div>
+          </div>
+        </div>
+        <div className='subreview-info'>
+          <div className='subreview-details'>
+            <div className='subreview-detail'>
+              <p>Attendance: <b>{review.attendance ? 'Mandatory' : 'Not Mandatory'} </b></p>
+              <p>Would Take Again: <b>{review.takeAgain ? 'Yes' : 'No'}</b></p>
+              <p>Textbook: <b>{review.textbook ? 'Yes' : 'No'}</b></p>
+            </div>
+            <div className='subreview-detail'>
+              <p>Quarter Taken: <b>{review.quarter}</b></p>
+              <p>Grade Received: <b>{review.gradeReceived}</b></p>
+            </div>
+          </div>
+          <div>
+            <div className='subreview-author'>
+              <p>Posted by {review.userDisplay}</p>
+              <p>{new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+            <p>{review.reviewContent}</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        {review.tags?.map((tag, i) =>
+          <Badge pill className='p-3 mr-2 mt-2' variant='info' key={`review-tag-${review._id}-${i}`}>
+            {tag}
+          </Badge>
+        )}
+      </div>
+      <div className='subreview-footer' id={review._id}>
+        <p>Helpful?</p>
+        <button className='upvote' onClick={upvote}>&#9650;</button>
+        <p>{score}</p>
+        <button className='downvote' onClick={downvote}>&#9660;</button>
+        <a href='/report'>Report</a>
       </div>
     </div>
   )

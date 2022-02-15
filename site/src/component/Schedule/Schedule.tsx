@@ -20,14 +20,16 @@ interface ScheduleData {
 const Schedule: FC<ScheduleProps> = (props) => {
     // For fetching data from API
     const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
+    const [quarter, setQuarter] = useState<string>('');
 
     useEffect(() => {
         // get the current quarter used in websoc
         axios.get<string>('/schedule/api/currentQuarter')
             .then(res => {
+                setQuarter(res.data);
                 fetchScheduleDataFromAPI(res.data);
             })
-    }, [])
+    }, [props.courseID, props.professorID])
 
     const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
         let url = '';
@@ -157,6 +159,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
         return (
             <div>
+                <div className='schedule-quarter'>
+                    Showing results for {quarter}
+                </div>
                 <Table responsive borderless className='schedule-table'>
                     <thead>
                         <tr>

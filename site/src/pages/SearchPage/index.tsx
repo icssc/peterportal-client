@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import './SearchPage.scss';
 import 'react-multi-carousel/lib/styles.css';
@@ -6,7 +6,7 @@ import SearchModule from './SearchModule'
 import SearchFilter from './SearchFilter'
 import SearchHitContainer from './SearchHitContainer'
 import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
-import { Collapse } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 import CoursePopup from './CoursePopup'
 import ProfessorPopup from './ProfessorPopup'
 
@@ -40,19 +40,20 @@ interface SearchPageContentProps {
 }
 const SearchPageContent: FC<SearchPageContentProps> = ({ index }) => {
     const filterOpen = useAppSelector(state => state.ui.filterOpen);
+    const [isShown, setIsShown] = useState(false);
 
     return <>
-        <div style={{ display: 'flex', flexGrow: 1 }}>
-            <div style={{ width: '50vw' }}>
-                <Collapse in={filterOpen}>
+        <div id='content-container'>
+            <div id='search-list'>
+                <Fade className={`${isShown ? '' : 'hide'}`} in={filterOpen}  onEnter={() => setIsShown(true)} onExited={() => setIsShown(false)}>
                     <div>
                         <SearchFilter query={index} />
                     </div>
-                </Collapse>
+                </Fade>
                 <SearchModule query={index} />
                 <SearchHitContainer query={index} />
             </div>
-            <div style={{ flexGrow: 1 }}>
+            <div id="search-popup">
                 {index == 'courses' && <CoursePopup />}
                 {index == 'professors' && <ProfessorPopup />}
             </div>

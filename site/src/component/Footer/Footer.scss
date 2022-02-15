@@ -1,11 +1,7 @@
 .footer {
     // background-color: #f9f9f9;
     height: auto;
-    padding: 1rem 3rem;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100vw;
+    padding: 1rem 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,6 +15,11 @@
 
     a:hover {
       color: var(--peterportal-primary-color-1);
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
     }
   
     .copyright {

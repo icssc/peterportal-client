@@ -5,7 +5,7 @@ const Footer: FC = (props) => {
     return (
         <>
             <footer className='footer'>
-                <div>
+                <div className='links'>
                     <a href='https://github.com/icssc-projects'>Github</a>
                     <a href='https://api.peterportal.org'>API</a>
                     <a href='/about'>About</a>

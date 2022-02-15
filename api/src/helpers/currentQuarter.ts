@@ -26,11 +26,11 @@ export function getCurrentQuarter() {
         // get the quarter dropdown
         let selects = $('select[name="YearTerm"]').toArray();
         if (selects.length > 0) {
-            // get the selected item
-            let selectedQuarter = $(selects[0]).find('option[selected="selected"]')
-            if (selectedQuarter) {
+            // get the first item
+            let firstQuarter = $(selects[0]).find('option').first();
+            if (firstQuarter) {
                 // get the text in the selected item
-                let currentQuarter = $(selectedQuarter).text();
+                let currentQuarter = $(firstQuarter).text();
                 // cache the value and the date acquired
                 setValue(COLLECTION_NAMES.SCHEDULE, cacheKey, {
                     date: new Date(),

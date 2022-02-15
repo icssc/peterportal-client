@@ -21,12 +21,14 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.21",
     "moment": "^2.24.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.1",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^1.5.1",
     "react-bootstrap-icons": "^1.4.0",
+    "react-bootstrap-range-slider": "^3.0.3",
     "react-cookie": "^4.0.3",
+    "react-device-detect": "^2.1.2",
     "react-dom": "^16.13.1",
     "react-ga": "^3.1.2",
     "react-google-recaptcha": "^2.1.0",
@@ -69,11 +71,12 @@
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.7",
-    "@types/react": "^17.0.15",
+    "@types/react": "^17.0.38",
     "@types/react-beautiful-dnd": "^13.1.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.1.8",
-    "@types/redux": "^3.6.0"
+    "@types/redux": "^3.6.0",
+    "sass": "^1.49.0"
   }
 }
