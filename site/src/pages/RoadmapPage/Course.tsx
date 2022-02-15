@@ -33,7 +33,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const WarningPopover = <Popover id={'warning-popover-' + id}>
     <Popover.Content>
-      You do not meet the prerequisite to take this class. Here are some of the courses you are missing: {requiredCourses?.join(', ')}
+      Prerequisite not met! Missing: {requiredCourses?.join(', ')}
     </Popover.Content>
   </Popover>
 

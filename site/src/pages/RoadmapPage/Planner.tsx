@@ -4,7 +4,7 @@ import Header from "./Header";
 import AddYearPopup from "./AddYearPopup";
 import Year from "./Year";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectYearPlans, setYearPlans, setInvalidCourses } from '../../store/slices/roadmapSlice';
+import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
 import { InvalidCourseData } from '../../types/types';
 
@@ -12,11 +12,11 @@ const Planner: FC = () => {
   const dispatch = useAppDispatch();
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
+  const transfers = useAppSelector(state => state.roadmap.transfers);
 
   useEffect(() => {
     // if is first render, load from local storage
     if (isFirstRenderer) {
-      console.log('FR', data);
       let localState = localStorage.getItem('roadmapState');
       if (localState) {
         dispatch(setYearPlans(JSON.parse(localState)))
@@ -24,15 +24,30 @@ const Planner: FC = () => {
     }
     // constantly update local storage and validate planner
     else {
-      console.log('NR', data);
       localStorage.setItem('roadmapState', JSON.stringify(data));
       validatePlanner();
     }
   }, [data]);
 
+  useEffect(() => {
+    // if is first render, load from local storage
+    if (isFirstRenderer) {
+      let localState = localStorage.getItem('roadmapTransfers');
+      if (localState) {
+        dispatch(setTransfers(JSON.parse(localState)))
+      }
+    }
+    // constantly update local storage and validate planner
+    else {
+      localStorage.setItem('roadmapTransfers', JSON.stringify(transfers));
+      validatePlanner();
+    }
+  }, [transfers]);
+
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
     let courseCount = 0;
+    // sum up all courses
     data.forEach(year => {
       year.quarters.forEach(quarter => {
         quarter.courses.forEach(course => {
@@ -41,12 +56,20 @@ const Planner: FC = () => {
         })
       })
     })
+    // add in transfer courses
+    transfers.forEach(transfer => {
+      // only count if has both name and units
+      if (transfer.units && transfer.name) {
+        unitCount += transfer.units;
+        courseCount += 1;
+      }
+    });
     return { unitCount, courseCount };
   };
 
   const validatePlanner = () => {
     // store courses that have been taken
-    let taken: Set<string> = new Set();
+    let taken: Set<string> = new Set(transfers.map(transfer => transfer.name));
     let invalidCourses: InvalidCourseData[] = [];
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
@@ -121,35 +144,35 @@ const Planner: FC = () => {
             return;
           }
           courses.forEach(course => required.add(course));
-      })
-      return satisfied ? new Set() : required;
-    }
+        })
+        return satisfied ? new Set() : required;
+      }
       else {
-  // should never reach here
-  return new Set();
-}
+        // should never reach here
+        return new Set();
+      }
     }
   }
 
-let { unitCount, courseCount } = calculatePlannerOverviewStats();
+  let { unitCount, courseCount } = calculatePlannerOverviewStats();
 
-return (
-  <div className="planner">
-    <Header courseCount={courseCount} unitCount={unitCount} />
-    <section className="years">
-      {data.map((year, yearIndex) => {
-        return (
-          <Year
-            key={yearIndex}
-            yearIndex={yearIndex}
-            data={year}
-          />
-        );
-      })}
-    </section>
-    <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
-  </div>
-);
+  return (
+    <div className="planner">
+      <Header courseCount={courseCount} unitCount={unitCount} />
+      <section className="years">
+        {data.map((year, yearIndex) => {
+          return (
+            <Year
+              key={yearIndex}
+              yearIndex={yearIndex}
+              data={year}
+            />
+          );
+        })}
+      </section>
+      <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
+    </div>
+  );
 };
 
 export default Planner;

@@ -167,6 +167,12 @@ export interface InvalidCourseData {
     required: string[];
 };
 
+// Specify name of transfer course and how many units its worth
+export interface TransferData {
+    name: string;
+    units: number | undefined;
+}
+
 /**
  * GraphQL Definitions
  */
