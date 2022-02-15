@@ -19,7 +19,8 @@ const DB_NAME = 'peterPortalDB';
 const COLLECTION_NAMES = {
     SESSIONS: 'sessions',
     REVIEWS: 'reviews',
-    SCHEDULE: 'schedule'
+    SCHEDULE: 'schedule',
+    REPORTS: 'reports'
 }
 /**
  * Global reference to database

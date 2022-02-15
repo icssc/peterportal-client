@@ -17,6 +17,7 @@ import ProfessorPage from './pages/ProfessorPage';
 import ErrorPage from './pages/ErrorPage';
 import RoadmapPage from './pages/RoadmapPage';
 import ZotisticsPage from './pages/ZotisticsPage';
+import ReportPage from './pages/ReportPage';
 import SideBar from './component/SideBar/SideBar';
 
 import { useAppSelector } from './store/hooks';
@@ -48,6 +49,7 @@ export default function App() {
           <Route path='/search/:index' component={SearchPage} />
           <Route path='/course/:id+' component={CoursePage} />
           <Route path='/professor/:id' component={ProfessorPage} />
+          <Route path='/reports' component={ReportPage} />
           <Route component={ErrorPage} />
         </Switch>
       </div>

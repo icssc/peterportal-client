@@ -75,6 +75,11 @@ export interface ReviewData {
     score: number;
 }
 
+export interface ReportData {
+    id: string,
+    reason: string
+}
+
 export interface PassportData {
     email: string;
     name: string;

@@ -30,6 +30,7 @@ import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
 import graphqlRouter from './controllers/graphql';
+import reportsRouter from './controllers/reports';
 
 // instantiate app
 const app = express();
@@ -90,6 +91,7 @@ app.use('/schedule', scheduleRouter);
 app.use('/reviews', reviewsRouter);
 app.use('/users', usersRouter);
 app.use('/graphql', graphqlRouter);
+app.use('/reports', reportsRouter);
 app.use('/about', (req, res) => {
   res.render('about');
 });
