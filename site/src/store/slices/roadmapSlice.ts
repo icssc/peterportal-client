@@ -70,6 +70,7 @@ export const roadmapSlice = createSlice({
 
             // if duplicate year
             if (currentYears.includes(newYear)) {
+                alert(`${newYear}-${newYear+1} has already been added as Year ${currentYears.indexOf(newYear)+1}!`);
                 return;
             }
             // check if where to put newYear
