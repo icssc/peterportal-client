@@ -7,7 +7,7 @@ var router = express.Router();
 /**
  * Get a roadmap
  */
-router.get<{}, {}, {}, { email: string }>('/', async function (req, res) {
+router.get<{}, {}, {}, { email: string }>('/get', async function (req, res) {
     getDocuments(COLLECTION_NAMES.ROADMAPS, { _id: req.query.email })
         .then(roadmaps => {
             if (roadmaps.length > 0) {

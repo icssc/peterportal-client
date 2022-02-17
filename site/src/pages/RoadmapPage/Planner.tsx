@@ -78,7 +78,7 @@ const Planner: FC = () => {
     // if logged in
     if (cookies.hasOwnProperty('user')) {
       // get data from account
-      let request = await axios.get<MongoRoadmap>('/roadmap', { params: { email: cookies.user.email } });
+      let request = await axios.get<MongoRoadmap>('/roadmap/get', { params: { email: cookies.user.email } });
       // if a roadmap is found
       if (!request.data.hasOwnProperty('error')) {
         roadmap = request.data.roadmap;
