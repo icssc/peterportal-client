@@ -66,13 +66,13 @@ const ReportPage: FC = () => {
             </div>
         );
     } else if (reports.length === 0) {
-        // return 
-        return <p>No reports to display at this moment.</p>;
+        return <p>No reports to display at the moment.</p>;
     } else {
         return (
             <div className='reports-container'>
                 {reports.map(report => {
                     return <SubReport 
+                                key={report.reviewID}
                                 reportID={report._id} 
                                 reviewID={report.reviewID} 
                                 reason={report.reason} 
