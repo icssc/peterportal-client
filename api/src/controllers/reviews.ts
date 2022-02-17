@@ -129,6 +129,19 @@ router.post("/", async function (req, res, next) {
 /**
  * Delete a review
  */
+ router.delete('/', async (req, res, next) => {
+  console.log(`Deleting review ${req.body.id}`);
+  
+  let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
+      _id: new ObjectID(req.body.id)
+  });
+
+  res.json(status);
+})
+
+/**
+ * Upvote or downvote a review
+ */
 router.delete('/', async (req, res, next) => {
   console.log(`Deleting review ${req.body.id}`);
 
