@@ -1,0 +1,34 @@
+.subreport {
+    background-color: var(--peterportal-gray-blue);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 3vh;
+}
+
+.subreport-identifier {
+    margin: 0;
+    // font-weight: bold;
+    font-size: x-large;
+    // a {
+    //   color: black;
+    // }
+}
+
+.subreport-user-display {
+    font-size: medium;
+}
+
+
+.subreport-review-content {
+    margin: 10px;
+}
+
+.subreport-report-reason {
+    margin: 10px;
+}
+
+.subreport-footer {
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-end;
+}

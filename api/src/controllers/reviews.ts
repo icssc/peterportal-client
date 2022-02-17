@@ -84,17 +84,17 @@ router.get("/", async function (req, res, next) {
   let courseID = req.query.courseID as string;
   let professorID = req.query.professorID as string;
   let userID = req.query.userID as string;
+  let reviewID = req.query.reviewID as string;
 
   interface ReviewFilter {
-    courseID: string;
-    professorID: string;
-    userID: string;
+    courseID: string,
+    professorID: string,
+    userID: string
+    _id: ObjectID | undefined
   }
 
   let query: ReviewFilter = {
-    courseID,
-    professorID,
-    userID,
+    courseID, professorID, userID, _id: (reviewID === undefined ? undefined : new ObjectID(reviewID))
   };
 
   // remove null params
@@ -124,6 +124,19 @@ router.post("/", async function (req, res, next) {
   // echo back body
   res.json(req.body);
 });
+
+/**
+ * Delete a review
+ */
+router.delete('/', async (req, res, next) => {
+  console.log(`Deleting review ${req.body.id}`);
+
+  let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
+    _id: new ObjectID(req.body.id)
+  });
+
+  res.json(status);
+})
 
 /**
  * Upvote or downvote a review
