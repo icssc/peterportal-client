@@ -80,8 +80,9 @@ export interface ReviewData {
 }
 
 export interface ReportData {
-    id: string,
-    reason: string
+    _id?: string;
+    reviewID: string;
+    reason: string;
 }
 
 export interface PassportData {
