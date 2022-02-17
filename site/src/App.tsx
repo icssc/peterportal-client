@@ -51,7 +51,7 @@ export default function App() {
           <Route path='/search/:index' component={SearchPage} />
           <Route path='/course/:id+' component={CoursePage} />
           <Route path='/professor/:id' component={ProfessorPage} />
-          <Route path='/reports' component={ReportPage} />
+          <Route path='/admin' component={ReportPage} />
           <Route component={ErrorPage} />
         </Switch>
         <Footer />
