@@ -94,8 +94,28 @@ const AppHeader: FC<{}> = props => {
         </div>
 
         {/* Week */}
-        <div style={{ display: 'flex' }}>
-          <p className='school-term' style={{ marginBottom: '-1px' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className='alpha' style={{ margin: "auto 12px" }}>
+            <Popup style={{ padding: "36px", width: "400px" }} position='bottom right' trigger={<Label as='a' color='yellow' image>alpha<Label.Detail>v1.1</Label.Detail></Label>} flowing hoverable >
+              <Grid centered columns={1}>
+                <Grid.Column textAlign='left'>
+                  <h4>Alpha Disclaimer</h4>
+                  <p>
+                    Please note that this is an alpha version of PeterPortal, which is still undergoing development.
+                    Some content on this web application may not be accurate. Users are encouraged to double check details.
+                    <br />
+                    <br />
+                    Should you encounter any bugs, glitches, lack of functionality or other problems on the application,
+                    please let us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
+                  </p>
+                  <a className="ui button" href="https://github.com/icssc-projects/peterportal-client/issues/new" target="_blank" rel="noopener noreferrer">
+                    <Icon name='github' />Report an issue
+                  </a>
+                </Grid.Column>
+              </Grid>
+            </Popup>
+          </div>
+          <p className='school-term' style={{ height: '1rem', lineHeight: '1rem' }}>
             {week}
           </p>
         </div>

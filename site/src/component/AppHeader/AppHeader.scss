@@ -119,6 +119,10 @@ ul {
     }
 
     @media only screen and (max-width: 600px) {
+      .alpha {
+        display: none;
+      }
+
       .desktop-toggle {
         display: none;
       }
