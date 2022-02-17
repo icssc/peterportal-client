@@ -1,13 +1,9 @@
 import React, { FC } from 'react';
+import Error from '../../component/Error/Error';
 
 const ErrorPage: FC = () => {
     return (
-        <div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <h1>404</h1>
-                <h3>Page not found.</h3>
-            </div>
-        </div>
+        <Error message=''></Error>
     )
 }
 

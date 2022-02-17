@@ -141,6 +141,20 @@ $avatarWidth: 65px;
   left: 0;
 }
 
+.add-report-button {
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: 0px;
+  margin-left: auto;
+  color: grey;
+  transition: 0.2s;
+  padding: 3px;
+}
+
+.add-report-button:hover {
+  background-color: lightgray;
+}
+
 
 @media only screen and (max-width: 600px) {
   .subreview-content {

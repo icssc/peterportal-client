@@ -18,7 +18,13 @@ router.get('/', function (req, res, next) {
  * Get whether or not a user is an admin
  */
 router.get('/isAdmin', function (req, res, next) {
-  res.json({ admin: req.session.passport!.admin ? true : false });
+  // not logged in
+  if (!req.session.passport) {
+    res.json({ admin: false });
+  }
+  else {
+    res.json({ admin: req.session.passport.admin ? true : false });
+  }
 });
 
 /**
@@ -37,9 +43,32 @@ router.get('/auth/google',
 /**
  * Callback for Google authentication
  */
-router.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/', session: true }),
-  successLogin
+router.get('/auth/google/callback', function (req, res) {
+  passport.authenticate('google', { failureRedirect: '/', session: true },
+    // provides user information to determine whether or not to authenticate
+    function (err, user, info) {
+      console.log('Logging with Google!')
+      if (err) console.log(err);
+      else if (!user) console.log('Invalid login data');
+      else {
+        // manually login
+        req.login(user, function (err) {
+          if (err) console.log(err);
+          else {
+            console.log('GOOGLE AUTHORIZED!')
+            // check if user is an admin
+            let allowedUsers = JSON.parse(process.env.ADMIN_EMAILS)
+            if (allowedUsers.includes(user.email)) {
+              console.log('AUTHORIZED AS ADMIN');
+              req.session.passport!.admin = true;
+            }
+            successLogin(req, res)
+          }
+        });
+      }
+    }
+  )(req, res)
+}
 );
 
 /**
