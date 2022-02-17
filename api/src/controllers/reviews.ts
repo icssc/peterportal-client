@@ -11,6 +11,7 @@ import {
   addDocument,
   getDocuments,
   updateDocument,
+  deleteDocument
 } from "../helpers/mongo";
 
 var router = express.Router();
