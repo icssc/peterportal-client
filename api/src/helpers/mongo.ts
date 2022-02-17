@@ -165,7 +165,7 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
         await getDB();
         getCollection(collectionName)
             .then(async (collection) => {
-                await collection.replaceOne(query, update, (err) => {
+                await collection.updateOne(query, update, (err) => {
                     if (err) console.log(err)
                 });
                 resolve();
