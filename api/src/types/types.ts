@@ -1,3 +1,5 @@
+import { integer } from "aws-sdk/clients/cloudfront";
+
 export interface GenericObject {
     /**
      * Can have any key string and any value type
@@ -9,7 +11,7 @@ export interface QuarterMapping {
     /**
      * Maps quarter name to a date range
      */
-    [key: string]: DateRange
+    [key: string]: DateRange;
 }
 
 export interface DateRange {
@@ -41,7 +43,14 @@ export interface WeekData {
     display: string;
 }
 
-declare module 'express-session' {
+export interface VoteData {
+    _id?: string;
+    userID: string;
+    reviewID: string;
+    score: number;
+}
+
+declare module "express-session" {
     export interface SessionData {
         /**
          * Store custom data in passport
@@ -57,6 +66,13 @@ declare module 'express-session' {
         /**
          * True if is validated as an admin
          */
-        admin: boolean
+        admin: boolean;
+        user: User;
+    }
+
+    interface User {
+        email: string;
+        name: string;
+        picture: string;
     }
 }

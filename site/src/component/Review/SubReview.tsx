@@ -19,9 +19,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/reviews/vote', vote);
+    return res.data.deltaScore;
   }
 
-  const upvote = (e: MouseEvent) => {
+  const upvote = async (e: MouseEvent) => {
     if (!cookies.hasOwnProperty('user')) {
       alert('You must be logged in to vote.');
       return;
@@ -30,11 +31,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: true
     }
-    voteReq(votes)
-    setScore(score + 1)
+    let deltaScore = await voteReq(votes);
+    setScore(score + deltaScore );
   }
 
-  const downvote = (e: MouseEvent) => {
+  const downvote = async (e: MouseEvent) => {
     if (!cookies.hasOwnProperty('user')) {
       alert('You must be logged in to vote.');
       return;
@@ -43,8 +44,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: false
     }
-    voteReq(votes)
-    setScore(score - 1)
+    let deltaScore = await voteReq(votes);
+    setScore(score + deltaScore );
   }
 
   return (
