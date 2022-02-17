@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import ReportForm from '../ReportForm/ReportForm';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -16,6 +17,8 @@ interface SubReviewProps {
 const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
+
+  const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
 
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/reviews/vote', vote);
@@ -46,6 +49,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     }
     let deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
+  }
+
+  const openReportForm = (e: MouseEvent) => {
+    setReportFormOpen(true);
   }
 
   return (
@@ -104,7 +111,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         <button className='upvote' onClick={upvote}>&#9650;</button>
         <p>{score}</p>
         <button className='downvote' onClick={downvote}>&#9660;</button>
-        <a href='/report'>Report</a>
+        {/* <a href='/report'>Report</a> */}
+        <button type='button' className='add-report-button' onClick={openReportForm}>Report</button>
+        {reportFormOpen && (
+          <>
+            <div className='blur-bg' onClick={() => setReportFormOpen(false)} />
+            <ReportForm reviewID={review._id} reviewContent={review.reviewContent} closeForm={() => setReportFormOpen(false)} />
+          </>
+        )}
       </div>
     </div>
   )

@@ -79,6 +79,12 @@ export interface ReviewData {
     tags: string[];
 }
 
+export interface ReportData {
+    _id?: string;
+    reviewID: string;
+    reason: string;
+}
+
 export interface PassportData {
     email: string;
     name: string;

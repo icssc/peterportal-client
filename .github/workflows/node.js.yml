@@ -42,6 +42,7 @@ jobs:
             SESSION_SECRET=$SESSION_SECRET\n \
             GOOGLE_CLIENT=$GOOGLE_CLIENT\n \
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
+            ADMIN_EMAILS=$ADMIN_EMAILS\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
             PORT=$PORT" > .env
 
