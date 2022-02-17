@@ -167,7 +167,27 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
         await getDB();
         getCollection(collectionName)
             .then(async (collection) => {
-                await collection.updateOne(query, update, (err) => {
+                collection.updateOne(query, update, (err) => {
+                    if (err) console.log(err)
+                });
+                resolve();
+            })
+    });
+}
+
+/**
+ * Replaces a document from a collection
+ * @param collectionName Name of collection
+ * @param query Query object
+ * @param update Update object
+ * @returns 
+ */
+ function replaceDocument(collectionName: string, query: GenericObject, update: GenericObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        getCollection(collectionName)
+            .then(async (collection) => {
+                collection.replaceOne(query, update, (err) => {
                     if (err) console.log(err)
                 });
                 resolve();
@@ -187,7 +207,7 @@ function deleteDocument(collectionName: string, query: GenericObject): Promise<v
         getCollection(collectionName)
             .then(async (collection) => {
                 await collection.deleteOne(query, (err) => {
-                    if (err) console.log(err); 
+                    if (err) console.log(err);
                 });
                 resolve();
             })
@@ -200,7 +220,7 @@ function deleteDocument(collectionName: string, query: GenericObject): Promise<v
  * @param key Key to look up the cache
  * @returns Cached value
  */
- async function getValue(cache: string, key: string): Promise<any> {
+async function getValue(cache: string, key: string): Promise<any> {
     return new Promise(async resolve => {
         let value = await getDocuments(cache, { _id: key });
         // cache hit
@@ -225,7 +245,7 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
     return new Promise(async resolve => {
         // if already in cache, update doc
         if (await containsID(cache, key)) {
-            await updateDocument(cache, { _id: key }, { value: value })
+            await replaceDocument(cache, { _id: key }, { value: value })
         }
         // if not in cache, add doc
         else {
