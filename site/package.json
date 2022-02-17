@@ -22,7 +22,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "node-sass": "^7.0.1",
-    "react": "^16.13.1",
+    "react": "^17.0.2",
     "react-beautiful-dnd": "^13.0.0",
     "react-bootstrap": "^1.5.1",
     "react-bootstrap-icons": "^1.4.0",
