@@ -20,7 +20,8 @@ const COLLECTION_NAMES = {
     SESSIONS: 'sessions',
     REVIEWS: 'reviews',
     SCHEDULE: 'schedule',
-    ROADMAPS: 'roadmaps'
+    ROADMAPS: 'roadmaps',
+    VOTES: 'votes'
 }
 /**
  * Global reference to database
