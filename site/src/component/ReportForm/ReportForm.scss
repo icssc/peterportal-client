@@ -5,7 +5,7 @@
     display: flex;
     grid-gap: 35px;
     width: fit-content;
-    max-width: 70vw;
+    width: 40vw;
     height: fit-content;
     position: fixed;
     top: 0;
@@ -26,29 +26,24 @@
 }
 
 .report-form-review-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1rem;
   margin-bottom: 20px;
+}
+
+.report-form-review-content-label {
+  font-weight: bold;
+}
+
+.report-form-review-content-text {
+  font-style: italic;
 }
 
 .report-form-header {
   margin: 0px;
   margin-top: 0px;
-  margin-bottom: 20px;
 }
-
-// .report-form-section {
-//   width: auto;
-//   flex-direction: row;
-//   justify-content: center;
-//   justify-items: end;
-// }
-
-// .report-form-row {
-
-// }
-
-// .report-form-col {
-
-// }
 
 .submitted-report-form {
     text-align: center;
@@ -63,4 +58,12 @@
     p {
       font-size: 1.25rem;
     }
+}
+
+@media only screen and (max-width: 600px) {
+  .report-form {
+    width: 90vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }

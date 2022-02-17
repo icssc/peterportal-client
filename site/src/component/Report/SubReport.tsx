@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { ReviewData } from "src/types/types";
+import Button from 'react-bootstrap/Button';
 import './SubReport.scss';
 
 interface SubReportProps {
-    reportID: string | undefined,
-    reviewID: string | undefined,
+    reportID: string,
+    reviewID: string,
     reason: string,
     onAccept: () => void,
     onDeny: () => void
@@ -13,45 +14,47 @@ interface SubReportProps {
 
 
 const SubReport: FC<SubReportProps> = (props) => {
-    const [reviewContent, setReviewContent] = useState<string>('');
-    const [profName, setProfName] = useState<string>('');
-    const [userDisplay, setUserDisplay] = useState<string>('');
-    
+    const [review, setReview] = useState<ReviewData>(null!);
+
     const getReviewData = async (reviewID: string) => {
         const res: AxiosResponse<ReviewData[]> = await axios.get(`/reviews?reviewID=${reviewID}`);
         const review: ReviewData = res.data[0];
-        
-        setReviewContent(review.reviewContent);
-        setUserDisplay(review.userDisplay);
-        setProfName(review.professorID);
+        console.log(review);
+        setReview(review);
     }
 
     useEffect(() => {
         getReviewData(props.reviewID!);
     }, []);
 
+    if (!review) {
+        return <></>
+    }
     return (
         <div className='subreport'>
             <div className='subreport-identifier'>
                 <div className="subreport-professor-name">
-                    {profName}
+                    {review.professorID}
                 </div>
                 <div className='subreport-user-display'>
-                    Reviewed by {userDisplay}
+                    Posted by {review.userDisplay} on {new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>
             </div>
-            <div className='subreport-review-content'>
-                <p>{reviewContent}</p>
-            </div>
-            <div className='subreport-report-reason'>
+            <div className='subreport-content'>
                 <label>
-                    Reason given for report:
+                    Review Content:
+                </label>
+                <p>{review.reviewContent}</p>
+            </div>
+            <div className='subreport-content'>
+                <label>
+                    Report Reason:
                 </label>
                 <p>{props.reason}</p>
             </div>
             <div className='subreport-footer'>
-                <button className='subreport-reject-button' onClick={props.onDeny}>Deny</button>
-                <button className='subreport-accept-button' onClick={props.onAccept}>Accept</button>
+                <Button variant='danger' className='mr-3' onClick={props.onDeny}>Deny</Button>
+                <Button variant='success' onClick={props.onAccept}>Accept</Button>
             </div>
         </div>
     );

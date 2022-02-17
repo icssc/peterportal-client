@@ -19,12 +19,15 @@
 }
 
 
-.subreport-review-content {
-    margin: 10px;
-}
-
-.subreport-report-reason {
-    margin: 10px;
+.subreport-content {
+    margin: 1vh 0;
+    label {
+        font-weight: bold;
+    }
+    p {
+        font-style: italic;
+        margin-left: 1vw;
+    }
 }
 
 .subreport-footer {
