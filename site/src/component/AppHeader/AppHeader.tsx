@@ -95,13 +95,13 @@ const AppHeader: FC<{}> = props => {
 
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div className='alpha' style={{ margin: "auto 12px" }}>
-            <Popup style={{ padding: "36px", width: "400px" }} position='bottom right' trigger={<Label as='a' color='yellow' image>alpha<Label.Detail>v1.1</Label.Detail></Label>} flowing hoverable >
+          <div className='beta' style={{ margin: "auto 12px" }}>
+            <Popup style={{ padding: "36px", width: "400px" }} position='bottom right' trigger={<Label as='a' color='yellow' image>beta<Label.Detail>v1.1</Label.Detail></Label>} flowing hoverable >
               <Grid centered columns={1}>
                 <Grid.Column textAlign='left'>
-                  <h4>Alpha Disclaimer</h4>
+                  <h4>Beta Disclaimer</h4>
                   <p>
-                    Please note that this is an alpha version of PeterPortal, which is still undergoing development.
+                    Please note that this is a beta version of PeterPortal, which is still undergoing development.
                     Some content on this web application may not be accurate. Users are encouraged to double check details.
                     <br />
                     <br />
