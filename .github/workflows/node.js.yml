@@ -19,6 +19,7 @@ jobs:
       SESSION_SECRET: ${{secrets.SESSION_SECRET}}
       GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
       GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
+      ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
       PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
       PORT: ${{secrets.PORT}}
 
