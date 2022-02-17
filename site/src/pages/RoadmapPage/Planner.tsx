@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from "react";
+import { useCookies } from 'react-cookie';
+import axios from 'axios';
 import "./Planner.scss";
 import Header from "./Header";
 import AddYearPopup from "./AddYearPopup";
@@ -6,10 +8,11 @@ import Year from "./Year";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
-import { InvalidCourseData } from '../../types/types';
+import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, CourseData, MongoRoadmap } from '../../types/types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
+  const [cookies, setCookie] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
   const transfers = useAppSelector(state => state.roadmap.transfers);
@@ -17,32 +20,110 @@ const Planner: FC = () => {
   useEffect(() => {
     // if is first render, load from local storage
     if (isFirstRenderer) {
-      let localState = localStorage.getItem('roadmapState');
-      if (localState) {
-        dispatch(setYearPlans(JSON.parse(localState)))
-      }
+      loadRoadmap();
     }
-    // constantly update local storage and validate planner
+    // validate planner every time something changes
     else {
-      localStorage.setItem('roadmapState', JSON.stringify(data));
       validatePlanner();
     }
-  }, [data]);
+  }, [data, transfers]);
 
-  useEffect(() => {
-    // if is first render, load from local storage
-    if (isFirstRenderer) {
-      let localState = localStorage.getItem('roadmapTransfers');
-      if (localState) {
-        dispatch(setTransfers(JSON.parse(localState)))
+  // remove all unecessary data to store into the database
+  const collapsePlanner = (planner: PlannerData): SavedPlannerData => {
+    let savedPlanner: SavedPlannerData = [];
+    planner.forEach(year => {
+      let savedYear: SavedPlannerYearData = { startYear: year.startYear, quarters: [] };
+      year.quarters.forEach(quarter => {
+        let savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
+        savedQuarter.courses = quarter.courses.map(course => course.id);
+        savedYear.quarters.push(savedQuarter);
+      })
+      savedPlanner.push(savedYear);
+    })
+    return savedPlanner;
+  }
+
+  // query the lost information from collapsing
+  const expandPlanner = async (savedPlanner: SavedPlannerData): Promise<PlannerData> => {
+    return new Promise(async (resolve) => {
+      let courses: string[] = [];
+      // get all courses in the planner
+      savedPlanner.forEach(year => year.quarters.forEach(quarter => { courses = courses.concat(quarter.courses) }))
+      // get the course data for all courses
+      type CourseLookup = { [key: string]: CourseData };
+      let courseLookup: CourseLookup = {};
+      // only send request if there are courses
+      if (courses.length > 0) {
+        let response = await axios.post<CourseLookup>('/courses/api/batch', { courses: courses });
+        courseLookup = response.data;
+      }
+      let planner: PlannerData = [];
+      savedPlanner.forEach(savedYear => {
+        let year: PlannerYearData = { startYear: savedYear.startYear, quarters: [] };
+        savedYear.quarters.forEach(savedQuarter => {
+          let quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
+          quarter.courses = savedQuarter.courses.map(course => courseLookup[course]);
+          year.quarters.push(quarter);
+        })
+        planner.push(year);
+      })
+      resolve(planner);
+    })
+  }
+
+  const loadRoadmap = async () => {
+    console.log('Loading Roadmaps...');
+    let roadmap: SavedRoadmap = null!;
+    let localRoadmap = localStorage.getItem('roadmap');
+    // if logged in
+    if (cookies.hasOwnProperty('user')) {
+      // get data from account
+      let request = await axios.get<MongoRoadmap>('/roadmap', { params: { email: cookies.user.email } });
+      // if a roadmap is found
+      if (!request.data.hasOwnProperty('error')) {
+        roadmap = request.data.roadmap;
       }
     }
-    // constantly update local storage and validate planner
-    else {
-      localStorage.setItem('roadmapTransfers', JSON.stringify(transfers));
-      validatePlanner();
+    // check local storage next
+    if (!roadmap && localRoadmap) {
+      roadmap = JSON.parse(localRoadmap);
     }
-  }, [transfers]);
+    // no saved planner
+    if (!roadmap) {
+      return;
+    }
+
+    // expand planner and set the state
+    let planner = await expandPlanner(roadmap.planner);
+    dispatch(setYearPlans(planner));
+    dispatch(setTransfers(roadmap.transfers));
+  }
+
+  const saveRoadmap = () => {
+    console.log('Saving Roadmaps...');
+    let roadmap: SavedRoadmap = {
+      planner: collapsePlanner(data),
+      transfers: transfers
+    };
+    let savedAccount = false;
+    // if logged in
+    if (cookies.hasOwnProperty('user')) {
+      // save data to account
+      let mongoRoadmap: MongoRoadmap = { _id: cookies.user.email, roadmap: roadmap }
+      axios.post('/roadmap', mongoRoadmap);
+      savedAccount = true;
+    }
+
+    // save to local storage as well
+    localStorage.setItem('roadmap', JSON.stringify(roadmap));
+
+    if (savedAccount) {
+      alert(`Roadmap saved under ${cookies.user.email}`);
+    }
+    else {
+      alert('Roadmap saved locally! Login to save it to your account.');
+    }
+  }
 
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
@@ -158,7 +239,7 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} />
+      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
       <section className="years">
         {data.map((year, yearIndex) => {
           return (

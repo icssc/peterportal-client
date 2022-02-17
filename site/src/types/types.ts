@@ -146,6 +146,18 @@ export interface PlannerQuarterData {
     courses: CourseData[];
 }
 
+export type SavedPlannerData = SavedPlannerYearData[];
+
+export interface SavedPlannerYearData {
+    startYear: number;
+    quarters: SavedPlannerQuarterData[];
+}
+
+export interface SavedPlannerQuarterData {
+    name: string;
+    courses: string[];
+}
+
 // Specify the location of a year
 export interface YearIdentifier {
     yearIndex: number;
@@ -172,6 +184,18 @@ export interface TransferData {
     name: string;
     units: number | undefined;
 }
+
+// Bundle planner and transfer data in one object
+export interface SavedRoadmap {
+    planner: SavedPlannerData;
+    transfers: TransferData[];
+}
+
+// Structure stored in mongo for accounts
+export interface MongoRoadmap {
+    _id: string;
+    roadmap: SavedRoadmap;
+} 
 
 /**
  * GraphQL Definitions

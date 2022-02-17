@@ -4,6 +4,7 @@
 
 import express, { Request } from 'express';
 import fetch from 'node-fetch';
+import { GenericObject } from '../types/types';
 var router = express.Router();
 
 /**
@@ -39,6 +40,37 @@ router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
 
   r.then((response) => response.json())
     .then((data) => res.send(data))
+});
+
+/**
+ * PPAPI proxy for professor data 
+ */
+router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => {
+  let results: GenericObject = {};
+  let count = 0;
+  if (req.body.courses.length == 0) {
+    res.json({});
+  }
+  else {
+    req.body.courses.forEach(course => {
+      let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(course), {
+        headers: {
+          'x-api-key': process.env.PPAPI_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      r.then((response) => response.json())
+        .then((data) => {
+          results[course] = data;
+          count += 1;
+          if (count == req.body.courses.length) {
+            res.json(results);
+          }
+        })
+    })
+  }
 });
 
 /**
