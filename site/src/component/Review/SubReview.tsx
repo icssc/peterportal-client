@@ -55,10 +55,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     setReportFormOpen(true);
   }
 
-  const openReportForm = (e: MouseEvent) => {
-    setReportFormOpen(true);
-  }
-
   return (
     <div className='subreview'>
       <div>
