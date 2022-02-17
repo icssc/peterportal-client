@@ -112,7 +112,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         <p>{score}</p>
         <button className='downvote' onClick={downvote}>&#9660;</button>
         {/* <a href='/report'>Report</a> */}
-        <button type='button' className='add-report-button' onClick={openReportForm}></button>
+        <button type='button' className='add-report-button' onClick={openReportForm}>Report</button>
         {reportFormOpen && (
           <>
             <div className='blur-bg' onClick={() => setReportFormOpen(false)} />

@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import { useAppDispatch } from '../../store/hooks';
 import { ReportData } from '../../types/types';
-import { useCookies } from 'react-cookie';;
+import { useCookies } from 'react-cookie';
 
 
 
@@ -47,7 +47,8 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
     const reportForm = (
         <Form noValidate validated={validated} onSubmit={submitReport}>
-            <Row>
+            <h2 className='report-form-header'>Report Review</h2>
+            <Row className='report-form-review-content'>
                 <p>{props.reviewContent}</p>
             </Row>
             <Row>
@@ -59,9 +60,6 @@ const ReportForm: FC<ReportFormProps> = (props) => {
                     style={{ height: '15vh', width: '100%' }}
                     onChange={(e) => {
                         setReason(e.target.value);
-                        // if (overCharLimit && e.target.value.length < 500) {
-                        //   setOverCharLimit(false)
-                        // }
                     }}
                     />
                 </Form.Group>

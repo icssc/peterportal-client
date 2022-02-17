@@ -5,6 +5,7 @@
     display: flex;
     grid-gap: 35px;
     width: fit-content;
+    max-width: 70vw;
     height: fit-content;
     position: fixed;
     top: 0;
@@ -12,6 +13,7 @@
     left: 0;
     bottom: 0;
     margin: auto auto;
+    padding: 50px;
 
     textarea {
         border-radius: var(--border-radius);
@@ -23,13 +25,30 @@
     }
 }
 
-.report-form-row {
-
+.report-form-review-content {
+  margin-bottom: 20px;
 }
 
-.report-form-col {
-
+.report-form-header {
+  margin: 0px;
+  margin-top: 0px;
+  margin-bottom: 20px;
 }
+
+// .report-form-section {
+//   width: auto;
+//   flex-direction: row;
+//   justify-content: center;
+//   justify-items: end;
+// }
+
+// .report-form-row {
+
+// }
+
+// .report-form-col {
+
+// }
 
 .submitted-report-form {
     text-align: center;
