@@ -37,7 +37,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         if (reason.length > 500) return;
         if (reason.length === 0) return;
         setValidated(true);
-        
+
         const report = {
             reviewID: props.reviewID!,
             reason
@@ -46,30 +46,27 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     }
 
     const reportForm = (
-        <Form noValidate validated={validated} onSubmit={submitReport}>
+        <Form noValidate validated={validated} onSubmit={submitReport} style={{ width: '100%' }}>
             <h2 className='report-form-header'>Report Review</h2>
-            <Row className='report-form-review-content'>
-                <p>{props.reviewContent}</p>
-            </Row>
-            <Row>
-                <Form.Group className='report-form-section'>
-                    <Form.Label>Why are you reporting this review?</Form.Label>
-                    <Form.Control
+            <p>Does the report contain vulgar or hateful content? Submit an anonymous report here.</p>
+            <div className='report-form-review-content'>
+                <p className='report-form-review-content-label'>You're reporting:</p>
+                <p className='report-form-review-content-text'>{props.reviewContent}</p>
+            </div>
+            <Form.Group className='report-form-section'>
+                <Form.Label>Why are you reporting this review?</Form.Label>
+                <Form.Control
                     as="textarea"
                     placeholder="Enter a reason..."
-                    style={{ height: '15vh', width: '100%' }}
                     onChange={(e) => {
                         setReason(e.target.value);
                     }}
-                    />
-                </Form.Group>
-            </Row>
-            <Row>
-                <Col className='mb-3'>
-                    <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
-                    <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
-                </Col>
-          </Row>
+                />
+            </Form.Group>
+            <div>
+                <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
+                <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
+            </div>
         </Form>
     );
 
@@ -77,9 +74,9 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <div className='report-form'>
             {reportSubmitted ? (
                 <div className='submitted-report-form'>
-                <Icon name='check circle' size='huge' />
-                <h1>Thank You</h1>
-                <p>Your report has been submitted successfully.</p>
+                    <Icon name='check circle' size='huge' />
+                    <h1>Thank You</h1>
+                    <p>Your report has been submitted successfully.</p>
                 </div>
             ) : reportForm}
         </div>
