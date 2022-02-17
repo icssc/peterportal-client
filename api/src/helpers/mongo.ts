@@ -20,7 +20,8 @@ const COLLECTION_NAMES = {
     SESSIONS: 'sessions',
     REVIEWS: 'reviews',
     SCHEDULE: 'schedule',
-    ROADMAPS: 'roadmaps'
+    ROADMAPS: 'roadmaps',
+    VOTES: 'votes'
 }
 /**
  * Global reference to database
@@ -165,7 +166,7 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
         await getDB();
         getCollection(collectionName)
             .then(async (collection) => {
-                await collection.replaceOne(query, update, (err) => {
+                await collection.updateOne(query, update, (err) => {
                     if (err) console.log(err)
                 });
                 resolve();
