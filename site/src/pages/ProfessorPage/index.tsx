@@ -27,12 +27,18 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         fetchDataFromApi();
     }, []);
 
+    // check if professor exists
     if (!profData) {
         return <LoadingPage />;
     }
     else if (profData.hasOwnProperty('error')) {
-        return <Error message='Professor Does Not Exist!'/>
-    } else {
+        return <Error message='Professor Does Not Exist!' />
+    }
+    // wait for additional details
+    if (!professorGQLData) {
+        return <LoadingPage />;
+    }
+    else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='professor-page'>

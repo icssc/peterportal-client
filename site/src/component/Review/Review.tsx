@@ -36,6 +36,8 @@ const Review: FC<ReviewProps> = (props) => {
     }
 
     useEffect(() => {
+        // prevent reviews from carrying over
+        dispatch(setReviews([]));
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 

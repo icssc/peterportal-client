@@ -7,8 +7,8 @@ var router = express.Router();
 /**
  * Get a roadmap
  */
-router.get<{}, {}, {}, { email: string }>('/get', async function (req, res) {
-    getDocuments(COLLECTION_NAMES.ROADMAPS, { _id: req.query.email })
+router.get<{}, {}, {}, { id: string }>('/get', async function (req, res) {
+    getDocuments(COLLECTION_NAMES.ROADMAPS, { _id: req.query.id })
         .then(roadmaps => {
             if (roadmaps.length > 0) {
                 res.json(roadmaps[0]);
@@ -22,15 +22,16 @@ router.get<{}, {}, {}, { email: string }>('/get', async function (req, res) {
 /**
  * Add a roadmap
  */
-router.post<{}, {}, { _id: string }>('/', async function (req, res, next) {
-    if (!req.body._id) {
+router.post<{}, {}, { id: string }>('/', async function (req, res, next) {
+    if (!req.body.id) {
         res.json({ error: 'Invalid input' });
+        return;
     }
     console.log(`Adding Roadmap: ${JSON.stringify(req.body)}`)
 
-    if (await containsID(COLLECTION_NAMES.ROADMAPS, req.body._id)) {
+    if (await containsID(COLLECTION_NAMES.ROADMAPS, req.body.id)) {
         // overwrite
-        await updateDocument(COLLECTION_NAMES.ROADMAPS, { _id: req.body._id }, req.body)
+        await updateDocument(COLLECTION_NAMES.ROADMAPS, { _id: req.body.id }, req.body)
     }
     else {
         // add roadmap to mongo

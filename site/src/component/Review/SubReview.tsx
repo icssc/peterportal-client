@@ -55,6 +55,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     setReportFormOpen(true);
   }
 
+  console.log(professor, course, review);
   return (
     <div className='subreview'>
       <div>
