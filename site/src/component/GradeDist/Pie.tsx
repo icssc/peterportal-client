@@ -136,8 +136,8 @@ export default class Pie extends React.Component<PieProps> {
         />
         <div style={{ display: 'flex', textAlign: 'center', margin: '-235px' }}>
           <div style={{ margin: 'auto' }}>
-            <h3>Average Grade: {this.averageGrade} ({this.averageGPA})</h3>
-            <h3 style={{ marginBottom: '6px' }}>Total Enrolled: <strong>{this.total}</strong></h3>
+            <h3 className='pie-text'>Average Grade: {this.averageGrade} ({this.averageGPA})</h3>
+            <h3 className='pie-text' style={{ marginBottom: '6px' }}>Total Enrolled: <strong>{this.total}</strong></h3>
             {this.totalPNP > 0 ? <small>{this.totalPNP} enrolled as P/NP</small> : null}
           </div>
         </div>

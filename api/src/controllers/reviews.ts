@@ -129,11 +129,11 @@ router.post("/", async function (req, res, next) {
 /**
  * Delete a review
  */
- router.delete('/', async (req, res, next) => {
+router.delete('/', async (req, res, next) => {
   console.log(`Deleting review ${req.body.id}`);
-  
+
   let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
-      _id: new ObjectID(req.body.id)
+    _id: new ObjectID(req.body.id)
   });
 
   res.json(status);
@@ -212,10 +212,15 @@ router.patch("/vote", async function (req, res) {
  * Clear all reviews
  */
 router.delete("/clear", async function (req, res) {
-  let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  let status = await reviewsCollection.deleteMany({});
+  if (process.env.NODE_ENV == 'development') {
+    let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
+    let status = await reviewsCollection.deleteMany({});
 
-  res.json(status);
+    res.json(status);
+  }
+  else {
+    res.json({ error: 'Can only clear on development environment' });
+  }
 });
 
 export default router;
