@@ -80,9 +80,31 @@
     }
 
     .search-popup-carousel-max-score {
-        margin-left: .5vw;
+        margin-left: 0.5vw;
         display: flex;
         align-items: center;
         color: var(--peterportal-mid-gray);
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+    .search-popup-infos {
+        flex-direction: column;
+    }
+
+    .search-popup-info:first-child {
+        margin-bottom: 3vh;
+    }
+
+    .search-popup-info {
+        width: 90%;
+    }
+
+    .search-popup-id {
+        flex-direction: column-reverse;
+
+        a {
+            margin-left: auto;
+        }
     }
 }
