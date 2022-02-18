@@ -71,6 +71,7 @@ declare module "express-session" {
     }
 
     interface User {
+        id: string;
         email: string;
         name: string;
         picture: string;

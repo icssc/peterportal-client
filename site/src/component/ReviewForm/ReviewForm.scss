@@ -8,10 +8,10 @@
   height: fit-content;
   position: fixed;
   top: 0;
-  right: 0;
-  left: 0;
   bottom: 0;
-  margin: auto auto;
+  left: 0;
+  right: 0;
+  margin: auto;
 
   h5 {
     font-weight: normal;
@@ -43,6 +43,9 @@
   .badge-pill {
     cursor: pointer;
   }
+}
+.review-form-grade {
+  margin-left: 1vw;
 }
 .review-form-section {
   background-color: #ffffff;
@@ -97,10 +100,24 @@
   top: 2vh;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 800px) {
   .review-form {
     height: 80vh;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  .review-form-taken {
+    margin-bottom: 3vh;
+  }
+}
+
+@media only screen and (max-width: 1700px) {
+  .review-form-row {
+    flex-direction: column;
+  }
+
+  .review-form-grade {
+    margin-left: 0;
   }
 }

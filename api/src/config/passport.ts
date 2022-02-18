@@ -32,6 +32,7 @@ passport.use(
                 email = profile.emails[0].value;
             }
             var userData = {
+                id: profile.id,
                 email: email,
                 name: profile.displayName,
                 picture: profile._json.picture

@@ -35,7 +35,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       upvote: true
     }
     let deltaScore = await voteReq(votes);
-    setScore(score + deltaScore );
+    setScore(score + deltaScore);
   }
 
   const downvote = async (e: MouseEvent) => {
@@ -48,7 +48,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       upvote: false
     }
     let deltaScore = await voteReq(votes);
-    setScore(score + deltaScore );
+    setScore(score + deltaScore);
   }
 
   const openReportForm = (e: MouseEvent) => {
@@ -111,14 +111,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         <button className='upvote' onClick={upvote}>&#9650;</button>
         <p>{score}</p>
         <button className='downvote' onClick={downvote}>&#9660;</button>
-        {/* <a href='/report'>Report</a> */}
         <button type='button' className='add-report-button' onClick={openReportForm}>Report</button>
-        {reportFormOpen && (
-          <>
-            <div className='blur-bg' onClick={() => setReportFormOpen(false)} />
-            <ReportForm reviewID={review._id} reviewContent={review.reviewContent} closeForm={() => setReportFormOpen(false)} />
-          </>
-        )}
+        <ReportForm showForm={reportFormOpen} reviewID={review._id} reviewContent={review.reviewContent} closeForm={() => setReportFormOpen(false)} />
       </div>
     </div>
   )

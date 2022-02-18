@@ -16,7 +16,6 @@ export interface ReviewProps {
 const Review: FC<ReviewProps> = (props) => {
     const dispatch = useAppDispatch();
     const reviewData = useAppSelector(selectReviews);
-    const openForm = useAppSelector(state => state.review.formOpen);
 
     const getReviews = async () => {
         interface paramsProps {
@@ -36,6 +35,8 @@ const Review: FC<ReviewProps> = (props) => {
     }
 
     useEffect(() => {
+        // prevent reviews from carrying over
+        dispatch(setReviews([]));
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
@@ -59,12 +60,7 @@ const Review: FC<ReviewProps> = (props) => {
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
-                {openForm ? (
-                    <>
-                        <div className='blur-bg' onClick={closeForm} />
-                        <ReviewForm closeForm={closeForm} {...props} />
-                    </>
-                ) : null}
+                <ReviewForm closeForm={closeForm} {...props} />
             </>
         )
     }

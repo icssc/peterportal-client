@@ -14,6 +14,8 @@
     bottom: 0;
     margin: auto auto;
     padding: 50px;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     textarea {
         border-radius: var(--border-radius);
@@ -63,7 +65,11 @@
 @media only screen and (max-width: 600px) {
   .report-form {
     width: 90vw;
-    overflow-y: auto;
-    overflow-x: hidden;
+  }
+}
+
+@media only screen and (max-width: 1300px) {
+  .report-form {
+    width: 75vw;
   }
 }

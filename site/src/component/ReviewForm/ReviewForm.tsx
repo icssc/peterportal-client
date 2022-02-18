@@ -9,9 +9,10 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
+import Modal from 'react-bootstrap/Modal';
 
 import { addReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 
@@ -53,6 +54,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
+  const showForm = useAppSelector(state => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
@@ -187,12 +189,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <h5>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</h5>
             </Col>
           </Row>
-          <Row className='mt-4'>
+          <Row className='mt-4' lg={2} md={1}>
             <Col>
-              <div className='review-form-section review-form-row'>
+              <div className='review-form-section review-form-row review-form-taken'>
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className='ml-3' controlId='grade'>
+                <Form.Group className='review-form-grade' controlId='grade'>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
                     <option disabled={true} selected value=''>Grade</option>
@@ -347,15 +349,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   )
 
   return (
-    <div className='review-form'>
-      {submitted ? (
-        <div className='submitted-form'>
-          <Icon name='check circle' size='huge' />
-          <h1>Thank You</h1>
-          <p>Your form has been submitted successfully.</p>
-        </div>
-      ) : reviewForm}
-    </div>
+    <Modal show={showForm} onHide={props.closeForm} centered animation={false}>
+      <div className='review-form'>
+        {submitted ? (
+          <div className='submitted-form'>
+            <Icon name='check circle' size='huge' />
+            <h1>Thank You</h1>
+            <p>Your form has been submitted successfully.</p>
+          </div>
+        ) : reviewForm}
+      </div>
+    </Modal>
   )
 }
 

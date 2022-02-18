@@ -10,13 +10,13 @@ import './ReportForm.scss';
 import { useAppDispatch } from '../../store/hooks';
 import { ReportData } from '../../types/types';
 import { useCookies } from 'react-cookie';
-
-
+import Modal from 'react-bootstrap/Modal';
 
 interface ReportFormProps {
-    reviewID: string | undefined
-    reviewContent: string
-    closeForm: () => void
+    showForm: boolean;
+    reviewID: string | undefined;
+    reviewContent: string;
+    closeForm: () => void;
 }
 
 const ReportForm: FC<ReportFormProps> = (props) => {
@@ -71,15 +71,17 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     );
 
     return (
-        <div className='report-form'>
-            {reportSubmitted ? (
-                <div className='submitted-report-form'>
-                    <Icon name='check circle' size='huge' />
-                    <h1>Thank You</h1>
-                    <p>Your report has been submitted successfully.</p>
-                </div>
-            ) : reportForm}
-        </div>
+        <Modal show={props.showForm} animation={false} onHide={props.closeForm}>
+            <div className='report-form'>
+                {reportSubmitted ? (
+                    <div className='submitted-report-form'>
+                        <Icon name='check circle' size='huge' />
+                        <h1>Thank You</h1>
+                        <p>Your report has been submitted successfully.</p>
+                    </div>
+                ) : reportForm}
+            </div>
+        </Modal>
     );
 }
 
