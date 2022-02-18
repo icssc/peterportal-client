@@ -11,6 +11,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { ReportData } from '../../types/types';
 import { useCookies } from 'react-cookie';
 import Modal from 'react-bootstrap/Modal';
+import { isMobile } from 'react-device-detect';
 
 interface ReportFormProps {
     showForm: boolean;
@@ -63,9 +64,9 @@ const ReportForm: FC<ReportFormProps> = (props) => {
                     }}
                 />
             </Form.Group>
-            <div>
-                <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
-                <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
+            <div className='d-flex justify-content-end'>
+                <Button className='py-2 px-4 mr-3' variant="outline-secondary" size={isMobile ? 'sm' : undefined} onClick={props.closeForm}>Cancel</Button>
+                <Button className='py-2 px-4' type="submit" variant="secondary" size={isMobile ? 'sm' : undefined}>Submit</Button>
             </div>
         </Form>
     );
