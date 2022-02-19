@@ -68,8 +68,17 @@ const AddCoursePopup: FC<AddCoursePopupProps> = (props) => {
             <Form.Group controlId='year'>
                 <Form.Label>Year</Form.Label>
                 <Form.Control as="select" name='year' id='year' required
-                    onChange={(e) => setYear(parseInt(e.target.value))}>
-                    {/* <option disabled={true} selected value=''>Year</option> */}
+                    onChange={(e) => {
+                        let parsed = parseInt(e.target.value)
+                        console.log(parsed, isNaN(parsed))
+                        if (isNaN(parsed)) {
+                            setYear(-1);
+                        }
+                        else {
+                            setYear(parsed)
+                        }
+                    }}>
+                    <option disabled={true} selected value=''>Year</option>
                     {planner.map((plannerYear, i) => {
                         let value = plannerYear.startYear;
                         return <option key={'add-course-form-year-' + i} value={i}>{value}</option>
@@ -83,8 +92,13 @@ const AddCoursePopup: FC<AddCoursePopupProps> = (props) => {
                 year != -1 && <Form.Group controlId='quarter'>
                     <Form.Label>Quarter</Form.Label>
                     <Form.Control as="select" name='quarter' id='quarter' required
-                        onChange={(e) => setQuarter(parseInt(e.target.value))}>
-                        {/* <option disabled={true} selected value=''>Quarter</option> */}
+                        onChange={(e) => {
+                            let parsed = parseInt(e.target.value)
+                            if (!isNaN(parsed)) {
+                                setQuarter(parsed)
+                            }
+                        }}>
+                        <option disabled={true} selected value=''>Quarter</option>
                         {planner[year].quarters.map((plannerQuarter, i) => {
                             let value = capitalizeFirstLetter(plannerQuarter.name);
                             return <option key={'add-course-form-quarter-' + i} value={i}>{value}</option>

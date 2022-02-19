@@ -38,23 +38,25 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
   return (
     <div className="header">
       <Transfer />
-      <span id="planner-stats">
-        Total: <span id="course-count">{courseCount}</span>{" "}
-        {courseCount === 1 ? "course" : "courses"},{" "}
-        <span id="unit-count">{unitCount}</span>{" "}
-        {unitCount === 1 ? "unit" : "units"}
-      </span>
-      <span id="title">
-        <h2>Peter's Roadmap</h2>
-      </span>
+      <div>
+        <div id="title">
+          Peter's Roadmap
+        </div>
+        <span id="planner-stats">
+          Total: <span id="course-count">{courseCount}</span>{" "}
+          {courseCount === 1 ? "course" : "courses"},{" "}
+          <span id="unit-count">{unitCount}</span>{" "}
+          {unitCount === 1 ? "unit" : "units"}
+        </span>
+      </div>
       <div>
         {
           isMobile && <>
-            <Button variant="light" className="header-btn" onClick={() => { dispatch(setShowSearch(true)) }}>
+            <Button variant="light" className="header-btn add-course" onClick={() => { dispatch(setShowSearch(true)) }}>
               <Plus className="header-icon mr-1" />
               Add Course
             </Button>
-            <List className='mr-3' onClick={onMenuClick} />
+            <List className='mx-3' onClick={onMenuClick} />
             <Overlay show={showMenu} target={target} placement="left">
               <Popover id='roadmap-header-buttons'>
                 <Popover.Content>

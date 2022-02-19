@@ -36,17 +36,17 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
         }))
     }, [name, units])
 
-    return <Row className="g-2 mb-1">
-        <Col md='auto' className="d-flex flex-row justify-content-center">
+    return <Row className="g-2 mb-1" xs={3}>
+        <Col xs='auto' md='auto' className="d-flex flex-row justify-content-center">
             <CloseButton onClick={() => dispatch(deleteTransfer(props.index))} />
         </Col>
-        <Col md>
+        <Col xs md>
             <Form.Control type="text" placeholder="Name"
                 value={name} onChange={e =>
                     setName(e.target.value)
                 } />
         </Col>
-        <Col md>
+        <Col xs md>
             <Form.Control type="number" placeholder="Units"
                 value={units} onChange={e =>
                     setUnits(parseInt(e.target.value))
