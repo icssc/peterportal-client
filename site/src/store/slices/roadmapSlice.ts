@@ -14,6 +14,10 @@ interface RoadmapState {
     showTransfer: boolean;
     // Store transfer course data
     transfers: TransferData[];
+    // Whether or not to show the search bar on mobile
+    showSearch: boolean;
+    // Whether or not to show the add course modal on mobile
+    showAddCourse: boolean;
 }
 
 // Define the initial state using that type
@@ -22,7 +26,9 @@ const initialState: RoadmapState = {
     activeCourse: null!,
     invalidCourses: [],
     showTransfer: false,
-    transfers: []
+    transfers: [],
+    showSearch: false,
+    showAddCourse: false
 }
 
 // Payload to pass in to move a course
@@ -51,7 +57,7 @@ export const roadmapSlice = createSlice({
         moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
             let toYear = action.payload.to.yearIndex;
             let toQuarter = action.payload.to.quarterIndex;
-            let toCourse = action.payload.from.courseIndex;
+            let toCourse = action.payload.to.courseIndex;
             let fromYear = action.payload.from.yearIndex;
             let fromQuarter = action.payload.from.quarterIndex;
             let fromCourse = action.payload.from.courseIndex;
@@ -82,7 +88,7 @@ export const roadmapSlice = createSlice({
 
             // if duplicate year
             if (currentYears.includes(newYear)) {
-                alert(`${newYear}-${newYear+1} has already been added as Year ${currentYears.indexOf(newYear)+1}!`);
+                alert(`${newYear}-${newYear + 1} has already been added as Year ${currentYears.indexOf(newYear) + 1}!`);
                 return;
             }
             // check if where to put newYear
@@ -123,10 +129,18 @@ export const roadmapSlice = createSlice({
         deleteTransfer: (state, action: PayloadAction<number>) => {
             state.transfers.splice(action.payload, 1);
         },
+        setShowSearch: (state, action: PayloadAction<boolean>) => {
+            state.showSearch = action.payload;
+        },
+        setShowAddCourse: (state, action: PayloadAction<boolean>) => {
+            state.showAddCourse = action.payload;
+        },
     },
 })
 
-export const { moveCourse, deleteCourse, addYear, deleteYear, setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer, setTransfers, deleteTransfer } = roadmapSlice.actions
+export const { moveCourse, deleteCourse, addYear, deleteYear, setActiveCourse, setYearPlans,
+    setInvalidCourses, setShowTransfer, addTransfer, setTransfer, setTransfers, deleteTransfer,
+    setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectYearPlans = (state: RootState) => state.roadmap.yearPlans;

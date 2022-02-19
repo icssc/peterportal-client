@@ -20,7 +20,7 @@ interface YearProps {
 
 const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(true);
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState<any>(null!);
 
