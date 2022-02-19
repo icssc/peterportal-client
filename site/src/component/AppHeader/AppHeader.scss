@@ -313,6 +313,12 @@ i.icon {
   margin: -2px 0 0 0 !important;
 }
 
+.feedback {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 @media only screen and (max-width: 1300px) {
   .navbar {
     .navbar-nav {
