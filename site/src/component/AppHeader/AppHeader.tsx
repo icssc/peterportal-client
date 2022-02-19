@@ -108,9 +108,14 @@ const AppHeader: FC<{}> = props => {
                     Should you encounter any bugs, glitches, lack of functionality or other problems on the application,
                     please let us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
                   </p>
-                  <a className="ui button" href="https://github.com/icssc-projects/peterportal-client/issues/new" target="_blank" rel="noopener noreferrer">
-                    <Icon name='github' />Report an issue
-                  </a>
+                  <div className='feedback'>
+                    <a className="ui button" href="https://github.com/icssc-projects/peterportal-client/issues/new" target="_blank" rel="noopener noreferrer">
+                      <Icon name='github' />Report an issue
+                    </a>
+                    <a className="ui button" href="https://forms.gle/JjwBmELq26daroTh9" target="_blank" rel="noopener noreferrer">
+                      <Icon name='clipboard list' />Feedback
+                    </a>
+                  </div>
                 </Grid.Column>
               </Grid>
             </Popup>

@@ -6,18 +6,29 @@
   display: flex;
   width: 100%;
 
+  .hide {
+    display: none;
+  }
+
   .main-wrapper {
     width: 80%;
     height: 100%;
     overflow-y: auto;
   }
 
+  .main-wrapper.mobile {
+    width: 100%;
+  }
+
   .sidebar-wrapper {
-    min-width: 400px;
     background: white;
-    width: 20%;
+    width: 30%;
     height: 100%;
     background-color: white;
     overflow-y: auto;
+  }
+
+  .sidebar-wrapper.mobile {
+    width: 100%;
   }
 }

@@ -7,16 +7,20 @@
 
 .header {
   background: linear-gradient(to right, var(--zot-blue), var(--aldrich-blue));
-  height: 3rem;
   color: var(--ring-road-white);
-  text-align: center;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.25rem;
+  
+  #title {
+    font-size: 1.5em;
+  }
 }
 
 #planner-stats {
   margin-left: 1rem;
+  font-size: 1em;
 }
 
 #course-count,
@@ -39,4 +43,20 @@
 
 .header-icon {
   margin-left: 10px;
+}
+
+@media only screen and (max-width: 400px) {
+  .header {
+    #title {
+      font-size: 1em;
+    }
+
+    #planner-stats {
+      font-size: 0.75em;
+    }
+
+    .add-course {
+      font-size: .75em;
+    }
+  }
 }

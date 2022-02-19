@@ -62,13 +62,22 @@
     }
 }
 
+@media only screen and (max-width: 400px) {
+  .report-form {
+    button {
+      margin: 0;
+    }
+  }
+}
+
 @media only screen and (max-width: 600px) {
   .report-form {
+    height: 80vh;
     width: 90vw;
   }
 }
 
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 1300px) and (min-width: 600px) {
   .report-form {
     width: 75vw;
   }

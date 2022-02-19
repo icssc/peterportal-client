@@ -36,6 +36,10 @@
   width: 50%;
 }
 
+.pie-text {
+  font-size: 1.5em;
+}
+
 .grade-dist-mini {
   width: 100%;
 
@@ -60,5 +64,15 @@
 
   .pie {
     width: 100%;
+  }
+
+  .pie-text {
+    font-size: 1.25em;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .pie-text {
+    font-size: 1em;
   }
 }

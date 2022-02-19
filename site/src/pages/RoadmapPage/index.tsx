@@ -3,13 +3,14 @@ import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
-import Error from '../../component/Error/Error';
+import AddCoursePopup from './AddCoursePopup';
 import { isMobile, isBrowser } from 'react-device-detect';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
+  const showSearch = useAppSelector(state => state.roadmap.showSearch);
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
@@ -68,23 +69,34 @@ const RoadmapPage: FC = () => {
     }
   }, []);
 
+  // do not conditionally renderer because it would remount planner which would discard unsaved changes
+  const mobileVersion = <>
+      <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
+        <Planner />
+      </div>
+      <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
+        <SearchSidebar />
+      </div>
+  </>
+
+  const desktopVersion = <>
+    <div className='main-wrapper'>
+      <Planner />
+    </div>
+    <div className='sidebar-wrapper'>
+      <SearchSidebar />
+    </div>
+  </>
+
   return (
     <>
-      {isMobile &&
-        <Error message='This page is under construction for mobile!' />
-      }
-      {isBrowser &&
-        <div className='roadmap-page'>
-          <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => { }}>
-            <div className='main-wrapper' id='screenshot'>
-              <Planner />
-            </div>
-            <div className='sidebar-wrapper'>
-              <SearchSidebar />
-            </div>
-          </DragDropContext>
-        </div>
-      }
+      <div className='roadmap-page'>
+        <AddCoursePopup />
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => { }}>
+          {isMobile && mobileVersion}
+          {!isMobile && desktopVersion}
+        </DragDropContext>
+      </div>
     </>
   );
 };
