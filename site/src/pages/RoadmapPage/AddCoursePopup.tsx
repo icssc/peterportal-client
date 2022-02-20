@@ -66,7 +66,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = (props) => {
             <h2 className='add-course-form-header'>Add Course</h2>
             <p>Where do you want to add this course?</p>
             <Form.Group controlId='year'>
-                <Form.Label>Year</Form.Label>
+                <Form.Label>School Year</Form.Label>
                 <Form.Control as="select" name='year' id='year' required
                     onChange={(e) => {
                         let parsed = parseInt(e.target.value)
@@ -81,7 +81,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = (props) => {
                     <option disabled={true} selected value=''>Year</option>
                     {planner.map((plannerYear, i) => {
                         let value = plannerYear.startYear;
-                        return <option key={'add-course-form-year-' + i} value={i}>{value}</option>
+                        return <option key={'add-course-form-year-' + i} value={i}>{value} - {value + 1}</option>
                     })}
                 </Form.Control>
                 <Form.Control.Feedback type="invalid">

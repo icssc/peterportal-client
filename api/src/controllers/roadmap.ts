@@ -1,6 +1,6 @@
 import express from 'express';
 import { ObjectID } from 'mongodb';
-import { COLLECTION_NAMES, containsID, getCollection, addDocument, getDocuments, updateDocument } from '../helpers/mongo';
+import { COLLECTION_NAMES, containsID, getCollection, addDocument, getDocuments, replaceDocument } from '../helpers/mongo';
 
 var router = express.Router();
 
@@ -31,7 +31,7 @@ router.post<{}, {}, { _id: string }>('/', async function (req, res, next) {
 
     if (await containsID(COLLECTION_NAMES.ROADMAPS, req.body._id)) {
         // overwrite
-        await updateDocument(COLLECTION_NAMES.ROADMAPS, { _id: req.body._id }, req.body)
+        await replaceDocument(COLLECTION_NAMES.ROADMAPS, { _id: req.body._id }, req.body)
     }
     else {
         // add roadmap to mongo
