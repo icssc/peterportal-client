@@ -94,9 +94,6 @@ app.use('/users', usersRouter);
 app.use('/graphql', graphqlRouter);
 app.use('/roadmap', roadmapRouter);
 app.use('/reports', reportsRouter);
-app.use('/about', (req, res) => {
-  res.render('about');
-});
 
 app.options(`*`, (req, res) => {
   res.status(200).send()
