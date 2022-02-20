@@ -255,4 +255,4 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
     })
 }
 
-export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, deleteDocument, setValue, getValue };
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, setValue, getValue };
