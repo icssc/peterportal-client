@@ -102,21 +102,13 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         <div className="year-accordion-content">
           {
             data.quarters.map((quarter, quarterIndex) => {
-              return <Droppable key={`year-quarter-${quarterIndex}`} droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
-                {(provided) => {
-                  return (
-                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
-                      <Quarter
-                        year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
-                        provided={provided}
-                        yearIndex={yearIndex}
-                        quarterIndex={quarterIndex}
-                        data={quarter}
-                      />
-                    </div>
-                  );
-                }}
-              </Droppable>
+              return <Quarter
+                key={`year-quarter-${quarterIndex}`}
+                year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
+                yearIndex={yearIndex}
+                quarterIndex={quarterIndex}
+                data={quarter}
+              />
             })
           }
         </div>

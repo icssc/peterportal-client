@@ -2,7 +2,7 @@ import React, { FC, useCallback, useReducer, useEffect } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult, DragUpdate } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
@@ -14,8 +14,8 @@ const RoadmapPage: FC = () => {
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
-      // no destination
-      if (!result.destination) {
+      // no destination or dragging to search bar
+      if (!result.destination || result.destination.droppableId === 'search') {
         // removing from quarter
         if (result.source.droppableId != 'search') {
           let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
@@ -25,12 +25,6 @@ const RoadmapPage: FC = () => {
             courseIndex: result.source.index
           }))
         }
-        return;
-      }
-
-      // roadmap to search / search to search
-      if (result.destination.droppableId === 'search') {
-        // Don't move courses back into search area
         return;
       }
 
@@ -69,14 +63,18 @@ const RoadmapPage: FC = () => {
     }
   }, []);
 
+  const onDragUpdate = useCallback((initial: DragUpdate) => {
+    console.log(initial)
+  }, []);
+
   // do not conditionally renderer because it would remount planner which would discard unsaved changes
   const mobileVersion = <>
-      <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
-        <Planner />
-      </div>
-      <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
-        <SearchSidebar />
-      </div>
+    <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
+      <Planner />
+    </div>
+    <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
+      <SearchSidebar />
+    </div>
   </>
 
   const desktopVersion = <>
@@ -92,7 +90,7 @@ const RoadmapPage: FC = () => {
     <>
       <div className='roadmap-page'>
         <AddCoursePopup />
-        <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => { }}>
+        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           {isMobile && mobileVersion}
           {!isMobile && desktopVersion}
         </DragDropContext>

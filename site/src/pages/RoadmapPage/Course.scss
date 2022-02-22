@@ -1,7 +1,6 @@
 .course {
   box-shadow: 0px 0px 4px #2484C6;
   background: #FFFFFF;
-  margin: 0rem 2rem 1rem 2rem;
   border-radius: 15px;
   height: auto;
   font-size: 16px;
@@ -22,10 +21,10 @@
     color: #808080;
     font-size: 14px;
   }
-}
-
-.invalid {
-  box-shadow: 0px 0px 4px orange;
+  
+  .invalid {
+    box-shadow: 0px 0px 4px orange;
+  }
 }
 
 .course-card-top {
