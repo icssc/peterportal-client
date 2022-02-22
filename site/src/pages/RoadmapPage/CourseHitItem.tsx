@@ -40,12 +40,16 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
       draggableId={`search-${props.result._source.id}-${props.index}`}
       index={props.index}
     >
-      {(provided) => {
+      {(provided, snapshot) => {
         return (
           <div
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            style={{
+              margin: ' 0rem 2rem 1rem 2rem',
+              ...provided.draggableProps.style
+            }}
             onMouseDown={() => { dispatch(setActiveCourse(props.result._source)) }}
           >
             <Course {...props.result._source} />
