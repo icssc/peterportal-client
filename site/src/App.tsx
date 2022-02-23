@@ -29,32 +29,32 @@ export default function App() {
 
   return (
     <Router>
-      <Fade className={`${isShown ? '' : 'hide'}`} in={sidebarOpen} onEnter={() => setIsShown(true)} onExited={() => setIsShown(false)}>
-        <div >
+      <AppHeader />
+      <div className='app-body'>
+        <div className='app-sidebar'>
           <SideBar></SideBar>
         </div>
-      </Fade>
-      <AppHeader />
-      <div className='app-content'>
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to='/search/courses' />
-          </Route>
-          <Route path='/search/:index' />
-        </Switch>
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to='/search/courses' />
-          </Route>
-          <Route path='/roadmap' component={RoadmapPage} />
-          <Route path='/zotistics' component={ZotisticsPage} />
-          <Route path='/search/:index' component={SearchPage} />
-          <Route path='/course/:id+' component={CoursePage} />
-          <Route path='/professor/:id' component={ProfessorPage} />
-          <Route path='/admin' component={ReportPage} />
-          <Route component={ErrorPage} />
-        </Switch>
-        <Footer />
+        <div className='app-content'>
+          <Switch>
+            <Route exact path='/'>
+              <Redirect to='/search/courses' />
+            </Route>
+            <Route path='/search/:index' />
+          </Switch>
+          <Switch>
+            <Route exact path='/'>
+              <Redirect to='/search/courses' />
+            </Route>
+            <Route path='/roadmap' component={RoadmapPage} />
+            <Route path='/zotistics' component={ZotisticsPage} />
+            <Route path='/search/:index' component={SearchPage} />
+            <Route path='/course/:id+' component={CoursePage} />
+            <Route path='/professor/:id' component={ProfessorPage} />
+            <Route path='/admin' component={ReportPage} />
+            <Route component={ErrorPage} />
+          </Switch>
+          <Footer />
+        </div>
       </div>
     </Router>
   )

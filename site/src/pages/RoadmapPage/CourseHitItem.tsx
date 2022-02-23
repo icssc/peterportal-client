@@ -29,7 +29,8 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
       dispatch(setShowAddCourse(true));
       // also hide the search bar to view the roadmap
       dispatch(setShowSearch(false));
-    }}>
+    }}
+      style={{ margin: ' 0rem 2rem 1rem 2rem' }}>
       <Course {...props.result._source} />
     </div>
   }

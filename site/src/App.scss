@@ -1,10 +1,17 @@
+.app-body {
+    display: flex;
+    height: 92vh;
+    overflow: hidden;
+}
+
 .app-content {
     display: flex;
     flex-direction: column;
     padding-top: 3vh;
     padding-left: 3vw;
     padding-right: 3vw;
-    height: 92vh;
+    width: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: var(--peterportal-gray-blue);
