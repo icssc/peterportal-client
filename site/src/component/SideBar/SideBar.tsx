@@ -12,6 +12,7 @@ import { setSidebarStatus } from '../../store/slices/uiSlice';
 
 const SideBar: FC = ({ children }) => {
   const dispatch = useAppDispatch();
+  const showSidebar = useAppSelector(state => state.ui.sidebarOpen);
   const [cookies, setCookie] = useCookies(['user']);
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
@@ -30,6 +31,36 @@ const SideBar: FC = ({ children }) => {
     dispatch(setSidebarStatus(false));
   }
 
+  let links = <div className='sidebar-links'>
+    <ul>
+      <li><NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
+        let splitLocation = location.pathname.split('/');
+        return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
+      }}>
+        <div>
+          <Icon name='list alternate outline' size='large' />
+        </div>
+        <span>
+          Catalogue
+        </span>
+      </NavLink></li>
+      <li><NavLink to='/roadmap' activeClassName='sidebar-active'>
+        <div>
+          <Icon name='map outline' size='large' />
+        </div>
+        <span>
+          Peter's Roadmap
+        </span>
+      </NavLink></li>
+    </ul>
+  </div>
+
+  
+  if (!showSidebar) {
+    return <div className='sidebar mini'>
+      {links}
+    </div>
+  }
   return (
     <div className='sidebar'>
       {/* Close Button */}
@@ -46,49 +77,7 @@ const SideBar: FC = ({ children }) => {
       </div>
 
       {/* Links */}
-      <div className='sidebar-links'>
-        <ul>
-          <li><NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
-            let splitLocation = location.pathname.split('/');
-            return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
-          }}>
-            <div>
-              <Icon name='list alternate outline' />
-            </div>
-            Catalogue
-          </NavLink></li>
-          {/* <li><NavLink to='/schedule' activeClassName='sidebar-active'>
-          <div>
-            <Icon name='clock outline' />
-          </div>
-          Schedule of Classes
-        </NavLink></li> */}
-          {/* <li><NavLink to='/zotistics' activeClassName='sidebar-active'>
-          <div>
-            <Icon name='chart bar outline' />
-          </div>
-          Zotistics
-        </NavLink></li> */}
-          {/* <li><NavLink to='/antalmanac' activeClassName='sidebar-active'>
-          <div>
-            <Icon name='calendar outline' />
-          </div>
-          AntAlmanac
-        </NavLink></li> */}
-          <li><NavLink to='/roadmap' activeClassName='sidebar-active'>
-            <div>
-              <Icon name='map outline' />
-            </div>
-            Peter's Roadmap
-          </NavLink></li>
-          {/* <li><NavLink to='/reviews' activeClassName='sidebar-active'>
-          <div>
-            <Icon name='thumbs up outline'/>
-          </div>
-          Reviews
-        </NavLink></li> */}
-        </ul>
-      </div>
+      {links}
 
       {/* Login/Logout */}
       <div className='sidebar-login'>

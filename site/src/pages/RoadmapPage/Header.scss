@@ -7,11 +7,12 @@
 
 .header {
   background: linear-gradient(to right, var(--zot-blue), var(--aldrich-blue));
+  border-radius: var(--border-radius);
   color: var(--ring-road-white);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.25rem;
+  padding: 0.5rem;
   
   #title {
     font-size: 1.5em;
@@ -52,11 +53,11 @@
     }
 
     #planner-stats {
-      font-size: 0.75em;
+      font-size: 0.70em;
     }
 
     .add-course {
-      font-size: .75em;
+      font-size: .70em;
     }
   }
 }

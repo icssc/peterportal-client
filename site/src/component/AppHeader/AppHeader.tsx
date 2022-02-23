@@ -11,11 +11,12 @@ import { WeekData } from '../../types/types';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './AppHeader.scss';
 
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 
 const AppHeader: FC<{}> = props => {
   const dispatch = useAppDispatch();
+  const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
   const location = useLocation();
   const [week, setWeek] = useState('');
 
@@ -40,7 +41,7 @@ const AppHeader: FC<{}> = props => {
   }, [])
 
   let toggleMenu = () => {
-    dispatch(setSidebarStatus(true));
+    dispatch(setSidebarStatus(!sidebarOpen));
   }
 
   return (

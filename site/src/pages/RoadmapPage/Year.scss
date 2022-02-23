@@ -6,17 +6,20 @@
 }
 
 .year {
-  margin: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
   align-items: center;
   background-color: var(--ring-road-white);
-  border-radius: 10px;
+  border-radius: var(--border-radius);
+  border-collapse: separate; 
   display: inline-block;
-  width: calc(100% - 2rem);
+  width: 100%;
 }
 
 .yearTitleBar {
   display: flex;
   justify-content: space-between;
+  border-radius: var(--border-radius);
 }
 
 .caret-icon {
@@ -24,6 +27,7 @@
 }
 .year-accordion,
 .year-accordion-content {
+  border-radius: var(--border-radius);
   background-color: var(--ring-road-white);
   display: flex;
 }
