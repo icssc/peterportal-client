@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Component, FC } from 'react';
 import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 import { List } from 'react-bootstrap-icons';
 import { ReactComponent as CogIcon } from '../../asset/cog.svg';
@@ -26,16 +27,15 @@ const AppHeader: FC<{}> = props => {
 
   useEffect(() => {
     // Get the current week data
-    fetch('/schedule/api/currentWeek')
-      .then(res => res.json())
-      .then((data: WeekData) => {
+    axios.get<WeekData>('/schedule/api/currentWeek')
+      .then(res => {
         // case for break and finals week
-        if (data.week == -1) {
-          setWeek(data.display);
+        if (res.data.week == -1) {
+          setWeek(res.data.display);
         }
         // case when school is in session 
         else {
-          setWeek('Week ' + data.week + ' • ' + data.quarter);
+          setWeek('Week ' + res.data.week + ' • ' + res.data.quarter);
         }
       });
   }, [])

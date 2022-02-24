@@ -4,7 +4,6 @@ useDotenv: true
 plugins:
   - serverless-domain-manager
   - serverless-dotenv-plugin
-  - serverless-api-gateway-caching
 
 custom:
   customDomain:
@@ -12,8 +11,6 @@ custom:
     certificateName: 'peterportal.org'
     basePath: ''
     createRoute53Record: true
-  apiGatewayCaching:
-    enabled: false
 
 provider:
   name: aws
