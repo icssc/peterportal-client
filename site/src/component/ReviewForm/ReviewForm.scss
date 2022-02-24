@@ -80,11 +80,6 @@
   margin: auto auto 25px auto;
   cursor: pointer;
 }
-.review-form-submit {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 .submitted-form {
   text-align: center;
   width: 100%;
@@ -114,14 +109,6 @@
 
   .review-form-taken {
     margin-bottom: 3vh;
-  }
-
-  .review-form-submit {
-    flex-direction: column;
-
-    button {
-      margin-top: 1vh;
-    }
   }
 }
 
