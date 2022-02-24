@@ -117,39 +117,36 @@ router.get("/", async function (req, res, next) {
  * Add a review
  */
 router.post("/", async function (req, res, next) {
-  console.log(`Adding Review: ${JSON.stringify(req.body)}`);
+  if (req.session.passport) {
+    console.log(`Adding Review: ${JSON.stringify(req.body)}`);
 
-  // add review to mongo
-  await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
+    // add review to mongo
+    await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
 
-  // echo back body
-  res.json(req.body);
+    // echo back body
+    res.json(req.body);
+  }
+  else {
+    res.json({ error: 'Must be logged in to add a review!' });
+  }
 });
 
 /**
  * Delete a review
  */
 router.delete('/', async (req, res, next) => {
-  console.log(`Deleting review ${req.body.id}`);
+  if (req.session.passport?.admin) {
+    console.log(`Deleting review ${req.body.id}`);
 
-  let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
-    _id: new ObjectID(req.body.id)
-  });
+    let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
+      _id: new ObjectID(req.body.id)
+    });
 
-  res.json(status);
-})
-
-/**
- * Upvote or downvote a review
- */
-router.delete('/', async (req, res, next) => {
-  console.log(`Deleting review ${req.body.id}`);
-
-  let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
-    _id: new ObjectID(req.body.id)
-  });
-
-  res.json(status);
+    res.json(status);
+  }
+  else {
+    res.json({ error: 'Must be an admin to delete reviews!' });
+  }
 })
 
 /**
@@ -162,7 +159,7 @@ router.patch("/vote", async function (req, res) {
     let deltaScore = req.body["upvote"] ? 1 : -1;
     //query to search for a vote matching the same review and user
     let currentVotes = {
-      userID: req.session.passport.user.email,
+      userID: req.session.passport.user.id,
       reviewID: id,
     };
     //either length 1 or 0 array(ideally) 0 if no existing vote, 1 if existing vote
@@ -198,7 +195,7 @@ router.patch("/vote", async function (req, res) {
       );
       //sends in vote
       await addDocument(COLLECTION_NAMES.VOTES, {
-        userID: req.session.passport.user.email,
+        userID: req.session.passport.user.id,
         reviewID: id,
         score: deltaScore,
       });
