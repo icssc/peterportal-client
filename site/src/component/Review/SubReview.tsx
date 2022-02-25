@@ -65,6 +65,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
             {course.instructor_history[review.professorID].name}
           </Link>}
+          {(!course && !professor) && <div>
+            {review.courseID} {review.professorID}
+          </div>}
         </h3>
       </div>
       <div className='subreview-content'>
@@ -92,7 +95,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           </div>
           <div>
             <div className='subreview-author'>
-              <p>Posted by {review.userDisplay}</p>
+              <p><span className='mr-1'>Posted by {review.userDisplay}</span>{review.verified && <Badge variant='primary'>Verified</Badge>}</p>
               <p>{new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
             <p>{review.reviewContent}</p>

@@ -86,16 +86,20 @@ router.get("/", async function (req, res, next) {
   let professorID = req.query.professorID as string;
   let userID = req.query.userID as string;
   let reviewID = req.query.reviewID as string;
+  let verified = req.query.verified as string;
 
   interface ReviewFilter {
     courseID: string,
     professorID: string,
     userID: string
-    _id: ObjectID | undefined
+    _id: ObjectID | undefined,
+    verified: boolean | undefined
   }
 
   let query: ReviewFilter = {
-    courseID, professorID, userID, _id: (reviewID === undefined ? undefined : new ObjectID(reviewID))
+    courseID, professorID, userID, 
+    _id: (reviewID === undefined ? undefined : new ObjectID(reviewID)),
+    verified: (verified === undefined ? undefined : (verified === 'true' ? true : false))
   };
 
   // remove null params
@@ -202,6 +206,24 @@ router.patch("/vote", async function (req, res) {
 
       res.json({ deltaScore: deltaScore });
     }
+  }
+});
+
+/**
+ * Verify a review
+ */
+router.patch("/verify", async function (req, res) {
+  if (req.session.passport?.admin) {
+    console.log(`Verifying review ${req.body.id}`);
+
+    let status = await updateDocument(COLLECTION_NAMES.REVIEWS,
+      { _id: new ObjectID(req.body.id) },
+      { $set: { verified: true } });
+
+    res.json(status);
+  }
+  else {
+    res.json({ error: 'Must be an admin to verify reviews!' });
   }
 });
 
