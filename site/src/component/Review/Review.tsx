@@ -30,6 +30,11 @@ const Review: FC<ReviewProps> = (props) => {
         })
             .then((res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null)
+                data.sort((a, b) => {
+                    let aScore = a.score + (a.verified ? 10000 : 0);
+                    let bScore = b.score + (b.verified ? 10000 : 0);
+                    return bScore - aScore;
+                })
                 dispatch(setReviews(data));
             });
     }

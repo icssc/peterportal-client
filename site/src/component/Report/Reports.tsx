@@ -1,34 +1,18 @@
 import axios, { AxiosResponse } from "axios";
 import React, { FC, useEffect, useState } from "react";
 import SubReport from "src/component/Report/SubReport";
-import Error from '../../component/Error/Error';
 import { ReportData } from "src/types/types";
-import './ReportPage.scss';
+import './Reports.scss';
 
-interface ReportPageProps {
+interface ReportsProps {
 }
 
-const ReportPage: FC = () => {
-
+const Reports: FC = () => {
     const [reports, setReports] = useState<ReportData[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [authorized, setAuthorized] = useState<boolean>(false);
 
     interface AdminResponse {
         admin: boolean
-    }
-
-    // user has to be authenticated as admin to view this page
-    const checkAdmin = async () => {
-        const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
-        const isAdmin: boolean = res.data.admin;
-        setAuthorized(isAdmin);
-        if (isAdmin) {
-            getReports();
-        }
-        else {
-            setLoaded(true);
-        }
     }
 
     const getReports = async () => {
@@ -38,7 +22,7 @@ const ReportPage: FC = () => {
     }
 
     useEffect(() => {
-        checkAdmin();
+        getReports();
     }, []);
 
     const acceptReport = async (reportID: string, reviewID: string) => {
@@ -54,10 +38,6 @@ const ReportPage: FC = () => {
 
     if (!loaded) {
         return <p>Loading...</p>;
-    } else if (!authorized) {
-        return (
-            <Error message='Access Denied: You are not authorized to view this page.'></Error>
-        );
     } else if (reports.length === 0) {
         return <p>No reports to display at the moment.</p>;
     } else {
@@ -80,4 +60,4 @@ const ReportPage: FC = () => {
     }
 };
 
-export default ReportPage;
+export default Reports;

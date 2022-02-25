@@ -72,7 +72,7 @@
 
 @media only screen and (max-width: 600px) {
   .report-form {
-    height: 80vh;
+    max-height: 80vh;
     width: 90vw;
   }
 }
