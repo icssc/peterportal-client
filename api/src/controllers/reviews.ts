@@ -97,7 +97,7 @@ router.get("/", async function (req, res, next) {
   }
 
   let query: ReviewFilter = {
-    courseID, professorID, userID, 
+    courseID, professorID, userID,
     _id: (reviewID === undefined ? undefined : new ObjectID(reviewID)),
     verified: (verified === undefined ? undefined : (verified === 'true' ? true : false))
   };
@@ -123,6 +123,17 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   if (req.session.passport) {
     console.log(`Adding Review: ${JSON.stringify(req.body)}`);
+
+    // check if user is trusted
+    const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
+    const verifiedCount = await reviewsCollection.find({
+      'userID': req.session.passport.user.id,
+      'verified': true
+    }).count();
+    // set the review as verified
+    if (verifiedCount >= 3) {
+      req.body['verified'] = true;
+    }
 
     // add review to mongo
     await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
