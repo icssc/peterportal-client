@@ -97,6 +97,10 @@ export interface VoteRequest {
     upvote: boolean;
 }
 
+export interface VoteColorRequest {
+    id: string;
+}
+
 export interface ScoreData {
     name: string;
     score: number;
@@ -195,7 +199,7 @@ export interface SavedRoadmap {
 export interface MongoRoadmap {
     _id: string;
     roadmap: SavedRoadmap;
-} 
+}
 
 /**
  * GraphQL Definitions

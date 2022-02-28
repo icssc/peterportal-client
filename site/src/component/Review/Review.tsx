@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
-import './Review.scss'
+import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';

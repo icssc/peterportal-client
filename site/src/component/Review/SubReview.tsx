@@ -21,6 +21,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     const res = await axios.patch('/reviews/vote', vote);
     return res.data.deltaScore;
   }
+/*
+  const getColor = async (vote: VoteColorRequest) => {
+    const res = await axios.patch('/reviews/getVoteColor', vote);
+    return res.data;
+  }*/
 
   const upvote = async (e: MouseEvent) => {
     if (!cookies.hasOwnProperty('user')) {
@@ -47,6 +52,39 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     let deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
   }
+  /*
+  const getColoredUpvote = async (id: string) => {
+    const votes = {
+      id: id
+    }
+    let res = await getColor(votes);
+    console.log(res);
+    return res;
+  }
+
+  const getColoredDownvote = async (id: string) => {
+    const votes = {
+      id: id
+    }
+    let res = await getColor(votes);
+    console.log(res);
+    return res;
+  }
+
+  const tester = async (e: MouseEvent) => {
+    const votes = {
+      id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!
+    }
+    console.log("test");
+    let res = await getColor(votes);
+    console.log(res);
+    //return res;
+    return async () => {
+      let res = await getColor(votes);
+      console.log(res);
+      return res;
+    }
+  }*/
 
   return (
     <div className='subreview'>

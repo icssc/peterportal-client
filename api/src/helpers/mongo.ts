@@ -173,6 +173,22 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
             })
     });
 }
+/**
+ * Deletes a document from the given collection
+ * @param collectionName the collection containing the to be deleted item
+ * @param query the query specifying which document should be deleted
+ * @returns 
+ */
+function deleteDocument(collectionName: string, query: GenericObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        db.collection(collectionName).deleteOne(query, function (err, obj) {
+            if (err) throw err;
+            console.log(`Deleted collection matching query of ${query}`);
+            resolve();
+        });
+    });
+}
 
 /**
  * Retrieve mongo's cached value by key
@@ -180,7 +196,7 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
  * @param key Key to look up the cache
  * @returns Cached value
  */
- async function getValue(cache: string, key: string): Promise<any> {
+async function getValue(cache: string, key: string): Promise<any> {
     return new Promise(async resolve => {
         let value = await getDocuments(cache, { _id: key });
         // cache hit
@@ -215,4 +231,4 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
     })
 }
 
-export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, setValue, getValue };
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, deleteDocument, setValue, getValue };
