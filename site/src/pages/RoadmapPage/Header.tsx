@@ -3,18 +3,19 @@ import "./Header.scss";
 import { Button, ButtonGroup, Popover, Overlay } from "react-bootstrap";
 import { ArrowLeftRight, Save, Plus, List } from "react-bootstrap-icons";
 import html2canvas from 'html2canvas';
-import { setShowTransfer, setShowSearch } from '../../store/slices/roadmapSlice';
+import { setShowTransfer, setShowSearch, deleteYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Transfer from './Transfer';
 import { isMobile, isBrowser } from 'react-device-detect';
 
 interface HeaderProps {
+  yearCount: number;
   courseCount: number;
   unitCount: number;
   saveRoadmap: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
+const Header: FC<HeaderProps> = ({ yearCount, courseCount, unitCount, saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const [target, setTarget] = useState<any>(null!);
   const [showMenu, setShowMenu] = useState(false);
@@ -27,6 +28,9 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     <Button variant={isMobile ? "primary" : 'light'} className={isMobile ? 'my-1' : "header-btn"} onClick={saveRoadmap}>
       Save
       <Save className="header-icon" />
+    </Button>
+    <Button variant={isMobile ? "primary" : 'light'} className={isMobile ? 'my-1' : "header-btn"} onClick={() => {for (let i = 0; i < yearCount; i++) dispatch(deleteYear({yearIndex: 0}))}}>
+      Clear
     </Button>
   </>
 

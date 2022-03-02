@@ -239,7 +239,7 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
+      <Header yearCount={data.length} courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
       <section className="years">
         {data.map((year, yearIndex) => {
           return (
