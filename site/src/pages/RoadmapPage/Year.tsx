@@ -86,13 +86,12 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   id="clear-btn"
                   onClick={() => {
                     for (let i = 0; i < data.quarters.length; i++) {
-                      const courseLength = data.quarters[i].courses.length
-                      for (let j = 0; j < courseLength; j++) {
+                      for (let j = 0; j < data.quarters[i].courses.length; j++) {
                         dispatch(deleteCourse({
                           yearIndex: yearIndex,
                           quarterIndex: i,
                           courseIndex: 0
-                        }))
+                        }));
                       }
                     }
                   }}
