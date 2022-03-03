@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react";
 import "./Header.scss";
 import { Button, ButtonGroup, Popover, Overlay } from "react-bootstrap";
-import { ArrowLeftRight, Save, Plus, List } from "react-bootstrap-icons";
+import { ArrowLeftRight, Save, Plus, List, Trash } from "react-bootstrap-icons";
 import html2canvas from 'html2canvas';
-import { setShowTransfer, setShowSearch } from '../../store/slices/roadmapSlice';
+import { setShowTransfer, setShowSearch, clearPlanner } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Transfer from './Transfer';
 import { isMobile, isBrowser } from 'react-device-detect';
@@ -27,6 +27,10 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     <Button variant={isMobile ? "primary" : 'light'} className={isMobile ? 'my-1' : "header-btn"} onClick={saveRoadmap}>
       Save
       <Save className="header-icon" />
+    </Button>
+    <Button variant={isMobile ? "primary" : 'light'} className={isMobile ? 'my-1' : "header-btn"} onClick={() => dispatch(clearPlanner())}>
+      Clear
+      <Trash className="header-icon" />
     </Button>
   </>
 
