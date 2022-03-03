@@ -8,7 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { deleteYear, deleteCourse } from '../../store/slices/roadmapSlice';
+import { deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -85,15 +85,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   className="year-settings-btn"
                   id="clear-btn"
                   onClick={() => {
-                    for (let i = 0; i < data.quarters.length; i++) {
-                      for (let j = 0; j < data.quarters[i].courses.length; j++) {
-                        dispatch(deleteCourse({
-                          yearIndex: yearIndex,
-                          quarterIndex: i,
-                          courseIndex: 0
-                        }));
-                      }
-                    }
+                    dispatch(clearYear({
+                      yearIndex: yearIndex
+                    }));
                   }}
                 >
                   Clear
