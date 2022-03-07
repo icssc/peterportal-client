@@ -215,6 +215,25 @@ function deleteDocument(collectionName: string, query: GenericObject): Promise<v
 }
 
 /**
+ * Deletes multiple documents from a collection
+ * @param collectionName Name of collection
+ * @param query Query object
+ * @returns 
+ */
+ function deleteDocuments(collectionName: string, query: GenericObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        getCollection(collectionName)
+            .then(async (collection) => {
+                await collection.deleteMany(query, (err) => {
+                    if (err) console.log(err);
+                });
+                resolve();
+            })
+    })
+}
+
+/**
  * Retrieve mongo's cached value by key
  * @param cache Name of cache to look up
  * @param key Key to look up the cache
@@ -255,4 +274,4 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
     })
 }
 
-export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, setValue, getValue };
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, deleteDocuments, setValue, getValue };

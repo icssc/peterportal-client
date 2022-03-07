@@ -11,7 +11,8 @@ import {
   addDocument,
   getDocuments,
   updateDocument,
-  deleteDocument
+  deleteDocument,
+  deleteDocuments
 } from "../helpers/mongo";
 
 var router = express.Router();
@@ -155,6 +156,10 @@ router.delete('/', async (req, res, next) => {
 
     let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
       _id: new ObjectID(req.body.id)
+    });
+
+    let deleteVotesStatus = await deleteDocuments(COLLECTION_NAMES.VOTES, {
+      reviewID: req.body.id
     });
 
     res.json(status);
