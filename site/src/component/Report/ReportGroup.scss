@@ -1,6 +1,37 @@
-.subreport {
+.report-group {
     background-color: var(--peterportal-gray-blue);
     border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 3vh;
 }
+
+.report-group-identifier {
+    margin: 0;
+    // font-weight: bold;
+    font-size: x-large;
+    // a {
+    //   color: black;
+    // }
+}
+
+.report-group-user-display {
+    font-size: medium;
+}
+
+.report-group-content {
+    margin: 1vh 0;
+    label {
+        font-weight: bold;
+    }
+    p {
+        font-style: italic;
+        margin-left: 1vw;
+    }
+}
+
+.report-group-footer {
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-end;
+}
+

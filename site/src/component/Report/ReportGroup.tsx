@@ -32,10 +32,13 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
         return (
             <div className="report-group">
                 <div className="report-group-identifier">
-                    <div className="subreport-professor-name">
+                    <div className="report-group-professor-name">
                         {review.professorID}
                     </div>
-                    <div className='subreport-user-display'>
+                    <div className="report-group-course-id">
+                        {review.courseID}
+                    </div>
+                    <div className='report-group-user-display'>
                         Posted by {review.userDisplay} on {new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </div>
                 </div>
