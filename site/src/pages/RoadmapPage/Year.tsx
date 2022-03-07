@@ -6,10 +6,9 @@ import {
   CaretDownFill,
   ThreeDots,
 } from "react-bootstrap-icons";
-import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { deleteYear } from '../../store/slices/roadmapSlice';
+import { deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -80,6 +79,18 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               <div>
                 <Button variant="light" className="year-settings-btn">
                   Edit Year
+                </Button>
+                <Button 
+                  variant="light" 
+                  className="year-settings-btn"
+                  id="clear-btn"
+                  onClick={() => {
+                    dispatch(clearYear({
+                      yearIndex: yearIndex
+                    }));
+                  }}
+                >
+                  Clear
                 </Button>
                 <Button
                   variant="light"

@@ -86,8 +86,15 @@
 
 .year-settings-btn {
   display: block;
+  width: 100%;
+  text-align: start;
+  border: 0px;
   background: transparent;
   padding: 0;
+}
+
+#clear-btn {
+  color: red;
 }
 
 #remove-btn {
