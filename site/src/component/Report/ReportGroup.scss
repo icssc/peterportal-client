@@ -3,6 +3,10 @@
     border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 3vh;
+
+    label {
+        font-weight: bold;
+    }
 }
 
 .report-group-identifier {
@@ -29,9 +33,15 @@
     }
 }
 
+.report-group-subreports-container {
+    background-color: white;
+    border-radius: var(--border-radius);
+}
+
 .report-group-footer {
     flex-direction: row;
     width: 100%;
+    margin-top: 15px;
     align-items: flex-end;
 }
 

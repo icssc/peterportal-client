@@ -41,8 +41,8 @@ const Reports: FC = () => {
         });
 
         reportsDisplay.sort((rd1, rd2) => {
-            if (rd1.reports.length < rd2.reports.length) return -1;
-            if (rd1.reports.length > rd2.reports.length) return 1;
+            if (rd1.reports.length > rd2.reports.length) return -1;
+            if (rd1.reports.length < rd2.reports.length) return 1;
             return 0;
         });
 
@@ -73,8 +73,8 @@ const Reports: FC = () => {
         return (
             <div className='reports-container'>
                 <h1>User Review Reports</h1>
-                <p>Denying a report will discard the report and preserve the review.</p>
-                <p>Accepting a report will discard the report, the review, and all other reports on the review.</p>
+                <p>Denying a review's reports will discard the reports and preserve the review.</p>
+                <p>Accepting a review's reports will discard the reports and the review.</p>
                 {data.map(review => {
                     return <ReportGroup
                         key={review.reviewID}

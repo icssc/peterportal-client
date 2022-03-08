@@ -1,8 +1,8 @@
 .subreport {
-    background-color: var(--peterportal-gray-blue);
+    // background-color: white;
     border-radius: var(--border-radius);
-    padding: 2rem;
-    margin-bottom: 3vh;
+    padding: 1rem;
+    margin-bottom: 1vh;
 }
 
 .subreport-identifier {
@@ -20,7 +20,7 @@
 
 
 .subreport-content {
-    margin: 1vh 0;
+    // margin: 1vh 0;
     label {
         font-weight: bold;
     }

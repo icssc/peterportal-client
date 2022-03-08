@@ -44,9 +44,9 @@ const SubReport: FC<SubReportProps> = (props) => {
                 <p>{review.reviewContent}</p>
             </div> */}
             <div className='subreport-content'>
-                <label>
+                {/* <label>
                     Report Reason:
-                </label>
+                </label> */}
                 <p>{props.reason}</p>
             </div>
             

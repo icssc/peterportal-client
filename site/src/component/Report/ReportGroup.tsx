@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Button from 'react-bootstrap/Button';
-import { ReportData, ReviewData } from "src/types/types";
+import { ReportData, ReviewData } from "../../types/types";
 import SubReport from './SubReport';
 import './ReportGroup.scss';
 
@@ -48,9 +48,14 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
                     </label>
                     <p>{review.reviewContent}</p>
                 </div>
-                {props.reports.map(report => {
-                    return <SubReport key={report._id} reportID={report._id!} reviewID={report.reviewID} reason={report.reason}/>
-                })}
+                <label>
+                    Reports on this review:
+                </label>
+                <div className='report-group-subreports-container'>
+                    {props.reports.map(report => {
+                        return <SubReport key={report._id} reportID={report._id!} reviewID={report.reviewID} reason={report.reason}/>
+                    })}
+                </div>
                 <div className='report-group-footer'>
                     <Button variant='danger' className='mr-3' onClick={props.onDeny}>Deny</Button>
                     <Button variant='success' onClick={props.onAccept}>Accept</Button>
