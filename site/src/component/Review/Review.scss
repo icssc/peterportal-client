@@ -107,12 +107,19 @@ $avatarWidth: 65px;
   padding: 0;
   height: fit-content;
   background-color: transparent;
+  transition: 0.5s;
 }
 .upvote {
   color: var(--peterportal-primary-color-1);
 }
 .downvote {
   color: var(--peterportal-secondary-red);
+}
+.coloredUpvote {
+  color: var(--peterportal-upvoted);
+}
+.coloredDownvote {
+  color: var(--peterportal-downvoted);
 }
 .add-review-btn {
   border: none;
@@ -140,7 +147,6 @@ $avatarWidth: 65px;
   top: 0;
   left: 0;
 }
-
 
 @media only screen and (max-width: 600px) {
   .subreview-content {

@@ -3,13 +3,13 @@ body {
   /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif; */
-    font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -19,26 +19,28 @@ code {
 }
 
 :root {
-  --peterportal-primary-color-1: #2484C6;
-  --peterportal-primary-color-2: #74D1F6;
-  --peterportal-secondary-green: #81C284;
-  --peterportal-secondary-yellow: #F5D77F;
-  --peterportal-secondary-orange: #ECAD6D;
-  --peterportal-secondary-red: #E7966D;
-  --peterportal-light-gray: #EEEEEE;
+  --peterportal-primary-color-1: #2484c6;
+  --peterportal-primary-color-2: #74d1f6;
+  --peterportal-secondary-green: #81c284;
+  --peterportal-secondary-yellow: #f5d77f;
+  --peterportal-secondary-orange: #ecad6d;
+  --peterportal-secondary-red: #e7966d;
+  --peterportal-light-gray: #eeeeee;
   --peterportal-mid-gray: #8d8d8d;
-  --peterportal-uci-gold: #FFD200;
-  --peterportal-gray-blue: #F5F6FC;
+  --peterportal-uci-gold: #ffd200;
+  --peterportal-gray-blue: #f5f6fc;
+  --peterportal-upvoted: #155179;
+  --peterportal-downvoted: #cc6938;
 }
 
-::-moz-selection { 
+::-moz-selection {
   background: var(--peterportal-uci-gold);
   color: black;
   opacity: 1;
 }
 
-::selection { 
-  background: var(--peterportal-uci-gold); 
+::selection {
+  background: var(--peterportal-uci-gold);
   color: black;
   opacity: 1;
 }
@@ -48,7 +50,16 @@ code {
 }
 
 @font-face {
-  font-family: "revicons"; 
-  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot"); 
-  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot?#iefix") format("embedded-opentype"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff2") format("woff2"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff") format("woff"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.ttf") format("truetype"), url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.svg#revicons") format("svg"); 
+  font-family: "revicons";
+  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot");
+  src: url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff2")
+      format("woff2"),
+    url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.woff")
+      format("woff"),
+    url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.ttf")
+      format("truetype"),
+    url("https://db.onlinewebfonts.com/t/0e979bd4a3c1c6ac788ed57ac569667f.svg#revicons")
+      format("svg");
 }

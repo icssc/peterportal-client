@@ -194,13 +194,32 @@ router.patch("/vote", async function (req, res) {
 
 /**
  * Get whether or not the color of a button should be colored
- *//*
+ */
 router.patch("/getVoteColor", async function (req, res) {
-if (req.session.passport != null) {
-res.json(req.body["id"]);
-}
+  //make sure user is logged in
+  if (req.session.passport != null) {
+    //query of the user's email and the review id
+    let query = {
+      userID: req.session.passport.user.email,
+      reviewID: req.body["id"],
+    }
+    //get any existing vote in the db
+    let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
+    //result an array of either length 1 or empty
+    if (existingVote.length == 0) {
+      //if empty, both should be uncolored
+      res.json([false, false]);
+    } else {
+      //if not empty, there is a vote, so color it accordingly
+      if (existingVote[0].score == 1) {
+        res.json([true, false]);
+      } else {
+        res.json([false, true]);
+      }
+    }
+  }
 });
-*/
+
 
 /**
  * Clear all reviews
