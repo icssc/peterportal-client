@@ -36,6 +36,7 @@ PeterPortal is a web application aimed to aid UCI students with course discovery
         > `cd api`
         > 
         - **On initial start**, run `npm install` to install all node dependencies.
+        - Rename the 'dev.env' file to '.env'
         - Run the development server using `npm run dev`.
         - Express development server should be running on port 5000 by default.
 
