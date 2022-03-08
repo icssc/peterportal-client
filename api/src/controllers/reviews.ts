@@ -38,18 +38,23 @@ router.get<{}, {}, {}, ScoresQuery>("/scores", async function (req, res) {
 
   // execute aggregation on the reviews collection
   let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  let cursor = reviewsCollection.aggregate([
-    { $match: { [matchField]: req.query.id } },
-    { $group: { _id: groupField, score: { $avg: "$rating" } } },
-  ]);
+  if (reviewsCollection) {
+    let cursor = reviewsCollection.aggregate([
+      { $match: { [matchField]: req.query.id } },
+      { $group: { _id: groupField, score: { $avg: "$rating" } } },
+    ]);
 
-  // returns the results in an array
-  let array = await cursor.toArray();
-  // rename _id to name
-  let results = array.map((v) => {
-    return { name: v._id, score: v.score };
-  });
-  res.json(results);
+    // returns the results in an array
+    let array = await cursor.toArray();
+    // rename _id to name
+    let results = array.map((v) => {
+      return { name: v._id, score: v.score };
+    });
+    res.json(results);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -70,12 +75,17 @@ router.get<{}, {}, {}, FeaturedQuery>("/featured", async function (req, res) {
 
   // find first review with the highest score
   let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  let cursor = reviewsCollection
-    .find({ [field]: req.query.id })
-    .sort({ score: -1 })
-    .limit(1);
-  let results = await cursor.toArray();
-  res.json(results);
+  if (reviewsCollection) {
+    let cursor = reviewsCollection
+      .find({ [field]: req.query.id })
+      .sort({ score: -1 })
+      .limit(1);
+    let results = await cursor.toArray();
+    res.json(results);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -113,8 +123,12 @@ router.get("/", async function (req, res, next) {
   }
 
   let reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
-
-  res.json(reviews);
+  if (reviews) {
+    res.json(reviews);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -242,7 +256,7 @@ router.patch("/verify", async function (req, res) {
  * Clear all reviews
  */
 router.delete("/clear", async function (req, res) {
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.NODE_ENV != 'production') {
     let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
     let status = await reviewsCollection.deleteMany({});
 

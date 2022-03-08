@@ -27,7 +27,7 @@ export function getCurrentQuarter() {
         let selects = $('select[name="YearTerm"]').toArray();
         if (selects.length > 0) {
             // get the first item
-            let firstQuarter = $(selects[0]).find('option').first();
+            let firstQuarter = $(selects[0]).find('option[selected="selected"]').first();
             if (firstQuarter) {
                 // get the text in the selected item
                 let currentQuarter = $(firstQuarter).text();
