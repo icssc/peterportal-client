@@ -107,19 +107,14 @@ $avatarWidth: 65px;
   padding: 0;
   height: fit-content;
   background-color: transparent;
-  transition: 0.5s;
-}
-.upvote {
-  color: var(--peterportal-primary-color-1);
-}
-.downvote {
-  color: var(--peterportal-secondary-red);
+  transition: 0.25s;
+  color: var(--peterportal-mid-gray);
 }
 .coloredUpvote {
-  color: var(--peterportal-upvoted);
+  color: var(--peterportal-primary-color-1);
 }
 .coloredDownvote {
-  color: var(--peterportal-downvoted);
+  color: var(--peterportal-secondary-red);
 }
 .add-review-btn {
   border: none;
