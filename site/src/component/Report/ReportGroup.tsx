@@ -52,8 +52,10 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
                     Reports on this review:
                 </label>
                 <div className='report-group-subreports-container'>
-                    {props.reports.map(report => {
-                        return <SubReport key={report._id} reportID={report._id!} reviewID={report.reviewID} reason={report.reason}/>
+                    {props.reports.map((report, i) => {
+                        return <SubReport key={report._id} reportID={report._id!} reviewID={report.reviewID}
+                            reason={report.reason} timestamp={report.timestamp}
+                            isLast={i == props.reports.length - 1} />
                     })}
                 </div>
                 <div className='report-group-footer'>

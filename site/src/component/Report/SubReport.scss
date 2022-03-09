@@ -1,26 +1,8 @@
 .subreport {
-    // background-color: white;
     border-radius: var(--border-radius);
-    padding: 1rem;
-    margin-bottom: 1vh;
 }
-
-.subreport-identifier {
-    margin: 0;
-    // font-weight: bold;
-    font-size: x-large;
-    // a {
-    //   color: black;
-    // }
-}
-
-.subreport-user-display {
-    font-size: medium;
-}
-
 
 .subreport-content {
-    // margin: 1vh 0;
     label {
         font-weight: bold;
     }
@@ -28,10 +10,4 @@
         font-style: italic;
         margin-left: 1vw;
     }
-}
-
-.subreport-footer {
-    flex-direction: row;
-    width: 100%;
-    align-items: flex-end;
 }
