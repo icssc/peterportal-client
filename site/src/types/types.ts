@@ -84,6 +84,7 @@ export interface ReportData {
     _id?: string;
     reviewID: string;
     reason: string;
+    timestamp: string;
 }
 
 export interface PassportData {
