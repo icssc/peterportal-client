@@ -39,27 +39,29 @@ const app = express();
 
 // Setup mongo store for sessions
 let mongoStore = MongoDBStore(session);
-var store = new mongoStore({
-  uri: process.env.MONGO_URL,
-  databaseName: DB_NAME,
-  collection: COLLECTION_NAMES.SESSIONS
-});
-// Catch errors
-store.on('error', function (error) {
-  console.log(error);
-});
+if (process.env.MONGO_URL) {
+  var store = new mongoStore({
+    uri: process.env.MONGO_URL,
+    databaseName: DB_NAME,
+    collection: COLLECTION_NAMES.SESSIONS
+  });
+  // Catch errors
+  store.on('error', function (error) {
+    console.log(error);
+  });
 
-// Setup Passport and Sesssions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  store: store
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-require('./config/passport')
+  // Setup Passport and Sesssions
+  app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    store: store
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  require('./config/passport')
+}
 
 /**
  * Configure Express.js Middleware
