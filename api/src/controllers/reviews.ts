@@ -11,7 +11,8 @@ import {
   addDocument,
   getDocuments,
   updateDocument,
-  deleteDocument
+  deleteDocument,
+  deleteDocuments
 } from "../helpers/mongo";
 
 var router = express.Router();
@@ -38,18 +39,23 @@ router.get<{}, {}, {}, ScoresQuery>("/scores", async function (req, res) {
 
   // execute aggregation on the reviews collection
   let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  let cursor = reviewsCollection.aggregate([
-    { $match: { [matchField]: req.query.id } },
-    { $group: { _id: groupField, score: { $avg: "$rating" } } },
-  ]);
+  if (reviewsCollection) {
+    let cursor = reviewsCollection.aggregate([
+      { $match: { [matchField]: req.query.id } },
+      { $group: { _id: groupField, score: { $avg: "$rating" } } },
+    ]);
 
-  // returns the results in an array
-  let array = await cursor.toArray();
-  // rename _id to name
-  let results = array.map((v) => {
-    return { name: v._id, score: v.score };
-  });
-  res.json(results);
+    // returns the results in an array
+    let array = await cursor.toArray();
+    // rename _id to name
+    let results = array.map((v) => {
+      return { name: v._id, score: v.score };
+    });
+    res.json(results);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -70,12 +76,17 @@ router.get<{}, {}, {}, FeaturedQuery>("/featured", async function (req, res) {
 
   // find first review with the highest score
   let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  let cursor = reviewsCollection
-    .find({ [field]: req.query.id })
-    .sort({ score: -1 })
-    .limit(1);
-  let results = await cursor.toArray();
-  res.json(results);
+  if (reviewsCollection) {
+    let cursor = reviewsCollection
+      .find({ [field]: req.query.id })
+      .sort({ score: -1 })
+      .limit(1);
+    let results = await cursor.toArray();
+    res.json(results);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -86,16 +97,20 @@ router.get("/", async function (req, res, next) {
   let professorID = req.query.professorID as string;
   let userID = req.query.userID as string;
   let reviewID = req.query.reviewID as string;
+  let verified = req.query.verified as string;
 
   interface ReviewFilter {
     courseID: string,
     professorID: string,
     userID: string
-    _id: ObjectID | undefined
+    _id: ObjectID | undefined,
+    verified: boolean | undefined
   }
 
   let query: ReviewFilter = {
-    courseID, professorID, userID, _id: (reviewID === undefined ? undefined : new ObjectID(reviewID))
+    courseID, professorID, userID,
+    _id: (reviewID === undefined ? undefined : new ObjectID(reviewID)),
+    verified: (verified === undefined ? undefined : (verified === 'true' ? true : false))
   };
 
   // remove null params
@@ -109,8 +124,12 @@ router.get("/", async function (req, res, next) {
   }
 
   let reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
-
-  res.json(reviews);
+  if (reviews) {
+    res.json(reviews);
+  }
+  else {
+    res.json([]);
+  }
 });
 
 /**
@@ -119,6 +138,17 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   if (req.session.passport) {
     console.log(`Adding Review: ${JSON.stringify(req.body)}`);
+
+    // check if user is trusted
+    const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
+    const verifiedCount = await reviewsCollection.find({
+      'userID': req.session.passport.user.id,
+      'verified': true
+    }).count();
+    // set the review as verified
+    if (verifiedCount >= 3) {
+      req.body['verified'] = true;
+    }
 
     // add review to mongo
     await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
@@ -140,6 +170,10 @@ router.delete('/', async (req, res, next) => {
 
     let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
       _id: new ObjectID(req.body.id)
+    });
+
+    let deleteVotesStatus = await deleteDocuments(COLLECTION_NAMES.VOTES, {
+      reviewID: req.body.id
     });
 
     res.json(status);
@@ -206,10 +240,28 @@ router.patch("/vote", async function (req, res) {
 });
 
 /**
+ * Verify a review
+ */
+router.patch("/verify", async function (req, res) {
+  if (req.session.passport?.admin) {
+    console.log(`Verifying review ${req.body.id}`);
+
+    let status = await updateDocument(COLLECTION_NAMES.REVIEWS,
+      { _id: new ObjectID(req.body.id) },
+      { $set: { verified: true } });
+
+    res.json(status);
+  }
+  else {
+    res.json({ error: 'Must be an admin to verify reviews!' });
+  }
+});
+
+/**
  * Clear all reviews
  */
 router.delete("/clear", async function (req, res) {
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.NODE_ENV != 'production') {
     let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
     let status = await reviewsCollection.deleteMany({});
 

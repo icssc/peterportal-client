@@ -5,12 +5,17 @@
 import express, { Request } from 'express';
 import fetch from 'node-fetch';
 import { GenericObject } from '../types/types';
+import courseDummy from '../dummy/course.json';
 var router = express.Router();
 
 /**
  * Elasticsearch proxy for courses index
  */
 router.post('/_search', function (req, res, next) {
+  if (!process.env.PETERPORTAL_MAIN_ES) {
+    res.json(courseDummy);
+    return;
+  }
   let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'courses/_search',
     {
       method: 'POST',

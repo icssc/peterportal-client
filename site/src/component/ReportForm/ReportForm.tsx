@@ -39,9 +39,14 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         if (reason.length === 0) return;
         setValidated(true);
 
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = (1 + date.getMonth()).toString();
+        const day = date.getDate().toString();
         const report = {
             reviewID: props.reviewID!,
-            reason
+            reason,
+            timestamp: month + '/' + day + '/' + year,
         }
         postReport(report);
     }

@@ -2,6 +2,8 @@ import React, { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
 import Badge from 'react-bootstrap/Badge';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 
@@ -55,6 +57,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     setReportFormOpen(true);
   }
 
+  const badgeOverlay = <Tooltip id='verified-tooltip'>
+    This review was verified by an administrator.
+  </Tooltip>
+
+  const verifiedBadge = <OverlayTrigger overlay={badgeOverlay}>
+    <Badge variant='primary'>Verified</Badge>
+  </OverlayTrigger>
+
   return (
     <div className='subreview'>
       <div>
@@ -65,6 +75,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
             {course.instructor_history[review.professorID].name}
           </Link>}
+          {(!course && !professor) && <div>
+            {review.courseID} {review.professorID}
+          </div>}
         </h3>
       </div>
       <div className='subreview-content'>
@@ -92,7 +105,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           </div>
           <div>
             <div className='subreview-author'>
-              <p>Posted by {review.userDisplay}</p>
+              <p><span className='mr-1'>Posted by {review.userDisplay}</span>{review.verified && verifiedBadge}</p>
               <p>{new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
             <p>{review.reviewContent}</p>

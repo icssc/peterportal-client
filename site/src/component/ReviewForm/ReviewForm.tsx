@@ -392,7 +392,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className='d-inline'
                 sitekey='6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4'
-                onChange={(token) => { if (token) { setVerified(true) } }}
+                onChange={(token) => {
+                  // if verified
+                  if (token) {
+                    setVerified(true)
+                  }
+                  // captcha expired
+                  else {
+                    setVerified(false)
+                  }
+                }}
               />
               <div>
                 <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>

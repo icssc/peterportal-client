@@ -169,6 +169,10 @@ $avatarWidth: 65px;
     width: 100%;
     margin-bottom: 1vh;
   }
+
+  .subreview-author {
+    flex-direction: column;
+  }
 }
 
 @media only screen and (max-width: 1300px) and (min-width: 600px) {

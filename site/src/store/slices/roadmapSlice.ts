@@ -144,6 +144,14 @@ export const roadmapSlice = createSlice({
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
             state.yearPlans.splice(action.payload.yearIndex, 1);
         },
+        clearYear: (state, action: PayloadAction<YearIdentifier>) => {
+            for (let i = 0; i < state.yearPlans[action.payload.yearIndex].quarters.length; i++) {
+                state.yearPlans[action.payload.yearIndex].quarters[i].courses = [];
+            }
+        },
+        clearPlanner: (state) => {
+            state.yearPlans = [];
+        },
         setActiveCourse: (state, action: PayloadAction<CourseData>) => {
             state.activeCourse = action.payload;
         },
@@ -177,9 +185,9 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, addYear, addQuarter, deleteYear, setActiveCourse, setYearPlans,
-    setInvalidCourses, setShowTransfer, addTransfer, setTransfer, setTransfers, deleteTransfer,
-    setShowSearch, setShowAddCourse } = roadmapSlice.actions
+export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, deleteYear, clearPlanner, 
+    setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer, 
+    setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectYearPlans = (state: RootState) => state.roadmap.yearPlans;

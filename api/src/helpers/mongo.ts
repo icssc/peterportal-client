@@ -76,7 +76,18 @@ function getDB(): Promise<Db> {
  */
 function getCollection(collectionName: string): Promise<Collection<any>> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         // check if collection exists
         db.listCollections({ name: collectionName })
             .next(function (err, collection) {
@@ -99,7 +110,18 @@ function getCollection(collectionName: string): Promise<Collection<any>> {
  */
 function containsID(collectionName: string, id: string): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         getCollection(collectionName)
             .then(async (collection) => {
                 resolve(await collection.find({
@@ -118,7 +140,18 @@ function containsID(collectionName: string, id: string): Promise<boolean> {
  */
 function addDocument(collectionName: string, document: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         // get collection
         getCollection(collectionName)
             .then(async (collection) => {
@@ -143,7 +176,18 @@ function addDocument(collectionName: string, document: GenericObject): Promise<v
  */
 function getDocuments(collectionName: string, query: GenericObject): Promise<GenericObject[]> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         // get collection
         getCollection(collectionName)
             .then(async (collection) => {
@@ -164,7 +208,18 @@ function getDocuments(collectionName: string, query: GenericObject): Promise<Gen
  */
 function updateDocument(collectionName: string, query: GenericObject, update: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         getCollection(collectionName)
             .then(async (collection) => {
                 collection.updateOne(query, update, (err) => {
@@ -182,9 +237,20 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
  * @param update Update object
  * @returns 
  */
- function replaceDocument(collectionName: string, query: GenericObject, update: GenericObject): Promise<void> {
+function replaceDocument(collectionName: string, query: GenericObject, update: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         getCollection(collectionName)
             .then(async (collection) => {
                 collection.replaceOne(query, update, (err) => {
@@ -203,10 +269,40 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
  */
 function deleteDocument(collectionName: string, query: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        await getDB();
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         getCollection(collectionName)
             .then(async (collection) => {
                 await collection.deleteOne(query, (err) => {
+                    if (err) console.log(err);
+                });
+                resolve();
+            })
+    })
+}
+
+/**
+ * Deletes multiple documents from a collection
+ * @param collectionName Name of collection
+ * @param query Query object
+ * @returns 
+ */
+ function deleteDocuments(collectionName: string, query: GenericObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        getCollection(collectionName)
+            .then(async (collection) => {
+                await collection.deleteMany(query, (err) => {
                     if (err) console.log(err);
                 });
                 resolve();
@@ -221,7 +317,19 @@ function deleteDocument(collectionName: string, query: GenericObject): Promise<v
  * @returns Cached value
  */
 async function getValue(cache: string, key: string): Promise<any> {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         let value = await getDocuments(cache, { _id: key });
         // cache hit
         if (value.length > 0) {
@@ -242,7 +350,19 @@ async function getValue(cache: string, key: string): Promise<any> {
  * @returns Promise that is resolved when value is cached
  */
 async function setValue(cache: string, key: string, value: any): Promise<void> {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await getDB();
+        }
+        catch (e) {
+            if (process.env.NODE_ENV == 'production') {
+                reject(e);
+            }
+            else {
+                resolve(null!);
+            }
+            return;
+        }
         // if already in cache, update doc
         if (await containsID(cache, key)) {
             await replaceDocument(cache, { _id: key }, { value: value })
@@ -255,4 +375,4 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
     })
 }
 
-export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, setValue, getValue };
+export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, deleteDocuments, setValue, getValue };

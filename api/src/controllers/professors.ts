@@ -4,6 +4,7 @@
 
 import express from 'express';
 import fetch from 'node-fetch';
+import professorDummy from '../dummy/professor.json';
 
 var router = express.Router();
 
@@ -11,6 +12,10 @@ var router = express.Router();
  * Elasticsearch proxy for professor index
  */
 router.post('/_search', function (req, res, next) {
+  if (!process.env.PETERPORTAL_MAIN_ES) {
+    res.json(professorDummy);
+    return;
+  }
   let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'professors/_search',
     {
       method: 'POST',
