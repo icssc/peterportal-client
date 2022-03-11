@@ -1,6 +1,6 @@
 import React, { FC, useState, useRef } from "react";
 import "./Year.scss";
-import { Button, Popover, Overlay } from "react-bootstrap";
+import { Button, Form, Popover, Overlay, Dropdown, DropdownButton } from "react-bootstrap";
 import {
   CaretRightFill,
   CaretDownFill,
@@ -9,7 +9,7 @@ import {
 import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { deleteYear } from '../../store/slices/roadmapSlice';
+import { addQuarter, deleteYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -22,12 +22,29 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
   const [showContent, setShowContent] = useState(true);
   const [show, setShow] = useState(false);
+  const [showAddQuarter, setShowAddQuarter] = useState(false);
   const [target, setTarget] = useState<any>(null!);
+  const [addQuarterTarget, setAddQuarterTarget] = useState<any>(null!);
 
   const handleEditClick = (event: React.MouseEvent) => {
-    setShow(!show);
-    setTarget(event.target);
+    if (showAddQuarter) {
+      /* hide both overlays */
+      setShowAddQuarter(!showAddQuarter);
+      setShow(!show);
+    } else {
+      setShow(!show);
+      setTarget(event.target);
+    }
   };
+
+  const handleShowAddQuarterClick = (event: React.MouseEvent) => {
+    setShowAddQuarter(!showAddQuarter);
+    setAddQuarterTarget(event.target);
+  }
+
+  const handleAddQuarterClick = (year: number, quarter: string) => {
+    dispatch(addQuarter({ startYear: year, quarterData: { name: quarter, courses: [] } }));
+  }
 
   const calculateYearStats = () => {
     let unitCount = 0;
@@ -78,6 +95,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           <Popover id={`year-menu-${yearIndex}`}>
             <Popover.Content className="year-settings-popup">
               <div>
+                <Button onClick={handleShowAddQuarterClick} variant="light" className="year-settings-btn">
+                  Add Quarter
+                </Button>
                 <Button variant="light" className="year-settings-btn">
                   Edit Year
                 </Button>
@@ -93,6 +113,17 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 >
                   Remove
                 </Button>
+              </div>
+            </Popover.Content>
+          </Popover>
+        </Overlay>
+        <Overlay show={showAddQuarter} target={addQuarterTarget} placement="right">
+          <Popover id={`add-quarter-menu-${yearIndex}`}>
+            <Popover.Content>
+              <div>
+                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer I")} onClick={() => handleAddQuarterClick(data.startYear, "summer I")} variant="light" className="year-settings-btn">Summer I</Button>
+                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer II")} onClick={() => handleAddQuarterClick(data.startYear, "summer II")} variant="light" className="year-settings-btn">Summer II</Button>
+                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer 10 Week")} onClick={() => handleAddQuarterClick(data.startYear, "summer 10 Week")} variant="light" className="year-settings-btn">Summer 10 Week</Button>
               </div>
             </Popover.Content>
           </Popover>

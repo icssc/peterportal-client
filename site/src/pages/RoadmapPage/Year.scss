@@ -30,6 +30,7 @@
   border-radius: var(--border-radius);
   background-color: var(--ring-road-white);
   display: flex;
+  flex-wrap: wrap;
 }
 
 .year-accordion-title {
