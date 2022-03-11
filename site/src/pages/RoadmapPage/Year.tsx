@@ -100,8 +100,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button variant="light" className="year-settings-btn">
                   Edit Year
                 </Button>
-                <Button 
-                  variant="light" 
+                <Button
+                  variant="light"
                   className="year-settings-btn"
                   id="clear-btn"
                   onClick={() => {

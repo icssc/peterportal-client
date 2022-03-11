@@ -185,8 +185,8 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, deleteYear, clearPlanner, 
-    setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer, 
+export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, deleteYear, clearPlanner,
+    setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
     setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
