@@ -27,7 +27,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
         <PlusCircleFill className="add-year-icon" />
         <div className="add-year-text">Add year</div>
       </Button>
-      <Overlay show={show} target={target} placement="bottom">
+      <Overlay show={show} target={target} placement="top">
         <Popover id=''>
           <Popover.Content>
             <Form>
