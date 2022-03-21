@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import "./Course.scss";
-import { InfoCircle, ExclamationTriangle } from "react-bootstrap-icons";
+import { Button } from "react-bootstrap";
+import { InfoCircle, ExclamationTriangle, Trash } from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -8,10 +9,11 @@ import { CourseData } from '../../types/types';
 
 interface CourseProps extends CourseData {
   requiredCourses?: string[];
+  onDelete?: () => void;
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses } = props;
+  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
@@ -40,25 +42,33 @@ const Course: FC<CourseProps> = (props) => {
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
-        <div className="name">{department + ' ' + number}</div>
+        <div className="course-and-info">
+          <div className="name">{department + ' ' + number}</div>
+          <OverlayTrigger
+            trigger={['hover', 'focus']}
+            placement="left"
+            overlay={CoursePopover}
+            delay={100}>
+            <InfoCircle className="info-circle" />
+          </OverlayTrigger>
+        </div>
+        {onDelete && (
+          <Button variant="light" className="header-btn" onClick={onDelete}>
+            <Trash className="course-delete-icon" />
+          </Button>
+        )}
+      </div>
+      <div className="title">{title}</div>
+      <div className="footer">
+        {requiredCourses && <OverlayTrigger
+          trigger={['hover', 'focus']}
+          placement="right"
+          overlay={WarningPopover}
+          delay={100}>
+          <ExclamationTriangle />
+        </OverlayTrigger>}
         <div className="units">{units[0]} units</div>
       </div>
-
-      <div className="title">{title}</div>
-      <OverlayTrigger
-        trigger={['hover', 'focus']}
-        placement="left"
-        overlay={CoursePopover}
-        delay={100}>
-        <InfoCircle className="info-circle" />
-      </OverlayTrigger>
-      {requiredCourses && <OverlayTrigger
-        trigger={['hover', 'focus']}
-        placement="right"
-        overlay={WarningPopover}
-        delay={100}>
-        <ExclamationTriangle />
-      </OverlayTrigger>}
     </div>
   );
 };

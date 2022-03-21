@@ -3,7 +3,8 @@ import "./Quarter.scss";
 import { Draggable, Droppable, DroppableProvided } from "react-beautiful-dnd";
 import Course from "./Course";
 
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { deleteCourse } from '../../store/slices/roadmapSlice';
 import { PlannerQuarterData } from '../../types/types';
 
 interface QuarterProps {
@@ -14,6 +15,7 @@ interface QuarterProps {
 }
 
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
+  const dispatch = useAppDispatch();
   let quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
   const invalidCourses = useAppSelector(state => state.roadmap.invalidCourses);
 
@@ -40,7 +42,16 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
               requiredCourses = ic.required;
             }
-          })
+          });
+
+          const onDelete = () => {
+            dispatch(deleteCourse({
+              yearIndex,
+              quarterIndex,
+              courseIndex: index,
+            }));
+          };
+
           return (
             <div
               ref={provided.innerRef}
@@ -52,7 +63,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
               }}
             >
               <Course key={course.id} {...course}
-                requiredCourses={requiredCourses}/>
+                requiredCourses={requiredCourses}
+                onDelete={onDelete}/>
             </div>
           );
         }}

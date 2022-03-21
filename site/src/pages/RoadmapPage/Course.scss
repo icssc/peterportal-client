@@ -18,6 +18,7 @@
   }
 
   .units {
+    margin-left: auto;
     color: #808080;
     font-size: 14px;
   }
@@ -30,12 +31,29 @@
 .course-card-top {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
-.info-circle {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
+.course-and-info {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.header-btn {
+  background-color: transparent;
+  font-weight: bold;
+  border: none;
+}
+
+.course-delete-icon {
+  color: red;
+}
+
+.footer {
+  padding: 0px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .course-popover {
