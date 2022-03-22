@@ -53,7 +53,7 @@ const Course: FC<CourseProps> = (props) => {
           </OverlayTrigger>
         </div>
         {onDelete && (
-          <Button variant="light" className="header-btn" onClick={onDelete}>
+          <Button variant="light" className="course-delete-btn" onClick={onDelete}>
             <Trash className="course-delete-icon" />
           </Button>
         )}
