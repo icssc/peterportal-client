@@ -5,28 +5,33 @@ import Badge from 'react-bootstrap/Badge';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 
-import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColorRequest } from '../../types/types';
+import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColorRequest, VoteColor } from '../../types/types';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  colors: VoteColor;
+  colorUpdater: () => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
   const [upvoteClassname, setUpvoteClass] = useState("upvote");
   const [downvoteClassname, setDownvoteClass] = useState("downvote");
-
+  let upvoteClass;
+  let downvoteClass;
+  if(colors.colors != undefined){
+    upvoteClass = colors.colors[0] ? "upvote coloredUpvote" : "upvote";
+    downvoteClass = colors.colors[1] ? "downvote coloredDownvote" : "downvote";
+  }else{
+    upvoteClass = "upvote";
+    downvoteClass = "downvote";
+  }
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/reviews/vote', vote);
     return res.data.deltaScore;
-  }
-
-  const getColor = async (vote: VoteColorRequest) => {
-    const res = await axios.patch('/reviews/getVoteColor', vote);
-    return res.data;
   }
 
   const upvote = async (e: MouseEvent) => {
@@ -40,6 +45,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     }
     let deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
+    colorUpdater();
   }
 
   const downvote = async (e: MouseEvent) => {
@@ -53,40 +59,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     }
     let deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
+    colorUpdater();
   }
-  //returns a class title for an upvote that considers if the user has voted 
-  const upvoteClass = async (id: string) => {
-    const color = {
-      id: id!
-    }
-    let res = await getColor(color);
-    if(res[0] == 1){
-      return "upvote coloredUpvote";
-    }else{
-      return "upvote";
-    }
-  };
-  //returns a class title for an upvote that considers if the user has voted 
-  const downvoteClass = async (id: string) => {
-    const color = {
-      id: id!
-    }
-    let res = await getColor(color);
-    if(res[1] == 1){
-      return "downvote coloredDownvote";
-    }else{
-      return "downvote";
-    }
-  };
-  //update the state of the class names
-  useEffect(() => {
-    async function setClasses() {
-      setUpvoteClass(await upvoteClass(review._id!));
-      setDownvoteClass(await downvoteClass(review._id!));
-    }
-    setClasses();
-  });
-
+  
   return (
     <div className='subreview'>
       <div>
@@ -140,9 +115,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       </div>
       <div className='subreview-footer' id={review._id}>
         <p>Helpful?</p>
-        <button className={upvoteClassname} onClick={upvote}>&#9650;</button>
+        <button className={upvoteClass} onClick={upvote}>&#9650;</button>
         <p>{score}</p>
-        <button className={downvoteClassname} onClick={downvote}>&#9660;</button>
+        <button className={downvoteClass} onClick={downvote}>&#9660;</button>
         <a href='/report'>Report</a>
       </div>
     </div>

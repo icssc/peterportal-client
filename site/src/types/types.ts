@@ -101,6 +101,10 @@ export interface VoteColorRequest {
     id: string;
 }
 
+export interface VoteColorsRequest {
+    ids: string[];
+}
+
 export interface ScoreData {
     name: string;
     score: number;
@@ -199,6 +203,10 @@ export interface SavedRoadmap {
 export interface MongoRoadmap {
     _id: string;
     roadmap: SavedRoadmap;
+}
+
+export interface VoteColor {
+    colors: boolean[]
 }
 
 /**

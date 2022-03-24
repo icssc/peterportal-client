@@ -6,7 +6,8 @@ import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
+import { reviewSlice } from 'src/store/slices/uiSlice';
 
 export interface ReviewProps {
     course?: CourseGQLData;
@@ -16,7 +17,13 @@ export interface ReviewProps {
 const Review: FC<ReviewProps> = (props) => {
     const dispatch = useAppDispatch();
     const reviewData = useAppSelector(selectReviews);
+    const [voteColors, setVoteColors] = useState([]);
     const openForm = useAppSelector(state => state.review.formOpen);
+
+    const getColors = async (vote: VoteColorsRequest) => {
+        const res = await axios.patch('/reviews/getVoteColors', vote);
+        return res.data;
+    }
 
     const getReviews = async () => {
         interface paramsProps {
@@ -29,10 +36,31 @@ const Review: FC<ReviewProps> = (props) => {
         axios.get(`/reviews`, {
             params: params
         })
-            .then((res: AxiosResponse<ReviewData[]>) => {
-                const data = res.data.filter((review) => review !== null)
+            .then(async (res: AxiosResponse<ReviewData[]>) => {
+                const data = res.data.filter((review) => review !== null);
+                let reviewIDs = [];
+                for(let i = 0;i<data.length;i++){
+                    reviewIDs.push(data[i]._id);
+                }
+                const req = {
+                    ids: reviewIDs as string[]
+                }
+                let colors = await getColors(req);
+                setVoteColors(colors);
                 dispatch(setReviews(data));
             });
+    }
+
+    const updateVoteColors = async () => {
+        let reviewIDs = [];
+        for(let i = 0;i<reviewData.length;i++){
+            reviewIDs.push(reviewData[i]._id);
+        }
+        const req = {
+            ids: reviewIDs as string[]
+        }
+        let colors = await getColors(req);
+        setVoteColors(colors);
     }
 
     useEffect(() => {
@@ -55,7 +83,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} />)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={{colors: voteColors[i]} as VoteColor} colorUpdater={updateVoteColors}/>)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
