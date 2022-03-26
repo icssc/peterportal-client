@@ -286,7 +286,7 @@ router.patch("/getVoteColors", async function (req, res) {
     let colors = [];
     for (let i = 0; i < ids.length; i++) {
       let query = {
-        userID: req.session.passport.user.email,
+        userID: req.session.passport.user.id,
         reviewID: ids[i],
       }
       //get any existing vote in the db
@@ -314,9 +314,9 @@ router.patch("/getVoteColors", async function (req, res) {
     res.json(result);
   }
 });
- /*
- * Verify a review
- */
+/*
+* Verify a review
+*/
 router.patch("/verify", async function (req, res) {
   if (req.session.passport?.admin) {
     console.log(`Verifying review ${req.body.id}`);

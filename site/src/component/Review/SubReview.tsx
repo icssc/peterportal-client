@@ -14,8 +14,8 @@ interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  colors: VoteColor;
-  colorUpdater: () => void;
+  colors?: VoteColor;
+  colorUpdater?: () => void;
 }
 
 const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
@@ -25,7 +25,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   const [downvoteClassname, setDownvoteClass] = useState("downvote");
   let upvoteClass;
   let downvoteClass;
-  if(colors.colors != undefined){
+  if(colors != undefined && colors.colors != undefined){
     upvoteClass = colors.colors[0] ? "upvote coloredUpvote" : "upvote";
     downvoteClass = colors.colors[1] ? "downvote coloredDownvote" : "downvote";
   }else{
@@ -50,7 +50,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
     let deltaScore = await voteReq(votes);
 
     setScore(score + deltaScore );
-    colorUpdater();
+    if(colorUpdater != undefined){
+      colorUpdater();
+    }
   }
 
   const downvote = async (e: MouseEvent) => {
@@ -64,7 +66,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
     }
     let deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
-    colorUpdater();
+    if(colorUpdater != undefined){
+      colorUpdater();
+    }  
   }
 
   const openReportForm = (e: MouseEvent) => {
