@@ -229,6 +229,22 @@ function updateDocument(collectionName: string, query: GenericObject, update: Ge
             })
     });
 }
+/**
+ * Deletes a document from the given collection
+ * @param collectionName the collection containing the to be deleted item
+ * @param query the query specifying which document should be deleted
+ * @returns 
+ */
+function deleteDocument(collectionName: string, query: GenericObject): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        await getDB();
+        db.collection(collectionName).deleteOne(query, function (err, obj) {
+            if (err) throw err;
+            console.log(`Deleted collection matching query of ${query}`);
+            resolve();
+        });
+    });
+}
 
 /**
  * Replaces a document from a collection
@@ -374,5 +390,6 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
         resolve();
     })
 }
+
 
 export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, deleteDocuments, setValue, getValue };

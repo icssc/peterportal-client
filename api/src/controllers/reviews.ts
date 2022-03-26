@@ -200,8 +200,18 @@ router.patch("/vote", async function (req, res) {
     let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, currentVotes) as VoteData[];
     //check if there is an existing vote and it has the same vote as the previous vote
     if (existingVote.length != 0 && deltaScore == existingVote[0].score) {
-      res.json({ deltaScore: 0 });
-      //do nothing if the vote is the same
+      //remove the vote
+      res.json({ deltaScore: -1 * deltaScore });
+
+      //delete the existing vote from the votes collection
+      await deleteDocument(COLLECTION_NAMES.VOTES, currentVotes);
+      //update the votes document with a lowered score
+      await updateDocument(
+        COLLECTION_NAMES.REVIEWS,
+        { _id: new ObjectID(id) },
+        { $inc: { score: -1 * deltaScore } }
+      );
+
     } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
       //there is an existing vote but the vote was different
       deltaScore *= 2;
@@ -233,13 +243,78 @@ router.patch("/vote", async function (req, res) {
         reviewID: id,
         score: deltaScore,
       });
-
       res.json({ deltaScore: deltaScore });
     }
   }
 });
 
 /**
+ * Get whether or not the color of a button should be colored
+ */
+router.patch("/getVoteColor", async function (req, res) {
+  //make sure user is logged in
+  if (req.session.passport != null) {
+    //query of the user's email and the review id
+    let query = {
+      userID: req.session.passport.user.email,
+      reviewID: req.body["id"],
+    }
+    //get any existing vote in the db
+    let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
+    //result an array of either length 1 or empty
+    if (existingVote.length == 0) {
+      //if empty, both should be uncolored
+      res.json([false, false]);
+    } else {
+      //if not empty, there is a vote, so color it accordingly
+      if (existingVote[0].score == 1) {
+        res.json([true, false]);
+      } else {
+        res.json([false, true]);
+      }
+    }
+  }
+});
+
+/**
+ * Get multiple review colors
+ */
+router.patch("/getVoteColors", async function (req, res) {
+  if (req.session.passport != null) {
+    //query of the user's email and the review id
+    let ids = req.body["ids"];
+    let colors = [];
+    for (let i = 0; i < ids.length; i++) {
+      let query = {
+        userID: req.session.passport.user.email,
+        reviewID: ids[i],
+      }
+      //get any existing vote in the db
+      let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
+      //result an array of either length 1 or empty
+      if (existingVote.length == 0) {
+        //if empty, both should be uncolored
+        colors.push([false, false]);
+      } else {
+        //if not empty, there is a vote, so color it accordingly
+        if (existingVote[0].score == 1) {
+          colors.push([true, false]);
+        } else {
+          colors.push([false, true]);
+        }
+      }
+    }
+    res.json(colors);
+  } else {
+    let ids = req.body["ids"];
+    let result = [];
+    for (let i = 0; i < ids.length; i++) {
+      result.push([false, false]);
+    }
+    res.json(result);
+  }
+});
+ /*
  * Verify a review
  */
 router.patch("/verify", async function (req, res) {

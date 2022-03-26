@@ -106,11 +106,13 @@ $avatarWidth: 65px;
   padding: 0;
   height: fit-content;
   background-color: transparent;
+  transition: 0.25s;
+  color: var(--peterportal-mid-gray);
 }
-.upvote {
+.coloredUpvote {
   color: var(--peterportal-primary-color-1);
 }
-.downvote {
+.coloredDownvote {
   color: var(--peterportal-secondary-red);
 }
 .add-review-btn {
@@ -143,7 +145,6 @@ $avatarWidth: 65px;
 .add-report-button:hover {
   background-color: lightgray;
 }
-
 
 @media only screen and (max-width: 600px) {
   .subreview-content {
