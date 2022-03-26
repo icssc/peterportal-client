@@ -1,6 +1,6 @@
 #peterportal-logo {
   width: 100%;
-  height: 100%
+  height: 100%;
 }
 
 .ui.segment {
@@ -31,7 +31,8 @@ ul {
   width: 100%;
   height: 8vh;
   background-color: var(--bg);
-  padding: 0 3vw;
+  padding-right: 3vw;
+  padding-left: 2vw;
   display: flex;
   top: 0;
 
@@ -118,11 +119,15 @@ ul {
       width: 7vw;
     }
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 800px) {
+      .beta {
+        display: none;
+      }
+
       .desktop-toggle {
         display: none;
       }
-  
+
       .mobile-toggle {
         display: contents;
       }
@@ -136,7 +141,7 @@ ul {
         height: 60%;
         border-radius: 1rem;
         width: 17vw;
-  
+
         .navbar-toggle-item {
           width: 100%;
           height: 100%;
@@ -307,4 +312,20 @@ ul {
 
 i.icon {
   margin: -2px 0 0 0 !important;
+}
+
+.feedback {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 1300px) {
+  .navbar {
+    .navbar-nav {
+      .navbar-toggle {
+        width: 20vw;
+      }
+    }
+  }
 }

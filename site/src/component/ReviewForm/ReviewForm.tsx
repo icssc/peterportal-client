@@ -9,9 +9,11 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
+import Modal from 'react-bootstrap/Modal';
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { addReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 
@@ -40,7 +42,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [yearTaken, setYearTaken] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
   const [gradeReceived, setGradeReceived] = useState('');
-  const [userEmail, setUserEmail] = useState('anonymouspeter@gmail.com');
+  const [userID, setUserID] = useState('');
   const [userName, setUserName] = useState('Anonymous Peter');
   const [content, setContent] = useState('');
   const [quality, setQuality] = useState<number>(3);
@@ -49,22 +51,40 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [verified, setVerified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
+  const showForm = useAppSelector(state => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
     if (cookies.hasOwnProperty('user')) {
-      setUserEmail(cookies.user.email);
+      setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
   }, [])
 
+  useEffect(() => {
+    // upon opening this form
+    if (showForm) {
+      // if not logged in, close the form
+      if (!cookies.hasOwnProperty('user')) {
+        alert('You must be logged in to add a review!')
+        props.closeForm();
+      }
+    }
+  }, [showForm])
+
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/reviews', review);
-    dispatch(addReview(res.data));
+    if (res.data.hasOwnProperty('error')) {
+      alert('You must be logged in to add a review!');
+    }
+    else {
+      dispatch(addReview(res.data));
+    }
   }
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,6 +102,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       return;
     }
 
+    if (!verified) {
+      alert('Please complete the CAPTCHA');
+      return;
+    }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (1 + date.getMonth()).toString();
@@ -89,7 +114,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     const review = {
       professorID: professor,
       courseID: course,
-      userID: userEmail,
+      userID: userID,
       userDisplay: userName,
       reviewContent: content,
       rating: quality,
@@ -102,7 +127,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       takeAgain: takeAgain,
       textbook: textbook,
       attendance: attendance,
-      tags: selectedTags
+      tags: selectedTags,
+      verified: false
     };
     if (content.length > 500) {
       setOverCharLimit(true);
@@ -187,12 +213,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <h5>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</h5>
             </Col>
           </Row>
-          <Row className='mt-4'>
+          <Row className='mt-4' lg={2} md={1}>
             <Col>
-              <div className='review-form-section review-form-row'>
+              <div className='review-form-section review-form-row review-form-taken'>
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className='ml-3' controlId='grade'>
+                <Form.Group className='review-form-grade' controlId='grade'>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
                     <option disabled={true} selected value=''>Grade</option>
@@ -336,9 +362,51 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col className='mb-3'>
-              <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
-              <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
+            <Col>
+              <Form.Group className='review-form-section'>
+                <Row>
+                  <Col>
+                    <Form.Check
+                      inline
+                      type='switch'
+                      id='anonymouse'
+                      label='Post as Anonymous'
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        // set name as anonymous
+                        if (e.target.checked) {
+                          setUserName('Anonymous Peter')
+                        }
+                        // use real name
+                        else {
+                          setUserName(cookies.user.name);
+                        }
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col className='mb-3 review-form-submit'>
+              <ReCAPTCHA
+                className='d-inline'
+                sitekey='6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4'
+                onChange={(token) => {
+                  // if verified
+                  if (token) {
+                    setVerified(true)
+                  }
+                  // captcha expired
+                  else {
+                    setVerified(false)
+                  }
+                }}
+              />
+              <div>
+                <Button className='py-2 px-4 float-right' type="submit" variant="secondary">Submit</Button>
+                <Button className='py-2 px-4 mr-3 float-right' variant="outline-secondary" onClick={props.closeForm}>Cancel</Button>
+              </div>
             </Col>
           </Row>
         </Col>
@@ -347,15 +415,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   )
 
   return (
-    <div className='review-form'>
-      {submitted ? (
-        <div className='submitted-form'>
-          <Icon name='check circle' size='huge' />
-          <h1>Thank You</h1>
-          <p>Your form has been submitted successfully.</p>
-        </div>
-      ) : reviewForm}
-    </div>
+    <Modal show={showForm} onHide={props.closeForm} centered animation={false}>
+      <div className='review-form'>
+        {submitted ? (
+          <div className='submitted-form'>
+            <Icon name='check circle' size='huge' />
+            <h1>Thank You</h1>
+            <p>Your form has been submitted successfully.</p>
+          </div>
+        ) : reviewForm}
+      </div>
+    </Modal>
   )
 }
 

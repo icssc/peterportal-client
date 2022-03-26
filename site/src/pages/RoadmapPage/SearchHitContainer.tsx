@@ -30,8 +30,8 @@ interface SearchHitContainerProps {
 
 const SearchHitContainer: FC<SearchHitContainerProps> = (props) => {
     return (
-        <article>
-            <div style={{ minHeight: '80vh' }}>
+        <article style={{ flex: 1, overflowY: 'auto', paddingTop: '1vh' }}>
+            <div>
                 <Hits
                     itemComponent={CourseHitItem}
                     hitsPerPage={20}
@@ -43,7 +43,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = (props) => {
                 />
             </div>
             <InitialLoader component={InitialLoaderComponent} />
-            <Pagination showNumbers={true} />
+            <Pagination showNumbers={false} />
         </article>
     )
 }

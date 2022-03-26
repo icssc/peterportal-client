@@ -32,6 +32,7 @@ passport.use(
                 email = profile.emails[0].value;
             }
             var userData = {
+                id: profile.id,
                 email: email,
                 name: profile.displayName,
                 picture: profile._json.picture
@@ -67,8 +68,7 @@ passport.use(
 //     var userData = {
 //         email: profile.emails[0].value,
 //         name: profile.displayName,
-//         picture: profile.photos[0].value,
-//         username: profile.username
+//         picture: profile.photos[0].value
 //     };
 //     done(null, userData);
 //   }

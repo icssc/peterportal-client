@@ -1,0 +1,84 @@
+.report-form {
+    background-color: var(--peterportal-gray-blue);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    display: flex;
+    grid-gap: 35px;
+    width: fit-content;
+    width: 40vw;
+    height: fit-content;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto auto;
+    padding: 50px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    textarea {
+        border-radius: var(--border-radius);
+        border: 2px solid #EAEBF2;
+        padding: 1rem;
+        resize: none;
+        width: 100%;
+        display: block;
+    }
+}
+
+.report-form-review-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 20px;
+}
+
+.report-form-review-content-label {
+  font-weight: bold;
+}
+
+.report-form-review-content-text {
+  font-style: italic;
+}
+
+.report-form-header {
+  margin: 0px;
+  margin-top: 0px;
+}
+
+.submitted-report-form {
+    text-align: center;
+    width: 100%;
+    margin-top: 15%;
+    i {
+      color: var(--peterportal-secondary-green);
+    }
+    h1 {
+      margin: 15px 0;
+    }
+    p {
+      font-size: 1.25rem;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+  .report-form {
+    button {
+      margin: 0;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .report-form {
+    max-height: 80vh;
+    width: 90vw;
+  }
+}
+
+@media only screen and (max-width: 1300px) and (min-width: 600px) {
+  .report-form {
+    width: 75vw;
+  }
+}

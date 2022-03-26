@@ -1,0 +1,1966 @@
+{
+    "took": 22,
+    "timed_out": false,
+    "_shards": {
+        "total": 5,
+        "successful": 5,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": {
+            "value": 66,
+            "relation": "eq"
+        },
+        "max_score": 1,
+        "hits": [
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "dutt",
+                "_score": 1,
+                "_source": {
+                    "name": "Nikil D Dutt",
+                    "ucinetid": "dutt",
+                    "title": "Distinguished Professor",
+                    "department": "Computer Science",
+                    "email": "dutt@uci.edu",
+                    "schools": [
+                        "The Henry Samueli School of Engineering",
+                        "Donald Bren School of Information and Computer Sciences",
+                        "School of Social Sciences"
+                    ],
+                    "related_departments": [
+                        "EECS",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS",
+                        "ANTHRO",
+                        "CHC/LAT",
+                        "COGS",
+                        "ECON",
+                        "INTL ST",
+                        "LINGUIS",
+                        "LPS",
+                        "POL SCI",
+                        "PSYCH",
+                        "SOC SCI",
+                        "SOCIOL"
+                    ],
+                    "shortened_name": "DUTT, N.",
+                    "course_history": [
+                        "EECS 297",
+                        "IN4MATX 244",
+                        "I&C SCI 299",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "I&C SCI 399",
+                        "I&C SCI H198",
+                        "I&C SCI 256",
+                        "I&C SCI 199",
+                        "COMPSCI 190",
+                        "EECS 199",
+                        "EECS 296",
+                        "I&C SCI 291",
+                        "COMPSCI 295",
+                        "COMPSCI 290",
+                        "I&C SCI 251",
+                        "I&C SCI 298",
+                        "COMPSCI H198",
+                        "COMPSCI 246",
+                        "EECS 299",
+                        "I&C SCI 212",
+                        "EECS 159A",
+                        "I&C SCI 151",
+                        "I&C SCI 290",
+                        "I&C SCI 259",
+                        "EECS 159B",
+                        "COMPSCI 298",
+                        "COMPSCI 244",
+                        "COMPSCI 151",
+                        "I&C SCI 280",
+                        "COMPSCI 259S",
+                        "I&C SCI 53"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "aburtsev",
+                "_score": 1,
+                "_source": {
+                    "name": "Anton Burtsev",
+                    "ucinetid": "aburtsev",
+                    "title": "Assistant Adjunct Professor",
+                    "department": "Computer Science",
+                    "email": "aburtsev@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "BURTSEV, A.",
+                    "course_history": [
+                        "COMPSCI 143A",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "COMPSCI H198",
+                        "COMPSCI 238P",
+                        "COMPSCI 298",
+                        "COMPSCI 250P"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "sgagomas",
+                "_score": 1,
+                "_source": {
+                    "name": "Sergio Gago Masague",
+                    "ucinetid": "sgagomas",
+                    "title": "Assistant Professor of Teaching",
+                    "department": "Computer Science",
+                    "email": "sgagomas@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "GAGO MASAGUE, S.",
+                    "course_history": [
+                        "COMPSCI 190",
+                        "I&C SCI 46",
+                        "COMPSCI 125",
+                        "COMPSCI 147",
+                        "IN4MATX 141",
+                        "COMPSCI 180B",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "COMPSCI 290",
+                        "COMPSCI 297P",
+                        "I&C SCI 6N",
+                        "COMPSCI 121",
+                        "COMPSCI H198",
+                        "I&C SCI 32",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "igassko",
+                "_score": 1,
+                "_source": {
+                    "name": "Irene Gassko",
+                    "ucinetid": "igassko",
+                    "title": "Lecturer",
+                    "department": "Computer Science",
+                    "email": "igassko@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "GASSKO, I.",
+                    "course_history": [
+                        "I&C SCI 139W",
+                        "I&C SCI 6B",
+                        "COMPSCI 199",
+                        "I&C SCI 6D",
+                        "COMPSCI H198",
+                        "I&C SCI 31"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "mustafai",
+                "_score": 1,
+                "_source": {
+                    "name": "Mustafa Ibrahim",
+                    "ucinetid": "mustafai",
+                    "title": "Lecturer",
+                    "department": "Computer Science",
+                    "email": "mustafai@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "IBRAHIM, M.",
+                    "course_history": [
+                        "IN4MATX H198",
+                        "COMPSCI 199",
+                        "COMPSCI 121",
+                        "IN4MATX 199",
+                        "IN4MATX 298",
+                        "COMPSCI H198",
+                        "I&C SCI 32",
+                        "IN4MATX 225",
+                        "COMPSCI 178",
+                        "IN4MATX 290",
+                        "COMPSCI 112",
+                        "I&C SCI 139W",
+                        "COMPSCI 297P",
+                        "IN4MATX 299",
+                        "I&C SCI 45J",
+                        "COMPSCI 221",
+                        "IN4MATX 141",
+                        "IN4MATX 43",
+                        "COMPSCI 111",
+                        "I&C SCI 45C"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "mohseni",
+                "_score": 1,
+                "_source": {
+                    "name": "Mohsen Imani",
+                    "ucinetid": "mohseni",
+                    "title": "Assistant Professor",
+                    "department": "Computer Science",
+                    "email": "m.imani@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "IMANI, M.",
+                    "course_history": [
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "COMPSCI H198",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "swjun",
+                "_score": 1,
+                "_source": {
+                    "name": "Sang Woo Jun",
+                    "ucinetid": "swjun",
+                    "title": "Assistant Professor",
+                    "department": "Computer Science",
+                    "email": "swjun@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "JUN, S.",
+                    "course_history": [
+                        "COMPSCI 250B",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "COMPSCI 295",
+                        "COMPSCI H198",
+                        "COMPSCI 152",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "kkask",
+                "_score": 1,
+                "_source": {
+                    "name": "Kalev Kask",
+                    "ucinetid": "kkask",
+                    "title": "Asst Project Scientist",
+                    "department": "Computer Science",
+                    "email": "kkask@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "KASK, K.",
+                    "course_history": [
+                        "COMPSCI 271P",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 171",
+                        "COMPSCI 299",
+                        "COMPSCI H198",
+                        "COMPSCI 271",
+                        "COMPSCI 298",
+                        "COMPSCI 273P"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "rickl",
+                "_score": 1,
+                "_source": {
+                    "name": "Richard H Lathrop",
+                    "ucinetid": "rickl",
+                    "title": "Professor Emeritus",
+                    "department": "Computer Science",
+                    "email": "rickl@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "LATHROP, R.",
+                    "course_history": [
+                        "I&C SCI 209",
+                        "I&C SCI 299",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "I&C SCI H197",
+                        "I&C SCI H198",
+                        "COMPSCI 271",
+                        "I&C SCI 199",
+                        "I&C SCI 279",
+                        "COMPSCI 271P",
+                        "COMPSCI 290",
+                        "I&C SCI 298",
+                        "COMPSCI H198",
+                        "I&C SCI 290",
+                        "I&C SCI 171",
+                        "COMPSCI 171",
+                        "COMPSCI 175",
+                        "I&C SCI 277A",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "smehrotr",
+                "_score": 1,
+                "_source": {
+                    "name": "Sharad Mehrotra",
+                    "ucinetid": "smehrotr",
+                    "title": "Professor",
+                    "department": "Computer Science",
+                    "email": "smehrotr@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "MEHROTRA, S.",
+                    "course_history": [
+                        "I&C SCI 215",
+                        "I&C SCI 219",
+                        "I&C SCI 299",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "I&C SCI H198",
+                        "I&C SCI 214",
+                        "I&C SCI 199",
+                        "COMPSCI 295",
+                        "COMPSCI 290",
+                        "COMPSCI 122A",
+                        "I&C SCI 298",
+                        "COMPSCI H198",
+                        "I&C SCI 184",
+                        "I&C SCI 214B",
+                        "I&C SCI 290",
+                        "COMPSCI 298",
+                        "COMPSCI 223",
+                        "I&C SCI 214A",
+                        "COMPSCI 224",
+                        "I&C SCI 280",
+                        "COMPSCI 222"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "mikes",
+                "_score": 1,
+                "_source": {
+                    "name": "Michael Shindler",
+                    "ucinetid": "mikes",
+                    "title": "Assistant Professor of Teaching",
+                    "department": "Computer Science",
+                    "email": "mikes@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "SHINDLER, M.",
+                    "course_history": [
+                        "COMPSCI 269S",
+                        "I&C SCI 46",
+                        "I&C SCI 161",
+                        "COMPSCI 261P",
+                        "COMPSCI 161",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "COMPSCI H198",
+                        "I&C SCI 141",
+                        "COMPSCI 162",
+                        "COMPSCI 298",
+                        "COMPSCI 167",
+                        "COMPSCI 260P",
+                        "I&C SCI 23"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "pjsmyth",
+                "_score": 1,
+                "_source": {
+                    "name": "Patrick Smyth",
+                    "ucinetid": "pjsmyth",
+                    "title": "Chancellor's Professor",
+                    "department": "Computer Science",
+                    "email": "p.smyth@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "SMYTH, P.",
+                    "course_history": [
+                        "COMPSCI 277",
+                        "IN4MATX 295",
+                        "STATS 298",
+                        "I&C SCI 274",
+                        "I&C SCI 299",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "STATS 199",
+                        "I&C SCI H198",
+                        "COMPSCI 271",
+                        "COMPSCI 274A",
+                        "I&C SCI 199",
+                        "STATS 299",
+                        "COMPSCI 295",
+                        "COMPSCI 290",
+                        "I&C SCI 178",
+                        "I&C SCI 298",
+                        "I&C SCI 274A",
+                        "COMPSCI H198",
+                        "I&C SCI 175A",
+                        "I&C SCI 290",
+                        "COMPSCI 175",
+                        "COMPSCI 177",
+                        "STATS 170B",
+                        "COMPSCI 298",
+                        "STATS 5",
+                        "I&C SCI 278",
+                        "I&C SCI 280",
+                        "STATS 170A",
+                        "COMPSCI 279S"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "vazirani",
+                "_score": 1,
+                "_source": {
+                    "name": "Vijay Vazirani",
+                    "ucinetid": "vazirani",
+                    "title": "Distinguished Professor",
+                    "department": "Computer Science",
+                    "email": "vazirani@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "VAZIRANI, V.",
+                    "course_history": [
+                        "COMPSCI 263",
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "COMPSCI 290",
+                        "COMPSCI H198",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "xhx",
+                "_score": 1,
+                "_source": {
+                    "name": "Xiaohui Xie",
+                    "ucinetid": "xhx",
+                    "title": "Professor",
+                    "department": "Computer Science",
+                    "email": "xhx@uci.edu",
+                    "schools": [
+                        "School of Biological Sciences",
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "BIO SCI",
+                        "DEV BIO",
+                        "ECO EVO",
+                        "MOL BIO",
+                        "NEURBIO",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "XIE, X.",
+                    "course_history": [
+                        "COMPSCI 190",
+                        "COMPSCI 285",
+                        "COMPSCI 284A",
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "COMPSCI 290",
+                        "COMPSCI 206",
+                        "COMPSCI 184A",
+                        "I&C SCI 6N",
+                        "COMPSCI 189",
+                        "COMPSCI H198",
+                        "DEV BIO 200R",
+                        "COMPSCI 175",
+                        "COMPSCI 174",
+                        "COMPSCI 298",
+                        "COMPSCI 273P"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "bdemsky",
+                "_score": 1,
+                "_source": {
+                    "name": "Brian C Demsky",
+                    "ucinetid": "bdemsky",
+                    "title": "Professor",
+                    "department": "Computer Science",
+                    "email": "bdemsky@uci.edu",
+                    "schools": [
+                        "The Henry Samueli School of Engineering",
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "EECS",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "DEMSKY, B.",
+                    "course_history": [
+                        "EECS 215",
+                        "EECS 297",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "EECS 40",
+                        "EECS 199",
+                        "EECS 296",
+                        "COMPSCI 295",
+                        "COMPSCI 290",
+                        "EECS 129B",
+                        "EECS 195",
+                        "COMPSCI H198",
+                        "EECS 10",
+                        "EECS 295",
+                        "EECS 189B",
+                        "EECS 299",
+                        "EECS 228",
+                        "COMPSCI 142A",
+                        "EECS 159A",
+                        "EECS 221",
+                        "EECS 159B",
+                        "EECS 114",
+                        "EECS 129A",
+                        "COMPSCI 298",
+                        "EECS 218"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "elzarki",
+                "_score": 1,
+                "_source": {
+                    "name": "Magda S El Zarki",
+                    "ucinetid": "elzarki",
+                    "title": "Professor",
+                    "department": "Computer Science",
+                    "email": "elzarki@uci.edu",
+                    "schools": [
+                        "The Henry Samueli School of Engineering",
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "EECS",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "EL ZARKI, M.",
+                    "course_history": [
+                        "IN4MATX 295",
+                        "EECS 297",
+                        "I&C SCI 299",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "I&C SCI 399",
+                        "I&C SCI H198",
+                        "COMPSCI 232P",
+                        "I&C SCI 200",
+                        "I&C SCI 156",
+                        "I&C SCI 199",
+                        "COMPSCI 190",
+                        "EECS 199",
+                        "EECS 296",
+                        "COMPSCI 295",
+                        "COMPSCI 290",
+                        "I&C SCI 298",
+                        "COMPSCI H198",
+                        "I&C SCI 243B",
+                        "EECS 299",
+                        "COMPSCI 232",
+                        "I&C SCI 243E",
+                        "COMPSCI 233",
+                        "I&C SCI 290",
+                        "COMPSCI 298",
+                        "I&C SCI 167",
+                        "I&C SCI 280",
+                        "EECS 248A",
+                        "COMPSCI 133"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "levorato",
+                "_score": 1,
+                "_source": {
+                    "name": "Marco Levorato",
+                    "ucinetid": "levorato",
+                    "title": "Associate Professor",
+                    "department": "Computer Science",
+                    "email": "levorato@uci.edu",
+                    "schools": [
+                        "The Henry Samueli School of Engineering",
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "EECS",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "LEVORATO, M.",
+                    "course_history": [
+                        "COMPSCI 236",
+                        "EECS 299",
+                        "COMPSCI 190",
+                        "EECS 199",
+                        "COMPSCI 232",
+                        "EECS 159A",
+                        "EECS 148",
+                        "EECS 297",
+                        "COMPSCI 278",
+                        "EECS 296",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "EECS 248A",
+                        "EECS 159B",
+                        "COMPSCI H198",
+                        "COMPSCI 298",
+                        "COMPSCI 132"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "sameer",
+                "_score": 1,
+                "_source": {
+                    "name": "Sameer Singh",
+                    "ucinetid": "sameer",
+                    "title": "Associate Professor",
+                    "department": "Computer Science",
+                    "email": "sameer@uci.edu",
+                    "schools": [
+                        "The Henry Samueli School of Engineering",
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "EECS",
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "SINGH, S.",
+                    "course_history": [
+                        "EECS 299",
+                        "COMPSCI 200S",
+                        "EECS 199",
+                        "COMPSCI 178",
+                        "EECS 159A",
+                        "EECS 296",
+                        "EECS 297",
+                        "COMPSCI 272",
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "COMPSCI 290",
+                        "COMPSCI 273A",
+                        "EECS 159B",
+                        "COMPSCI H198",
+                        "COMPSCI 175",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "mjcarey",
+                "_score": 1,
+                "_source": {
+                    "name": "Michael J Carey",
+                    "ucinetid": "mjcarey",
+                    "title": "Distinguished Professor / Bren Professor of ICS",
+                    "department": "Computer Science",
+                    "email": "mjcarey@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "CAREY, M.",
+                    "course_history": [
+                        "COMPSCI 122D",
+                        "COMPSCI 190",
+                        "COMPSCI 122C",
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 290",
+                        "COMPSCI 299",
+                        "COMPSCI 122A",
+                        "COMPSCI H198",
+                        "STATS 170A",
+                        "COMPSCI 222",
+                        "STATS 170B",
+                        "COMPSCI 298"
+                    ]
+                }
+            },
+            {
+                "_index": "professors",
+                "_type": "_doc",
+                "_id": "alfchen",
+                "_score": 1,
+                "_source": {
+                    "name": "Qi Chen",
+                    "ucinetid": "alfchen",
+                    "title": "Assistant Professor",
+                    "department": "Computer Science",
+                    "email": "alfchen@uci.edu",
+                    "schools": [
+                        "Donald Bren School of Information and Computer Sciences"
+                    ],
+                    "related_departments": [
+                        "COMPSCI",
+                        "IN4MATX",
+                        "I&C SCI",
+                        "SWE",
+                        "STATS"
+                    ],
+                    "shortened_name": "CHEN, Q.",
+                    "course_history": [
+                        "COMPSCI 200S",
+                        "COMPSCI 205",
+                        "COMPSCI 295",
+                        "COMPSCI 199",
+                        "COMPSCI 299",
+                        "COMPSCI 290",
+                        "COMPSCI 134",
+                        "COMPSCI H198",
+                        "COMPSCI 298"
+                    ]
+                }
+            }
+        ]
+    },
+    "aggregations": {
+        "courses3": {
+            "doc_count": 66,
+            "course_history.keyword_count": {
+                "value": 355
+            },
+            "course_history.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 155,
+                "buckets": [
+                    {
+                        "key": "COMPSCI 199",
+                        "doc_count": 62
+                    },
+                    {
+                        "key": "COMPSCI H198",
+                        "doc_count": 62
+                    },
+                    {
+                        "key": "COMPSCI 290",
+                        "doc_count": 58
+                    },
+                    {
+                        "key": "COMPSCI 298",
+                        "doc_count": 58
+                    },
+                    {
+                        "key": "COMPSCI 299",
+                        "doc_count": 58
+                    },
+                    {
+                        "key": "COMPSCI 295",
+                        "doc_count": 42
+                    },
+                    {
+                        "key": "I&C SCI 199",
+                        "doc_count": 34
+                    },
+                    {
+                        "key": "I&C SCI H198",
+                        "doc_count": 34
+                    },
+                    {
+                        "key": "I&C SCI 290",
+                        "doc_count": 31
+                    },
+                    {
+                        "key": "I&C SCI 298",
+                        "doc_count": 31
+                    },
+                    {
+                        "key": "I&C SCI 299",
+                        "doc_count": 31
+                    },
+                    {
+                        "key": "I&C SCI 280",
+                        "doc_count": 25
+                    },
+                    {
+                        "key": "COMPSCI 190",
+                        "doc_count": 10
+                    },
+                    {
+                        "key": "I&C SCI 139W",
+                        "doc_count": 10
+                    },
+                    {
+                        "key": "EECS 299",
+                        "doc_count": 9
+                    },
+                    {
+                        "key": "I&C SCI 180",
+                        "doc_count": 9
+                    },
+                    {
+                        "key": "I&C SCI 23",
+                        "doc_count": 9
+                    },
+                    {
+                        "key": "I&C SCI 6B",
+                        "doc_count": 8
+                    },
+                    {
+                        "key": "COMPSCI 161",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "COMPSCI 175",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "EECS 199",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "EECS 297",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "I&C SCI 51",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "I&C SCI 6D",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "I&C SCI H23",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "COMPSCI 143A",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "COMPSCI 171",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "COMPSCI 178",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "EECS 159B",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "EECS 296",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "I&C SCI 161",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "I&C SCI 46",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "I&C SCI 53",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "COMPSCI 122A",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 200S",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 244",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 269S",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 271",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 273A",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 297P",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "EECS 159A",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 269",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 31",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 399",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 6A",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 6N",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "I&C SCI 80",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "IN4MATX 244",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "COMPSCI 142A",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "COMPSCI 152",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "COMPSCI 177",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "COMPSCI 260",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "I&C SCI 171",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "I&C SCI 175A",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "I&C SCI 53L",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "I&C SCI H22",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "COMPSCI 112",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 132",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 141",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 151",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 153",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 162",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 163",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 167",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 222",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 232",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 242",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 260P",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 263",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 298P",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 299P",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "EECS 248A",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 141",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 142",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 151",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 152",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 162",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 163",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 184",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 196",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 200",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 21",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 22",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 260",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 32",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 33",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI 45C",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "I&C SCI H197",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "IN4MATX 101",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "IN4MATX 299",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "IN4MATX 43",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "STATS 170A",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "STATS 170B",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "COMPSCI 111",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 121",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 122B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 122C",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 125",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 131",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 134",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 142B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 143B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 145",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 145L",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 164",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 165",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 169",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 179",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 206",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 221",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 223",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 224",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 250B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 250P",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 252",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 259S",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 261",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 261P",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 262",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 265",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 266",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 268",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 271P",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 273P",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 274A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 274B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 277",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 278",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 279S",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 284A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "COMPSCI 284B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "EECS 148",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "EECS 295",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 10",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 143",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 145A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 155B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 164",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 174",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 193",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 209",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 212",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 214",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 214A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 214B",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 215",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 219",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 241A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 249",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 251",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 261",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 262",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 268",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 270A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 277A",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 279",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 291",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 61",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 65",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "I&C SCI 8",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 102",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 141",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 199",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 225",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 290",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 295",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 298",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 41",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 42",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX 45",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "IN4MATX H198",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "STATS 199",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "STATS 298",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "STATS 299",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "BME 199",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "BME 296",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "BME 297",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "BME 299",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 103",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 113",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 114",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 115",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 116",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 117",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 118",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 122D",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 133",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 144",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 145A",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 145B",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 146",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 147",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 154",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 166",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 168",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 172",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 172B",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 172C",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 174",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "COMPSCI 180B",
+                        "doc_count": 1
+                    }
+                ]
+            }
+        },
+        "schools1": {
+            "doc_count": 66,
+            "schools.keyword_count": {
+                "value": 5
+            },
+            "schools.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "Donald Bren School of Information and Computer Sciences",
+                        "doc_count": 66
+                    },
+                    {
+                        "key": "The Henry Samueli School of Engineering",
+                        "doc_count": 10
+                    },
+                    {
+                        "key": "School of Biological Sciences",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "School of Physical Sciences",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "School of Social Sciences",
+                        "doc_count": 2
+                    }
+                ]
+            }
+        },
+        "depts2": {
+            "doc_count": 380,
+            "department.keyword_count": {
+                "value": 54
+            },
+            "department.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "Computer Science",
+                        "doc_count": 66
+                    },
+                    {
+                        "key": "Civil & Environmental Engineering",
+                        "doc_count": 38
+                    },
+                    {
+                        "key": "Informatics",
+                        "doc_count": 38
+                    },
+                    {
+                        "key": "Mechanical & Aerospace Engineering",
+                        "doc_count": 38
+                    },
+                    {
+                        "key": "Electrical Engineering & Computer Science",
+                        "doc_count": 37
+                    },
+                    {
+                        "key": "Biomedical Engineering",
+                        "doc_count": 24
+                    },
+                    {
+                        "key": "Chemical & Biomolecular Engineering",
+                        "doc_count": 18
+                    },
+                    {
+                        "key": "Materials Science and Engineering",
+                        "doc_count": 14
+                    },
+                    {
+                        "key": "Statistics",
+                        "doc_count": 14
+                    },
+                    {
+                        "key": "Chemistry",
+                        "doc_count": 7
+                    },
+                    {
+                        "key": "SOM - Radiological Sciences",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "Cognitive Science",
+                        "doc_count": 5
+                    },
+                    {
+                        "key": "Earth System Science",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "Mathematics",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "Ophthalmology Clinical",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "Pharmaceutical Sciences",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "SOM - Otolaryngology",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "Surgery - Beckman Laser",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "Education",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "SOM - Physiology & Biophysics",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "Advanced Power & Energy Program",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Arts-Studio Art",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Developmental and Cell Biology",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Economics",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Film & Media Studies",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "History",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Molecular Biology & Biochemistry",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Physics and Astronomy",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Psychological Science",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "SOM - Anatomy & Neurobiology",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "SOM - Department of Medicine",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "Arts-Music",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Center For Embedded Cyber-Physical Systems",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Donald Bren School of Information and Computer Sciences",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "English",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Environ & Occ Health Faculty",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Epidemiology & Biostats Faclty",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Executive Vice Chancellor",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Graduate Division",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Henry Samueli School of Engineering",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Language Science",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Neurobiology and Behavior",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Office of Research",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Paul Merage School of Business",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Neurology",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Neurosurgery",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Orthopaedic Surgery",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Pediatrics",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Plastic Surgery",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Surgery",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "SOM - Urology",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Social Science Graduate Office",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Sociology",
+                        "doc_count": 1
+                    },
+                    {
+                        "key": "Sue & Bill Gross School of Nursing",
+                        "doc_count": 1
+                    }
+                ]
+            }
+        }
+    }
+}

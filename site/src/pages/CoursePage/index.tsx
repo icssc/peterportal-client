@@ -35,12 +35,19 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
         fetchDataFromApi();
     }, []);
 
+    // check if course exists
     if (!courseData) {
         return <LoadingPage />;
     }
     else if (courseData.hasOwnProperty('error')) {
         return <Error message='Course Does Not Exist!' />
-    } else {
+    } 
+
+    // wait for additional details
+    if (!courseGQLData) {
+        return <LoadingPage />;
+    }
+    else {
         return (
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='course-page'>

@@ -6,10 +6,9 @@ import {
   CaretDownFill,
   ThreeDots,
 } from "react-bootstrap-icons";
-import { Droppable } from "react-beautiful-dnd";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { deleteYear } from '../../store/slices/roadmapSlice';
+import { deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -20,7 +19,7 @@ interface YearProps {
 
 const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
-  const [showContent, setShowContent] = useState(false);
+  const [showContent, setShowContent] = useState(true);
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState<any>(null!);
 
@@ -81,6 +80,18 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button variant="light" className="year-settings-btn">
                   Edit Year
                 </Button>
+                <Button 
+                  variant="light" 
+                  className="year-settings-btn"
+                  id="clear-btn"
+                  onClick={() => {
+                    dispatch(clearYear({
+                      yearIndex: yearIndex
+                    }));
+                  }}
+                >
+                  Clear
+                </Button>
                 <Button
                   variant="light"
                   className="year-settings-btn"
@@ -102,21 +113,13 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         <div className="year-accordion-content">
           {
             data.quarters.map((quarter, quarterIndex) => {
-              return <Droppable key={`year-quarter-${quarterIndex}`} droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
-                {(provided) => {
-                  return (
-                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ flex: 1 }}>
-                      <Quarter
-                        year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
-                        provided={provided}
-                        yearIndex={yearIndex}
-                        quarterIndex={quarterIndex}
-                        data={quarter}
-                      />
-                    </div>
-                  );
-                }}
-              </Droppable>
+              return <Quarter
+                key={`year-quarter-${quarterIndex}`}
+                year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
+                yearIndex={yearIndex}
+                quarterIndex={quarterIndex}
+                data={quarter}
+              />
             })
           }
         </div>

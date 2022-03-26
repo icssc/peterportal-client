@@ -2,10 +2,13 @@ import React, { FC, MouseEvent, useState, useEffect } from 'react';
 import axios from 'axios';
 import './Review.scss'
 import Badge from 'react-bootstrap/Badge';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColorRequest, VoteColor } from '../../types/types';
+import ReportForm from '../ReportForm/ReportForm';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -29,6 +32,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
     upvoteClass = "upvote";
     downvoteClass = "downvote";
   }
+  const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/reviews/vote', vote);
     return res.data.deltaScore;
@@ -44,6 +48,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       upvote: true
     }
     let deltaScore = await voteReq(votes);
+
     setScore(score + deltaScore );
     colorUpdater();
   }
@@ -61,7 +66,19 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
     setScore(score + deltaScore );
     colorUpdater();
   }
-  
+
+  const openReportForm = (e: MouseEvent) => {
+    setReportFormOpen(true);
+  }
+
+  const badgeOverlay = <Tooltip id='verified-tooltip'>
+    This review was verified by an administrator.
+  </Tooltip>
+
+  const verifiedBadge = <OverlayTrigger overlay={badgeOverlay}>
+    <Badge variant='primary'>Verified</Badge>
+  </OverlayTrigger>
+
   return (
     <div className='subreview'>
       <div>
@@ -72,6 +89,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
           {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
             {course.instructor_history[review.professorID].name}
           </Link>}
+          {(!course && !professor) && <div>
+            {review.courseID} {review.professorID}
+          </div>}
         </h3>
       </div>
       <div className='subreview-content'>
@@ -99,7 +119,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
           </div>
           <div>
             <div className='subreview-author'>
-              <p>Posted by {review.userDisplay}</p>
+              <p><span className='mr-1'>Posted by {review.userDisplay}</span>{review.verified && verifiedBadge}</p>
               <p>{new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
             <p>{review.reviewContent}</p>
@@ -118,7 +138,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
         <button className={upvoteClass} onClick={upvote}>&#9650;</button>
         <p>{score}</p>
         <button className={downvoteClass} onClick={downvote}>&#9660;</button>
-        <a href='/report'>Report</a>
+        <button type='button' className='add-report-button' onClick={openReportForm}>Report</button>
+        <ReportForm showForm={reportFormOpen} reviewID={review._id} reviewContent={review.reviewContent} closeForm={() => setReportFormOpen(false)} />
       </div>
     </div>
   )

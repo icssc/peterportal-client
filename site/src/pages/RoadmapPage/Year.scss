@@ -6,17 +6,20 @@
 }
 
 .year {
-  margin: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
   align-items: center;
   background-color: var(--ring-road-white);
-  border-radius: 10px;
+  border-radius: var(--border-radius);
+  border-collapse: separate; 
   display: inline-block;
-  width: 97%;
+  width: 100%;
 }
 
 .yearTitleBar {
   display: flex;
   justify-content: space-between;
+  border-radius: var(--border-radius);
 }
 
 .caret-icon {
@@ -24,6 +27,7 @@
 }
 .year-accordion,
 .year-accordion-content {
+  border-radius: var(--border-radius);
   background-color: var(--ring-road-white);
   display: flex;
 }
@@ -82,10 +86,31 @@
 
 .year-settings-btn {
   display: block;
+  width: 100%;
+  text-align: start;
+  border: 0px;
   background: transparent;
   padding: 0;
 }
 
+#clear-btn {
+  color: red;
+}
+
 #remove-btn {
   color: red;
+}
+@media only screen and (max-width: 400px) {
+  .year-accordion-title {
+    flex-direction: column;
+  }
+  .edit-btn {
+    margin-right: 10px;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .year-accordion-content {
+    flex-direction: column;
+  }
 }

@@ -77,6 +77,14 @@ export interface ReviewData {
     textbook: boolean;
     attendance: boolean;
     tags: string[];
+    verified: boolean;
+}
+
+export interface ReportData {
+    _id?: string;
+    reviewID: string;
+    reason: string;
+    timestamp: string;
 }
 
 export interface PassportData {

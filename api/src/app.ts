@@ -14,6 +14,7 @@ import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import serverless from 'serverless-http';
+import nocache from 'nocache';
 
 console.log('Starting server...')
 
@@ -31,33 +32,36 @@ import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
 import graphqlRouter from './controllers/graphql';
 import roadmapRouter from './controllers/roadmap';
+import reportsRouter from './controllers/reports';
 
 // instantiate app
 const app = express();
 
 // Setup mongo store for sessions
 let mongoStore = MongoDBStore(session);
-var store = new mongoStore({
-  uri: process.env.MONGO_URL,
-  databaseName: DB_NAME,
-  collection: COLLECTION_NAMES.SESSIONS
-});
-// Catch errors
-store.on('error', function (error) {
-  console.log(error);
-});
+if (process.env.MONGO_URL) {
+  var store = new mongoStore({
+    uri: process.env.MONGO_URL,
+    databaseName: DB_NAME,
+    collection: COLLECTION_NAMES.SESSIONS
+  });
+  // Catch errors
+  store.on('error', function (error) {
+    console.log(error);
+  });
 
-// Setup Passport and Sesssions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  store: store
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-require('./config/passport')
+  // Setup Passport and Sesssions
+  app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    store: store
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  require('./config/passport')
+}
 
 /**
  * Configure Express.js Middleware
@@ -92,9 +96,7 @@ app.use('/reviews', reviewsRouter);
 app.use('/users', usersRouter);
 app.use('/graphql', graphqlRouter);
 app.use('/roadmap', roadmapRouter);
-app.use('/about', (req, res) => {
-  res.render('about');
-});
+app.use('/reports', reportsRouter);
 
 app.options(`*`, (req, res) => {
   res.status(200).send()
@@ -105,9 +107,9 @@ app.get(`/test/`, (req, res) => {
 })
 
 /**
- * Routes - Catch-All
+ * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
  */
-
+app.use(nocache());
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../build/index.html'));
 });

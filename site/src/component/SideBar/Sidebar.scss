@@ -1,7 +1,8 @@
 .sidebar {
   position: fixed;
-  width: 15vw;
-  height: 100%;
+  width: 20vw;
+  height: 100vh;
+  top: 0;
   z-index: 400;
   background-color: white;
   display: flex;
@@ -68,11 +69,44 @@
   }
 }
 
-@media only screen and (max-width: 600px) {
+.sidebar.mini {
+  position: static;
+  width: 5vw;
+
+  .sidebar-links {
+    margin-top: 4vh;
+    width: 100%;
+
+    ul {
+      li {
+        margin-top: 2vh;
+
+        a {
+          display: flex;
+          flex-direction: column;
+          margin: 0;
+
+          div {
+            display: flex;
+            justify-content: center;
+          }
+
+          span {
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+.sidebar-active {
+  color: var(--peterportal-primary-color-1) !important;
+}
+
+@media only screen and (max-width: 800px) {
   .sidebar {
-    position: fixed;
     width: 100vw;
-    height: 100%;
     z-index: 400;
     background-color: white;
     display: flex;
@@ -80,8 +114,24 @@
     justify-content: space-between;
     align-items: center;
   }
-} 
+  .sidebar.mini {
+    display: none;
+  }
+}
 
-.sidebar-active {
-  color: var(--peterportal-primary-color-1) !important;
+@media only screen and (max-width: 1500px) {
+  .sidebar.mini {
+    width: 7vw;
+    .sidebar-links {
+      ul {
+        li {
+          a {
+            span {
+              font-size: smaller;
+            }
+          }
+        }
+      }
+    }
+  }
 }

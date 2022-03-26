@@ -2,19 +2,20 @@ import React, { FC, useCallback, useReducer, useEffect } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { useAppDispatch } from '../../store/hooks';
+import { DragDropContext, DropResult, DragUpdate } from 'react-beautiful-dnd';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
-import Error from '../../component/Error/Error';
+import AddCoursePopup from './AddCoursePopup';
 import { isMobile, isBrowser } from 'react-device-detect';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
+  const showSearch = useAppSelector(state => state.roadmap.showSearch);
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
-      // no destination
-      if (!result.destination) {
+      // no destination or dragging to search bar
+      if (!result.destination || result.destination.droppableId === 'search') {
         // removing from quarter
         if (result.source.droppableId != 'search') {
           let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
@@ -24,12 +25,6 @@ const RoadmapPage: FC = () => {
             courseIndex: result.source.index
           }))
         }
-        return;
-      }
-
-      // roadmap to search / search to search
-      if (result.destination.droppableId === 'search') {
-        // Don't move courses back into search area
         return;
       }
 
@@ -68,23 +63,38 @@ const RoadmapPage: FC = () => {
     }
   }, []);
 
+  const onDragUpdate = useCallback((initial: DragUpdate) => {
+    console.log(initial)
+  }, []);
+
+  // do not conditionally renderer because it would remount planner which would discard unsaved changes
+  const mobileVersion = <>
+    <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
+      <Planner />
+    </div>
+    <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
+      <SearchSidebar />
+    </div>
+  </>
+
+  const desktopVersion = <>
+    <div className='main-wrapper'>
+      <Planner />
+    </div>
+    <div className='sidebar-wrapper'>
+      <SearchSidebar />
+    </div>
+  </>
+
   return (
     <>
-      {isMobile &&
-        <Error message='This page is under construction for mobile!' />
-      }
-      {isBrowser &&
-        <div className='roadmap-page'>
-          <DragDropContext onDragEnd={onDragEnd} onDragStart={(result) => { }}>
-            <div className='main-wrapper' id='screenshot'>
-              <Planner />
-            </div>
-            <div className='sidebar-wrapper'>
-              <SearchSidebar />
-            </div>
-          </DragDropContext>
-        </div>
-      }
+      <div className='roadmap-page'>
+        <AddCoursePopup />
+        <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+          {isMobile && mobileVersion}
+          {!isMobile && desktopVersion}
+        </DragDropContext>
+      </div>
     </>
   );
 };

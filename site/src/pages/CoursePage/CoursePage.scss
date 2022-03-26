@@ -7,6 +7,7 @@
 }
 
 .course-page-section {
+    max-width: 42vw;
     background-color: #ffffff;
     border-radius: var(--border-radius);
     padding: 3rem;
@@ -17,7 +18,7 @@
     width: 3rem;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1300px) {
     .course-page {
         flex-direction: column;
     }
@@ -25,5 +26,9 @@
     .course-page-body {
         margin-left: 0;
         margin-top: 3vh;
+    }
+
+    .course-page-section {
+        max-width: none;
     }
 }

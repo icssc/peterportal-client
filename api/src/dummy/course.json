@@ -1,0 +1,1399 @@
+{
+    "took": 18,
+    "timed_out": false,
+    "_shards": {
+        "total": 5,
+        "successful": 5,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": {
+            "value": 56,
+            "relation": "eq"
+        },
+        "max_score": 48.109093,
+        "hits": [
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI145L",
+                "_score": 48.109093,
+                "_source": {
+                    "id": "COMPSCI145L",
+                    "department": "COMPSCI",
+                    "number": "145L",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Embedded Software Laboratory",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        2,
+                        2
+                    ],
+                    "description": "Laboratory section to accompany COMPSCI 145.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "iharris",
+                        "givargis"
+                    ],
+                    "prerequisite_tree": "{\"OR\":[\"CSE 145\",\"COMPSCI 145\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 145",
+                        "CSE 145"
+                    ],
+                    "prerequisite_text": "( CSE 145 OR COMPSCI 145 )",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "COMPSCI 145",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2019 Spring",
+                        "2020 Winter",
+                        "2020 Spring",
+                        "2021 Winter",
+                        "2021 Spring",
+                        "2022 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "description": [
+                        "Laboratory section to accompany <highlight>COMPSCI</highlight> 145."
+                    ],
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI114",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI114",
+                    "department": "COMPSCI",
+                    "number": "114",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Projects in Advanced 3D Computer Graphics",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Projects in advanced 3D graphics such as illumination, geometric modeling, visualization, and animation. Topics include physically based and global illumination, solid modeling, curved surfaces, multiresolution modeling, image-based rendering, basic concepts of animation, and scientific visualization.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "shz"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"CSE 161\",\"COMPSCI 112\",\"COMPSCI 161\",\"COMPSCI 164\",\"COMPSCI 165\",{\"OR\":[\"CSE 45C\",\"I&C SCI 45C\"]}]}",
+                    "prerequisite_list": [
+                        "COMPSCI 112",
+                        "CSE 161",
+                        "COMPSCI 165",
+                        "COMPSCI 161",
+                        "CSE 45C",
+                        "I&C SCI 45C",
+                        "COMPSCI 164"
+                    ],
+                    "prerequisite_text": "CSE 161 AND COMPSCI 112 AND COMPSCI 161 AND COMPSCI 164 AND COMPSCI 165 AND ( CSE 45C OR I&C SCI 45C ) AND NO REPEATS ALLOWED",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI143B",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI143B",
+                    "department": "COMPSCI",
+                    "number": "143B",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Project in Operating System Organization",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Detailed specification and design of critical components of an actual operating system including a memory manager, a process server, and a file/IO subsystem. Hardware/software tradeoffs. Emphasis on logical organization of system and communication.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "lbic",
+                        "mbdillen"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"COMPSCI 143A\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 143A"
+                    ],
+                    "prerequisite_text": " COMPSCI 143A",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2019 Fall",
+                        "2020 Winter",
+                        "2020 Fall",
+                        "2021 Winter",
+                        "2021 Fall",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI161",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI161",
+                    "department": "COMPSCI",
+                    "number": "161",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Design and Analysis of Algorithms",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Techniques for efficient algorithm design, including divide-and-conquer and dynamic programming, and time/space analysis. Fast algorithms for problems applicable to networks, computer games, and scientific computing, such as sorting, shortest paths, minimum spanning trees, network flow, and pattern matching.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "mbdillen",
+                        "eppstein",
+                        "goodrich",
+                        "dhirschb",
+                        "lueker",
+                        "aregan",
+                        "mikes"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 6B\",\"I&C SCI 6D\",{\"OR\":[\"MATH 2B\",\"AP CALCULUS BC\"]},{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 6B",
+                        "I&C SCI 6D",
+                        "CSE 46",
+                        "I&C SCI 46",
+                        "MATH 2B",
+                        "AP CALCULUS BC"
+                    ],
+                    "prerequisite_text": "I&C SCI 6B AND I&C SCI 6D AND ( MATH 2B OR AP CALCULUS BC ) AND ( CSE 46 OR I&C SCI 46 )",
+                    "prerequisite_for": [
+                        "COMPSCI 114",
+                        "COMPSCI 163",
+                        "COMPSCI 165",
+                        "COMPSCI 166",
+                        "COMPSCI 167",
+                        "COMPSCI 212",
+                        "COMPSCI 221",
+                        "COMPSCI 244",
+                        "COMPSCI 245",
+                        "COMPSCI 260",
+                        "COMPSCI 261",
+                        "COMPSCI 263",
+                        "COMPSCI 265",
+                        "COMPSCI 266",
+                        "IN4MATX 244",
+                        "STATS 170A"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Software Engineering Majors have first consideration for enrollment. Data Science Majors have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment. Computer Science Majors have first consideration for enrollment. Business Information Management, Computer Game Science, and Informatics majors have second right of consideration.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2019 Spring",
+                        "2019 Fall",
+                        "2020 Winter",
+                        "2020 Spring",
+                        "2020 Fall",
+                        "2021 Winter",
+                        "2021 Spring",
+                        "2021 Fall",
+                        "2022 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI164",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI164",
+                    "department": "COMPSCI",
+                    "number": "164",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Computational Geometry and Geometric Modeling",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Algorithms and data structures for computational geometry and geometric modeling, with applications to game and graphics programming. Topics: convex hulls, Voronoi diagrams, algorithms for triangulation, motion planning, and data structures for geometric searching and modeling of 2D and 3D objects.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "eppstein",
+                        "goodrich"
+                    ],
+                    "prerequisite_tree": "{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]}",
+                    "prerequisite_list": [
+                        "I&C SCI 46",
+                        "CSE 46"
+                    ],
+                    "prerequisite_text": " I&C SCI 46 or CSE 46. I&C SCI 46 with a grade of C or better. CSE 46 with a grade of C or better",
+                    "prerequisite_for": [
+                        "COMPSCI 114"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2020 Fall",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI178",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI178",
+                    "department": "COMPSCI",
+                    "number": "178",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Machine Learning and Data-Mining",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Introduction to principles of machine learning and data-mining applied to real-world datasets. Typical applications include spam filtering, object recognition, and credit scoring.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "sameer",
+                        "mustafai",
+                        "aihler",
+                        "mandt",
+                        "emj",
+                        "sudderth"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 6B\",\"I&C SCI 6D\",{\"OR\":[\"MATH 2B\",\"AP CALCULUS BC\"]},{\"OR\":[\"MATH 3A\",\"I&C SCI 6N\"]},{\"OR\":[\"STATS 67\",{\"AND\":[\"STATS 120A\",{\"OR\":[\"STATS 7\",\"AP STATISTICS\"]}]}]}]}",
+                    "prerequisite_list": [
+                        "STATS 120A",
+                        "I&C SCI 6B",
+                        "I&C SCI 6D",
+                        "STATS 7",
+                        "AP STATISTICS",
+                        "STATS 67",
+                        "MATH 2B",
+                        "MATH 3A",
+                        "I&C SCI 6N",
+                        "AP CALCULUS BC"
+                    ],
+                    "prerequisite_text": "I&C SCI 6B AND I&C SCI 6D AND ( MATH 2B OR AP CALCULUS BC ) AND ( MATH 3A OR I&C SCI 6N ) AND ( STATS 67 OR ( STATS 120A AND ( STATS 7 OR AP STATISTICS ) ) )",
+                    "prerequisite_for": [
+                        "COMPSCI 117",
+                        "COMPSCI 172B",
+                        "COMPSCI 175",
+                        "COMPSCI 272",
+                        "COMPSCI 274C",
+                        "COMPSCI 274D",
+                        "COMPSCI 274E",
+                        "STATS 170A"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2019 Fall",
+                        "2020 Winter",
+                        "2020 Spring",
+                        "2020 Fall",
+                        "2021 Winter",
+                        "2021 Spring",
+                        "2021 Fall",
+                        "2022 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI190",
+                "_score": 42.48083,
+                "_source": {
+                    "id": "COMPSCI190",
+                    "department": "COMPSCI",
+                    "number": "190",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Special Topics in Information and Computer Science",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Studies in selected areas of Information and Computer Science. Topics addressed vary each quarter.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "dobrian",
+                        "xhx",
+                        "dutt",
+                        "elzarki",
+                        "levorato",
+                        "ardalan",
+                        "mjcarey",
+                        "changp6",
+                        "rfutrell",
+                        "sgagomas",
+                        "ssirani",
+                        "rcjain",
+                        "anicolau",
+                        "jingz18",
+                        "hziv"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 51\",{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]},{\"OR\":[\"EECS 116\",\"COMPSCI 122A\"]}]}",
+                    "prerequisite_list": [
+                        "EECS 116",
+                        "CSE 46",
+                        "I&C SCI 46",
+                        "COMPSCI 122A",
+                        "I&C SCI 51"
+                    ],
+                    "prerequisite_text": "I&C SCI 51 AND ( CSE 46 OR I&C SCI 46 ) AND ( EECS 116 OR COMPSCI 122A )",
+                    "prerequisite_for": [],
+                    "repeatability": "Unlimited as topics vary.",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Winter",
+                        "2020 Spring",
+                        "2021 Winter",
+                        "2021 Spring",
+                        "2022 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI115",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI115",
+                    "department": "COMPSCI",
+                    "number": "115",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Computer Simulation",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Discrete event-driven simulation; continuous system simulation; basic probability as pertaining to input distributions and output analysis; stochastic and deterministic simulation; static and dynamic system simulation.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "whayes"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 51\",\"I&C SCI 6B\",\"IN4MATX 43\",{\"OR\":[\"MATH 3A\",\"I&C SCI 6N\"]},{\"OR\":[\"STATS 67\",{\"AND\":[\"STATS 120A\",{\"OR\":[\"STATS 7\",\"AP STATISTICS\"]}]}]}]}",
+                    "prerequisite_list": [
+                        "STATS 120A",
+                        "IN4MATX 43",
+                        "I&C SCI 6B",
+                        "STATS 7",
+                        "AP STATISTICS",
+                        "STATS 67",
+                        "MATH 3A",
+                        "I&C SCI 6N",
+                        "I&C SCI 51"
+                    ],
+                    "prerequisite_text": "I&C SCI 51 AND I&C SCI 6B AND IN4MATX 43 AND ( MATH 3A OR I&C SCI 6N ) AND ( STATS 67 OR ( STATS 120A AND ( STATS 7 OR AP STATISTICS ) ) ) AND NO REPEATS ALLOWED",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Fall",
+                        "2020 Fall",
+                        "2021 Fall"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI177",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI177",
+                    "department": "COMPSCI",
+                    "number": "177",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Applications of Probability in Computer Science",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Application of probability to real-world problems in computer science. Typical topics include analysis of algorithms and graphs, probabilistic language models, network traffic modeling, data compression, and reliability modeling.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "fowlkes",
+                        "aihler",
+                        "pjsmyth",
+                        "sudderth"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"STATS 67\",\"I&C SCI 6B\",\"I&C SCI 6D\",{\"OR\":[\"MATH 2B\",\"AP CALCULUS BC\"]},{\"OR\":[\"MATH 3A\",\"I&C SCI 6N\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 6B",
+                        "I&C SCI 6D",
+                        "MATH 3A",
+                        "STATS 67",
+                        "MATH 2B",
+                        "I&C SCI 6N",
+                        "AP CALCULUS BC"
+                    ],
+                    "prerequisite_text": "STATS 67 AND I&C SCI 6B AND I&C SCI 6D AND ( MATH 2B OR AP CALCULUS BC ) AND ( MATH 3A OR I&C SCI 6N ) AND NO REPEATS ALLOWED",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Fall",
+                        "2020 Fall",
+                        "2021 Fall"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI183",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI183",
+                    "department": "COMPSCI",
+                    "number": "183",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Introduction to Computational Biology",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "The use of theories and methods based on computer science, mathematics, and physics in molecular biology and biochemistry. Basics in biomolecular modeling. Analysis of sequence and structural data of biomolecules. Analysis of biomolecular functions.",
+                    "department_name": "Computer Science",
+                    "professor_history": [],
+                    "prerequisite_tree": "{\"OR\":[\"MATH 2D\",\"MATH 3A\",\"STATS 7\",\"STATS 8\"]}",
+                    "prerequisite_list": [
+                        "MATH 2D",
+                        "MATH 3A",
+                        "STATS 7",
+                        "STATS 8"
+                    ],
+                    "prerequisite_text": " MATH 2D or MATH 3A or STATS 7 or STATS 8",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "MOL BIO 223 and BME 232.",
+                    "same_as": "BME 132, BIO SCI M123.",
+                    "restriction": "",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2020 Fall",
+                        "2021 Fall"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI162",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI162",
+                    "department": "COMPSCI",
+                    "number": "162",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Formal Languages and Automata",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Formal aspects of describing and recognizing languages by grammars and automata.  Parsing regular and context-free languages. Ambiguity, nondeterminism. Elements of computability; Turning machines, random access machines, undecidable problems, NP-completeness.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "goodrich",
+                        "whayes",
+                        "mikes"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 6B\",\"I&C SCI 6D\",{\"OR\":[\"MATH 2B\",\"AP CALCULUS BC\"]},{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 6B",
+                        "I&C SCI 6D",
+                        "CSE 46",
+                        "I&C SCI 46",
+                        "MATH 2B",
+                        "AP CALCULUS BC"
+                    ],
+                    "prerequisite_text": "I&C SCI 6B AND I&C SCI 6D AND ( MATH 2B OR AP CALCULUS BC ) AND ( CSE 46 OR I&C SCI 46 )",
+                    "prerequisite_for": [
+                        "COMPSCI 262"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "LSCI 102.",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Cognitive Sciences Majors have first consideration for enrollment. Language Science Majors have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2022 Winter"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI166",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI166",
+                    "department": "COMPSCI",
+                    "number": "166",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Quantum Computation and Information",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Basic models for quantum computation and their foundations in quantum mechanics. Quantum complexity classes and quantum algorithms, including algorithms for factoring and quantum simulation. Introduction to quantum information theory and quantum entanglement.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "ssirani"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"COMPSCI 161\",{\"OR\":[\"MATH 3A\",\"I&C SCI 6N\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 6N",
+                        "MATH 3A",
+                        "COMPSCI 161"
+                    ],
+                    "prerequisite_text": " (I&C SCI 6N or MATH 3A) and COMPSCI 161",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2021 Winter",
+                        "2022 Winter"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI142B",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI142B",
+                    "department": "COMPSCI",
+                    "number": "142B",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Language Processor Construction",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Project course which provides working laboratory experience in construction and behavior of compilers and interpreters. Students build actual language processors and perform experiments which reveal their behaviors.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "franz",
+                        "klefstad"
+                    ],
+                    "prerequisite_tree": "{\"OR\":[\"CSE 142\",\"COMPSCI 142A\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 142A",
+                        "CSE 142"
+                    ],
+                    "prerequisite_text": " COMPSCI 142A or CSE 142",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI143A",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI143A",
+                    "department": "COMPSCI",
+                    "number": "143A",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Principles of Operating Systems",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Principles and concepts of process and resource management, especially as seen in operating systems. Processes, memory management, protection, scheduling, file systems, and I/O systems are covered. Concepts illustrated in the context of several well-known systems.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "ardalan",
+                        "alfaro",
+                        "lbic",
+                        "aburtsev",
+                        "mbdillen",
+                        "klefstad"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]},{\"OR\":[\"CSE 31\",\"EECS 31\",\"I&C SCI 51\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 46",
+                        "CSE 46",
+                        "I&C SCI 51",
+                        "EECS 31",
+                        "CSE 31"
+                    ],
+                    "prerequisite_text": " (I&C SCI 46 or CSE 46) and (I&C SCI 51 or EECS 31 or CSE 31)",
+                    "prerequisite_for": [
+                        "COMPSCI 122C",
+                        "COMPSCI 131",
+                        "COMPSCI 134",
+                        "COMPSCI 143B",
+                        "COMPSCI 146",
+                        "COMPSCI 205",
+                        "COMPSCI 212",
+                        "COMPSCI 222",
+                        "COMPSCI 238"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "EECS 111.",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2019 Spring",
+                        "2019 Summer2",
+                        "2019 Fall",
+                        "2020 Winter",
+                        "2020 Spring",
+                        "2020 Summer2",
+                        "2020 Fall",
+                        "2021 Winter",
+                        "2021 Spring",
+                        "2021 Summer2",
+                        "2021 Fall",
+                        "2022 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI146",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI146",
+                    "department": "COMPSCI",
+                    "number": "146",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Programming in Multitasking Operating Systems",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "User- and systems-level programming of modern Internet-connected, multi-user, multitasking operating systems. Shells, scripting, filters, pipelines, programmability, extensibility, concurrency, inter-process communication. Concrete examples of a modern operating system (such as, but not necessarily, Unix programmed in C) are used.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "whayes"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 51\",\"COMPSCI 143A\",{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]}]}",
+                    "prerequisite_list": [
+                        "CSE 46",
+                        "COMPSCI 143A",
+                        "I&C SCI 51",
+                        "I&C SCI 46"
+                    ],
+                    "prerequisite_text": "I&C SCI 51 AND COMPSCI 143A AND ( CSE 46 OR I&C SCI 46 ) AND NO REPEATS ALLOWED",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI172B",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI172B",
+                    "department": "COMPSCI",
+                    "number": "172B",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Neural Networks and Deep Learning",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Neural network and deep learning from multiple perspectives. Theory of parallel distributed processing systems, algorithmic approaches for learning from data in various manners, applications to difficult problems in AI from computer vision, to natural language understanding, to bioinformatics and chemoinformatics.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "pfbaldi"
+                    ],
+                    "prerequisite_tree": "{\"OR\":[\"MATH 121A\",\"COMPSCI 178\",\"COMPSCI 273A\",{\"AND\":[\"STATS 120A\",\"STATS 120B\"]}]}",
+                    "prerequisite_list": [
+                        "STATS 120A",
+                        "STATS 120B",
+                        "MATH 121A",
+                        "COMPSCI 178",
+                        "COMPSCI 273A"
+                    ],
+                    "prerequisite_text": " (STATS 120A and STATS 120B) or MATH 121A or COMPSCI 178 or COMPSCI 273A",
+                    "prerequisite_for": [
+                        "COMPSCI 172C",
+                        "COMPSCI 274D"
+                    ],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "COMPSCI 274C.",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Winter",
+                        "2020 Spring",
+                        "2021 Winter",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI179",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI179",
+                    "department": "COMPSCI",
+                    "number": "179",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Algorithms for Probabilistic and Deterministic Graphical Models",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Graphical model techniques dealing with probabilistic and deterministic knowledge representations. Focuses on graphical models such as constraint networks, Bayesian networks, and Markov networks that have become a central paradigm for knowledge representation and reasoning in AI and general computer science.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "dechter",
+                        "aihler"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"COMPSCI 171\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 171"
+                    ],
+                    "prerequisite_text": " COMPSCI 171",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI184C",
+                "_score": 41.085743,
+                "_source": {
+                    "id": "COMPSCI184C",
+                    "department": "COMPSCI",
+                    "number": "184C",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Computational Systems Biology",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Computational inference and modeling of gene regulation networks, signal transduction pathways, and the effects of regulatory networks in cellular processes, development, and disease. Introduction of required mathematical, computational, and data handling tools.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "emj"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"COMPSCI 184A\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 184A"
+                    ],
+                    "prerequisite_text": " COMPSCI 184A",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "COMPSCI 284C.",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2022 Spring"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI172C",
+                "_score": 38.681995,
+                "_source": {
+                    "id": "COMPSCI172C",
+                    "department": "COMPSCI",
+                    "number": "172C",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Artificial Intelligence Frontiers: Technical, Ethical, and Societal",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Explores the frontiers of artificial intelligence and related technologies with a focus on the underlying ethical, legal, and societal challenges and opportunities they create. Encourages critical thinking about these issues.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "pfbaldi"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"COMPSCI 171\",\"COMPSCI 172B\"]}",
+                    "prerequisite_list": [
+                        "COMPSCI 171",
+                        "COMPSCI 172B"
+                    ],
+                    "prerequisite_text": " COMPSCI 171 and COMPSCI 172B. Recommended: COMPSCI 178",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "COMPSCI 274D.",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2020 Spring",
+                        "2021 Winter"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            },
+            {
+                "_index": "courses",
+                "_type": "_doc",
+                "_id": "COMPSCI111",
+                "_score": 38.681995,
+                "_source": {
+                    "id": "COMPSCI111",
+                    "department": "COMPSCI",
+                    "number": "111",
+                    "school": "Donald Bren School of Information and Computer Sciences",
+                    "title": "Digital Image Processing",
+                    "course_level": "Upper Division (100-199)",
+                    "department_alias": [
+                        "CS"
+                    ],
+                    "units": [
+                        4,
+                        4
+                    ],
+                    "description": "Introduction to the fundamental concepts of digital signal and image processing as applicable in areas such as multimedia, graphics, AI, data mining, databases, vision, or video games. Topics include image representation, space- and frequency-domain transformations, filters, segmentation, and compression.",
+                    "department_name": "Computer Science",
+                    "professor_history": [
+                        "mustafai",
+                        "majumder"
+                    ],
+                    "prerequisite_tree": "{\"AND\":[\"I&C SCI 6D\",{\"OR\":[\"CSE 46\",\"I&C SCI 46\"]},{\"OR\":[\"MATH 3A\",\"I&C SCI 6N\"]}]}",
+                    "prerequisite_list": [
+                        "I&C SCI 46",
+                        "CSE 46",
+                        "I&C SCI 6D",
+                        "MATH 3A",
+                        "I&C SCI 6N"
+                    ],
+                    "prerequisite_text": " (I&C SCI 46 or CSE 46) and I&C SCI 6D and (MATH 3A or I&C SCI 6N). I&C SCI 46 with a grade of C or better. CSE 46 with a grade of C or better. I&C SCI 6D with a grade of C or better. MATH 3A with a grade of C or better. I&C SCI 6N with a grade of C or better",
+                    "prerequisite_for": [],
+                    "repeatability": "",
+                    "grading_option": "",
+                    "concurrent": "",
+                    "same_as": "",
+                    "restriction": "School of Info & Computer Sci students have first consideration for enrollment. Computer Science Engineering Majors have first consideration for enrollment.",
+                    "overlap": "",
+                    "corequisite": "",
+                    "ge_list": [],
+                    "ge_text": "",
+                    "terms": [
+                        "2019 Spring",
+                        "2020 Spring",
+                        "2021 Spring",
+                        "2021 Fall"
+                    ]
+                },
+                "highlight": {
+                    "department": [
+                        "<highlight>COMPSCI</highlight>"
+                    ]
+                }
+            }
+        ]
+    },
+    "aggregations": {
+        "school16": {
+            "doc_count": 56,
+            "school.keyword_count": {
+                "value": 1
+            },
+            "school.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "Donald Bren School of Information and Computer Sciences",
+                        "doc_count": 56
+                    }
+                ]
+            }
+        },
+        "ge-II4": {
+            "doc_count": 0
+        },
+        "ge-Ib3": {
+            "doc_count": 0
+        },
+        "ge-Ia2": {
+            "doc_count": 0
+        },
+        "depts12": {
+            "doc_count": 56,
+            "department.keyword_count": {
+                "value": 1
+            },
+            "department.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "COMPSCI",
+                        "doc_count": 56
+                    }
+                ]
+            }
+        },
+        "course-level-grad15": {
+            "doc_count": 0
+        },
+        "course-level-upper14": {
+            "doc_count": 56
+        },
+        "ge-III5": {
+            "doc_count": 0
+        },
+        "ge-VII10": {
+            "doc_count": 0
+        },
+        "ge-Vb8": {
+            "doc_count": 0
+        },
+        "ge-Va7": {
+            "doc_count": 0
+        },
+        "terms1": {
+            "doc_count": 56,
+            "terms.keyword": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": "2022 Winter",
+                        "doc_count": 27
+                    },
+                    {
+                        "key": "2022 Spring",
+                        "doc_count": 29
+                    },
+                    {
+                        "key": "2021 Winter",
+                        "doc_count": 29
+                    },
+                    {
+                        "key": "2021 Summer2",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "2021 Summer10wk",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "2021 Summer1",
+                        "doc_count": 2
+                    },
+                    {
+                        "key": "2021 Spring",
+                        "doc_count": 31
+                    },
+                    {
+                        "key": "2021 Fall",
+                        "doc_count": 24
+                    },
+                    {
+                        "key": "2020 Winter",
+                        "doc_count": 24
+                    },
+                    {
+                        "key": "2020 Summer2",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "2020 Summer10wk",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "2020 Summer1",
+                        "doc_count": 4
+                    },
+                    {
+                        "key": "2020 Spring",
+                        "doc_count": 32
+                    },
+                    {
+                        "key": "2020 Fall",
+                        "doc_count": 24
+                    },
+                    {
+                        "key": "2019 Winter",
+                        "doc_count": 23
+                    },
+                    {
+                        "key": "2019 Summer2",
+                        "doc_count": 6
+                    },
+                    {
+                        "key": "2019 Summer10wk",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "2019 Summer1",
+                        "doc_count": 3
+                    },
+                    {
+                        "key": "2019 Spring",
+                        "doc_count": 27
+                    },
+                    {
+                        "key": "2019 Fall",
+                        "doc_count": 23
+                    }
+                ]
+            },
+            "terms.keyword_count": {
+                "value": 20
+            }
+        },
+        "ge-VIII11": {
+            "doc_count": 0
+        },
+        "ge-IV6": {
+            "doc_count": 0
+        },
+        "course-level-lower13": {
+            "doc_count": 0
+        },
+        "ge-VI9": {
+            "doc_count": 0
+        }
+    }
+}

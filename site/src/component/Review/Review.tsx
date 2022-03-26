@@ -38,6 +38,11 @@ const Review: FC<ReviewProps> = (props) => {
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null);
+                data.sort((a, b) => {
+                    let aScore = a.score + (a.verified ? 10000 : 0);
+                    let bScore = b.score + (b.verified ? 10000 : 0);
+                    return bScore - aScore;
+                })
                 let reviewIDs = [];
                 for(let i = 0;i<data.length;i++){
                     reviewIDs.push(data[i]._id);
@@ -64,6 +69,8 @@ const Review: FC<ReviewProps> = (props) => {
     }
 
     useEffect(() => {
+        // prevent reviews from carrying over
+        dispatch(setReviews([]));
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
@@ -87,12 +94,7 @@ const Review: FC<ReviewProps> = (props) => {
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
-                {openForm ? (
-                    <>
-                        <div className='blur-bg' onClick={closeForm} />
-                        <ReviewForm closeForm={closeForm} {...props} />
-                    </>
-                ) : null}
+                <ReviewForm closeForm={closeForm} {...props} />
             </>
         )
     }

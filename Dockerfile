@@ -4,7 +4,7 @@ FROM node:14 AS clientBuilder
 # Install client dependencies
 WORKDIR /usr/src/app
 COPY site/package*.json ./
-RUN npm install --production=false
+RUN npm install --production=false --legacy-peer-deps
 
 # Copy client source code
 COPY ./site ./

@@ -78,7 +78,7 @@ const Planner: FC = () => {
     // if logged in
     if (cookies.hasOwnProperty('user')) {
       // get data from account
-      let request = await axios.get<MongoRoadmap>('/roadmap', { params: { email: cookies.user.email } });
+      let request = await axios.get<MongoRoadmap>('/roadmap/get', { params: { id: cookies.user.id } });
       // if a roadmap is found
       if (!request.data.hasOwnProperty('error')) {
         roadmap = request.data.roadmap;
@@ -109,7 +109,7 @@ const Planner: FC = () => {
     // if logged in
     if (cookies.hasOwnProperty('user')) {
       // save data to account
-      let mongoRoadmap: MongoRoadmap = { _id: cookies.user.email, roadmap: roadmap }
+      let mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap }
       axios.post('/roadmap', mongoRoadmap);
       savedAccount = true;
     }

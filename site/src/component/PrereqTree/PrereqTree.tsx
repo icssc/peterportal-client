@@ -97,9 +97,9 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           style={{
             display: 'inline-flex',
             flexDirection: 'row',
-            margin: 'auto',
-            width: '100%',
-            overflow: 'auto'
+            width: 'fit-content',
+            justifyContent: 'center',
+            margin: 'auto'
           }}
         >
           {/* Display dependencies */}

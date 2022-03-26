@@ -7,17 +7,6 @@ interface ProfessorGQLResponse {
     }
 }
 
-const placeholder: ProfessorGQLData = {
-    name: '',
-    shortened_name: '',
-    ucinetid: '',
-    title: '',
-    department: '',
-    schools: [],
-    related_departments: [],
-    course_history: {}
-}
-
 // given a course id, get the gql equivalent
 function useProfessorGQL(professorID: string | undefined) {
     const query = gql`
@@ -40,11 +29,11 @@ function useProfessorGQL(professorID: string | undefined) {
     }`;
     const { loading, error, data } = useQuery<ProfessorGQLResponse>(query);
     if (loading || error) {
-        return { loading, error, professor: placeholder };
+        return { loading, error, professor: null };
     }
     else {
         if (!professorID || !data?.instructor) {
-            return { loading, error, professor: placeholder };
+            return { loading, error, professor: null };
         }
         let courseHistoryLookup: CourseLookup = {};
         // maps course's id to course basic details

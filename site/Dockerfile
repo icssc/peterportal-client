@@ -3,7 +3,7 @@ FROM node:14
 # Install dependencies
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install --production=false
+RUN npm install --production=false --legacy-peer-deps
 
 # Copy source code
 COPY . ./
