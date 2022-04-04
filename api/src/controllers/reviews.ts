@@ -284,34 +284,20 @@ router.patch("/getVoteColors", async function (req, res) {
     //query of the user's email and the review id
     let ids = req.body["ids"];
     let colors = [];
-    for (let i = 0; i < ids.length; i++) {
-      let query = {
-        userID: req.session.passport.user.id,
-        reviewID: ids[i],
-      }
-      //get any existing vote in the db
-      let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
-      //result an array of either length 1 or empty
-      if (existingVote.length == 0) {
-        //if empty, both should be uncolored
-        colors.push([false, false]);
-      } else {
-        //if not empty, there is a vote, so color it accordingly
-        if (existingVote[0].score == 1) {
-          colors.push([true, false]);
-        } else {
-          colors.push([false, true]);
-        }
-      }
+
+    let q = {
+      userID: req.session.passport.user.id,
+      reviewID: { $in: ids }
     }
-    res.json(colors);
+
+    let votes = await getDocuments(COLLECTION_NAMES.VOTES, q);
+    let r: any = {};
+    for (let i = 0; i < votes.length; i++) {
+      r[votes[i].reviewID] = votes[i].score;
+    }
+    res.json(r);
   } else {
-    let ids = req.body["ids"];
-    let result = [];
-    for (let i = 0; i < ids.length; i++) {
-      result.push([false, false]);
-    }
-    res.json(result);
+    res.json({});
   }
 });
 /*
