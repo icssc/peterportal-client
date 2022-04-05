@@ -8,6 +8,7 @@ import { selectReviews, setReviews, setFormStatus } from '../../store/slices/rev
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
 import { reviewSlice } from 'src/store/slices/uiSlice';
+import { EaselFill } from 'react-bootstrap-icons';
 
 export interface ReviewProps {
     course?: CourseGQLData;
@@ -68,6 +69,22 @@ const Review: FC<ReviewProps> = (props) => {
         setVoteColors(colors);
     }
 
+    const getU = (id: string | undefined) => {
+        let temp = voteColors as Object;
+        let v = (temp[id as keyof typeof temp]) as unknown as number;
+        if(v == 1){
+            return {
+                colors: [true, false]
+            }
+        }else if(v == -1){
+            return {
+                colors: [false, true]
+            }
+        }
+        return {
+            colors: [false, false]
+        }
+    }
     useEffect(() => {
         // prevent reviews from carrying over
         dispatch(setReviews([]));
@@ -90,7 +107,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={{colors: voteColors[i]} as VoteColor} colorUpdater={updateVoteColors}/>)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
