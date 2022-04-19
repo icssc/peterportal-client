@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { PlannerData, PlannerYearData, CourseData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData, TransferData } from '../../types/types';
+import { PlannerData, PlannerYearData, CourseData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData, TransferData, PlannerQuarterData } from '../../types/types';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -42,6 +42,12 @@ interface AddYearPayload {
     yearData: PlannerYearData;
 }
 
+// Payload to pass in to add a quarter
+interface AddQuarterPayload {
+    startYear: number,
+    quarterData: PlannerQuarterData;
+}
+
 // Payload to set the trasnfer data at a specific index
 interface SetTransferPayload {
     index: number;
@@ -81,6 +87,39 @@ export const roadmapSlice = createSlice({
         },
         deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
             state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(action.payload.courseIndex, 1);
+        },
+        addQuarter: (state, action: PayloadAction<AddQuarterPayload>) => {
+            let startYear = action.payload.startYear;
+            let currentYears = state.yearPlans.map(e => e.startYear);
+            let newQuarter = action.payload.quarterData;
+
+            // if year doesn't exist
+            if (!currentYears.includes(startYear)) {
+                alert(`${startYear}-${startYear + 1} has not yet been added!`);
+                return;
+            }
+
+            let yearIndex: number = currentYears.indexOf(startYear);
+            let currentQuarters = state.yearPlans[yearIndex].quarters.map(e => e.name);
+
+            // if duplicate quarter
+            if (currentQuarters.includes(newQuarter.name)) {
+                alert(`${newQuarter.name.charAt(0).toUpperCase() + newQuarter.name.slice(1)} has already been added to Year ${yearIndex}!`);
+                return;
+            }
+
+            // check if where to put newQuarter
+            let index = currentQuarters.length;
+            if (currentQuarters) {
+                for (let i = 0; i < currentQuarters.length; i++) {
+                    if (currentQuarters[i].length > newQuarter.name.length) {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+
+            state.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
         },
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
             let currentYears = state.yearPlans.map(e => e.startYear);
@@ -146,8 +185,8 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, clearYear, addYear, deleteYear, clearPlanner, 
-    setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer, 
+export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, deleteYear, clearPlanner,
+    setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
     setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type

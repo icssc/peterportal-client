@@ -30,6 +30,15 @@
   border-radius: var(--border-radius);
   background-color: var(--ring-road-white);
   display: flex;
+  flex-wrap: wrap;
+}
+
+.empty-quarter {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 4px #2484c6;
+  flex: 1 1 30%;
+  margin: .75rem;
 }
 
 .year-accordion-title {
