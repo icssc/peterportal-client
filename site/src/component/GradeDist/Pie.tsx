@@ -129,9 +129,16 @@ export default class Pie extends React.Component<PieProps> {
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
           tooltip={(props: PieTooltipProps<Slice>) => (
-            <strong style={{ color: props.datum.color }}>
-              {props.datum.id}: {(props.datum.value / (this.total - this.totalPNP) * 100).toFixed(2)}%
-            </strong>
+            <div style={{ 
+              color: '#FFFFFF',
+              background: '#000000',
+              paddingLeft: '0.5em',
+              paddingRight: '0.5em'
+            }}>
+              <strong>
+                {props.datum.id}: {(props.datum.value / (this.total - this.totalPNP) * 100).toFixed(2)}%
+              </strong>
+            </div>
           )}
         />
         <div style={{ display: 'flex', textAlign: 'center', margin: '-235px' }}>

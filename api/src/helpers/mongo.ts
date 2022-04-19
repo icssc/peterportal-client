@@ -297,7 +297,7 @@ function deleteDocument(collectionName: string, query: GenericObject): Promise<v
  * @param query Query object
  * @returns 
  */
- function deleteDocuments(collectionName: string, query: GenericObject): Promise<void> {
+function deleteDocuments(collectionName: string, query: GenericObject): Promise<void> {
     return new Promise(async (resolve, reject) => {
         await getDB();
         getCollection(collectionName)
@@ -374,5 +374,6 @@ async function setValue(cache: string, key: string, value: any): Promise<void> {
         resolve();
     })
 }
+
 
 export { DB_NAME, COLLECTION_NAMES, getCollection, getDB, containsID, addDocument, getDocuments, updateDocument, replaceDocument, deleteDocument, deleteDocuments, setValue, getValue };
