@@ -9,6 +9,7 @@ import { Button } from 'react-bootstrap';
 
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
+import axios, { AxiosResponse } from 'axios';
 
 const SideBar: FC = ({ children }) => {
   const dispatch = useAppDispatch();
@@ -16,8 +17,19 @@ const SideBar: FC = ({ children }) => {
   const [cookies, setCookie] = useCookies(['user']);
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
+  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
 
   let isLoggedIn = cookies.hasOwnProperty('user');
+
+  interface AdminResponse {
+    admin: boolean
+  }
+
+  const checkAdmin = async () => {
+    const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
+    const admin = res.data.admin;
+    setIsAdmin(admin);
+  }
 
   useEffect(() => {
     // if the user is logged in
@@ -25,6 +37,7 @@ const SideBar: FC = ({ children }) => {
       setName(cookies.user.name);
       setPicture(cookies.user.picture);
     }
+    checkAdmin();
   })
 
   let toggleMenu = () => {
@@ -33,25 +46,51 @@ const SideBar: FC = ({ children }) => {
 
   let links = <div className='sidebar-links'>
     <ul>
-      <li><NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
-        let splitLocation = location.pathname.split('/');
-        return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
-      }}>
-        <div>
-          <Icon name='list alternate outline' size='large' />
-        </div>
-        <span>
-          Catalogue
-        </span>
-      </NavLink></li>
-      <li><NavLink to='/roadmap' activeClassName='sidebar-active'>
-        <div>
-          <Icon name='map outline' size='large' />
-        </div>
-        <span>
-          Peter's Roadmap
-        </span>
-      </NavLink></li>
+      <li>
+        <NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
+          let splitLocation = location.pathname.split('/');
+          return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
+        }}>
+          <div>
+            <Icon name='list alternate outline' size='large' />
+          </div>
+          <span>
+            Catalogue
+          </span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to='/roadmap' activeClassName='sidebar-active'>
+          <div>
+            <Icon name='map outline' size='large' />
+          </div>
+          <span>
+            Peter's Roadmap
+          </span>
+        </NavLink>
+      </li>
+      {isAdmin && <>
+      <li>
+        <NavLink to='/admin/verify' activeClassName='sidebar-active'>
+          <div>
+            <Icon name='check' size='large' />
+          </div>
+          <span>
+            Verify Reviews
+          </span>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to='/admin/reports' activeClassName='sidebar-active'>
+          <div>
+            <Icon name='exclamation triangle' size='large' />
+          </div>
+          <span>
+            View Reports
+          </span>
+        </NavLink>
+      </li> </>
+      }
     </ul>
   </div>
 
