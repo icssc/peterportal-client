@@ -42,6 +42,12 @@ interface AddYearPayload {
     yearData: PlannerYearData;
 }
 
+// Payload to padd in to edit a year
+interface EditYearPayload {
+    startYear: number;
+    index: number;
+}
+
 // Payload to pass in to add a quarter
 interface AddQuarterPayload {
     startYear: number,
@@ -141,6 +147,22 @@ export const roadmapSlice = createSlice({
 
             state.yearPlans.splice(index, 0, action.payload.yearData);
         },
+        editYear: (state, action: PayloadAction<EditYearPayload>) => {
+            let currentYears = state.yearPlans.map(e => e.startYear);
+            let newYear = action.payload.startYear;
+            let yearIndex = action.payload.index;
+
+            // if duplicate year
+            if (currentYears.includes(newYear)) {
+                alert(`${newYear}-${newYear + 1} already exists as Year ${currentYears.indexOf(newYear) + 1}!`);
+                return;
+            }
+
+            // edit year & sort years
+            state.yearPlans[yearIndex].startYear = newYear;
+            state.yearPlans.sort((a, b) => a.startYear - b.startYear);
+
+        },
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
             state.yearPlans.splice(action.payload.yearIndex, 1);
         },
@@ -185,7 +207,7 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, deleteYear, clearPlanner,
+export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, editYear, deleteYear, clearPlanner,
     setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
     setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
