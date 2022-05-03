@@ -40,11 +40,7 @@ const SideBar: FC = ({ children }) => {
     checkAdmin();
   })
 
-  const closeSidebar = () => {
-    if (showSidebar) {
-      dispatch(setSidebarStatus(false));
-    }
-  }
+  const closeSidebar = () => dispatch(setSidebarStatus(false));
 
   let links = <div className='sidebar-links'>
     <ul>
