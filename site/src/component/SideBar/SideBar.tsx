@@ -40,14 +40,12 @@ const SideBar: FC = ({ children }) => {
     checkAdmin();
   })
 
-  let toggleMenu = () => {
-    dispatch(setSidebarStatus(false));
-  }
+  const closeSidebar = () => dispatch(setSidebarStatus(false));
 
   let links = <div className='sidebar-links'>
     <ul>
       <li>
-        <NavLink to='/' activeClassName='sidebar-active' isActive={(match, location) => {
+        <NavLink to='/' activeClassName='sidebar-active' onClick={closeSidebar} isActive={(match, location) => {
           let splitLocation = location.pathname.split('/');
           return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
         }}>
@@ -60,7 +58,7 @@ const SideBar: FC = ({ children }) => {
         </NavLink>
       </li>
       <li>
-        <NavLink to='/roadmap' activeClassName='sidebar-active'>
+        <NavLink to='/roadmap' activeClassName='sidebar-active' onClick={closeSidebar}>
           <div>
             <Icon name='map outline' size='large' />
           </div>
@@ -71,7 +69,7 @@ const SideBar: FC = ({ children }) => {
       </li>
       {isAdmin && <>
       <li>
-        <NavLink to='/admin/verify' activeClassName='sidebar-active'>
+        <NavLink to='/admin/verify' activeClassName='sidebar-active' onClick={closeSidebar}>
           <div>
             <Icon name='check' size='large' />
           </div>
@@ -81,7 +79,7 @@ const SideBar: FC = ({ children }) => {
         </NavLink>
       </li>
       <li>
-        <NavLink to='/admin/reports' activeClassName='sidebar-active'>
+        <NavLink to='/admin/reports' activeClassName='sidebar-active' onClick={closeSidebar}>
           <div>
             <Icon name='exclamation triangle' size='large' />
           </div>
@@ -94,7 +92,7 @@ const SideBar: FC = ({ children }) => {
     </ul>
   </div>
 
-  
+
   if (!showSidebar) {
     return <div className='sidebar mini'>
       {links}
@@ -104,7 +102,7 @@ const SideBar: FC = ({ children }) => {
     <div className='sidebar'>
       {/* Close Button */}
       <div className='sidebar-close'>
-        <XCircle className='sidebar-close-icon' onClick={toggleMenu} />
+        <XCircle className='sidebar-close-icon' onClick={closeSidebar} />
       </div>
 
       {/* Profile Icon and Name */}
