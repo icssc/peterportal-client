@@ -8,7 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { addQuarter, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
+import { addQuarter, editYear, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -22,13 +22,19 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [showContent, setShowContent] = useState(true);
   const [show, setShow] = useState(false);
   const [showAddQuarter, setShowAddQuarter] = useState(false);
+  const [showEditYear, setShowEditYear] = useState(false);
   const [target, setTarget] = useState<any>(null!);
   const [addQuarterTarget, setAddQuarterTarget] = useState<any>(null!);
+  const [editYearTarget, setEditYearTarget] = useState<any>(null!);
+  const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
 
   const handleEditClick = (event: React.MouseEvent) => {
     if (showAddQuarter) {
       /* hide both overlays */
       setShowAddQuarter(!showAddQuarter);
+      setShow(!show);
+    } else if (showEditYear) {
+      setShowEditYear(!showEditYear);
       setShow(!show);
     } else {
       setShow(!show);
@@ -37,12 +43,20 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   };
 
   const handleShowAddQuarterClick = (event: React.MouseEvent) => {
+    setShowEditYear(false); // hide any other currently displayed menu bar options
     setShowAddQuarter(!showAddQuarter);
     setAddQuarterTarget(event.target);
   }
 
   const handleAddQuarterClick = (year: number, quarter: string) => {
     dispatch(addQuarter({ startYear: year, quarterData: { name: quarter, courses: [] } }));
+  }
+
+  const handleEditYearClick = (event: React.MouseEvent) => {
+    setShowAddQuarter(false);           // hide any other currently displayed menu bar options
+    setPlaceholderYear(data.startYear); // set default year to current year
+    setShowEditYear(!showEditYear);
+    setEditYearTarget(event.target);
   }
 
   const calculateYearStats = () => {
@@ -97,7 +111,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button onClick={handleShowAddQuarterClick} variant="light" className="year-settings-btn">
                   Add Quarter
                 </Button>
-                <Button variant="light" className="year-settings-btn">
+                <Button onClick={handleEditYearClick} variant="light" className="year-settings-btn">
                   Edit Year
                 </Button>
                 <Button
@@ -139,6 +153,48 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </Popover.Content>
           </Popover>
         </Overlay>
+        <Overlay show={showEditYear} target={editYearTarget} placement="right">
+          <Popover id={`edit-year-menu-${yearIndex}`}>
+            <Popover.Content>
+              <Form>
+                <Form.Group>
+                  <Form.Label className="edit-year-form-label">
+                    Start Year
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="year"
+                    value={placeholderYear}
+                    onChange={(e) => {
+                      setPlaceholderYear(parseInt(e.target.value));
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      // prevent submitting form (reloads the page)
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
+                    min={1000}
+                    max={9999}
+                    placeholder={placeholderYear.toString()}
+                  ></Form.Control>
+                </Form.Group>
+                <Button
+                  className="edit-year-popup-btn"
+                  onClick={() => {
+                    setShowEditYear(!showEditYear);
+                    setShow(!show);
+                    if (placeholderYear != data.startYear) {
+                      dispatch(editYear({ startYear: placeholderYear, index: yearIndex }));
+                    }
+                  }}
+                >
+                  Confirm
+                </Button>
+              </Form>
+            </Popover.Content>
+          </Popover>
+        </Overlay>
       </div>
       {showContent && (
         <div className="year-accordion-content">
@@ -155,7 +211,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           }
 
           {/* render blank, non-functional quarters to ensure there are 3 per row */}
-          { data.quarters.length > 3 && data.quarters.length < 6 && (
+          {data.quarters.length > 3 && data.quarters.length < 6 && (
             [undefined, undefined].slice(data.quarters.length - 4).map(() => {
               return <div className="empty-quarter"></div>
             })

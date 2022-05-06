@@ -11,7 +11,7 @@
   align-items: center;
   background-color: var(--ring-road-white);
   border-radius: var(--border-radius);
-  border-collapse: separate; 
+  border-collapse: separate;
   display: inline-block;
   width: 100%;
 }
@@ -25,6 +25,7 @@
 .caret-icon {
   margin-right: 10px;
 }
+
 .year-accordion,
 .year-accordion-content {
   border-radius: var(--border-radius);
@@ -102,6 +103,17 @@
   padding: 0;
 }
 
+.edit-year-form-label {
+  font-weight: bold;
+}
+
+.edit-year-popup-btn {
+  text-transform: uppercase;
+  background-color: var(--peterportal-primary-color-1);
+  color: var(--ring-road-white);
+  border-radius: 1.25rem;
+}
+
 #clear-btn {
   color: red;
 }
@@ -109,10 +121,12 @@
 #remove-btn {
   color: red;
 }
+
 @media only screen and (max-width: 400px) {
   .year-accordion-title {
     flex-direction: column;
   }
+
   .edit-btn {
     margin-right: 10px;
   }
