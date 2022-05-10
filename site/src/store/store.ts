@@ -3,13 +3,15 @@ import reviewReducer from './slices/reviewSlice';
 import uiReducer from './slices/uiSlice';
 import popupReducer from './slices/popupSlice';
 import roadmapReducer from './slices/roadmapSlice';
+import searchReducer from './slices/searchSlice';
 
 export const store = configureStore({
     reducer: {
         review: reviewReducer,
         ui: uiReducer,
         popup: popupReducer,
-        roadmap: roadmapReducer
+        roadmap: roadmapReducer,
+        search: searchReducer,
     }
 })
 

@@ -31,7 +31,7 @@ router.post('/_search', function (req, res, next) {
 });
 
 /**
- * PPAPI proxy for professor data 
+ * PPAPI proxy for course data 
  */
 router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
   let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
@@ -48,7 +48,7 @@ router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
 });
 
 /**
- * PPAPI proxy for professor data 
+ * PPAPI proxy for course data 
  */
 router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => {
   let results: GenericObject = {};

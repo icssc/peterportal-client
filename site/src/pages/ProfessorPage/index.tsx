@@ -19,7 +19,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const [profData, setProfData] = useState<ProfessorData>(null!);
 
     const fetchDataFromApi = async () => {
-        const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
+        const apiResponse = await axios.get<ProfessorData>('/professors/api', { params: { ucinetid: props.match.params.id } });
         setProfData(apiResponse.data);
     }
 

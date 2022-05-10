@@ -37,6 +37,9 @@ export interface ProfessorData {
     course_history: string[]
 }
 
+export type BatchCourseData = { [key: string]: CourseData };
+export type BatchProfessorData = { [key: string]: ProfessorData };
+
 export type GradeDistData = GradeData[];
 
 export interface GradeData {
@@ -118,7 +121,7 @@ export interface ScoreData {
     score: number;
 }
 
-export type ElasticSearchIndex = 'courses' | 'professors';
+export type SearchIndex = 'courses' | 'professors';
 export type SearchType = 'course' | 'professor';
 
 export interface WeekData {

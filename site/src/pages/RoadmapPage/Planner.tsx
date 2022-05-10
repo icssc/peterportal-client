@@ -8,7 +8,7 @@ import Year from "./Year";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
-import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, CourseData, MongoRoadmap } from '../../types/types';
+import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, BatchCourseData, MongoRoadmap } from '../../types/types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -50,11 +50,10 @@ const Planner: FC = () => {
       // get all courses in the planner
       savedPlanner.forEach(year => year.quarters.forEach(quarter => { courses = courses.concat(quarter.courses) }))
       // get the course data for all courses
-      type CourseLookup = { [key: string]: CourseData };
-      let courseLookup: CourseLookup = {};
+      let courseLookup: BatchCourseData = {};
       // only send request if there are courses
       if (courses.length > 0) {
-        let response = await axios.post<CourseLookup>('/courses/api/batch', { courses: courses });
+        let response = await axios.post<BatchCourseData>('/courses/api/batch', { courses: courses });
         courseLookup = response.data;
       }
       let planner: PlannerData = [];

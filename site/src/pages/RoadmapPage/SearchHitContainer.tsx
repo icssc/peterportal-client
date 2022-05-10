@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import CourseHitItem from './CourseHitItem'
 import { Pagination, Hits, InitialLoader, SelectedFilters, InitialViewDisplayProps } from 'searchkit'
 
-import { ElasticSearchIndex } from '../../types/types'
+import { SearchIndex } from '../../types/types'
 
 // Array of highlighted fields. Any highlight matches will be render
 // as <highlight> html element
@@ -25,7 +25,7 @@ const highlightFieldValues = {
 const InitialLoaderComponent = (props: InitialViewDisplayProps) => <div style={{ fontSize: '12pt' }}>Fetching course data...</div>;
 
 interface SearchHitContainerProps {
-    query: ElasticSearchIndex;
+    query: SearchIndex;
 }
 
 const SearchHitContainer: FC<SearchHitContainerProps> = (props) => {
