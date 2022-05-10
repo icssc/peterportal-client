@@ -33,8 +33,15 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
     let searchNames = (query: string) => {
         try {
+            /*
+                TODO: Search optimization
+                - Currently sending a query request for every input change
+                - Goal is to have only one query request pending
+                - Use setTimeout/clearTimeout to keep track of pending query request
+            */
             let nameResults = wfs(query, PAGE_SIZE * 5, index === 'courses' ? ['DEPARTMENT', 'GE_CATEGORY', 'INSTRUCTOR'] : ['DEPARTMENT', 'GE_CATEGORY', 'COURSE']);
             let names = Object.keys(nameResults);
+            // TODO: Remove when professors are supported
             if (index == 'professors') {
                 names = ['igassko']
             }
@@ -50,12 +57,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         // Get the subset of names based on the page
         let pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
         // Get results from backend search
-        /*
-            TODO: Search optimization
-            - Currently sending an API request for every change
-            - Goal is to have only one API request pending
-            - Use setTimeout/clearTimeout to keep track of pending API request
-        */
         axios.post<BatchCourseData>(`/${index}/api/batch`, { [index]: pageNames })
             .then(searchResponse => {
                 let results = Object.values(searchResponse.data);
