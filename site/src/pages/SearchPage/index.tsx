@@ -7,6 +7,8 @@ import CoursePopup from './CoursePopup'
 import ProfessorPopup from './ProfessorPopup'
 import SearchModule from '../../component/SearchModule/SearchModule';
 import SearchHitContainer from '../../component/SearchHitContainer/SearchHitContainer';
+import CourseHitItem from './CourseHitItem';
+import ProfessorHitItem from './ProfessorHitItem';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
@@ -21,7 +23,7 @@ const SearchPage: FC<SearchPageProps> = (props) => {
         <div id='content-container'>
             <div id='search-list'>
                 <SearchModule index={index} />
-                <SearchHitContainer index={index} />
+                <SearchHitContainer index={index} CourseHitItem={CourseHitItem} ProfessorHitItem={ProfessorHitItem}/>
             </div>
             <div id="search-popup">
                 {index == 'courses' && <CoursePopup />}

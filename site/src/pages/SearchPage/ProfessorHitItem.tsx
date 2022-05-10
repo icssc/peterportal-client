@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import './ProfessorHitItem.scss';
+import './HitItem.scss';
 import { useHistory } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
@@ -28,7 +28,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
 
     return (
-        <div className='professor-hit-item' onClick={onClickName}>
+        <div className='hit-item' onClick={onClickName}>
             <div style={{ marginRight: '16px', minWidth: '50px', maxWidth: '50px', height: '50px', borderRadius: '50px', background: '#74D1F6', display: 'flex', alignItems: 'center' }}>
                 <h3 style={{ width: '100%', textAlign: 'center', color: 'white' }}>
                     {props.name.split(' ').map((x: string) => x[0])}

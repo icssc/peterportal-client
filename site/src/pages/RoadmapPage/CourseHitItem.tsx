@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { get } from 'lodash';
-import { RenderComponentType, HitItemProps } from 'searchkit';
+import React, { FC } from 'react';
 import { setActiveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Course from './Course';
@@ -9,36 +7,30 @@ import { isMobile, isBrowser } from 'react-device-detect';
 
 import { CourseData } from '../../types/types';
 
-interface CourseHitItemProps extends HitItemProps {
+interface CourseHitItemProps extends CourseData {
   index: number;
-  result: {
-    _id: string;
-    _index: string;
-    _score: number;
-    _source: CourseData;
-    _type: string;
-  }
 }
 
-const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHitItemProps) => {
+const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
   // do not make course draggable on mobile
   if (isMobile) {
     return <div onMouseDown={() => {
-      dispatch(setActiveCourse(props.result._source));
+      dispatch(setActiveCourse(props));
       dispatch(setShowAddCourse(true));
       // also hide the search bar to view the roadmap
       dispatch(setShowSearch(false));
     }}
+      // use inline style here so dnd can calculate size
       style={{ margin: ' 0rem 2rem 1rem 2rem' }}>
-      <Course {...props.result._source} />
+      <Course {...props} />
     </div>
   }
-  // couse is draggable on desktop
+  // course is draggable on desktop
   else {
     return <Draggable
       key={`search-course-${props.index}`}
-      draggableId={`search-${props.result._source.id}-${props.index}`}
+      draggableId={`search-${props.id}-${props.index}`}
       index={props.index}
     >
       {(provided, snapshot) => {
@@ -48,12 +40,13 @@ const CourseHitItem: RenderComponentType<CourseHitItemProps> = (props: CourseHit
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             style={{
+              // use inline style here so dnd can calculate size
               margin: ' 0rem 2rem 1rem 2rem',
               ...provided.draggableProps.style
             }}
-            onMouseDown={() => { dispatch(setActiveCourse(props.result._source)) }}
+            onMouseDown={() => { dispatch(setActiveCourse(props)) }}
           >
-            <Course {...props.result._source} />
+            <Course {...props} />
           </div>
         );
       }}

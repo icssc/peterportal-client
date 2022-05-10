@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import './CourseHitItem.scss';
+import './HitItem.scss';
 import { useHistory } from 'react-router-dom';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge'
@@ -34,7 +34,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   }
 
   return (
-    <div className='course-hit-item' onClick={onClickName}>
+    <div className='hit-item' onClick={onClickName}>
       <div className='course-hit-id'>
         <div>
           <h3>
