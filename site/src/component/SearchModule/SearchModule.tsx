@@ -48,15 +48,16 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
                 query: query,
                 numResults: PAGE_SIZE * 5,
                 resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
-                filterOptions: {                    
+                filterOptions: {
                 }
             })
-            let names = Object.keys(nameResults);
-            // TODO: Remove when professors are supported
-            if (index == 'professors') {
-                names = ['igassko']
+            let names: string[] = [];
+            if (index == 'courses') {
+                names = Object.keys(nameResults);
             }
-            console.log('From frontend search', names);
+            else if (index == 'professors') {
+                names = Object.keys(nameResults).map(n => nameResults[n].metadata.ucinetid) as string[];
+            }
             dispatch(setNames({ index, names }));
         }
         catch (e) {
