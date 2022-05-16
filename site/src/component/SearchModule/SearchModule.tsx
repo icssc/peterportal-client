@@ -23,6 +23,11 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     const courseSearch = useAppSelector(state => state.search.courses);
     const professorSearch = useAppSelector(state => state.search.professors);
 
+    // Search empty string to load some results
+    useEffect(() => {
+        searchNames('');
+    }, [])
+
     // Refresh search results when names and page number changes
     useEffect(() => {
         searchResults('courses', courseSearch.pageNumber, courseSearch.names);
@@ -39,7 +44,13 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
                 - Goal is to have only one query request pending
                 - Use setTimeout/clearTimeout to keep track of pending query request
             */
-            let nameResults = wfs(query, PAGE_SIZE * 5, index === 'courses' ? ['DEPARTMENT', 'GE_CATEGORY', 'INSTRUCTOR'] : ['DEPARTMENT', 'GE_CATEGORY', 'COURSE']);
+            let nameResults = wfs({
+                query: query,
+                numResults: PAGE_SIZE * 5,
+                resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
+                filterOptions: {                    
+                }
+            })
             let names = Object.keys(nameResults);
             // TODO: Remove when professors are supported
             if (index == 'professors') {
