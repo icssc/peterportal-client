@@ -142,7 +142,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </Popover.Content>
           </Popover>
         </Overlay>
-        <Overlay show={showAddQuarter} target={addQuarterTarget} placement="right">
+        <Overlay show={showAddQuarter} target={addQuarterTarget} placement="left">
           <Popover id={`add-quarter-menu-${yearIndex}`}>
             <Popover.Content>
               <div>
@@ -153,7 +153,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </Popover.Content>
           </Popover>
         </Overlay>
-        <Overlay show={showEditYear} target={editYearTarget} placement="right">
+        <Overlay show={showEditYear} target={editYearTarget} placement="left">
           <Popover id={`edit-year-menu-${yearIndex}`}>
             <Popover.Content>
               <Form>
