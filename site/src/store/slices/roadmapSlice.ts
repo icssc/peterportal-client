@@ -118,7 +118,9 @@ export const roadmapSlice = createSlice({
             let index = currentQuarters.length;
             if (currentQuarters) {
                 for (let i = 0; i < currentQuarters.length; i++) {
-                    if (currentQuarters[i].length > newQuarter.name.length) {
+                    if (currentQuarters[i].length > newQuarter.name.length ||
+                        currentQuarters[i].length == newQuarter.name.length && newQuarter.name === "winter") {
+                        // only scenario where name length can't distinguish ordering is spring vs winter
                         index = i;
                         break;
                     }
@@ -126,6 +128,12 @@ export const roadmapSlice = createSlice({
             }
 
             state.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
+        },
+        deleteQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
+            state.yearPlans[action.payload.yearIndex].quarters.splice(action.payload.quarterIndex, 1);
+        },
+        clearQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
+            state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses = [];
         },
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
             let currentYears = state.yearPlans.map(e => e.startYear);
@@ -207,7 +215,7 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, addQuarter, clearYear, addYear, editYear, deleteYear, clearPlanner,
+export const { moveCourse, deleteCourse, addQuarter, deleteQuarter, clearQuarter, clearYear, addYear, editYear, deleteYear, clearPlanner,
     setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
     setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
