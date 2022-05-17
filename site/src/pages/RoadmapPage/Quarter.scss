@@ -6,11 +6,24 @@
   height: fit-content;
   margin: .75rem;
 
-  .quarter-title {
-    color: #202e47;
-    font-weight: bold;
-    font-size: 20px;
-    padding: 1rem 0rem 0rem 2rem;
+  .quarter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .quarter-title {
+      color: #202e47;
+      font-weight: bold;
+      font-size: 20px;
+      padding: 1rem 0rem 0rem 2rem;
+    }
+
+    .edit-btn {
+      background-color: var(--ring-road-white);
+      width: 5%;
+      margin-top: 10px;
+      margin-right: 1.5rem;
+    }
   }
 
   .quarter-units {
@@ -18,4 +31,17 @@
     color: #808080;
     font-size: 16px;
   }
+}
+
+.quarter-menu-btn {
+  display: block;
+  width: 100%;
+  text-align: start;
+  border: 0px;
+  background: transparent;
+  padding: 0;
+}
+
+.red-menu-btn {
+  color: red;
 }

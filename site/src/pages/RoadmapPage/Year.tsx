@@ -108,7 +108,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           <Popover id={`year-menu-${yearIndex}`}>
             <Popover.Content className="year-settings-popup">
               <div>
-                <Button onClick={handleShowAddQuarterClick} variant="light" className="year-settings-btn">
+                <Button disabled={!(data.quarters && data.quarters.length < 6)} onClick={handleShowAddQuarterClick} variant="light" className="year-settings-btn">
                   Add Quarter
                 </Button>
                 <Button onClick={handleEditYearClick} variant="light" className="year-settings-btn">
@@ -142,13 +142,16 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </Popover.Content>
           </Popover>
         </Overlay>
-        <Overlay show={showAddQuarter} target={addQuarterTarget} placement="left">
+        <Overlay show={showAddQuarter && data.quarters && data.quarters.length < 6} target={addQuarterTarget} placement="left">
           <Popover id={`add-quarter-menu-${yearIndex}`}>
             <Popover.Content>
               <div>
-                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer I")} onClick={() => handleAddQuarterClick(data.startYear, "summer I")} variant="light" className="year-settings-btn">Summer I</Button>
-                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer II")} onClick={() => handleAddQuarterClick(data.startYear, "summer II")} variant="light" className="year-settings-btn">Summer II</Button>
-                <Button disabled={data.quarters.map(quarter => quarter.name).includes("summer 10 Week")} onClick={() => handleAddQuarterClick(data.startYear, "summer 10 Week")} variant="light" className="year-settings-btn">Summer 10 Week</Button>
+                {!data.quarters.map(quarter => quarter.name).includes("fall") && <Button onClick={() => handleAddQuarterClick(data.startYear, "fall")} variant="light" className="year-settings-btn">Fall</Button>}
+                {!data.quarters.map(quarter => quarter.name).includes("winter") && <Button onClick={() => handleAddQuarterClick(data.startYear, "winter")} variant="light" className="year-settings-btn">Winter</Button>}
+                {!data.quarters.map(quarter => quarter.name).includes("spring") && <Button onClick={() => handleAddQuarterClick(data.startYear, "spring")} variant="light" className="year-settings-btn">Spring</Button>}
+                {!data.quarters.map(quarter => quarter.name).includes("summer I") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer I")} variant="light" className="year-settings-btn">Summer I</Button>}
+                {!data.quarters.map(quarter => quarter.name).includes("summer II") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer II")} variant="light" className="year-settings-btn">Summer II</Button>}
+                {!data.quarters.map(quarter => quarter.name).includes("summer 10 Week") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer 10 Week")} variant="light" className="year-settings-btn">Summer 10 Week</Button>}
               </div>
             </Popover.Content>
           </Popover>
