@@ -5,9 +5,9 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 import { isMobile } from 'react-device-detect';
 
-import { ProfessorData } from '../../types/types';
+import { ProfessorGQLData } from '../../types/types';
 
-interface ProfessorHitItemProps extends ProfessorData {
+interface ProfessorHitItemProps extends ProfessorGQLData {
 }
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
@@ -16,14 +16,13 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     const activeProfessor = useAppSelector(state => state.popup.professor);
 
     const onClickName = () => {
+        // set the professor popup
+        dispatch(setProfessor(props))
+
         // if click on a professor that is already in popup
         // or if on mobile
         if (activeProfessor && props.ucinetid == activeProfessor.ucinetid || isMobile) {
             history.push(`/professor/${props.ucinetid}`)
-        }
-        // click on new or different professor than popup
-        else {
-            dispatch(setProfessor(props))
         }
     }
 
@@ -43,10 +42,10 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
                     {props.title}
                 </h4>
 
-                {props.course_history.length > 0 &&
+                {Object.keys(props.course_history).length > 0 &&
                     <p><b>Recently taught:&nbsp;</b>
-                        {props.course_history.map((item: string, index: number) => {
-                            return <span>
+                        {Object.keys(props.course_history).map((item: string, index: number) => {
+                            return <span key={`professor-hit-item-course-${index}`}>
                                 {(index ? ', ' : '')}
                                 <a style={{ color: 'black' }} href={'/course/' + item.replace(/\s+/g, '')}>
                                     {item}

@@ -5,9 +5,9 @@ import Course from './Course';
 import { Draggable } from "react-beautiful-dnd";
 import { isMobile, isBrowser } from 'react-device-detect';
 
-import { CourseData } from '../../types/types';
+import { CourseGQLData } from '../../types/types';
 
-interface CourseHitItemProps extends CourseData {
+interface CourseHitItemProps extends CourseGQLData {
   index: number;
 }
 

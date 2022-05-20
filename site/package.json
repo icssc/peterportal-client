@@ -40,7 +40,6 @@
     "react-transition-group": "^4.4.1",
     "react-twemoji": "^0.3.0",
     "redux": "^4.1.1",
-    "searchkit": "^2.4.4",
     "semantic-ui-react": "^1.2.1",
     "treeviz-react": "^0.4.0",
     "typescript": "^4.3.5",

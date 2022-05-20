@@ -9,8 +9,8 @@ import { Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setNames, setResults } from '../../store/slices/searchSlice';
-
-import { SearchIndex, BatchCourseData } from '../../types/types';
+import { searchAPIResults } from '../../helpers/util';
+import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
 
 const PAGE_SIZE = 10;
 
@@ -58,6 +58,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             else if (index == 'professors') {
                 names = Object.keys(nameResults).map(n => nameResults[n].metadata.ucinetid) as string[];
             }
+            console.log('From frontend search', names)
             dispatch(setNames({ index, names }));
         }
         catch (e) {
@@ -68,13 +69,8 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     let searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
         // Get the subset of names based on the page
         let pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
-        // Get results from backend search
-        axios.post<BatchCourseData>(`/${index}/api/batch`, { [index]: pageNames })
-            .then(searchResponse => {
-                let results = Object.values(searchResponse.data);
-                console.log('From backend search', results);
-                dispatch(setResults({ index, results }));
-            })
+        let results = await searchAPIResults(index, pageNames);
+        dispatch(setResults({ index, results: Object.values(results) }));
     }
 
     let coursePlaceholder = 'Search a course number or department';

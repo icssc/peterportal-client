@@ -3,12 +3,12 @@ import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
 
-import { SearchIndex, CourseData, ProfessorData } from '../../types/types';
+import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 interface SearchHitContainerProps {
     index: SearchIndex;
-    CourseHitItem: FC<CourseData & { index: number }>;
-    ProfessorHitItem?: FC<ProfessorData & { index: number }>;
+    CourseHitItem: FC<CourseGQLData & { index: number }>;
+    ProfessorHitItem?: FC<ProfessorGQLData & { index: number }>;
 }
 
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
@@ -24,7 +24,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
             index == 'courses' && <>
                 {
                     courseResults.map((course, i) => {
-                        return <CourseHitItem key={`course-hit-item-${i}`} index={i} {...(course as CourseData)} />
+                        return <CourseHitItem key={`course-hit-item-${i}`} index={i} {...(course as CourseGQLData)} />
                     })
                 }
             </>
@@ -33,7 +33,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
             (index == 'professors' && ProfessorHitItem) && <>
                 {
                     professorResults.map((professor, i) => {
-                        return <ProfessorHitItem key={`professor-hit-item-${i}`} index={i} {...(professor as ProfessorData)} />
+                        return <ProfessorHitItem key={`professor-hit-item-${i}`} index={i} {...(professor as ProfessorGQLData)} />
                     })
                 }
             </>

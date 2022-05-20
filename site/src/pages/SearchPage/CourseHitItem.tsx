@@ -7,10 +7,10 @@ import { isMobile } from 'react-device-detect';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { CourseData } from '../../types/types';
+import { CourseGQLData } from '../../types/types';
 import { getCourseTags } from '../../helpers/util';
 
-interface CourseHitItemProps extends CourseData {
+interface CourseHitItemProps extends CourseGQLData {
 }
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
@@ -22,14 +22,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   let pillData = getCourseTags(props);
 
   const onClickName = () => {
+    // set the popup course
+    dispatch(setCourse(props))
+    
     // if click on a course that is already in popup
     // or if on mobile
     if (activeCourse && props.id == activeCourse.id || isMobile) {
       history.push(`/course/${props.id}`)
-    }
-    // click on new or different course than popup
-    else {
-      dispatch(setCourse(props))
     }
   }
 

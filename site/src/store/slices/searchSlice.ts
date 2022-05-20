@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { CourseData, ProfessorData, SearchIndex } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
 
 interface SearchData {
     names: string[];
     pageNumber: number;
-    results: CourseData[] | ProfessorData[];
+    results: CourseGQLData[] | ProfessorGQLData[];
 }
 
 // Define a type for the slice state

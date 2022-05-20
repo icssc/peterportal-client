@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { PlannerData, PlannerYearData, CourseData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData, TransferData, PlannerQuarterData } from '../../types/types';
+import { PlannerData, PlannerYearData, CourseGQLData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData, TransferData, PlannerQuarterData } from '../../types/types';
 
 // Define a type for the slice state
 interface RoadmapState {
     // Store planner data
     yearPlans: PlannerData;
     // Store the course data of the active dragging item
-    activeCourse: CourseData;
+    activeCourse: CourseGQLData;
     // Store the location of invalid courses (do not meet prerequisites)
     invalidCourses: InvalidCourseData[];
     // Whether or not to show the transfer modal
@@ -74,7 +74,7 @@ export const roadmapSlice = createSlice({
             let fromQuarter = action.payload.from.quarterIndex;
             let fromCourse = action.payload.from.courseIndex;
 
-            let removed: CourseData = null!;
+            let removed: CourseGQLData = null!;
             // not from the searchbar
             if (fromYear != -1) {
                 // remove course from list
@@ -174,7 +174,7 @@ export const roadmapSlice = createSlice({
         clearPlanner: (state) => {
             state.yearPlans = [];
         },
-        setActiveCourse: (state, action: PayloadAction<CourseData>) => {
+        setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
             state.activeCourse = action.payload;
         },
         setYearPlans: (state, action: PayloadAction<PlannerData>) => {

@@ -19,16 +19,24 @@ const CoursePopup: FC = () => {
                 }
             })
                 .then(res => {
+                    let scores: ScoreData[] = [];
+                    // set of ucinetid professors with scores
                     let scoredProfessors = new Set(res.data.map(v => v.name));
-                    course.professor_history.forEach(professor => {
-                        // add unknown score
-                        if (!scoredProfessors.has(professor)) {
-                            res.data.push({ name: professor, score: -1 })
+                    // add known scores
+                    res.data.forEach(entry => {
+                        if (course.instructor_history[entry.name]) {
+                            scores.push({ name: course.instructor_history[entry.name].shortened_name, score: entry.score, key: entry.name })
+                        }
+                    })
+                    // add unknown score
+                    Object.keys(course.instructor_history).forEach(ucinetid => {
+                        if (!scoredProfessors.has(ucinetid)) {
+                            scores.push({ name: course.instructor_history[ucinetid].shortened_name, score: -1, key: ucinetid })
                         }
                     })
                     // sort by highest score
-                    res.data.sort((a, b) => b.score - a.score);
-                    setScores(res.data);
+                    scores.sort((a, b) => b.score - a.score);
+                    setScores(scores);
                 });
         }
     }, [course])

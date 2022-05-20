@@ -2,10 +2,11 @@
  @module ProfessorsRoute
 */
 
-import express, { Request }  from 'express';
+import express, { Request } from 'express';
 import fetch from 'node-fetch';
 import { GenericObject } from '../types/types';
 import professorDummy from '../dummy/professor.json';
+import { getProfessorQuery } from '../helpers/gql';
 
 var router = express.Router();
 
@@ -46,31 +47,23 @@ router.get('/api', function (req: Request<{}, {}, {}, { ucinetid: string }>, res
 /**
  * PPAPI proxy for professor data 
  */
- router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) => {
-  let results: GenericObject = {};
-  let count = 0;
+router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) => {
   if (req.body.professors.length == 0) {
     res.json({});
   }
   else {
-    req.body.professors.forEach(professor => {
-      let r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + encodeURIComponent(professor), {
-        headers: {
-          'x-api-key': process.env.PPAPI_KEY,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
+    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: getProfessorQuery(req.body.professors)
+      })
+    });
 
-      r.then((response) => response.json())
-        .then((data) => {
-          results[professor] = data;
-          count += 1;
-          if (count == req.body.professors.length) {
-            res.json(results);
-          }
-        })
-    })
+    r.then((response) => response.json())
+      .then((data) => res.json(data.data))
   }
 });
 
