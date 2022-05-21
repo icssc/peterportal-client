@@ -13,6 +13,7 @@ import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
 
 const PAGE_SIZE = 10;
+const SEARCH_TIMEOUT_MS = 1000;
 
 interface SearchModuleProps {
     index: SearchIndex;
@@ -22,6 +23,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     const dispatch = useAppDispatch();
     const courseSearch = useAppSelector(state => state.search.courses);
     const professorSearch = useAppSelector(state => state.search.professors);
+    const [ pendingRequest, setPendingRequest ] = useState<NodeJS.Timeout | null>(null);
 
     // Search empty string to load some results
     useEffect(() => {
@@ -73,6 +75,17 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         dispatch(setResults({ index, results: Object.values(results) }));
     }
 
+    let searchNamesAfterTimeout = (query: string) => {
+        if (pendingRequest) {
+            clearTimeout(pendingRequest);
+        }
+        let timeout = setTimeout(() => {
+            searchNames(query);
+            setPendingRequest(null);
+        }, SEARCH_TIMEOUT_MS);
+        setPendingRequest(timeout);
+    }
+
     let coursePlaceholder = 'Search a course number or department';
     let professorPlaceholder = 'Search a professor';
     let placeholder = index == 'courses' ? coursePlaceholder : professorPlaceholder;
@@ -85,7 +98,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
                         <Search />
                     </InputGroup.Text>
                 </InputGroup.Prepend>
-                <Form.Control className='search-bar' type="text" placeholder={placeholder} onChange={(e) => searchNames(e.target.value)} />
+                <Form.Control className='search-bar' type="text" placeholder={placeholder} onChange={(e) => searchNamesAfterTimeout(e.target.value)} />
             </InputGroup>
         </Form.Group>
     </div>
