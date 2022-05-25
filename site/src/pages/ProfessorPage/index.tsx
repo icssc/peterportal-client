@@ -10,32 +10,38 @@ import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
-import { useProfessorGQL } from '../../hooks/professorData';
 
-import { ProfessorData, CourseData, ReviewData } from '../../types/types';
+import { setProfessor } from '../../store/slices/popupSlice';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { ProfessorGQLData } from '../../types/types';
+import { searchAPIResult } from '../../helpers/util';
 
 const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
-    const { loading, error, professor: professorGQLData } = useProfessorGQL(props.match.params.id);
-    const [profData, setProfData] = useState<ProfessorData>(null!);
-
-    const fetchDataFromApi = async () => {
-        const apiResponse = await axios.get<ProfessorData>('/professors/api/' + props.match.params.id);
-        setProfData(apiResponse.data);
-    }
+    const dispatch = useAppDispatch();
+    const professorGQLData = useAppSelector(state => state.popup.professor);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        fetchDataFromApi();
-    }, []);
+        // make a gql query if directly landed on this page
+        if (professorGQLData == null || professorGQLData.ucinetid != props.match.params.id) {
+            searchAPIResult('professor', props.match.params.id)
+                .then(professor => {
+                    if (professor) {
+                        dispatch(setProfessor(professor as ProfessorGQLData))
+                    }
+                    else {
+                        setError(`Professor ${props.match.params.id} does not exist!`);
+                    }
+                })
+        }
+    }, [])
 
-    // check if professor exists
-    if (!profData) {
-        return <LoadingPage />;
+    // if professor does not exists
+    if (error) {
+        return <Error message={error} />
     }
-    else if (profData.hasOwnProperty('error')) {
-        return <Error message='Professor Does Not Exist!' />
-    }
-    // wait for additional details
-    if (!professorGQLData) {
+    // loading results
+    else if (!professorGQLData) {
         return <LoadingPage />;
     }
     else {
@@ -43,9 +49,9 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='professor-page'>
                     <div>
-                        <SideInfo searchType='professor' name={profData.name}
-                            title={profData.title} school={profData.schools[0]} description={profData.department}
-                            tags={[profData.ucinetid, profData.shortened_name]} professor={professorGQLData} />
+                        <SideInfo searchType='professor' name={professorGQLData.name}
+                            title={professorGQLData.title} school={professorGQLData.schools[0]} description={professorGQLData.department}
+                            tags={[professorGQLData.ucinetid, professorGQLData.shortened_name]} professor={professorGQLData} />
                     </div>
                     <article className='professor-page-body'>
                         <div className='professor-page-section'>
@@ -61,7 +67,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>📊 Grade Distribution</h2>
                             </div>
                             <Divider />
-                            <GradeDist professor={profData} />
+                            <GradeDist professor={professorGQLData} />
                         </div>
 
                         <div className='professor-page-section'>

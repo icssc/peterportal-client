@@ -6,7 +6,7 @@ import Carousel from "react-multi-carousel";
 
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
-import { CourseData, ProfessorData, SearchType, ScoreData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
 
 interface InfoData {
     title: string;
@@ -20,8 +20,8 @@ interface SearchPopupProps {
     title: string;
     infos: InfoData[];
     scores: ScoreData[];
-    course?: CourseData;
-    professor?: ProfessorData;
+    course?: CourseGQLData;
+    professor?: ProfessorGQLData;
 }
 
 const SearchPopup: FC<SearchPopupProps> = (props) => {
@@ -114,7 +114,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                                 <span className='search-popup-carousel-score'>{score.score == -1 ? '?' : score.score}</span>
                                 <span className='search-popup-carousel-max-score'>/ 5.0</span>
                             </div>
-                            <a href={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.name}`}>{score.name}</a>
+                            <a href={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.key}`}>{score.name}</a>
                         </div>
                         )}
                     </Carousel>

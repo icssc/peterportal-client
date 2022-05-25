@@ -6,6 +6,7 @@ import express, { Request } from 'express';
 import fetch from 'node-fetch';
 import { GenericObject } from '../types/types';
 import courseDummy from '../dummy/course.json';
+import {getCourseQuery} from '../helpers/gql';
 var router = express.Router();
 
 /**
@@ -31,7 +32,7 @@ router.post('/_search', function (req, res, next) {
 });
 
 /**
- * PPAPI proxy for professor data 
+ * PPAPI proxy for course data 
  */
 router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
   let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
@@ -48,33 +49,25 @@ router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
 });
 
 /**
- * PPAPI proxy for professor data 
+ * PPAPI proxy for course data 
  */
 router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => {
-  let results: GenericObject = {};
-  let count = 0;
   if (req.body.courses.length == 0) {
     res.json({});
   }
   else {
-    req.body.courses.forEach(course => {
-      let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(course), {
-        headers: {
-          'x-api-key': process.env.PPAPI_KEY,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
+    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: getCourseQuery(req.body.courses)
+      })
+    });
 
-      r.then((response) => response.json())
-        .then((data) => {
-          results[course] = data;
-          count += 1;
-          if (count == req.body.courses.length) {
-            res.json(results);
-          }
-        })
-    })
+    r.then((response) => response.json())
+      .then((data) => res.json(data.data))
   }
 });
 

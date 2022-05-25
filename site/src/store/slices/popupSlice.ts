@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import { CourseData, ProfessorData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 // Define a type for the slice state
 interface PopupState {
-    course: CourseData;
-    professor: ProfessorData;
+    course: CourseGQLData;
+    professor: ProfessorGQLData;
 }
 
 // Define the initial state using that type
@@ -20,10 +20,10 @@ export const reviewSlice = createSlice({
     initialState,
     reducers: {
         // Use the PayloadAction type to declare the contents of `action.payload`
-        setCourse: (state, action: PayloadAction<CourseData>) => {
+        setCourse: (state, action: PayloadAction<CourseGQLData>) => {
             state.course = action.payload;
         },
-        setProfessor: (state, action: PayloadAction<ProfessorData>) => {
+        setProfessor: (state, action: PayloadAction<ProfessorGQLData>) => {
             state.professor = action.payload;
         }
     },

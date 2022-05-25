@@ -5,9 +5,9 @@ import { InfoCircle, ExclamationTriangle, Trash } from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
-import { CourseData } from '../../types/types';
+import { CourseGQLData } from '../../types/types';
 
-interface CourseProps extends CourseData {
+interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
   onDelete?: () => void;
 }

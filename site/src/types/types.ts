@@ -37,6 +37,9 @@ export interface ProfessorData {
     course_history: string[]
 }
 
+export type BatchCourseData = { [key: string]: CourseGQLData };
+export type BatchProfessorData = { [key: string]: ProfessorGQLData };
+
 export type GradeDistData = GradeData[];
 
 export interface GradeData {
@@ -116,9 +119,10 @@ export interface VoteColorsRequest {
 export interface ScoreData {
     name: string;
     score: number;
+    key?: string;
 }
 
-export type ElasticSearchIndex = 'courses' | 'professors';
+export type SearchIndex = 'courses' | 'professors';
 export type SearchType = 'course' | 'professor';
 
 export interface WeekData {
@@ -159,7 +163,7 @@ export interface PlannerYearData {
 
 export interface PlannerQuarterData {
     name: string;
-    courses: CourseData[];
+    courses: CourseGQLData[];
 }
 
 export type SavedPlannerData = SavedPlannerYearData[];
@@ -220,6 +224,7 @@ export interface VoteColor {
 /**
  * GraphQL Definitions
  */
+// Format we deal with
 export interface CourseGQLData {
     id: string;
     department: string;
@@ -256,6 +261,17 @@ export interface ProfessorGQLData {
     schools: string[];
     related_departments: string[];
     course_history: CourseLookup;
+}
+
+// PPAPI format
+export type CourseGQLResponse = Omit<CourseGQLData, 'instructor_history' | 'prerequisite_list' | 'prerequisite_for'> & {
+    instructor_history: SubProfessor[];
+    prerequisite_list: SubCourse[];
+    prerequisite_for: SubCourse[];
+}
+
+export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'course_history'> & {
+    course_history: SubCourse[];
 }
 
 // maps ucinetid to subprofessor

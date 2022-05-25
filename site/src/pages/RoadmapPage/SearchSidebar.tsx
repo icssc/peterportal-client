@@ -1,15 +1,15 @@
-import React from "react";
+import React, { FC } from "react";
 import "./SearchSidebar.scss";
-import { PlusCircle } from "react-bootstrap-icons";
 import { Droppable } from "react-beautiful-dnd";
-import CloseButton from 'react-bootstrap/CloseButton';
 import { isMobile, isBrowser } from 'react-device-detect';
+
+import CloseButton from 'react-bootstrap/CloseButton';
+import SearchModule from '../../component/SearchModule/SearchModule';
+import SearchHitContainer from '../../component/SearchHitContainer/SearchHitContainer';
+import CourseHitItem from "./CourseHitItem";
+
 import { useAppDispatch } from '../../store/hooks';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
-
-import SearchModule from './SearchModule'
-import SearchHitContainer from './SearchHitContainer'
-import { SearchkitComponent, SearchkitManager, SearchkitProvider, SearchkitComponentProps } from 'searchkit';
 
 const SearchSidebar = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +25,12 @@ const SearchSidebar = () => {
                 style={{ height: "100%" }}
                 {...provided.droppableProps}
               >
-                <Search />
+                <div className='search-sidebar-content'>
+                  <div className='search-sidebar-search-module'>
+                    <SearchModule index='courses' />
+                  </div>
+                  <SearchHitContainer index='courses' CourseHitItem={CourseHitItem} />
+                </div>
                 {provided.placeholder}
               </div>
             );
@@ -35,27 +40,6 @@ const SearchSidebar = () => {
     </div>
   );
 };
-
-class Search extends SearchkitComponent<SearchkitComponentProps, {}> {
-  render() {
-    // 'this.props.match.params.index' is used to determine which index to 
-    // query via url location - i.e: (professor || courses)
-    let searchkit = new SearchkitManager('/courses');
-
-    return (
-      <SearchkitProvider searchkit={searchkit}>
-        <>
-          <div style={{ display: 'flex', height: '100%', justifyContent: 'center' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-              <SearchModule query={'courses'} />
-              <SearchHitContainer query={'courses'} />
-            </div>
-          </div>
-        </>
-      </SearchkitProvider>
-    );
-  }
-}
 
 
 export default SearchSidebar;

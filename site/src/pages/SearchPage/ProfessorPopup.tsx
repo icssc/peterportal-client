@@ -20,12 +20,13 @@ const ProfessorPopup: FC = () => {
             axios.get<ScoreData[]>('/reviews/scores', { params: reviewParams })
                 .then(res => {
                     let scoredCourses = new Set(res.data.map(v => v.name));
-                    professor.course_history.forEach(course => {
+                    res.data.forEach(v => v.key = v.name)
+                    Object.keys(professor.course_history).forEach(course => {
                         // remove spaces
                         course = course.replace(/\s+/g, '');
                         // add unknown score
                         if (!scoredCourses.has(course)) {
-                            res.data.push({ name: course, score: -1 })
+                            res.data.push({ name: course, score: -1, key: course })
                         }
                     })
                     // sort by highest score

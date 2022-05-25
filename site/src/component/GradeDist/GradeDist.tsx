@@ -5,11 +5,11 @@ import Pie from './Pie';
 import './GradeDist.scss'
 import axios from 'axios'
 
-import { CourseData, ProfessorData, GradeDistData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GradeDistData } from '../../types/types';
 
 interface GradeDistProps {
-  course?: CourseData;
-  professor?: ProfessorData;
+  course?: CourseGQLData;
+  professor?: ProfessorGQLData;
   minify?: boolean;
 }
 

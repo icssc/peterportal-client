@@ -2,9 +2,11 @@
  @module ProfessorsRoute
 */
 
-import express from 'express';
+import express, { Request } from 'express';
 import fetch from 'node-fetch';
+import { GenericObject } from '../types/types';
 import professorDummy from '../dummy/professor.json';
+import { getProfessorQuery } from '../helpers/gql';
 
 var router = express.Router();
 
@@ -31,8 +33,8 @@ router.post('/_search', function (req, res, next) {
 /**
  * PPAPI proxy for professor data 
  */
-router.get('/api/:ucinetid', function (req, res, next) {
-  let r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.params.ucinetid, {
+router.get('/api', function (req: Request<{}, {}, {}, { ucinetid: string }>, res) {
+  let r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.query.ucinetid, {
     headers: {
       'x-api-key': process.env.PPAPI_KEY,
     }
@@ -40,6 +42,29 @@ router.get('/api/:ucinetid', function (req, res, next) {
 
   r.then((response) => response.json())
     .then((data) => res.send(data))
+});
+
+/**
+ * PPAPI proxy for professor data 
+ */
+router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) => {
+  if (req.body.professors.length == 0) {
+    res.json({});
+  }
+  else {
+    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: getProfessorQuery(req.body.professors)
+      })
+    });
+
+    r.then((response) => response.json())
+      .then((data) => res.json(data.data))
+  }
 });
 
 /**
