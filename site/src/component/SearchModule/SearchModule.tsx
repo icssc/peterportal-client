@@ -13,7 +13,7 @@ import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
 
 const PAGE_SIZE = 10;
-const SEARCH_TIMEOUT_MS = 1000;
+const SEARCH_TIMEOUT_MS = 500;
 
 interface SearchModuleProps {
     index: SearchIndex;
@@ -23,7 +23,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     const dispatch = useAppDispatch();
     const courseSearch = useAppSelector(state => state.search.courses);
     const professorSearch = useAppSelector(state => state.search.professors);
-    const [ pendingRequest, setPendingRequest ] = useState<NodeJS.Timeout | null>(null);
+    let pendingRequest: NodeJS.Timeout | null = null;
 
     // Search empty string to load some results
     useEffect(() => {
@@ -81,9 +81,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         }
         let timeout = setTimeout(() => {
             searchNames(query);
-            setPendingRequest(null);
+            pendingRequest = null;
         }, SEARCH_TIMEOUT_MS);
-        setPendingRequest(timeout);
+        pendingRequest = timeout;
     }
 
     let coursePlaceholder = 'Search a course number or department';
