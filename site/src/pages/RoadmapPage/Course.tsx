@@ -46,7 +46,7 @@ const Course: FC<CourseProps> = (props) => {
           <div className="name">{department + ' ' + number}</div>
           <OverlayTrigger
             trigger={['hover', 'focus']}
-            placement="left"
+            placement="auto"
             overlay={CoursePopover}
             delay={100}>
             <InfoCircle className="info-circle" />
