@@ -11,23 +11,18 @@ import { getProfessorQuery } from '../helpers/gql';
 var router = express.Router();
 
 /**
- * Elasticsearch proxy for professor index
+ * Check if a ucinetid exists in the directory
  */
-router.post('/_search', function (req, res, next) {
-  if (!process.env.PETERPORTAL_MAIN_ES) {
-    res.json(professorDummy);
-    return;
-  }
-  let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'professors/_search',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(req.body)
-    })
-  r.then((response) => response.json())
-    .then((data) => res.send(data))
+router.get('/directory', function (req: Request<{}, {}, {}, { ucinetid: string }>, res) {
+  fetch('https://directory.uci.edu', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body:  encodeURIComponent('uciKey') + '=' + encodeURIComponent(req.query.ucinetid)
+  })
+    .then(r => r.json())
+    .then(json => res.json(json))
 });
 
 /**

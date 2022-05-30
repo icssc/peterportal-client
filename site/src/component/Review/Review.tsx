@@ -38,14 +38,21 @@ const Review: FC<ReviewProps> = (props) => {
             params: params
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {
-                const data = res.data.filter((review) => review !== null);
+                const data = res.data.filter((review) => {
+                    // filter out null reviews
+                    if (review === null) return false;
+                    // filter out unverified professors
+                    if (props.course && !props.course.instructor_history[review.professorID]) {
+                        return false;
+                    }
+                });
                 data.sort((a, b) => {
                     let aScore = a.score + (a.verified ? 10000 : 0);
                     let bScore = b.score + (b.verified ? 10000 : 0);
                     return bScore - aScore;
                 })
                 let reviewIDs = [];
-                for(let i = 0;i<data.length;i++){
+                for (let i = 0; i < data.length; i++) {
                     reviewIDs.push(data[i]._id);
                 }
                 const req = {
@@ -59,7 +66,7 @@ const Review: FC<ReviewProps> = (props) => {
 
     const updateVoteColors = async () => {
         let reviewIDs = [];
-        for(let i = 0;i<reviewData.length;i++){
+        for (let i = 0; i < reviewData.length; i++) {
             reviewIDs.push(reviewData[i]._id);
         }
         const req = {
@@ -72,11 +79,11 @@ const Review: FC<ReviewProps> = (props) => {
     const getU = (id: string | undefined) => {
         let temp = voteColors as Object;
         let v = (temp[id as keyof typeof temp]) as unknown as number;
-        if(v == 1){
+        if (v == 1) {
             return {
                 colors: [true, false]
             }
-        }else if(v == -1){
+        } else if (v == -1) {
             return {
                 colors: [false, true]
             }
@@ -107,7 +114,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors} />)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>

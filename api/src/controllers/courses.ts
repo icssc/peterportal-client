@@ -10,28 +10,6 @@ import {getCourseQuery} from '../helpers/gql';
 var router = express.Router();
 
 /**
- * Elasticsearch proxy for courses index
- */
-router.post('/_search', function (req, res, next) {
-  if (!process.env.PETERPORTAL_MAIN_ES) {
-    res.json(courseDummy);
-    return;
-  }
-  let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'courses/_search',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(req.body)
-    })
-
-  r.then((response) => response.json())
-    .then((data) => res.send(data))
-    .catch(err => console.log('Error:', err))
-});
-
-/**
  * PPAPI proxy for course data 
  */
 router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {

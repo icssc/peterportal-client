@@ -15,11 +15,17 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import { ReviewData } from '../../types/types';
+import { ReviewData, DirectoryResult } from '../../types/types';
+import _ from 'lodash';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
 }
+
+interface ErrorData {
+  ucinetid?: string;
+}
+
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
   const dispatch = useAppDispatch();
@@ -38,6 +44,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   ]
 
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
+  const [otherProfessor, setOtherProfessor] = useState('');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
   const [quarterTaken, setQuarterTaken] = useState('');
@@ -51,11 +58,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [verified, setVerified] = useState(false);
+  const [verified, setVerified] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
+  const [errors, setErrors] = useState<ErrorData>({});
   const showForm = useAppSelector(state => state.review.formOpen);
 
   useEffect(() => {
@@ -83,16 +91,63 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       alert('You must be logged in to add a review!');
     }
     else {
-      dispatch(addReview(res.data));
+      // dont add review if using user given ucinetid
+      if (!otherProfessor) {
+        dispatch(addReview(res.data));
+      }
     }
   }
 
-  const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
-    // validate form
-    const form = event.currentTarget;
-    const valid = form.checkValidity();
+  // Validate ucinetid through directory
+  const validateUcinetid = (ucinetid: string) => {
+    return new Promise(async (resolve) => {
+      let res = await axios.get<DirectoryResult>('/professors/directory', {
+        params: {
+          'ucinetid': otherProfessor
+        }
+      })
+      let found = false;
+      for (let i = 0; i < res.data.length; ++i) {
+        let entry = res.data[i];
+        let data = entry[1];
+        if (data.UCInetID == ucinetid) {
+          console.log(data.UCInetID)
+          found = true;
+          resolve(true)
+          return;
+        }
+      }
+      if (!found) {
+        resolve(false);
+      }
+    })
+  }
+
+  const checkCustomValidity = async () => {
+    let errors: ErrorData = {}
+
+    if (professor == 'Other') {
+      // check if ucinetid was given
+      if (!otherProfessor) {
+        errors.ucinetid = 'Enter a ucinetid.'
+      }
+      // check if ucinetid can be found in the directory
+      else if (!(await validateUcinetid(otherProfessor))) {
+        errors.ucinetid = 'Ucinetid not found in directory.'
+      }
+    }
+    console.log(errors)
+    setErrors(errors);
+
+    return Object.keys(errors).length == 0;
+  }
+
+  const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    // validate form
+    const form = event.currentTarget;
+    const valid = form.checkValidity() && (await checkCustomValidity());
 
     // validated
     setValidated(true);
@@ -130,6 +185,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       tags: selectedTags,
       verified: false
     };
+    // Use provided ucinetid if user selected other
+    if (review.professorID == 'Other') {
+      review.professorID = otherProfessor;
+    }
     if (content.length > 500) {
       setOverCharLimit(true);
     }
@@ -161,10 +220,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }
 
   // select instructor if in course context
-  const instructorSelect = props.course && <Form.Group controlId='instructor'>
+  const instructorSelect = props.course && <Form.Group>
     <Form.Label>Taken With</Form.Label>
     <Form.Control as="select" name='instructor' id='instructor' required
-      onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
+      onChange={(e) => {
+        // Use professor's name to lookup ucinetid
+        let professor = document.getElementsByName(e.target.value)[0].id;
+        setProfessor(professor)
+      }}>
       <option disabled={true} selected value=''>Instructor</option>
       {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
         const name = props.course?.instructor_history[ucinetid].shortened_name;
@@ -173,19 +236,36 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
         )
       })}
+      {/* @ts-ignore name attribute isn't supported */}
+      <option name="Other" id='Other'>Other</option>
     </Form.Control>
-    <Form.Text muted>
+    {
+      // If the professor is not shown, ask for their ucinetid
+      professor == 'Other' && <Form.Group className='review-form-ucinetid'>
+        <Form.Label>Ucinetid</Form.Label>
+        <Form.Control name='ucinetid' id='ucinetid'
+          onChange={e => {
+            setOtherProfessor(e.target.value);
+          }}
+          isInvalid={errors.ucinetid ? true : false}
+        />
+        <Form.Control.Feedback type='invalid'>
+          {errors.ucinetid}
+        </Form.Control.Feedback>
+      </Form.Group>
+    }
+    {/* <Form.Text muted>
       <a href='https://forms.gle/qAhCng7Ygua7SZ358' target='_blank' rel='noopener noreferrer'>
         Can't find your professor?
       </a>
-    </Form.Text>
+    </Form.Text> */}
     <Form.Control.Feedback type="invalid">
       Missing instructor
     </Form.Control.Feedback>
   </Form.Group>
 
   // select course if in professor context
-  const courseSelect = props.professor && <Form.Group controlId='course'>
+  const courseSelect = props.professor && <Form.Group>
     <Form.Label>Course Taken</Form.Label>
     <Form.Control as="select" name='course' id='course' required
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
@@ -216,14 +296,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className='mt-4' lg={2} md={1}>
             <Col>
               <div className='review-form-section review-form-row review-form-taken'>
-                {instructorSelect}
                 {courseSelect}
-                <Form.Group className='review-form-grade' controlId='grade'>
+                {instructorSelect}
+                <Form.Group className='review-form-grade'>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
                     <option disabled={true} selected value=''>Grade</option>
                     {grades.map((grade, i) => (
-                      <option key={i}>{grade}</option>
+                      <option key={`grade-${i}`}>{grade}</option>
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
@@ -236,7 +316,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <Form.Group className='review-form-section'>
                 <Form.Label>Taken During</Form.Label>
                 <div className='review-form-row'>
-                  <Form.Group controlId='quarter' className='mr-3'>
+                  <Form.Group className='mr-3'>
                     <Form.Control as="select" name='quarter' id='quarter' required onChange={(e) => setQuarterTaken(e.target.value)}>
                       <option disabled={true} selected value=''>Quarter</option>
                       {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
@@ -247,11 +327,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       Missing quarter
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group controlId='year'>
+                  <Form.Group>
                     <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}>
                       <option disabled={true} selected value=''>Year</option>
                       {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year, i) => (
-                        <option key={i}>{year}</option>
+                        <option key={`year-${i}`}>{year}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
@@ -329,7 +409,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Select up to 3 tags</Form.Label>
                 <div>
                   {tags.map((tag, i) =>
-                    <Badge pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
+                    <Badge key={`tag-${i}`} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
                       onClick={(e: React.MouseEvent<HTMLInputElement>) => { selectTag(tag) }}>
                       {tag}
                     </Badge>

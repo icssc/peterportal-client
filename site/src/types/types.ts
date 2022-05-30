@@ -298,3 +298,35 @@ export interface SubCourse {
     number: string;
     title: string;
 }
+
+// data from uci directory post endpoint
+export type DirectoryResult = DirectoryEntry[];
+export type DirectoryEntry = [number, DirectoryData];
+export interface DirectoryData {
+    UCInetID: string,
+    Name: string,
+    Nickname: string,
+    "Call Sign": string,
+    Title: string,
+    Department: string,
+    Address: string,
+    Title2: string ,
+    Department2: string ,
+    Address2: string ,
+    "ZOT Code": string,
+    Email: string,
+    "Delivery Point": string,
+    Phone: string,
+    Extension: string ,
+    Fax: string ,
+    Hours: string ,
+    "Other Info": string ,
+    "Home Page": string ,
+    "Picture URL": string ,
+    Major: string ,
+    "Student's Level": string ,
+    deptPhone: string ,
+    Project: string ,
+    vCard: string,
+    type: string
+  }
