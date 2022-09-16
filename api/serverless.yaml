@@ -22,7 +22,7 @@ provider:
       - 'image/*'
   package:
     patterns:
-      - '!../site/node_modules/**'
+      - '!node_modules/**'
 
 functions:
   app:
