@@ -20,6 +20,9 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - 'image/*'
+  package:
+    patterns:
+      - '!../site/node_modules/**'
 
 functions:
   app:
