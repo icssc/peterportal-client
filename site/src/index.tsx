@@ -12,6 +12,9 @@ import { Provider } from 'react-redux';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
+import axios from 'axios';
+axios.defaults.baseURL = 'https://8di904abhb.execute-api.us-east-1.amazonaws.com/prod/';
+
 const client = new ApolloClient({
   uri: '/graphql/',
   cache: new InMemoryCache()

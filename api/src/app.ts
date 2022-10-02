@@ -102,8 +102,8 @@ app.options(`*`, (req, res) => {
   res.status(200).send()
 })
 
-app.get(`/test/`, (req, res) => {
-  res.status(200).send('Request received')
+app.get(`/`, (req, res) => {
+  res.status(200).send('Hello World!')
 })
 
 /**
