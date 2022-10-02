@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - migrate-gh-pages
 
 jobs:
   frontend:
