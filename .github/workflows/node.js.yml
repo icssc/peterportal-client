@@ -25,10 +25,10 @@ jobs:
 
     steps:
       - name: Check Out Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'npm'
@@ -58,7 +58,7 @@ jobs:
       - name: Deploy to Serverless
         uses: serverless/github-action@v1.53.0
         with:
-          args: -c "cd api && ls -a && cat .env && serverless deploy"
+          args: -c "cd api && serverless package --package my-package && serverless deploy --package ./my-package"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID:  ${{secrets.AWS_ACCESS_KEY_ID}}
