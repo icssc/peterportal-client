@@ -29,7 +29,7 @@ jobs:
       - name: Install and Build 🔧 
         run: |
           cd site
-          npm ci
+          npm install
           npm run build
 
       - name: Deploy 🚀
@@ -75,6 +75,12 @@ jobs:
             ADMIN_EMAILS=$ADMIN_EMAILS\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
             PORT=$PORT" > .env
+
+      - name: Install and Build 🔧 
+        run: |
+          cd api
+          npm install
+          npm run build
 
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.1
