@@ -58,17 +58,12 @@ jobs:
       - name: Deploy to Serverless
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd api && serverless package --package my-package"
+          args: -c "cd api && serverless package --package my-package && serverless deploy --package ./my-package"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID:  ${{secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           SLS_DEBUG: 1      
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: my-package
-          path: api/my-package
 
   deployHeroku:
     runs-on: ubuntu-latest
