@@ -28,7 +28,7 @@ export default function App() {
   const [isShown, setIsShown] = useState(false);
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <AppHeader />
       <div className='app-body'>
         <div className='app-sidebar'>

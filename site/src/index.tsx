@@ -13,7 +13,10 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
 import axios from 'axios';
-axios.defaults.baseURL = 'https://8di904abhb.execute-api.us-east-1.amazonaws.com/prod';
+if (process.env.NODE_ENV == 'production') {
+  // Redirect relative url to api url on production
+  axios.defaults.baseURL = 'https://8di904abhb.execute-api.us-east-1.amazonaws.com/prod';
+}
 
 const client = new ApolloClient({
   uri: '/graphql/',
