@@ -2,15 +2,7 @@ service: peterportal-core
 useDotenv: true
 
 plugins:
-  - serverless-domain-manager
   - serverless-dotenv-plugin
-
-custom:
-  customDomain:
-    domainName: peterportal.org
-    certificateName: 'peterportal.org'
-    basePath: ''
-    createRoute53Record: true
 
 provider:
   name: aws
@@ -20,10 +12,6 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - 'image/*'
-      
-package:
-  patterns:
-    - '!node_modules/**'
 
 functions:
   app:

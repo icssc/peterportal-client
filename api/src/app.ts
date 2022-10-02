@@ -107,14 +107,6 @@ app.get(`/test/`, (req, res) => {
 })
 
 /**
- * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
- */
-app.use(nocache());
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../build/index.html'));
-});
-
-/**
  * Error Handler
  */
 app.use(function (req, res, next) {
