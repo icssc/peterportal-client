@@ -102,17 +102,9 @@ app.options(`*`, (req, res) => {
   res.status(200).send()
 })
 
-app.get(`/test/`, (req, res) => {
-  res.status(200).send('Request received')
+app.get(`/`, (req, res) => {
+  res.status(200).send('Hello World!')
 })
-
-/**
- * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
- */
-app.use(nocache());
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../build/index.html'));
-});
 
 /**
  * Error Handler

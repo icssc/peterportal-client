@@ -79,5 +79,6 @@
     "@types/react-router-dom": "^5.1.8",
     "@types/redux": "^3.6.0",
     "sass": "^1.49.0"
-  }
+  },
+  "homepage": "https://peterportal.org"
 }
