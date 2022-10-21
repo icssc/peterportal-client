@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Component, FC } from 'react';
 import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { List } from 'react-bootstrap-icons';
@@ -57,29 +57,29 @@ const AppHeader: FC<{}> = props => {
           {(coursesActive || professorsActive) && <div className='navbar-toggle'>
             <div className='desktop-toggle'>
               <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
-                <a href='/search/courses'>
+                <Link to={'/search/courses'}>
                   Courses
-                </a>
+                </Link>
               </div>
               <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
-                <a href='/search/professors'>
+                <Link to={'/search/professors'}>
                   Professors
-                </a>
+                </Link>
               </div>
             </div>
             <div className='mobile-toggle'>
               {coursesActive === true && (
                 <div className={`navbar-toggle-item active`}>
-                  <a href='/search/professors'>
+                  <Link to={'/search/professors'}>
                     Professors
-                  </a>
+                  </Link>
                 </div>
               )}
               {professorsActive === true && (
                 <div className={`navbar-toggle-item active`}>
-                  <a href='/search/courses'>
+                  <Link to={'/search/courses'}>
                     Courses
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
@@ -89,9 +89,9 @@ const AppHeader: FC<{}> = props => {
 
         {/* Logo */}
         <div className='navbar-logo'>
-          <a href='/'>
+          <Link to={'/'}>
             <img alt='PeterPortal' id='peterportal-logo' src={Logo}></img>
-          </a>
+          </Link>
         </div>
 
         {/* Week */}
