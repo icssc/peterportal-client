@@ -28,6 +28,7 @@ jobs:
       - name: Install and Build 🔧 
         run: |
           cd site
+          rm .env.local
           npm install --legacy-peer-deps
           npm run build
 
