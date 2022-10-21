@@ -10,34 +10,11 @@ import {getCourseQuery} from '../helpers/gql';
 var router = express.Router();
 
 /**
- * Elasticsearch proxy for courses index
- */
-router.post('/_search', function (req, res, next) {
-  if (!process.env.PETERPORTAL_MAIN_ES) {
-    res.json(courseDummy);
-    return;
-  }
-  let r = fetch(process.env.PETERPORTAL_MAIN_ES + 'courses/_search',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(req.body)
-    })
-
-  r.then((response) => response.json())
-    .then((data) => res.send(data))
-    .catch(err => console.log('Error:', err))
-});
-
-/**
  * PPAPI proxy for course data 
  */
 router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
   let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
     headers: {
-      'x-api-key': process.env.PPAPI_KEY,
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
@@ -76,11 +53,7 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
  */
 router.get('/api/grades',
   (req: Request<{}, {}, {}, { department: string; number: string; }>, res) => {
-    let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?department=' + encodeURIComponent(req.query.department) + '&number=' + req.query.number, {
-      headers: {
-        'x-api-key': process.env.PPAPI_KEY
-      }
-    });
+    let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?department=' + encodeURIComponent(req.query.department) + '&number=' + req.query.number);
 
     r.then((response) => response.json())
       .then((data) => res.send(data))

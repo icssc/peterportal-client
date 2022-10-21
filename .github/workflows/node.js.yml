@@ -41,9 +41,7 @@ jobs:
     env:
       PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
       PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
-      PETERPORTAL_MAIN_ES: ${{secrets.PETERPORTAL_MAIN_ES}}
       MONGO_URL: ${{secrets.MONGO_URL}}
-      PPAPI_KEY: ${{secrets.PPAPI_KEY}}
       SESSION_SECRET: ${{secrets.SESSION_SECRET}}
       GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
       GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
@@ -65,9 +63,7 @@ jobs:
         run: |
           cd api && printf "PUBLIC_API_URL=$PUBLIC_API_URL\n \
             PUBLIC_API_GRAPHQL_URL=$PUBLIC_API_GRAPHQL_URL\n \
-            PETERPORTAL_MAIN_ES=$PETERPORTAL_MAIN_ES\n \
             MONGO_URL=$MONGO_URL\n \
-            PPAPI_KEY=$PPAPI_KEY\n \
             SESSION_SECRET=$SESSION_SECRET\n \
             GOOGLE_CLIENT=$GOOGLE_CLIENT\n \
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
