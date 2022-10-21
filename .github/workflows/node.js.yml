@@ -48,6 +48,7 @@ jobs:
       GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
       ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
       PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
+      CLIENT_DOMAIN: ${{secrets.CLIENT_DOMAIN}}
       PORT: ${{secrets.PORT}}
 
     steps:
@@ -70,6 +71,7 @@ jobs:
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
             ADMIN_EMAILS=$ADMIN_EMAILS\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
+            CLIENT_DOMAIN=$CLIENT_DOMAIN\n \
             PORT=$PORT" > .env
 
       - name: Install and Build 🔧 
