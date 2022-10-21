@@ -9,9 +9,7 @@ declare global {
             PORT?: string;
             PUBLIC_API_URL: string;
             PUBLIC_API_GRAPHQL_URL: string;
-            PETERPORTAL_MAIN_ES: string;
             MONGO_URL: string;
-            PPAPI_KEY: string;
             SESSION_SECRET: string;
             GOOGLE_CLIENT: string;
             GOOGLE_SECRET: string;
