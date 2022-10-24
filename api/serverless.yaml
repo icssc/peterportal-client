@@ -3,6 +3,19 @@ useDotenv: true
 
 plugins:
   - serverless-dotenv-plugin
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: peterportal.org
+    certificateName: 'peterportal.org'
+    basePath: ''
+    createRoute53Record: true
+    
+
+package:
+  patterns:
+    - '!src/**'
 
 provider:
   name: aws

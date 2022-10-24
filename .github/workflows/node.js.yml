@@ -4,42 +4,16 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  frontend:
-    # The type of runner that the job will run on
+  deploy-aws:
     runs-on: ubuntu-latest
-
     env:
       # need to set to false, otherwise react warnings will be treated as errors
       CI: false
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
-        
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-
-      - name: Install and Build 🔧 
-        run: |
-          cd site
-          rm .env.local
-          npm install --legacy-peer-deps
-          npm run build
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: site/build # The folder the action should deploy.
-
-  backend:
-    runs-on: ubuntu-latest
-    env:
       PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
       PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
       MONGO_URL: ${{secrets.MONGO_URL}}
@@ -72,16 +46,29 @@ jobs:
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
             PORT=$PORT" > .env
 
-      - name: Install and Build 🔧 
+      - name: Install and Build Frontend 🔧 
+        run: |
+          cd site
+          npm install --legacy-peer-deps
+          npm run build
+          cp -r build ../api/
+
+      - name: Install and Build Backend 🔧 
         run: |
           cd api
+          rm .env.local
           npm install
           npm run build
 
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd api serverless plugin install --name serverless-dotenv-plugin && serverless deploy"
+          args: >
+            -c "cd api && 
+            serverless plugin install --name serverless-dotenv-plugin && 
+            serverless plugin install --name serverless-domain-manager && 
+            serverless package --package my-package &&
+            serverless deploy --package ./my-package"
           entrypoint: /bin/sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

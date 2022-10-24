@@ -12,7 +12,7 @@ import passport from 'passport';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv-flow';
 import serverless from 'serverless-http';
 import nocache from 'nocache';
 
@@ -56,11 +56,14 @@ if (process.env.MONGO_URL) {
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
-    store: store
+    store: store,
   }));
   app.use(passport.initialize());
   app.use(passport.session());
   require('./config/passport')
+}
+else {
+  console.log('MONGO_URL env var is not defined!')
 }
 
 /**
@@ -71,7 +74,6 @@ app.use(express.json());
 app.use(logger('dev'))
 app.use(cookieParser());
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // Enable CORS
@@ -102,9 +104,17 @@ app.options(`*`, (req, res) => {
   res.status(200).send()
 })
 
-app.get(`/`, (req, res) => {
+app.get(`/test`, (req, res) => {
   res.status(200).send('Hello World!')
 })
+
+/**
+ * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
+ */
+ app.use(nocache());
+ app.get('*', (req, res) => {
+   res.sendFile(path.resolve(__dirname, '../build/index.html'));
+ });
 
 /**
  * Error Handler
