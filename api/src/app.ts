@@ -62,6 +62,9 @@ if (process.env.MONGO_URL) {
   app.use(passport.session());
   require('./config/passport')
 }
+else {
+  console.log('MONGO_URL env var is not defined!')
+}
 
 /**
  * Configure Express.js Middleware
@@ -71,8 +74,6 @@ app.use(express.json());
 app.use(logger('dev'))
 app.use(cookieParser());
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '..', 'public')));
-app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // Enable CORS
 app.use(function (req, res, next) {
