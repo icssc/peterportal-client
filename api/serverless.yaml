@@ -11,10 +11,10 @@ custom:
     certificateName: 'peterportal.org'
     basePath: ''
     createRoute53Record: true
+    
 
 package:
   patterns:
-    - '!node_modules/**'
     - '!src/**'
 
 provider:
