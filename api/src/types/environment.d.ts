@@ -14,7 +14,6 @@ declare global {
             GOOGLE_CLIENT: string;
             GOOGLE_SECRET: string;
             PRODUCTION_DOMAIN: string;
-            CLIENT_DOMAIN: string;
             GITHUB_ADMIN_USERNAMES: string;
             ADMIN_EMAILS: string;
         }

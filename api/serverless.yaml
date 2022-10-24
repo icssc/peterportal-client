@@ -7,10 +7,15 @@ plugins:
 
 custom:
   customDomain:
-    domainName: coreapi.peterportal.org
-    certificateName: '*.peterportal.org'
+    domainName: peterportal.org
+    certificateName: 'peterportal.org'
     basePath: ''
     createRoute53Record: true
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!src/**'
 
 provider:
   name: aws

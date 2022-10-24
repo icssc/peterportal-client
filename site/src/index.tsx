@@ -14,9 +14,6 @@ import { ApolloProvider } from '@apollo/client/react';
 
 import axios from 'axios';
 
-// Redirect relative url to api url on production
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
-
 const client = new ApolloClient({
   uri: '/graphql/',
   cache: new InMemoryCache()

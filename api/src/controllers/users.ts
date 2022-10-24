@@ -32,6 +32,7 @@ router.get('/isAdmin', function (req, res, next) {
  */
 router.get('/auth/google',
   function (req, res) {
+    req.session.returnTo = req.headers.referer;
     passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email']
@@ -75,6 +76,7 @@ router.get('/auth/google/callback', function (req, res) {
  */
 router.get('/auth/facebook',
   function (req, res) {
+    req.session.returnTo = req.headers.referer;
     passport.authenticate('facebook', { scope: ['email'] })(req, res);
   });
 
@@ -92,6 +94,7 @@ router.get('/auth/facebook/callback',
 router.get('/auth/github',
   function (req, res) {
     console.log('START AUTH GITHUB')
+    req.session.returnTo = req.headers.referer;
     passport.authenticate('github')(req, res);
   });
 
@@ -123,7 +126,9 @@ router.get('/auth/github/callback',
           else {
             console.log(`INVALID USER! Expected ${allowedUsers}, Got ${user.username}`)
             // failed login
-            res.redirect(process.env.CLIENT_DOMAIN);
+            let returnTo = req.session.returnTo;
+            delete req.session.returnTo;
+            res.redirect(returnTo!);
           }
         }
       }
@@ -137,11 +142,13 @@ router.get('/auth/github/callback',
  * @param res Express Response Object
  */
 function successLogin(req: Request, res: Response) {
-  console.log('Logged in');
+  console.log('Logged in', req.user);
   // set the user cookie
   res.cookie('user', req.user);
-  // redirect browser to client
-  res.redirect(process.env.CLIENT_DOMAIN);
+  // redirect browser to the page they came from
+  let returnTo = req.session.returnTo;
+  delete req.session.returnTo;
+  res.redirect(returnTo!);
 }
 
 /**

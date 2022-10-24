@@ -118,7 +118,7 @@ const SideBar: FC = ({ children }) => {
 
       {/* Login/Logout */}
       <div className='sidebar-login'>
-        {isLoggedIn && <a href={`${process.env.REACT_APP_SERVER_URL}/users/logout`}>
+        {isLoggedIn && <a href={`/users/logout`}>
           <Button variant='light'>
             <span className='sidebar-login-icon'>
               <Icon name='sign out' className='sidebar-login-icon' />
@@ -126,7 +126,7 @@ const SideBar: FC = ({ children }) => {
             Log Out
           </Button>
         </a>}
-        {!isLoggedIn && <a href={`${process.env.REACT_APP_SERVER_URL}/users/auth/google`}>
+        {!isLoggedIn && <a href={`/users/auth/google`}>
           <Button variant='light'>
             <span className='sidebar-login-icon'>
               <Icon name='sign in' className='sidebar-login-icon' />

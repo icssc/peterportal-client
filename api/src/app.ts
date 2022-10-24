@@ -55,8 +55,8 @@ if (process.env.MONGO_URL) {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24, domain: '.peterportal.org' },
-    store: store
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    store: store,
   }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -74,6 +74,7 @@ app.use(express.json());
 app.use(logger('dev'))
 app.use(cookieParser());
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // Enable CORS
 app.use(function (req, res, next) {
@@ -103,9 +104,17 @@ app.options(`*`, (req, res) => {
   res.status(200).send()
 })
 
-app.get(`/`, (req, res) => {
+app.get(`/test`, (req, res) => {
   res.status(200).send('Hello World!')
 })
+
+/**
+ * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
+ */
+ app.use(nocache());
+ app.get('*', (req, res) => {
+   res.sendFile(path.resolve(__dirname, '../build/index.html'));
+ });
 
 /**
  * Error Handler
