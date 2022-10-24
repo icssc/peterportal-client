@@ -12,7 +12,7 @@ import passport from 'passport';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv-flow';
 import serverless from 'serverless-http';
 import nocache from 'nocache';
 
