@@ -9,6 +9,6 @@
   "dependencies": {},
   "devDependencies": {},
   "engines": {
-    "node": "16.x.x"
+    "node": "18.x.x"
   }
 }

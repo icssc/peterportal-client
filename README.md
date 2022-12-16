@@ -21,7 +21,7 @@ PeterPortal is a web application aimed to aid UCI students with course discovery
     
     > `git checkout -b [branch name]`
     > 
-3. Make sure you have node version 14 or 16
+3. Make sure you have node version 14 or above (18 recommended)
     1. `node -v`
 4. Open two terminal windows and `cd [local directory of your repo]`.
     1. Running the client
