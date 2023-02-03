@@ -14,6 +14,7 @@ export function getWeek(): Promise<WeekData> {
     return new Promise(async resolve => {
         // current date
         let date = new Date(Date.now());
+        // date = new Date(2023, 1, 2, 20);
         // current year
         let year = date.getFullYear();
 
@@ -55,9 +56,22 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
     Object.keys(quarterMapping).forEach(function (quarter) {
         let begin = new Date(quarterMapping[quarter]['begin'])
         let end = new Date(quarterMapping[quarter]['end'])
+
+        let isFallQuarter = false;
+        // in fall quarter, instruction start date is not on a monday
+        // it is on a thursday in week 0
+        // let's move it back to monday in week 0 and adjust our week calculations by -1
+        // that way week calculations are correct for fall quarter
+        console.log(begin.toUTCString())
+        console.log(begin.toString())
+        if (begin.getDay() != 1) {
+            isFallQuarter = true;
+            begin.setDate(begin.getDate() - 3);
+        }
+
         // check if the date lies within the start/end range
         if (date >= begin && date <= end) {
-            let week = Math.floor(dateSubtract(begin, date) / 7) + 1;
+            let week = Math.floor(dateSubtract(begin, date) / 7) + (isFallQuarter ? 0 : 1); // if it's fall quarter, start counting at week 0, otherwise 1
             let display = `Week ${week} • ${quarter}`
             result = {
                 week: week,
