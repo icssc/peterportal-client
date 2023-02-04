@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import React, { FC, useEffect, useState } from "react";
-import SubReport from "src/component/Report/SubReport";
-import { ReportData } from "src/types/types";
+import { ReportData } from "../../types/types";
 import ReportGroup from "./ReportGroup";
 import './Reports.scss';
 

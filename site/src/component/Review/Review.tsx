@@ -7,8 +7,6 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
-import { reviewSlice } from 'src/store/slices/uiSlice';
-import { EaselFill } from 'react-bootstrap-icons';
 
 export interface ReviewProps {
     course?: CourseGQLData;

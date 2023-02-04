@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from "src/types/types";
+import { ReviewData } from "../../types/types";
 import './Verify.scss';
 
 const Verify: FC = () => {
