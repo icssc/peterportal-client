@@ -20,7 +20,7 @@ const Review: FC<ReviewProps> = (props) => {
     const openForm = useAppSelector(state => state.review.formOpen);
 
     const getColors = async (vote: VoteColorsRequest) => {
-        const res = await axios.patch('/reviews/getVoteColors', vote);
+        const res = await axios.patch('/api/reviews/getVoteColors', vote);
         return res.data;
     }
 
@@ -32,7 +32,7 @@ const Review: FC<ReviewProps> = (props) => {
         let params: paramsProps = {};
         if (props.course) params.courseID = props.course.id;
         if (props.professor) params.professorID = props.professor.ucinetid;
-        axios.get(`/reviews`, {
+        axios.get(`/api/reviews`, {
             params: params
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {

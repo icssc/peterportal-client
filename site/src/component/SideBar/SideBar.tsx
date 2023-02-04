@@ -26,7 +26,7 @@ const SideBar: FC = ({ children }) => {
   }
 
   const checkAdmin = async () => {
-    const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
+    const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
     const admin = res.data.admin;
     setIsAdmin(admin);
   }

@@ -21,7 +21,7 @@ const Reports: FC = () => {
     }
 
     const getData = async () => {
-        const reports: AxiosResponse<ReportData[]> = await axios.get('/reports');
+        const reports: AxiosResponse<ReportData[]> = await axios.get('/api/reports');
         const reportsData: ReportData[] = reports.data;
         
         let reportsDisplay: ReviewDisplay[] = [];
@@ -54,13 +54,13 @@ const Reports: FC = () => {
     }, []);
 
     const acceptReports = async (reviewID: string) => {
-        const deleteReviewResponse = await axios.delete('/reviews', { data: { id: reviewID } });
-        const deleteReportsResponse = await axios.delete('/reports', { data: { reviewID: reviewID } });
+        const deleteReviewResponse = await axios.delete('/api/reviews', { data: { id: reviewID } });
+        const deleteReportsResponse = await axios.delete('/api/reports', { data: { reviewID: reviewID } });
         setData(data.filter(review => review.reviewID !== reviewID));
     }
 
     const denyReports = async (reviewID: string) => {
-        const deleteReportsResponse = await axios.delete('/reports', { data: { reviewID: reviewID } });
+        const deleteReportsResponse = await axios.delete('/api/reports', { data: { reviewID: reviewID } });
         setData(data.filter(review => review.reviewID !== reviewID));
     }
 

@@ -20,7 +20,7 @@ const AdminPage: FC = () => {
 
     // user has to be authenticated as admin to view this page
     const checkAdmin = async () => {
-        const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
+        const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
         const isAdmin: boolean = res.data.admin;
         setAuthorized(isAdmin);
         setLoaded(true);
