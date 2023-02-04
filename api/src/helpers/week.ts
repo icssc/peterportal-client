@@ -76,7 +76,7 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
         // begin/end dates retrieved from mongo are currently in UTC
         // so for example, Winter 2023 starts on Monday Jan 9, 2023 PST
         // the date retrieved from mongo is incorrectly Jan 9, 2023 00:00 UTC, when it should be
-        // Jan 8, 2023 17:00 UTC (since Irvine is in PST which is 8 hours behind UTC)
+        // Jan 9, 2023 8:00 UTC (since Irvine is in PST which is 8 hours behind UTC)
         // we want to fix this offset for accurate comparsions
         // it should compare accurately regardless of whatever time zone the prod or development server is in
         console.log(begin.toUTCString());
