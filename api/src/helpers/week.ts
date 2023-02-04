@@ -14,12 +14,14 @@ export function getWeek(): Promise<WeekData> {
     return new Promise(async resolve => {
         // current date
         let date = new Date(Date.now());
-        // date = new Date(2023, 1, 2, 20);
+        date = new Date(2022, 9, 22);
+        console.log(date);
         // current year
         let year = date.getFullYear();
 
         // check for current year to current year + 1
         let quarterMapping1 = await getQuarterMapping(year) as QuarterMapping;
+        console.log(quarterMapping1);
         let potentialWeek = findWeek(date, quarterMapping1);
         // if the date lies within this page
         if (potentialWeek) {
@@ -62,11 +64,26 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
         // it is on a thursday in week 0
         // let's move it back to monday in week 0 and adjust our week calculations by -1
         // that way week calculations are correct for fall quarter
-        console.log(begin.toUTCString())
-        console.log(begin.toString())
-        if (begin.getDay() != 1) {
+        // note getUTCDay and setUTCDay are used because the dates received from the mongo
+        // cache are in UTC, e.g. Mon Jan 9, 2023 00:00 UTC for Winter 2023 start
+        // using regular getDay and setDay can result in the wrong day being returned if
+        // the prod or dev server is not in UTC time (it's not, unless you're developing in England right now)
+        if (begin.getUTCDay() !== 1) {
             isFallQuarter = true;
-            begin.setDate(begin.getDate() - 3);
+            begin.setUTCDate(begin.getUTCDate() - 3);
+        }
+
+        // begin/end dates retrieved from mongo are currently in UTC
+        // so for example, Winter 2023 starts on Monday Jan 9, 2023 PST
+        // the date retrieved from mongo is incorrectly Jan 9, 2023 00:00 UTC, when it should be
+        // Jan 8, 2023 17:00 UTC (since Irvine is in PST which is 8 hours behind UTC)
+        // we want to fix this offset for accurate comparsions
+        // it should compare accurately regardless of whatever time zone the prod or development server is in
+        console.log(begin.toUTCString());
+        if (begin.getUTCHours() === 0) {
+            // TODO: need to detect if the date is in PDT instead of PST, would only add 7 if its in PDT
+            // TODO: probably a better way to do this exists
+            begin.setUTCHours(begin.getUTCHours() + 8);
         }
 
         // check if the date lies within the start/end range
