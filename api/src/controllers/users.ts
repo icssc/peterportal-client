@@ -32,10 +32,12 @@ router.get('/isAdmin', function (req, res, next) {
  */
 router.get('/auth/google',
   function (req, res) {
+    
     req.session.returnTo = req.headers.referer;
+    
     passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email']
+        'https://www.googleapis.com/auth/userinfo.email'],
     })(req, res);
   }
 );
@@ -146,7 +148,7 @@ function successLogin(req: Request, res: Response) {
   // set the user cookie
   res.cookie('user', req.user);
   // redirect browser to the page they came from
-  let returnTo = req.session.returnTo;
+  let returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
   res.redirect(returnTo!);
 }
