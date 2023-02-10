@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import "./Planner.scss";
@@ -17,6 +17,7 @@ const Planner: FC = () => {
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
   const transfers = useAppSelector(state => state.roadmap.transfers);
+  const [missingCourses, setMissingCourses] = useState(new Set<string>);
 
   useEffect(() => {
     // if is first render, load from local storage
@@ -152,6 +153,7 @@ const Planner: FC = () => {
     // store courses that have been taken
     let taken: Set<string> = new Set(transfers.map(transfer => transfer.name));
     let invalidCourses: InvalidCourseData[] = [];
+    let missing: Set<string> = new Set<string>;
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
         let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.number));
@@ -162,6 +164,7 @@ const Planner: FC = () => {
             // prerequisite not fulfilled, has some required classes to take
             if (required.size > 0) {
               console.log('invalid course', course.id);
+              // console.log('missing', course.prerequisite_text);
               invalidCourses.push({
                 location: {
                   yearIndex: yi,
@@ -170,6 +173,13 @@ const Planner: FC = () => {
                 },
                 required: Array.from(required)
               })
+
+              required.forEach((course) => {
+                // FIXME: include all transferable classes
+                let result = course.match(/AP/);
+                if (result != null)
+                  missing.add(course);
+              })
             }
           }
         })
@@ -177,6 +187,11 @@ const Planner: FC = () => {
         taking.forEach(course => taken.add(course));
       })
     })
+
+    // set missing courses
+    // FIXME: need to deal with AND and OR relation for prerequisitsprerequisites
+    setMissingCourses(missing);
+
     // set the invalid courses
     dispatch(setInvalidCourses(invalidCourses));
   }
@@ -239,7 +254,7 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
+      <Header courseCount={courseCount} unitCount={unitCount} missingCourses={missingCourses} saveRoadmap={saveRoadmap} />
       <section className="years">
         {data.map((year, yearIndex) => {
           return (
