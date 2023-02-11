@@ -62,26 +62,22 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
     </Row>
 }
 
-const Transfer: FC<MissingCoursesProps> = ({ names }) => {
+const Transfer: FC = () => {
     const dispatch = useAppDispatch();
     const transfers = useAppSelector(state => state.roadmap.transfers);
     const show = useAppSelector(state => state.roadmap.showTransfer);
     const handleClose = () => dispatch(setShowTransfer(false));
 
-    console.log("missing courses: ", names);
-
-    // console.log("For transfers classes");
-    // transfers.forEach((course) => {
-    //     console.log(course.name);
-    // });
+    // console.log("missing courses: ", names);
 
 
-    const DisplayMissingCourses: FC = () => {
-        return <ListGroup horizontal> {
-                Array.from(names).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
-            }
-        </ListGroup>
-    };
+    // TODO: 
+    // const DisplayMissingCourses: FC = () => {
+    //     return <ListGroup horizontal> {
+    //             Array.from(names).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+    //         }
+    //     </ListGroup>
+    // };
         
 
 
@@ -92,8 +88,8 @@ const Transfer: FC<MissingCoursesProps> = ({ names }) => {
             </Modal.Header>
             <Modal.Body className='transfer' >
                 <p>Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the roadmap.</p>
-                <p>Below is a list of transferable courses based on your current plan</p>
-                <DisplayMissingCourses />
+                <p>Notice: you need to include course names that match on UCI catalog (eg. "AP computer science" to "AP COMP SCI A")</p>
+                
                 <Container>
                     <Form>
                         {

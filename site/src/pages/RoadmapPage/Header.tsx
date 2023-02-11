@@ -11,11 +11,11 @@ import { isMobile, isBrowser } from 'react-device-detect';
 interface HeaderProps {
   courseCount: number;
   unitCount: number;
-  missingCourses: Set<string>;
+  // missingCourses: Set<string>;
   saveRoadmap: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ courseCount, unitCount, missingCourses, saveRoadmap }) => {
+const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const [target, setTarget] = useState<any>(null!);
   const [showMenu, setShowMenu] = useState(false);
@@ -42,7 +42,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, missingCourses, saveR
 
   return (
     <div className="header">
-      <Transfer names={missingCourses} />
+      <Transfer />
       <div>
         <div id="title">
           Peter's Roadmap
