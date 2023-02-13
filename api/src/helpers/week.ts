@@ -82,8 +82,8 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             begin = dayjs.tz({ year: beginDate.getUTCFullYear(), month: beginDate.getUTCMonth(), date: beginDate.getUTCDate() });
             end = dayjs.tz({ year: endDate.getUTCFullYear(), month: endDate.getUTCMonth(), date: endDate.getUTCDate() });
         } else { // default case if the dates aren't in UTC+0 and are in correct timezone
-            begin = dayjs(beginDate);
-            end = dayjs(endDate);
+            begin = dayjs(beginDate).tz();
+            end = dayjs(endDate).tz();
         }
 
         // adjust instruction end date to last ms of the day
