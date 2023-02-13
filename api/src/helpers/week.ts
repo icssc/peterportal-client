@@ -87,7 +87,7 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
         }
 
         // adjust instruction end date to last ms of the day
-        end.add({
+        end = end.add({
             hours: 23,
             minutes: 59,
             seconds: 59,
@@ -101,7 +101,7 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
         // that way week calculations are correct for fall quarter
         if (begin.day() !== 1) {
             isFallQuarter = true;
-            begin.day(1); // moves day back to Monday (monday is index 1)
+            begin = begin.day(1); // moves day back to Monday (monday is index 1)
         }
 
         // check if the date lies within the start/end range
