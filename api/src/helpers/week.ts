@@ -6,9 +6,20 @@ import fetch from 'node-fetch';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { COLLECTION_NAMES, setValue, getValue } from './mongo';
 import { QuarterMapping, WeekData } from '../types/types';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import objectSupport from 'dayjs/plugin/objectSupport';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(objectSupport)
+dayjs.extend(customParseFormat)
 
 const PACIFIC_TIME = 'America/Los_Angeles';
+dayjs.tz.setDefault(PACIFIC_TIME);
 
 /**
  * Get the current week and quarter. A display string is also provided.
@@ -16,7 +27,7 @@ const PACIFIC_TIME = 'America/Los_Angeles';
 export function getWeek(): Promise<WeekData> {
     return new Promise(async resolve => {
         // current date
-        let date = moment.tz(PACIFIC_TIME);
+        let date = dayjs().tz();
         // current year
         let year = date.year();
 
@@ -52,15 +63,15 @@ export function getWeek(): Promise<WeekData> {
  * @param quarterMapping Maps a quarter to its start and end date 
  * @returns Week description if it lies within the quarter
  */
-function findWeek(date: moment.Moment, quarterMapping: QuarterMapping): WeekData {
+function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
     let result: WeekData = undefined!;
     // iterate through each quarter
     Object.keys(quarterMapping).forEach(function (quarter) {
         let beginDate = new Date(quarterMapping[quarter]['begin']);
         let endDate = new Date(quarterMapping[quarter]['end']);
 
-        let begin: moment.Moment;
-        let end: moment.Moment;
+        let begin: dayjs.Dayjs;
+        let end: dayjs.Dayjs;
 
         // begin/end dates are incorrectly in UTC+0, likely due to AWS servers being in UTC+0 by default
         // so for example, Winter 2023 starts on Monday Jan 9, 2023 PST
@@ -68,18 +79,21 @@ function findWeek(date: moment.Moment, quarterMapping: QuarterMapping): WeekData
         // Jan 9, 2023 0:00 UTC-8 (since Irvine is in PST which is 8 hours behind UTC)
         // we want to fix this offset for accurate comparsions
         if (beginDate.getUTCHours() === 0) {
-            begin = moment.tz([beginDate.getUTCFullYear(), beginDate.getUTCMonth(), beginDate.getUTCDate()], PACIFIC_TIME);
-            end = moment.tz([endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()], PACIFIC_TIME);
+            begin = dayjs.tz({ year: beginDate.getUTCFullYear(), month: beginDate.getUTCMonth(), date: beginDate.getUTCDate() });
+            end = dayjs.tz({ year: endDate.getUTCFullYear(), month: endDate.getUTCMonth(), date: endDate.getUTCDate() });
         } else { // default case if the dates aren't in UTC+0 and are in correct timezone
-            begin = moment(beginDate);
-            end = moment(endDate);
+            begin = dayjs(beginDate);
+            end = dayjs(endDate);
         }
 
         // adjust instruction end date to last ms of the day
-        end.add(23, 'hours');
-        end.add(59, 'minutes');
-        end.add(59, 'seconds');
-        end.add(999, 'ms');
+        end.add({
+            hours: 23,
+            minutes: 59,
+            seconds: 59,
+            ms: 999
+        });
+        console.log(end);
 
         let isFallQuarter = false;
         // in fall quarter, instruction start date is not on a monday
@@ -102,7 +116,7 @@ function findWeek(date: moment.Moment, quarterMapping: QuarterMapping): WeekData
             }
         }
         // check if date is after instruction end date and by no more than 1 week - finals week
-        else if (date > end && date <= moment(end).add(1, 'week')) {
+        else if (date > end && date <= end.add(1, 'week')) {
             let display = `Finals Week • ${quarter}. Good Luck!🤞`
             result = {
                 week: -1,
@@ -205,7 +219,7 @@ function processRow(row: Element, $: CheerioAPI, quarterToDayMapping: QuarterMap
  * processDate('Jan 17', 'Winter 2020', 2019)
  * @example 
  * // returns Date(7/30/2021)
- * processDate('July 30', 'Summer Session 10WK', 2020)
+ * processDate('Jul 30', 'Summer Session 10WK', 2020)
  * @param dateEntry Date entry on the calendar
  * @param dateLabel Date label on the calendar
  * @param year Beginning academic year
@@ -218,8 +232,50 @@ function processDate(dateEntry: string, dateLabel: string, year: number): Date {
     let labelYear = dateLabel.split(' ')[1];
     // 'Winter 2020' => 2020, but 'Summer Session I' => Session
     // Exception for Summer Session
-    let correctYear = isInteger(labelYear) ? labelYear : year + 1;
-    return moment.tz(`${month} ${day} ${correctYear}`, 'MMM D, YYYY', PACIFIC_TIME).toDate();
+    let correctYear = isInteger(labelYear) ? parseInt(labelYear) : year + 1;
+
+    return dayjs.tz({ year: correctYear, month: processMonth(month), date: day }, PACIFIC_TIME).toDate();
+}
+
+/**
+ * @example
+ * // returns 0
+ * processMonth('Jan')
+ * @example
+ * // returns 6
+ * processMonth('Jul')
+ * @param month Month name as it appears on registrar
+ * @returns Month index (0-11)
+ */
+function processMonth(month: string): number {
+    switch (month) {
+        case 'Jan':
+            return 0;
+        case 'Feb':
+            return 1;
+        case 'Mar':
+            return 2;
+        case 'Apr':
+            return 3;
+        case 'May':
+            return 4;
+        case 'Jun':
+            return 5;
+        case 'Jul':
+            return 6;
+        case 'Aug':
+            return 7;
+        case 'Sep':
+            return 8;
+        case 'Oct':
+            return 9;
+        case 'Nov':
+            return 10;
+        case 'Dec':
+            return 11;
+    }
+
+    return -1;
 }
 
 /**
