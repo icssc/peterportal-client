@@ -93,7 +93,6 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             seconds: 59,
             ms: 999
         });
-        console.log(end);
 
         let isFallQuarter = false;
         // in fall quarter, instruction start date is not on a monday
