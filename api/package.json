@@ -46,7 +46,6 @@
     "@types/express-session": "^1.17.4",
     "@types/http-errors": "^1.8.1",
     "@types/keyv": "^4.2.0",
-    "@types/moment-timezone": "^0.5.30",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.4.6",
     "@types/node-fetch": "^2.5.12",
