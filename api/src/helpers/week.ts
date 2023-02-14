@@ -10,13 +10,11 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import objectSupport from 'dayjs/plugin/objectSupport';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(objectSupport)
-dayjs.extend(customParseFormat)
 
 const PACIFIC_TIME = 'America/Los_Angeles';
 dayjs.tz.setDefault(PACIFIC_TIME);
@@ -233,7 +231,7 @@ function processDate(dateEntry: string, dateLabel: string, year: number): Date {
     // Exception for Summer Session
     let correctYear = isInteger(labelYear) ? parseInt(labelYear) : year + 1;
 
-    return dayjs.tz({ year: correctYear, month: processMonth(month), date: day }, PACIFIC_TIME).toDate();
+    return dayjs.tz({ year: correctYear, month: processMonth(month), date: day }).toDate();
 }
 
 /**
