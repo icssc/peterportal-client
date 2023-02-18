@@ -61,7 +61,7 @@
   }
 
   .sidebar-login {
-    margin-bottom: 5vh;
+    margin-bottom: 5vh; 
 
     .sidebar-login-icon {
       margin-right: 1vw;
@@ -74,7 +74,7 @@
   width: 5vw;
 
   .sidebar-links {
-    margin-top: 4vh;
+    margin-top: 2vh; 
     width: 100%;
 
     ul {
@@ -115,6 +115,11 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+
+    .sidebar-login {
+      margin-top: -20vh;
+      margin-bottom: 35vh; 
+    }
   }
   .sidebar.mini {
     display: none;
