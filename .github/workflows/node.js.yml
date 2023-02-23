@@ -21,7 +21,9 @@ jobs:
       GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
       GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
       ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
+      STAGING_PREFIX: ${{ github.event_name == 'pull_request' && format('staging-{0}.', github.event.pull_request.number) || '' }}
       PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
+      STAGE_NAME: ${{ github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number) || 'prod' }}
       PORT: ${{secrets.PORT}}
 
     steps:
@@ -43,7 +45,9 @@ jobs:
             GOOGLE_CLIENT=$GOOGLE_CLIENT\n \
             GOOGLE_SECRET=$GOOGLE_SECRET\n \
             ADMIN_EMAILS=$ADMIN_EMAILS\n \
+            STAGING_PREFIX=$STAGING_PREFIX\n \
             PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
+            STAGE_NAME=$STAGE_NAME\n \
             PORT=$PORT" > .env
 
       - name: Install and Build Frontend 🔧 
@@ -67,8 +71,7 @@ jobs:
             -c "cd api && 
             serverless plugin install --name serverless-dotenv-plugin && 
             serverless plugin install --name serverless-domain-manager && 
-            serverless package --package my-package &&
-            serverless deploy --package ./my-package"
+            serverless deploy"
           entrypoint: /bin/sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
