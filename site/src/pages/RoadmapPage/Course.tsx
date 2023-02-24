@@ -24,7 +24,7 @@ const Course: FC<CourseProps> = (props) => {
         </div>
         <div className="popover-description">{description}</div>
         {prerequisite_text && <div className="popover-detail">
-          <span className="popover-detail-prefix">Prequisite:</span> {prerequisite_text}
+          <span className="popover-detail-prefix">Prerequisite:</span> {prerequisite_text}
         </div>}
         {corequisite && <div className="popover-detail">
           <span className="popover-detail-prefix">Corequisite:</span> {corequisite}
