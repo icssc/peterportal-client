@@ -343,7 +343,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Tell us more about this {props.course ? 'course' : 'professor'}</Form.Label>
                 <Form.Control
                   as="textarea"
-                  placeholder="Here's your chance to be more specific...&#13;&#10;Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!"
+                  placeholder="Here's your chance to be more specific..."
                   style={{ height: '15vh', width: '100%' }}
                   onChange={(e) => {
                     setContent(e.target.value);
@@ -357,6 +357,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   {overCharLimit ? (<p style={{ color: 'red' }}>Your review exceeds the character limit</p>) : null}
                   <p style={content.length > 500 ? { color: 'red' } : {}} className='chars'>{content.length}/500</p>
                 </div>
+                <Form.Text>
+                  <Icon name='info circle' />
+                  <span style={{ color: '#333333' }}>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</span>
+                </Form.Text>
               </Form.Group>
             </Col>
           </Row>
