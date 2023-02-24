@@ -2,3 +2,15 @@
     max-height: 75vh;
     overflow-y: auto;
 }
+
+.list-group {
+    height: auto;
+    width: auto;
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.entry {
+    margin-top: 1%;
+}
+

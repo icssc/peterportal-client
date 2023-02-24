@@ -18,7 +18,7 @@ const Planner: FC = () => {
   const data = useAppSelector(selectYearPlans);
   const transfers = useAppSelector(state => state.roadmap.transfers);
   
-  // const [missingCourses, setMissingCourses] = useState(new Set<string>);
+  const [missingCourses, setMissingCourses] = useState(new Set<string>);
 
   useEffect(() => {
     // if is first render, load from local storage
@@ -29,6 +29,7 @@ const Planner: FC = () => {
     else {
       validatePlanner();
     }
+  
   }, [data, transfers]);
 
   // remove all unecessary data to store into the database
@@ -186,9 +187,10 @@ const Planner: FC = () => {
       })
     })
 
-    // FIXME: need to deal with AND and OR relation for prerequisitsprerequisites
+    // TODO: check if a missing course is transferable
+
     // set missing courses
-    // setMissingCourses(missing);
+    setMissingCourses(missing);
 
     // set the invalid courses
     dispatch(setInvalidCourses(invalidCourses));
@@ -252,7 +254,7 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
+      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} missingCourses={missingCourses} />
       <section className="years">
         {data.map((year, yearIndex) => {
           return (
