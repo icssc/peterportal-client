@@ -210,7 +210,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row>
             <Col>
               <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
-              <h5>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</h5>
             </Col>
           </Row>
           <Row className='mt-4' lg={2} md={1}>
@@ -344,7 +343,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Tell us more about this {props.course ? 'course' : 'professor'}</Form.Label>
                 <Form.Control
                   as="textarea"
-                  placeholder="Here's your chance to be more specific..."
+                  placeholder="Here's your chance to be more specific...&#13;&#10;Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!"
                   style={{ height: '15vh', width: '100%' }}
                   onChange={(e) => {
                     setContent(e.target.value);
