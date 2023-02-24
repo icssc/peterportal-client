@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 
-import { WebsocResponse, Section } from 'websoc-api';
+import { WebsocResponse, Section } from '../../types/types';
 
 interface ScheduleProps {
     courseID?: string;

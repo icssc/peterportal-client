@@ -21,6 +21,10 @@
 
 ## Steps to verify/test this change:
 
-## Todos:
+## Final Checks:
+- [ ] Verify successful deployment
+- [ ] Delete branch
+
+(optional)
 - [ ] Write tests
 - [ ] Write documentation
