@@ -19,6 +19,8 @@ dayjs.extend(objectSupport)
 const PACIFIC_TIME = 'America/Los_Angeles';
 dayjs.tz.setDefault(PACIFIC_TIME);
 
+const MONDAY = 1; // day index (sunday=0, ..., saturday=6)
+
 /**
  * Get the current week and quarter. A display string is also provided.
  */
@@ -92,18 +94,13 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             ms: 999
         });
 
-        let isFallQuarter = false;
-        // in fall quarter, instruction start date is not on a monday
-        // it is on a thursday in week 0
-        // let's move it back to monday in week 0 and adjust our week calculations by -1
-        // that way week calculations are correct for fall quarter
-        if (begin.day() !== 1) {
-            isFallQuarter = true;
-            begin = begin.day(1); // moves day back to Monday (monday is index 1)
-        }
+        // moves day back to Monday (if it isn't already such as in fall quarter which starts on a Thursday)
+        // so that each new week starts on a Monday (rather than on Thursday as it was incorrectly calculating for fall quarter)
+        begin = begin.day(MONDAY); 
 
         // check if the date lies within the start/end range
         if (date >= begin && date <= end) {
+            let isFallQuarter = quarter.toLowerCase().includes('fall');
             let week = Math.floor(date.diff(begin, 'weeks')) + (isFallQuarter ? 0 : 1); // if it's fall quarter, start counting at week 0, otherwise 1
             let display = `Week ${week} • ${quarter}`
             result = {
