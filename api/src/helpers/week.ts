@@ -9,12 +9,10 @@ import { QuarterMapping, WeekData } from '../types/types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import objectSupport from 'dayjs/plugin/objectSupport';
 
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
-dayjs.extend(objectSupport)
 
 const PACIFIC_TIME = 'America/Los_Angeles';
 dayjs.tz.setDefault(PACIFIC_TIME);
@@ -79,20 +77,19 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
         // Jan 9, 2023 0:00 UTC-8 (since Irvine is in PST which is 8 hours behind UTC)
         // we want to fix this offset for accurate comparsions
         if (beginDate.getUTCHours() === 0) {
-            begin = dayjs.tz({ year: beginDate.getUTCFullYear(), month: beginDate.getUTCMonth(), date: beginDate.getUTCDate() });
-            end = dayjs.tz({ year: endDate.getUTCFullYear(), month: endDate.getUTCMonth(), date: endDate.getUTCDate() });
+            begin = dayjs.tz(beginDate.toISOString());
+            end = dayjs.tz(endDate.toISOString());
         } else { // default case if the dates aren't in UTC+0 and are in correct timezone
             begin = dayjs(beginDate).tz();
             end = dayjs(endDate).tz();
         }
 
         // adjust instruction end date to last ms of the day
-        end = end.add({
-            hours: 23,
-            minutes: 59,
-            seconds: 59,
-            ms: 999
-        });
+        end = end
+            .add(23, 'hours')
+            .add(59, 'minutes')
+            .add(59, 'seconds')
+            .add(999, 'ms');
 
         // moves day back to Monday (if it isn't already such as in fall quarter which starts on a Thursday)
         // so that each new week starts on a Monday (rather than on Thursday as it was incorrectly calculating for fall quarter)
@@ -228,48 +225,7 @@ function processDate(dateEntry: string, dateLabel: string, year: number): Date {
     // Exception for Summer Session
     let correctYear = isInteger(labelYear) ? parseInt(labelYear) : year + 1;
 
-    return dayjs.tz({ year: correctYear, month: processMonth(month), date: day }).toDate();
-}
-
-/**
- * @example
- * // returns 0
- * processMonth('Jan')
- * @example
- * // returns 6
- * processMonth('Jul')
- * @param month Month name as it appears on registrar
- * @returns Month index (0-11)
- */
-function processMonth(month: string): number {
-    switch (month) {
-        case 'Jan':
-            return 0;
-        case 'Feb':
-            return 1;
-        case 'Mar':
-            return 2;
-        case 'Apr':
-            return 3;
-        case 'May':
-            return 4;
-        case 'Jun':
-            return 5;
-        case 'Jul':
-            return 6;
-        case 'Aug':
-            return 7;
-        case 'Sep':
-            return 8;
-        case 'Oct':
-            return 9;
-        case 'Nov':
-            return 10;
-        case 'Dec':
-            return 11;
-    }
-
-    return -1;
+    return dayjs.tz(`${correctYear}-${month}-${day}`).toDate();
 }
 
 /**
