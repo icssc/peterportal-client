@@ -8,6 +8,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   deploy-aws:
     runs-on: ubuntu-latest
@@ -58,6 +62,7 @@ jobs:
           cp -r build ../api/
 
       - name: Install and Build Backend 🔧 
+        id: install-backend
         run: |
           cd api
           rm .env.local
@@ -66,6 +71,7 @@ jobs:
 
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.1
+        if: ${{ success() || ( cancelled() && steps.install-backend.outcome == 'success' ) }}
         with:
           args: >
             -c "cd api && 

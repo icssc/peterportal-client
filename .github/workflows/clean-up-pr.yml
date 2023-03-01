@@ -6,6 +6,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   clean-up-pr:
     runs-on: ubuntu-latest
@@ -19,12 +23,14 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Dump Environment Variables
+        id: dump-env-variables
         run: |
           cd api && printf "STAGING_PREFIX=$STAGING_PREFIX\n \
             STAGE_NAME=$STAGE_NAME" > .env
 
       - name: Remove Serverless stack
         uses: serverless/github-action@v3.1
+        if: ${{ success() || ( cancelled() && steps.dump-env-variables.outcome == 'success' ) }}
         with:
           args: >
             -c "cd api && 
