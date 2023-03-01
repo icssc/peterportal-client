@@ -20,8 +20,8 @@ interface TransferEntryProps extends TransferData {
 }
 
 // a list of missing courses for current plan, passed into Transfer component to display dropdown
-interface MissingCoursesProps {
-    names: Set<string>;
+interface MissingPrereqProps {
+    missingPrereqNames: Set<string>;
 }
 
 const TransferEntry: FC<TransferEntryProps> = (props) => {
@@ -62,23 +62,18 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
     </Row>
 }
 
-const Transfer: FC<MissingCoursesProps> = ({ names }) => {
+const Transfer: FC<MissingPrereqProps> = ({ missingPrereqNames }) => {
     const dispatch = useAppDispatch();
     const transfers = useAppSelector(state => state.roadmap.transfers);
     const show = useAppSelector(state => state.roadmap.showTransfer);
     const handleClose = () => dispatch(setShowTransfer(false));
 
-    console.log("missing courses: ", names);
-
-    // console.log("For transfers classes");
-    // transfers.forEach((course) => {
-    //     console.log(course.name);
-    // });
+    console.log("missing courses: ", missingPrereqNames);
 
 
     const DisplayMissingCourses: FC = () => {
         return <ListGroup horizontal> {
-                Array.from(names).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+                Array.from(missingPrereqNames).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
             }
         </ListGroup>
     };
@@ -92,9 +87,9 @@ const Transfer: FC<MissingCoursesProps> = ({ names }) => {
             </Modal.Header>
             <Modal.Body className='transfer' >
                 <p>Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the roadmap.</p>
-                <p>Below is a list of transferable courses based on your current plan</p>
+                <p>Notice: entered course names need to match exactly as displayed on the UCI catalog (eg. "AP computer science" must be entered as "AP COMP SCI A")</p>
                 <DisplayMissingCourses />
-                <Container>
+                <Container className="entry">
                     <Form>
                         {
                             transfers.map((transfer, i) => <TransferEntry key={`transfer-${i}`} index={i} {...transfer}></TransferEntry>)
