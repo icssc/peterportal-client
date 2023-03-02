@@ -43,7 +43,7 @@ const Course: FC<CourseProps> = (props) => {
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <div className="name">{department + ' ' + number}</div>
+          <a className="name" href={'/course/' + props.department.replace(/\s+/g, '') + props.number.replace(/\s+/g, '')} target="_blank">{department + ' ' + number}</a>
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="auto"
