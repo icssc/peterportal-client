@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Build and deploy
 
 on:
   push:
@@ -8,12 +8,9 @@ on:
     branches:
       - master
 
-concurrency:
-  group: ${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
-  deploy-aws:
+  build:
+    name: Build project
     runs-on: ubuntu-latest
     env:
       # need to set to false, otherwise react warnings will be treated as errors
@@ -29,6 +26,10 @@ jobs:
       PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
       STAGE_NAME: ${{ github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number) || 'prod' }}
       PORT: ${{secrets.PORT}}
+
+    concurrency:
+      group: build-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
 
     steps:
       - name: Check Out Repo
@@ -62,16 +63,35 @@ jobs:
           cp -r build ../api/
 
       - name: Install and Build Backend 🔧 
-        id: install-backend
         run: |
           cd api
           rm .env.local
           npm install
           npm run build
 
+      - name: Cache build to use in deployment
+        uses: actions/cache@v3
+        with:
+          key: "${{ github.workflow }} #${{ github.run_number }} attempt ${{ github.run_attempt }}"
+          path: ${{ github.workspace }}
+
+  deploy:
+    name: Deploy to AWS
+    needs: build
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: deploy-${{ github.head_ref || github.run_id }}
+
+    steps:
+      - name: Retrieve build from cache
+        uses: actions/cache@v3
+        with:
+          key: "${{ github.workflow }} #${{ github.run_number }} attempt ${{ github.run_attempt }}"
+          path: ${{ github.workspace }}
+
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.1
-        if: ${{ success() || ( cancelled() && steps.install-backend.outcome == 'success' ) }}
         with:
           args: >
             -c "cd api && 
