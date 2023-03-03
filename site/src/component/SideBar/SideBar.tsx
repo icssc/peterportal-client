@@ -67,6 +67,18 @@ const SideBar: FC = ({ children }) => {
           </span>
         </NavLink>
       </li>
+      {isLoggedIn && 
+      <li>
+        <NavLink to='/reviews' activeClassName='sidebar-active' onClick={closeSidebar}>
+          <div>
+            <Icon name='sticky note outline' size='large' />
+          </div>
+          <span>
+            Reviews
+          </span>
+        </NavLink>
+      </li>
+      }
       {isAdmin && <>
       <li>
         <NavLink to='/admin/verify' activeClassName='sidebar-active' onClick={closeSidebar}>

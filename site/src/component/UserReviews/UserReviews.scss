@@ -1,0 +1,17 @@
+.user-reviews-container {
+    padding: 2rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+}
+
+.user-reviews {
+    background-color: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 3vh;
+
+    .user-reviews-footer {
+        flex-direction: row;
+        width: 100%;
+        align-items: flex-end;
+    }
+}
