@@ -43,7 +43,6 @@
     "semantic-ui-react": "^1.2.1",
     "treeviz-react": "^0.4.0",
     "typescript": "^4.3.5",
-    "websoc-api": "^1.0.0",
     "websoc-fuzzy-search": "^0.8.0-rc.1"
   },
   "scripts": {

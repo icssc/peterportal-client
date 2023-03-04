@@ -11,6 +11,7 @@
     "connect-mongodb-session": "^3.1.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.7",
     "dotenv": "^8.2.0",
     "dotenv-flow": "^3.2.0",
     "ejs": "^3.1.5",
@@ -34,8 +35,7 @@
     "request-promise": "^4.2.6",
     "serverless-http": "^2.7.0",
     "shortid": "^2.2.15",
-    "typescript": "^4.3.5",
-    "websoc-api": "^1.0.0"
+    "typescript": "^4.3.5"
   },
   "devDependencies": {
     "@types/connect-mongodb-session": "^2.4.2",
