@@ -21,7 +21,7 @@ interface TransferEntryProps extends TransferData {
 
 // a list of missing courses for current plan, passed into Transfer component to display dropdown
 interface MissingCoursesProps {
-    names: Set<string>;
+    missingPrereqNames: Set<string>;
 }
 
 const TransferEntry: FC<TransferEntryProps> = (props) => {
@@ -62,18 +62,18 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
     </Row>
 }
 
-const Transfer: FC<MissingCoursesProps> = ({ names }) => {
+const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
     const dispatch = useAppDispatch();
     const transfers = useAppSelector(state => state.roadmap.transfers);
     const show = useAppSelector(state => state.roadmap.showTransfer);
     const handleClose = () => dispatch(setShowTransfer(false));
 
-    console.log("missing courses: ", names);
+    console.log("missing courses: ", missingPrereqNames);
 
 
     const DisplayMissingCourses: FC = () => {
         return <ListGroup horizontal> {
-                Array.from(names).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+                Array.from(missingPrereqNames).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
             }
         </ListGroup>
     };

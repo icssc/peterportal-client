@@ -4,10 +4,12 @@
 }
 
 .list-group {
-    height: auto;
-    width: auto;
+    height: max-content;
     overflow-x: scroll;
-    -webkit-overflow-scrolling: touch;
+}
+
+.transfer .list-group .list-group-item {
+    min-width: max-content;
 }
 
 .entry {
