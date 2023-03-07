@@ -84,19 +84,15 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             end = dayjs(endDate).tz();
         }
 
-        // adjust instruction end date to last ms of the day
-        end = end
-            .add(23, 'hours')
-            .add(59, 'minutes')
-            .add(59, 'seconds')
-            .add(999, 'ms');
+        // adjust instruction end date to the beginning of the following day
+        end = end.add(1, 'day');
 
         // moves day back to Monday (if it isn't already such as in fall quarter which starts on a Thursday)
         // so that each new week starts on a Monday (rather than on Thursday as it was incorrectly calculating for fall quarter)
         begin = begin.day(MONDAY); 
 
         // check if the date lies within the start/end range
-        if (date >= begin && date <= end) {
+        if (date >= begin && date < end) {
             let isFallQuarter = quarter.toLowerCase().includes('fall');
             let week = Math.floor(date.diff(begin, 'weeks')) + (isFallQuarter ? 0 : 1); // if it's fall quarter, start counting at week 0, otherwise 1
             let display = `Week ${week} • ${quarter}`
@@ -107,7 +103,7 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             }
         }
         // check if date is after instruction end date and by no more than 1 week - finals week
-        else if (date > end && date <= end.add(1, 'week')) {
+        else if (date >= end && date <= end.add(1, 'week')) {
             let display = `Finals Week • ${quarter}. Good Luck!🤞`
             result = {
                 week: -1,
