@@ -103,7 +103,7 @@ function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
             }
         }
         // check if date is after instruction end date and by no more than 1 week - finals week
-        else if (date >= end && date <= end.add(1, 'week')) {
+        else if (date >= end && date < end.add(1, 'week')) {
             let display = `Finals Week • ${quarter}. Good Luck!🤞`
             result = {
                 week: -1,
