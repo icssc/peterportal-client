@@ -13,8 +13,8 @@ jobs:
   clean-up-pr:
     runs-on: ubuntu-latest
     env:
-      STAGING_PREFIX: ${{ github.event_name == 'pull_request' && format('staging-{0}.', github.event.pull_request.number) || '' }}
-      STAGE_NAME: ${{ github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number) || 'prod' }}
+      STAGING_PREFIX: staging-${{ github.event.pull_request.number }}.
+      STAGE_NAME: staging-${{ github.event.pull_request.number }}
 
     steps:
       - name: Check Out Repo
