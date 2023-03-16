@@ -89,6 +89,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
             <Modal.Body className='transfer' >
                 <p>Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the roadmap.</p>
                 <p>Notice: entered course names need to match exactly as displayed on the UCI catalog (eg. "AP computer science" must be entered as "AP COMP SCI A")</p>
+                <p>Missing Prerequisites</p>
                 <DisplayMissingCourses />
                 <Container className="entry">
                     <Form>
