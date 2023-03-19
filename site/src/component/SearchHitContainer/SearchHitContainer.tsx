@@ -14,12 +14,17 @@ interface SearchHitContainerProps {
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
     const courseResults = useAppSelector(state => state.search.courses.results);
     const professorResults = useAppSelector(state => state.search.professors.results);
+    const containerDivRef = React.createRef<HTMLDivElement>();
+
+    useEffect(() => {
+        containerDivRef.current!.scrollTop = 0;
+    });
 
     if (index == 'professors' && !ProfessorHitItem) {
         throw 'Professor Component not provided';
     }
 
-    return <div className='search-hit-container'>
+    return <div ref={containerDivRef} className='search-hit-container'>
         {
             index == 'courses' && <>
                 {
