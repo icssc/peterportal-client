@@ -13,20 +13,37 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
   const dispatch = useAppDispatch();
   const [year, setYear] = useState(placeholderYear);
   const [show, setShow] = useState(false);
-  const target = useRef(null);
+  const target = useRef<HTMLButtonElement>(null);
+  const popupTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setYear(placeholderYear) }, [placeholderYear]);
 
-  const handleClick = (event: React.MouseEvent) => {
-    setShow(!show);
-  };
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (target.current && target.current.contains(event.target as Node)) {
+        setShow(!show);
+      } else {
+        setShow(false);
+      }
+    };
+    const rootElement = document.getElementById("root");
+    if(rootElement){
+      rootElement.addEventListener('click', handleClick);
+    }
+    return () => {
+      if(rootElement){
+        rootElement.removeEventListener('click', handleClick);
+      }
+    };
+  }, [popupTarget, target, show]);
 
   return (
     <div>
-      <Button variant="light" ref={target} className="add-year-btn" onClick={handleClick}>
+      <Button variant="light" ref={target} className="add-year-btn">
         <PlusCircleFill className="add-year-icon" />
         <div className="add-year-text">Add year</div>
       </Button>
+      <div ref={popupTarget}>
       <Overlay show={show} target={target} placement="top">
         <Popover id=''>
           <Popover.Content>
@@ -74,6 +91,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
           </Popover.Content>
         </Popover>
       </Overlay>
+      </div>
     </div >
   );
 }
