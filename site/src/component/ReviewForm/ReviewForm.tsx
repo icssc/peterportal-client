@@ -358,7 +358,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   <p style={content.length > 500 ? { color: 'red' } : {}} className='chars'>{content.length}/500</p>
                 </div>
                 <Form.Text>
-                  <Icon name='info circle' />
+                  <Icon name='warning sign' />
                   <span style={{ color: '#333333' }}>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</span>
                 </Form.Text>
               </Form.Group>
