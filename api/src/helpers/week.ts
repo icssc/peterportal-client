@@ -6,6 +6,18 @@ import fetch from 'node-fetch';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { COLLECTION_NAMES, setValue, getValue } from './mongo';
 import { QuarterMapping, WeekData } from '../types/types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
+const PACIFIC_TIME = 'America/Los_Angeles';
+dayjs.tz.setDefault(PACIFIC_TIME);
+
+const MONDAY = 1; // day index (sunday=0, ..., saturday=6)
 
 /**
  * Get the current week and quarter. A display string is also provided.
@@ -13,9 +25,9 @@ import { QuarterMapping, WeekData } from '../types/types';
 export function getWeek(): Promise<WeekData> {
     return new Promise(async resolve => {
         // current date
-        let date = new Date(Date.now());
+        let date = dayjs().tz();
         // current year
-        let year = date.getFullYear();
+        let year = date.year();
 
         // check for current year to current year + 1
         let quarterMapping1 = await getQuarterMapping(year) as QuarterMapping;
@@ -49,15 +61,40 @@ export function getWeek(): Promise<WeekData> {
  * @param quarterMapping Maps a quarter to its start and end date 
  * @returns Week description if it lies within the quarter
  */
-function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
+function findWeek(date: dayjs.Dayjs, quarterMapping: QuarterMapping): WeekData {
     let result: WeekData = undefined!;
     // iterate through each quarter
     Object.keys(quarterMapping).forEach(function (quarter) {
-        let begin = new Date(quarterMapping[quarter]['begin'])
-        let end = new Date(quarterMapping[quarter]['end'])
+        let beginDate = new Date(quarterMapping[quarter]['begin']);
+        let endDate = new Date(quarterMapping[quarter]['end']);
+
+        let begin: dayjs.Dayjs;
+        let end: dayjs.Dayjs;
+
+        // begin/end dates are incorrectly in UTC+0, likely due to AWS servers being in UTC+0 by default
+        // so for example, Winter 2023 starts on Monday Jan 9, 2023 PST
+        // the begin date on production is incorrectly Jan 9, 2023 00:00 UTC+0, when it should be
+        // Jan 9, 2023 0:00 UTC-8 (since Irvine is in PST which is 8 hours behind UTC)
+        // we want to fix this offset for accurate comparsions
+        if (beginDate.getUTCHours() === 0) {
+            begin = dayjs.tz(beginDate.toISOString());
+            end = dayjs.tz(endDate.toISOString());
+        } else { // default case if the dates aren't in UTC+0 and are in correct timezone
+            begin = dayjs(beginDate).tz();
+            end = dayjs(endDate).tz();
+        }
+
+        // adjust instruction end date to the beginning of the following day
+        end = end.add(1, 'day');
+
+        // moves day back to Monday (if it isn't already such as in fall quarter which starts on a Thursday)
+        // so that each new week starts on a Monday (rather than on Thursday as it was incorrectly calculating for fall quarter)
+        begin = begin.day(MONDAY); 
+
         // check if the date lies within the start/end range
-        if (date >= begin && date <= end) {
-            let week = Math.floor(dateSubtract(begin, date) / 7) + 1;
+        if (date >= begin && date < end) {
+            let isFallQuarter = quarter.toLowerCase().includes('fall');
+            let week = Math.floor(date.diff(begin, 'weeks')) + (isFallQuarter ? 0 : 1); // if it's fall quarter, start counting at week 0, otherwise 1
             let display = `Week ${week} • ${quarter}`
             result = {
                 week: week,
@@ -65,8 +102,8 @@ function findWeek(date: Date, quarterMapping: QuarterMapping): WeekData {
                 display: display
             }
         }
-        // check if date is 1 week after end
-        else if (date > end && date <= addDays(end, 7)) {
+        // check if date is after instruction end date and by no more than 1 week - finals week
+        else if (date >= end && date < end.add(1, 'week')) {
             let display = `Finals Week • ${quarter}. Good Luck!🤞`
             result = {
                 week: -1,
@@ -169,7 +206,7 @@ function processRow(row: Element, $: CheerioAPI, quarterToDayMapping: QuarterMap
  * processDate('Jan 17', 'Winter 2020', 2019)
  * @example 
  * // returns Date(7/30/2021)
- * processDate('July 30', 'Summer Session 10WK', 2020)
+ * processDate('Jul 30', 'Summer Session 10WK', 2020)
  * @param dateEntry Date entry on the calendar
  * @param dateLabel Date label on the calendar
  * @param year Beginning academic year
@@ -182,8 +219,9 @@ function processDate(dateEntry: string, dateLabel: string, year: number): Date {
     let labelYear = dateLabel.split(' ')[1];
     // 'Winter 2020' => 2020, but 'Summer Session I' => Session
     // Exception for Summer Session
-    let correctYear = isInteger(labelYear) ? labelYear : year + 1;
-    return new Date(`${month}/${day}/${correctYear}`)
+    let correctYear = isInteger(labelYear) ? parseInt(labelYear) : year + 1;
+
+    return dayjs.tz(`${correctYear}-${month}-${day}`).toDate();
 }
 
 /**
@@ -202,28 +240,4 @@ function strip(str: string): string {
  */
 function isInteger(num: string): boolean {
     return !isNaN(parseInt(num, 10))
-}
-
-/**
- * Get the number of days between two dates
- * @param date1 Earlier date
- * @param date2 Later date
- * @returns Number of days between date1 and date2
- */
-function dateSubtract(date1: Date, date2: Date): number {
-    // To calculate the time difference of two dates 
-    let Difference_In_Time = date2.getTime() - date1.getTime();
-    // To calculate the no. of days between two dates 
-    return Difference_In_Time / (1000 * 3600 * 24);
-}
-
-/**
- * Add days to a date
- * @param date Date to add days to
- * @param days Number of days to add
- * @returns Same date as the one passed in
- */
-function addDays(date: Date, days: number): Date {
-    date.setDate(date.getDate() + days);
-    return date;
 }
