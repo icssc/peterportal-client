@@ -7,11 +7,10 @@ plugins:
 
 custom:
   customDomain:
-    domainName: peterportal.org
+    domainName: ${env:STAGING_PREFIX}peterportal.org
     certificateName: 'peterportal.org'
-    basePath: ''
     createRoute53Record: true
-    
+    autoDomain: true
 
 package:
   patterns:
@@ -21,7 +20,8 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
-  stage: prod
+  stage: ${env:STAGE_NAME}
+  stackName: peterportal-core-${env:STAGE_NAME}
   apiGateway:
     binaryMediaTypes:
       - 'image/*'
