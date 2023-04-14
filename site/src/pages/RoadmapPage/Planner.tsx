@@ -6,7 +6,7 @@ import Header from "./Header";
 import AddYearPopup from "./AddYearPopup";
 import Year from "./Year";
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers } from '../../store/slices/roadmapSlice';
+import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers, addYear } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
 import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, BatchCourseData, MongoRoadmap } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
@@ -235,25 +235,39 @@ const Planner: FC = () => {
     }
   }
 
+  const initializePlanner = () => {
+    if (data.length == 0) {
+      dispatch(addYear(
+        {
+          yearData: {
+            startYear: new Date().getFullYear(),
+            quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
+          }
+        }
+      ))
+    }
+  
+    return data.map((year, yearIndex) => {
+      return (
+        <Year
+          key={yearIndex}
+          yearIndex={yearIndex}
+          data={year}
+        />
+      );
+    })
+  }
+
   let { unitCount, courseCount } = calculatePlannerOverviewStats();
 
   return (
     <div className="planner">
       <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} />
       <section className="years">
-        {data.map((year, yearIndex) => {
-          return (
-            <Year
-              key={yearIndex}
-              yearIndex={yearIndex}
-              data={year}
-            />
-          );
-        })}
+        {initializePlanner()}
       </section>
       <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
     </div>
   );
 };
-
 export default Planner;
