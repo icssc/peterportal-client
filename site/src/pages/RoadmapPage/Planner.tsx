@@ -234,6 +234,8 @@ const Planner: FC = () => {
       }
     }
   }
+  //TODO: Support for Multiple Planner future implementation
+  //  - Default year only added when a new planner is created
 
   const initializePlanner = () => {
     if (data.length == 0) {
