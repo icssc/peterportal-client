@@ -259,30 +259,6 @@ const Planner: FC = () => {
       );
     })
   }
-
-  const initializePlanner = () => {
-    if (data.length == 0) {
-      dispatch(addYear(
-        {
-          yearData: {
-            startYear: new Date().getFullYear(),
-            quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
-          }
-        }
-      ))
-    }
-  
-    return data.map((year, yearIndex) => {
-      return (
-        <Year
-          key={yearIndex}
-          yearIndex={yearIndex}
-          data={year}
-        />
-      );
-    })
-  }
-
   let { unitCount, courseCount } = calculatePlannerOverviewStats();
 
   return (
