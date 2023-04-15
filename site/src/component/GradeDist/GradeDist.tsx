@@ -54,6 +54,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     })
       .then(res => {
         setGradeDistData(res.data);
+      }).catch(error => {
+        // TODO: display an error message
+        console.error(error.response);
       });
   }
 
