@@ -39,11 +39,15 @@ const Course: FC<CourseProps> = (props) => {
     </Popover.Content>
   </Popover>
 
+  const CourseRoute = () => {
+    return '/course/' + props.department.replace(/\s+/g, '') + props.number.replace(/\s+/g, '')
+  }
+
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={'/course/' + props.department.replace(/\s+/g, '') + props.number.replace(/\s+/g, '')} target="_blank">{department + ' ' + number}</a>
+          <a className="name" href={CourseRoute()} target="_blank" rel="noopener noreferrer">{department + ' ' + number}</a>
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="auto"
