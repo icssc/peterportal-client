@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import React, { FC, useEffect, useState } from "react";
-import Reports from "src/component/Report/Reports";
+import Reports from "../../component/Report/Reports";
 import Verify from '../../component/Verify/Verify';
 import Error from '../../component/Error/Error';
 import './AdminPage.scss';
@@ -20,7 +20,7 @@ const AdminPage: FC = () => {
 
     // user has to be authenticated as admin to view this page
     const checkAdmin = async () => {
-        const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
+        const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
         const isAdmin: boolean = res.data.admin;
         setAuthorized(isAdmin);
         setLoaded(true);

@@ -38,7 +38,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'npm'
 
       - name: Dump Environment Variables
@@ -58,7 +58,7 @@ jobs:
       - name: Install and Build Frontend 🔧 
         run: |
           cd site
-          npm install --legacy-peer-deps
+          npm install
           npm run build
           cp -r build ../api/
 

@@ -91,14 +91,16 @@ app.use(cors());
  */
 
 // Enable custom routes
-app.use('/courses', coursesRouter);
-app.use('/professors', professorsRouter);
-app.use('/schedule', scheduleRouter);
-app.use('/reviews', reviewsRouter);
-app.use('/users', usersRouter);
-app.use('/graphql', graphqlRouter);
-app.use('/roadmap', roadmapRouter);
-app.use('/reports', reportsRouter);
+const router = express.Router();
+router.use('/courses', coursesRouter);
+router.use('/professors', professorsRouter);
+router.use('/schedule', scheduleRouter);
+router.use('/reviews', reviewsRouter);
+router.use('/users', usersRouter);
+router.use('/graphql', graphqlRouter);
+router.use('/roadmap', roadmapRouter);
+router.use('/reports', reportsRouter);
+app.use('/api', router);
 
 app.options(`*`, (req, res) => {
   res.status(200).send()

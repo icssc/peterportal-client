@@ -12,7 +12,7 @@ const CoursePopup: FC = () => {
 
     useEffect(() => {
         if (course) {
-            axios.get<ScoreData[]>('/reviews/scores', {
+            axios.get<ScoreData[]>('/api/reviews/scores', {
                 params: {
                     type: 'course',
                     id: course.id
