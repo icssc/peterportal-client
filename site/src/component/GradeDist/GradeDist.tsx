@@ -55,7 +55,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .then(res => {
         setGradeDistData(res.data);
       }).catch(error => {
-        // TODO: display an error message
         console.error(error.response);
       });
   }
@@ -245,6 +244,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   } else {
     return (
       <div>
+        Error: could not retrieve grade distribution data.
       </div>
     );
   }
