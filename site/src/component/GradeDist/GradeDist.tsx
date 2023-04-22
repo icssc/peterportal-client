@@ -59,14 +59,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       });
   }
 
-  // initial request to get grade dist data
-  useEffect(() => {
-    if (gradeDistData == null) {
-      fetchGradeDistData();
-    }
-  })
-
-  // get new data if choose a new course or professor
+  // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
     setGradeDistData([]);
     fetchGradeDistData();
