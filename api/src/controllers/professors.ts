@@ -53,7 +53,6 @@ router.get('/api/grades/:name', function (req, res, next) {
 
   r.then((response) => {
     status = response.status;
-    console.log(status);
     return response.json();
   }).then((data) => res.status(status).send(data))
 });
