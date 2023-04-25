@@ -14,8 +14,8 @@ export function BackendStack({stack}: StackContext) {
             'ANY /api/{proxy+}': {
                 function: {
                     handler: 'api/src/app.handler',
-                    memorySize: 512,
-                    runtime: 'nodejs14.x',
+                    memorySize: 128,
+                    runtime: 'nodejs18.x',
                     logRetention: stack.stage === 'prod' ? 'two_years' : 'one_week',
                     environment: {
                         MONGO_URL: process.env.MONGO_URL,
