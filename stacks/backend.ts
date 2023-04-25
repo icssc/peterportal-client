@@ -16,6 +16,7 @@ export function BackendStack({stack}: StackContext) {
                     handler: 'api/src/app.handler',
                     memorySize: 512,
                     runtime: 'nodejs14.x',
+                    logRetention: stack.stage === 'prod' ? 'two_years' : 'one_week',
                     environment: {
                         MONGO_URL: process.env.MONGO_URL,
                         SESSION_SECRET: process.env.SESSION_SECRET,
