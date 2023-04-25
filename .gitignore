@@ -107,9 +107,10 @@ dist
 # sst files
 .sst
 
-# IDE files
+# local files
 .idea
 .vscode
+.DS_STORE
 
 # env files
 .env
