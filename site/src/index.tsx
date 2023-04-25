@@ -19,6 +19,8 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+axios.defaults.baseURL = '/api';
+
 /**
  * Render App
  */

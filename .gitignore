@@ -104,6 +104,15 @@ dist
 .tern-port
 .DS_Store
 
+# sst files
+.sst
+
+# IDE files
+.idea
+.vscode
+
+# env files
+.env
 
 api/build
 site/build

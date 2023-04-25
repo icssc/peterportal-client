@@ -6,8 +6,10 @@
     "heroku-postbuild": "cd api && npm run build && cd .. && cd site && npm run build && cp -r build ../api/",
     "start": "npm start --prefix api"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "dotenv-flow": "^3.2.0",
+    "sst": "^2.5.8"
+  },
   "engines": {
     "node": "18.x.x"
   }
