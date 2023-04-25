@@ -12,10 +12,6 @@ import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
-import nocache from 'nocache';
-
-console.log('Starting server...')
-
 // load env
 dotenv.config();
 
@@ -39,7 +35,7 @@ const app = express();
 let mongoStore = MongoDBStore(session);
 
 if (process.env.MONGO_URL) {
-  var store = new mongoStore({
+  let store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
     collection: COLLECTION_NAMES.SESSIONS
@@ -48,7 +44,7 @@ if (process.env.MONGO_URL) {
   store.on('error', function (error) {
     console.log(error);
   });
-  // Setup Passport and Sesssions
+  // Setup Passport and Sessions
   app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -67,7 +63,6 @@ else {
 /**
  * Configure Express.js Middleware
  */
-
 
 app.use(express.json());
 app.use(logger('dev'))
@@ -107,11 +102,6 @@ app.options(`*`, (req, res) => {
 app.get(`/test`, (req, res) => {
   res.status(200).send('Hello World!')
 })
-
-/**
- * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
- */
-app.use(nocache());
 
 /**
  * Error Handler
