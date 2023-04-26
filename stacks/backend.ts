@@ -2,12 +2,27 @@ import {Api, StackContext, use} from "sst/constructs";
 import { FrontendStack } from "./frontend";
 
 
-export function BackendStack({stack}: StackContext) {
+export function BackendStack({app, stack}: StackContext) {
     const { frontendUrl } = use(FrontendStack);
+
+    let domainName;
+    if (app.stage === 'prod') {
+        domainName = 'peterportal.org'
+    }
+    else if (app.stage === 'dev') {
+        domainName = 'dev.peterportal.org'
+    }
+    else if (!isNaN(app.stage as any)) {
+        const prNum = parseInt(app.stage)
+        domainName = `staging-${prNum}.peterportal.org`
+    }
+    else {
+        throw new Error('Invalid stage')
+    }
 
     const api = new Api(stack, "Api", {
         customDomain: {
-            domainName: "test.peterportal.org",
+            domainName: domainName,
             hostedZone: "peterportal.org",
         },
         routes: {
