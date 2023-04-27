@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../store'
-import { PlannerData, PlannerYearData, CourseGQLData, YearIdentifier, QuarterIdentifier, CourseIdentifier, InvalidCourseData, TransferData, PlannerQuarterData } from '../../types/types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CourseGQLData, CourseIdentifier, InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData, QuarterIdentifier, TransferData, YearIdentifier } from '../../types/types';
+import type { RootState } from '../store';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -20,8 +20,9 @@ interface RoadmapState {
     showAddCourse: boolean;
 }
 
+
 // Define the initial state using that type
-const initialState: RoadmapState = {
+export const initialState: RoadmapState = {
     yearPlans: [],
     activeCourse: null!,
     invalidCourses: [],
@@ -30,6 +31,42 @@ const initialState: RoadmapState = {
     showSearch: false,
     showAddCourse: false
 }
+
+/** added for multiple planner */
+// create roadmap plan object 
+interface RoadmapPlan {
+    name: string;
+    content: RoadmapState;
+}
+
+interface RoadmapPlanIdentifier {
+    planIndex: number;
+}
+
+interface SetPlanNamePayload {
+    index: number;
+    name: string;
+}
+
+// default plan to display for uesr
+const defaultPlan: RoadmapPlan = {
+    name: "Schedule 1",
+    content: initialState
+};
+
+// have an array of RoadmapPlan; use index to access them later
+interface RoadmapPlans {
+    plans: RoadmapPlan[];
+    currentPlanIndex: number;
+};
+
+// define initial empty plans
+const initialPlans: RoadmapPlans = {
+    plans: [defaultPlan],
+    currentPlanIndex: 0
+};
+/** added for multiple planner */
+
 
 // Payload to pass in to move a course
 interface MoveCoursePayload {
@@ -60,10 +97,11 @@ interface SetTransferPayload {
     transfer: TransferData;
 }
 
+
 export const roadmapSlice = createSlice({
     name: 'roadmap',
     // `createSlice` will infer the state type from the `initialState` argument
-    initialState,
+    initialState: initialPlans,
     reducers: {
         // Use the PayloadAction type to declare the contents of `action.payload`
         moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
@@ -78,25 +116,25 @@ export const roadmapSlice = createSlice({
             // not from the searchbar
             if (fromYear != -1) {
                 // remove course from list
-                let courseList = state.yearPlans[fromYear].quarters[fromQuarter].courses;
+                let courseList = state.plans[state.currentPlanIndex].content.yearPlans[fromYear].quarters[fromQuarter].courses;
                 [removed] = courseList.splice(fromCourse, 1);
             }
             // from the searchbar
             else {
                 // active course has the current dragging course
-                removed = state.activeCourse;
+                removed = state.plans[state.currentPlanIndex].content.activeCourse;
             }
 
             // add course to list
-            let courseList = state.yearPlans[toYear].quarters[toQuarter].courses;
+            let courseList = state.plans[state.currentPlanIndex].content.yearPlans[toYear].quarters[toQuarter].courses;
             courseList.splice(toCourse, 0, removed!);
         },
         deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
-            state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(action.payload.courseIndex, 1);
+            state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(action.payload.courseIndex, 1);
         },
         addQuarter: (state, action: PayloadAction<AddQuarterPayload>) => {
             let startYear = action.payload.startYear;
-            let currentYears = state.yearPlans.map(e => e.startYear);
+            let currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map(e => e.startYear);
             let newQuarter = action.payload.quarterData;
 
             // if year doesn't exist
@@ -106,7 +144,7 @@ export const roadmapSlice = createSlice({
             }
 
             let yearIndex: number = currentYears.indexOf(startYear);
-            let currentQuarters = state.yearPlans[yearIndex].quarters.map(e => e.name);
+            let currentQuarters = state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].quarters.map(e => e.name);
 
             // if duplicate quarter
             if (currentQuarters.includes(newQuarter.name)) {
@@ -127,16 +165,16 @@ export const roadmapSlice = createSlice({
                 }
             }
 
-            state.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
+            state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
         },
         deleteQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
-            state.yearPlans[action.payload.yearIndex].quarters.splice(action.payload.quarterIndex, 1);
+            state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters.splice(action.payload.quarterIndex, 1);
         },
         clearQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
-            state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses = [];
+            state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses = [];
         },
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
-            let currentYears = state.yearPlans.map(e => e.startYear);
+            let currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map(e => e.startYear);
             let newYear = action.payload.yearData.startYear;
 
             // if duplicate year
@@ -153,10 +191,10 @@ export const roadmapSlice = createSlice({
                 }
             }
 
-            state.yearPlans.splice(index, 0, action.payload.yearData);
+            state.plans[state.currentPlanIndex].content.yearPlans.splice(index, 0, action.payload.yearData);
         },
         editYear: (state, action: PayloadAction<EditYearPayload>) => {
-            let currentYears = state.yearPlans.map(e => e.startYear);
+            let currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map(e => e.startYear);
             let newYear = action.payload.startYear;
             let yearIndex = action.payload.index;
 
@@ -167,59 +205,86 @@ export const roadmapSlice = createSlice({
             }
 
             // edit year & sort years
-            state.yearPlans[yearIndex].startYear = newYear;
-            state.yearPlans.sort((a, b) => a.startYear - b.startYear);
+            state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].startYear = newYear;
+            state.plans[state.currentPlanIndex].content.yearPlans.sort((a, b) => a.startYear - b.startYear);
 
         },
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
-            state.yearPlans.splice(action.payload.yearIndex, 1);
+            state.plans[state.currentPlanIndex].content.yearPlans.splice(action.payload.yearIndex, 1);
         },
         clearYear: (state, action: PayloadAction<YearIdentifier>) => {
-            for (let i = 0; i < state.yearPlans[action.payload.yearIndex].quarters.length; i++) {
-                state.yearPlans[action.payload.yearIndex].quarters[i].courses = [];
+            for (let i = 0; i < state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters.length; i++) {
+                state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[i].courses = [];
             }
         },
         clearPlanner: (state) => {
-            state.yearPlans = [];
+            state.plans[state.currentPlanIndex].content.yearPlans = [];
         },
         setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
-            state.activeCourse = action.payload;
+            state.plans[state.currentPlanIndex].content.activeCourse = action.payload;
         },
         setYearPlans: (state, action: PayloadAction<PlannerData>) => {
-            state.yearPlans = action.payload;
+            state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
         },
         setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
-            state.invalidCourses = action.payload;
+            state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
         },
         setShowTransfer: (state, action: PayloadAction<boolean>) => {
-            state.showTransfer = action.payload;
+            state.plans[state.currentPlanIndex].content.showTransfer = action.payload;
         },
         addTransfer: (state, action: PayloadAction<TransferData>) => {
-            state.transfers.push(action.payload);
+            state.plans[state.currentPlanIndex].content.transfers.push(action.payload);
         },
         setTransfer: (state, action: PayloadAction<SetTransferPayload>) => {
-            state.transfers[action.payload.index] = action.payload.transfer;
+            state.plans[state.currentPlanIndex].content.transfers[action.payload.index] = action.payload.transfer;
         },
         setTransfers: (state, action: PayloadAction<TransferData[]>) => {
-            state.transfers = action.payload;
+            state.plans[state.currentPlanIndex].content.transfers = action.payload;
         },
         deleteTransfer: (state, action: PayloadAction<number>) => {
-            state.transfers.splice(action.payload, 1);
+            state.plans[state.currentPlanIndex].content.transfers.splice(action.payload, 1);
         },
         setShowSearch: (state, action: PayloadAction<boolean>) => {
-            state.showSearch = action.payload;
+            state.plans[state.currentPlanIndex].content.showSearch = action.payload;
         },
         setShowAddCourse: (state, action: PayloadAction<boolean>) => {
-            state.showAddCourse = action.payload;
+            state.plans[state.currentPlanIndex].content.showAddCourse = action.payload;
         },
+        /** added for multiple plans */
+        setRoadmapPlan: (state, action: PayloadAction<RoadmapPlans>) => {
+            state.plans = action.payload.plans;
+        },
+        addRoadmapPlan: (state, action: PayloadAction<RoadmapPlan>) => {
+            state.plans.push(action.payload);
+        },
+        deleteRoadmapPlan: (state, action: PayloadAction<RoadmapPlanIdentifier>) => {
+            state.plans.splice(action.payload.planIndex, 1);
+            if (state.plans.length === 0) {
+                state.plans.push(defaultPlan);
+            }
+        },
+        setPlanIndex: (state, action: PayloadAction<number>) => {
+            state.currentPlanIndex = action.payload;
+        },
+        setPlanName: (state, action: PayloadAction<SetPlanNamePayload>) => {
+            let index = action.payload.index;
+            state.plans[index].name = action.payload.name;
+        }
+        /** added for multiple plans */
     },
 })
 
+
 export const { moveCourse, deleteCourse, addQuarter, deleteQuarter, clearQuarter, clearYear, addYear, editYear, deleteYear, clearPlanner,
     setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
-    setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
+    setTransfers, deleteTransfer, setShowSearch, setShowAddCourse,
+    setRoadmapPlan, addRoadmapPlan, deleteRoadmapPlan, setPlanIndex, setPlanName } = roadmapSlice.actions
+
+
+// export const { setRoadmapPlan, addRoadmapPlan, deleteRoadmapPlan } = roadmapMultiplePlanSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectYearPlans = (state: RootState) => state.roadmap.yearPlans;
+export const selectYearPlans = (state: RootState) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans;
 
-export default roadmapSlice.reducer
+
+export default roadmapSlice.reducer;

@@ -7,10 +7,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
 import { isMobile, isBrowser } from 'react-device-detect';
+import RoadmapMultiplan from './RoadmapMultiplan';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
-  const showSearch = useAppSelector(state => state.roadmap.showSearch);
+  const showSearch = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showSearch);
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
@@ -88,6 +89,7 @@ const RoadmapPage: FC = () => {
 
   return (
     <>
+      <RoadmapMultiplan />
       <div className='roadmap-page'>
         <AddCoursePopup />
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>

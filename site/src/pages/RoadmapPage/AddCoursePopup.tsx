@@ -1,21 +1,19 @@
-import React, { FC, ChangeEvent, useState, useEffect } from 'react';
-import Form from 'react-bootstrap/Form';
+import React, { FC, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import './AddCoursePopup.scss';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
-import { ReportData } from '../../types/types';
-import { useCookies } from 'react-cookie';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { isMobile } from 'react-device-detect';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import './AddCoursePopup.scss';
 
 interface AddCoursePopupProps {
 }
 
 const AddCoursePopup: FC<AddCoursePopupProps> = (props) => {
     const dispatch = useAppDispatch();
-    const planner = useAppSelector(state => state.roadmap.yearPlans);
-    const showForm = useAppSelector(state => state.roadmap.showAddCourse);
+    const planner = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans);
+    const showForm = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showAddCourse);
     const [year, setYear] = useState(-1);
     const [quarter, setQuarter] = useState(-1);
     const [validated, setValidated] = useState(false);

@@ -64,8 +64,8 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
 
 const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
     const dispatch = useAppDispatch();
-    const transfers = useAppSelector(state => state.roadmap.transfers);
-    const show = useAppSelector(state => state.roadmap.showTransfer);
+    const transfers = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.transfers);
+    const show = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showTransfer);
     const handleClose = () => dispatch(setShowTransfer(false));
 
     console.log("missing courses: ", missingPrereqNames);

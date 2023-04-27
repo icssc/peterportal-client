@@ -21,7 +21,7 @@ interface QuarterProps {
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   let quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
-  const invalidCourses = useAppSelector(state => state.roadmap.invalidCourses);
+  const invalidCourses = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses);
 
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [target, setTarget] = useState<any>(null!);
