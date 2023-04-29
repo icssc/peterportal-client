@@ -2,7 +2,7 @@ import { FrontendStack } from "./stacks/frontend";
 import { BackendStack } from "./stacks/backend";
 import dotenv from 'dotenv-flow';
 
-import {App} from "sst/constructs";
+import { App } from "sst/constructs";
 
 dotenv.config();
 

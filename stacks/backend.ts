@@ -1,4 +1,4 @@
-import {Api, StackContext, use} from "sst/constructs";
+import { Api, StackContext, use } from "sst/constructs";
 import { FrontendStack } from "./frontend";
 
 
@@ -20,7 +20,7 @@ export function BackendStack({app, stack}: StackContext) {
         throw new Error('Invalid stage')
     }
 
-    const api = new Api(stack, "Api", {
+    new Api(stack, "Api", {
         customDomain: {
             domainName: domainName,
             hostedZone: "peterportal.org",

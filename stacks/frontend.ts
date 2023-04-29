@@ -1,6 +1,4 @@
 import { StaticSite, StackContext } from "sst/constructs";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
 
 
 export function FrontendStack({stack}: StackContext) {
@@ -9,7 +7,6 @@ export function FrontendStack({stack}: StackContext) {
         buildOutput: "build",
         buildCommand: "npm run build"
     });
-
     return {
         frontendUrl: site.url
     }
