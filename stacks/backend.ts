@@ -29,7 +29,7 @@ export function BackendStack({app, stack}: StackContext) {
             'ANY /api/{proxy+}': {
                 function: {
                     handler: 'api/src/app.handler',
-                    memorySize: 128,
+                    memorySize: 256,
                     runtime: 'nodejs18.x',
                     logRetention: stack.stage === 'prod' ? 'two_years' : 'one_week',
                     environment: {
@@ -46,9 +46,8 @@ export function BackendStack({app, stack}: StackContext) {
             },
             $default: {
                 type: "url",
-                url: frontendUrl
+                url: frontendUrl ?? "peterportal.org" // when removing the frontend stack, frontendUrl will be undefined
             }
         },
     });
-
 }

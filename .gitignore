@@ -106,6 +106,7 @@ dist
 
 # sst files
 .sst
+cdk.context.json
 
 # local files
 .idea
