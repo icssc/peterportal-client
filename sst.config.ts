@@ -9,7 +9,7 @@ dotenv.config();
 export default {
     config(_input) {
         return {
-            name: "peterportal-test",
+            name: "peterportal-client",
             region: "us-west-1",
         };
     },
