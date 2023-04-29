@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Build and deploy
-        run: npx sst deploy --stage ${{ (github.event_name == 'pull_request' && github.event.pull_request.number) || 'prod'  }}
+        run: npx sst deploy --stage ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'prod'  }}
         env:
           CI: false
           PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}

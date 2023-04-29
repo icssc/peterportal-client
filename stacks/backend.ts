@@ -12,9 +12,9 @@ export function BackendStack({app, stack}: StackContext) {
     else if (app.stage === 'dev') {
         domainName = 'dev.peterportal.org'
     }
-    else if (!isNaN(app.stage as any)) {
-        const prNum = parseInt(app.stage)
-        domainName = `staging-${prNum}.peterportal.org`
+    else if (app.stage.match(/^staging-(\d+)$/)) {
+        // check if stage is like staging-###
+        domainName = `${app.stage}.peterportal.org`
     }
     else {
         throw new Error('Invalid stage')
