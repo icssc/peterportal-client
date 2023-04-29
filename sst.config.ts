@@ -18,6 +18,6 @@ export default {
             app.setDefaultRemovalPolicy("destroy");
         }
 
-        app.stack(FrontendStack).stack(BackendStack);
+        app.stack(FrontendStack, {stackName: `${app.name}-${app.stage}`} ).stack(BackendStack);
     }
 };
