@@ -18,7 +18,7 @@ export default {
             app.setDefaultRemovalPolicy("destroy");
         }
 
-        app.stack(FrontendStack, {stackName: `${app.name}-${app.stage}`} )
-           .stack(BackendStack, {stackName: `${app.name}-${app.stage}`});
+        app.stack(FrontendStack, {stackName: `${app.name}-${app.stage}-frontend`} )
+           .stack(BackendStack, {stackName: `${app.name}-${app.stage}-backend`});
     }
 };
