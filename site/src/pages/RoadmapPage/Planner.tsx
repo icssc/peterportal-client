@@ -186,7 +186,6 @@ const Planner: FC = () => {
       })
     })
 
-    // TODO: check if a missing course is transferable
 
     // set missing courses
     setMissingPrerequisites(missing);
