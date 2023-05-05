@@ -109,4 +109,6 @@ jobs:
         with:
           header: staging url
           recreate: true
-          message: Deployed staging instance to https://staging-${{ github.event.pull_request.number }}.peterportal.org
+          message: |+ 
+          Deployed staging instance to https://staging-${{ github.event.pull_request.number }}.peterportal.org
+          Please note that it usually takes a couple minutes for the instance to be deployed and the link above may temporarily display an error message.
