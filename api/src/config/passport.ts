@@ -23,7 +23,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT,
             clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: process.env.PRODUCTION_DOMAIN + '/api/users/auth/google/callback',
+            callbackURL: 'http://localhost:3000/api/users/auth/google/callback',
         },
         function (accessToken, refreshToken, profile, done) {
             let email = '';
