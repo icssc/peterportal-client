@@ -40,14 +40,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     let params = {};
     // course context
     if (props.course) {
-      url = `/courses/api/grades`;
+      url = `/api/courses/api/grades`;
       params = {
         department: props.course.department,
         number: props.course.number
       }
     }
     else if (props.professor) {
-      url = `/professors/api/grades/${props.professor.shortened_name}`;
+      url = `/api/professors/api/grades/${props.professor.shortened_name}`;
     }
     const res = axios.get<GradeDistData>(url, {
       params: params

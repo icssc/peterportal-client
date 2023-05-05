@@ -18,7 +18,7 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   region: us-east-1
   stage: ${env:STAGE_NAME}
   stackName: peterportal-core-${env:STAGE_NAME}

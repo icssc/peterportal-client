@@ -78,7 +78,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }, [showForm])
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>('/reviews', review);
+    const res = await axios.post<ReviewData>('/api/reviews', review);
     if (res.data.hasOwnProperty('error')) {
       alert('You must be logged in to add a review!');
     }
@@ -210,7 +210,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row>
             <Col>
               <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
-              <h5>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</h5>
             </Col>
           </Row>
           <Row className='mt-4' lg={2} md={1}>
@@ -358,6 +357,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   {overCharLimit ? (<p style={{ color: 'red' }}>Your review exceeds the character limit</p>) : null}
                   <p style={content.length > 500 ? { color: 'red' } : {}} className='chars'>{content.length}/500</p>
                 </div>
+                <Form.Text>
+                  <Icon name='warning sign' />
+                  <span style={{ color: '#333333' }}>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</span>
+                </Form.Text>
               </Form.Group>
             </Col>
           </Row>

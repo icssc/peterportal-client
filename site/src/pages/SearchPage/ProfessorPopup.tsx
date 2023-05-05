@@ -17,7 +17,7 @@ const ProfessorPopup: FC = () => {
                 type: 'professor',
                 id: professor.ucinetid
             };
-            axios.get<ScoreData[]>('/reviews/scores', { params: reviewParams })
+            axios.get<ScoreData[]>('/api/reviews/scores', { params: reviewParams })
                 .then(res => {
                     let scoredCourses = new Set(res.data.map(v => v.name));
                     res.data.forEach(v => v.key = v.name)
@@ -33,7 +33,7 @@ const ProfessorPopup: FC = () => {
                     res.data.sort((a, b) => b.score - a.score);
                     setScores(res.data);
                 });
-            axios.get<ReviewData[]>('/reviews/featured', { params: reviewParams })
+            axios.get<ReviewData[]>('/api/reviews/featured', { params: reviewParams })
                 .then(res => {
                     // if has a featured review
                     if (res.data.length > 0) {
