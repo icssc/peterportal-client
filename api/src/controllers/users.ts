@@ -34,7 +34,6 @@ router.get('/auth/google',
   function (req, res) {
     
     req.session.returnTo = req.headers.referer;
-    
     passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'],
@@ -46,6 +45,7 @@ router.get('/auth/google',
  * Callback for Google authentication
  */
 router.get('/auth/google/callback', function (req, res) {
+  const returnTo = req.session.returnTo;
   passport.authenticate('google', { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
     function (err, user, info) {
@@ -64,6 +64,7 @@ router.get('/auth/google/callback', function (req, res) {
               console.log('AUTHORIZED AS ADMIN');
               req.session.passport!.admin = true;
             }
+            req.session.returnTo = returnTo;
             successLogin(req, res)
           }
         });
