@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from "src/types/types";
+import { ReviewData } from "../../types/types";
 import './Verify.scss';
 
 const Verify: FC = () => {
@@ -15,7 +15,7 @@ const Verify: FC = () => {
     }
 
     const getUnverifiedReviews = async () => {
-        const response: AxiosResponse<ReviewData[]> = await axios.get('/reviews?verified=false');
+        const response: AxiosResponse<ReviewData[]> = await axios.get('/api/reviews?verified=false');
         setReviews(response.data);
         setLoaded(true);
     }
@@ -25,12 +25,12 @@ const Verify: FC = () => {
     }, []);
 
     const verifyReview = async (reviewID: string) => {
-        await axios.patch('/reviews/verify', { id: reviewID });
+        await axios.patch('/api/reviews/verify', { id: reviewID });
         getUnverifiedReviews();
     }
 
     const deleteReview = async (reviewID: string) => {
-        await axios.delete('/reviews', { data: { id: reviewID } });
+        await axios.delete('/api/reviews', { data: { id: reviewID } });
         getUnverifiedReviews();
     }
 

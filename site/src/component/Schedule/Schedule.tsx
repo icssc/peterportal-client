@@ -24,7 +24,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     useEffect(() => {
         // get the current quarter used in websoc
-        axios.get<string>('/schedule/api/currentQuarter')
+        axios.get<string>('/api/schedule/api/currentQuarter')
             .then(res => {
                 setQuarter(res.data);
                 fetchScheduleDataFromAPI(res.data);
@@ -39,10 +39,10 @@ const Schedule: FC<ScheduleProps> = (props) => {
             const str = props.courseID.split(' ');
             department = str.slice(0, str.length - 1).join(' ');
             number = str[str.length - 1];
-            url = `/schedule/api/${currentQuarter}/${department}/${number}`;
+            url = `/api/schedule/api/${currentQuarter}/${department}/${number}`;
         }
         else if (props.professorID) {
-            url = `/schedule/api/${currentQuarter}/${props.professorID}`;
+            url = `/api/schedule/api/${currentQuarter}/${props.professorID}`;
         }
 
         const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);

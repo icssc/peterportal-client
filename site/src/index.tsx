@@ -15,7 +15,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import axios from 'axios';
 
 const client = new ApolloClient({
-  uri: '/graphql/',
+  uri: '/api/graphql/',
   cache: new InMemoryCache()
 });
 
