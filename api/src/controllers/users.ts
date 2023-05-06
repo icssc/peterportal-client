@@ -51,8 +51,10 @@ router.get('/auth/google/callback', function (req, res) {
   // all staging auths will redirect their callback to prod since all callback URLs must be registered
   // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
   // staging instances
-  if (host.startsWith('staging-')) { 
-    res.redirect('https://' + host + req.url);
+  // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
+  if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
+    // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
+    res.redirect('https://' + host + '/api/users' + req.url);
     return;
   }
   passport.authenticate('google', { failureRedirect: '/', session: true },
