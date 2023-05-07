@@ -54,19 +54,15 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     })
       .then(res => {
         setGradeDistData(res.data);
+      }).catch(error => {
+        setGradeDistData([]);
+        console.error(error.response);
       });
   }
 
-  // initial request to get grade dist data
+  // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
-    if (gradeDistData == null) {
-      fetchGradeDistData();
-    }
-  })
-
-  // get new data if choose a new course or professor
-  useEffect(() => {
-    setGradeDistData([]);
+    setGradeDistData(null!);
     fetchGradeDistData();
   }, [props.course?.id, props.professor?.ucinetid])
 
@@ -239,10 +235,13 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         </Grid.Row>
       </div>
     );
-  } else {
+  } else if (gradeDistData == null) { // null if still fetching, don't display anything while it still loads
+    return null;
+  } else { // gradeDistData is empty, did not receive any data from API call or received an error, display an error message
     return (
-      <div>
-      </div>
+      <>
+        Error: could not retrieve grade distribution data.
+      </>
     );
   }
 }
