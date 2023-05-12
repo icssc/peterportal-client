@@ -13,6 +13,7 @@ import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
 
 const PAGE_SIZE = 10;
+const MAX_PAGE_NUMBER = 5;
 const SEARCH_TIMEOUT_MS = 500;
 
 interface SearchModuleProps {
@@ -48,7 +49,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             */
             let nameResults = wfs({
                 query: query,
-                numResults: PAGE_SIZE * 5,
+                numResults: PAGE_SIZE * MAX_PAGE_NUMBER,
                 resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
                 filterOptions: {
                 }

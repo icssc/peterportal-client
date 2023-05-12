@@ -4,6 +4,7 @@ import './SearchHitContainer.scss';
 import { useAppSelector } from '../../store/hooks';
 
 import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import SearchPagination from '../SearchPagination/SearchPagination';
 
 interface SearchHitContainerProps {
     index: SearchIndex;
@@ -43,6 +44,9 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
                 }
             </>
         }
+        <div className='search-pagination'>
+            <SearchPagination index={index} />
+        </div>
     </div>
 }
 
