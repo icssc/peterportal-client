@@ -126,3 +126,19 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
 
   return professor;
 }
+
+// define assert to avoid dealing with polifill
+
+// define AssertionError for use in assert function
+class AssertionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AssertionError';
+  }
+}
+
+export function assert(condition: boolean, message: string) {
+  if (!condition) {
+    throw new AssertionError(message);
+  }
+}
