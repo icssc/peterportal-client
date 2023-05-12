@@ -38,6 +38,8 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   }
 
   return (
+    // hide if there is no page or only one page
+    numPages <= 1 ? null :
     <Pagination>
       <Pagination.First onClick={() => clickPageNumber(0)} disabled={active === 0} />
       <Pagination.Prev onClick={() => clickPageNumber(active - 1)} disabled={active === 0} />
