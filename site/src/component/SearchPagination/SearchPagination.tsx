@@ -1,7 +1,6 @@
 import { FC, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
 import { PAGE_SIZE } from "src/helpers/constants";
-import { assert } from "src/helpers/util";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { setPageNumber } from "src/store/slices/searchSlice";
 import { SearchIndex } from "src/types/types";
@@ -22,13 +21,16 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     dispatch(setPageNumber({index, pageNumber}));
   }
 
-  // assert in case SerachIndex type is changed in the future
-  assert(index === 'courses' || index === 'professors', 'Pagination only supports courses and professors')
+  let numPages = 0;
+  let active = 0;
+  if (index === 'courses') {
+    numPages = Math.ceil(courseData.names.length / PAGE_SIZE);
+    active = coursePageNumber;
+  } else if (index === 'professors') {
+    numPages = Math.ceil(professorData.names.length / PAGE_SIZE);
+    active = professorPageNumber;
+  }
 
-  const numPages = index === 'courses' ? 
-    Math.ceil(courseData.names.length / PAGE_SIZE) : 
-    Math.ceil(professorData.names.length / PAGE_SIZE);
-  const active = index === 'courses' ? courseData.pageNumber : courseData.pageNumber;
   let items = [];
   let startPageNumber = Math.max(0, active - 2);
   let endPageNumber = Math.min(numPages, startPageNumber + 5); // exclusive
