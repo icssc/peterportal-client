@@ -163,7 +163,7 @@ export default class Pie extends React.Component<PieProps> {
           tooltip={(props: PieTooltipProps<Slice>) => (
             <div style={{ 
               color: '#FFFFFF',
-              background: '#000000',
+              background: 'rgba(0,0,0,.87)',
               paddingLeft: '0.5em',
               paddingRight: '0.5em'
             }}>
