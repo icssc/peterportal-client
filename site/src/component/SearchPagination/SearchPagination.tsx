@@ -1,5 +1,6 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
+import { PAGE_SIZE } from "src/helpers/constants";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { setPageNumber } from "src/store/slices/searchSlice";
 import { SearchIndex } from "src/types/types";
@@ -7,9 +8,6 @@ import { SearchIndex } from "src/types/types";
 interface SearchPaginationProps {
   index: SearchIndex;
 }
-
-// TODO: Make this a global constant (also in ../SearchModule/SearchModule.tsx)
-const PAGE_SIZE = 10;
 
 const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   const dispatch = useAppDispatch();
@@ -23,20 +21,31 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     dispatch(setPageNumber({index, pageNumber}));
   }
 
-  const maxPageNumber = index === 'courses' ? 
+  const numPages = index === 'courses' ? 
     Math.ceil(courseData.names.length / PAGE_SIZE) : 
     Math.ceil(professorData.names.length / PAGE_SIZE);
   const active = index === 'courses' ? courseData.pageNumber : courseData.pageNumber;
   let items = [];
-  for (let i = 0; i < maxPageNumber; i++) {
+  let startPageNumber = Math.max(0, active - 2);
+  let endPageNumber = Math.min(numPages, startPageNumber + 5); // exclusive
+  startPageNumber = Math.max(0, endPageNumber - 5);
+  for (let i = startPageNumber; i < endPageNumber; i++) {
     items.push(
       <Pagination.Item key={i} active={i === active} onClick={() => clickPageNumber(i)}>
         {i + 1}
-      </Pagination.Item>,
+      </Pagination.Item>
     );
   }
 
-  return <Pagination size="lg">{items}</Pagination>
+  return (
+    <Pagination>
+      <Pagination.First onClick={() => clickPageNumber(0)} disabled={active === 0} />
+      <Pagination.Prev onClick={() => clickPageNumber(active - 1)} disabled={active === 0} />
+      {items}
+      <Pagination.Next onClick={() => clickPageNumber(active + 1)} disabled={active === numPages - 1} />
+      <Pagination.Last onClick={() => clickPageNumber(numPages - 1)} disabled={active === numPages - 1} />
+    </Pagination>
+  );
 }
 
 export default SearchPagination;
