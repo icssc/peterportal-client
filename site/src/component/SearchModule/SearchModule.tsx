@@ -48,7 +48,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             */
             let nameResults = wfs({
                 query: query,
-                // numResults: PAGE_SIZE * MAX_PAGE_NUMBER,
                 resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
                 filterOptions: {
                 }
