@@ -8,7 +8,7 @@ import { Search } from 'react-bootstrap-icons';
 
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setNames, setResults } from '../../store/slices/searchSlice';
+import { setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
 import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
 import { PAGE_SIZE } from 'src/helpers/constants';
@@ -62,6 +62,8 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             }
             console.log('From frontend search', names)
             dispatch(setNames({ index, names }));
+            // reset page number
+            dispatch(setPageNumber({ index, pageNumber: 0 }));
         }
         catch (e) {
             console.log(e)
