@@ -9,20 +9,26 @@ interface SearchPaginationProps {
 }
 
 // TODO: Make this a global constant (also in ../SearchModule/SearchModule.tsx)
-const MAX_PAGE_NUMBER = 5;
+const PAGE_SIZE = 10;
 
 const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const coursePageNumber = useAppSelector(state => state.search.courses.pageNumber);
   const professorPageNumber = useAppSelector(state => state.search.professors.pageNumber);
 
+  const courseData = useAppSelector(state => state.search.courses);
+  const professorData = useAppSelector(state => state.search.professors);
+
   const clickPageNumber = (pageNumber: number) => {
     dispatch(setPageNumber({index, pageNumber}));
   }
 
-  const active = index === 'courses' ? coursePageNumber : professorPageNumber;
+  const maxPageNumber = index === 'courses' ? 
+    Math.ceil(courseData.names.length / PAGE_SIZE) : 
+    Math.ceil(professorData.names.length / PAGE_SIZE);
+  const active = index === 'courses' ? courseData.pageNumber : courseData.pageNumber;
   let items = [];
-  for (let i = 0; i < MAX_PAGE_NUMBER; i++) {
+  for (let i = 0; i < maxPageNumber; i++) {
     items.push(
       <Pagination.Item key={i} active={i === active} onClick={() => clickPageNumber(i)}>
         {i + 1}
