@@ -29,6 +29,9 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
         {
             index == 'courses' && <>
                 {
+                    courseResults.length === 0 ?
+                        <div className='no-results'>No results found</div>
+                    :
                     courseResults.map((course, i) => {
                         return <CourseHitItem key={`course-hit-item-${i}`} index={i} {...(course as CourseGQLData)} />
                     })
@@ -38,6 +41,9 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
         {
             (index == 'professors' && ProfessorHitItem) && <>
                 {
+                    professorResults.length === 0 ?
+                        <div className='no-results'>No results found</div>
+                    :
                     professorResults.map((professor, i) => {
                         return <ProfessorHitItem key={`professor-hit-item-${i}`} index={i} {...(professor as ProfessorGQLData)} />
                     })
