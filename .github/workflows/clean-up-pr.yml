@@ -29,7 +29,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build and deploy
+      - name: Remove staging stack
         run: npx sst destroy --stage ${{ format('staging-{0}', github.event.pull_request.number) }}
         env:
           CI: false
@@ -43,4 +43,3 @@ jobs:
           PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
