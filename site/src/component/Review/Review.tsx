@@ -7,10 +7,17 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
+import { Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
     course?: CourseGQLData;
     professor?: ProfessorGQLData;
+}
+
+enum SortingOption {
+    MOST_RECENT,
+    TOP_REVIEWS,
+    CONTROVERSIAL
 }
 
 const Review: FC<ReviewProps> = (props) => {
@@ -18,6 +25,7 @@ const Review: FC<ReviewProps> = (props) => {
     const reviewData = useAppSelector(selectReviews);
     const [voteColors, setVoteColors] = useState([]);
     const openForm = useAppSelector(state => state.review.formOpen);
+    const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
 
     const getColors = async (vote: VoteColorsRequest) => {
         const res = await axios.patch('/api/reviews/getVoteColors', vote);
@@ -101,10 +109,33 @@ const Review: FC<ReviewProps> = (props) => {
     if (!reviewData) {
         return <p>Loading reviews..</p>;
     } else {
+        let sortedReviews = reviewData.slice(0); // clone since const
+        switch (sortingOption) {
+            case SortingOption.MOST_RECENT:
+                sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+            case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
+                sortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+            case SortingOption.CONTROVERSIAL:
+                sortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+        }
+
         return (
             <>
+                <Dropdown
+                    placeholder='Chart Type'
+                    scrolling
+                    selection
+                    options={[{ text: 'Most Recent', value: SortingOption.MOST_RECENT },
+                        { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+                        { text: 'Controversial', value: SortingOption.CONTROVERSIAL }]}
+                    value={sortingOption}
+                    onChange={(e, s) => setSortingOption(s.value as SortingOption)}
+                />
                 <div className='reviews'>
-                    {reviewData.map((review, i) => {
+                    {sortedReviews.map((review, i) => {
                         if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
