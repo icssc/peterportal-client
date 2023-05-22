@@ -9,23 +9,9 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build project
+  build_and_deploy:
+    name: Build and deploy PeterPortal
     runs-on: ubuntu-latest
-    env:
-      # need to set to false, otherwise react warnings will be treated as errors
-      CI: false
-      PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
-      PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
-      MONGO_URL: ${{secrets.MONGO_URL}}
-      SESSION_SECRET: ${{secrets.SESSION_SECRET}}
-      GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
-      GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
-      ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
-      STAGING_PREFIX: ${{ github.event_name == 'pull_request' && format('staging-{0}.', github.event.pull_request.number) || '' }}
-      PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
-      STAGE_NAME: ${{ github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number) || 'prod' }}
-      PORT: ${{secrets.PORT}}
 
     concurrency:
       group: build-${{ github.head_ref || github.run_id }}
@@ -41,65 +27,21 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Dump Environment Variables
-        run: |
-          cd api && printf "PUBLIC_API_URL=$PUBLIC_API_URL\n \
-            PUBLIC_API_GRAPHQL_URL=$PUBLIC_API_GRAPHQL_URL\n \
-            MONGO_URL=$MONGO_URL\n \
-            SESSION_SECRET=$SESSION_SECRET\n \
-            GOOGLE_CLIENT=$GOOGLE_CLIENT\n \
-            GOOGLE_SECRET=$GOOGLE_SECRET\n \
-            ADMIN_EMAILS=$ADMIN_EMAILS\n \
-            STAGING_PREFIX=$STAGING_PREFIX\n \
-            PRODUCTION_DOMAIN=$PRODUCTION_DOMAIN\n \
-            STAGE_NAME=$STAGE_NAME\n \
-            PORT=$PORT" > .env
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Install and Build Frontend 🔧 
-        run: |
-          cd site
-          npm install
-          npm run build
-          cp -r build ../api/
-
-      - name: Install and Build Backend 🔧 
-        run: |
-          cd api
-          rm .env.local
-          npm install
-          npm run build
-
-      - name: Cache build to use in deployment
-        uses: actions/cache@v3
-        with:
-          key: "${{ github.workflow }} #${{ github.run_number }} attempt ${{ github.run_attempt }}"
-          path: ${{ github.workspace }}
-
-  deploy:
-    name: Deploy to AWS
-    needs: build
-    runs-on: ubuntu-latest
-
-    concurrency:
-      group: deploy-${{ github.head_ref || github.run_id }}
-
-    steps:
-      - name: Retrieve build from cache
-        uses: actions/cache@v3
-        with:
-          key: "${{ github.workflow }} #${{ github.run_number }} attempt ${{ github.run_attempt }}"
-          path: ${{ github.workspace }}
-
-      - name: Install Plugin and Deploy
-        uses: serverless/github-action@v3.1
-        with:
-          args: >
-            -c "cd api && 
-            serverless plugin install --name serverless-dotenv-plugin && 
-            serverless plugin install --name serverless-domain-manager && 
-            serverless deploy"
-          entrypoint: /bin/sh
+      - name: Build and deploy
+        run: npx sst deploy --stage ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'prod'  }}
         env:
+          CI: false
+          PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
+          PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
+          MONGO_URL: ${{secrets.MONGO_URL}}
+          SESSION_SECRET: ${{secrets.SESSION_SECRET}}
+          GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
+          GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
+          ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
+          PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
