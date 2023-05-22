@@ -182,3 +182,15 @@ $avatarWidth: 65px;
     height: 8vh;
   }
 }
+
+.sorting-menu {
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 15px;
+
+  #checkbox {
+    display: flex;
+    align-items: center;
+    padding: 0 1vh;
+  }
+}

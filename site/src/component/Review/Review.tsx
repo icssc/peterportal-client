@@ -7,7 +7,7 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
-import { Dropdown } from 'semantic-ui-react';
+import { Checkbox, Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
     course?: CourseGQLData;
@@ -26,6 +26,7 @@ const Review: FC<ReviewProps> = (props) => {
     const [voteColors, setVoteColors] = useState([]);
     const openForm = useAppSelector(state => state.review.formOpen);
     const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+    const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
 
     const getColors = async (vote: VoteColorsRequest) => {
         const res = await axios.patch('/api/reviews/getVoteColors', vote);
@@ -104,7 +105,14 @@ const Review: FC<ReviewProps> = (props) => {
     if (!reviewData) {
         return <p>Loading reviews..</p>;
     } else {
-        let sortedReviews = reviewData.slice(0); // clone since const
+        let sortedReviews;
+        // filter verified if option is set
+        if (showOnlyVerifiedReviews) {
+            sortedReviews = reviewData.filter(review => review.verified);
+        } else { // if not, clone reviewData since its const
+            sortedReviews = reviewData.slice(0);
+        }
+
         switch (sortingOption) {
             case SortingOption.MOST_RECENT:
                 sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -119,18 +127,23 @@ const Review: FC<ReviewProps> = (props) => {
 
         return (
             <>
-                <Dropdown
-                    placeholder='Chart Type'
-                    scrolling
-                    selection
-                    options={[{ text: 'Most Recent', value: SortingOption.MOST_RECENT },
-                        { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
-                        { text: 'Controversial', value: SortingOption.CONTROVERSIAL }]}
-                    value={sortingOption}
-                    onChange={(e, s) => setSortingOption(s.value as SortingOption)}
-                />
                 <div className='reviews'>
-                    {sortedReviews.map((review, i) => <SubReview review={review} key={review._id} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}
+                    <div className='sorting-menu row'>
+                        <Dropdown
+                            placeholder='Sorting Option'
+                            scrolling
+                            selection
+                            options={[{ text: 'Most Recent', value: SortingOption.MOST_RECENT },
+                                { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+                                { text: 'Controversial', value: SortingOption.CONTROVERSIAL }]}
+                            value={sortingOption}
+                            onChange={(e, s) => setSortingOption(s.value as SortingOption)}
+                        />
+                        <div id="checkbox">
+                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(e, props) => setShowOnlyVerifiedReviews(props.checked!)} />
+                        </div>
+                    </div>
+                    {sortedReviews.map(review => <SubReview review={review} key={review._id} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
                 <ReviewForm closeForm={closeForm} {...props} />
