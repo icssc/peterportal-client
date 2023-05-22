@@ -45,11 +45,6 @@ const Review: FC<ReviewProps> = (props) => {
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null);
-                data.sort((a, b) => {
-                    let aScore = a.score + (a.verified ? 10000 : 0);
-                    let bScore = b.score + (b.verified ? 10000 : 0);
-                    return bScore - aScore;
-                })
                 let reviewIDs = [];
                 for(let i = 0;i<data.length;i++){
                     reviewIDs.push(data[i]._id);
@@ -135,9 +130,7 @@ const Review: FC<ReviewProps> = (props) => {
                     onChange={(e, s) => setSortingOption(s.value as SortingOption)}
                 />
                 <div className='reviews'>
-                    {sortedReviews.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
-                    })}
+                    {sortedReviews.map((review, i) => <SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
                 <ReviewForm closeForm={closeForm} {...props} />
