@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: Remove staging stack
-        run: npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend && npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend
+        run: npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend && npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} frontend
         env:
           CI: false
           PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
