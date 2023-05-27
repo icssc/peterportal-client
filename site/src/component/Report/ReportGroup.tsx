@@ -16,7 +16,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     const [review, setReview] = useState<ReviewData>(null!);
 
     const getReviewData = async (reviewID: string) => {
-        const res: AxiosResponse<ReviewData[]> = await axios.get(`/reviews?reviewID=${reviewID}`);
+        const res: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?reviewID=${reviewID}`);
         const review: ReviewData = res.data[0];
         console.log(review);
         setReview(review);

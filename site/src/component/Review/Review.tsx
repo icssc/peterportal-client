@@ -7,8 +7,6 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
-import { reviewSlice } from 'src/store/slices/uiSlice';
-import { EaselFill } from 'react-bootstrap-icons';
 
 export interface ReviewProps {
     course?: CourseGQLData;
@@ -22,7 +20,7 @@ const Review: FC<ReviewProps> = (props) => {
     const openForm = useAppSelector(state => state.review.formOpen);
 
     const getColors = async (vote: VoteColorsRequest) => {
-        const res = await axios.patch('/reviews/getVoteColors', vote);
+        const res = await axios.patch('/api/reviews/getVoteColors', vote);
         return res.data;
     }
 
@@ -34,7 +32,7 @@ const Review: FC<ReviewProps> = (props) => {
         let params: paramsProps = {};
         if (props.course) params.courseID = props.course.id;
         if (props.professor) params.professorID = props.professor.ucinetid;
-        axios.get(`/reviews`, {
+        axios.get(`/api/reviews`, {
             params: params
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {

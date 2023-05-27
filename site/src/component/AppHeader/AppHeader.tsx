@@ -27,7 +27,7 @@ const AppHeader: FC<{}> = props => {
 
   useEffect(() => {
     // Get the current week data
-    axios.get<WeekData>('/schedule/api/currentWeek')
+    axios.get<WeekData>('/api/schedule/api/currentWeek')
       .then(res => {
         // case for break and finals week
         if (res.data.week == -1) {

@@ -49,8 +49,12 @@ router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) 
 router.get('/api/grades/:name', function (req, res, next) {
   let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(req.params.name));
 
-  r.then((response) => response.json())
-    .then((data) => res.send(data))
+  let status = 200;
+
+  r.then((response) => {
+    status = response.status;
+    return response.json();
+  }).then((data) => res.status(status).send(data))
 });
 
 export default router;

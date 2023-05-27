@@ -29,7 +29,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
 
     const postReport = async (report: ReportData) => {
-        const res = await axios.post('/reports', report);
+        const res = await axios.post('/api/reports', report);
         setReportSubmitted(true);
     }
 

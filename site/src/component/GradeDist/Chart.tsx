@@ -118,7 +118,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   styleTooltip = (event: BarTooltipDatum) => {
     return (
-      <div style={this.theme.tooltip.container}>
+      <div>
         <strong>
           {event.data.label}: {eval('event.data.' + event.data.label)}
         </strong>

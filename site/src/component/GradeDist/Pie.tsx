@@ -7,7 +7,7 @@ const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7]
 
 interface Slice {
-  id: 'A' | 'B' | 'C' | 'D' | 'F';
+  id: 'A' | 'B' | 'C' | 'D' | 'F' | 'P' | 'NP';
   value: number;
   label: string;
   color: string;
@@ -25,6 +25,7 @@ export default class Pie extends React.Component<PieProps> {
   totalPNP = 0;
   averageGPA = '';
   averageGrade = '';
+  averagePNP = '';
 
   getClassData = () => {
     let gradeACount = 0, gradeBCount = 0, gradeCCount = 0, gradeDCount = 0,
@@ -34,6 +35,7 @@ export default class Pie extends React.Component<PieProps> {
     this.totalPNP = 0;
     this.averageGPA = '';
     this.averageGrade = '';
+    this.averagePNP = '';
 
     var sum = 0
 
@@ -51,11 +53,40 @@ export default class Pie extends React.Component<PieProps> {
         this.total += data.gradeACount + data.gradeBCount + data.gradeCCount
           + data.gradeDCount + data.gradeFCount + data.gradePCount + data.gradeNPCount;
         this.totalPNP += data.gradePCount + data.gradeNPCount;
+        
+        if(data.gradePCount >= data.gradeNPCount)
+        {
+          this.averagePNP = 'P';
+        }
+        else 
+        {
+          this.averagePNP = 'NP';
+        }
       }
     });
 
     this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1)
     this.gpaToGradeConverter(this.averageGPA);
+
+    if(this.totalPNP == this.total)
+    {
+      let data: Slice[] = [
+        {
+          'id': 'P',
+          'label': 'P',
+          'value': gradePCount,
+          'color': '#4AB486'
+        },
+        {
+          'id': 'NP',
+          'label': 'NP',
+          'value': gradeNPCount,
+          'color': '#E36436'
+        }
+
+      ];
+      return data;
+    }
 
     let data: Slice[] = [
       {
@@ -87,19 +118,20 @@ export default class Pie extends React.Component<PieProps> {
         'label': 'F',
         'value': gradeFCount,
         'color': '#E8966D'
+      },
+      {
+        'id': 'P',
+        'label': 'P',
+        'value': gradePCount,
+        'color': '#4AB486'
+      },
+      {
+        'id': 'NP',
+        'label': 'NP',
+        'value': gradeNPCount,
+        'color': '#E36436'
       }
-      //   {
-      //     'id': 'P',
-      //     'label': 'P',
-      //     'value': gradePCount,
-      //     'color': '#4AB486'
-      //   },
-      //   {
-      //     'id': 'NP',
-      //     'label': 'NP',
-      //     'value': gradeNPCount,
-      //     'color': '#E36436'
-      //   },
+
     ];
     return data;
   }
@@ -124,26 +156,27 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D']}
+          colors={['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#4AB486', '#E36436']}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
           tooltip={(props: PieTooltipProps<Slice>) => (
             <div style={{ 
               color: '#FFFFFF',
-              background: '#000000',
+              background: 'rgba(0,0,0,.87)',
               paddingLeft: '0.5em',
               paddingRight: '0.5em'
             }}>
               <strong>
-                {props.datum.id}: {(props.datum.value / (this.total - this.totalPNP) * 100).toFixed(2)}%
+                {props.datum.id}: {(props.datum.value / (this.total) * 100).toFixed(2)}%
               </strong>
             </div>
           )}
         />
         <div style={{ display: 'flex', textAlign: 'center', margin: '-235px' }}>
           <div style={{ margin: 'auto' }}>
-            <h3 className='pie-text'>Average Grade: {this.averageGrade} ({this.averageGPA})</h3>
+            {this.totalPNP == this.total ? <h3 className='pie-text'>Average Grade: {this.averagePNP}</h3> : null}
+            {this.totalPNP != this.total ? <h3 className='pie-text'>Average Grade: {this.averageGrade} ({this.averageGPA})</h3> : null}
             <h3 className='pie-text' style={{ marginBottom: '6px' }}>Total Enrolled: <strong>{this.total}</strong></h3>
             {this.totalPNP > 0 ? <small>{this.totalPNP} enrolled as P/NP</small> : null}
           </div>

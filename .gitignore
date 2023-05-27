@@ -104,10 +104,17 @@ dist
 .tern-port
 .DS_Store
 
+# sst files
+.sst
+cdk.context.json
+
+# local files
+.idea
+.vscode
+.DS_STORE
+
+# env files
+.env
 
 api/build
 site/build
-
-api/package-lock.json
-site/package-lock.json
-package-lock.json

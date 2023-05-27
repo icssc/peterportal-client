@@ -6,18 +6,12 @@
 import express from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
-import { graphqlHTTP } from 'express-graphql';
-import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import cors from 'cors';
 import dotenv from 'dotenv-flow';
-import serverless from 'serverless-http';
-import nocache from 'nocache';
-
-console.log('Starting server...')
-
+import serverlessExpress from '@vendia/serverless-express';
 // load env
 dotenv.config();
 
@@ -39,8 +33,9 @@ const app = express();
 
 // Setup mongo store for sessions
 let mongoStore = MongoDBStore(session);
+
 if (process.env.MONGO_URL) {
-  var store = new mongoStore({
+  let store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
     collection: COLLECTION_NAMES.SESSIONS
@@ -49,8 +44,7 @@ if (process.env.MONGO_URL) {
   store.on('error', function (error) {
     console.log(error);
   });
-
-  // Setup Passport and Sesssions
+  // Setup Passport and Sessions
   app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -74,7 +68,6 @@ app.use(express.json());
 app.use(logger('dev'))
 app.use(cookieParser());
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, '..', 'build')));
 
 // Enable CORS
 app.use(function (req, res, next) {
@@ -91,14 +84,16 @@ app.use(cors());
  */
 
 // Enable custom routes
-app.use('/courses', coursesRouter);
-app.use('/professors', professorsRouter);
-app.use('/schedule', scheduleRouter);
-app.use('/reviews', reviewsRouter);
-app.use('/users', usersRouter);
-app.use('/graphql', graphqlRouter);
-app.use('/roadmap', roadmapRouter);
-app.use('/reports', reportsRouter);
+const router = express.Router();
+router.use('/courses', coursesRouter);
+router.use('/professors', professorsRouter);
+router.use('/schedule', scheduleRouter);
+router.use('/reviews', reviewsRouter);
+router.use('/users', usersRouter);
+router.use('/graphql', graphqlRouter);
+router.use('/roadmap', roadmapRouter);
+router.use('/reports', reportsRouter);
+app.use('/api', router);
 
 app.options(`*`, (req, res) => {
   res.status(200).send()
@@ -107,14 +102,6 @@ app.options(`*`, (req, res) => {
 app.get(`/test`, (req, res) => {
   res.status(200).send('Hello World!')
 })
-
-/**
- * Routes - Catch-All and redirect to React frontend. Do not cache index.html.
- */
- app.use(nocache());
- app.get('*', (req, res) => {
-   res.sendFile(path.resolve(__dirname, '../build/index.html'));
- });
 
 /**
  * Error Handler
@@ -127,4 +114,4 @@ app.use(function (req, res, next) {
 // export for local dev
 export default app
 // export for serverless
-exports.handler = serverless(app, { binary: ['image/*'] });
+export const handler = serverlessExpress({app});

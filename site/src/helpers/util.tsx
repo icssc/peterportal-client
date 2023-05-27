@@ -46,7 +46,7 @@ export function searchAPIResult(type: SearchType, name: string) {
 export function searchAPIResults(index: SearchIndex, names: string[]) {
   return new Promise<BatchCourseData | BatchProfessorData>(res => {
     // Get results from backend search
-    axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/${index}/api/batch`, { [index]: names })
+    axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/api/${index}/api/batch`, { [index]: names })
       .then(searchResponse => {
         let data = searchResponse.data;
         let transformed: BatchCourseData | BatchProfessorData = {};

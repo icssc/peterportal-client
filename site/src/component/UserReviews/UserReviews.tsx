@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import SubReview from "../../component/Review/SubReview";
 import Button from "react-bootstrap/Button";
 import { Divider, Modal } from "semantic-ui-react";
-import { CourseGQLData, ProfessorGQLData, ReviewData } from "src/types/types";
+import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest } from "src/types/types";
 import "./UserReviews.scss";
 import { useCookies } from "react-cookie";
 import { Interface } from "readline";
@@ -18,6 +18,7 @@ const UserReviews: FC = () => {
   const [selectedReviewId, setSelectedReviewId] = useState<string>("");
   const [professorData, setProfessorData] = useState<Map<string, ProfessorGQLData>>(new Map());
   const [courseData, setCourseData] = useState<Map<string, CourseGQLData>>(new Map());
+  const [voteColors, setVoteColors] = useState([]);
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(
       `/reviews?userID=${cookies.user.id}`
@@ -25,6 +26,40 @@ const UserReviews: FC = () => {
     setReviews(response.data);
     setLoaded(true);
   };
+
+  const getColors = async (vote: VoteColorsRequest) => {
+      const res = await axios.patch('/reviews/getVoteColors', vote);
+      return res.data;
+  }
+
+  const updateVoteColors = async () => {
+      let reviewIDs = [];
+      for(let i = 0;i<reviews.length;i++){
+          reviewIDs.push(reviews[i]._id);
+      }
+      const req = {
+          ids: reviewIDs as string[]
+      }
+      let colors = await getColors(req);
+      setVoteColors(colors);
+  }
+
+  const getU = (id: string | undefined) => {
+      let temp = voteColors as Object;
+      let v = (temp[id as keyof typeof temp]) as unknown as number;
+      if(v == 1){
+          return {
+              colors: [true, false]
+          }
+      }else if(v == -1){
+          return {
+              colors: [false, true]
+          }
+      }
+      return {
+          colors: [false, false]
+      }
+  }
 
   useEffect(() => {
     getUserReviews()
@@ -34,6 +69,7 @@ const UserReviews: FC = () => {
     // wrap in async function as use awaits so we don't
     // update the state until after we populated the maps
     // with results from the api request
+    updateVoteColors();
     (async() => {
       const newCourseData = new Map(courseData);
       const newProfessorData = new Map(professorData);
@@ -97,7 +133,14 @@ const UserReviews: FC = () => {
         {reviews.map((review, i) => (
           <div key={`${review._id}`} className="user-reviews">
             <Divider />
-            <SubReview editable={true} review={review} course={courseData.get(review.courseID)} professor={professorData.get(review.professorID)}></SubReview>
+            <SubReview
+              editable={true}
+              review={review}
+              course={courseData.get(review.courseID)}
+              professor={professorData.get(review.professorID)}
+              colorUpdater={updateVoteColors}
+              colors={getU(review._id)}
+            />
             <div className="user-reviews-footer">
               <Button
                 variant="danger"
