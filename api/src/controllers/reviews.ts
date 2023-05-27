@@ -273,7 +273,7 @@ router.patch("/getVoteColor", async function (req, res) {
     let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
     //result an array of either length 1 or empty
     if (existingVote.length == 0) {
-      //if empty, both should be uncolored
+      //if empty, both shxould be uncolored
       res.json([false, false]);
     } else {
       //if not empty, there is a vote, so color it accordingly
@@ -342,5 +342,31 @@ router.delete("/clear", async function (req, res) {
     res.json({ error: 'Can only clear on development environment' });
   }
 });
-
+/**
+ * Updating the review
+ */
+ router.patch("/", async function (req, res) {
+  //make sure user is logged in
+  if (req.session.passport != null) {
+    //query of the user's email and the review id
+    let query = {
+      userID: req.session.passport.user.email,
+      reviewID: req.body["id"],
+    }
+    //get any existing vote in the db
+    let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
+    //result an array of either length 1 or empty
+    if (existingVote.length == 0) {
+      //if empty, both shxould be uncolored
+      res.json([false, false]);
+    } else {
+      //if not empty, there is a vote, so color it accordingly
+      if (existingVote[0].score == 1) {
+        res.json([true, false]);
+      } else {
+        res.json([false, true]);
+      }
+    }
+  }
+});
 export default router;

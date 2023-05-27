@@ -15,3 +15,23 @@
         align-items: flex-end;
     }
 }
+
+
+.delete-modal
+{ 
+    display: block;
+    position: initial;
+    background-color: black;
+    align-items: center;
+}
+
+.delete-confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+  }
+  
+  .delete-button,
+  .cancel-button {
+    flex: 1;
+  }
