@@ -31,12 +31,16 @@ const UserReviews: FC = () => {
   }, []);
 
   useEffect(() => {
+    // wrap in async function as use awaits so we don't
+    // update the state until after we populated the maps
+    // with results from the api request
+    (async() => {
       const newCourseData = new Map(courseData);
       const newProfessorData = new Map(professorData);
-      reviews.forEach(review => {
+      for (const review of reviews) {
         const courseID = review.courseID;
         if (!courseData.has(courseID)) {
-          searchAPIResult('course', courseID)
+          await searchAPIResult('course', courseID)
             .then(course => {
                 if (course) {
                     newCourseData.set(courseID, (course as CourseGQLData));
@@ -49,7 +53,7 @@ const UserReviews: FC = () => {
 
         const profId = review.professorID;
         if (!professorData.has(profId)) {
-          searchAPIResult('professor', profId)
+          await searchAPIResult('professor', profId)
             .then(professor => {
                 if (professor) {
                     newProfessorData.set(profId, (professor as ProfessorGQLData));
@@ -58,11 +62,12 @@ const UserReviews: FC = () => {
                     console.log(`Professor ${profId} does not exist!`);
                 }
             });
-          }
-        });
+        }
 
         setCourseData(newCourseData);
         setProfessorData(newProfessorData);
+      }
+    })();
   }, [reviews]);
 
   const deleteReview = async (reviewID: string) => {
