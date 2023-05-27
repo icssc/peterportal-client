@@ -97,7 +97,7 @@ const UserReviews: FC = () => {
         {reviews.map((review, i) => (
           <div key={`${review._id}`} className="user-reviews">
             <Divider />
-            <SubReview review={review} course={courseData.get(review.courseID)} professor={professorData.get(review.professorID)}></SubReview>
+            <SubReview editable={true} review={review} course={courseData.get(review.courseID)} professor={professorData.get(review.professorID)}></SubReview>
             <div className="user-reviews-footer">
               <Button
                 variant="danger"

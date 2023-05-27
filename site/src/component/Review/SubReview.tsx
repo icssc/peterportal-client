@@ -34,6 +34,7 @@ interface SubReviewProps {
   professor?: ProfessorGQLData;
   colors?: VoteColor;
   colorUpdater?: () => void;
+  editable?: boolean;
 }
 
 const SubReview: FC<SubReviewProps> = ({
@@ -42,6 +43,7 @@ const SubReview: FC<SubReviewProps> = ({
   professor,
   colors,
   colorUpdater,
+  editable
 }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(["user"]);
@@ -137,9 +139,11 @@ const SubReview: FC<SubReviewProps> = ({
 
   return (
     <div className="subreview">
-      <div style={{ float: "right", width: "3%", height: "3%" }}>
-        <Icon.PenFill onClick={editReview} />
-      </div>
+      {editable && 
+        <div style={{ float: "right", width: "3%", height: "3%" }}>
+          <Icon.PenFill onClick={editReview} />
+        </div>
+      }
       <div>
         <div>
           {course && <ReviewForm course={course} closeForm={closeForm} />}
