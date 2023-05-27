@@ -79,7 +79,6 @@ ul {
       display: flex;
       flex-direction: row;
       align-items: center;
-      background-color: #f5f6fc;
       height: 60%;
       border-radius: 1rem;
       width: 12vw;
@@ -92,10 +91,6 @@ ul {
         justify-content: center;
         align-items: center;
         border-radius: 1rem;
-
-        a {
-          color: black;
-        }
       }
 
       .active {

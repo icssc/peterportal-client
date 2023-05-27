@@ -29,7 +29,6 @@
 .year-accordion,
 .year-accordion-content {
   border-radius: var(--border-radius);
-  background-color: var(--ring-road-white);
   display: flex;
   flex-wrap: wrap;
 }
@@ -60,7 +59,6 @@
 
 #year-title {
   font-size: 1.2rem;
-  color: black;
 }
 
 #year-accordion-icon {
@@ -85,7 +83,6 @@
 }
 
 .edit-btn {
-  background-color: var(--ring-road-white);
   width: 5%;
   margin-top: 10px;
 }

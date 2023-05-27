@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import { XCircle } from 'react-bootstrap-icons';
@@ -10,8 +10,14 @@ import { Button } from 'react-bootstrap';
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
+import { ThemeConsumer } from 'styled-components';
 
-const SideBar: FC = ({ children }) => {
+interface SideBarProps {
+  darkMode: boolean,
+  toggleTheme: () => void;
+}
+
+const SideBar = ({ darkMode, toggleTheme }: SideBarProps) => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector(state => state.ui.sidebarOpen);
   const [cookies, setCookie] = useCookies(['user']);
@@ -67,6 +73,16 @@ const SideBar: FC = ({ children }) => {
           </span>
         </NavLink>
       </li>
+      {showSidebar && <li>
+        <a style={{cursor: 'pointer'}} onClick={toggleTheme}>
+          <div>
+            <Icon name={darkMode ? 'sun outline' : 'moon outline'} size='large' />
+          </div>
+          <span>
+            {darkMode ? 'Toggle Light Theme' : 'Toggle Dark Theme'}
+          </span>
+        </a>
+      </li>}
       {isAdmin && <>
       <li>
         <NavLink to='/admin/verify' activeClassName='sidebar-active' onClick={closeSidebar}>
@@ -127,12 +143,16 @@ const SideBar: FC = ({ children }) => {
           </Button>
         </a>}
         {!isLoggedIn && <a href={`/api/users/auth/google`}>
-          <Button variant='light'>
-            <span className='sidebar-login-icon'>
-              <Icon name='sign in' className='sidebar-login-icon' />
-            </span>
-            Log In
-          </Button>
+          <ThemeConsumer>
+            {theme => (
+              <Button variant={theme.name}>
+                <span className='sidebar-login-icon'>
+                  <Icon name='sign in' className='sidebar-login-icon' />
+                </span>
+                Log In
+              </Button>
+            )}
+          </ThemeConsumer>
         </a>}
       </div>
     </div>

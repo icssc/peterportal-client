@@ -154,10 +154,9 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
         </div>
-        <div
+        <div className='prereq-text-box'
           style={{
             padding: '1em',
-            backgroundColor: '#f5f5f5',
             marginTop: '2em',
           }}
         >

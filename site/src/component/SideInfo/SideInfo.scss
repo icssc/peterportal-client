@@ -79,9 +79,6 @@
     .side-info-feature-name {
         font-weight: bold;
         font-size: 2em;
-        a {
-            color: black;
-        }
     }
 
     .side-info-feature-stats {
@@ -90,7 +87,6 @@
     }
 
     .side-info-feature-stat {
-        background-color: #ffffff;
         border-radius: var(--border-radius);
         padding: 0.5rem;
         width: 45%;
