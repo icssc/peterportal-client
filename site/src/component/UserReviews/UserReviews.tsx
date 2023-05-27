@@ -3,9 +3,12 @@ import React, { FC, useEffect, useState } from "react";
 import SubReview from "../../component/Review/SubReview";
 import Button from "react-bootstrap/Button";
 import { Divider, Modal } from "semantic-ui-react";
-import { ReviewData } from "src/types/types";
+import { CourseGQLData, ProfessorGQLData, ReviewData } from "src/types/types";
 import "./UserReviews.scss";
 import { useCookies } from "react-cookie";
+import { Interface } from "readline";
+import { searchAPIResult } from "src/helpers/util";
+
 
 const UserReviews: FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
@@ -13,6 +16,8 @@ const UserReviews: FC = () => {
   const [cookies, setCookie] = useCookies(["user"]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string>("");
+  const [professorData, setProfessorData] = useState<Map<string, ProfessorGQLData>>(new Map());
+  const [courseData, setCourseData] = useState<Map<string, CourseGQLData>>(new Map());
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(
       `/reviews?userID=${cookies.user.id}`
@@ -22,9 +27,43 @@ const UserReviews: FC = () => {
   };
 
   useEffect(() => {
-    getUserReviews();
-    
+    getUserReviews()
   }, []);
+
+  useEffect(() => {
+      const newCourseData = new Map(courseData);
+      const newProfessorData = new Map(professorData);
+      reviews.forEach(review => {
+        const courseID = review.courseID;
+        if (!courseData.has(courseID)) {
+          searchAPIResult('course', courseID)
+            .then(course => {
+                if (course) {
+                    newCourseData.set(courseID, (course as CourseGQLData));
+                }
+                else {
+                    console.log(`Course ${courseID} does not exist!`);
+                }
+            });
+        }
+
+        const profId = review.professorID;
+        if (!professorData.has(profId)) {
+          searchAPIResult('professor', profId)
+            .then(professor => {
+                if (professor) {
+                    newProfessorData.set(profId, (professor as ProfessorGQLData));
+                }
+                else {
+                    console.log(`Professor ${profId} does not exist!`);
+                }
+            });
+          }
+        });
+
+        setCourseData(newCourseData);
+        setProfessorData(newProfessorData);
+  }, [reviews]);
 
   const deleteReview = async (reviewID: string) => {
     await axios.delete("/reviews", { data: { id: reviewID } });
@@ -51,9 +90,9 @@ const UserReviews: FC = () => {
         <h1>Your Reviews</h1>
         <p>Deleting a review will remove it permanently.</p>
         {reviews.map((review, i) => (
-          <div key={`user-reviews-${i}`} className="user-reviews">
+          <div key={`${review._id}`} className="user-reviews">
             <Divider />
-            <SubReview review={review}></SubReview>
+            <SubReview review={review} course={courseData.get(review.courseID)} professor={professorData.get(review.professorID)}></SubReview>
             <div className="user-reviews-footer">
               <Button
                 variant="danger"
