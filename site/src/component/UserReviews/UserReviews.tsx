@@ -21,14 +21,14 @@ const UserReviews: FC = () => {
   const [voteColors, setVoteColors] = useState([]);
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(
-      `/reviews?userID=${cookies.user.id}`
+      `/api/reviews?userID=${cookies.user.id}`
     );
     setReviews(response.data);
     setLoaded(true);
   };
 
   const getColors = async (vote: VoteColorsRequest) => {
-      const res = await axios.patch('/reviews/getVoteColors', vote);
+      const res = await axios.patch('/api/reviews/getVoteColors', vote);
       return res.data;
   }
 
