@@ -227,8 +227,8 @@ const SubReview: FC<SubReviewProps> = ({
                 })}
               </p>
             </div>
-            <div className="edit-review-content">
-              {/* {editMode ? <p>Test</p> : <p>{review.reviewContent}</p>} */}
+            <div>
+              <p>{review.reviewContent}</p>
             </div>
           </div>
         </div>

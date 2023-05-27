@@ -166,11 +166,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='instructor' id='instructor' required
       onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
+      {Object.keys(props.course?.instructor_history!).map((ucinetid) => {
         const name = props.course?.instructor_history[ucinetid].shortened_name;
         return (
           // @ts-ignore name attribute isn't supported
-          <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
+          <option key={ucinetid} name={name} id={ucinetid}>{name}</option>
         )
       })}
     </Form.Control>
@@ -190,11 +190,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='course' id='course' required
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Course</option>
-      {Object.keys(props.professor?.course_history!).map((courseID, i) => {
+      {Object.keys(props.professor?.course_history!).map((courseID) => {
         const name = props.professor?.course_history[courseID].department + ' ' + props.professor?.course_history[courseID].number;
         return (
           // @ts-ignore name attribute isn't supported
-          <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
+          <option key={courseID} name={name} id={courseID}>{name}</option>
         )
       })}
     </Form.Control>
@@ -221,8 +221,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
                     <option disabled={true} selected value=''>Grade</option>
-                    {grades.map((grade, i) => (
-                      <option key={i}>{grade}</option>
+                    {grades.map((grade) => (
+                      <option key={grade}>{grade}</option>
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
@@ -238,8 +238,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   <Form.Group controlId='quarter' className='mr-3'>
                     <Form.Control as="select" name='quarter' id='quarter' required onChange={(e) => setQuarterTaken(e.target.value)}>
                       <option disabled={true} selected value=''>Quarter</option>
-                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
-                        <option key={`quarter-${i}`}>{quarter}</option>
+                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter) => (
+                        <option key={quarter}>{quarter}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
@@ -249,8 +249,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   <Form.Group controlId='year'>
                     <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}>
                       <option disabled={true} selected value=''>Year</option>
-                      {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year, i) => (
-                        <option key={i}>{year}</option>
+                      {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year}>{year}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
