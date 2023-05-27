@@ -12,8 +12,6 @@ import { Provider } from 'react-redux';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
-import axios from 'axios';
-
 const client = new ApolloClient({
   uri: '/api/graphql/',
   cache: new InMemoryCache()
