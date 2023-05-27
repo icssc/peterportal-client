@@ -35,6 +35,7 @@ interface SubReviewProps {
   colors?: VoteColor;
   colorUpdater?: () => void;
   editable?: boolean;
+  editReview?: (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => void;
 }
 
 const SubReview: FC<SubReviewProps> = ({
@@ -43,7 +44,8 @@ const SubReview: FC<SubReviewProps> = ({
   professor,
   colors,
   colorUpdater,
-  editable
+  editable,
+  editReview
 }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(["user"]);
@@ -52,7 +54,6 @@ const SubReview: FC<SubReviewProps> = ({
   //Edit Review
   const [showReviewForm, setShowReviewForm] = useState(true);
   const reviewData = useAppSelector(selectReviews);
-  const dispatch = useAppDispatch();
   console.log(course);
   console.log(professor);
 
@@ -124,34 +125,13 @@ const SubReview: FC<SubReviewProps> = ({
     </OverlayTrigger>
   );
 
-  //EDIT REVIEW
-  //Edit mode activates
-  const editReview = (e: MouseEvent) => {
-    dispatch(setFormStatus(true));
-    document.body.style.overflow = "hidden";
-    console.log("Edit Review clicked!");
-  };
-
-  const closeForm = () => {
-    dispatch(setFormStatus(false));
-    document.body.style.overflow = "visible";
-  };
-
   return (
     <div className="subreview">
-      {editable && 
+      {editable && editReview && 
         <div style={{ float: "right", width: "3%", height: "3%" }}>
-          <Icon.PenFill onClick={editReview} />
+          <Icon.PenFill onClick={() => editReview(review, course, professor)} />
         </div>
       }
-      <div>
-        <div>
-          {course && <ReviewForm course={course} closeForm={closeForm} />}
-          {professor && (
-            <ReviewForm professor={professor} closeForm={closeForm} />
-          )}
-        </div>
-      </div>
       <div>
         <h3 className="subreview-identifier">
           {professor && (

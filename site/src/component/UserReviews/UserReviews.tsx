@@ -8,6 +8,9 @@ import "./UserReviews.scss";
 import { useCookies } from "react-cookie";
 import { Interface } from "readline";
 import { searchAPIResult } from "src/helpers/util";
+import ReviewForm from "../ReviewForm/ReviewForm";
+import { useAppDispatch } from "src/store/hooks";
+import { setFormStatus } from "src/store/slices/reviewSlice";
 
 
 const UserReviews: FC = () => {
@@ -19,6 +22,10 @@ const UserReviews: FC = () => {
   const [professorData, setProfessorData] = useState<Map<string, ProfessorGQLData>>(new Map());
   const [courseData, setCourseData] = useState<Map<string, CourseGQLData>>(new Map());
   const [voteColors, setVoteColors] = useState([]);
+  const [courseToEdit, setCourseToEdit] = useState<CourseGQLData>();
+  const [professorToEdit, setProfessorToEdit] = useState<ProfessorGQLData>();
+  const [reviewToEdit, setReviewToEdit] = useState<ReviewData>();
+  const dispatch = useAppDispatch();
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(
       `/api/reviews?userID=${cookies.user.id}`
@@ -100,9 +107,9 @@ const UserReviews: FC = () => {
             });
         }
 
-        setCourseData(newCourseData);
-        setProfessorData(newProfessorData);
       }
+      setCourseData(newCourseData);
+      setProfessorData(newProfessorData);
     })();
   }, [reviews]);
 
@@ -119,6 +126,22 @@ const UserReviews: FC = () => {
 
   const handleDeleteReview = () => {
     deleteReview(selectedReviewId);
+  };
+
+  //EDIT REVIEW
+  //Edit mode activates
+  const editReview = (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => {
+    setCourseToEdit(course);
+    setProfessorToEdit(professor);
+    setReviewToEdit(review);
+    dispatch(setFormStatus(true));
+    document.body.style.overflow = "hidden";
+    console.log("Edit Review clicked!");
+  };
+
+  const closeForm = () => {
+    dispatch(setFormStatus(false));
+    document.body.style.overflow = "visible";
   };
 
   if (!loaded) {
@@ -140,6 +163,7 @@ const UserReviews: FC = () => {
               professor={professorData.get(review.professorID)}
               colorUpdater={updateVoteColors}
               colors={getU(review._id)}
+              editReview={editReview}
             />
             <div className="user-reviews-footer">
               <Button
@@ -182,6 +206,7 @@ const UserReviews: FC = () => {
             </Modal.Actions>
           </Modal>
         </div>
+        <ReviewForm course={courseToEdit} professor={professorToEdit} review={reviewToEdit} closeForm={closeForm} editable={true} />
       </div>
     );
   }

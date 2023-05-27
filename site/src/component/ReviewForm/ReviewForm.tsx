@@ -19,6 +19,8 @@ import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
+  editable?: boolean;
+  review?: ReviewData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
@@ -73,6 +75,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       if (!cookies.hasOwnProperty('user')) {
         alert('You must be logged in to add a review!')
         props.closeForm();
+      }
+
+      if (props.review) {
+        for (const tag of props.review.tags) {
+          selectTag(tag);
+        }
       }
     }
   }, [showForm])
@@ -209,14 +217,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
+              {props.editable ? <h1>Edit your review for {props.course?.department + ' ' + props.course?.number + ' - ' + props.professor?.name}</h1> : 
+                <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
+              }
             </Col>
           </Row>
           <Row className='mt-4' lg={2} md={1}>
             <Col>
               <div className='review-form-section review-form-row review-form-taken'>
-                {instructorSelect}
-                {courseSelect}
+                {!props.editable && instructorSelect}
+                {!props.editable && courseSelect}
                 <Form.Group className='review-form-grade' controlId='grade'>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
@@ -345,6 +355,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   as="textarea"
                   placeholder="Here's your chance to be more specific..."
                   style={{ height: '15vh', width: '100%' }}
+                  value={props.review?.reviewContent}
                   onChange={(e) => {
                     setContent(e.target.value);
                     if (overCharLimit && e.target.value.length < 500) {
