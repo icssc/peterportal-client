@@ -36,9 +36,17 @@
   background-color: var(--overlay1);
   color: var(--text);
 }
-
+.bs-popover-top>.arrow::after {
+  border-top-color: var(--overlay1);
+}
+.bs-popover-bottom>.arrow::after {
+  border-bottom-color: var(--overlay1);
+}
 .bs-popover-left>.arrow::after {
   border-left-color: var(--overlay1);
+}
+.bs-popover-right>.arrow::after {
+  border-right-color: var(--overlay1);
 }
 
 // general semantic-ui overwrites. bg color may need to be customized per component
