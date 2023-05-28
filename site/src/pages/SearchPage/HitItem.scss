@@ -1,9 +1,13 @@
 .hit-item {
     border-radius: var(--border-radius);
-    background-color: #ffffff;
+    background-color: var(--overlay1);
     padding: 2vh;
     margin-bottom: 2vh;
     cursor: pointer;
+
+    a {
+        color: var(--text);
+    }
 }
 
 .course-hit-id {

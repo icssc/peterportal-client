@@ -2,6 +2,7 @@ import React from 'react';
 import { ResponsiveBar, BarTooltipDatum } from '@nivo/bar'
 
 import { GradeDistData } from '../../types/types';
+import ThemeContext from 'src/style/theme-context';
 
 const colors = { 'A': '#60A3D1', 'B': '#81C284', 'C': '#F5D77F', 'D': '#ECAD6D', 'F': '#E8966D', 'P': '#EBEBEB', 'NP': '#EBEBEB' }
 const getColor = (bar: Bar) => colors[bar.id]
@@ -30,14 +31,29 @@ export default class Chart extends React.Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
-  theme = {
-    tooltip: {
-      container: {
-        background: 'rgba(0,0,0,.87)',
-        color: '#ffffff',
-        fontSize: '1.2rem',
-        outline: 'none',
-        margin: 0,
+
+  getTheme = (darkMode: boolean) => {
+    return {
+      tooltip: {
+        container: {
+          background: 'rgba(0,0,0,.87)',
+          color: '#ffffff',
+          fontSize: '1.2rem',
+          outline: 'none',
+          margin: 0,
+        }
+      },
+      axis: {
+        ticks: {
+          text: {
+            fill: darkMode ? '#eee' : '#333'
+          }
+        },
+        legend: {
+          text: {
+            fill: darkMode ? '#eee' : '#333'
+          }
+        }
       }
     }
   }
@@ -132,30 +148,34 @@ export default class Chart extends React.Component<ChartProps> {
    */
   render() {
     return <>
-      <ResponsiveBar
-        data={this.getClassData()}
-        keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
-        indexBy='label'
-        margin={{
-          top: 50,
-          right: 30,
-          bottom: 50,
-          left: 30
-        }}
-        layout='vertical'
-        axisBottom={{
-          tickSize: 10,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: 'Grade',
-          legendPosition: 'middle',
-          legendOffset: 36
-        }}
-        enableLabel={false}
-        colors={getColor}
-        theme={this.theme}
-        tooltip={this.styleTooltip}
-      />
+      <ThemeContext.Consumer>
+        {({ darkMode }) => 
+          <ResponsiveBar
+            data={this.getClassData()}
+            keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
+            indexBy='label'
+            margin={{
+              top: 50,
+              right: 30,
+              bottom: 50,
+              left: 30
+            }}
+            layout='vertical'
+            axisBottom={{
+              tickSize: 10,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: 'Grade',
+              legendPosition: 'middle',
+              legendOffset: 36
+            }}
+            enableLabel={false}
+            colors={getColor}
+            theme={this.getTheme(darkMode)}
+            tooltip={this.styleTooltip}
+          />
+        }
+      </ThemeContext.Consumer>
     </>
   }
 }

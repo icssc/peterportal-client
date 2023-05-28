@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   BrowserRouter as Router,
@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import './style/theme.scss';
 import './App.scss';
 import { Fade } from 'react-bootstrap';
 
@@ -24,26 +25,29 @@ import SideBar from './component/SideBar/SideBar';
 import { useAppSelector } from './store/hooks';
 import { darkTheme, lightTheme } from './style/theme';
 import { ThemeProvider } from 'styled-components';
-import GlobalStyle from './style/globalStyle';
+import ThemeContext from './style/theme-context';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true' ? true : (localStorage.getItem('darkMode') === 'false' ? false : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)));
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
   const [isShown, setIsShown] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode ? 'true' : 'false');
+    document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode])
+
   const toggleTheme = () => {
-    localStorage.setItem('darkMode', darkMode ? 'false' : 'true');
     setDarkMode(!darkMode);
   }
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <GlobalStyle />
-        <AppHeader />
+      <ThemeContext.Provider value={{ darkMode: darkMode, toggleTheme: toggleTheme }} >
+        <AppHeader/>
         <div className='app-body'>
           <div className='app-sidebar'>
-            <SideBar darkMode={darkMode} toggleTheme={toggleTheme} />
+            <SideBar/>
           </div>
           <div className='app-content'>
             <Switch>
@@ -67,7 +71,7 @@ export default function App() {
             <Footer />
           </div>
         </div>
-      </ThemeProvider>
+      </ThemeContext.Provider>
     </Router>
   )
 }

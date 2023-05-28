@@ -1,6 +1,6 @@
 $avatarWidth: 65px;
 .subreview {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
   padding: 2rem;
   margin-bottom: 3vh;
@@ -11,7 +11,7 @@ $avatarWidth: 65px;
   font-weight: bold;
   font-size: xx-large;
   a {
-    color: black;
+    color: var(--text);
   }
 }
 // content of review
@@ -68,7 +68,7 @@ $avatarWidth: 65px;
 }
 .subreview-detail {
   border-radius: var(--border-radius);
-  background-color: #ffffff;
+  background-color: var(--overlay3);
   width: 45%;
   padding: 1rem;
   display: flex;

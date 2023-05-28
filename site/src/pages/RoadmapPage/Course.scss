@@ -1,6 +1,6 @@
 .course {
   box-shadow: 0px 0px 4px #2484C6;
-  background: #FFFFFF;
+  background: var(--overlay1);
   border-radius: 15px;
   height: auto;
   font-size: 16px;
@@ -58,12 +58,11 @@
 }
 
 .course-popover {
-  background: #FFFFFF;
   padding: 5%;
 
   .popover-name {
     font-weight: bold;
-    color: black;
+    color: var(--text-dark);
     font-size: 16px;
   }
 

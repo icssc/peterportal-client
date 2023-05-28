@@ -97,7 +97,7 @@ const AppHeader: FC<{}> = props => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div className='beta' style={{ margin: "auto 12px" }}>
-            <Popup style={{ padding: "36px", width: "400px" }} position='bottom right' trigger={<Label as='a' color='yellow' image>beta<Label.Detail>v1.1</Label.Detail></Label>} flowing hoverable >
+            <Popup className='beta-popup' style={{ padding: "36px", width: "400px" }} position='bottom right' trigger={<Label as='a' color='yellow' image>beta<Label.Detail>v1.1</Label.Detail></Label>} flowing hoverable >
               <Grid centered columns={1}>
                 <Grid.Column textAlign='left'>
                   <h4>Beta Disclaimer</h4>

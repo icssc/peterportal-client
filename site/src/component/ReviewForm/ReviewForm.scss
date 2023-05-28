@@ -1,5 +1,5 @@
 .review-form {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
   padding: 2rem;
   display: flex;
@@ -48,7 +48,7 @@
   margin-left: 1vw;
 }
 .review-form-section {
-  background-color: #ffffff;
+  background-color: var(--overlay3);
   border-radius: var(--border-radius);
   padding: 1rem;
 }
@@ -88,7 +88,6 @@
 .submitted-form {
   text-align: center;
   width: 100%;
-  margin-top: 15%;
   i {
     color: var(--peterportal-secondary-green);
   }

@@ -1,5 +1,9 @@
+[data-theme='dark'] .quarter .quarter-header .quarter-title {
+  color: #eee;
+}
+
 .quarter {
-  background-color: white;
+  background-color: var(--overlay1);
   border-radius: 10px;
   box-shadow: 0px 0px 4px #2484c6;
   flex: 1 1 30%;
@@ -12,6 +16,7 @@
     align-items: center;
 
     .quarter-title {
+      color: #202e47;
       font-weight: bold;
       font-size: 20px;
       padding: 1rem 0rem 0rem 2rem;

@@ -11,7 +11,7 @@
 }
 
 .search-popup {
-    background-color: #ffffff;
+    background-color: var(--overlay1);
     padding: 3rem;
     margin-left: 3vw;
     height: 85vh;
@@ -36,11 +36,11 @@
 }
 
 .search-popup-more {
-    background-color: #ffffff;
+    background-color: transparent;
 }
 
 .search-popup-block {
-    background-color: var(--peterportal-gray-blue);
+    background-color: var(--overlay2);
     border-radius: var(--border-radius);
 }
 
@@ -62,7 +62,7 @@
 }
 
 .search-popup-carousel {
-    background-color: var(--peterportal-gray-blue);
+    background-color: var(--overlay2);
     height: 100%;
     margin: 0 1vw;
     padding: 2vh 1vw;

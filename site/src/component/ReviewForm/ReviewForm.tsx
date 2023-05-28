@@ -359,7 +359,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 </div>
                 <Form.Text>
                   <Icon name='warning sign' />
-                  <span style={{ color: '#333333' }}>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</span>
+                  <span className='profanity-warning'>Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!</span>
                 </Form.Text>
               </Form.Group>
             </Col>
@@ -392,7 +392,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           </Row>
           <Row>
             <Col className='mb-3 review-form-submit'>
-              <ReCAPTCHA
+              <ReCAPTCHA 
                 className='d-inline'
                 sitekey='6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4'
                 onChange={(token) => {
