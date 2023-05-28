@@ -6,7 +6,7 @@
 [data-theme='dark'] {
     .search-bar,
     .search-module .input-group-text {
-        color: white;
+        color: var(--text);
         background-color: var(--overlay1);
         border-color: var(--overlay3);
     }

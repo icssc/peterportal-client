@@ -11,6 +11,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { addQuarter, editYear, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
+import ThemeContext from "src/style/theme-context";
 
 interface YearProps {
   yearIndex: number;
@@ -104,58 +105,65 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           </span>
         </Button>
         <ThreeDots onClick={handleEditClick} className="edit-btn" />
-        <Overlay show={show} target={target} placement="bottom">
-          <Popover id={`year-menu-${yearIndex}`}>
-            <Popover.Content className="year-settings-popup">
-              <div>
-                <Button disabled={!(data.quarters && data.quarters.length < 6)} onClick={handleShowAddQuarterClick} variant="light" className="year-settings-btn">
-                  Add Quarter
-                </Button>
-                <Button onClick={handleEditYearClick} variant="light" className="year-settings-btn">
-                  Edit Year
-                </Button>
-                <Button
-                  variant="light"
-                  className="year-settings-btn"
-                  id="clear-btn"
-                  onClick={() => {
-                    dispatch(clearYear({
-                      yearIndex: yearIndex
-                    }));
-                  }}
-                >
-                  Clear
-                </Button>
-                <Button
-                  variant="light"
-                  className="year-settings-btn"
-                  id="remove-btn"
-                  onClick={() => {
-                    dispatch(deleteYear({
-                      yearIndex: yearIndex
-                    }));
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            </Popover.Content>
-          </Popover>
-        </Overlay>
-        <Overlay show={showAddQuarter && data.quarters && data.quarters.length < 6} target={addQuarterTarget} placement="left">
-          <Popover id={`add-quarter-menu-${yearIndex}`}>
-            <Popover.Content>
-              <div>
-                {!data.quarters.map(quarter => quarter.name).includes("fall") && <Button onClick={() => handleAddQuarterClick(data.startYear, "fall")} variant="light" className="year-settings-btn">Fall</Button>}
-                {!data.quarters.map(quarter => quarter.name).includes("winter") && <Button onClick={() => handleAddQuarterClick(data.startYear, "winter")} variant="light" className="year-settings-btn">Winter</Button>}
-                {!data.quarters.map(quarter => quarter.name).includes("spring") && <Button onClick={() => handleAddQuarterClick(data.startYear, "spring")} variant="light" className="year-settings-btn">Spring</Button>}
-                {!data.quarters.map(quarter => quarter.name).includes("summer I") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer I")} variant="light" className="year-settings-btn">Summer I</Button>}
-                {!data.quarters.map(quarter => quarter.name).includes("summer II") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer II")} variant="light" className="year-settings-btn">Summer II</Button>}
-                {!data.quarters.map(quarter => quarter.name).includes("summer 10 Week") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer 10 Week")} variant="light" className="year-settings-btn">Summer 10 Week</Button>}
-              </div>
-            </Popover.Content>
-          </Popover>
-        </Overlay>
+        <ThemeContext.Consumer>
+          {({ darkMode }) => {
+            let variant = darkMode ? 'dark' : 'light';
+            return <>
+              <Overlay show={show} target={target} placement="bottom">
+                <Popover id={`year-menu-${yearIndex}`}>
+                  <Popover.Content className="year-settings-popup">
+                    <div>
+                      <Button disabled={!(data.quarters && data.quarters.length < 6)} onClick={handleShowAddQuarterClick} variant={variant} className="year-settings-btn">
+                        Add Quarter
+                      </Button>
+                      <Button onClick={handleEditYearClick} variant={variant} className="year-settings-btn">
+                        Edit Year
+                      </Button>
+                      <Button
+                        variant={variant}
+                        className="year-settings-btn"
+                        id="clear-btn"
+                        onClick={() => {
+                          dispatch(clearYear({
+                            yearIndex: yearIndex
+                          }));
+                        }}
+                      >
+                        Clear
+                      </Button>
+                      <Button
+                        variant={variant}
+                        className="year-settings-btn"
+                        id="remove-btn"
+                        onClick={() => {
+                          dispatch(deleteYear({
+                            yearIndex: yearIndex
+                          }));
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </Popover.Content>
+                </Popover>
+              </Overlay>
+              <Overlay show={showAddQuarter && data.quarters && data.quarters.length < 6} target={addQuarterTarget} placement="left">
+                <Popover id={`add-quarter-menu-${yearIndex}`}>
+                  <Popover.Content>
+                    <div>
+                      {!data.quarters.map(quarter => quarter.name).includes("fall") && <Button onClick={() => handleAddQuarterClick(data.startYear, "fall")} variant={variant} className="year-settings-btn">Fall</Button>}
+                      {!data.quarters.map(quarter => quarter.name).includes("winter") && <Button onClick={() => handleAddQuarterClick(data.startYear, "winter")} variant={variant} className="year-settings-btn">Winter</Button>}
+                      {!data.quarters.map(quarter => quarter.name).includes("spring") && <Button onClick={() => handleAddQuarterClick(data.startYear, "spring")} variant={variant} className="year-settings-btn">Spring</Button>}
+                      {!data.quarters.map(quarter => quarter.name).includes("summer I") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer I")} variant={variant} className="year-settings-btn">Summer I</Button>}
+                      {!data.quarters.map(quarter => quarter.name).includes("summer II") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer II")} variant={variant} className="year-settings-btn">Summer II</Button>}
+                      {!data.quarters.map(quarter => quarter.name).includes("summer 10 Week") && <Button onClick={() => handleAddQuarterClick(data.startYear, "summer 10 Week")} variant={variant} className="year-settings-btn">Summer 10 Week</Button>}
+                    </div>
+                  </Popover.Content>
+                </Popover>
+              </Overlay>
+            </>;
+          }}
+        </ThemeContext.Consumer>
         <Overlay show={showEditYear} target={editYearTarget} placement="left">
           <Popover id={`edit-year-menu-${yearIndex}`}>
             <Popover.Content>

@@ -31,6 +31,7 @@ code {
   --peterportal-mid-gray: #8d8d8d;
   --peterportal-uci-gold: #ffd200;
   --peterportal-gray-blue: #f5f6fc;
+  --border-radius: 8px;
 }
 
 ::-moz-selection {

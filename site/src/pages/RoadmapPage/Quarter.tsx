@@ -10,6 +10,7 @@ import { Button, Overlay, Popover } from "react-bootstrap";
 import {
   ThreeDots
 } from "react-bootstrap-icons";
+import ThemeContext from "src/style/theme-context";
 
 interface QuarterProps {
   year: number;
@@ -90,23 +91,30 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         {quarterTitle} {year}
       </h2>
       <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
-      <Overlay show={showQuarterMenu} target={target} placement="bottom">
-        <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
-          <Popover.Content>
-            <div>
-              <Button variant="light" className="quarter-menu-btn red-menu-btn" onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}>
-                Clear
-              </Button>
-              <Button variant="light" className="quarter-menu-btn red-menu-btn" onClick={() => {
-                dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
-                setShowQuarterMenu(false)
-              }}>
-                Delete
-              </Button>
-            </div>
-          </Popover.Content>
-        </Popover>
-      </Overlay>
+      <ThemeContext.Consumer>
+        {({ darkMode }) => {
+          let variant = darkMode ? 'dark' : 'light';
+          return <>
+            <Overlay show={showQuarterMenu} target={target} placement="bottom">
+              <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
+                <Popover.Content>
+                  <div>
+                    <Button variant={variant} className="quarter-menu-btn red-menu-btn" onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}>
+                      Clear
+                    </Button>
+                    <Button variant={variant} className="quarter-menu-btn red-menu-btn" onClick={() => {
+                      dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
+                      setShowQuarterMenu(false)
+                    }}>
+                      Delete
+                    </Button>
+                  </div>
+                </Popover.Content>
+              </Popover>
+            </Overlay>
+          </>;
+        }}
+      </ThemeContext.Consumer>
     </span>
     <div className="quarter-units">
       {unitCount} {unitCount === 1 ? "unit" : "units"}

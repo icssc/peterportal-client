@@ -27,9 +27,28 @@
   color: var(--text);
 }
 
+.form-control::selection {
+  color: var(--text-dark);
+}
+
 .dropdown-menu, .dropdown-item, .form-control, .form-control:focus {
   color: var(--text-light);
   background-color: var(--overlay3);
+}
+
+[data-theme='dark'] {
+  .modal-content {
+    background-color: var(--overlay1);
+
+    .form-control, .form-control:focus {
+      background-color: var(--overlay2);
+    }
+
+    .close {
+      color: white;
+      text-shadow: none;
+    }
+  }
 }
 
 .popover-body {
@@ -50,27 +69,29 @@
 }
 
 // general semantic-ui overwrites. bg color may need to be customized per component
-[data-theme='dark'] .ui, [data-theme='dark'] .ui.popup:before {
-  color: var(--text);
-  background-color: var(--overlay2);
-  border-color: var(--overlay1);
-}
+[data-theme='dark'] {
+  .ui, .ui.popup:before {
+    color: var(--text);
+    background-color: var(--overlay2);
+    border-color: var(--overlay1);
+  }
 
-[data-theme='dark'] .ui.bottom.popup:before {
-  box-shadow: -1px -1px 0 0 var(--overlay1);
-}
+  .ui.bottom.popup:before {
+    box-shadow: -1px -1px 0 0 var(--overlay1);
+  }
 
-[data-theme='dark'] .ui.dropdown, [data-theme='dark'] .ui.dropdown .menu {
-  color: white;
-  background-color: var(--overlay3);
-  border-color: var(--overlay2);
-}
+  .ui.dropdown, .ui.dropdown .menu {
+    color: white;
+    background-color: var(--overlay3);
+    border-color: var(--overlay2);
+  }
 
-[data-theme='dark'] .ui.selection.visible.dropdown>.text:not(.default),
-[data-theme='dark'] .ui.dropdown .menu>.item {
-  color: white;
-}
+  .ui.selection.visible.dropdown>.text:not(.default),
+  .ui.dropdown .menu>.item {
+    color: white;
+  }
 
-[data-theme='dark'] .ui.dropdown:hover {
-  border-color: var(--overlay1);
+  .ui.dropdown:hover {
+    border-color: var(--overlay1);
+  }
 }

@@ -84,7 +84,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)
     return (
-      <div className='missing-tree'>
+      <div className='prereq-text-box'>
         <p>
           No Dependencies or Prerequisites!
         </p>

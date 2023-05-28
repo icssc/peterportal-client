@@ -3,21 +3,19 @@
   height: 100%;
 }
 
-.ui.segment {
-  // background: linear-gradient(90deg, $primary-color-1 0%, $primary-color-2 100%);
-  padding: 0 !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
 
-:root {
-  --border: 1px solid #eee;
-  --border-radius: 8px;
-  --speed: 500ms;
-}
+[data-theme='dark'] {
+  .beta-popup .button {
+    background-color: var(--overlay3);
+  }
 
-[data-theme='dark'] .navbar {
-  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  .beta-popup .button:hover, .beta-popup .button:focus {
+    background-color: #CACBCD;
+  }
+
+  .navbar {
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  }
 }
 
 .navbar {
@@ -70,7 +68,7 @@
     }
 
     .navbar-toggle {
-      background-color: var(--background);
+      background-color: var(--overlay2);
       margin-left: 5vw;
       display: flex;
       flex-direction: row;
@@ -132,7 +130,6 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        background-color: #f5f6fc;
         height: 60%;
         border-radius: 1rem;
         width: 17vw;
@@ -186,12 +183,4 @@
       }
     }
   }
-}
-
-[data-theme='dark'] .beta-popup .button {
-  background-color: var(--overlay3);
-}
-
-[data-theme='dark'] .beta-popup .button:hover, [data-theme='dark'] .beta-popup .button:focus {
-  background-color: #CACBCD;
 }
