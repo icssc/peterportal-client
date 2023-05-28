@@ -7,7 +7,6 @@
     "@nivo/bar": "^0.69.1",
     "@nivo/pie": "^0.69.0",
     "@reduxjs/toolkit": "^1.6.1",
-    "@types/styled-components": "^5.1.26",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "html2canvas": "^1.0.0-rc.7",

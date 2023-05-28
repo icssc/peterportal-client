@@ -10,7 +10,6 @@ import { Button } from 'react-bootstrap';
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
-import { ThemeConsumer } from 'styled-components';
 import ThemeContext from 'src/style/theme-context';
 
 const SideBar = () => {
