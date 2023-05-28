@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './style/theme.scss';
 import './App.scss';
-import { Fade } from 'react-bootstrap';
 
 import AppHeader from './component/AppHeader/AppHeader';
 import Footer from './component/Footer/Footer';
@@ -23,8 +22,6 @@ import AdminPage from './pages/AdminPage';
 import SideBar from './component/SideBar/SideBar';
 
 import { useAppSelector } from './store/hooks';
-import { darkTheme, lightTheme } from './style/theme';
-import { ThemeProvider } from 'styled-components';
 import ThemeContext from './style/theme-context';
 
 export default function App() {
