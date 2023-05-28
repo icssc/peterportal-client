@@ -36,9 +36,13 @@
   background-color: var(--overlay3);
 }
 
+.list-group-item {
+  background-color: var(--overlay2);
+}
+
 [data-theme='dark'] {
   .modal-content {
-    background-color: var(--overlay1);
+    background-color: var(--overlay2);
 
     .form-control, .form-control:focus {
       background-color: var(--overlay2);

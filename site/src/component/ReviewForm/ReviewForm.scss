@@ -1,3 +1,9 @@
+[data-theme='dark'] {
+  .review-form .form-control, .form-control:focus {
+    background-color: var(--overlay3);
+  }
+}
+
 .review-form {
   background-color: var(--overlay2);
   border-radius: var(--border-radius);
