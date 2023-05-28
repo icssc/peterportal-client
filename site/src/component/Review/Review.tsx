@@ -27,6 +27,7 @@ const Review: FC<ReviewProps> = (props) => {
     const openForm = useAppSelector(state => state.review.formOpen);
     const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
     const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
+    const [sortedReviews, setSortedReviews] = useState<ReviewData[]>([]);
 
     const getColors = async (vote: VoteColorsRequest) => {
         const res = await axios.patch('/api/reviews/getVoteColors', vote);
@@ -93,6 +94,30 @@ const Review: FC<ReviewProps> = (props) => {
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
+    useEffect(() => {
+        let newSortedReviews: ReviewData[];
+        // filter verified if option is set
+        if (showOnlyVerifiedReviews) {
+            newSortedReviews = reviewData.filter(review => review.verified);
+        } else { // if not, clone reviewData since its const
+            newSortedReviews = reviewData.slice(0);
+        }
+
+        switch (sortingOption) {
+            case SortingOption.MOST_RECENT:
+                newSortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+            case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
+                newSortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+            case SortingOption.CONTROVERSIAL:
+                newSortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+                break;
+        }
+
+        setSortedReviews(newSortedReviews);
+    }, [showOnlyVerifiedReviews, reviewData, sortingOption]);
+
     const openReviewForm = () => {
         dispatch(setFormStatus(true));
         document.body.style.overflow = 'hidden';
@@ -105,26 +130,6 @@ const Review: FC<ReviewProps> = (props) => {
     if (!reviewData) {
         return <p>Loading reviews..</p>;
     } else {
-        let sortedReviews;
-        // filter verified if option is set
-        if (showOnlyVerifiedReviews) {
-            sortedReviews = reviewData.filter(review => review.verified);
-        } else { // if not, clone reviewData since its const
-            sortedReviews = reviewData.slice(0);
-        }
-
-        switch (sortingOption) {
-            case SortingOption.MOST_RECENT:
-                sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-            case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
-                sortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-            case SortingOption.CONTROVERSIAL:
-                sortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-        }
-
         return (
             <>
                 <div className='reviews'>
