@@ -41,10 +41,10 @@ export default function App() {
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <ThemeContext.Provider value={{ darkMode: darkMode, toggleTheme: toggleTheme }} >
-        <AppHeader/>
+        <AppHeader />
         <div className='app-body'>
           <div className='app-sidebar'>
-            <SideBar/>
+            <SideBar />
           </div>
           <div className='app-content'>
             <Switch>
