@@ -96,4 +96,7 @@
   .ui.dropdown:hover {
     border-color: var(--overlay3);
   }
+  .ui.dropdown .menu>.item:hover {
+    background-color: var(--overlay3);
+  }
 }
