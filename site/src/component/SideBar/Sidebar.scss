@@ -1,3 +1,13 @@
+[data-theme='dark'] {
+  .sidebar {
+    .sidebar-links {
+      ul li a:hover {
+        background-color: var(--overlay2);
+      }
+    }
+  }
+}
+
 .sidebar {
   position: fixed;
   width: 20vw;
