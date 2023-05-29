@@ -8,8 +8,12 @@
         .dropdown:hover {
             border-color: var(--overlay4);
         }
-        .ui.dropdown .menu>.item:hover {
-            background-color: var(--overlay4);
+
+        .ui.dropdown {
+            .menu>.item.active,
+            .menu>.item:hover {
+                background-color: var(--overlay4);
+            }
         }
     }
 }

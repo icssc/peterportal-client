@@ -99,8 +99,11 @@
   .ui.dropdown:hover {
     border-color: var(--overlay3);
   }
-  .ui.dropdown .menu>.item:hover {
-    background-color: var(--overlay3);
+  .ui.dropdown {
+    .menu>.item:hover,
+    .menu>.item.active{
+      background-color: var(--overlay3);
+    }
   }
 }
 // end semantic-ui overwrites
