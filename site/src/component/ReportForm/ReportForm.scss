@@ -19,7 +19,6 @@
 
   textarea {
     color: var(--text);
-    background-color: var(--overlay3);
     border-radius: var(--border-radius);
     border: 2px solid #EAEBF2;
     padding: 1rem;
@@ -28,7 +27,11 @@
     display: block;
   }
 
-  textarea:focus {
+  textarea.form-control {
+    background-color: var(--overlay3);
+  }
+
+  textarea.form-control:focus {
     color: var(--text);
     background-color: var(--overlay3);
   }

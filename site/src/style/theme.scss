@@ -7,6 +7,7 @@
   --text: #212529; // default bootstrap color
   --text-dark: #000;
   --text-light: #495057;
+  --hover: #CACBCD; // semantic-ui default
 }
 
 // dark theme vars
@@ -20,6 +21,7 @@
   --text: #fff;
   --text-dark: #fff;
   --text-light: #fff;
+  --hover: #CACBCD;
 }
 
 // general bootstrap overwrites. bg color may need further customization per component
@@ -31,27 +33,23 @@
   color: var(--text-dark);
 }
 
-.dropdown-menu, .dropdown-item, .form-control, .form-control:focus {
-  color: var(--text-light);
-  background-color: var(--overlay3);
-}
-
-.list-group-item {
-  background-color: var(--overlay2);
-}
 
 [data-theme='dark'] {
-  .modal-content {
+  .list-group-item,
+  .modal-content,
+  .dropdown-menu, .dropdown-item,
+  .form-control, .form-control:focus {
+    color: var(--text);
     background-color: var(--overlay2);
+  }
 
-    .form-control, .form-control:focus {
-      background-color: var(--overlay2);
-    }
+  .dropdown-item:hover {
+    background-color: var(--overlay3);
+  }
 
-    .close {
-      color: white;
-      text-shadow: none;
-    }
+  .close {
+    color: var(--text);
+    text-shadow: none;
   }
 }
 
@@ -85,17 +83,17 @@
   }
 
   .ui.dropdown, .ui.dropdown .menu {
-    color: white;
-    background-color: var(--overlay3);
-    border-color: var(--overlay2);
+    color: var(--text);
+    background-color: var(--overlay2);
+    border-color: var(--overlay1);
   }
 
   .ui.selection.visible.dropdown>.text:not(.default),
   .ui.dropdown .menu>.item {
-    color: white;
+    color: var(--text);
   }
 
   .ui.dropdown:hover {
-    border-color: var(--overlay1);
+    border-color: var(--overlay3);
   }
 }

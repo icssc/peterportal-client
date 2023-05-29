@@ -1,6 +1,8 @@
 [data-theme='dark'] {
-  .review-form .form-control, .form-control:focus {
-    background-color: var(--overlay3);
+  .review-form {
+    .form-control, .form-control:focus {
+      background-color: var(--overlay3);
+    }
   }
 }
 

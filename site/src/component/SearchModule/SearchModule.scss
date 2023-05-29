@@ -5,6 +5,7 @@
 
 [data-theme='dark'] {
     .search-bar,
+    .search-bar:focus,
     .search-module .input-group-text {
         color: var(--text);
         background-color: var(--overlay1);
