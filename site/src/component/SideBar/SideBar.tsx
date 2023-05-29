@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import { XCircle } from 'react-bootstrap-icons';
@@ -19,6 +19,7 @@ const SideBar = () => {
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
 
   let isLoggedIn = cookies.hasOwnProperty('user');
 
@@ -69,19 +70,15 @@ const SideBar = () => {
         </NavLink>
       </li>
       {showSidebar && <li>
-        <ThemeContext.Consumer>
-          {({ darkMode, toggleTheme }) => 
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            <a className='theme-toggle' onClick={toggleTheme}>
-              <div>
-                <Icon name={darkMode ? 'moon outline' : 'sun outline'} size='large' />
-              </div>
-              <span>
-                Toggle Dark Mode
-              </span>
-            </a>
-          }
-        </ThemeContext.Consumer>
+        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+        <a className='theme-toggle' onClick={toggleTheme}>
+          <div>
+            <Icon name={darkMode ? 'moon outline' : 'sun outline'} size='large' />
+          </div>
+          <span>
+            Toggle Dark Mode
+          </span>
+        </a>
       </li>}
       {isAdmin && <>
       <li>
@@ -135,28 +132,20 @@ const SideBar = () => {
       {/* Login/Logout */}
       <div className='sidebar-login'>
         {isLoggedIn && <a href={`/api/users/logout`}>
-          <ThemeContext.Consumer>
-            {({ darkMode }) => 
-              <Button variant={darkMode ? 'dark' : 'light'}>
-                <span className='sidebar-login-icon'>
-                  <Icon name='sign out' className='sidebar-login-icon' />
-                </span>
-                Log Out
-              </Button>
-            }
-          </ThemeContext.Consumer>
+          <Button variant={darkMode ? 'dark' : 'light'}>
+            <span className='sidebar-login-icon'>
+              <Icon name='sign out' className='sidebar-login-icon' />
+            </span>
+            Log Out
+          </Button>
         </a>}
         {!isLoggedIn && <a href={`/api/users/auth/google`}>
-          <ThemeContext.Consumer>
-            {({ darkMode }) => 
-              <Button variant={darkMode ? 'dark' : 'light'}>
-                <span className='sidebar-login-icon'>
-                  <Icon name='sign in' className='sidebar-login-icon' />
-                </span>
-                Log In
-              </Button>
-            }
-          </ThemeContext.Consumer>
+          <Button variant={darkMode ? 'dark' : 'light'}>
+            <span className='sidebar-login-icon'>
+              <Icon name='sign in' className='sidebar-login-icon' />
+            </span>
+            Log In
+          </Button>
         </a>}
       </div>
     </div>
