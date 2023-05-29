@@ -26,7 +26,7 @@
   --hover: #CACBCD;
 }
 
-// general bootstrap overwrites. bg color may need further customization per component
+// general bootstrap overwrites. bg/border color may need further customization per component
 .table {
   color: var(--text);
 }
@@ -71,8 +71,9 @@
 .bs-popover-right>.arrow::after {
   border-right-color: var(--overlay1);
 }
+// end bootstrap overwrites
 
-// general semantic-ui overwrites. bg color may need to be customized per component
+// general semantic-ui overwrites. bg/border color may need to be customized per component
 [data-theme='dark'] {
   .ui, .ui.popup:before {
     color: var(--text);
@@ -102,3 +103,4 @@
     background-color: var(--overlay3);
   }
 }
+// end semantic-ui overwrites
