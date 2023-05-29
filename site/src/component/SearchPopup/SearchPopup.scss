@@ -1,3 +1,19 @@
+[data-theme='dark'] {
+    .search-popup {
+        .dropdown, .dropdown .menu {
+            background-color: var(--overlay3);
+            border-color: var(--overlay2);
+        }
+
+        .dropdown:hover {
+            border-color: var(--overlay4);
+        }
+        .ui.dropdown .menu>.item:hover {
+            background-color: var(--overlay4);
+        }
+    }
+}
+
 .search-popup-missing {
     display: flex;
     flex-direction: column;
