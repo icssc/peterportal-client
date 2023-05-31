@@ -5,6 +5,12 @@
   --petr-gray: #808080;
 }
 
+[data-theme='dark'] {
+  .year-settings-btn:hover, .year-settings-btn:focus, .popover-body .year-settings-btn:active {
+    background-color: var(--overlay2);
+  }
+}
+
 .year {
   margin: 1rem 0;
   padding: 1rem;
