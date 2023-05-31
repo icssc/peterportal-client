@@ -4,6 +4,7 @@
 
 import express, { Request, Response } from 'express';
 import passport from 'passport';
+import { COLLECTION_NAMES, addDocument, getCollection, getDocuments, updateDocument } from '../helpers/mongo';
 
 let router = express.Router();
 
@@ -12,6 +13,54 @@ let router = express.Router();
  */
 router.get('/', function (req, res, next) {
   res.json(req.session)
+});
+
+router.get('/preferences', (req, res) => {
+  if (!req.session.passport) {
+    res.json({ error: 'Must be logged in to get preferences.'});
+    return;
+  }
+
+  const userID = req.session.passport.user.id;
+
+  getDocuments(COLLECTION_NAMES.PREFERENCES, { _id: userID }).then(preferences => {
+    if (preferences.length > 0) {
+      res.json(preferences[0]);
+    } else {
+      res.json({ error: 'No preferences found' });
+    }
+  })
+});
+
+interface UserPreferences {
+  theme?: string;
+}
+
+router.post('/preferences', async (req, res) => {
+  if (!req.session.passport) {
+    res.json({ error: 'Must be logged in to get preferences.'});
+    return;
+  }
+
+  const userID = req.session.passport.user.id;
+
+  // make user's preference doc if it doesn't exist
+  const preferencesCollection = await getCollection(COLLECTION_NAMES.PREFERENCES);
+  if ((await preferencesCollection.find({ _id: userID }).count()) == 0) {
+    await addDocument(COLLECTION_NAMES.PREFERENCES, { _id: userID });
+  }
+
+  // grab valid preferences from request body
+  const preferences: UserPreferences = {};
+  if (req.body.theme) {
+    preferences.theme = req.body.theme;
+  }
+
+  // set the preferences
+  await updateDocument(COLLECTION_NAMES.PREFERENCES, { _id: userID },  { $set: preferences });
+
+  // echo back body
+  res.json(req.body);
 });
 
 /**

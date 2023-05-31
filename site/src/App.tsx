@@ -23,16 +23,43 @@ import SideBar from './component/SideBar/SideBar';
 
 import { useAppSelector } from './store/hooks';
 import ThemeContext from './style/theme-context';
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
+
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true' ? true : (localStorage.getItem('darkMode') === 'false' ? false : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)));
+  // default darkMode to local or system preferences
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark' ? true : (localStorage.getItem('theme') === 'light' ? false : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)));
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
   const [isShown, setIsShown] = useState(false);
+  const [cookies, setCookies] = useCookies(['user']);
 
   useEffect(() => {
-    localStorage.setItem('darkMode', darkMode ? 'true' : 'false');
+    // if logged in, load user prefs (theme) from mongo
+    if (cookies.user) { 
+      axios.get('/api/users/preferences').then(res => {
+        const { theme } = res.data;
+        if (theme === 'dark') {
+          setDarkMode(true);
+        } else if (theme === 'light') {
+          setDarkMode(false);
+        } else { // not defined or set to use local/system prefs
+          setDarkMode(localStorage.getItem('theme') === 'dark' ? true : (localStorage.getItem('theme') === 'light' ? false : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)));
+          setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+      });
+    }
+  }, [cookies.user]);
+
+  useEffect(() => {
     document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  }, [darkMode])
+    if (cookies.user) {
+      axios.post('/api/users/preferences', { theme: darkMode ? 'dark' : 'light', bs: '123', hello: 'world' }).then(res =>
+        console.log(res.data));
+    } else {
+      localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    }
+  }, [darkMode]);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
