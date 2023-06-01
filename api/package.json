@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "@vendia/serverless-express": "^4.10.1",
     "aws-sdk": "^2.739.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
@@ -23,6 +24,7 @@
     "jsonwebtoken": "^8.5.1",
     "keyv": "^4.5.0",
     "mongodb": "^3.6.6",
+    "mongodb-client-encryption": "^2.7.1",
     "morgan": "^1.10.0",
     "nocache": "^3.0.1",
     "node-fetch": "^2.6.1",
