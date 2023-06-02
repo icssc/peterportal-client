@@ -31,7 +31,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
         <Popover id=''>
           <Popover.Content>
             <Form>
-              <Form.Group>
+              <Form.Group className="add-year-form">
                 <Form.Label className="add-year-form-label">
                   Start Year
                 </Form.Label>

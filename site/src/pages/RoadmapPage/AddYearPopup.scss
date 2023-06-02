@@ -1,3 +1,11 @@
+[data-theme='dark'] {
+  .add-year-form {
+    .form-control, .form-control:focus {
+      background-color: var(--overlay1);
+    }
+  }
+}
+
 .add-year-btn {
   background-color: transparent;
   color: var(--petr-gray);
