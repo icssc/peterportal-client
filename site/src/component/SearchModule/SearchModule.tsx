@@ -14,6 +14,8 @@ import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, 
 import { PAGE_SIZE } from 'src/helpers/constants';
 
 const SEARCH_TIMEOUT_MS = 500;
+const FULL_RESULT_THRESHOLD = 3;
+const INITIAL_MAX_PAGE = 5;
 
 interface SearchModuleProps {
     index: SearchIndex;
@@ -23,7 +25,11 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     const dispatch = useAppDispatch();
     const courseSearch = useAppSelector(state => state.search.courses);
     const professorSearch = useAppSelector(state => state.search.professors);
+    const [hasFullResults, setHasFullResults] = useState(false);
+    const [lastQuery, setLastQuery] = useState('');
     let pendingRequest: NodeJS.Timeout | null = null;
+
+    console.log('course page', courseSearch.pageNumber)
 
     // Search empty string to load some results
     useEffect(() => {
@@ -40,17 +46,12 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
     let searchNames = (query: string) => {
         try {
-            /*
-                TODO: Search optimization
-                - Currently sending a query request for every input change
-                - Goal is to have only one query request pending
-                - Use setTimeout/clearTimeout to keep track of pending query request
-            */
+            // Get all results only when query changes or user reaches the fourth page or after
+            const currentPage = index === 'courses' ? courseSearch.pageNumber : professorSearch.pageNumber;
             let nameResults = wfs({
                 query: query,
                 resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
-                filterOptions: {
-                }
+                numResults: lastQuery !== query || currentPage < FULL_RESULT_THRESHOLD ? PAGE_SIZE * INITIAL_MAX_PAGE : undefined,
             })
             let names: string[] = [];
             if (index == 'courses') {
@@ -61,8 +62,12 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             }
             console.log('From frontend search', names)
             dispatch(setNames({ index, names }));
-            // reset page number
-            dispatch(setPageNumber({ index, pageNumber: 0 }));
+            // reset page number and hasFullResults flag if query changes
+            if (query !== lastQuery) {
+                dispatch(setPageNumber({ index, pageNumber: 0 }));
+                setHasFullResults(false);
+                setLastQuery(query);
+            }
         }
         catch (e) {
             console.log(e)
@@ -70,6 +75,10 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     }
 
     let searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
+        if (!hasFullResults && pageNumber >= FULL_RESULT_THRESHOLD) {
+            setHasFullResults(true);
+            searchNames(lastQuery);
+        }
         // Get the subset of names based on the page
         let pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
         let results = await searchAPIResults(index, pageNames);
