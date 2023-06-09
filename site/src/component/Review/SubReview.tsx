@@ -34,7 +34,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   }
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const voteReq = async (vote: VoteRequest) => {
-    const res = await axios.patch('/reviews/vote', vote);
+    const res = await axios.patch('/api/reviews/vote', vote);
     return res.data.deltaScore;
   }
 

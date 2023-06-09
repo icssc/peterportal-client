@@ -78,7 +78,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }, [showForm])
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>('/reviews', review);
+    const res = await axios.post<ReviewData>('/api/reviews', review);
     if (res.data.hasOwnProperty('error')) {
       alert('You must be logged in to add a review!');
     }

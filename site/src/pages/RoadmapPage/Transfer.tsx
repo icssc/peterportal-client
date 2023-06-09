@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from "react";
 import './Transfer.scss';
 import Button from 'react-bootstrap/Button';
+import { ListGroup } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
@@ -12,9 +13,15 @@ import { Pencil, Save } from "react-bootstrap-icons";
 import { TransferData } from '../../types/types';
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { List } from "semantic-ui-react";
 
 interface TransferEntryProps extends TransferData {
     index: number;
+}
+
+// a list of missing courses for current plan, passed into Transfer component to display dropdown
+interface MissingCoursesProps {
+    missingPrereqNames: Set<string>;
 }
 
 const TransferEntry: FC<TransferEntryProps> = (props) => {
@@ -55,11 +62,24 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
     </Row>
 }
 
-const Transfer: FC = () => {
+const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
     const dispatch = useAppDispatch();
     const transfers = useAppSelector(state => state.roadmap.transfers);
     const show = useAppSelector(state => state.roadmap.showTransfer);
     const handleClose = () => dispatch(setShowTransfer(false));
+
+    // console.log("missing courses: ", missingPrereqNames);
+    // console.log("missing courses: ", missingPrereqNames);
+
+
+    const DisplayMissingCourses: FC = () => {
+        return <ListGroup horizontal> {
+                Array.from(missingPrereqNames).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+            }
+        </ListGroup>
+    };
+        
+
 
     return (
         <Modal show={show} onHide={handleClose} centered>
@@ -68,7 +88,10 @@ const Transfer: FC = () => {
             </Modal.Header>
             <Modal.Body className='transfer' >
                 <p>Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the roadmap.</p>
-                <Container>
+                <p>Notice: entered course names need to match exactly as displayed on the UCI catalog (eg. "AP computer science" must be entered as "AP COMP SCI A")</p>
+                <p>Missing Prerequisites</p>
+                <DisplayMissingCourses />
+                <Container className="entry">
                     <Form>
                         {
                             transfers.map((transfer, i) => <TransferEntry key={`transfer-${i}`} index={i} {...transfer}></TransferEntry>)
