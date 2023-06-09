@@ -13,7 +13,7 @@ const UserReviews: FC = () => {
     const [cookies, setCookie] = useCookies(['user']);
 
     const getUserReviews = async () => {
-        const response: AxiosResponse<ReviewData[]> = await axios.get(`/reviews?userID=${cookies.user.id}`);
+        const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);
         setReviews(response.data);
         setLoaded(true);
     }
@@ -23,7 +23,7 @@ const UserReviews: FC = () => {
     }, []);
 
     const deleteReview = async (reviewID: string) => {
-        await axios.delete('/reviews', { data: { id: reviewID } });
+        await axios.delete('/api/reviews', { data: { id: reviewID } });
         setReviews(reviews.filter(review => review._id !== reviewID));
     }
 
