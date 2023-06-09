@@ -24,7 +24,6 @@
   "include": [
     "src/",
     "src/types/react-twemoji.d.ts",
-    "src/types/websoc-api.d.ts",
     "src/types/types.ts"
   ]
 }
