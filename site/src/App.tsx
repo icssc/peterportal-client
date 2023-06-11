@@ -19,6 +19,7 @@ import ErrorPage from './pages/ErrorPage';
 import RoadmapPage from './pages/RoadmapPage';
 import ZotisticsPage from './pages/ZotisticsPage';
 import AdminPage from './pages/AdminPage';
+import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
 import { useAppSelector } from './store/hooks';
@@ -90,6 +91,7 @@ export default function App() {
               <Route path='/course/:id+' component={CoursePage} />
               <Route path='/professor/:id' component={ProfessorPage} />
               <Route path='/admin' component={AdminPage} />
+              <Route path='/reviews'  component={ReviewsPage} />
               <Route component={ErrorPage} />
             </Switch>
             <Footer />
