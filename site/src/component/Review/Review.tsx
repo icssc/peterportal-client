@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useMemo } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
@@ -93,29 +93,25 @@ const Review: FC<ReviewProps> = (props) => {
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
-    let sortedReviews = useMemo(() => {
-        let newSortedReviews: ReviewData[];
-        // filter verified if option is set
-        if (showOnlyVerifiedReviews) {
-            newSortedReviews = reviewData.filter(review => review.verified);
-        } else { // if not, clone reviewData since its const
-            newSortedReviews = reviewData.slice(0);
-        }
+    let sortedReviews: ReviewData[];
+    // filter verified if option is set
+    if (showOnlyVerifiedReviews) {
+        sortedReviews = reviewData.filter(review => review.verified);
+    } else { // if not, clone reviewData since its const
+        sortedReviews = reviewData.slice(0);
+    }
 
-        switch (sortingOption) {
-            case SortingOption.MOST_RECENT:
-                newSortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-            case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
-                newSortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-            case SortingOption.CONTROVERSIAL:
-                newSortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-                break;
-        }
-
-        return newSortedReviews;
-    }, [showOnlyVerifiedReviews, reviewData, sortingOption]);
+    switch (sortingOption) {
+        case SortingOption.MOST_RECENT:
+            sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+        case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
+            sortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+        case SortingOption.CONTROVERSIAL:
+            sortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+    }
 
     const openReviewForm = () => {
         dispatch(setFormStatus(true));
