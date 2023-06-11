@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useMemo } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
@@ -27,7 +27,6 @@ const Review: FC<ReviewProps> = (props) => {
     const openForm = useAppSelector(state => state.review.formOpen);
     const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
     const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
-    const [sortedReviews, setSortedReviews] = useState<ReviewData[]>([]);
 
     const getColors = async (vote: VoteColorsRequest) => {
         const res = await axios.patch('/api/reviews/getVoteColors', vote);
@@ -94,7 +93,7 @@ const Review: FC<ReviewProps> = (props) => {
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
-    useEffect(() => {
+    let sortedReviews = useMemo(() => {
         let newSortedReviews: ReviewData[];
         // filter verified if option is set
         if (showOnlyVerifiedReviews) {
@@ -115,7 +114,7 @@ const Review: FC<ReviewProps> = (props) => {
                 break;
         }
 
-        setSortedReviews(newSortedReviews);
+        return newSortedReviews;
     }, [showOnlyVerifiedReviews, reviewData, sortingOption]);
 
     const openReviewForm = () => {
