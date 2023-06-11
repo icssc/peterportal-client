@@ -165,7 +165,17 @@ router.post("/", async function (req, res, next) {
  * Delete a review
  */
 router.delete('/', async (req, res, next) => {
-  if (req.session.passport?.admin) {
+
+  const checkUser = async () => {
+
+    let review = await getDocuments(COLLECTION_NAMES.REVIEWS, {
+      _id: new ObjectID(req.body.id)
+    });
+
+    return review.length > 0 && review[0].userID === req.session.passport?.user.id;
+  }
+
+  if (req.session.passport?.admin || await checkUser()) {
     console.log(`Deleting review ${req.body.id}`);
 
     let status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
@@ -179,7 +189,7 @@ router.delete('/', async (req, res, next) => {
     res.json(status);
   }
   else {
-    res.json({ error: 'Must be an admin to delete reviews!' });
+    res.json({ error: 'Must be an admin or review author to delete reviews!' });
   }
 })
 
