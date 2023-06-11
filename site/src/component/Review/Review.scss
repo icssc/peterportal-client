@@ -186,11 +186,21 @@ $avatarWidth: 65px;
 .sorting-menu {
   margin-left: 0;
   margin-right: 0;
-  margin-bottom: 15px;
+
+  > * {
+    margin-bottom: 15px;
+  }
+
+  .dropdown {
+    margin-right: 1vh;
+  }
 
   #checkbox {
     display: flex;
     align-items: center;
-    padding: 0 1vh;
+
+    label {
+      margin-bottom: 0.25rem;
+    }
   }
 }
