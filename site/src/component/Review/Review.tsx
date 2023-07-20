@@ -42,14 +42,11 @@ const Review: FC<ReviewProps> = (props) => {
                     let bScore = b.score + (b.verified ? 10000 : 0);
                     return bScore - aScore;
                 })
-                let reviewIDs = [];
-                for(let i = 0;i<data.length;i++){
-                    reviewIDs.push(data[i]._id);
-                }
                 const req = {
-                    ids: reviewIDs as string[]
+                    ids: data.map(review => review._id!)
                 }
                 let colors = await getColors(req);
+                console.log(colors);
                 setVoteColors(colors);
                 dispatch(setReviews(data));
             });
@@ -70,18 +67,7 @@ const Review: FC<ReviewProps> = (props) => {
     const getU = (id: string | undefined) => {
         let temp = voteColors as Object;
         let v = (temp[id as keyof typeof temp]) as unknown as number;
-        if(v == 1){
-            return {
-                colors: [true, false]
-            }
-        }else if(v == -1){
-            return {
-                colors: [false, true]
-            }
-        }
-        return {
-            colors: [false, false]
-        }
+        return v ?? 0;
     }
     useEffect(() => {
         // prevent reviews from carrying over
@@ -105,7 +91,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} userVote={getU(review._id)} colorUpdater={updateVoteColors}/>)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>

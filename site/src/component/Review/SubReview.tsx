@@ -14,45 +14,34 @@ interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  colors?: VoteColor;
+  userVote?: number;
   colorUpdater?: () => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote, colorUpdater }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
-  const [upvoteClassname, setUpvoteClass] = useState("upvote");
-  const [downvoteClassname, setDownvoteClass] = useState("downvote");
-  let upvoteClass;
-  let downvoteClass;
-  if(colors != undefined && colors.colors != undefined){
-    upvoteClass = colors.colors[0] ? "upvote coloredUpvote" : "upvote";
-    downvoteClass = colors.colors[1] ? "downvote coloredDownvote" : "downvote";
-  }else{
-    upvoteClass = "upvote";
-    downvoteClass = "downvote";
-  }
+  const [vote, setVote] = useState(userVote);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const voteReq = async (vote: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', vote);
     return res.data.deltaScore;
   }
 
-  const upvote = async (e: MouseEvent) => {
+  const upvote = async (e: MouseEvent) => {    
     if (!cookies.hasOwnProperty('user')) {
       alert('You must be logged in to vote.');
       return;
     }
     const votes = {
-      id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+      // id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+      id: review._id!,
       upvote: true
     }
-    let deltaScore = await voteReq(votes);
-
-    setScore(score + deltaScore );
-    if(colorUpdater != undefined){
-      colorUpdater();
-    }
+    let deltaScore = await voteReq(votes);    
+    setScore(score + deltaScore);
+    const newVote = vote + deltaScore;
+    setVote(newVote);
   }
 
   const downvote = async (e: MouseEvent) => {
@@ -61,14 +50,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       return;
     }
     const votes = {
-      id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+      // id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+      id: review._id!,
       upvote: false
     }
     let deltaScore = await voteReq(votes);
-    setScore(score + deltaScore );
-    if(colorUpdater != undefined){
-      colorUpdater();
-    }  
+    setScore(score + deltaScore);
+    const newVote = vote + deltaScore;
+    setVote(newVote);
   }
 
   const openReportForm = (e: MouseEvent) => {
@@ -82,6 +71,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   const verifiedBadge = <OverlayTrigger overlay={badgeOverlay}>
     <Badge variant='primary'>Verified</Badge>
   </OverlayTrigger>
+
+  const upvoteClassname = vote === 1 ? "upvote coloredUpvote" : "upvote";
+  const downvoteClassname = vote === -1 ? "downvote coloredDownvote" : "downvote";
 
   return (
     <div className='subreview'>
@@ -139,9 +131,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       </div>
       <div className='subreview-footer' id={review._id}>
         <p>Helpful?</p>
-        <button className={upvoteClass} onClick={upvote}>&#9650;</button>
+        <button className={upvoteClassname} onClick={upvote}>&#9650;</button>
         <p>{score}</p>
-        <button className={downvoteClass} onClick={downvote}>&#9660;</button>
+        <button className={downvoteClassname} onClick={downvote}>&#9660;</button>
         <button type='button' className='add-report-button' onClick={openReportForm}>Report</button>
         <ReportForm showForm={reportFormOpen} reviewID={review._id} reviewContent={review.reviewContent} closeForm={() => setReportFormOpen(false)} />
       </div>
