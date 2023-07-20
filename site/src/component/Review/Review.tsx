@@ -91,7 +91,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} userVote={getU(review._id)} colorUpdater={updateVoteColors}/>)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} userVote={getU(review._id)} />)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>

@@ -18,7 +18,7 @@ interface SubReviewProps {
   colorUpdater?: () => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote, colorUpdater }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) => {
   const [score, setScore] = useState(review.score);
   const [cookies, setCookie] = useCookies(['user']);
   const [vote, setVote] = useState(userVote);
@@ -38,10 +38,26 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote, co
       id: review._id!,
       upvote: true
     }
-    let deltaScore = await voteReq(votes);    
-    setScore(score + deltaScore);
-    const newVote = vote + deltaScore;
+    let newVote;
+    let newScore;
+    if (vote === 1) {
+      newVote = 0;
+      newScore = score - 1;
+    }
+    else if (vote === 0) {
+      newVote = 1;
+      newScore = score + 1;
+    } else {
+      newVote = 1;
+      newScore = score + 2;
+    }
+    setScore(newScore);
     setVote(newVote);
+    let deltaScore = await voteReq(votes).catch(err => {
+      console.error('Error sending upvote:', err);
+      setScore(score);
+      setVote(vote);
+    });
   }
 
   const downvote = async (e: MouseEvent) => {
@@ -54,10 +70,26 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote, co
       id: review._id!,
       upvote: false
     }
-    let deltaScore = await voteReq(votes);
-    setScore(score + deltaScore);
-    const newVote = vote + deltaScore;
+    let newVote;
+    let newScore;
+    if (vote === 1) {
+      newVote = -1;
+      newScore = score - 2;
+    }
+    else if (vote === 0) {
+      newVote = -1;
+      newScore = score - 1;
+    } else {
+      newVote = 0;
+      newScore = score + 1;
+    }
+    setScore(newScore);
     setVote(newVote);
+    let deltaScore = await voteReq(votes).catch(err => {
+      console.error('Error sending downvote:', err);
+      setScore(score);
+      setVote(vote);
+    });
   }
 
   const openReportForm = (e: MouseEvent) => {
