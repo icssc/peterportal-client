@@ -26,6 +26,8 @@ interface ChartProps {
   course?: string;
 }
 
+let largeGraphScale = false;
+
 export default class Chart extends React.Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
@@ -62,6 +64,10 @@ export default class Chart extends React.Component<ChartProps> {
         gradeNPCount += data.gradeNPCount;
       }
     });
+
+    (gradeACount > 999 || gradeBCount > 999 || gradeCCount > 999 || gradeDCount > 999 || gradeFCount > 999 || gradePCount > 999 || gradeNPCount > 999)
+      ? largeGraphScale = true
+      : largeGraphScale = false;
 
     return [
       {
@@ -138,9 +144,9 @@ export default class Chart extends React.Component<ChartProps> {
         indexBy='label'
         margin={{
           top: 50,
-          right: 30,
+          right: largeGraphScale ? 35: 30,
           bottom: 50,
-          left: 30
+          left: largeGraphScale ? 35: 30,
         }}
         layout='vertical'
         axisBottom={{
