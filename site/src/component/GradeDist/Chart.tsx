@@ -132,7 +132,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   render() {
     const data = this.getClassData()
-    const largeGraphScale = data.some((grade) => Object.values(grade).some((value) => value > 999));
+    const largeGraphScale = data.some((grade) => grade[grade.id] > 999));
 
     return <>
       <ResponsiveBar
