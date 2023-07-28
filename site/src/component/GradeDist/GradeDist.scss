@@ -2,7 +2,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-left: 1vw;
 
   .gradedist-filter {
     margin: 1vh;
@@ -16,6 +15,8 @@
 
 #menu {
   display: flex;
+  justify-content: center;
+  margin: auto;
 }
 
 #chart {
@@ -45,7 +46,6 @@
 
   #menu {
     padding-top: 2vh;
-    justify-content: flex-start;
   }
 
   .chart {
