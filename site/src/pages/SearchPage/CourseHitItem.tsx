@@ -3,7 +3,7 @@ import './HitItem.scss';
 import { useHistory } from 'react-router-dom';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge'
-import { isMobile, isTablet } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
