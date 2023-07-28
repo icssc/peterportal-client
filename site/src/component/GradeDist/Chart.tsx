@@ -141,7 +141,7 @@ export default class Chart extends React.Component<ChartProps> {
     ), 0);
 
     // The base marginX is 30, with increments of 5 added on for every order of magnitude greater than 100 to accomadate for larger axis labels (1,000, 10,000, etc)
-    // For example, if greatestCount is 5173, it is, when rounding down (i.e. floor), one magnitude (calculated with log_10) greater than 100, therefore we add one increment of 5px to our base marginX of 30px
+    // For example, if greatestCount is 5173 it is (when rounding down (i.e. floor)), one magnitude (calculated with log_10) greater than 100, therefore we add one increment of 5px to our base marginX of 30px
     // Math.max() ensures that we're not finding the log of a non-positive number
     const marginX = 30 + (5 * Math.floor(Math.log10(Math.max(100, greatestCount) / 100)))
 
