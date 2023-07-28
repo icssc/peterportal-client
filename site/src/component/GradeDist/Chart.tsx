@@ -46,7 +46,7 @@ export default class Chart extends React.Component<ChartProps> {
    * Create an array of objects to feed into the chart.
    * @return an array of JSON objects detailing the grades for each class
    */
-  getClassData = () => {
+  getClassData = (): Bar[] => {
     let gradeACount = 0, gradeBCount = 0, gradeCCount = 0, gradeDCount = 0,
       gradeFCount = 0, gradePCount = 0, gradeNPCount = 0;
 
@@ -132,7 +132,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   render() {
     const data = this.getClassData()
-    const largeGraphScale = data.some((grade) => grade[grade.id] > 999));
+    const largeGraphScale = data.some((grade) => grade[grade.id] as number > 999);
 
     return <>
       <ResponsiveBar
