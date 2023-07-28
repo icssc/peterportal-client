@@ -39,12 +39,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           <h3>
             <span>{props.department}</span>
             &nbsp;
-            <span>{props.number} {props.title}</span>
-            {/* <span>{props.department}</span>
-            &nbsp;
-            <span>{props.number} </span>
-
-            <span>{props.title}</span> */}
+            <span>{props.number} {props.title}</span> {/* &nbsp; is not used between props.number & props.title so that props.title can wrap */}
           </h3>
         </div>
         <CourseQuarterIndicator terms={props.terms} />
