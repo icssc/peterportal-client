@@ -108,16 +108,21 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                     {props.searchType == 'course' ? 'Current Instructors' : 'Previously Taught'}
                 </h2>
                 <div>
+                {props.scores.length > 0 ? (
                     <Carousel responsive={responsive} renderButtonGroupOutside>
-                        {props.scores.map((score, i) => <div key={`search-popup-carousel-${i}`} className='search-popup-carousel search-popup-block'>
+                        {props.scores.map((score, i) => (
+                        <div key={`search-popup-carousel-${i}`} className='search-popup-carousel search-popup-block'>
                             <div>
-                                <span className='search-popup-carousel-score'>{score.score == -1 ? '?' : score.score}</span>
-                                <span className='search-popup-carousel-max-score'>/ 5.0</span>
+                            <span className='search-popup-carousel-score'>{score.score == -1 ? '?' : score.score}</span>
+                            <span className='search-popup-carousel-max-score'>/ 5.0</span>
                             </div>
                             <a href={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.key}`}>{score.name}</a>
                         </div>
-                        )}
+                        ))}
                     </Carousel>
+                    ) : (
+                    "No Instructors Found"
+                    )}
                 </div>
             </div>
         </div>
