@@ -21,6 +21,8 @@
 #chart {
   display: flex;
   justify-content: space-evenly;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .grade_distribution_chart-container {
@@ -54,7 +56,7 @@
 
 @media only screen and (max-width: 600px) {
   #chart {
-      flex-direction: column;
+    flex-direction: column;
   }
 
   .chart {
@@ -82,14 +84,12 @@
   }
 }
 
-@media only screen and (min-device-width : 1320px) 
-and (max-device-width : 1440px)  {
+@media only screen and (min-device-width: 1320px) and (max-device-width: 1440px) {
   .pie-text {
     font-size: 1.2em;
   }
 }
-@media only screen and (min-device-width : 1441px) 
-and (max-device-width : 1600px)  {
+@media only screen and (min-device-width: 1441px) and (max-device-width: 1600px) {
   .pie-text {
     font-size: 1.3em;
   }
