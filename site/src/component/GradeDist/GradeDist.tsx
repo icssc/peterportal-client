@@ -235,8 +235,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         </Grid.Row>
       </div>
     );
-  } else if (gradeDistData == null) { // null if still fetching, don't display anything while it still loads
-    return null;
+  } else if (gradeDistData == null) { // null if still fetching, display loading message
+    return <>Loading Distribution..</>;
   } else { // gradeDistData is empty, did not receive any data from API call or received an error, display an error message
     return (
       <>
