@@ -35,8 +35,13 @@ export function BackendStack({app, stack}: StackContext) {
                     environment: {
                         MONGO_URL: process.env.MONGO_URL,
                         SESSION_SECRET: process.env.SESSION_SECRET,
-                        PUBLIC_API_URL: process.env.PUBLIC_API_URL,
-                        PUBLIC_API_GRAPHQL_URL: process.env.PUBLIC_API_GRAPHQL_URL,
+                        /**
+                         * TODO: needs to be restored before merging.
+                         */
+                        // PUBLIC_API_URL: process.env.PUBLIC_API_URL,
+                        // PUBLIC_API_GRAPHQL_URL: process.env.PUBLIC_API_GRAPHQL_URL,
+                        PUBLIC_API_URL: "https://api-next.peterportal.org/v1/rest/",
+                        PUBLIC_API_GRAPHQL_URL: "https://api-next.peterportal.org/v1/graphql",
                         GOOGLE_CLIENT: process.env.GOOGLE_CLIENT,
                         GOOGLE_SECRET: process.env.GOOGLE_SECRET,
                         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,

@@ -29,14 +29,7 @@ const AppHeader: FC<{}> = props => {
     // Get the current week data
     axios.get<WeekData>('/api/schedule/api/currentWeek')
       .then(res => {
-        // case for break and finals week
-        if (res.data.week == -1) {
-          setWeek(res.data.display);
-        }
-        // case when school is in session 
-        else {
-          setWeek('Week ' + res.data.week + ' • ' + res.data.quarter);
-        }
+        setWeek(res.data.display);
       });
   }, [])
 

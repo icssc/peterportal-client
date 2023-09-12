@@ -12,38 +12,23 @@ export function getCourseQuery(courseIDs: string[]) {
             number
             school
             title
-            course_level
-            department_alias
+            courseLevel
             units
             description
-            department_name
-            instructor_history{
-                name
-                ucinetid
-                shortened_name
-            }
-            prerequisite_tree
-            prerequisite_list {
-                id
-                department
-                number
-                title
-            }
-            prerequisite_text
-            prerequisite_for {
-                id
-                department
-                number
-                title        
-            }
+            departmentName
+            instructorHistory
+            prerequisiteTree
+            prerequisiteList
+            prerequisiteText
+            prerequisiteFor
             repeatability
             concurrent
-            same_as
+            sameAs
             restriction
             overlap
             corequisite
-            ge_list
-            ge_text
+            geList
+            geText
             terms
         },
         `
@@ -64,18 +49,13 @@ export function getProfessorQuery(ucinetids: string[]) {
         result += `
         ${'_' + i}: instructor(ucinetid: "${ucinetid}"){
             name
-            shortened_name
+            shortenedName
             ucinetid
             title
             department
             schools
-            related_departments
-            course_history {
-                id
-                department
-                number
-                title
-            }
+            relatedDepartments
+            courseHistory
         },
         `
     })
