@@ -21,7 +21,7 @@ const ProfessorPopup: FC = () => {
                 .then(res => {
                     let scoredCourses = new Set(res.data.map(v => v.name));
                     res.data.forEach(v => v.key = v.name)
-                    Object.keys(professor.course_history).forEach(course => {
+                    Object.keys(professor.courseHistory).forEach(course => {
                         // remove spaces
                         course = course.replace(/\s+/g, '');
                         // add unknown score

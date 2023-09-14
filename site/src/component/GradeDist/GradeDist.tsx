@@ -47,7 +47,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       }
     }
     else if (props.professor) {
-      url = `/api/professors/api/grades/${props.professor.shortened_name}`;
+      url = `/api/professors/api/grades/${props.professor.shortenedName}`;
     }
     const res = axios.get<GradeDistData>(url, {
       params: params

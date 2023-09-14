@@ -35,7 +35,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     let unitCount = 0;
     let courseCount = 0;
     data.courses.forEach(course => {
-      unitCount += course.units[0];
+      unitCount += course.minUnits;
       courseCount += 1;
     })
     return [unitCount, courseCount];

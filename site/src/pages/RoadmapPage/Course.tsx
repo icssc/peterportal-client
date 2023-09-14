@@ -13,18 +13,18 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses, onDelete } = props;
+  let { id, department, number, title, minUnits, maxUnits, description, prerequisiteText, corequisite, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
       <div className="course-popover">
         <div className="popover-name">{department + ' ' + number} {title}</div>
         <div className="popover-units">
-          <span className="popover-units-value">{units[0]}</span> units
+          <span className="popover-units-value">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`}</span> units
         </div>
         <div className="popover-description">{description}</div>
-        {prerequisite_text && <div className="popover-detail">
-          <span className="popover-detail-prefix">Prerequisite:</span> {prerequisite_text}
+        {prerequisiteText && <div className="popover-detail">
+          <span className="popover-detail-prefix">Prerequisite:</span> {prerequisiteText}
         </div>}
         {corequisite && <div className="popover-detail">
           <span className="popover-detail-prefix">Corequisite:</span> {corequisite}
@@ -71,7 +71,7 @@ const Course: FC<CourseProps> = (props) => {
           delay={100}>
           <ExclamationTriangle />
         </OverlayTrigger>}
-        <div className="units">{units[0]} units</div>
+        <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
       </div>
     </div>
   );

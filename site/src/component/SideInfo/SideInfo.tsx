@@ -178,8 +178,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                     }}>
                         {
                             sortedReviews.map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-                            {props.searchType == 'course' && (props.course?.instructor_history[key] ? props.course?.instructor_history[key].shortened_name : key)}
-                            {props.searchType == 'professor' && (props.professor?.course_history[key] ? (props.professor?.course_history[key].department + ' ' + props.professor?.course_history[key].number) : key)}
+                            {props.searchType == 'course' && (props.course?.instructorHistory[key] ? props.course?.instructorHistory[key].shortenedName : key)}
+                            {props.searchType == 'professor' && (props.professor?.courseHistory[key] ? (props.professor?.courseHistory[key].department + ' ' + props.professor?.courseHistory[key].number) : key)}
                         </Dropdown.Item>)
                         }
                     </DropdownButton>
@@ -234,12 +234,12 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             <div className='side-info-featured'>
                 {highestReview && <FeaturedInfo searchType={props.searchType} featureType='Highest'
                     averageReviews={averageReviews} reviewKey={highestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructor_history[highestReview].shortened_name! :
-                        (props.professor?.course_history[highestReview] ? props.professor?.course_history[highestReview].department + ' ' + props.professor?.course_history[highestReview].number : highestReview)} />}
+                    displayName={props.searchType == 'course' ? props.course?.instructorHistory[highestReview].shortenedName! :
+                        (props.professor?.courseHistory[highestReview] ? props.professor?.courseHistory[highestReview].department + ' ' + props.professor?.courseHistory[highestReview].number : highestReview)} />}
                 {lowestReview && <FeaturedInfo searchType={props.searchType} featureType='Lowest'
                     averageReviews={averageReviews} reviewKey={lowestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructor_history[lowestReview].shortened_name! :
-                        (props.professor?.course_history[lowestReview] ? props.professor?.course_history[lowestReview].department + ' ' + props.professor?.course_history[lowestReview].number : lowestReview)} />}
+                    displayName={props.searchType == 'course' ? props.course?.instructorHistory[lowestReview].shortenedName! :
+                        (props.professor?.courseHistory[lowestReview] ? props.professor?.courseHistory[lowestReview].department + ' ' + props.professor?.courseHistory[lowestReview].number : lowestReview)} />}
             </div>
         </div>
     )

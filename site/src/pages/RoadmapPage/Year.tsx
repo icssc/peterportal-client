@@ -64,7 +64,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     let courseCount = 0;
     data.quarters.forEach(quarter => {
       quarter.courses.forEach(course => {
-        unitCount += course.units[0];
+        unitCount += course.minUnits;
         courseCount += 1;
       })
     })

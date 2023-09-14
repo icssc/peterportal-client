@@ -5,17 +5,17 @@ export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
   let tags: string[] = [];
   // course level
-  let courseLevel = course.course_level;
+  let courseLevel = course.courseLevel;
   if (courseLevel) {
     tags.push(`${courseLevel.substring(0, courseLevel.indexOf('('))}`);
   }
   // ge
-  course.ge_list.forEach(ge => {
+  course.geList.forEach(ge => {
     tags.push(`${ge.substring(0, ge.indexOf(':'))}`);
   })
   // units
-  let units = course.units[0]
-  tags.push(`${units} unit${units != 1 ? 's' : ''}`);
+  const { minUnits, maxUnits } = course;
+  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${(minUnits === maxUnits ? (maxUnits !== 1 ? 's' : '') : 's')}`);
   return tags;
 }
 
@@ -23,7 +23,7 @@ export function getCourseTags(course: CourseGQLData) {
 export function searchAPIResult(type: SearchType, name: string) {
   return new Promise<CourseGQLData | ProfessorGQLData | undefined>(res => {
     let index: SearchIndex;
-    if (type == 'course') {
+    if (type === 'course') {
       index = 'courses';
     }
     else {
@@ -85,44 +85,31 @@ function transformCourseGQL(data: CourseGQLResponse) {
   let instructorHistoryLookup: ProfessorLookup = {};
   let prerequisiteListLookup: CourseLookup = {};
   let prerequisiteForLookup: CourseLookup = {};
-  // maps professor's ucinetid to professor basic details
-  data.instructor_history.forEach(professor => {
-    if (professor) {
-      instructorHistoryLookup[professor.ucinetid] = professor;
-    }
-  })
-  // maps course's id to course basic details
-  data.prerequisite_list.forEach(course => {
-    if (course) {
-      prerequisiteListLookup[course.id] = course;
-    }
-  })
-  // maps course's id to course basic details
-  data.prerequisite_for.forEach(course => {
-    if (course) {
-      prerequisiteForLookup[course.id] = course;
-    }
-  })
-  // create copy to override fields with lookups
+  axios.post<{ [key: string]: CourseGQLResponse }>
+  (`/api/courses/api/batch`, {"courses": data.prerequisiteList})
+    .then(r => prerequisiteListLookup = r.data);
+  axios.post<{ [key: string]: CourseGQLResponse }>
+  (`/api/courses/api/batch`, {"courses": data.prerequisiteFor})
+    .then(r => prerequisiteForLookup = r.data);
+  axios.post<{ [key: string]: ProfessorGQLResponse }>
+  (`/api/professors/api/batch`, {"courses": data.instructorHistory})
+    .then(r => instructorHistoryLookup = r.data);
+   // create copy to override fields with lookups
   let course = { ...data } as unknown as CourseGQLData;
-  course.instructor_history = instructorHistoryLookup;
-  course.prerequisite_list = prerequisiteListLookup;
-  course.prerequisite_for = prerequisiteForLookup;
-
+  course.instructorHistory = instructorHistoryLookup;
+  course.prerequisiteList = prerequisiteListLookup;
+  course.prerequisiteFor = prerequisiteForLookup;
   return course;
 }
 
 function transformProfessorGQL(data: ProfessorGQLResponse) {
   let courseHistoryLookup: CourseLookup = {};
-  // maps course's id to course basic details
-  data.course_history.forEach(course => {
-    if (course) {
-      courseHistoryLookup[course.id] = course;
-    }
-  })
+  axios.post<{ [key: string]: CourseGQLResponse }>
+  (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory)})
+    .then(r => courseHistoryLookup = r.data);
   // create copy to override fields with lookups
   let professor = { ...data } as unknown as ProfessorGQLData;
-  professor.course_history = courseHistoryLookup;
+  professor.courseHistory = courseHistoryLookup;
 
   return professor;
 }

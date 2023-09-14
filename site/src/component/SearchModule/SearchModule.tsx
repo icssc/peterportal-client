@@ -55,10 +55,10 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             })
             let names: string[] = [];
             if (index == 'courses') {
-                names = Object.keys(nameResults);
+                names = Object.keys(nameResults ?? {});
             }
             else if (index == 'professors') {
-                names = Object.keys(nameResults).map(n => nameResults[n].metadata.ucinetid) as string[];
+                names = Object.keys(nameResults ?? {}).map(n => (nameResults![n].metadata as { ucinetid: string }).ucinetid) as string[];
             }
             console.log('From frontend search', names)
             dispatch(setNames({ index, names }));

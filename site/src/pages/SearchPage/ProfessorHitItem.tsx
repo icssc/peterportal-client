@@ -42,9 +42,9 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
                     {props.title}
                 </h4>
 
-                {Object.keys(props.course_history).length > 0 &&
+                {Object.keys(props.courseHistory).length > 0 &&
                     <p><b>Recently taught:&nbsp;</b>
-                        {Object.keys(props.course_history).map((item: string, index: number) => {
+                        {Object.keys(props.courseHistory).map((item: string, index: number) => {
                             return <span key={`professor-hit-item-course-${index}`}>
                                 {(index ? ', ' : '')}
                                 <a style={{ color: 'black' }} href={'/course/' + item.replace(/\s+/g, '')}>

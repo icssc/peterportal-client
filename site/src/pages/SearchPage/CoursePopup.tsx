@@ -24,14 +24,14 @@ const CoursePopup: FC = () => {
                     let scoredProfessors = new Set(res.data.map(v => v.name));
                     // add known scores
                     res.data.forEach(entry => {
-                        if (course.instructor_history[entry.name]) {
-                            scores.push({ name: course.instructor_history[entry.name].shortened_name, score: entry.score, key: entry.name })
+                        if (course.instructorHistory[entry.name]) {
+                            scores.push({ name: course.instructorHistory[entry.name].shortenedName, score: entry.score, key: entry.name })
                         }
                     })
                     // add unknown score
-                    Object.keys(course.instructor_history).forEach(ucinetid => {
+                    Object.keys(course.instructorHistory).forEach(ucinetid => {
                         if (!scoredProfessors.has(ucinetid)) {
-                            scores.push({ name: course.instructor_history[ucinetid].shortened_name, score: -1, key: ucinetid })
+                            scores.push({ name: course.instructorHistory[ucinetid].shortenedName, score: -1, key: ucinetid })
                         }
                     })
                     // sort by highest score
@@ -46,7 +46,7 @@ const CoursePopup: FC = () => {
         let infos = [
             {
                 title: 'Prerequisite',
-                content: course.prerequisite_text
+                content: course.prerequisiteText
             },
             {
                 title: 'Restrictions',

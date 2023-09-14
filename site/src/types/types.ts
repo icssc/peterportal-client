@@ -28,7 +28,7 @@ export interface CourseData {
 
 export interface ProfessorData {
     name: string;
-    shortened_name: string;
+    shortenedName: string;
     ucinetid: string;
     title: string;
     department: string;
@@ -231,47 +231,47 @@ export interface CourseGQLData {
     number: string;
     school: string;
     title: string;
-    course_level: string;
-    department_alias: string[];
-    units: number[];
+    courseLevel: string;
+    minUnits: number;
+    maxUnits: number;
     description: string;
-    department_name: string;
-    instructor_history: ProfessorLookup;
-    prerequisite_tree: string;
-    prerequisite_list: CourseLookup;
-    prerequisite_text: string;
-    prerequisite_for: CourseLookup;
+    departmentName: string;
+    instructorHistory: ProfessorLookup;
+    prerequisiteTree: Record<string, unknown>;
+    prerequisiteList: CourseLookup;
+    prerequisiteText: string;
+    prerequisiteFor: CourseLookup;
     repeatability: string;
     concurrent: string;
     same_as: string;
     restriction: string;
     overlap: string;
     corequisite: string;
-    ge_list: string[];
-    ge_text: string;
+    geList: string[];
+    gText: string;
     terms: string[];
 }
 
 export interface ProfessorGQLData {
     name: string;
-    shortened_name: string;
+    shortenedName: string;
     ucinetid: string;
     title: string;
     department: string;
     schools: string[];
-    related_departments: string[];
-    course_history: CourseLookup;
+    relatedDepartments: string[];
+    courseHistory: CourseLookup;
 }
 
 // PPAPI format
-export type CourseGQLResponse = Omit<CourseGQLData, 'instructor_history' | 'prerequisite_list' | 'prerequisite_for'> & {
-    instructor_history: SubProfessor[];
-    prerequisite_list: SubCourse[];
-    prerequisite_for: SubCourse[];
+export type CourseGQLResponse = Omit<CourseGQLData, 'instructorHistory' | 'prerequisiteList' | 'prerequisiteFor'> & {
+    instructorHistory: string[];
+    prerequisiteList: string[];
+    prerequisiteFor: string[];
 }
 
-export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'course_history'> & {
-    course_history: SubCourse[];
+export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'courseHistory'> & {
+    courseHistory: Record<string, string[]>;
 }
 
 // maps ucinetid to subprofessor
@@ -288,7 +288,7 @@ export interface CourseLookup {
 export interface SubProfessor {
     name: string;
     ucinetid: string;
-    shortened_name: string;
+    shortenedName: string;
 }
 
 // subset of course details needed for display purposes

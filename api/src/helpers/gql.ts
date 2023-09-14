@@ -6,14 +6,15 @@ export function getCourseQuery(courseIDs: string[]) {
     courseIDs.forEach((courseID, i) => {
         // use number id here because cannot use special character names
         result += `
-        ${'_' + i}: course(id: "${courseID}"){
+        ${'_' + i}: course(courseId: "${courseID}") {
             id
             department
-            number
+            courseNumber
             school
             title
             courseLevel
-            units
+            minUnits
+            maxUnits
             description
             departmentName
             instructorHistory
@@ -26,7 +27,7 @@ export function getCourseQuery(courseIDs: string[]) {
             sameAs
             restriction
             overlap
-            corequisite
+            corequisites
             geList
             geText
             terms

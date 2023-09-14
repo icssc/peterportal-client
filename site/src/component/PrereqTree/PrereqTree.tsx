@@ -1,15 +1,23 @@
 import React, { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
+import type { Prerequisite, PrerequisiteTree } from "peterportal-api-next-types";
 
-import { PrerequisiteJSONNode, PrerequisiteJSON, CourseGQLData, CourseLookup } from '../../types/types';
+import { CourseGQLData, CourseLookup } from '../../types/types';
 
 interface NodeProps {
   node: string;
   label: string;
-  content: string;
   index?: number;
 }
+
+type PrerequisiteNode = Prerequisite | PrerequisiteTree;
+
+const phraseMapping = {
+  AND: 'all of',
+  OR: 'one of',
+  NOT: 'none of',
+};
 
 const Node: FC<NodeProps> = (props) => {
   return (
@@ -20,52 +28,61 @@ const Node: FC<NodeProps> = (props) => {
             {props.label}
           </a>
         }
-        content={props.content} basic position='top center' wide='very' />
+        basic position='top center' wide='very' />
     </div>
   );
 }
 
 interface TreeProps {
   prerequisiteNames: CourseLookup;
-  prerequisiteJSON: PrerequisiteJSONNode;
+  prerequisiteJSON: PrerequisiteNode;
   key?: string;
   index?: number;
 }
 
-const Tree: FC<TreeProps> = (props) => {
-  let prerequisite = props.prerequisiteJSON;
-  let isValueNode = typeof prerequisite === 'string';
+const PrereqTreeNode: FC<TreeProps> = (props) => {
+  const prerequisite = props.prerequisiteJSON;
+  const isValueNode = Object.prototype.hasOwnProperty.call(prerequisite, 'prereqType');
 
   // if value is a string, render leaf node
   if (isValueNode) {
-    let id = (prerequisite as string).replace(/\s+/g, '');
-    let content = prerequisite;
-    if (props.prerequisiteNames.hasOwnProperty(id)) {
-      content = props.prerequisiteNames[id].title;
-    }
+    const prereq = prerequisite as Prerequisite;
     return (
       <li key={props.index} className={'prerequisite-node'}>
-        <Node label={prerequisite as string} content={content as string} node={'prerequisite-node'} />
+        <Node
+          label={`${prereq.courseId ?? prereq.examName ?? ''}${
+            prereq?.minGrade ? ` (min grade = ${prereq?.minGrade})` : ''
+          }${prereq?.coreq ? ' (coreq)' : ''}`}
+          node={'prerequisite-node'}
+        />
       </li>
-    )
+    );
   }
   // if value is an object, render the rest of the sub tree
   else {
+    const prereqTree = prerequisite as Record<string, PrerequisiteNode[]>;
     return (
       <div style={{ margin: 'auto 0' }} className={'prerequisite-node'}>
         <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
           <span style={{ margin: 'auto' }}>
-            <div className='prereq-branch'>
-              {prerequisite.hasOwnProperty('OR') ? 'one of' : 'all of'}
-            </div>
+             <div className={'prereq-branch'}>
+                            {
+                              Object.entries(phraseMapping).filter(([subtreeType, _]) =>
+                                Object.prototype.hasOwnProperty.call(prerequisite, subtreeType)
+                              )[0][1]
+                            }
+                        </div>
           </span>
           <div className='prereq-clump'>
             <ul className='prereq-list'>
-              {(prerequisite as PrerequisiteJSON)[Object.keys(prerequisite)[0]].map(
-                (child, index) => (
-                  <Tree key={`tree-${index}`} prerequisiteNames={props.prerequisiteNames} index={index} prerequisiteJSON={child} />
-                )
-              )}
+              {prereqTree[Object.keys(prerequisite)[0]].map((child, index) => (
+                <PrereqTreeNode
+                  key={`tree-${index}`}
+                  prerequisiteNames={props.prerequisiteNames}
+                  index={index}
+                  prerequisiteJSON={child}
+                />
+              ))}
             </ul>
           </div>
         </div>
@@ -78,8 +95,8 @@ interface PrereqProps extends CourseGQLData {
 }
 
 const PrereqTree: FC<PrereqProps> = (props) => {
-  let hasPrereqs = props.prerequisite_tree !== '';
-  let hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
+  let hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
+  let hasDependencies = Object.keys(props.prerequisiteFor).length !== 0;
 
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)
@@ -107,10 +124,10 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             <>
               <ul style={{ padding: '0', display: 'flex' }}>
                 <div className='dependency-list-branch'>
-                  {Object.values(props.prerequisite_for).map(
+                  {Object.values(props.prerequisiteFor).map(
                     (dependency, index) => (
                       <li key={`dependency-node-${index}`} className={'dependency-node'}>
-                        <Node label={dependency.department + ' ' + dependency.number} content={dependency.title} node={'dependency-node'} />
+                        <Node label={dependency.id} node={'dependency-node'} />
                       </li>
                     )
                   )}
@@ -134,14 +151,14 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
           {/* Display the class id */}
-          <Node label={props.id} content={props.title} node={'course-node'} />
+          <Node label={props.id} node={'course-node'} />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
             <div style={{ display: 'flex' }}>
-              <Tree
-                prerequisiteNames={props.prerequisite_list}
-                prerequisiteJSON={JSON.parse(props.prerequisite_tree)}
+              <PrereqTreeNode
+                prerequisiteNames={props.prerequisiteList}
+                prerequisiteJSON={props.prerequisiteTree}
               />
 
             </div>
@@ -162,8 +179,8 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           }}
         >
           <p>
-            {props.prerequisite_text !== '' && <b>Prerequisite: </b>}
-            {props.prerequisite_text}
+            {props.prerequisiteText !== '' && <b>Prerequisite: </b>}
+            {props.prerequisiteText}
           </p>
         </div>
       </Grid.Row>

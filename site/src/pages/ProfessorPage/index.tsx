@@ -51,7 +51,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                     <div>
                         <SideInfo searchType='professor' name={professorGQLData.name}
                             title={professorGQLData.title} school={professorGQLData.schools[0]} description={professorGQLData.department}
-                            tags={[professorGQLData.ucinetid, professorGQLData.shortened_name]} professor={professorGQLData} />
+                            tags={[professorGQLData.ucinetid, professorGQLData.shortenedName]} professor={professorGQLData} />
                     </div>
                     <article className='professor-page-body'>
                         <div className='professor-page-section'>
@@ -59,7 +59,7 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>🗓️ Schedule of Classes</h2>
                             </div>
                             <Divider />
-                            <Schedule professorID={professorGQLData.shortened_name} />
+                            <Schedule professorID={professorGQLData.shortenedName} />
                         </div>
 
                         <div className='professor-page-section'>

@@ -166,8 +166,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='instructor' id='instructor' required
       onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
-        const name = props.course?.instructor_history[ucinetid].shortened_name;
+      {Object.keys(props.course?.instructorHistory!).map((ucinetid, i) => {
+        const name = props.course?.instructorHistory[ucinetid].shortenedName;
         return (
           // @ts-ignore name attribute isn't supported
           <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
@@ -190,8 +190,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='course' id='course' required
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Course</option>
-      {Object.keys(props.professor?.course_history!).map((courseID, i) => {
-        const name = props.professor?.course_history[courseID].department + ' ' + props.professor?.course_history[courseID].number;
+      {Object.keys(props.professor?.courseHistory!).map((courseID, i) => {
+        const name = props.professor?.courseHistory[courseID].department + ' ' + props.professor?.courseHistory[courseID].number;
         return (
           // @ts-ignore name attribute isn't supported
           <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
