@@ -40,28 +40,6 @@ export interface ProfessorData {
 export type BatchCourseData = { [key: string]: CourseGQLData };
 export type BatchProfessorData = { [key: string]: ProfessorGQLData };
 
-export type GradeDistData = GradeData[];
-
-export interface GradeData {
-    year: string;
-    quarter: string;
-    department: string;
-    number: string;
-    code: number;
-    section: string;
-    instructor: string;
-    type: string;
-    gradeACount: number;
-    gradeBCount: number;
-    gradeCCount: number;
-    gradeDCount: number;
-    gradeFCount: number;
-    gradePCount: number;
-    gradeNPCount: number;
-    gradeWCount: number;
-    averageGPA: number;
-}
-
 export interface ReviewData {
     _id?: string;
     professorID: string;
@@ -228,7 +206,7 @@ export interface VoteColor {
 export interface CourseGQLData {
     id: string;
     department: string;
-    number: string;
+    courseNumber: string;
     school: string;
     title: string;
     courseLevel: string;
@@ -295,59 +273,6 @@ export interface SubProfessor {
 export interface SubCourse {
     id: string;
     department: string;
-    number: string;
-    title: string;
-}
-
-/*
- * WebSoc schedule types
- */
-export interface WebsocResponse {
-    schools: School[]
-} 
-export interface School {
-    schoolName: string;
-    schoolComment: string;
-    departments: Department[];
-}
-export interface Department {
-    deptName: string;
-    deptCode: string;
-    deptComment: string;
-    courses: Course[];
-    sectionCodeRangeComments: string[];
-    courseNumberRangeComments: string[];
-}
-export interface Course {
     courseNumber: string;
-    courseTitle: string;
-    courseComment: string;
-    prerequisiteLink: string;
-    sections: Section[];
-}
-export interface Section {
-    sectionCode: string;
-    sectionType: string;
-    sectionNum: string;
-    units: string;
-    instructors: string[];
-    meetings: Meeting[];
-    finalExam: string;
-    maxCapacity: string;
-    numCurrentlyEnrolled: EnrollmentCount;
-    numOnWaitlist: string;
-    numRequested: string;
-    numNewOnlyReserved: string;
-    restrictions: string;
-    status: string;
-    sectionComment: string;
-}
-export interface Meeting {
-    days: string;
-    time: string;
-    bldg: string;
-}
-export interface EnrollmentCount {
-    totalEnrolled: string;
-    sectionEnrolled: string;
+    title: string;
 }

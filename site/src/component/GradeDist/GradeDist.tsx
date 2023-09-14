@@ -5,7 +5,8 @@ import Pie from './Pie';
 import './GradeDist.scss'
 import axios from 'axios'
 
-import { CourseGQLData, ProfessorGQLData, GradeDistData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import {GradesRaw} from "peterportal-api-next-types";
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -26,7 +27,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
  * @param props attributes received from the parent element
  */
 
-  const [gradeDistData, setGradeDistData] = useState<GradeDistData>(null!);
+  const [gradeDistData, setGradeDistData] = useState<GradesRaw>(null!);
   const [chartType, setChartType] = useState<ChartTypes>('bar');
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
@@ -43,16 +44,17 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       url = `/api/courses/api/grades`;
       params = {
         department: props.course.department,
-        number: props.course.number
+        number: props.course.courseNumber
       }
     }
     else if (props.professor) {
       url = `/api/professors/api/grades/${props.professor.shortenedName}`;
     }
-    const res = axios.get<GradeDistData>(url, {
+    const res = axios.get<GradesRaw>(url, {
       params: params
     })
       .then(res => {
+        console.log(res)
         setGradeDistData(res.data);
       }).catch(error => {
         setGradeDistData([]);
@@ -95,10 +97,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     gradeDistData
       .filter(entry => {
-        if (props.course && entry.instructor === currentProf) {
+        if (props.course && entry.instructors.includes(currentProf)) {
           return true;
         }
-        if (props.professor && (entry.department + ' ' + entry.number) == currentCourse) {
+        if (props.professor && (entry.department + ' ' + entry.courseNumber) == currentCourse) {
           return true;
         }
         return false;
@@ -119,7 +121,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     let result: Entry[] = [];
 
     gradeDistData
-      .forEach(match => professors.add(match.instructor));
+      .forEach(match => match.instructors.forEach((prof) => professors.add(prof)));
 
     professors.forEach(professor => result.push(
       { value: professor, text: professor }
@@ -138,7 +140,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     let result: Entry[] = [];
 
     gradeDistData
-      .forEach(match => courses.add(match.department + ' ' + match.number));
+      .forEach(match => courses.add(match.department + ' ' + match.courseNumber));
 
     courses.forEach(course => result.push(
       { value: course, text: course }

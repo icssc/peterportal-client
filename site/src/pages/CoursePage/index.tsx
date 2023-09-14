@@ -51,7 +51,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
             <Twemoji options={{ className: 'twemoji' }}>
                 <div className='course-page'>
                     <div>
-                        <SideInfo searchType='course' name={courseGQLData.department + ' ' + courseGQLData.number}
+                        <SideInfo searchType='course' name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
                             title={courseGQLData.title} school={courseGQLData.school} description={courseGQLData.description}
                             tags={getCourseTags(courseGQLData)} course={courseGQLData} />
                     </div>
@@ -69,7 +69,7 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
                                 <h2>🗓️ Schedule of Classes</h2>
                             </div>
                             <Divider />
-                            <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.number} />
+                            <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
                         </div>
 
                         <div className='course-page-section'>

@@ -19,11 +19,11 @@ router.get('/', function (req, res, next) {
  */
 router.get('/isAdmin', function (req, res, next) {
   // not logged in
-  if (!req.session.passport) {
+  if (!req.session?.passport) {
     res.json({ admin: false });
   }
   else {
-    res.json({ admin: req.session.passport.admin ? true : false });
+    res.json({ admin: req.session.passport.admin });
   }
 });
 

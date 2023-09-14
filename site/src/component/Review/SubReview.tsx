@@ -88,7 +88,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       <div>
         <h3 className='subreview-identifier'>
           {professor && <Link to={{ pathname: `/course/${review.courseID}` }}>
-            {professor.courseHistory[review.courseID].department + ' ' + professor.courseHistory[review.courseID].number}
+            {professor.courseHistory[review.courseID].department + ' ' + professor.courseHistory[review.courseID].courseNumber}
           </Link>}
           {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
             {course.instructorHistory[review.professorID].name}

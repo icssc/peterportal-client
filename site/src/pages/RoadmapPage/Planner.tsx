@@ -159,7 +159,7 @@ const Planner: FC = () => {
     let missing = new Set<string>();
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
-        let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.number));
+        let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.courseNumber));
         quarter.courses.forEach((course, ci) => {
           // if has prerequisite
           if (course.prerequisiteTree) {

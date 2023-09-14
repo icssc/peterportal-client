@@ -197,7 +197,7 @@ router.delete('/', async (req, res, next) => {
  * Upvote or downvote a review
  */
 router.patch("/vote", async function (req, res) {
-  if (req.session.passport != null) {
+  if (req.session?.passport != null) {
     //get id and delta score from initial vote
     let id = req.body["id"];
     let deltaScore = req.body["upvote"] ? 1 : -1;
@@ -263,7 +263,7 @@ router.patch("/vote", async function (req, res) {
  */
 router.patch("/getVoteColor", async function (req, res) {
   //make sure user is logged in
-  if (req.session.passport != null) {
+  if (req.session?.passport != null) {
     //query of the user's email and the review id
     let query = {
       userID: req.session.passport.user.email,
@@ -290,7 +290,7 @@ router.patch("/getVoteColor", async function (req, res) {
  * Get multiple review colors
  */
 router.patch("/getVoteColors", async function (req, res) {
-  if (req.session.passport != null) {
+  if (req.session?.passport != null) {
     //query of the user's email and the review id
     let ids = req.body["ids"];
     let colors = [];

@@ -86,13 +86,13 @@ function transformCourseGQL(data: CourseGQLResponse) {
   let prerequisiteListLookup: CourseLookup = {};
   let prerequisiteForLookup: CourseLookup = {};
   axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": data.prerequisiteList})
+  (`/api/courses/api/batch`, {"courses": data.prerequisiteList.map((x) => x.replace(/ /g, ""))})
     .then(r => prerequisiteListLookup = r.data);
   axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": data.prerequisiteFor})
+  (`/api/courses/api/batch`, {"courses": data.prerequisiteFor.map((x) => x.replace(/ /g, ""))})
     .then(r => prerequisiteForLookup = r.data);
   axios.post<{ [key: string]: ProfessorGQLResponse }>
-  (`/api/professors/api/batch`, {"courses": data.instructorHistory})
+  (`/api/professors/api/batch`, {"professors": data.instructorHistory})
     .then(r => instructorHistoryLookup = r.data);
    // create copy to override fields with lookups
   let course = { ...data } as unknown as CourseGQLData;
@@ -105,7 +105,7 @@ function transformCourseGQL(data: CourseGQLResponse) {
 function transformProfessorGQL(data: ProfessorGQLResponse) {
   let courseHistoryLookup: CourseLookup = {};
   axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory)})
+  (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory).map((x) => x.replace(/ /g, ""))})
     .then(r => courseHistoryLookup = r.data);
   // create copy to override fields with lookups
   let professor = { ...data } as unknown as ProfessorGQLData;
@@ -113,3 +113,6 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
 
   return professor;
 }
+
+export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number, minute: number }) =>
+  `${hour % 12}:${minute.toString().padStart(2, "0")} ${Math.floor(hour / 12) === 0 ? "AM" : "PM"}`;

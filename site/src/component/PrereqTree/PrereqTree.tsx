@@ -8,6 +8,7 @@ import { CourseGQLData, CourseLookup } from '../../types/types';
 interface NodeProps {
   node: string;
   label: string;
+  content: string;
   index?: number;
 }
 
@@ -53,7 +54,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
           label={`${prereq.courseId ?? prereq.examName ?? ''}${
             prereq?.minGrade ? ` (min grade = ${prereq?.minGrade})` : ''
           }${prereq?.coreq ? ' (coreq)' : ''}`}
-          node={'prerequisite-node'}
+          content={prereq.courseId ?? ""} node={'prerequisite-node'}
         />
       </li>
     );
@@ -127,7 +128,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
                   {Object.values(props.prerequisiteFor).map(
                     (dependency, index) => (
                       <li key={`dependency-node-${index}`} className={'dependency-node'}>
-                        <Node label={dependency.id} node={'dependency-node'} />
+                        <Node label={dependency.id} content={dependency.title} node={'dependency-node'} />
                       </li>
                     )
                   )}
@@ -151,7 +152,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
           {/* Display the class id */}
-          <Node label={props.id} node={'course-node'} />
+          <Node label={props.id} content={props.title} node={'course-node'} />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (

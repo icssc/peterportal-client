@@ -13,12 +13,12 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, minUnits, maxUnits, description, prerequisiteText, corequisite, requiredCourses, onDelete } = props;
+  let { id, department, courseNumber, title, minUnits, maxUnits, description, prerequisiteText, corequisite, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
       <div className="course-popover">
-        <div className="popover-name">{department + ' ' + number} {title}</div>
+        <div className="popover-name">{department + ' ' + courseNumber} {title}</div>
         <div className="popover-units">
           <span className="popover-units-value">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`}</span> units
         </div>
@@ -40,14 +40,14 @@ const Course: FC<CourseProps> = (props) => {
   </Popover>
 
   const courseRoute = () => {
-    return '/course/' + props.department.replace(/\s+/g, '') + props.number.replace(/\s+/g, '')
+    return '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '')
   }
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={courseRoute()} target="_blank" rel="noopener noreferrer">{department + ' ' + number}</a>
+          <a className="name" href={courseRoute()} target="_blank" rel="noopener noreferrer">{department + ' ' + courseNumber}</a>
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="auto"

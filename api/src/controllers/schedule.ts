@@ -32,7 +32,7 @@ router.get("/getTerms", function (req, res) {
  */
 router.get('/api/currentWeek', async function (_, res) {
   console.log(process.env.PUBLIC_API_URL)
-  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}/week`);
+  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
   const json = await apiResp.json();
   res.send(json.payload)
 });
@@ -41,7 +41,7 @@ router.get('/api/currentWeek', async function (_, res) {
  * Get the current quarter on websoc
  */
 router.get('/api/currentQuarter', async function (_, res) {
-  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}/websoc/terms`);
+  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
   const json = await apiResp.json();
   res.send(json.payload[0].longName)
 });
@@ -75,7 +75,7 @@ router.get('/api/:term/:professor', async function (req, res) {
 async function callPPAPIWebSoc(params: Record<string, string>) {
   const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' +
     new URLSearchParams(params))
-  return await fetch(url).then(response => response.json());
+  return await fetch(url).then(response => response.json()).then(json => json.payload);
 }
 
 export default router;

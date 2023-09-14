@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
-import { GradeDistData } from '../../types/types';
+import { GradesRaw } from "peterportal-api-next-types";
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-']
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7]
@@ -14,7 +14,7 @@ interface Slice {
 }
 
 interface PieProps {
-  gradeData: GradeDistData;
+  gradeData: GradesRaw;
   quarter: string;
   professor?: string;
   course?: string;
@@ -41,7 +41,7 @@ export default class Pie extends React.Component<PieProps> {
 
     this.props.gradeData.forEach(data => {
       if ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL')
-        && (data.instructor === this.props.professor || (data.department + ' ' + data.number) === this.props.course)) {
+        && (data.instructors.includes(this.props.professor ?? "") || (data.department + ' ' + data.courseNumber) === this.props.course)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;

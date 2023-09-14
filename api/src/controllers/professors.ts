@@ -39,7 +39,9 @@ router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) 
     });
 
     r.then((response) => response.json())
-      .then((data) => res.json(data.data))
+      .then((data) => {
+        res.json(data.data)
+      })
   }
 });
 
@@ -54,7 +56,7 @@ router.get('/api/grades/:name', function (req, res, next) {
   r.then((response) => {
     status = response.status;
     return response.json();
-  }).then((data) => res.status(status).send(data))
+  }).then((data) => res.status(status).send(data.payload))
 });
 
 export default router;

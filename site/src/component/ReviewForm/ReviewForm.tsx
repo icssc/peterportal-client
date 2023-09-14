@@ -191,7 +191,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Course</option>
       {Object.keys(props.professor?.courseHistory!).map((courseID, i) => {
-        const name = props.professor?.courseHistory[courseID].department + ' ' + props.professor?.courseHistory[courseID].number;
+        const name = props.professor?.courseHistory[courseID].department + ' ' + props.professor?.courseHistory[courseID].courseNumber;
         return (
           // @ts-ignore name attribute isn't supported
           <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
@@ -209,7 +209,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.number) : props.professor?.name}</h1>
+              <h1>It's your turn to review {props.course ? (props.course?.department + ' ' + props.course?.courseNumber) : props.professor?.name}</h1>
             </Col>
           </Row>
           <Row className='mt-4' lg={2} md={1}>

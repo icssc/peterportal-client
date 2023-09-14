@@ -61,7 +61,9 @@ router.get('/api/grades',
     let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?department=' + encodeURIComponent(req.query.department) + '&courseNumber=' + req.query.number);
 
     r.then((response) => response.json())
-      .then((data) => res.send(data))
+      .then((data) => {
+        res.send(data.payload)
+      })
   });
 
 export default router;

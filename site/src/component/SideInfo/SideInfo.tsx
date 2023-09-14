@@ -179,7 +179,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                         {
                             sortedReviews.map((key, index) => <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
                             {props.searchType == 'course' && (props.course?.instructorHistory[key] ? props.course?.instructorHistory[key].shortenedName : key)}
-                            {props.searchType == 'professor' && (props.professor?.courseHistory[key] ? (props.professor?.courseHistory[key].department + ' ' + props.professor?.courseHistory[key].number) : key)}
+                            {props.searchType == 'professor' && (props.professor?.courseHistory[key] ? (props.professor?.courseHistory[key].department + ' ' + props.professor?.courseHistory[key].courseNumber) : key)}
                         </Dropdown.Item>)
                         }
                     </DropdownButton>
@@ -235,11 +235,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                 {highestReview && <FeaturedInfo searchType={props.searchType} featureType='Highest'
                     averageReviews={averageReviews} reviewKey={highestReview}
                     displayName={props.searchType == 'course' ? props.course?.instructorHistory[highestReview].shortenedName! :
-                        (props.professor?.courseHistory[highestReview] ? props.professor?.courseHistory[highestReview].department + ' ' + props.professor?.courseHistory[highestReview].number : highestReview)} />}
+                        (props.professor?.courseHistory[highestReview] ? props.professor?.courseHistory[highestReview].department + ' ' + props.professor?.courseHistory[highestReview].courseNumber : highestReview)} />}
                 {lowestReview && <FeaturedInfo searchType={props.searchType} featureType='Lowest'
                     averageReviews={averageReviews} reviewKey={lowestReview}
                     displayName={props.searchType == 'course' ? props.course?.instructorHistory[lowestReview].shortenedName! :
-                        (props.professor?.courseHistory[lowestReview] ? props.professor?.courseHistory[lowestReview].department + ' ' + props.professor?.courseHistory[lowestReview].number : lowestReview)} />}
+                        (props.professor?.courseHistory[lowestReview] ? props.professor?.courseHistory[lowestReview].department + ' ' + props.professor?.courseHistory[lowestReview].courseNumber : lowestReview)} />}
             </div>
         </div>
     )
