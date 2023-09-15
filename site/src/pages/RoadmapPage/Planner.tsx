@@ -163,7 +163,7 @@ const Planner: FC = () => {
         quarter.courses.forEach((course, ci) => {
           // if has prerequisite
           if (course.prerequisiteTree) {
-            let required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisite);
+            let required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
             // prerequisite not fulfilled, has some required classes to take
             if (required.size > 0) {
               console.log('invalid course', course.id);

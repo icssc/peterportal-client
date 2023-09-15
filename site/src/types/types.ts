@@ -221,12 +221,12 @@ export interface CourseGQLData {
     prerequisiteFor: CourseLookup;
     repeatability: string;
     concurrent: string;
-    same_as: string;
+    sameAs: string;
     restriction: string;
     overlap: string;
-    corequisite: string;
+    corequisites: string;
     geList: string[];
-    gText: string;
+    geText: string;
     terms: string[];
 }
 

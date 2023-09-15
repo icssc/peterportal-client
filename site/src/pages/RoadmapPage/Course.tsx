@@ -13,7 +13,7 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, courseNumber, title, minUnits, maxUnits, description, prerequisiteText, corequisite, requiredCourses, onDelete } = props;
+  let { id, department, courseNumber, title, minUnits, maxUnits, description, prerequisiteText, corequisites, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
@@ -24,10 +24,10 @@ const Course: FC<CourseProps> = (props) => {
         </div>
         <div className="popover-description">{description}</div>
         {prerequisiteText && <div className="popover-detail">
-          <span className="popover-detail-prefix">Prerequisite:</span> {prerequisiteText}
+          <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
         </div>}
-        {corequisite && <div className="popover-detail">
-          <span className="popover-detail-prefix">Corequisite:</span> {corequisite}
+        {corequisites && <div className="popover-detail">
+          <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
         </div>}
       </div>
     </Popover.Content>

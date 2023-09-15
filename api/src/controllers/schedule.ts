@@ -3,8 +3,6 @@
 */
 
 import express from 'express';
-import { getWeek } from '../helpers/week';
-import { getCurrentQuarter } from '../helpers/currentQuarter';
 import fetch from 'node-fetch';
 
 var router = express.Router();
