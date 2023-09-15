@@ -6,7 +6,7 @@ const Footer: FC = () => {
         <>
             <footer className='footer'>
                 <div className='links'>
-                    <a href='https://github.com/icssc'>Github</a>
+                    <a href='https://github.com/icssc'>GitHub</a>
                     <a href='https://docs.api-next.peterportal.org'>API</a>
                 </div>
                 <div className='copyright'>
