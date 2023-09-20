@@ -37,7 +37,7 @@ const Course: FC<CourseProps> = (props) => {
     <Popover.Content>
       Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')} 
       <br />
-      Already completed prerequisite(s)? Click 'Transfer Credits' at the top of the planner to clear the prerequisite(s).
+      Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to clear the prerequisite(s).
     </Popover.Content>
   </Popover>
 
