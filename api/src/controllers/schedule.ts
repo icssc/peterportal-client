@@ -29,7 +29,6 @@ router.get("/getTerms", function (req, res) {
  * Get the current week
  */
 router.get('/api/currentWeek', async function (_, res) {
-  console.log(process.env.PUBLIC_API_URL)
   const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
   const json = await apiResp.json();
   res.send(json.payload)

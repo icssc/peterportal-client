@@ -43,36 +43,31 @@ export function searchAPIResult(type: SearchType, name: string) {
 }
 
 // helper function to query from API and transform to data used in redux
-export function searchAPIResults(index: SearchIndex, names: string[]) {
-  return new Promise<BatchCourseData | BatchProfessorData>(res => {
-    // Get results from backend search
-    axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/api/${index}/api/batch`, { [index]: names })
-      .then(searchResponse => {
-        let data = searchResponse.data;
-        let transformed: BatchCourseData | BatchProfessorData = {};
-        Object.keys(data).forEach(id => {
-          // filter out null reponses
-          if (data[id]) {
-            // use specific key based on index
-            let key = ''
-            if (index == 'courses') {
-              key = (data[id] as CourseGQLResponse).id;
-            }
-            else {
-              key = (data[id] as ProfessorGQLResponse).ucinetid;
-            }
-            // perform transformation
-            transformed[key] = transformGQLData(index, data[id])
-          }
-        })
-        console.log('From backend search', transformed);
-        res(transformed);
-      })
-  })
+export async function searchAPIResults(index: SearchIndex, names: string[]): Promise<BatchCourseData | BatchProfessorData> {
+  const res = await axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>
+  (`/api/${index}/api/batch`, { [index]: names });
+  const data = res.data;
+  const transformed: BatchCourseData | BatchProfessorData = {};
+  for (const id in data) {
+    if (data[id]) {
+      // use specific key based on index
+      let key = ''
+      if (index == 'courses') {
+        key = (data[id] as CourseGQLResponse).id;
+      }
+      else {
+        key = (data[id] as ProfessorGQLResponse).ucinetid;
+      }
+      // perform transformation
+      transformed[key] = await transformGQLData(index, data[id])
+    }
+  }
+  console.log('From backend search', transformed);
+  return transformed;
 }
 
 // transforms PPAPI gql schema to our needs
-export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | ProfessorGQLResponse) {
+export async function transformGQLData(index: SearchIndex, data: CourseGQLResponse | ProfessorGQLResponse) {
   if (index == 'courses') {
     return transformCourseGQL(data as CourseGQLResponse);
   }
@@ -81,36 +76,34 @@ export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | P
   }
 }
 
-function transformCourseGQL(data: CourseGQLResponse) {
-  let instructorHistoryLookup: ProfessorLookup = {};
-  let prerequisiteListLookup: CourseLookup = {};
-  let prerequisiteForLookup: CourseLookup = {};
-  axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": data.prerequisiteList.map((x) => x.replace(/ /g, ""))})
-    .then(r => prerequisiteListLookup = r.data);
-  axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": data.prerequisiteFor.map((x) => x.replace(/ /g, ""))})
-    .then(r => prerequisiteForLookup = r.data);
-  axios.post<{ [key: string]: ProfessorGQLResponse }>
-  (`/api/professors/api/batch`, {"professors": data.instructorHistory})
-    .then(r => instructorHistoryLookup = r.data);
+async function transformCourseGQL(data: CourseGQLResponse) {
+  const instructorHistoryLookup: ProfessorLookup = await
+    axios.post<{ [key: string]: ProfessorGQLResponse }>
+    (`/api/professors/api/batch`, {"professors": data.instructorHistory})
+      .then(r => r.data);
+  const prerequisiteListLookup: CourseLookup = await
+    axios.post<{ [key: string]: CourseGQLResponse }>
+    (`/api/courses/api/batch`, {"courses": data.prerequisiteList.map((x) => x.replace(/ /g, ""))})
+      .then(r => r.data);
+  const prerequisiteForLookup: CourseLookup = await
+    axios.post<{ [key: string]: CourseGQLResponse }>
+    (`/api/courses/api/batch`, {"courses": data.prerequisiteFor.map((x) => x.replace(/ /g, ""))})
+      .then(r => r.data);
    // create copy to override fields with lookups
-  let course = { ...data } as unknown as CourseGQLData;
+  const course = { ...data } as unknown as CourseGQLData;
   course.instructorHistory = instructorHistoryLookup;
   course.prerequisiteList = prerequisiteListLookup;
   course.prerequisiteFor = prerequisiteForLookup;
   return course;
 }
 
-function transformProfessorGQL(data: ProfessorGQLResponse) {
-  let courseHistoryLookup: CourseLookup = {};
-  axios.post<{ [key: string]: CourseGQLResponse }>
+async function transformProfessorGQL(data: ProfessorGQLResponse) {
+  const courseHistoryLookup = await axios.post<{ [key: string]: CourseGQLResponse }>
   (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory).map((x) => x.replace(/ /g, ""))})
-    .then(r => courseHistoryLookup = Object.fromEntries(Object.values(r).map(x => [x.id, x])));
+    .then(r => Object.fromEntries(Object.values(r.data).map(x => [x.id, x])));
   // create copy to override fields with lookups
   let professor = { ...data } as unknown as ProfessorGQLData;
   professor.courseHistory = courseHistoryLookup;
-
   return professor;
 }
 
