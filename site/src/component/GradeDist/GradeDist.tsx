@@ -6,7 +6,7 @@ import './GradeDist.scss'
 import axios from 'axios'
 
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import {GradesRaw} from "peterportal-api-next-types";
+import { GradesRaw } from "peterportal-api-next-types";
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -22,6 +22,7 @@ interface Entry {
 type ChartTypes = 'bar' | 'pie';
 
 const GradeDist: FC<GradeDistProps> = (props) => {
+  const quarterOrder = ["Winter", "Spring", "Summer1", "Summer10wk", "Summer2", "Fall"]
   /*
  * Initialize a GradeDist block on the webpage.
  * @param props attributes received from the parent element
@@ -108,7 +109,21 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .forEach(data => quarters.add(data.quarter + ' ' + data.year));
     quarters.forEach(quarter => result.push({ value: quarter, text: quarter }));
 
-    setQuarterEntries(result);
+    setQuarterEntries(result.sort((a, b) => {
+      if (a.value === "ALL") {
+        return -1;
+      }
+      if (b.value === "ALL") {
+        return 1;
+      }
+      const [thisQuarter, thisYear] = a.value.split(" ");
+      const [thatQuarter, thatYear] = b.value.split(" ");
+      if (thisYear === thatYear) {
+        return quarterOrder.indexOf(thisQuarter) - quarterOrder.indexOf(thatQuarter)
+      } else {
+        return Number.parseInt(thisYear, 10) - Number.parseInt(thatYear, 10);
+      }
+    }));
     setCurrentQuarter(result[0].value);
   }
 

@@ -106,7 +106,7 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
   let courseHistoryLookup: CourseLookup = {};
   axios.post<{ [key: string]: CourseGQLResponse }>
   (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory).map((x) => x.replace(/ /g, ""))})
-    .then(r => courseHistoryLookup = r.data);
+    .then(r => courseHistoryLookup = Object.fromEntries(Object.values(r).map(x => [x.id, x])));
   // create copy to override fields with lookups
   let professor = { ...data } as unknown as ProfessorGQLData;
   professor.courseHistory = courseHistoryLookup;
