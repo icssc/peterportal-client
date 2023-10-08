@@ -1,18 +1,31 @@
 ![petr](https://github.com/icssc-projects/peterportal-public-api/blob/master/public/images/peterportal-banner-logo.png?raw=true)
 
-PeterPortal is a web application aimed to aid UCI students with course discovery. We consolidate public data available on multiple UCI sources on the application to improve the user experience when planning their course schedule.
+PeterPortal is a web application aimed to aid UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources on the application to improve the user experience when planning their course schedule.
+
+Features include:
+* Course catalog with:
+    * Visual prerequisite trees
+    * Schedule of classes
+    * Grade distribution graphs/charts
+    * Reviews
+* Professor catalog with:
+    * Schedule of classes
+    * Grade distribution graphs/charts
+    * Reviews
+* Peter's Roadmap, a drag-and-drop 4-year course planner
 
 🔨 Built with:
 
-* PeterPortal API
-* ExpressJS
-* ReactJS
+* [PeterPortal API](https://github.com/icssc/peterportal-api-next)
+* Express
+* React
 * SST and AWS CDK
 * MongoDB
 * GraphQL
-* Typescript
+* TypeScript
 
 ## First time setup
+### Committee Members
 1. Clone the repository to your local machine:
     ```
     git clone https://github.com/icssc/peterportal-client
@@ -29,6 +42,41 @@ PeterPortal is a web application aimed to aid UCI students with course discovery
 
 5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
 
+6. Setup the appropriate environment variables provided by the project lead.
+### Open Source Contributors
+1. Fork the project by clicking the fork button in the top right, above the abut section.
+
+2. Clone your forked repository to your local machine
+```
+git clone https://github.com/<your username>/peterportal-client
+```
+
+3. Switch to a branch you will be working on.
+```
+git checkout -b [branch name]
+```
+
+4. Check your Node version with `node -v`. Make sure you have version 14 or above (18 recommended).
+
+5. Open a terminal window and `cd` into the directory of your repo.
+
+6. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
+
+7. Create a .env file in the api directory with the following contents:
+```
+PUBLIC_API_URL=https://api.peterportal.org/rest/v0/
+PUBLIC_API_GRAPHQL_URL=https://api.peterportal.org/graphql/
+PORT=5000
+```
+8. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
+```
+MONGO_URL=<secret>
+SESSION_SECRET=<secret>
+GOOGLE_CLIENT=<client>
+GOOGLE_SECRET=<secret>
+ADMIN_EMAILS=["<your email>"]
+```
+
 ## Running the project locally (after setup)
 1. Open two terminal windows and `cd` into the directory of your repo in each of them.
 
@@ -41,7 +89,7 @@ PeterPortal is a web application aimed to aid UCI students with course discovery
 
 ## Where does the data come from?
 
-We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI Webreg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-nex)).
+We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI Webreg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-next)).
 
 ## Bug Report
 🐞 If you encountered any issues or bug, please open an issue @ https://github.com/icssc-projects/peterportal-client/issues/new
