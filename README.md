@@ -8,11 +8,15 @@ Features include:
     * Schedule of classes
     * Grade distribution graphs/charts
     * Reviews
+![catalogue](https://github.com/icssc/peterportal-client/assets/8922227/e2e34103-a73e-4fd9-af44-69b707d1e910)
+![prereqtree](https://github.com/icssc/peterportal-client/assets/8922227/1303fe05-1c5d-4213-b2f6-e75fbe00a795)
 * Professor catalog with:
     * Schedule of classes
     * Grade distribution graphs/charts
     * Reviews
 * Peter's Roadmap, a drag-and-drop 4-year course planner
+
+![roadmap](https://github.com/icssc/peterportal-client/assets/8922227/7849f059-ebb6-43b4-814d-75fb850fec01)
 
 🔨 Built with:
 
