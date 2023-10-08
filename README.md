@@ -9,7 +9,7 @@ Features include:
     * Grade distribution graphs/charts
     * Reviews
 ![catalogue](https://github.com/icssc/peterportal-client/assets/8922227/e2e34103-a73e-4fd9-af44-69b707d1e910)
-![prereqtree](https://github.com/icssc/peterportal-client/assets/8922227/1303fe05-1c5d-4213-b2f6-e75fbe00a795)
+![coursepage](https://github.com/icssc/peterportal-client/assets/8922227/2df5a284-0040-4720-a9be-c08978b6bfb1)
 * Professor catalog with:
     * Schedule of classes
     * Grade distribution graphs/charts
