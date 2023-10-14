@@ -52,23 +52,12 @@ const Review: FC<ReviewProps> = (props) => {
             });
     }
 
-    const updateVoteColors = async () => {
-        let reviewIDs = [];
-        for(let i = 0;i<reviewData.length;i++){
-            reviewIDs.push(reviewData[i]._id);
-        }
-        const req = {
-            ids: reviewIDs as string[]
-        }
-        let colors = await getColors(req);
-        setVoteColors(colors);
-    }
-
-    const getU = (id: string | undefined) => {
+    const getVoteColor = (id: string | undefined) => {
         let temp = voteColors as Object;
         let v = (temp[id as keyof typeof temp]) as unknown as number;
         return v ?? 0;
     }
+
     useEffect(() => {
         // prevent reviews from carrying over
         dispatch(setReviews([]));
@@ -91,7 +80,7 @@ const Review: FC<ReviewProps> = (props) => {
             <>
                 <div className='reviews'>
                     {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} userVote={getU(review._id)} />)
+                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} userVote={getVoteColor(review._id)} />)
                     })}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
