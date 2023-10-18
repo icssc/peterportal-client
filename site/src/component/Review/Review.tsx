@@ -7,12 +7,17 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
-import { reviewSlice } from 'src/store/slices/uiSlice';
-import { EaselFill } from 'react-bootstrap-icons';
+import { Checkbox, Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
     course?: CourseGQLData;
     professor?: ProfessorGQLData;
+}
+
+enum SortingOption {
+    MOST_RECENT,
+    TOP_REVIEWS,
+    CONTROVERSIAL
 }
 
 const Review: FC<ReviewProps> = (props) => {
@@ -20,9 +25,11 @@ const Review: FC<ReviewProps> = (props) => {
     const reviewData = useAppSelector(selectReviews);
     const [voteColors, setVoteColors] = useState([]);
     const openForm = useAppSelector(state => state.review.formOpen);
+    const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+    const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
 
     const getColors = async (vote: VoteColorsRequest) => {
-        const res = await axios.patch('/reviews/getVoteColors', vote);
+        const res = await axios.patch('/api/reviews/getVoteColors', vote);
         return res.data;
     }
 
@@ -34,16 +41,11 @@ const Review: FC<ReviewProps> = (props) => {
         let params: paramsProps = {};
         if (props.course) params.courseID = props.course.id;
         if (props.professor) params.professorID = props.professor.ucinetid;
-        axios.get(`/reviews`, {
+        axios.get(`/api/reviews`, {
             params: params
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null);
-                data.sort((a, b) => {
-                    let aScore = a.score + (a.verified ? 10000 : 0);
-                    let bScore = b.score + (b.verified ? 10000 : 0);
-                    return bScore - aScore;
-                })
                 let reviewIDs = [];
                 for(let i = 0;i<data.length;i++){
                     reviewIDs.push(data[i]._id);
@@ -91,6 +93,26 @@ const Review: FC<ReviewProps> = (props) => {
         getReviews();
     }, [props.course?.id, props.professor?.ucinetid]);
 
+    let sortedReviews: ReviewData[];
+    // filter verified if option is set
+    if (showOnlyVerifiedReviews) {
+        sortedReviews = reviewData.filter(review => review.verified);
+    } else { // if not, clone reviewData since its const
+        sortedReviews = reviewData.slice(0);
+    }
+
+    switch (sortingOption) {
+        case SortingOption.MOST_RECENT:
+            sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+        case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
+            sortedReviews.sort((a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+        case SortingOption.CONTROVERSIAL:
+            sortedReviews.sort((a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            break;
+    }
+
     const openReviewForm = () => {
         dispatch(setFormStatus(true));
         document.body.style.overflow = 'hidden';
@@ -106,9 +128,22 @@ const Review: FC<ReviewProps> = (props) => {
         return (
             <>
                 <div className='reviews'>
-                    {reviewData.map((review, i) => {
-                        if (review !== null) return (<SubReview review={review} key={i} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)
-                    })}
+                    <div className='sorting-menu row'>
+                        <Dropdown
+                            placeholder='Sorting Option'
+                            scrolling
+                            selection
+                            options={[{ text: 'Most Recent', value: SortingOption.MOST_RECENT },
+                                { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+                                { text: 'Controversial', value: SortingOption.CONTROVERSIAL }]}
+                            value={sortingOption}
+                            onChange={(e, s) => setSortingOption(s.value as SortingOption)}
+                        />
+                        <div id="checkbox">
+                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(e, props) => setShowOnlyVerifiedReviews(props.checked!)} />
+                        </div>
+                    </div>
+                    {sortedReviews.map(review => <SubReview review={review} key={review._id} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}
                     <button type='button' className='add-review-btn' onClick={openReviewForm}>+ Add Review</button>
                 </div>
                 <ReviewForm closeForm={closeForm} {...props} />

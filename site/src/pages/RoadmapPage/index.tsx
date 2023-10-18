@@ -15,8 +15,11 @@ const RoadmapPage: FC = () => {
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
-      // no destination or dragging to search bar
-      if (!result.destination || result.destination.droppableId === 'search') {
+      // no destination
+      if(!result.destination) { return }
+
+      // dragging to search bar
+      if (result.destination.droppableId === 'search') {
         // removing from quarter
         if (result.source.droppableId != 'search') {
           let [yearIndex, quarterIndex] = result.source.droppableId.split('-');

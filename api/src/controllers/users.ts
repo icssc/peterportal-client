@@ -32,10 +32,12 @@ router.get('/isAdmin', function (req, res, next) {
  */
 router.get('/auth/google',
   function (req, res) {
+    
     req.session.returnTo = req.headers.referer;
     passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email']
+        'https://www.googleapis.com/auth/userinfo.email'],
+      state: req.headers.host
     })(req, res);
   }
 );
@@ -44,6 +46,17 @@ router.get('/auth/google',
  * Callback for Google authentication
  */
 router.get('/auth/google/callback', function (req, res) {
+  const returnTo = req.session.returnTo;
+  let host: string = req.query.state as string;
+  // all staging auths will redirect their callback to prod since all callback URLs must be registered
+  // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
+  // staging instances
+  // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
+  if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
+    // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
+    res.redirect('https://' + host + '/api/users' + req.url);
+    return;
+  }
   passport.authenticate('google', { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
     function (err, user, info) {
@@ -62,6 +75,7 @@ router.get('/auth/google/callback', function (req, res) {
               console.log('AUTHORIZED AS ADMIN');
               req.session.passport!.admin = true;
             }
+            req.session.returnTo = returnTo;
             successLogin(req, res)
           }
         });
@@ -146,7 +160,7 @@ function successLogin(req: Request, res: Response) {
   // set the user cookie
   res.cookie('user', req.user);
   // redirect browser to the page they came from
-  let returnTo = req.session.returnTo;
+  let returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
   res.redirect(returnTo!);
 }

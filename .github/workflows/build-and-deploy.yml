@@ -1,0 +1,54 @@
+name: Build and deploy
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build_and_deploy:
+    name: Build and deploy PeterPortal
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: build-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build and deploy
+        run: npx sst deploy --stage ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'prod'  }}
+        env:
+          CI: false
+          PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
+          PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
+          MONGO_URL: ${{secrets.MONGO_URL}}
+          SESSION_SECRET: ${{secrets.SESSION_SECRET}}
+          GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
+          GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
+          ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
+          PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Comment staging URL
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          header: staging url
+          recreate: true
+          message: Deployed staging instance to https://staging-${{ github.event.pull_request.number }}.peterportal.org

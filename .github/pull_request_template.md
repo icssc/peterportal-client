@@ -20,6 +20,8 @@
 -->
 
 ## Steps to verify/test this change:
+- [ ] Verify changes work as expected on staging instance
+<!-- Add more steps here… -->
 
 ## Final Checks:
 - [ ] Verify successful deployment
@@ -28,3 +30,7 @@
 (optional)
 - [ ] Write tests
 - [ ] Write documentation
+
+## Issues
+<!-- Link the issue you're closing -->
+Closes #

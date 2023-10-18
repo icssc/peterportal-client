@@ -26,7 +26,7 @@ const SideBar: FC = ({ children }) => {
   }
 
   const checkAdmin = async () => {
-    const res: AxiosResponse<AdminResponse> = await axios.get('/users/isAdmin');
+    const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
     const admin = res.data.admin;
     setIsAdmin(admin);
   }
@@ -67,6 +67,18 @@ const SideBar: FC = ({ children }) => {
           </span>
         </NavLink>
       </li>
+      {isLoggedIn && 
+      <li>
+        <NavLink to='/reviews' activeClassName='sidebar-active' onClick={closeSidebar}>
+          <div>
+            <Icon name='sticky note outline' size='large' />
+          </div>
+          <span>
+            Reviews
+          </span>
+        </NavLink>
+      </li>
+      }
       {isAdmin && <>
       <li>
         <NavLink to='/admin/verify' activeClassName='sidebar-active' onClick={closeSidebar}>
@@ -118,7 +130,7 @@ const SideBar: FC = ({ children }) => {
 
       {/* Login/Logout */}
       <div className='sidebar-login'>
-        {isLoggedIn && <a href={`/users/logout`}>
+        {isLoggedIn && <a href={`/api/users/logout`}>
           <Button variant='light'>
             <span className='sidebar-login-icon'>
               <Icon name='sign out' className='sidebar-login-icon' />
@@ -126,7 +138,7 @@ const SideBar: FC = ({ children }) => {
             Log Out
           </Button>
         </a>}
-        {!isLoggedIn && <a href={`/users/auth/google`}>
+        {!isLoggedIn && <a href={`/api/users/auth/google`}>
           <Button variant='light'>
             <span className='sidebar-login-icon'>
               <Icon name='sign in' className='sidebar-login-icon' />
