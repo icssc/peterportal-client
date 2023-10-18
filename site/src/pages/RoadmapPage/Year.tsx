@@ -8,7 +8,7 @@ import {
 } from "react-bootstrap-icons";
 import Quarter from "./Quarter";
 import { useAppDispatch } from '../../store/hooks';
-import { addQuarter, editYear, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
+import { addQuarter, editYear, editName, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 
@@ -27,6 +27,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [addQuarterTarget, setAddQuarterTarget] = useState<any>(null!);
   const [editYearTarget, setEditYearTarget] = useState<any>(null!);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
+  const [placeholderName, setPlaceholderName] = useState(data.name);
 
   const handleEditClick = (event: React.MouseEvent) => {
     if (showAddQuarter) {
@@ -90,7 +91,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               ) : (
                 <CaretRightFill className="caret-icon" />
               )}
-              <span id="year-number">Year {yearIndex + 1} </span>
+              <span id="year-number">{data.name} </span>
               <span id="year-range">
                 ({data.startYear} - {data.startYear + 1})
               </span>
@@ -162,6 +163,26 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               <Form>
                 <Form.Group>
                   <Form.Label className="edit-year-form-label">
+                    Name
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={placeholderName}
+                    onChange={(e) => {
+                      setPlaceholderName(e.target.value);
+                    }}
+                    onKeyDown={(e: React.KeyboardEvent) => {
+                      // prevent submitting form (reloads the page)
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
+                    placeholder={placeholderName}
+                  ></Form.Control>
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label className="edit-year-form-label">
                     Start Year
                   </Form.Label>
                   <Form.Control
@@ -185,10 +206,14 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button
                   className="edit-year-popup-btn"
                   onClick={() => {
+                    setPlaceholderName(placeholderName.trim());
                     setShowEditYear(!showEditYear);
                     setShow(!show);
-                    if (placeholderYear != data.startYear) {
+                    if (placeholderYear !== data.startYear) {
                       dispatch(editYear({ startYear: placeholderYear, index: yearIndex }));
+                    }
+                    if (placeholderName !== data.name) {
+                      dispatch(editName({ name: placeholderName.trim(), index: yearIndex }));
                     }
                   }}
                 >

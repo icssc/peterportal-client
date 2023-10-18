@@ -36,7 +36,7 @@ const Planner: FC = () => {
   const collapsePlanner = (planner: PlannerData): SavedPlannerData => {
     let savedPlanner: SavedPlannerData = [];
     planner.forEach(year => {
-      let savedYear: SavedPlannerYearData = { startYear: year.startYear, quarters: [] };
+      let savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
       year.quarters.forEach(quarter => {
         let savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
         savedQuarter.courses = quarter.courses.map(course => course.id);
@@ -61,7 +61,7 @@ const Planner: FC = () => {
       }
       let planner: PlannerData = [];
       savedPlanner.forEach(savedYear => {
-        let year: PlannerYearData = { startYear: savedYear.startYear, quarters: [] };
+        let year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
         savedYear.quarters.forEach(savedQuarter => {
           let quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
           quarter.courses = savedQuarter.courses.map(course => courseLookup[course]);
@@ -256,6 +256,7 @@ const Planner: FC = () => {
         {
           yearData: {
             startYear: new Date().getFullYear(),
+            name: "Year 1",
             quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
           }
         }
@@ -280,7 +281,7 @@ const Planner: FC = () => {
       <section className="years">
         {initializePlanner()}
       </section>
-      <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
+      <AddYearPopup placeholderName={"Year " + (data.length + 1)} placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
     </div>
   );
 };

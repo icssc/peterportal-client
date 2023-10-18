@@ -6,16 +6,21 @@ import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 
 interface AddYearPopupProps {
+  placeholderName: string;
   placeholderYear: number;
 }
 
-const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
+const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear }) => {
   const dispatch = useAppDispatch();
+  const [name, setName] = useState(placeholderName);
   const [year, setYear] = useState(placeholderYear);
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  useEffect(() => { setYear(placeholderYear) }, [placeholderYear]);
+  useEffect(() => { 
+    setYear(placeholderYear);
+    setName(placeholderName);
+  }, [placeholderYear, placeholderName]);
 
   const handleClick = (event: React.MouseEvent) => {
     setShow(!show);
@@ -31,6 +36,26 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
         <Popover id=''>
           <Popover.Content>
             <Form>
+              <Form.Group>
+                <Form.Label className="add-year-form-label">
+                  Name
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                  onKeyDown={(e: React.KeyboardEvent) => {
+                    // prevent submitting form (reloads the page)
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                    }
+                  }}
+                  placeholder={placeholderName}
+                ></Form.Control>
+              </Form.Group>
               <Form.Group>
                 <Form.Label className="add-year-form-label">
                   Start Year
@@ -61,11 +86,13 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
                     {
                       yearData: {
                         startYear: year,
+                        name: name.trim(),
                         quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
                       }
                     }
                   ));
                   setYear(placeholderYear);
+                  setName(placeholderName);
                 }}
               >
                 Add Year
