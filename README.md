@@ -48,7 +48,7 @@ Features include:
 
 6. Setup the appropriate environment variables provided by the project lead.
 ### Open Source Contributors
-1. Fork the project by clicking the fork button in the top right, above the abut section.
+1. Fork the project by clicking the fork button in the top right, above the about section.
 
 2. Clone your forked repository to your local machine
 ```
@@ -93,7 +93,7 @@ ADMIN_EMAILS=["<your email>"]
 
 ## Where does the data come from?
 
-We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI Webreg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-next)).
+We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-next)).
 
 ## Bug Report
 🐞 If you encountered any issues or bug, please open an issue @ https://github.com/icssc-projects/peterportal-client/issues/new
