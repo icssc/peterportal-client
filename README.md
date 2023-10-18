@@ -1,12 +1,14 @@
 ![petr](https://github.com/icssc-projects/peterportal-public-api/blob/master/public/images/peterportal-banner-logo.png?raw=true)
 
+## About
+
 PeterPortal is a web application aimed to aid UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources on the application to improve the user experience when planning their course schedule.
 
 Features include:
 * Course catalog with:
+    * Grade distribution graphs/charts
     * Visual prerequisite trees
     * Schedule of classes
-    * Grade distribution graphs/charts
     * Reviews
 ![catalogue](https://github.com/icssc/peterportal-client/assets/8922227/e2e34103-a73e-4fd9-af44-69b707d1e910)
 ![coursepage](https://github.com/icssc/peterportal-client/assets/8922227/2df5a284-0040-4720-a9be-c08978b6bfb1)
@@ -18,7 +20,7 @@ Features include:
 
 ![roadmap](https://github.com/icssc/peterportal-client/assets/8922227/7849f059-ebb6-43b4-814d-75fb850fec01)
 
-🔨 Built with:
+## 🔨 Built with
 
 * [PeterPortal API](https://github.com/icssc/peterportal-api-next)
 * Express
