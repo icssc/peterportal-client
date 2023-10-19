@@ -28,6 +28,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [editYearTarget, setEditYearTarget] = useState<any>(null!);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
+  const [validated, setValidated] = useState(false);
 
   const handleEditClick = (event: React.MouseEvent) => {
     if (showAddQuarter) {
@@ -161,12 +162,13 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         <Overlay show={showEditYear} target={editYearTarget} placement="left">
           <Popover id={`edit-year-menu-${yearIndex}`}>
             <Popover.Content>
-              <Form>
+              <Form noValidate validated={validated}>
                 <Form.Group>
                   <Form.Label className="edit-year-form-label">
                     Name
                   </Form.Label>
                   <Form.Control
+                    required
                     type="text"
                     name="name"
                     value={placeholderName}
@@ -179,6 +181,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                         e.preventDefault();
                       }
                     }}
+                    maxLength={35}
                     placeholder={placeholderName}
                   ></Form.Control>
                 </Form.Group>
@@ -207,6 +210,12 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button
                   className="edit-year-popup-btn"
                   onClick={() => {
+                    if (placeholderName === '') {
+                      setValidated(true);
+                      return;
+                    }
+                      
+                    setValidated(false);
                     setPlaceholderName(placeholderName.trim());
                     setShowEditYear(!showEditYear);
                     setShow(!show);
