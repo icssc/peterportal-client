@@ -56,6 +56,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const handleEditYearClick = (event: React.MouseEvent) => {
     setShowAddQuarter(false);           // hide any other currently displayed menu bar options
     setPlaceholderYear(data.startYear); // set default year to current year
+    setPlaceholderName(data.name);
     setShowEditYear(!showEditYear);
     setEditYearTarget(event.target);
   }
