@@ -20,7 +20,7 @@ import {
   ProfessorGQLResponse,
   BatchProfessorData,
 } from "../../types/types";
-import { PAGE_SIZE } from "src/helpers/constants";
+import { NUM_RESULTS_PER_PAGE  } from "src/helpers/constants";
 
 const SEARCH_TIMEOUT_MS = 500;
 const FULL_RESULT_THRESHOLD = 3;
@@ -65,9 +65,11 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       let nameResults = wfs({
         query: query,
         resultType: index === "courses" ? "COURSE" : "INSTRUCTOR",
+        // Load INITIAL_MAX_PAGE pages first
+        // when user reaches the 4th page or after, load all results
         numResults:
           lastQuery !== query || currentPage < FULL_RESULT_THRESHOLD
-            ? PAGE_SIZE * INITIAL_MAX_PAGE
+            ? NUM_RESULTS_PER_PAGE  * INITIAL_MAX_PAGE
             : undefined,
       });
       let names: string[] = [];
@@ -102,8 +104,8 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     }
     // Get the subset of names based on the page
     let pageNames = names.slice(
-      PAGE_SIZE * pageNumber,
-      PAGE_SIZE * (pageNumber + 1)
+      NUM_RESULTS_PER_PAGE  * pageNumber,
+      NUM_RESULTS_PER_PAGE  * (pageNumber + 1)
     );
     let results = await searchAPIResults(index, pageNames);
     dispatch(setResults({ index, results: Object.values(results) }));

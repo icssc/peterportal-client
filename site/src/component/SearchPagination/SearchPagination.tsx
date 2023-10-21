@@ -1,6 +1,6 @@
 import { FC, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
-import { PAGE_SIZE } from "src/helpers/constants";
+import { NUM_RESULTS_PER_PAGE  } from "src/helpers/constants";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { setPageNumber } from "src/store/slices/searchSlice";
 import { SearchIndex } from "src/types/types";
@@ -9,6 +9,7 @@ interface SearchPaginationProps {
   index: SearchIndex;
 }
 
+/* SearchPagination is the page buttons at the bottom of the search results */
 const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const coursePageNumber = useAppSelector(state => state.search.courses.pageNumber);
@@ -24,13 +25,14 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   let numPages = 0;
   let active = 0;
   if (index === 'courses') {
-    numPages = Math.ceil(courseData.names.length / PAGE_SIZE);
+    numPages = Math.ceil(courseData.names.length / NUM_RESULTS_PER_PAGE );
     active = coursePageNumber;
   } else if (index === 'professors') {
-    numPages = Math.ceil(professorData.names.length / PAGE_SIZE);
+    numPages = Math.ceil(professorData.names.length / NUM_RESULTS_PER_PAGE );
     active = professorPageNumber;
   }
 
+  // only show 5 page numbers at a time
   let items = [];
   let startPageNumber = Math.max(0, active - 2);
   let endPageNumber = Math.min(numPages, startPageNumber + 5); // exclusive
