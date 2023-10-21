@@ -182,3 +182,25 @@ $avatarWidth: 65px;
     height: 8vh;
   }
 }
+
+.sorting-menu {
+  margin-left: 0;
+  margin-right: 0;
+
+  > * {
+    margin-bottom: 15px;
+  }
+
+  .dropdown {
+    margin-right: 1vh;
+  }
+
+  #checkbox {
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-bottom: 0.25rem;
+    }
+  }
+}

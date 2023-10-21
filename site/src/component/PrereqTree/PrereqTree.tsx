@@ -154,17 +154,20 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
         </div>
-        <div className='prereq-text-box'
-          style={{
-            padding: '1em',
-            marginTop: '2em',
-          }}
-        >
-          <p>
-            {props.prerequisite_text !== '' && <b>Prerequisite: </b>}
-            {props.prerequisite_text}
-          </p>
-        </div>
+        {props.prerequisite_text !== '' && (
+          <div
+            className='prereq-text-box'
+            style={{
+              padding: '1em',
+              marginTop: '2em',
+            }}
+          >
+            <p>
+              <b>Prerequisite: </b>
+              {props.prerequisite_text}
+            </p>
+          </div>
+        )}
       </Grid.Row>
     </div>
   );
