@@ -14,6 +14,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
   const dispatch = useAppDispatch();
   const [name, setName] = useState(placeholderName);
   const [year, setYear] = useState(placeholderYear);
+  const [validated, setValidated] = useState(false);
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
@@ -35,12 +36,13 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
       <Overlay show={show} target={target} placement="top">
         <Popover id=''>
           <Popover.Content>
-            <Form>
+            <Form noValidate validated={validated}>
               <Form.Group>
                 <Form.Label className="add-year-form-label">
                   Name
                 </Form.Label>
                 <Form.Control
+                  required
                   type="text"
                   name="name"
                   value={name}
@@ -61,6 +63,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
                   Start Year
                 </Form.Label>
                 <Form.Control
+                  required
                   type="number"
                   name="year"
                   value={year}
@@ -81,6 +84,12 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
               <Button
                 className="popup-btn"
                 onClick={() => {
+                  if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
+                    setValidated(true);
+                    return;
+                  }
+
+                  setValidated(false);
                   setShow(!show);
                   dispatch(addYear(
                     {

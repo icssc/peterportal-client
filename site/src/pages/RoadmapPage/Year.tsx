@@ -93,7 +93,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               ) : (
                 <CaretRightFill className="caret-icon" />
               )}
-              <span id="year-number">{data.name} </span>
+              {data.name ? <span id="year-number">{data.name} </span> : <span id="year-number">Year {yearIndex + 1} </span>}
               <span id="year-range">
                 ({data.startYear} - {data.startYear + 1})
               </span>
@@ -190,6 +190,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                     Start Year
                   </Form.Label>
                   <Form.Control
+                    required
                     type="number"
                     name="year"
                     value={placeholderYear}
@@ -210,7 +211,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button
                   className="edit-year-popup-btn"
                   onClick={() => {
-                    if (placeholderName === '') {
+                    if (placeholderName === '' || placeholderYear < 1000 || placeholderYear > 9999 || Number.isNaN(placeholderYear)) {
                       setValidated(true);
                       return;
                     }
