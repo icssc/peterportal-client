@@ -9,11 +9,14 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers, addYear } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from "../../hooks/firstRenderer";
 import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, BatchCourseData, MongoRoadmap } from '../../types/types';
-import { searchAPIResults } from '../../helpers/util';
+import { searchAPIResults, getTimestamp } from '../../helpers/util';
+import { Modal, Button } from "react-bootstrap";
+
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
   const [cookies, setCookie] = useCookies(['user']);
+  const [isShow, setIsShow] = useState(false);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
   const transfers = useAppSelector(state => state.roadmap.transfers);
@@ -77,7 +80,12 @@ const Planner: FC = () => {
   const loadRoadmap = async () => {
     console.log('Loading Roadmaps...');
     let roadmap: SavedRoadmap = null!;
+    let localMap: SavedRoadmap = null!;
     let localRoadmap = localStorage.getItem('roadmap');
+    // check local storage
+    if (localRoadmap) {
+      localMap = JSON.parse(localRoadmap);
+    }
     // if logged in
     if (cookies.hasOwnProperty('user')) {
       // get data from account
@@ -85,26 +93,48 @@ const Planner: FC = () => {
       // if a roadmap is found
       if (!request.data.hasOwnProperty('error')) {
         roadmap = request.data.roadmap;
+        console.log("server roadmap");
       }
     }
-    // check local storage next
-    if (!roadmap && localRoadmap) {
-      roadmap = JSON.parse(localRoadmap);
-    }
-    // no saved planner
-    if (!roadmap) {
+    else if (!localRoadmap) {
+      // no saved local planner
+      console.log("There is no saved local roadmap");
       return;
+    }
+
+    if (roadmap && roadmap.timestamp && localMap) {
+      // if retrieved roadmap does not contain timestamp
+      // roadmap = roadmap.timestamp > localMap.timestamp ? roadmap : localMap;
+      setIsShow(true);
     }
 
     // expand planner and set the state
     let planner = await expandPlanner(roadmap.planner);
     dispatch(setYearPlans(planner));
     dispatch(setTransfers(roadmap.transfers));
+    console.log("finish loading roadmap");
   }
+  
+  const handleLoadLocal = async () => {
+    console.log('Loading Local Roadmaps...');
+    let roadmap: SavedRoadmap = null!;
+    let roadmapItem = localStorage.getItem('roadmap');
+    if (roadmapItem) {
+      roadmap = JSON.parse(roadmapItem);
+    }
+
+    // expand planner and set the state
+    let planner = await expandPlanner(roadmap.planner);
+    dispatch(setYearPlans(planner));
+    dispatch(setTransfers(roadmap.transfers));
+    setIsShow(false);
+    console.log("finish loading roadmap");
+  };
 
   const saveRoadmap = () => {
     console.log('Saving Roadmaps...');
     let roadmap: SavedRoadmap = {
+      timestamp: getTimestamp(),
       planner: collapsePlanner(data),
       transfers: transfers
     };
@@ -127,6 +157,7 @@ const Planner: FC = () => {
       alert('Roadmap saved locally! Login to save it to your account.');
     }
   }
+
 
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
@@ -247,8 +278,7 @@ const Planner: FC = () => {
       }
     }
   }
-  //TODO: Support for Multiple Planner future implementation
-  //  - Default year only added when a new planner is created
+  
 
   const initializePlanner = () => {
     if (data.length == 0) {
@@ -276,7 +306,19 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} missingPrerequisites={missingPrerequisites} />
+      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} loadRoadmap={handleLoadLocal} missingPrerequisites={missingPrerequisites} />
+      <Modal show={isShow} onHide={() => { setIsShow(false) }}>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>Detect local roadmap in the storage. Do you want to load local roadmap instead?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setIsShow(false)}>
+            No
+          </Button>
+          <Button variant="primary" onClick={handleLoadLocal}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </ Modal>
       <section className="years">
         {initializePlanner()}
       </section>

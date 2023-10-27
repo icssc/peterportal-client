@@ -126,3 +126,8 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
 
   return professor;
 }
+
+// timestamp helper
+export const getTimestamp = () => {
+  return new Date().getTime();
+}
