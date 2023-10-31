@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import './HitItem.scss';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge'
 import { isMobile } from 'react-device-detect';
@@ -15,7 +15,7 @@ interface CourseHitItemProps extends CourseGQLData {
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const activeCourse = useAppSelector(state => state.popup.course);
 
   // data to be displayed in pills
@@ -28,7 +28,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     // if click on a course that is already in popup
     // or if on mobile
     if (activeCourse && props.id == activeCourse.id || isMobile) {
-      history.push(`/course/${props.id}`)
+      navigate(`/course/${props.id}`)
     }
   }
 

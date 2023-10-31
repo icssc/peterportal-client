@@ -2,7 +2,6 @@ import React, { FC, useState } from "react";
 import "./Header.scss";
 import { Button, ButtonGroup, Popover, Overlay } from "react-bootstrap";
 import { ArrowLeftRight, Save, Plus, List, Trash } from "react-bootstrap-icons";
-import html2canvas from 'html2canvas';
 import { setShowTransfer, setShowSearch, clearPlanner } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Transfer from './Transfer';

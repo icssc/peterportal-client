@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
 import { Divider } from 'semantic-ui-react';
@@ -17,22 +17,23 @@ import { SearchType, SearchIndex, CourseGQLData } from '../../types/types';
 import { getCourseTags, searchAPIResult } from '../../helpers/util';
 import './CoursePage.scss';
 
-const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
+const CoursePage: FC = () => {
+    const { id } = useParams<{ id: string }>();
     const dispatch = useAppDispatch();
     const courseGQLData = useAppSelector(state => state.popup.course);
     const [error, setError] = useState('');
 
     useEffect(() => {
         // make a gql query if directly landed on this page
-        if (courseGQLData == null || courseGQLData.id != props.match.params.id) {
-            searchAPIResult('course', props.match.params.id)
+        if (id !== undefined && (courseGQLData == null || courseGQLData.id != id)) {
+            searchAPIResult('course', id)
                 .then(course => {
                     console.log("COURSE", course)
                     if (course) {
                         dispatch(setCourse(course as CourseGQLData))
                     }
                     else {
-                        setError(`Course ${props.match.params.id} does not exist!`);
+                        setError(`Course ${id} does not exist!`);
                     }
                 })
         }
