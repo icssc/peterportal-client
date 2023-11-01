@@ -29,6 +29,7 @@ Features include:
 * MongoDB
 * GraphQL
 * TypeScript
+* Vite
 
 ## First time setup
 ### Committee Members
@@ -88,7 +89,7 @@ ADMIN_EMAILS=["<your email>"]
 ## Running the project locally (after setup)
 1. Open two terminal windows and `cd` into the directory of your repo in each of them.
 
-2. In the first terminal window, enter the client directory with `cd site`. Then run the React development server using `npm start`. Ensure the server is running on port 3000 by default.
+2. In the first terminal window, enter the client directory with `cd site`. Then run the Vite development server using `npm run dev`. Ensure the server is running on port 3000 by default.
 
 3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 5000 by default.
 

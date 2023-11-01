@@ -27,6 +27,7 @@
     "websoc-fuzzy-search": "^0.8.0-rc.1"
   },
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
