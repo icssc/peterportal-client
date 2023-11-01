@@ -81,6 +81,7 @@ export interface ReviewData {
     attendance: boolean;
     tags: string[];
     verified: boolean;
+    error?: string;
 }
 
 export interface ReportData {
@@ -143,14 +144,6 @@ export interface WeekData {
     display: string;
 }
 
-export interface GenericObject {
-    /**
-     * Can have any key string and any value type
-     */
-    [key: string]: any;
-}
-
-
 /**
  * Peter's Roadmaps Type Definitions
  */
@@ -197,7 +190,7 @@ export interface CourseIdentifier extends QuarterIdentifier {
 export interface InvalidCourseData {
     location: CourseIdentifier;
     required: string[];
-};
+}
 
 // Specify name of transfer course and how many units its worth
 export interface TransferData {

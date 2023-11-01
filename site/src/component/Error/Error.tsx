@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, FC } from 'react';
+import { FC } from 'react';
 import './Error.scss';
 
 interface ErrorProps {

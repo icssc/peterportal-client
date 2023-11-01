@@ -37,7 +37,7 @@ export default class Pie extends React.Component<PieProps> {
     this.averageGrade = '';
     this.averagePNP = '';
 
-    var sum = 0
+    let sum = 0
 
     this.props.gradeData.forEach(data => {
       if ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL')
@@ -70,7 +70,7 @@ export default class Pie extends React.Component<PieProps> {
 
     if(this.totalPNP == this.total)
     {
-      let data: Slice[] = [
+      const data: Slice[] = [
         {
           'id': 'P',
           'label': 'P',
@@ -88,7 +88,7 @@ export default class Pie extends React.Component<PieProps> {
       return data;
     }
 
-    let data: Slice[] = [
+    const data: Slice[] = [
       {
         'id': 'A',
         'label': 'A',
@@ -137,7 +137,8 @@ export default class Pie extends React.Component<PieProps> {
   }
 
   gpaToGradeConverter(gpa: string) {
-    for (var i = 0; Number(gpa) < gpaScale[i]; i++) { }
+    let i;
+    for (i = 0; Number(gpa) < gpaScale[i]; i++);
     this.averageGrade = gradeScale[i];
   }
 

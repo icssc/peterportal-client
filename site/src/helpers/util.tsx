@@ -3,9 +3,9 @@ import { SearchIndex, CourseGQLData, CourseGQLResponse, ProfessorGQLData, Profes
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
-  let tags: string[] = [];
+  const tags: string[] = [];
   // course level
-  let courseLevel = course.course_level;
+  const courseLevel = course.course_level;
   if (courseLevel) {
     tags.push(`${courseLevel.substring(0, courseLevel.indexOf('('))}`);
   }
@@ -14,7 +14,7 @@ export function getCourseTags(course: CourseGQLData) {
     tags.push(`${ge.substring(0, ge.indexOf(':'))}`);
   })
   // units
-  let units = course.units[0]
+  const units = course.units[0]
   tags.push(`${units} unit${units != 1 ? 's' : ''}`);
   return tags;
 }
@@ -32,7 +32,7 @@ export function searchAPIResult(type: SearchType, name: string) {
     searchAPIResults(index, [name])
       .then(results => {
         if (Object.keys(results).length > 0) {
-          let key = Object.keys(results)[0];
+          const key = Object.keys(results)[0];
           res(results[key]);
         }
         else {
@@ -48,8 +48,8 @@ export function searchAPIResults(index: SearchIndex, names: string[]) {
     // Get results from backend search
     axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/api/${index}/api/batch`, { [index]: names })
       .then(searchResponse => {
-        let data = searchResponse.data;
-        let transformed: BatchCourseData | BatchProfessorData = {};
+        const data = searchResponse.data;
+        const transformed: BatchCourseData | BatchProfessorData = {};
         Object.keys(data).forEach(id => {
           // filter out null reponses
           if (data[id]) {
@@ -82,9 +82,9 @@ export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | P
 }
 
 function transformCourseGQL(data: CourseGQLResponse) {
-  let instructorHistoryLookup: ProfessorLookup = {};
-  let prerequisiteListLookup: CourseLookup = {};
-  let prerequisiteForLookup: CourseLookup = {};
+  const instructorHistoryLookup: ProfessorLookup = {};
+  const prerequisiteListLookup: CourseLookup = {};
+  const prerequisiteForLookup: CourseLookup = {};
   // maps professor's ucinetid to professor basic details
   data.instructor_history.forEach(professor => {
     if (professor) {
@@ -104,7 +104,7 @@ function transformCourseGQL(data: CourseGQLResponse) {
     }
   })
   // create copy to override fields with lookups
-  let course = { ...data } as unknown as CourseGQLData;
+  const course = { ...data } as unknown as CourseGQLData;
   course.instructor_history = instructorHistoryLookup;
   course.prerequisite_list = prerequisiteListLookup;
   course.prerequisite_for = prerequisiteForLookup;
@@ -113,7 +113,7 @@ function transformCourseGQL(data: CourseGQLResponse) {
 }
 
 function transformProfessorGQL(data: ProfessorGQLResponse) {
-  let courseHistoryLookup: CourseLookup = {};
+  const courseHistoryLookup: CourseLookup = {};
   // maps course's id to course basic details
   data.course_history.forEach(course => {
     if (course) {
@@ -121,7 +121,7 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
     }
   })
   // create copy to override fields with lookups
-  let professor = { ...data } as unknown as ProfessorGQLData;
+  const professor = { ...data } as unknown as ProfessorGQLData;
   professor.course_history = courseHistoryLookup;
 
   return professor;

@@ -67,18 +67,18 @@ export const roadmapSlice = createSlice({
     reducers: {
         // Use the PayloadAction type to declare the contents of `action.payload`
         moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
-            let toYear = action.payload.to.yearIndex;
-            let toQuarter = action.payload.to.quarterIndex;
-            let toCourse = action.payload.to.courseIndex;
-            let fromYear = action.payload.from.yearIndex;
-            let fromQuarter = action.payload.from.quarterIndex;
-            let fromCourse = action.payload.from.courseIndex;
+            const toYear = action.payload.to.yearIndex;
+            const toQuarter = action.payload.to.quarterIndex;
+            const toCourse = action.payload.to.courseIndex;
+            const fromYear = action.payload.from.yearIndex;
+            const fromQuarter = action.payload.from.quarterIndex;
+            const fromCourse = action.payload.from.courseIndex;
 
             let removed: CourseGQLData = null!;
             // not from the searchbar
             if (fromYear != -1) {
                 // remove course from list
-                let courseList = state.yearPlans[fromYear].quarters[fromQuarter].courses;
+                const courseList = state.yearPlans[fromYear].quarters[fromQuarter].courses;
                 [removed] = courseList.splice(fromCourse, 1);
             }
             // from the searchbar
@@ -88,16 +88,16 @@ export const roadmapSlice = createSlice({
             }
 
             // add course to list
-            let courseList = state.yearPlans[toYear].quarters[toQuarter].courses;
+            const courseList = state.yearPlans[toYear].quarters[toQuarter].courses;
             courseList.splice(toCourse, 0, removed!);
         },
         deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
             state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(action.payload.courseIndex, 1);
         },
         addQuarter: (state, action: PayloadAction<AddQuarterPayload>) => {
-            let startYear = action.payload.startYear;
-            let currentYears = state.yearPlans.map(e => e.startYear);
-            let newQuarter = action.payload.quarterData;
+            const startYear = action.payload.startYear;
+            const currentYears = state.yearPlans.map(e => e.startYear);
+            const newQuarter = action.payload.quarterData;
 
             // if year doesn't exist
             if (!currentYears.includes(startYear)) {
@@ -105,8 +105,8 @@ export const roadmapSlice = createSlice({
                 return;
             }
 
-            let yearIndex: number = currentYears.indexOf(startYear);
-            let currentQuarters = state.yearPlans[yearIndex].quarters.map(e => e.name);
+            const yearIndex: number = currentYears.indexOf(startYear);
+            const currentQuarters = state.yearPlans[yearIndex].quarters.map(e => e.name);
 
             // if duplicate quarter
             if (currentQuarters.includes(newQuarter.name)) {
@@ -136,8 +136,8 @@ export const roadmapSlice = createSlice({
             state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses = [];
         },
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
-            let currentYears = state.yearPlans.map(e => e.startYear);
-            let newYear = action.payload.yearData.startYear;
+            const currentYears = state.yearPlans.map(e => e.startYear);
+            const newYear = action.payload.yearData.startYear;
 
             // if duplicate year
             if (currentYears.includes(newYear)) {
@@ -156,9 +156,9 @@ export const roadmapSlice = createSlice({
             state.yearPlans.splice(index, 0, action.payload.yearData);
         },
         editYear: (state, action: PayloadAction<EditYearPayload>) => {
-            let currentYears = state.yearPlans.map(e => e.startYear);
-            let newYear = action.payload.startYear;
-            let yearIndex = action.payload.index;
+            const currentYears = state.yearPlans.map(e => e.startYear);
+            const newYear = action.payload.startYear;
+            const yearIndex = action.payload.index;
 
             // if duplicate year
             if (currentYears.includes(newYear)) {

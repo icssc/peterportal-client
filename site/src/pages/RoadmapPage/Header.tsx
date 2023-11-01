@@ -16,7 +16,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingPrerequisites }) => {
   const dispatch = useAppDispatch();
-  const [target, setTarget] = useState<any>(null!);
+  const [target, setTarget] = useState<HTMLElement | null>(null);
   const [showMenu, setShowMenu] = useState(false);
 
   const buttons = <>
@@ -43,7 +43,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
 
   const onMenuClick = (event: React.MouseEvent) => {
     setShowMenu(!showMenu);
-    setTarget(event.target);
+    setTarget(event.target as HTMLElement);
   };
 
   return (

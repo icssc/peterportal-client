@@ -35,7 +35,7 @@ function useProfessorGQL(professorID: string | undefined) {
         if (!professorID || !data?.instructor) {
             return { loading, error, professor: null };
         }
-        let courseHistoryLookup: CourseLookup = {};
+        const courseHistoryLookup: CourseLookup = {};
         // maps course's id to course basic details
         data!.instructor.course_history.forEach(course => {
             if (course) {
@@ -43,7 +43,7 @@ function useProfessorGQL(professorID: string | undefined) {
             }
         })
         // create copy to override fields with lookups
-        let professor = { ...data!.instructor } as unknown as ProfessorGQLData;
+        const professor = { ...data!.instructor } as unknown as ProfessorGQLData;
         professor.course_history = courseHistoryLookup;
         return { loading, error, professor: professor };
     }

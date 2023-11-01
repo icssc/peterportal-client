@@ -1,5 +1,5 @@
 
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
@@ -34,11 +34,10 @@ const Schedule: FC<ScheduleProps> = (props) => {
     const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
         let url = '';
         if (props.courseID) {
-            let department;
-            let number;
-            const str = props.courseID.split(' ');
-            department = str.slice(0, str.length - 1).join(' ');
-            number = str[str.length - 1];
+            const courseIDSplit = props.courseID.split(' ');
+            const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
+            const number = courseIDSplit[courseIDSplit.length - 1];
+            
             url = `/api/schedule/api/${currentQuarter}/${department}/${number}`;
         }
         else if (props.professorID) {
@@ -47,7 +46,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
         const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);
         try {
-            let data: ScheduleData = {};
+            const data: ScheduleData = {};
             apiResponse.data.schools.forEach(school => {
                 school.departments.forEach(department => {
                     department.courses.forEach(course => {
@@ -69,19 +68,16 @@ const Schedule: FC<ScheduleProps> = (props) => {
         //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'
         if (section.status == 'OPEN') {
             return (
-                // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-open btn-status' disabled={true}> OPEN </Button>
             )
         }
         else if (section.status == 'WAITL') {
             return (
-                // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-waitl btn-status' disabled={true}> WAITLIST </Button>
             )
         }
         else {
             return (
-                // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-full btn-status' disabled={true}> FULL </Button>
             )
         }
@@ -91,7 +87,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     const renderProgressBar = (section: Section) => {
         //This function returns the progress Bar for the enrollment into the class.
-        let percentage = Number(section.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(section.maxCapacity);
+        const percentage = Number(section.numCurrentlyEnrolled.totalEnrolled) * 100 / Number(section.maxCapacity);
         if (section.status == 'OPEN') {
             return (
                 <div className='progress-bar'>
@@ -150,7 +146,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
     if (!scheduleData) {
         return <p> Loading Schedule..</p>;
     } else {
-        let sectionElements: JSX.Element[] = [];
+        const sectionElements: JSX.Element[] = [];
         Object.keys(scheduleData).forEach(courseID => {
             scheduleData[courseID].forEach((section, i) => {
                 sectionElements.push(renderData(courseID, section, i))

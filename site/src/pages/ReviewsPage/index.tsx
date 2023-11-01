@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import UserReviews from '../../component/UserReviews/UserReviews';
 import Error from '../../component/Error/Error';
 import './ReviewsPage.scss';
@@ -8,12 +8,12 @@ import { useCookies } from "react-cookie";
 const ReviewsPage: FC = () => {
     const location = useLocation();
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [cookies, setCookie] = useCookies(['user']);
+    const [cookies] = useCookies(['user']);
     const [authorized, setAuthorized] = useState<boolean>(false);
 
     // user has to be logged in to view this page
     const checkLoggedIn = async () => {
-        const loggedIn: boolean = cookies.hasOwnProperty('user');
+        const loggedIn = cookies.user !== undefined;
         setAuthorized(loggedIn);
         setLoaded(true);
     }

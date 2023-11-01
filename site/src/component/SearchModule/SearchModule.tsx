@@ -37,7 +37,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         searchResults('professors', professorSearch.pageNumber, professorSearch.names);
     }, [professorSearch.names, professorSearch.pageNumber])
 
-    let searchNames = (query: string) => {
+    const searchNames = (query: string) => {
         try {
             /*
                 TODO: Search optimization
@@ -45,7 +45,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
                 - Goal is to have only one query request pending
                 - Use setTimeout/clearTimeout to keep track of pending query request
             */
-            let nameResults = wfs({
+            const nameResults = wfs({
                 query: query,
                 numResults: PAGE_SIZE * 5,
                 resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
@@ -67,27 +67,27 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         }
     }
 
-    let searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
+    const searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
         // Get the subset of names based on the page
-        let pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
-        let results = await searchAPIResults(index, pageNames);
+        const pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
+        const results = await searchAPIResults(index, pageNames);
         dispatch(setResults({ index, results: Object.values(results) }));
     }
 
-    let searchNamesAfterTimeout = (query: string) => {
+    const searchNamesAfterTimeout = (query: string) => {
         if (pendingRequest) {
             clearTimeout(pendingRequest);
         }
-        let timeout = setTimeout(() => {
+        const timeout = setTimeout(() => {
             searchNames(query);
             pendingRequest = null;
         }, SEARCH_TIMEOUT_MS);
         pendingRequest = timeout;
     }
 
-    let coursePlaceholder = 'Search a course number or department';
-    let professorPlaceholder = 'Search a professor';
-    let placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
+    const coursePlaceholder = 'Search a course number or department';
+    const professorPlaceholder = 'Search a professor';
+    const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
     return <div className='search-module'>
         <Form.Group className="mb-3">

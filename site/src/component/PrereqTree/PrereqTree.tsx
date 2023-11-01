@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
 
@@ -33,14 +33,14 @@ interface TreeProps {
 }
 
 const Tree: FC<TreeProps> = (props) => {
-  let prerequisite = props.prerequisiteJSON;
-  let isValueNode = typeof prerequisite === 'string';
+  const prerequisite = props.prerequisiteJSON;
+  const isValueNode = typeof prerequisite === 'string';
 
   // if value is a string, render leaf node
   if (isValueNode) {
-    let id = (prerequisite as string).replace(/\s+/g, '');
+    const id = (prerequisite as string).replace(/\s+/g, '');
     let content = prerequisite;
-    if (props.prerequisiteNames.hasOwnProperty(id)) {
+    if (props.prerequisiteNames[id] !== undefined) {
       content = props.prerequisiteNames[id].title;
     }
     return (
@@ -56,7 +56,7 @@ const Tree: FC<TreeProps> = (props) => {
         <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
           <span style={{ margin: 'auto' }}>
             <div className='prereq-branch'>
-              {prerequisite.hasOwnProperty('OR') ? 'one of' : 'all of'}
+              {prerequisite['OR'] !== undefined ? 'one of' : 'all of'}
             </div>
           </span>
           <div className='prereq-clump'>
@@ -78,8 +78,8 @@ interface PrereqProps extends CourseGQLData {
 }
 
 const PrereqTree: FC<PrereqProps> = (props) => {
-  let hasPrereqs = props.prerequisite_tree !== '';
-  let hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
+  const hasPrereqs = props.prerequisite_tree !== '';
+  const hasDependencies = Object.keys(props.prerequisite_for).length !== 0;
 
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)

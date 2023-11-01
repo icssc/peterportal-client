@@ -1,12 +1,9 @@
-import React, { useState, useEffect, Component, FC } from 'react';
-import { Icon, Popup, Grid, Label, Header } from 'semantic-ui-react';
+import { useState, useEffect, FC } from 'react';
+import { Icon, Popup, Grid, Label } from 'semantic-ui-react';
 import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { List } from 'react-bootstrap-icons';
-import { ReactComponent as CogIcon } from '../../asset/cog.svg';
-import { ReactComponent as ArrowIcon } from '../../asset/arrow.svg';
-import { CSSTransition } from 'react-transition-group';
 import { WeekData } from '../../types/types';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
@@ -15,15 +12,15 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 
-const AppHeader: FC<{}> = props => {
+const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
   const location = useLocation();
   const [week, setWeek] = useState('');
 
-  let splitLocation = location.pathname.split('/');
-  let coursesActive = splitLocation[1] === '' || (splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses' || splitLocation.length > 1 && splitLocation[1] == 'course');
-  let professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors' || splitLocation.length > 1 && splitLocation[1] == 'professor';
+  const splitLocation = location.pathname.split('/');
+  const coursesActive = splitLocation[1] === '' || (splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses' || splitLocation.length > 1 && splitLocation[1] == 'course');
+  const professorsActive = splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors' || splitLocation.length > 1 && splitLocation[1] == 'professor';
 
   useEffect(() => {
     // Get the current week data
@@ -40,7 +37,7 @@ const AppHeader: FC<{}> = props => {
       });
   }, [])
 
-  let toggleMenu = () => {
+  const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   }
 

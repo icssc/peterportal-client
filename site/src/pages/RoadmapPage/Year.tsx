@@ -1,6 +1,6 @@
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState } from "react";
 import "./Year.scss";
-import { Button, Form, Popover, Overlay, Dropdown, DropdownButton } from "react-bootstrap";
+import { Button, Form, Popover, Overlay } from "react-bootstrap";
 import {
   CaretRightFill,
   CaretDownFill,
@@ -23,9 +23,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [show, setShow] = useState(false);
   const [showAddQuarter, setShowAddQuarter] = useState(false);
   const [showEditYear, setShowEditYear] = useState(false);
-  const [target, setTarget] = useState<any>(null!);
-  const [addQuarterTarget, setAddQuarterTarget] = useState<any>(null!);
-  const [editYearTarget, setEditYearTarget] = useState<any>(null!);
+  const [threeDotMenuTarget, setThreeDotMenuTarget] = useState<HTMLElement | null>(null);
+  const [addQuarterTarget, setAddQuarterTarget] = useState<HTMLElement | null>(null);
+  const [editYearTarget, setEditYearTarget] = useState<HTMLElement | null>(null!);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
 
   const handleEditClick = (event: React.MouseEvent) => {
@@ -38,14 +38,14 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       setShow(!show);
     } else {
       setShow(!show);
-      setTarget(event.target);
+      setThreeDotMenuTarget(event.target as HTMLElement);
     }
   };
 
   const handleShowAddQuarterClick = (event: React.MouseEvent) => {
     setShowEditYear(false); // hide any other currently displayed menu bar options
     setShowAddQuarter(!showAddQuarter);
-    setAddQuarterTarget(event.target);
+    setAddQuarterTarget(event.target as HTMLElement);
   }
 
   const handleAddQuarterClick = (year: number, quarter: string) => {
@@ -56,7 +56,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     setShowAddQuarter(false);           // hide any other currently displayed menu bar options
     setPlaceholderYear(data.startYear); // set default year to current year
     setShowEditYear(!showEditYear);
-    setEditYearTarget(event.target);
+    setEditYearTarget(event.target as HTMLElement);
   }
 
   const calculateYearStats = () => {
@@ -71,7 +71,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     return { unitCount, courseCount };
   };
 
-  let { unitCount, courseCount } = calculateYearStats();
+  const { unitCount, courseCount } = calculateYearStats();
 
   return (
     <div className="year">
@@ -104,7 +104,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           </span>
         </Button>
         <ThreeDots onClick={handleEditClick} className="edit-btn" />
-        <Overlay show={show} target={target} placement="bottom">
+        <Overlay show={show} target={threeDotMenuTarget} placement="bottom">
           <Popover id={`year-menu-${yearIndex}`}>
             <Popover.Content className="year-settings-popup">
               <div>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 import Badge from 'react-bootstrap/Badge';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
-import { CourseGQLData, ProfessorGQLData, SearchType, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 
@@ -19,7 +19,7 @@ interface FeaturedInfoData {
 }
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
-    if (!averageReviews.hasOwnProperty(reviewKey)) {
+    if (averageReviews[reviewKey] === undefined) {
         return <></>
     }
     return <div className='side-info-feature'>
@@ -89,8 +89,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     const [selectedReview, setSelectedReview] = useState('');
 
     useEffect(() => {
-        let newAverageReviews: { [key: string]: AverageReview } = {};
-        let allReviews = {
+        const newAverageReviews: { [key: string]: AverageReview } = {};
+        const allReviews = {
             count: 0,
             rating: 0,
             difficulty: 0,
@@ -108,7 +108,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             }
 
             // add review entry
-            if (!newAverageReviews.hasOwnProperty(key)) {
+            if (newAverageReviews[key] === undefined) {
                 newAverageReviews[key] = {
                     count: 0,
                     rating: 0,
@@ -127,7 +127,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         })
 
         // find highest and lowest reviews
-        let sortedKeys = Object.keys(newAverageReviews);
+        const sortedKeys = Object.keys(newAverageReviews);
         sortedKeys.sort((a, b) => (newAverageReviews[a].rating / newAverageReviews[a].count - newAverageReviews[b].rating / newAverageReviews[b].count));
 
         // set the all token to all reviews
@@ -143,7 +143,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     }, [reviews])
 
     // sort by number of reviews for the dropdown
-    let sortedReviews = Object.keys(averageReviews);
+    const sortedReviews = Object.keys(averageReviews);
     sortedReviews.sort((a, b) => averageReviews[b].count - averageReviews[a].count);
 
     return (
@@ -234,11 +234,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             <div className='side-info-featured'>
                 {highestReview && <FeaturedInfo searchType={props.searchType} featureType='Highest'
                     averageReviews={averageReviews} reviewKey={highestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructor_history[highestReview].shortened_name! :
+                    displayName={props.searchType == 'course' ? (props.course?.instructor_history[highestReview].shortened_name ?? 'undefined') :
                         (props.professor?.course_history[highestReview] ? props.professor?.course_history[highestReview].department + ' ' + props.professor?.course_history[highestReview].number : highestReview)} />}
                 {lowestReview && <FeaturedInfo searchType={props.searchType} featureType='Lowest'
                     averageReviews={averageReviews} reviewKey={lowestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructor_history[lowestReview].shortened_name! :
+                    displayName={props.searchType == 'course' ? props.course?.instructor_history[lowestReview].shortened_name ?? 'undefined' :
                         (props.professor?.course_history[lowestReview] ? props.professor?.course_history[lowestReview].department + ' ' + props.professor?.course_history[lowestReview].number : lowestReview)} />}
             </div>
         </div>

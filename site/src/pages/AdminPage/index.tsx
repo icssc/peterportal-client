@@ -1,13 +1,10 @@
 import axios, { AxiosResponse } from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Reports from "../../component/Report/Reports";
 import Verify from '../../component/Verify/Verify';
 import Error from '../../component/Error/Error';
 import './AdminPage.scss';
 import { useLocation } from "react-router-dom";
-
-interface AdminPageProps {
-}
 
 const AdminPage: FC = () => {
     const location = useLocation();

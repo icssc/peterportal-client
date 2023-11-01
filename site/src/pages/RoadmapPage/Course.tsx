@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import "./Course.scss";
 import { Button } from "react-bootstrap";
 import { InfoCircle, ExclamationTriangle, Trash } from "react-bootstrap-icons";
@@ -13,7 +13,7 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses, onDelete } = props;
+  const { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>

@@ -1,7 +1,6 @@
-import React, { FC } from "react";
 import "./SearchSidebar.scss";
 import { Droppable } from "react-beautiful-dnd";
-import { isMobile, isBrowser } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import CloseButton from 'react-bootstrap/CloseButton';
 import SearchModule from '../../component/SearchModule/SearchModule';

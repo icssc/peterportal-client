@@ -62,9 +62,9 @@ function useCourseGQL(courseID: string | undefined) {
         if (!courseID || !data?.course) {
             return { loading, error, course: null };
         }
-        let instructorHistoryLookup: ProfessorLookup = {};
-        let prerequisiteListLookup: CourseLookup = {};
-        let prerequisiteForLookup: CourseLookup = {};
+        const instructorHistoryLookup: ProfessorLookup = {};
+        const prerequisiteListLookup: CourseLookup = {};
+        const prerequisiteForLookup: CourseLookup = {};
         // maps professor's ucinetid to professor basic details
         data!.course.instructor_history.forEach(professor => {
             if (professor) {
@@ -84,7 +84,7 @@ function useCourseGQL(courseID: string | undefined) {
             }
         })
         // create copy to override fields with lookups
-        let course = { ...data!.course } as unknown as CourseGQLData;
+        const course = { ...data!.course } as unknown as CourseGQLData;
         course.instructor_history = instructorHistoryLookup;
         course.prerequisite_list = prerequisiteListLookup;
         course.prerequisite_for = prerequisiteForLookup;

@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
@@ -13,7 +13,7 @@ import Error from '../../component/Error/Error';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { SearchType, SearchIndex, CourseGQLData } from '../../types/types';
+import { CourseGQLData } from '../../types/types';
 import { getCourseTags, searchAPIResult } from '../../helpers/util';
 import './CoursePage.scss';
 

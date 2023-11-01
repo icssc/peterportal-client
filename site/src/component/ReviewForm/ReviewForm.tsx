@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, ChangeEvent, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import './ReviewForm.scss'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
@@ -54,13 +54,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [verified, setVerified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector(state => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
-    if (cookies.hasOwnProperty('user')) {
+    if (cookies.user !== undefined) {
       setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
@@ -70,7 +70,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     // upon opening this form
     if (showForm) {
       // if not logged in, close the form
-      if (!cookies.hasOwnProperty('user')) {
+      if (cookies.user === undefined) {
         alert('You must be logged in to add a review!')
         props.closeForm();
       }
@@ -79,7 +79,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/api/reviews', review);
-    if (res.data.hasOwnProperty('error')) {
+    if (res.data.error !== undefined) {
       alert('You must be logged in to add a review!');
     }
     else {
@@ -143,14 +143,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const selectTag = (tag: string) => {
     // remove tag
     if (selectedTags.includes(tag)) {
-      let newSelectedTags = [...selectedTags];
+      const newSelectedTags = [...selectedTags];
       newSelectedTags.splice(newSelectedTags.indexOf(tag), 1);
       setSelectedTags(newSelectedTags);
     }
     // add tag if not over limit
     else {
       if (selectedTags.length < 3) {
-        let newSelectedTags = [...selectedTags];
+        const newSelectedTags = [...selectedTags];
         newSelectedTags.push(tag);
         setSelectedTags(newSelectedTags);
       }
@@ -166,11 +166,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='instructor' id='instructor' required
       onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
+      {Object.keys(props.course?.instructor_history).map((ucinetid, i) => {
         const name = props.course?.instructor_history[ucinetid].shortened_name;
         return (
-          // @ts-ignore name attribute isn't supported
-          <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
+          <option key={'review-form-professor-' + i} value={name} id={ucinetid}>{name}</option>
         )
       })}
     </Form.Control>
@@ -190,11 +189,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     <Form.Control as="select" name='course' id='course' required
       onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
       <option disabled={true} selected value=''>Course</option>
-      {Object.keys(props.professor?.course_history!).map((courseID, i) => {
+      {Object.keys(props.professor?.course_history).map((courseID, i) => {
         const name = props.professor?.course_history[courseID].department + ' ' + props.professor?.course_history[courseID].number;
         return (
-          // @ts-ignore name attribute isn't supported
-          <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
+          <option key={'review-form-course-' + i} value={name} id={courseID}>{name}</option>
         )
       })}
     </Form.Control>
@@ -249,7 +247,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   <Form.Group controlId='year'>
                     <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}>
                       <option disabled={true} selected value=''>Year</option>
-                      {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year, i) => (
+                      {Array.from(new Array(10), (_, i) => new Date().getFullYear() - i).map((year, i) => (
                         <option key={i}>{year}</option>
                       ))}
                     </Form.Control>
@@ -329,7 +327,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <div>
                   {tags.map((tag, i) =>
                     <Badge key={tag} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) => { selectTag(tag) }}>
+                      onClick={() => { selectTag(tag) }}>
                       {tag}
                     </Badge>
                   )}

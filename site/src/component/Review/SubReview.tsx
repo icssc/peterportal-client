@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, useState, useEffect } from 'react';
+import { FC, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import './Review.scss'
 import Badge from 'react-bootstrap/Badge';
@@ -7,7 +7,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 
-import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColorRequest, VoteColor } from '../../types/types';
+import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 
 interface SubReviewProps {
@@ -20,9 +20,7 @@ interface SubReviewProps {
 
 const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
   const [score, setScore] = useState(review.score);
-  const [cookies, setCookie] = useCookies(['user']);
-  const [upvoteClassname, setUpvoteClass] = useState("upvote");
-  const [downvoteClassname, setDownvoteClass] = useState("downvote");
+  const [cookies] = useCookies(['user']);
   let upvoteClass;
   let downvoteClass;
   if(colors != undefined && colors.colors != undefined){
@@ -39,7 +37,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   }
 
   const upvote = async (e: MouseEvent) => {
-    if (!cookies.hasOwnProperty('user')) {
+    if (cookies.user === undefined) {
       alert('You must be logged in to vote.');
       return;
     }
@@ -47,7 +45,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: true
     }
-    let deltaScore = await voteReq(votes);
+    const deltaScore = await voteReq(votes);
 
     setScore(score + deltaScore );
     if(colorUpdater != undefined){
@@ -56,7 +54,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   }
 
   const downvote = async (e: MouseEvent) => {
-    if (!cookies.hasOwnProperty('user')) {
+    if (cookies.user === undefined) {
       alert('You must be logged in to vote.');
       return;
     }
@@ -64,14 +62,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: false
     }
-    let deltaScore = await voteReq(votes);
+    const deltaScore = await voteReq(votes);
     setScore(score + deltaScore );
     if(colorUpdater != undefined){
       colorUpdater();
     }  
   }
 
-  const openReportForm = (e: MouseEvent) => {
+  const openReportForm = () => {
     setReportFormOpen(true);
   }
 

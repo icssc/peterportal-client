@@ -1,19 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { ReportData } from "../../types/types";
 import ReportGroup from "./ReportGroup";
 import './Reports.scss';
 
-interface ReportsProps {
-}
-
 const Reports: FC = () => {
     const [data, setData] = useState<ReviewDisplay[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
-
-    interface AdminResponse {
-        admin: boolean
-    }
 
     interface ReviewDisplay {
         reviewID: string,
@@ -24,7 +17,7 @@ const Reports: FC = () => {
         const reports: AxiosResponse<ReportData[]> = await axios.get('/api/reports');
         const reportsData: ReportData[] = reports.data;
         
-        let reportsDisplay: ReviewDisplay[] = [];
+        const reportsDisplay: ReviewDisplay[] = [];
 
         reportsData.forEach(report => {
             let i;
@@ -54,13 +47,13 @@ const Reports: FC = () => {
     }, []);
 
     const acceptReports = async (reviewID: string) => {
-        const deleteReviewResponse = await axios.delete('/api/reviews', { data: { id: reviewID } });
-        const deleteReportsResponse = await axios.delete('/api/reports', { data: { reviewID: reviewID } });
+        await axios.delete('/api/reviews', { data: { id: reviewID } });
+        await axios.delete('/api/reports', { data: { reviewID: reviewID } });
         setData(data.filter(review => review.reviewID !== reviewID));
     }
 
     const denyReports = async (reviewID: string) => {
-        const deleteReportsResponse = await axios.delete('/api/reports', { data: { reviewID: reviewID } });
+        await axios.delete('/api/reports', { data: { reviewID: reviewID } });
         setData(data.filter(review => review.reviewID !== reviewID));
     }
 

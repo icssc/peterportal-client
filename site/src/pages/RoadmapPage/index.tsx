@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useReducer, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
@@ -6,7 +6,7 @@ import { DragDropContext, DropResult, DragUpdate } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
-import { isMobile, isBrowser } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ const RoadmapPage: FC = () => {
       if (result.destination.droppableId === 'search') {
         // removing from quarter
         if (result.source.droppableId != 'search') {
-          let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+          const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
           dispatch(deleteCourse({
             yearIndex: parseInt(yearIndex),
             quarterIndex: parseInt(quarterIndex),
@@ -31,7 +31,7 @@ const RoadmapPage: FC = () => {
         return;
       }
 
-      let movePayload = {
+      const movePayload = {
         from: {
           yearIndex: -1,
           quarterIndex: -1,
@@ -48,7 +48,7 @@ const RoadmapPage: FC = () => {
 
       // roadmap to roadmap has source
       if (result.source.droppableId != 'search') {
-        let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+        const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
         movePayload.from.yearIndex = parseInt(yearIndex);
         movePayload.from.quarterIndex = parseInt(quarterIndex);
         movePayload.from.courseIndex = result.source.index;
@@ -56,7 +56,7 @@ const RoadmapPage: FC = () => {
       // search to roadmap has no source (use activeCourse in global state)      
 
       // both have destination
-      let [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
+      const [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
       movePayload.to.yearIndex = parseInt(yearIndex);
       movePayload.to.quarterIndex = parseInt(quarterIndex);
       movePayload.to.courseIndex = result.destination.index;

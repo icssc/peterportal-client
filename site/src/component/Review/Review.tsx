@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
@@ -24,7 +24,6 @@ const Review: FC<ReviewProps> = (props) => {
     const dispatch = useAppDispatch();
     const reviewData = useAppSelector(selectReviews);
     const [voteColors, setVoteColors] = useState([]);
-    const openForm = useAppSelector(state => state.review.formOpen);
     const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
     const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
 
@@ -38,7 +37,7 @@ const Review: FC<ReviewProps> = (props) => {
             courseID?: string;
             professorID?: string;
         }
-        let params: paramsProps = {};
+        const params: paramsProps = {};
         if (props.course) params.courseID = props.course.id;
         if (props.professor) params.professorID = props.professor.ucinetid;
         axios.get(`/api/reviews`, {
@@ -46,34 +45,34 @@ const Review: FC<ReviewProps> = (props) => {
         })
             .then(async (res: AxiosResponse<ReviewData[]>) => {
                 const data = res.data.filter((review) => review !== null);
-                let reviewIDs = [];
+                const reviewIDs = [];
                 for(let i = 0;i<data.length;i++){
                     reviewIDs.push(data[i]._id);
                 }
                 const req = {
                     ids: reviewIDs as string[]
                 }
-                let colors = await getColors(req);
+                const colors = await getColors(req);
                 setVoteColors(colors);
                 dispatch(setReviews(data));
             });
     }
 
     const updateVoteColors = async () => {
-        let reviewIDs = [];
+        const reviewIDs = [];
         for(let i = 0;i<reviewData.length;i++){
             reviewIDs.push(reviewData[i]._id);
         }
         const req = {
             ids: reviewIDs as string[]
         }
-        let colors = await getColors(req);
+        const colors = await getColors(req);
         setVoteColors(colors);
     }
 
     const getU = (id: string | undefined) => {
-        let temp = voteColors as Object;
-        let v = (temp[id as keyof typeof temp]) as unknown as number;
+        const temp = voteColors as object;
+        const v = (temp[id as keyof typeof temp]) as unknown as number;
         if(v == 1){
             return {
                 colors: [true, false]
@@ -137,10 +136,10 @@ const Review: FC<ReviewProps> = (props) => {
                                 { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
                                 { text: 'Controversial', value: SortingOption.CONTROVERSIAL }]}
                             value={sortingOption}
-                            onChange={(e, s) => setSortingOption(s.value as SortingOption)}
+                            onChange={(_, s) => setSortingOption(s.value as SortingOption)}
                         />
                         <div id="checkbox">
-                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(e, props) => setShowOnlyVerifiedReviews(props.checked!)} />
+                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(_, props) => setShowOnlyVerifiedReviews(props.checked!)} />
                         </div>
                     </div>
                     {sortedReviews.map(review => <SubReview review={review} key={review._id} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}

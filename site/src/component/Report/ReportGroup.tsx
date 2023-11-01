@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Button from 'react-bootstrap/Button';
 import { ReportData, ReviewData } from "../../types/types";

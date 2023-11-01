@@ -17,7 +17,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderYear }) => {
 
   useEffect(() => { setYear(placeholderYear) }, [placeholderYear]);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = () => {
     setShow(!show);
   };
 

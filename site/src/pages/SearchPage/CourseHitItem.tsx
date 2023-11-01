@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
@@ -19,7 +19,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const activeCourse = useAppSelector(state => state.popup.course);
 
   // data to be displayed in pills
-  let pillData = getCourseTags(props);
+  const pillData = getCourseTags(props);
 
   const onClickName = () => {
     // set the popup course

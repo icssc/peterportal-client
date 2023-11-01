@@ -1,23 +1,10 @@
 import React from 'react';
-import { ResponsiveBar, BarTooltipDatum } from '@nivo/bar'
+import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar'
 
 import { GradeDistData } from '../../types/types';
+import { type Theme } from '@nivo/core';
 
-const colors = { 'A': '#60A3D1', 'B': '#81C284', 'C': '#F5D77F', 'D': '#ECAD6D', 'F': '#E8966D', 'P': '#EBEBEB', 'NP': '#EBEBEB' }
-const getColor = (bar: Bar) => colors[bar.id]
-
-interface Bar {
-  id: 'A' | 'B' | 'C' | 'D' | 'F' | 'P' | 'NP',
-  label: string,
-  color: string,
-  A?: number,
-  B?: number,
-  C?: number,
-  D?: number,
-  F?: number,
-  P?: number,
-  NP?: number,
-}
+const colors = ['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#EBEBEB', '#EBEBEB'];
 
 interface ChartProps {
   gradeData: GradeDistData;
@@ -30,7 +17,7 @@ export default class Chart extends React.Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
-  theme = {
+  theme: Theme = {
     tooltip: {
       container: {
         background: 'rgba(0,0,0,.87)',
@@ -38,6 +25,8 @@ export default class Chart extends React.Component<ChartProps> {
         fontSize: '1.2rem',
         outline: 'none',
         margin: 0,
+        padding: '0.25em 0.5em',
+        borderRadius: '2px'
       }
     }
   }
@@ -46,7 +35,7 @@ export default class Chart extends React.Component<ChartProps> {
    * Create an array of objects to feed into the chart.
    * @return an array of JSON objects detailing the grades for each class
    */
-  getClassData = (): Bar[] => {
+  getClassData = (): BarDatum[] => {
     let gradeACount = 0, gradeBCount = 0, gradeCCount = 0, gradeDCount = 0,
       gradeFCount = 0, gradePCount = 0, gradeNPCount = 0;
 
@@ -116,11 +105,11 @@ export default class Chart extends React.Component<ChartProps> {
    * @param event an event object recording the mouse movement, etc.
    * @return a JSX block styling the chart
    */
-  styleTooltip = (event: BarTooltipDatum) => {
+  styleTooltip = (props: BarTooltipProps<BarDatum>) => {
     return (
-      <div>
+      <div style={this.theme.tooltip?.container}>
         <strong>
-          {event.data.label}: {eval('event.data.' + event.data.label)}
+          {props.label}: {props.data[props.label]}
         </strong>
       </div>
     );
@@ -166,8 +155,9 @@ export default class Chart extends React.Component<ChartProps> {
           legendOffset: 36
         }}
         enableLabel={false}
-        colors={getColor}
-        theme={this.theme}
+        colors={colors}
+        // theme={this.theme}
+        tooltipLabel={datum => String(datum.id)}
         tooltip={this.styleTooltip}
       />
     </>

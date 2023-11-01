@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import SearchPopup from '../../component/SearchPopup/SearchPopup';
 import axios from 'axios'
 
@@ -13,13 +13,13 @@ const ProfessorPopup: FC = () => {
 
     useEffect(() => {
         if (professor) {
-            let reviewParams = {
+            const reviewParams = {
                 type: 'professor',
                 id: professor.ucinetid
             };
             axios.get<ScoreData[]>('/api/reviews/scores', { params: reviewParams })
                 .then(res => {
-                    let scoredCourses = new Set(res.data.map(v => v.name));
+                    const scoredCourses = new Set(res.data.map(v => v.name));
                     res.data.forEach(v => v.key = v.name)
                     Object.keys(professor.course_history).forEach(course => {
                         // remove spaces
@@ -49,7 +49,7 @@ const ProfessorPopup: FC = () => {
 
     if (professor) {
         // include basic info and featured review panels
-        let infos = [
+        const infos = [
             {
                 title: 'Basic Info',
                 content: `Email: ${professor.ucinetid}@uci.edu`
