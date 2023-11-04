@@ -1,16 +1,15 @@
-import React, { useState, useEffect, Component, FC } from 'react';
-import './SearchModule.scss';
-import wfs from 'websoc-fuzzy-search';
-import axios from 'axios';
+import { FC, useEffect } from 'react';
+import { Search } from 'react-bootstrap-icons';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Search } from 'react-bootstrap-icons';
+import wfs from 'websoc-fuzzy-search';
+import './SearchModule.scss';
 
 
+import { searchAPIResults } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setNames, setResults } from '../../store/slices/searchSlice';
-import { searchAPIResults } from '../../helpers/util';
-import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
+import { SearchIndex } from '../../types/types';
 
 const PAGE_SIZE = 10;
 const SEARCH_TIMEOUT_MS = 500;
@@ -28,7 +27,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     // Search empty string to load some results
     useEffect(() => {
         searchNames('');
-    }, [])
+    }, [index])
 
     // Refresh search results when names and page number changes
     useEffect(() => {
@@ -54,10 +53,10 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
                 }
             })
             let names: string[] = [];
-            if (index == 'courses') {
+            if (index === 'courses') {
                 names = Object.keys(nameResults);
             }
-            else if (index == 'professors') {
+            else if (index === 'professors') {
                 names = Object.keys(nameResults).map(n => nameResults[n].metadata.ucinetid) as string[];
             }
             console.log('From frontend search', names)
@@ -88,7 +87,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
     let coursePlaceholder = 'Search a course number or department';
     let professorPlaceholder = 'Search a professor';
-    let placeholder = index == 'courses' ? coursePlaceholder : professorPlaceholder;
+    let placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
     return <div className='search-module'>
         <Form.Group className="mb-3">

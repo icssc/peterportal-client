@@ -328,7 +328,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Select up to 3 tags</Form.Label>
                 <div>
                   {tags.map((tag, i) =>
-                    <Badge pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
+                    <Badge key={tag} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
                       onClick={(e: React.MouseEvent<HTMLInputElement>) => { selectTag(tag) }}>
                       {tag}
                     </Badge>
