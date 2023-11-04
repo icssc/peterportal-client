@@ -3,6 +3,7 @@ import "./SearchPopup.scss";
 import GradeDist from "../GradeDist/GradeDist";
 import Button from "react-bootstrap/Button";
 import Carousel from "react-multi-carousel";
+import searching from '../../asset/searching.webp'
 
 import { useAppSelector } from "../../store/hooks";
 import { selectCourse, selectProfessor } from "../../store/slices/popupSlice";
@@ -44,7 +45,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     return (
       <div className="search-popup">
         <div className="search-popup-missing">
-          <img style={{ width: "100%" }} src="/searching.png" alt="searching" />
+          <img style={{ width: "80%" }} src={searching} alt="searching" />
           <p>Click on a {props.searchType} card to view more information!</p>
         </div>
       </div>
