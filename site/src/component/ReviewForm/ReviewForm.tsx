@@ -12,7 +12,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { addReview } from '../../store/slices/reviewSlice';
+import { addReview, setReviews, updateReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
@@ -76,22 +76,49 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         alert('You must be logged in to add a review!')
         props.closeForm();
       }
-
+      console.log("useEffect run user ID: " + userID);
       if (props.review) {
-        for (const tag of props.review.tags) {
-          selectTag(tag);
-        }
+        const [year, quarter] = props.review.quarter.split(' ');
+        console.log("quarter: "  + quarter);
+        console.log("year: " + year);
+        setQuarterTaken(quarter);
+        setYearTaken(year);
+        console.log('Review Content:', props.review?.reviewContent);
+        console.log("gradeReceived: " + props.review.gradeReceived)
+        setGradeReceived(props.review.gradeReceived);
+        setDifficulty(props.review.difficulty);
+        setQuality(props.review.rating);
+        setContent(props.review?.reviewContent);
+        setSelectedTags(props.review?.tags);
+        setAttendance(props.review?.attendance);
+        setTakeAgain(props.review?.takeAgain);
+        setTextbook(props.review?.textbook);
+        setUserName(props.review?.userDisplay);
+        setProfessor(props.review?.professorID);
+        setCourse(props.review?.courseID);
       }
+      console.log("afterSetProp userID " + props.review?.userID);
     }
   }, [showForm])
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>('/api/reviews', review);
-    if (res.data.hasOwnProperty('error')) {
-      alert('You must be logged in to add a review!');
-    }
-    else {
-      dispatch(addReview(res.data));
+    if (props.editable)
+    {
+      const res = await axios.patch('/api/reviews/updateReview', review);
+      console.log("show res.data: " + res.data);
+      if (res.data.hasOwnProperty('error')) {
+        alert('You must be logged in to edit the review!');
+      } else {
+        dispatch(updateReview(res.data));
+      }
+    } else{
+      const res = await axios.post<ReviewData>('/api/reviews', review);
+      if (res.data.hasOwnProperty('error')) {
+        alert('You must be logged in to add a review!');
+      }
+      else {
+        dispatch(addReview(res.data));
+      }
     }
   }
 
@@ -101,7 +128,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     const valid = form.checkValidity();
     event.preventDefault();
     event.stopPropagation();
-
+    console.log("Before submitForm run professorID: " + professor);
+    console.log("Grade Received without setGradeReceiveed:" + gradeReceived);
     // validated
     setValidated(true);
 
@@ -114,7 +142,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       alert('Please complete the CAPTCHA');
       return;
     }
-
+   
     const date = new Date();
     const year = date.getFullYear();
     const month = (1 + date.getMonth()).toString();
@@ -143,6 +171,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     }
     else {
       setOverCharLimit(false);
+      console.log("show review data before send to postReview: " + JSON.stringify(review));
       postReview(review);
       setSubmitted(true);
     }
@@ -225,11 +254,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className='mt-4' lg={2} md={1}>
             <Col>
               <div className='review-form-section review-form-row review-form-taken'>
-                {!props.editable && instructorSelect}
-                {!props.editable && courseSelect}
+                {/* {!props.editable && instructorSelect}
+                {!props.editable && courseSelect} */}
                 <Form.Group className='review-form-grade' controlId='grade'>
                   <Form.Label>Grade</Form.Label>
-                  <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
+                  <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}
+                   value={
+                    gradeReceived}
+                  >
                     <option disabled={true} selected value=''>Grade</option>
                     {grades.map((grade) => (
                       <option key={grade}>{grade}</option>
@@ -246,7 +278,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Taken During</Form.Label>
                 <div className='review-form-row'>
                   <Form.Group controlId='quarter' className='mr-3'>
-                    <Form.Control as="select" name='quarter' id='quarter' required onChange={(e) => setQuarterTaken(e.target.value)}>
+                    <Form.Control as="select" name='quarter' id='quarter' required onChange={(e) => setQuarterTaken(e.target.value)}
+                    value={
+                      quarterTaken
+                    }>
                       <option disabled={true} selected value=''>Quarter</option>
                       {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter) => (
                         <option key={quarter}>{quarter}</option>
@@ -257,7 +292,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group controlId='year'>
-                    <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}>
+                    <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}
+                      value={
+                      yearTaken
+                    }>
                       <option disabled={true} selected value=''>Year</option>
                       {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year) => (
                         <option key={year}>{year}</option>
@@ -355,13 +393,15 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   as="textarea"
                   placeholder="Here's your chance to be more specific..."
                   style={{ height: '15vh', width: '100%' }}
-                  value={props.review?.reviewContent}
+                  // value={props.review?.reviewContent}
+                  value={props.editable ? content : props.review?.reviewContent}
                   onChange={(e) => {
                     setContent(e.target.value);
                     if (overCharLimit && e.target.value.length < 500) {
                       setOverCharLimit(false)
                     }
                   }}
+                  
                 />
                 {/* <textarea rows={5} /> */}
                 <div className='char-limit'>

@@ -345,28 +345,40 @@ router.delete("/clear", async function (req, res) {
 /**
  * Updating the review
  */
- router.patch("/", async function (req, res) {
-  //make sure user is logged in
-  if (req.session.passport != null) {
-    //query of the user's email and the review id
-    let query = {
-      userID: req.session.passport.user.email,
-      reviewID: req.body["id"],
-    }
-    //get any existing vote in the db
-    let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
-    //result an array of either length 1 or empty
-    if (existingVote.length == 0) {
-      //if empty, both shxould be uncolored
-      res.json([false, false]);
+router.patch("/updateReview", async function (req, res) {
+  if (req.session.passport) {
+    //let id = req.body["id"];
+    //
+    const updatedReview = req.body;
+    const professorID = req.body.professorID;
+    const courseID = req.body.courseID;
+    const userID = req.body.userID;
+
+    const query = {
+      professorID: professorID,
+      courseID: courseID,
+      userID: userID
+    };
+    //
+    console.log(`Adding Review: ${JSON.stringify(updatedReview)}`);
+
+    await updateDocument(
+    COLLECTION_NAMES.REVIEWS,
+    query,
+    { $set: updatedReview }
+    );
+
+    // await updateDocument(
+    //   COLLECTION_NAMES.REVIEWS,
+    //   { _id: new ObjectID(id) },
+    //   { $set: updatedReview } 
+    // );
+      res.json({ message: 'Review updated successfully.' });
     } else {
-      //if not empty, there is a vote, so color it accordingly
-      if (existingVote[0].score == 1) {
-        res.json([true, false]);
-      } else {
-        res.json([false, true]);
-      }
+      res.status(401).json({ error: 'Must be logged in to update a review.' });
     }
-  }
+  
 });
+
+
 export default router;

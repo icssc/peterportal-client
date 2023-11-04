@@ -31,11 +31,20 @@ export const reviewSlice = createSlice({
         },
         toggleFormStatus: (state) => {
             state.formOpen = !state.formOpen;
+        },
+        // updateReview: (state, action: PayloadAction<ReviewData>) => {
+        //     state.reviews.(action.payload);
+        // },
+        updateReview: (state, action: PayloadAction<ReviewData>) => {
+            const updateReviewIndex = state.reviews.findIndex(review => review._id == action.payload._id);
+            if (updateReviewIndex != -1){
+                state.reviews[updateReviewIndex] = action.payload;
+            }
         }
     },
 })
 
-export const { addReview, setReviews, setFormStatus, toggleFormStatus } = reviewSlice.actions
+export const { addReview, setReviews, setFormStatus, toggleFormStatus, updateReview} = reviewSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectReviews = (state: RootState) => state.review.reviews;
