@@ -12,7 +12,7 @@ const client = new MongoClient(process.env.MONGO_URL, { useNewUrlParser: true, u
 /**
  * Database name to use in mongo
  */
-const DB_NAME = process.env.NODE_ENV == 'production' ? 'peterPortalDB' : 'peterPortalDevDB';
+const DB_NAME = 'peterPortalDB';
 /**
  * Collection names that we are using
  */
