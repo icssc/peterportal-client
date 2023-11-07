@@ -42,6 +42,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
             style={{
               // use inline style here so dnd can calculate size
               margin: ' 0rem 2rem 1rem 2rem',
+              cursor: 'grab',
               ...provided.draggableProps.style
             }}
             onMouseDown={() => { dispatch(setActiveCourse(props)) }}

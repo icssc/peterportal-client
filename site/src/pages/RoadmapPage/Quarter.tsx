@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import "./Quarter.scss";
-import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
 import Course from "./Course";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -10,6 +10,7 @@ import { Button, Overlay, Popover } from "react-bootstrap";
 import {
   ThreeDots
 } from "react-bootstrap-icons";
+import { StrictModeDroppable } from "./StrictModeDroppable";
 
 interface QuarterProps {
   year: number;
@@ -71,6 +72,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
               {...provided.dragHandleProps}
               style={{
                 margin: '0rem 2rem 1rem 2rem',
+                cursor: 'grab',
                 ...provided.draggableProps.style
               }}
             >
@@ -111,7 +113,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     <div className="quarter-units">
       {unitCount} {unitCount === 1 ? "unit" : "units"}
     </div>
-    <Droppable droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
+    <StrictModeDroppable droppableId={yearIndex + "-" + quarterIndex} type="COURSE">
       {(provided) => {
         return (
           <div
@@ -123,7 +125,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           </div>
         );
       }}
-    </Droppable>
+    </StrictModeDroppable>
   </div>
 };
 
