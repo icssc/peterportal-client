@@ -1,4 +1,4 @@
-import React, { useEffect, FC } from 'react';
+import { useEffect, FC, useRef } from 'react';
 import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
@@ -14,11 +14,11 @@ interface SearchHitContainerProps {
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
     const courseResults = useAppSelector(state => state.search.courses.results);
     const professorResults = useAppSelector(state => state.search.professors.results);
-    const containerDivRef = React.createRef<HTMLDivElement>();
+    const containerDivRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         containerDivRef.current!.scrollTop = 0;
-    });
+    }, [courseResults, professorResults]);
 
     if (index == 'professors' && !ProfessorHitItem) {
         throw 'Professor Component not provided';

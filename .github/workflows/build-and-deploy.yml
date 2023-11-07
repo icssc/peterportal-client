@@ -44,6 +44,7 @@ jobs:
           PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          NODE_ENV: ${{ github.event_name == 'pull_request' && 'staging' || 'production' }}
 
       - name: Comment staging URL
         uses: marocchino/sticky-pull-request-comment@v2
