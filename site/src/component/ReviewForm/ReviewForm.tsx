@@ -60,11 +60,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   useEffect(() => {
     // get user info from cookie
-    if (cookies.user !== undefined) {
+    if (cookies.user) {
       setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
-  }, [])
+  }, [cookies]);
 
   useEffect(() => {
     // upon opening this form
@@ -75,11 +75,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         props.closeForm();
       }
     }
-  }, [showForm])
+  }, [cookies.user, props, showForm]);
 
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/api/reviews', review);
-    if (res.data.error !== undefined) {
+    if (res.data.error) {
       alert('You must be logged in to add a review!');
     }
     else {
@@ -161,15 +161,15 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }
 
   // select instructor if in course context
-  const instructorSelect = props.course && <Form.Group controlId='instructor'>
+  const instructorSelect = props.course && <Form.Group>
     <Form.Label>Taken With</Form.Label>
-    <Form.Control as="select" name='instructor' id='instructor' required
-      onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
-      <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(props.course?.instructor_history).map((ucinetid, i) => {
+    <Form.Control as="select" name='instructor' id='instructor' defaultValue='' required
+      onChange={(e) => (setProfessor(e.target.value))}>
+      <option disabled={true} value=''>Instructor</option>
+      {Object.keys(props.course?.instructor_history).map((ucinetid) => {
         const name = props.course?.instructor_history[ucinetid].shortened_name;
         return (
-          <option key={'review-form-professor-' + i} value={name} id={ucinetid}>{name}</option>
+          <option key={ucinetid} value={ucinetid}>{name}</option>
         )
       })}
     </Form.Control>
@@ -186,13 +186,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   // select course if in professor context
   const courseSelect = props.professor && <Form.Group controlId='course'>
     <Form.Label>Course Taken</Form.Label>
-    <Form.Control as="select" name='course' id='course' required
-      onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
-      <option disabled={true} selected value=''>Course</option>
-      {Object.keys(props.professor?.course_history).map((courseID, i) => {
+    <Form.Control as="select" name='course' id='course' defaultValue='' required
+      onChange={(e) => (setCourse(e.target.value))}>
+      <option disabled={true} value=''>Course</option>
+      {Object.keys(props.professor?.course_history).map((courseID) => {
         const name = props.professor?.course_history[courseID].department + ' ' + props.professor?.course_history[courseID].number;
         return (
-          <option key={'review-form-course-' + i} value={name} id={courseID}>{name}</option>
+          <option key={courseID} value={courseID}>{name}</option>
         )
       })}
     </Form.Control>
@@ -215,12 +215,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <div className='review-form-section review-form-row review-form-taken'>
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className='review-form-grade' controlId='grade'>
+                <Form.Group className='review-form-grade'>
                   <Form.Label>Grade</Form.Label>
-                  <Form.Control as="select" name='grade' id='grade' required onChange={(e) => setGradeReceived(e.target.value)}>
-                    <option disabled={true} selected value=''>Grade</option>
-                    {grades.map((grade, i) => (
-                      <option key={i}>{grade}</option>
+                  <Form.Control as="select" name='grade' id='grade' defaultValue='' required onChange={(e) => setGradeReceived(e.target.value)}>
+                    <option disabled={true} value=''>Grade</option>
+                    {grades.map((grade) => (
+                      <option key={grade}>{grade}</option>
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">
@@ -233,22 +233,22 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <Form.Group className='review-form-section'>
                 <Form.Label>Taken During</Form.Label>
                 <div className='review-form-row'>
-                  <Form.Group controlId='quarter' className='mr-3'>
-                    <Form.Control as="select" name='quarter' id='quarter' required onChange={(e) => setQuarterTaken(e.target.value)}>
-                      <option disabled={true} selected value=''>Quarter</option>
-                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
-                        <option key={`quarter-${i}`}>{quarter}</option>
+                  <Form.Group className='mr-3'>
+                    <Form.Control as="select" name='quarter' id='quarter' defaultValue='' required onChange={(e) => setQuarterTaken(e.target.value)}>
+                      <option disabled={true} value=''>Quarter</option>
+                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter) => (
+                        <option key={quarter}>{quarter}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
                       Missing quarter
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group controlId='year'>
-                    <Form.Control as="select" name='year' id='year' required onChange={(e) => setYearTaken(e.target.value)}>
-                      <option disabled={true} selected value=''>Year</option>
-                      {Array.from(new Array(10), (_, i) => new Date().getFullYear() - i).map((year, i) => (
-                        <option key={i}>{year}</option>
+                  <Form.Group>
+                    <Form.Control as="select" name='year' id='year' defaultValue='' required onChange={(e) => setYearTaken(e.target.value)}>
+                      <option disabled={true} value=''>Year</option>
+                      {Array.from(new Array(10), (_, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year}>{year}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">
@@ -325,8 +325,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <Form.Group className='review-form-section'>
                 <Form.Label>Select up to 3 tags</Form.Label>
                 <div>
-                  {tags.map((tag, i) =>
-                    <Badge key={tag} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
+                  {tags.map((tag) =>
+                    <Badge key={tag} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'}
                       onClick={() => { selectTag(tag) }}>
                       {tag}
                     </Badge>
