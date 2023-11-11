@@ -43,7 +43,7 @@ Features include:
     git checkout -b [branch name]
     ```
 
-3. Check your Node version with `node -v`. Make sure you have version 14 or above (18 recommended).
+3. Check your Node version with `node -v`. Make sure you have version 16 or above (18 or 20 LTS recommended).
 
 4. Open a terminal window and `cd` into the directory of your repo.
 
