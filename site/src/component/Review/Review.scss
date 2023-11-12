@@ -199,8 +199,13 @@ $avatarWidth: 65px;
     display: flex;
     align-items: center;
 
+    .checkbox {
+      background: none;
+    }
+
     label {
       margin-bottom: 0.25rem;
+      color: var(--text);
     }
   }
 }

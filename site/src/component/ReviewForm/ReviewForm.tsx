@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, ChangeEvent, useState, useEffect } from 'react'
+import React, { FC, FormEvent, ChangeEvent, useState, useEffect, useContext } from 'react'
 import './ReviewForm.scss'
 import axios from 'axios'
 import { useCookies } from 'react-cookie';
@@ -16,6 +16,7 @@ import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
+import ThemeContext from 'src/style/theme-context';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -57,6 +58,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [cookies, setCookie] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector(state => state.review.formOpen);
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get user info from cookie
@@ -395,6 +397,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA 
                 className='d-inline'
                 sitekey='6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4'
+                theme={darkMode ? 'dark' : 'light'}
                 onChange={(token) => {
                   // if verified
                   if (token) {
