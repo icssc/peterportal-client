@@ -28,6 +28,8 @@ import graphqlRouter from './controllers/graphql';
 import roadmapRouter from './controllers/roadmap';
 import reportsRouter from './controllers/reports';
 
+import { SESSION_LENGTH } from './config/constants';
+
 // instantiate app
 const app = express();
 
@@ -49,7 +51,7 @@ if (process.env.MONGO_URL) {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 30 * 86400 * 1000 },
+    cookie: { maxAge: SESSION_LENGTH },
     store: store,
   }));
   app.use(passport.initialize());
