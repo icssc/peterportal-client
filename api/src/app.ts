@@ -49,7 +49,7 @@ if (process.env.MONGO_URL) {
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+    cookie: { maxAge: 30 * 86400 * 1000 },
     store: store,
   }));
   app.use(passport.initialize());
