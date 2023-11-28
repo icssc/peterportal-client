@@ -131,8 +131,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
         </div>
       </div>
       <div>
-        {review.tags?.map((tag, i) =>
-          <Badge pill className='p-3 mr-2 mt-2' variant='info' key={`review-tag-${review._id}-${i}`}>
+        {review.tags?.map(tag =>
+          <Badge pill className='p-3 mr-2 mt-2' variant='info' key={tag}>
             {tag}
           </Badge>
         )}
