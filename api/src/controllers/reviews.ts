@@ -335,7 +335,6 @@ router.delete("/clear", async function (req, res) {
   if (process.env.NODE_ENV != 'production') {
     let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
     let status = await reviewsCollection.deleteMany({});
-
     res.json(status);
   }
   else {
@@ -347,37 +346,38 @@ router.delete("/clear", async function (req, res) {
  */
 router.patch("/updateReview", async function (req, res) {
   if (req.session.passport) {
-    //let id = req.body["id"];
-    //
-    const updatedReview = req.body;
-    const professorID = req.body.professorID;
-    const courseID = req.body.courseID;
-    const userID = req.body.userID;
+    const updatedReviewBody = req.body;
+    console.log("updatedReview before query: ", req.body);
+    // const reviewId = req.body._id;
+    // console.log("patch reviewId: ", reviewId);
 
     const query = {
-      professorID: professorID,
-      courseID: courseID,
-      userID: userID
+      _id: new ObjectID(req.body._id)
     };
-    //
-    console.log(`Adding Review: ${JSON.stringify(updatedReview)}`);
+    
+    console.log(`Update Review: ${JSON.stringify(updatedReviewBody)}`);
+    console.log("HELLO1");
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+    console.log("HELLO2");
+    console.log(`Update without _id: ${JSON.stringify(updateWithoutId)}`);
 
     await updateDocument(
     COLLECTION_NAMES.REVIEWS,
     query,
-    { $set: updatedReview }
+    { $set: updateWithoutId }
     );
-
-    // await updateDocument(
-    //   COLLECTION_NAMES.REVIEWS,
-    //   { _id: new ObjectID(id) },
-    //   { $set: updatedReview } 
-    // );
-      res.json({ message: 'Review updated successfully.' });
+    console.log("HELLO3");
+      const responseWithId = {
+        _id: query._id, 
+        ...updateWithoutId
+      };
+      console.log(`response with _id: ${JSON.stringify(updateWithoutId)}`);
+      console.log("HELLO4");
+      res.json(responseWithId);
+      console.log("HELLO5");
     } else {
       res.status(401).json({ error: 'Must be logged in to update a review.' });
     }
-  
 });
 
 
