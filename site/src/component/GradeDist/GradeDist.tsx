@@ -44,7 +44,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     if (props.course) {
       url = `/api/courses/api/grades`;
       params = {
-        department: props.course.department,
+        department: props.course.department.replace(/ /g, ''),
         number: props.course.courseNumber
       }
     }
@@ -119,9 +119,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       const [thisQuarter, thisYear] = a.value.split(" ");
       const [thatQuarter, thatYear] = b.value.split(" ");
       if (thisYear === thatYear) {
-        return quarterOrder.indexOf(thisQuarter) - quarterOrder.indexOf(thatQuarter)
+        return quarterOrder.indexOf(thatQuarter) - quarterOrder.indexOf(thisQuarter);
       } else {
-        return Number.parseInt(thisYear, 10) - Number.parseInt(thatYear, 10);
+        return Number.parseInt(thatYear, 10) - Number.parseInt(thisYear, 10);
       }
     }));
     setCurrentQuarter(result[0].value);

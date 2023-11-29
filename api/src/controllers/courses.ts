@@ -45,11 +45,7 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
 
 
     r.then((response) => response.json())
-      .then((data) => {
-        const d = data.data
-        console.log(data)
-        res.json(d)
-      })
+      .then((data) => res.json(data.data))
   }
 });
 

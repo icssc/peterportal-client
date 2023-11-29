@@ -108,4 +108,4 @@ async function transformProfessorGQL(data: ProfessorGQLResponse) {
 }
 
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number, minute: number }) =>
-  `${hour % 12}:${minute.toString().padStart(2, "0")} ${Math.floor(hour / 12) === 0 ? "AM" : "PM"}`;
+  `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, "0")} ${Math.floor(hour / 12) === 0 ? "AM" : "PM"}`;

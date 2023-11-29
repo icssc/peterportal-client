@@ -91,7 +91,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
             {professor.courseHistory[review.courseID].department + ' ' + professor.courseHistory[review.courseID].courseNumber}
           </Link>}
           {course && <Link to={{ pathname: `/professor/${review.professorID}` }}>
-            {course.instructorHistory[review.professorID].name}
+            {Object.values(course.instructorHistory)?.find(({ ucinetid }) => ucinetid === review.professorID)?.name}
           </Link>}
           {(!course && !professor) && <div>
             {review.courseID} {review.professorID}

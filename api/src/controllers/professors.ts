@@ -39,9 +39,7 @@ router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) 
     });
 
     r.then((response) => response.json())
-      .then((data) => {
-        res.json(data.data)
-      })
+      .then((data) => res.json(data.data))
   }
 });
 

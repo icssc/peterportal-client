@@ -234,11 +234,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             <div className='side-info-featured'>
                 {highestReview && <FeaturedInfo searchType={props.searchType} featureType='Highest'
                     averageReviews={averageReviews} reviewKey={highestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructorHistory[highestReview].shortenedName! :
+                    displayName={props.searchType == 'course' ? Object.values(props.course?.instructorHistory ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)?.shortenedName ?? '' :
                         (props.professor?.courseHistory[highestReview] ? props.professor?.courseHistory[highestReview].department + ' ' + props.professor?.courseHistory[highestReview].courseNumber : highestReview)} />}
                 {lowestReview && <FeaturedInfo searchType={props.searchType} featureType='Lowest'
                     averageReviews={averageReviews} reviewKey={lowestReview}
-                    displayName={props.searchType == 'course' ? props.course?.instructorHistory[lowestReview].shortenedName! :
+                    displayName={props.searchType == 'course' ? Object.values(props.course?.instructorHistory ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)?.shortenedName ?? '' :
                         (props.professor?.courseHistory[lowestReview] ? props.professor?.courseHistory[lowestReview].department + ' ' + props.professor?.courseHistory[lowestReview].courseNumber : lowestReview)} />}
             </div>
         </div>
