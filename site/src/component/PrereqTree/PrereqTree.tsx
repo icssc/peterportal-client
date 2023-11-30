@@ -55,7 +55,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
             label={`${prereq.courseId?.replace(/ /g, '') ?? prereq.examName ?? ''}${
             prereq?.minGrade ? ` (min grade = ${prereq?.minGrade})` : ''
           }${prereq?.coreq ? ' (coreq)' : ''}`}
-            content={Object.values(props.prerequisiteNames).find(({ id }) => id === prereq.courseId?.replace(/ /g, '') ?? prereq.examName ?? '')?.title ?? ""} node={'prerequisite-node'}
+            content={props.prerequisiteNames[prereq.courseId?.replace(/ /g, '') ?? prereq.examName ?? '']?.title ?? ""} node={'prerequisite-node'}
         />
       </li>
     );

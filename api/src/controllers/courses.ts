@@ -37,9 +37,9 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
         req.body.courses.map(
             (course) => fetch(process.env.PUBLIC_API_URL + 'courses/' + course)
             .then((r) => r.json())
-            .then((r) => r.payload)
+            .then((r) => r.payload ? [r.payload.id, r.payload] : [])
         )
-    ).then((data) => res.json(data.filter((x) => x)));
+    ).then((data) => res.json(Object.fromEntries(data)));
   }
 });
 
