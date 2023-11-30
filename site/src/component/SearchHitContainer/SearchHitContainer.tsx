@@ -4,6 +4,7 @@ import './SearchHitContainer.scss';
 import { useAppSelector } from '../../store/hooks';
 
 import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import SearchPagination from '../SearchPagination/SearchPagination';
 
 interface SearchHitContainerProps {
     index: SearchIndex;
@@ -28,6 +29,9 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
         {
             index == 'courses' && <>
                 {
+                    courseResults.length === 0 ?
+                        <div className='no-results'>No results found</div>
+                    :
                     courseResults.map((course, i) => {
                         return <CourseHitItem key={`course-hit-item-${i}`} index={i} {...(course as CourseGQLData)} />
                     })
@@ -37,12 +41,18 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
         {
             (index == 'professors' && ProfessorHitItem) && <>
                 {
+                    professorResults.length === 0 ?
+                        <div className='no-results'>No results found</div>
+                    :
                     professorResults.map((professor, i) => {
                         return <ProfessorHitItem key={`professor-hit-item-${i}`} index={i} {...(professor as ProfessorGQLData)} />
                     })
                 }
             </>
         }
+        <div className='search-pagination'>
+            <SearchPagination index={index} />
+        </div>
     </div>
 }
 
