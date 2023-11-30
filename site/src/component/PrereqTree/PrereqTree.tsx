@@ -25,10 +25,11 @@ const Node: FC<NodeProps> = (props) => {
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
       <Popup
         trigger={
-          <a href={'/course/' + props.label.replace(/\s+/g, '')} role='button' style={{ padding: '0.5rem' }} className={'node ui button'}>
+          <a href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')} role='button' style={{ padding: '0.5rem' }} className={'node ui button'}>
             {props.label}
           </a>
         }
+        content={props.content.length ? props.content : props.label}
         basic position='top center' wide='very' />
     </div>
   );
@@ -51,10 +52,10 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
     return (
       <li key={props.index} className={'prerequisite-node'}>
         <Node
-          label={`${prereq.courseId ?? prereq.examName ?? ''}${
+            label={`${prereq.courseId?.replace(/ /g, '') ?? prereq.examName ?? ''}${
             prereq?.minGrade ? ` (min grade = ${prereq?.minGrade})` : ''
           }${prereq?.coreq ? ' (coreq)' : ''}`}
-          content={prereq.courseId ?? ""} node={'prerequisite-node'}
+            content={Object.values(props.prerequisiteNames).find(({ id }) => id === prereq.courseId?.replace(/ /g, '') ?? prereq.examName ?? '')?.title ?? ""} node={'prerequisite-node'}
         />
       </li>
     );

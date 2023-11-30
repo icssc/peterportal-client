@@ -33,19 +33,13 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
     res.json({});
   }
   else {
-    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        query: getCourseQuery(req.body.courses)
-      })
-    });
-
-
-    r.then((response) => response.json())
-      .then((data) => res.json(data.data))
+    Promise.all(
+        req.body.courses.map(
+            (course) => fetch(process.env.PUBLIC_API_URL + 'courses/' + course)
+            .then((r) => r.json())
+            .then((r) => r.payload)
+        )
+    ).then((data) => res.json(data.filter((x) => x)));
   }
 });
 
