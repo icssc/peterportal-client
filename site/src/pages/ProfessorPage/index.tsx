@@ -13,7 +13,7 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { ProfessorGQLData } from '../../types/types';
+import {CourseGQLResponse, ProfessorGQLData} from '../../types/types';
 import { searchAPIResult } from '../../helpers/util';
 
 const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
@@ -23,17 +23,23 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
 
     useEffect(() => {
         // make a gql query if directly landed on this page
-        if (professorGQLData == null || professorGQLData.ucinetid != props.match.params.id) {
-            searchAPIResult('professor', props.match.params.id)
+        if (professorGQLData == null || professorGQLData.ucinetid !== props.match.params.id) {
+            (searchAPIResult('professor', props.match.params.id) as Promise<ProfessorGQLData>)
                 .then(professor => {
                     if (professor) {
-                        dispatch(setProfessor(professor as ProfessorGQLData))
+                        axios.post<{ [key: string]: CourseGQLResponse }>
+                        (`/api/courses/api/batch`, {"courses": Object.keys(professor.courseHistory).map((x) => x.replace(/ /g, ""))})
+                            .then(r => {
+                                professor.courseHistory = Object.fromEntries(Object.values(r.data).map(x => [x.id, x]));
+                                dispatch(setProfessor(professor));
+                            })
                     }
                     else {
                         setError(`Professor ${props.match.params.id} does not exist!`);
                     }
                 })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // if professor does not exists

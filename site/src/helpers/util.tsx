@@ -77,33 +77,17 @@ export async function transformGQLData(index: SearchIndex, data: CourseGQLRespon
 }
 
 async function transformCourseGQL(data: CourseGQLResponse) {
-  const instructorHistoryLookup: ProfessorLookup = await
-    axios.post<{ [key: string]: ProfessorGQLResponse }>
-    (`/api/professors/api/batch`, {"professors": data.instructorHistory})
-      .then(r => r.data);
-  const prerequisiteListLookup: CourseLookup = await
-    axios.post<{ [key: string]: CourseGQLResponse }>
-    (`/api/courses/api/batch`, {"courses": data.prerequisiteList.map((x) => x.replace(/ /g, ""))})
-      .then(r => r.data);
-  const prerequisiteForLookup: CourseLookup = await
-    axios.post<{ [key: string]: CourseGQLResponse }>
-    (`/api/courses/api/batch`, {"courses": data.prerequisiteFor.map((x) => x.replace(/ /g, ""))})
-      .then(r => r.data);
    // create copy to override fields with lookups
   const course = { ...data } as unknown as CourseGQLData;
-  course.instructorHistory = instructorHistoryLookup;
-  course.prerequisiteList = prerequisiteListLookup;
-  course.prerequisiteFor = prerequisiteForLookup;
+  course.instructorHistory = Object.fromEntries(data.instructorHistory.map((x) => [x, null!]));
+  course.prerequisiteList = Object.fromEntries(data.prerequisiteList.map((x) => [x, null!]));
+  course.prerequisiteFor = Object.fromEntries(data.prerequisiteFor.map((x) => [x, null!]))
   return course;
 }
 
 async function transformProfessorGQL(data: ProfessorGQLResponse) {
-  const courseHistoryLookup = await axios.post<{ [key: string]: CourseGQLResponse }>
-  (`/api/courses/api/batch`, {"courses": Object.keys(data.courseHistory).map((x) => x.replace(/ /g, ""))})
-    .then(r => Object.fromEntries(Object.values(r.data).map(x => [x.id, x])));
-  // create copy to override fields with lookups
   let professor = { ...data } as unknown as ProfessorGQLData;
-  professor.courseHistory = courseHistoryLookup;
+  professor.courseHistory = Object.fromEntries(Object.entries(data.courseHistory).map(([x, _]) => [x, null!]));
   return professor;
 }
 

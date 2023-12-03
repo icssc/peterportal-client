@@ -13,9 +13,11 @@ import Error from '../../component/Error/Error';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { SearchType, SearchIndex, CourseGQLData } from '../../types/types';
+import { CourseGQLData } from '../../types/types';
 import { getCourseTags, searchAPIResult } from '../../helpers/util';
 import './CoursePage.scss';
+
+import axios from "axios";
 
 const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
     const dispatch = useAppDispatch();
@@ -24,18 +26,33 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
 
     useEffect(() => {
         // make a gql query if directly landed on this page
-        if (courseGQLData == null || courseGQLData.id != props.match.params.id) {
-            searchAPIResult('course', props.match.params.id)
+        if (courseGQLData == null || courseGQLData.id !== props.match.params.id) {
+            (searchAPIResult('course', props.match.params.id) as Promise<CourseGQLData>)
                 .then(course => {
-                    console.log("COURSE", course)
                     if (course) {
-                        dispatch(setCourse(course as CourseGQLData))
+                        Promise.all([
+                            axios.post
+                            (`/api/professors/api/batch`, {"professors": Object.keys(course.instructorHistory)})
+                                .then(r => r.data),
+                            axios.post
+                            (`/api/courses/api/batch`, {"courses": Object.keys(course.prerequisiteList).map((x) => x.replace(/ /g, ""))})
+                                .then(r => r.data),
+                            axios.post
+                            (`/api/courses/api/batch`, {"courses": Object.keys(course.prerequisiteFor).map((x) => x.replace(/ /g, ""))})
+                                .then(r => r.data),
+                        ]).then(([instructorHistory, prerequisiteList, prerequisiteFor]) => {
+                            course.instructorHistory = instructorHistory;
+                            course.prerequisiteList = prerequisiteList;
+                            course.prerequisiteFor = prerequisiteFor;
+                            dispatch(setCourse(course));
+                        })
                     }
                     else {
                         setError(`Course ${props.match.params.id} does not exist!`);
                     }
                 })
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // if course does not exists
