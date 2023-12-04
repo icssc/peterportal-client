@@ -40,8 +40,8 @@ export function BackendStack({app, stack}: StackContext) {
                          */
                         // PUBLIC_API_URL: process.env.PUBLIC_API_URL,
                         // PUBLIC_API_GRAPHQL_URL: process.env.PUBLIC_API_GRAPHQL_URL,
-                        PUBLIC_API_URL: "https://api-next.peterportal.org/v1/rest/",
-                        PUBLIC_API_GRAPHQL_URL: "https://api-next.peterportal.org/v1/graphql",
+                        PUBLIC_API_URL: "https://staging-116.api-next.peterportal.org/v1/rest/",
+                        PUBLIC_API_GRAPHQL_URL: "https://staging-116.api-next.peterportal.org/v1/graphql",
                         GOOGLE_CLIENT: process.env.GOOGLE_CLIENT,
                         GOOGLE_SECRET: process.env.GOOGLE_SECRET,
                         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
