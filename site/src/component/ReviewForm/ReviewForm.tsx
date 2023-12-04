@@ -161,16 +161,15 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   }
 
   // select instructor if in course context
-  const instructorSelect = props.course && <Form.Group controlId='instructor'>
+  const instructorSelect = props.course && <Form.Group>
     <Form.Label>Taken With</Form.Label>
-    <Form.Control as="select" name='instructor' id='instructor' required
-      onChange={(e) => (setProfessor(document.getElementsByName(e.target.value)[0].id))}>
-      <option disabled={true} selected value=''>Instructor</option>
-      {Object.keys(props.course?.instructorHistory!).map((ucinetid, i) => {
+    <Form.Control as="select" name='instructor' id='instructor' defaultValue='' required
+                  onChange={(e) => (setProfessor(e.target.value))}>
+      <option disabled={true} value=''>Instructor</option>
+      {Object.keys(props.course?.instructorHistory).map((ucinetid) => {
         const name = props.course?.instructorHistory[ucinetid].shortenedName;
         return (
-          // @ts-ignore name attribute isn't supported
-          <option key={'review-form-professor-' + i} name={name} id={ucinetid}>{name}</option>
+            <option key={ucinetid} value={ucinetid}>{name}</option>
         )
       })}
     </Form.Control>
@@ -183,18 +182,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       Missing instructor
     </Form.Control.Feedback>
   </Form.Group>
-
   // select course if in professor context
   const courseSelect = props.professor && <Form.Group controlId='course'>
     <Form.Label>Course Taken</Form.Label>
-    <Form.Control as="select" name='course' id='course' required
-      onChange={(e) => (setCourse(document.getElementsByName(e.target.value)[0].id))}>
-      <option disabled={true} selected value=''>Course</option>
-      {Object.keys(props.professor?.courseHistory!).map((courseID, i) => {
+    <Form.Control as="select" name='course' id='course' defaultValue='' required
+                  onChange={(e) => (setCourse(e.target.value))}>
+      <option disabled={true} value=''>Course</option>
+      {Object.keys(props.professor?.courseHistory).map((courseID) => {
         const name = props.professor?.courseHistory[courseID].department + ' ' + props.professor?.courseHistory[courseID].courseNumber;
         return (
-          // @ts-ignore name attribute isn't supported
-          <option key={'review-form-course-' + i} name={name} id={courseID}>{name}</option>
+            <option key={courseID} value={courseID}>{name}</option>
         )
       })}
     </Form.Control>
