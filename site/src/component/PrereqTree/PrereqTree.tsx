@@ -15,21 +15,21 @@ const Node: FC<NodeProps> = (props) => {
   console.log(props.label);
   return (
     <div style={{ padding: "1px 0" }} className={`node-container ${props.node}`} key={props.index}>
-      <Popup
-        trigger={
-          !props.label.startsWith("AP ") ? (
+      {!props.label.startsWith("AP ") ? (
+        <Popup
+          trigger={
             <a href={"/course/" + props.label.replace(/\s+/g, "")} role="button" style={{ padding: "0.5rem" }} className={`node ui button`}>
               {props.label}
             </a>
-          ) : (
-            <button style={{ padding: "0.5rem" }} className={`node ui button`}>{`${props.label}`}</button>
-          )
-        }
-        content={props.content}
-        basic
-        position="top center"
-        wide="very"
-      />
+          }
+          content={props.content}
+          basic
+          position="top center"
+          wide="very"
+        />
+      ) : (
+        <button style={{ padding: "0.5rem" }} className={`node ui button`}>{`${props.label}`}</button>
+      )}
     </div>
   );
 };
