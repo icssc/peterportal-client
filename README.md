@@ -90,7 +90,7 @@ ADMIN_EMAILS=["<your email>"]
 
 2. In the first terminal window, enter the client directory with `cd site`. Then run the React development server using `npm start`. Ensure the server is running on port 3000 by default.
 
-3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 5000 by default.
+3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 8080 by default.
 
 ## Our Mission
 🎇 Our mission is to improve the UCI student experience with course planning
