@@ -72,7 +72,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
 
     const DisplayMissingCourses: FC = () => {
         return <ListGroup horizontal> {
-                Array.from(missingPrereqNames).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+                Array.from(missingPrereqNames).map((course) => <ListGroup.Item key={course}>{course}</ListGroup.Item>)
             }
         </ListGroup>
     };

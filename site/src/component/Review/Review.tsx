@@ -139,7 +139,7 @@ const Review: FC<ReviewProps> = (props) => {
                             onChange={(_, s) => setSortingOption(s.value as SortingOption)}
                         />
                         <div id="checkbox">
-                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(_, props) => setShowOnlyVerifiedReviews(props.checked!)} />
+                            <Checkbox label="Show verified reviews only" checked={showOnlyVerifiedReviews} onChange={(e) => setShowOnlyVerifiedReviews(e.currentTarget.checked)} />
                         </div>
                     </div>
                     {sortedReviews.map(review => <SubReview review={review} key={review._id} course={props.course} professor={props.professor} colors={getU(review._id) as VoteColor} colorUpdater={updateVoteColors}/>)}

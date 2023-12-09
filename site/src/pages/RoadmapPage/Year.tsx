@@ -215,8 +215,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           {/* render blank, non-functional quarters to ensure there are 3 per row */}
           {data.quarters.length > 3 && data.quarters.length < 6 && (
-            [undefined, undefined].slice(data.quarters.length - 4).map(() => {
-              return <div className="empty-quarter"></div>
+            [undefined, undefined].slice(data.quarters.length - 4).map((_, i) => {
+              return <div key={i} className="empty-quarter"></div>
             })
           )
           }
