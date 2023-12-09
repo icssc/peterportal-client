@@ -1,15 +1,15 @@
-import { gql, useQuery } from "@apollo/client";
-import { ProfessorGQLData, SubCourse, CourseLookup } from "../types/types";
+import { gql, useQuery } from '@apollo/client';
+import { ProfessorGQLData, SubCourse, CourseLookup } from '../types/types';
 
 interface ProfessorGQLResponse {
-  instructor: Omit<ProfessorGQLData, "course_history"> & {
-    course_history: SubCourse[];
-  };
+    instructor: Omit<ProfessorGQLData, 'course_history'> & {
+        course_history: SubCourse[];
+    }
 }
 
 // given a course id, get the gql equivalent
 function useProfessorGQL(professorID: string | undefined) {
-  const query = gql`
+    const query = gql`
     query {
         instructor(ucinetid:"${professorID}"){
             name
@@ -27,25 +27,26 @@ function useProfessorGQL(professorID: string | undefined) {
             }
         }
     }`;
-  const { loading, error, data } = useQuery<ProfessorGQLResponse>(query);
-  if (loading || error) {
-    return { loading, error, professor: null };
-  } else {
-    if (!professorID || !data?.instructor) {
-      return { loading, error, professor: null };
+    const { loading, error, data } = useQuery<ProfessorGQLResponse>(query);
+    if (loading || error) {
+        return { loading, error, professor: null };
     }
-    let courseHistoryLookup: CourseLookup = {};
-    // maps course's id to course basic details
-    data!.instructor.course_history.forEach((course) => {
-      if (course) {
-        courseHistoryLookup[course.id] = course;
-      }
-    });
-    // create copy to override fields with lookups
-    let professor = { ...data!.instructor } as unknown as ProfessorGQLData;
-    professor.course_history = courseHistoryLookup;
-    return { loading, error, professor: professor };
-  }
+    else {
+        if (!professorID || !data?.instructor) {
+            return { loading, error, professor: null };
+        }
+        let courseHistoryLookup: CourseLookup = {};
+        // maps course's id to course basic details
+        data!.instructor.course_history.forEach(course => {
+            if (course) {
+                courseHistoryLookup[course.id] = course;
+            }
+        })
+        // create copy to override fields with lookups
+        let professor = { ...data!.instructor } as unknown as ProfessorGQLData;
+        professor.course_history = courseHistoryLookup;
+        return { loading, error, professor: professor };
+    }
 }
 
-export { useProfessorGQL };
+export { useProfessorGQL }
