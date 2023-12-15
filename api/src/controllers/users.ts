@@ -4,6 +4,7 @@
 
 import express, { Request, Response } from 'express';
 import passport from 'passport';
+import { SESSION_LENGTH } from '../config/constants';
 
 let router = express.Router();
 
@@ -37,6 +38,7 @@ router.get('/auth/google',
     passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email'],
+      state: req.headers.host
     })(req, res);
   }
 );
@@ -46,6 +48,16 @@ router.get('/auth/google',
  */
 router.get('/auth/google/callback', function (req, res) {
   const returnTo = req.session.returnTo;
+  let host: string = req.query.state as string;
+  // all staging auths will redirect their callback to prod since all callback URLs must be registered
+  // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
+  // staging instances
+  // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
+  if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
+    // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
+    res.redirect('https://' + host + '/api/users' + req.url);
+    return;
+  }
   passport.authenticate('google', { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
     function (err, user, info) {
@@ -147,7 +159,9 @@ router.get('/auth/github/callback',
 function successLogin(req: Request, res: Response) {
   console.log('Logged in', req.user);
   // set the user cookie
-  res.cookie('user', req.user);
+  res.cookie('user', req.user, {
+    maxAge: SESSION_LENGTH
+  });
   // redirect browser to the page they came from
   let returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;

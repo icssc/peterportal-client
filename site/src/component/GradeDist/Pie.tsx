@@ -143,7 +143,7 @@ export default class Pie extends React.Component<PieProps> {
 
   render() {
     return (
-      <div style={{ width: '100%' }}>
+      <div style={{ width: '100%', position: 'relative' }}>
         <ResponsivePie<Slice>
           data={this.getClassData()}
           margin={{
@@ -173,13 +173,18 @@ export default class Pie extends React.Component<PieProps> {
             </div>
           )}
         />
-        <div style={{ display: 'flex', textAlign: 'center', margin: '-235px' }}>
-          <div style={{ margin: 'auto' }}>
-            {this.totalPNP == this.total ? <h3 className='pie-text'>Average Grade: {this.averagePNP}</h3> : null}
-            {this.totalPNP != this.total ? <h3 className='pie-text'>Average Grade: {this.averageGrade} ({this.averageGPA})</h3> : null}
-            <h3 className='pie-text' style={{ marginBottom: '6px' }}>Total Enrolled: <strong>{this.total}</strong></h3>
-            {this.totalPNP > 0 ? <small>{this.totalPNP} enrolled as P/NP</small> : null}
-          </div>
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          width: '100%'
+        }}>
+          {this.totalPNP == this.total ? <h3 className='pie-text'>Average Grade: {this.averagePNP}</h3> : null}
+          {this.totalPNP != this.total ? <h3 className='pie-text'>Average Grade: {this.averageGrade} ({this.averageGPA})</h3> : null}
+          <h3 className='pie-text' style={{ marginBottom: '6px' }}>Total Enrolled: <strong>{this.total}</strong></h3>
+          {this.totalPNP > 0 ? <small>{this.totalPNP} enrolled as P/NP</small> : null}
         </div>
       </div>
     )

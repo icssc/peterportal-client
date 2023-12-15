@@ -180,7 +180,9 @@ export const roadmapSlice = createSlice({
             }
         },
         clearPlanner: (state) => {
-            state.yearPlans = [];
+            if(window.confirm("Are you sure you want to clear your Roadmap?")) {
+                state.yearPlans = [];
+            }
         },
         setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
             state.activeCourse = action.payload;

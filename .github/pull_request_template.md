@@ -30,3 +30,7 @@
 (optional)
 - [ ] Write tests
 - [ ] Write documentation
+
+## Issues
+<!-- Link the issue you're closing -->
+Closes #

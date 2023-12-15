@@ -21,7 +21,14 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
   const [showMenu, setShowMenu] = useState(false);
 
   const buttons = <>
-    <Button variant={isMobile ? "primary" : 'light'} className={isMobile ? 'my-1' : "header-btn"} onClick={() => dispatch(setShowTransfer(true))}>
+    <Button
+      variant={isMobile ? "primary" : "light"}
+      className={isMobile ? "my-1" : "header-btn"}
+      onClick={() => {
+        setShowMenu(false);
+        dispatch(setShowTransfer(true));
+      }}
+    >
       Transfer Credits
       <ArrowLeftRight className="header-icon" />
     </Button>

@@ -40,7 +40,8 @@ export function BackendStack({app, stack}: StackContext) {
                         GOOGLE_CLIENT: process.env.GOOGLE_CLIENT,
                         GOOGLE_SECRET: process.env.GOOGLE_SECRET,
                         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
-                        ADMIN_EMAILS: process.env.ADMIN_EMAILS
+                        ADMIN_EMAILS: process.env.ADMIN_EMAILS,
+                        NODE_ENV: process.env.NODE_ENV
                     }
                 }
             },
