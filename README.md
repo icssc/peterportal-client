@@ -73,9 +73,9 @@ git checkout -b [branch name]
 ```
 PUBLIC_API_URL=https://api.peterportal.org/rest/v0/
 PUBLIC_API_GRAPHQL_URL=https://api.peterportal.org/graphql/
-PORT=5000
+PORT=8080
 ```
-Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 5000.
+Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 8080.
 
 8. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 ```
@@ -91,7 +91,7 @@ ADMIN_EMAILS=["<your email>"]
 
 2. In the first terminal window, enter the client directory with `cd site`. Then run the Vite development server using `npm run dev`. Ensure the server is running on port 3000 by default.
 
-3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 5000 by default.
+3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 8080 by default.
 
 ## Our Mission
 🎇 Our mission is to improve the UCI student experience with course planning

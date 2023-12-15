@@ -2,7 +2,7 @@ import { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
 
-import { PrerequisiteJSONNode, PrerequisiteJSON, CourseGQLData, CourseLookup } from '../../types/types';
+import { PrerequisiteJSONNode, PrerequisiteJSON, CourseGQLData, CourseLookup } from "../../types/types";
 
 interface NodeProps {
   node: string;
@@ -13,17 +13,25 @@ interface NodeProps {
 
 const Node: FC<NodeProps> = (props) => {
   return (
-    <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
+    <div style={{ padding: "1px 0" }} className={`node-container ${props.node}`} key={props.index}>
       <Popup
         trigger={
-          <a href={'/course/' + props.label.replace(/\s+/g, '')} role='button' style={{ padding: '0.5rem' }} className={'node ui button'}>
-            {props.label}
-          </a>
+          !props.label.startsWith("AP ") ? (
+            <a href={"/course/" + props.label.replace(/\s+/g, "")} role="button" style={{ padding: "0.5rem" }} className={`node ui button`}>
+              {props.label}
+            </a>
+          ) : (
+            <button style={{ padding: "0.5rem" }} className={`node ui button`}>{`${props.label}`}</button>
+          )
         }
-        content={props.content} basic position='top center' wide='very' />
+        content={props.content}
+        basic
+        position="top center"
+        wide="very"
+      />
     </div>
   );
-}
+};
 
 interface TreeProps {
   prerequisiteNames: CourseLookup;
@@ -44,10 +52,10 @@ const Tree: FC<TreeProps> = (props) => {
       content = props.prerequisiteNames[id].title;
     }
     return (
-      <li key={props.index} className={'prerequisite-node'}>
-        <Node label={prerequisite as string} content={content as string} node={'prerequisite-node'} />
+      <li key={props.index} className={"prerequisite-node"}>
+        <Node label={prerequisite as string} content={content as string} node={"prerequisite-node"} />
       </li>
-    )
+    );
   }
   // if value is an object, render the rest of the sub tree
   else {
@@ -59,23 +67,20 @@ const Tree: FC<TreeProps> = (props) => {
               {prerequisite['OR'] !== undefined ? 'one of' : 'all of'}
             </div>
           </span>
-          <div className='prereq-clump'>
-            <ul className='prereq-list'>
-              {(prerequisite as PrerequisiteJSON)[Object.keys(prerequisite)[0]].map(
-                (child, index) => (
-                  <Tree key={`tree-${index}`} prerequisiteNames={props.prerequisiteNames} index={index} prerequisiteJSON={child} />
-                )
-              )}
+          <div className="prereq-clump">
+            <ul className="prereq-list">
+              {(prerequisite as PrerequisiteJSON)[Object.keys(prerequisite)[0]].map((child, index) => (
+                <Tree key={`tree-${index}`} prerequisiteNames={props.prerequisiteNames} index={index} prerequisiteJSON={child} />
+              ))}
             </ul>
           </div>
         </div>
       </div>
-    )
+    );
   }
-}
+};
 
-interface PrereqProps extends CourseGQLData {
-}
+interface PrereqProps extends CourseGQLData {}
 
 const PrereqTree: FC<PrereqProps> = (props) => {
   const hasPrereqs = props.prerequisite_tree !== '';
@@ -84,44 +89,38 @@ const PrereqTree: FC<PrereqProps> = (props) => {
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)
     return (
-      <div className='missing-tree'>
-        <p>
-          No Dependencies or Prerequisites!
-        </p>
+      <div className="missing-tree">
+        <p>No Dependencies or Prerequisites!</p>
       </div>
     );
   return (
     <div>
-      <Grid.Row className='prereq'>
+      <Grid.Row className="prereq">
         <div
           style={{
-            display: 'inline-flex',
-            flexDirection: 'row',
-            width: 'fit-content',
-            justifyContent: 'center',
-            margin: 'auto'
+            display: "inline-flex",
+            flexDirection: "row",
+            width: "fit-content",
+            justifyContent: "center",
+            margin: "auto",
           }}
         >
           {/* Display dependencies */}
           {hasDependencies && (
             <>
-              <ul style={{ padding: '0', display: 'flex' }}>
-                <div className='dependency-list-branch'>
-                  {Object.values(props.prerequisite_for).map(
-                    (dependency, index) => (
-                      <li key={`dependency-node-${index}`} className={'dependency-node'}>
-                        <Node label={dependency.department + ' ' + dependency.number} content={dependency.title} node={'dependency-node'} />
-                      </li>
-                    )
-                  )}
+              <ul style={{ padding: "0", display: "flex" }}>
+                <div className="dependency-list-branch">
+                  {Object.values(props.prerequisite_for).map((dependency, index) => (
+                    <li key={`dependency-node-${index}`} className={"dependency-node"}>
+                      <Node label={dependency.department + " " + dependency.number} content={dependency.title} node={"dependency-node"} />
+                    </li>
+                  ))}
                 </div>
               </ul>
 
-              <div style={{ display: 'inline-flex', flexDirection: 'row', marginLeft: '0.5rem' }}>
-                <span style={{ margin: 'auto 1rem' }}>
-                  <div className='dependency-needs dependency-branch'>
-                    needs
-                  </div>
+              <div style={{ display: "inline-flex", flexDirection: "row", marginLeft: "0.5rem" }}>
+                <span style={{ margin: "auto 1rem" }}>
+                  <div className="dependency-needs dependency-branch">needs</div>
                 </span>
               </div>
             </>
@@ -134,16 +133,12 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
           {/* Display the class id */}
-          <Node label={props.id} content={props.title} node={'course-node'} />
+          <Node label={props.id} content={props.title} node={"course-node"} />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
-            <div style={{ display: 'flex' }}>
-              <Tree
-                prerequisiteNames={props.prerequisite_list}
-                prerequisiteJSON={JSON.parse(props.prerequisite_tree)}
-              />
-
+            <div style={{ display: "flex" }}>
+              <Tree prerequisiteNames={props.prerequisite_list} prerequisiteJSON={JSON.parse(props.prerequisite_tree)} />
             </div>
           )}
 
@@ -152,14 +147,13 @@ const PrereqTree: FC<PrereqProps> = (props) => {
               No Prerequisites!
             </p>
           </div>} */}
-
         </div>
-        {props.prerequisite_text !== '' && (
+        {props.prerequisite_text !== "" && (
           <div
             style={{
-              padding: '1em',
-              backgroundColor: '#f5f5f5',
-              marginTop: '2em',
+              padding: "1em",
+              backgroundColor: "#f5f5f5",
+              marginTop: "2em",
             }}
           >
             <p>
@@ -171,6 +165,6 @@ const PrereqTree: FC<PrereqProps> = (props) => {
       </Grid.Row>
     </div>
   );
-}
+};
 
 export default PrereqTree;
