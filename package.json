@@ -2,7 +2,9 @@
   "name": "peterportal-root",
   "version": "0.1.0",
   "scripts": {
-    "postinstall": "npm install --prefix api && npm install --prefix site"
+    "postinstall": "cd api && npm install && cd ../site && npm install",
+    "prepare": "husky install",
+    "format": "prettier --write **/*.{scss,js,ts,tsx}"
   },
   "dependencies": {
     "dotenv-flow": "^3.2.0",
@@ -10,5 +12,10 @@
   },
   "engines": {
     "node": ">=18.x.x"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0"
   }
 }
