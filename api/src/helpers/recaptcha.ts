@@ -3,8 +3,8 @@ import { ReviewData } from '../types/types';
 
 export async function verifyCaptcha(review: ReviewData) {
   const reqBody = {
-    secret: process.env.GRECAPTCHA_SECRET || '',
-    response: review.captchaToken || '',
+    secret: process.env.GRECAPTCHA_SECRET ?? '',
+    response: review.captchaToken ?? '',
   };
   const query = new URLSearchParams(reqBody);
   const response = await axios
