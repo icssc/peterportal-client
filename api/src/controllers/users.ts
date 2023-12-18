@@ -4,6 +4,7 @@
 
 import express, { Request, Response } from 'express';
 import passport from 'passport';
+import { SESSION_LENGTH } from '../config/constants';
 
 let router = express.Router();
 
@@ -158,7 +159,9 @@ router.get('/auth/github/callback',
 function successLogin(req: Request, res: Response) {
   console.log('Logged in', req.user);
   // set the user cookie
-  res.cookie('user', req.user);
+  res.cookie('user', req.user, {
+    maxAge: SESSION_LENGTH
+  });
   // redirect browser to the page they came from
   let returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
