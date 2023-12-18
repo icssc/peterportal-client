@@ -145,6 +145,7 @@ router.post("/", async function (req, res, next) {
     // Verify the captcha
     const verifyResponse = await verifyCaptcha(req.body);
     if (!verifyResponse?.success) return res.status(400).json({ error: "ReCAPTCHA token is invalid", data: verifyResponse });
+    delete req.body.captchaToken; // so it doesn't get stored in DB
 
     //check if review already exists for same professor, course, and user
     let query: ReviewFilter = {
