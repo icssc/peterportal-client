@@ -6,6 +6,7 @@ import express from "express";
 import { ObjectID } from "mongodb";
 import { VoteData } from "../types/types";
 import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, updateDocument, deleteDocument, deleteDocuments } from "../helpers/mongo";
+import axios from "axios";
 
 const router = express.Router();
 
@@ -119,6 +120,23 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+/** @todo ReviewData type */
+async function verifyCaptcha (review: any) {
+  const reqBody = {
+    secret: process.env.GRECAPTCHA_SECRET,
+    response: review.captchaToken
+  };
+  const queryStr = new URLSearchParams(Object.entries(reqBody)).toString();
+  const response = await axios.post("https://www.google.com/recaptcha/api/siteverify?" + queryStr)
+    .then(x => x.data)
+    .catch(e => {
+      console.error("Error validating captcha response", e);
+      return { success: false };
+    });
+
+  return response.success;
+}
+
 /**
  * Add a review
  */
@@ -140,6 +158,10 @@ router.post("/", async function (req, res, next) {
     if (verifiedCount >= 3) {
       req.body.verified = true;
     }
+
+    // Verify the captcha
+    const captchaVerified = await verifyCaptcha(req.body);
+    if (!captchaVerified) return res.status(400).json({ error: "ReCAPTCHA token is invalid" });
 
     //check if review already exists for same professor, course, and user
     let query: ReviewFilter = {

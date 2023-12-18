@@ -86,7 +86,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>("/api/reviews", review).catch((err) => err.response);
     if (res.status === 400) {
-      alert("You have already submitted a review for this course/professor");
+      alert(res.data.error || "You have already submitted a review for this course/professor");
     } else if (res.data.hasOwnProperty("error")) {
       alert("You must be logged in to add a review!");
     } else {
