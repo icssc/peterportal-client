@@ -143,8 +143,8 @@ router.post("/", async function (req, res, next) {
     req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
     // Verify the captcha
-    const captchaVerified = await verifyCaptcha(req.body);
-    if (!captchaVerified) return res.status(400).json({ error: "ReCAPTCHA token is invalid" });
+    const verifyResponse = await verifyCaptcha(req.body);
+    if (!verifyResponse?.success) return res.status(400).json({ error: "ReCAPTCHA token is invalid", data: verifyResponse });
 
     //check if review already exists for same professor, course, and user
     let query: ReviewFilter = {

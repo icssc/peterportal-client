@@ -15,5 +15,5 @@ export async function verifyCaptcha(review: ReviewData) {
       return { success: false };
     });
 
-  return response.success;
+  return response;
 }
