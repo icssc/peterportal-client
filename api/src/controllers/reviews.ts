@@ -154,10 +154,9 @@ router.post("/", async function (req, res, next) {
         verified: true,
       })
       .count();
-    // set the review as verified
-    if (verifiedCount >= 3) {
-      req.body.verified = true;
-    }
+    
+    // Set on server so the client can't automatically verify their own review.
+    req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
     // Verify the captcha
     const captchaVerified = await verifyCaptcha(req.body);

@@ -137,7 +137,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       attendance: attendance,
       tags: selectedTags,
       captchaToken: captchaToken,
-      verified: false,
     };
     if (content.length > 500) {
       setOverCharLimit(true);

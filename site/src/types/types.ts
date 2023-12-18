@@ -80,7 +80,7 @@ export interface ReviewData {
     textbook: boolean;
     attendance: boolean;
     tags: string[];
-    verified: boolean;
+    verified?: boolean;
 }
 
 export interface ReportData {
