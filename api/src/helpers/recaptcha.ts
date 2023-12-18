@@ -6,9 +6,9 @@ export async function verifyCaptcha(review: ReviewData) {
     secret: process.env.GRECAPTCHA_SECRET || '',
     response: review.captchaToken || '',
   };
-  const queryStr = new URLSearchParams(Object.entries(reqBody)).toString();
+  const query = new URLSearchParams(reqBody);
   const response = await axios
-    .post('https://www.google.com/recaptcha/api/siteverify?' + queryStr)
+    .post('https://www.google.com/recaptcha/api/siteverify?' + query)
     .then((x) => x.data)
     .catch((e) => {
       console.error('Error validating captcha response', e);
