@@ -81,6 +81,7 @@ export interface ReviewData {
     attendance: boolean;
     tags: string[];
     verified?: boolean;
+    captchaToken?: string;
 }
 
 export interface ReportData {

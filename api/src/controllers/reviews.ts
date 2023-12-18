@@ -7,6 +7,7 @@ import { ObjectID } from "mongodb";
 import { VoteData } from "../types/types";
 import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, updateDocument, deleteDocument, deleteDocuments } from "../helpers/mongo";
 import axios from "axios";
+import { verifyCaptcha } from "../helpers/recaptcha";
 
 const router = express.Router();
 
@@ -119,23 +120,6 @@ router.get("/", async function (req, res, next) {
     res.json([]);
   }
 });
-
-/** @todo ReviewData type */
-async function verifyCaptcha (review: any) {
-  const reqBody = {
-    secret: process.env.GRECAPTCHA_SECRET,
-    response: review.captchaToken
-  };
-  const queryStr = new URLSearchParams(Object.entries(reqBody)).toString();
-  const response = await axios.post("https://www.google.com/recaptcha/api/siteverify?" + queryStr)
-    .then(x => x.data)
-    .catch(e => {
-      console.error("Error validating captcha response", e);
-      return { success: false };
-    });
-
-  return response.success;
-}
 
 /**
  * Add a review
