@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
-import cors from 'cors';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 // load env
@@ -70,16 +69,10 @@ if (process.env.MONGO_URL) {
 app.use(express.json());
 app.use(logger('dev'));
 app.use(cookieParser());
-
-// Enable CORS
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Access-Control-Allow-Headers', '*');
+app.use(function (_, res, next) {
   res.header('x-powered-by', 'serverless-express');
   next();
 });
-app.use(cors());
 
 /**
  * Routes - Public
@@ -96,10 +89,6 @@ router.use('/graphql', graphqlRouter);
 router.use('/roadmap', roadmapRouter);
 router.use('/reports', reportsRouter);
 app.use('/api', router);
-
-app.options(`*`, (req, res) => {
-  res.status(200).send();
-});
 
 /**
  * Error Handler
