@@ -1,7 +1,7 @@
 {
   "name": "peterportal-core-api",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
