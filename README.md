@@ -83,6 +83,7 @@ MONGO_URL=<secret>
 SESSION_SECRET=<secret>
 GOOGLE_CLIENT=<client>
 GOOGLE_SECRET=<secret>
+GRECAPTCHA_SECRET=<secret>
 ADMIN_EMAILS=["<your email>"]
 ```
 
