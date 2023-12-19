@@ -57,7 +57,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [verified, setVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
@@ -86,9 +86,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
     if (res.status === 400) {
-      alert('You have already submitted a review for this course/professor');
-    } else if (res.data.hasOwnProperty('error')) {
-      alert('You must be logged in to add a review!');
+      alert(res.data.error ?? "You have already submitted a review for this course/professor");
+    } else if (res.data.hasOwnProperty("error")) {
+      alert("You must be logged in to add a review!");
     } else {
       setSubmitted(true);
     }
@@ -108,9 +108,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     if (valid === false) {
       return;
     }
-
-    if (!verified) {
-      alert('Please complete the CAPTCHA');
+    if (!captchaToken) {
+      alert("Please complete the CAPTCHA");
       return;
     }
 
@@ -135,7 +134,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       textbook: textbook,
       attendance: attendance,
       tags: selectedTags,
-      verified: false,
+      captchaToken: captchaToken,
     };
     if (content.length > 500) {
       setOverCharLimit(true);
@@ -453,16 +452,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className="d-inline"
                 sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => {
-                  // if verified
-                  if (token) {
-                    setVerified(true);
-                  }
-                  // captcha expired
-                  else {
-                    setVerified(false);
-                  }
-                }}
+                onChange={(token) => setCaptchaToken(token ?? "")}
               />
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
