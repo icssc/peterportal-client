@@ -40,26 +40,27 @@ if (process.env.MONGO_URL) {
   let store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
-    collection: COLLECTION_NAMES.SESSIONS
+    collection: COLLECTION_NAMES.SESSIONS,
   });
   // Catch errors
   store.on('error', function (error) {
     console.log(error);
   });
   // Setup Passport and Sessions
-  app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: SESSION_LENGTH },
-    store: store,
-  }));
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: SESSION_LENGTH },
+      store: store,
+    }),
+  );
   app.use(passport.initialize());
   app.use(passport.session());
-  require('./config/passport')
-}
-else {
-  console.log('MONGO_URL env var is not defined!')
+  require('./config/passport');
+} else {
+  console.log('MONGO_URL env var is not defined!');
 }
 
 /**
@@ -67,18 +68,17 @@ else {
  */
 
 app.use(express.json());
-app.use(logger('dev'))
+app.use(logger('dev'));
 app.use(cookieParser());
-app.set('view engine', 'ejs');
 
 // Enable CORS
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', '*')
-  res.header('Access-Control-Allow-Headers', '*')
-  res.header('x-powered-by', 'serverless-express')
-  next()
-})
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('x-powered-by', 'serverless-express');
+  next();
+});
 app.use(cors());
 
 /**
@@ -98,22 +98,25 @@ router.use('/reports', reportsRouter);
 app.use('/api', router);
 
 app.options(`*`, (req, res) => {
-  res.status(200).send()
-})
-
-app.get(`/test`, (req, res) => {
-  res.status(200).send('Hello World!')
-})
+  res.status(200).send();
+});
 
 /**
  * Error Handler
  */
 app.use(function (req, res, next) {
-  console.error(req)
-  res.status(500).json({ error: `Internal Serverless Error - '${req}'` })
-})
+  console.error(req);
+  res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
+});
 
-// export for local dev
-export default app
+// run local dev server
+const NODE_ENV = process.env.NODE_ENV ?? 'development';
+if (NODE_ENV === 'development') {
+  const port = process.env.PORT ?? 8080;
+  app.listen(port, () => {
+    console.log('Listening on port', port);
+  });
+}
+
 // export for serverless
-export const handler = serverlessExpress({app});
+export const handler = serverlessExpress({ app });
