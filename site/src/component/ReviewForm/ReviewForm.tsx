@@ -424,7 +424,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className="d-inline"
                 sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => setCaptchaToken(token || "")}
+                onChange={(token) => setCaptchaToken(token ?? "")}
               />
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
