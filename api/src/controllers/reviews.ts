@@ -6,6 +6,8 @@ import express from "express";
 import { ObjectID } from "mongodb";
 import { VoteData } from "../types/types";
 import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, updateDocument, deleteDocument, deleteDocuments } from "../helpers/mongo";
+import axios from "axios";
+import { verifyCaptcha } from "../helpers/recaptcha";
 
 const router = express.Router();
 
@@ -136,10 +138,14 @@ router.post("/", async function (req, res, next) {
         verified: true,
       })
       .count();
-    // set the review as verified
-    if (verifiedCount >= 3) {
-      req.body.verified = true;
-    }
+    
+    // Set on server so the client can't automatically verify their own review.
+    req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
+
+    // Verify the captcha
+    const verifyResponse = await verifyCaptcha(req.body);
+    if (!verifyResponse?.success) return res.status(400).json({ error: "ReCAPTCHA token is invalid", data: verifyResponse });
+    delete req.body.captchaToken; // so it doesn't get stored in DB
 
     //check if review already exists for same professor, course, and user
     let query: ReviewFilter = {

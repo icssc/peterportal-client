@@ -39,6 +39,7 @@ jobs:
           SESSION_SECRET: ${{secrets.SESSION_SECRET}}
           GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
           GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
+          GRECAPTCHA_SECRET: ${{secrets.GRECAPTCHA_SECRET}}
           ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
           PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
