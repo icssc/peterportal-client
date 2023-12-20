@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollo/client": "^3.3.15",
     "@nivo/bar": "^0.69.1",
     "@nivo/pie": "^0.69.0",
     "@reduxjs/toolkit": "^1.6.1",

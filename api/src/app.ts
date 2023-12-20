@@ -23,7 +23,6 @@ import professorsRouter from './controllers/professors';
 import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
-import graphqlRouter from './controllers/graphql';
 import roadmapRouter from './controllers/roadmap';
 import reportsRouter from './controllers/reports';
 
@@ -85,7 +84,6 @@ router.use('/professors', professorsRouter);
 router.use('/schedule', scheduleRouter);
 router.use('/reviews', reviewsRouter);
 router.use('/users', usersRouter);
-router.use('/graphql', graphqlRouter);
 router.use('/roadmap', roadmapRouter);
 router.use('/reports', reportsRouter);
 app.use('/api', router);
