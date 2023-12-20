@@ -2,12 +2,20 @@
  @module ReviewRoute
 */
 
-import express from "express";
-import { ObjectID } from "mongodb";
-import { VoteData } from "../types/types";
-import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, updateDocument, deleteDocument, deleteDocuments } from "../helpers/mongo";
-import axios from "axios";
-import { verifyCaptcha } from "../helpers/recaptcha";
+import express from 'express';
+import { ObjectID } from 'mongodb';
+import { VoteData } from '../types/types';
+import {
+  COLLECTION_NAMES,
+  getCollection,
+  addDocument,
+  getDocuments,
+  updateDocument,
+  deleteDocument,
+  deleteDocuments,
+} from '../helpers/mongo';
+import axios from 'axios';
+import { verifyCaptcha } from '../helpers/recaptcha';
 
 const router = express.Router();
 
@@ -15,20 +23,20 @@ const router = express.Router();
  * Get review scores
  */
 interface ScoresQuery {
-  type: "course" | "professor";
+  type: 'course' | 'professor';
   id: string;
 }
-router.get<{}, {}, {}, ScoresQuery>("/scores", async function (req, res) {
+router.get<{}, {}, {}, ScoresQuery>('/scores', async function (req, res) {
   // match filters all reviews with given field
   // group aggregates by field
-  let matchField = "";
-  let groupField = "";
-  if (req.query.type == "professor") {
-    matchField = "professorID";
-    groupField = "$courseID";
-  } else if (req.query.type == "course") {
-    matchField = "courseID";
-    groupField = "$professorID";
+  let matchField = '';
+  let groupField = '';
+  if (req.query.type == 'professor') {
+    matchField = 'professorID';
+    groupField = '$courseID';
+  } else if (req.query.type == 'course') {
+    matchField = 'courseID';
+    groupField = '$professorID';
   }
 
   // execute aggregation on the reviews collection
@@ -36,7 +44,7 @@ router.get<{}, {}, {}, ScoresQuery>("/scores", async function (req, res) {
   if (reviewsCollection) {
     let cursor = reviewsCollection.aggregate([
       { $match: { [matchField]: req.query.id } },
-      { $group: { _id: groupField, score: { $avg: "$rating" } } },
+      { $group: { _id: groupField, score: { $avg: '$rating' } } },
     ]);
 
     // returns the results in an array
@@ -55,16 +63,16 @@ router.get<{}, {}, {}, ScoresQuery>("/scores", async function (req, res) {
  * Get featured review
  */
 interface FeaturedQuery {
-  type: "course" | "professor";
+  type: 'course' | 'professor';
   id: string;
 }
-router.get<{}, {}, {}, FeaturedQuery>("/featured", async function (req, res) {
+router.get<{}, {}, {}, FeaturedQuery>('/featured', async function (req, res) {
   // search by professor or course field
-  let field = "";
-  if (req.query.type == "course") {
-    field = "courseID";
-  } else if (req.query.type == "professor") {
-    field = "professorID";
+  let field = '';
+  if (req.query.type == 'course') {
+    field = 'courseID';
+  } else if (req.query.type == 'professor') {
+    field = 'professorID';
   }
 
   // find first review with the highest score
@@ -91,7 +99,7 @@ interface ReviewFilter {
 /**
  * Query reviews
  */
-router.get("/", async function (req, res, next) {
+router.get('/', async function (req, res, next) {
   let courseID = req.query.courseID as string;
   let professorID = req.query.professorID as string;
   let userID = req.query.userID as string;
@@ -103,7 +111,7 @@ router.get("/", async function (req, res, next) {
     professorID,
     userID,
     _id: reviewID === undefined ? undefined : new ObjectID(reviewID),
-    verified: verified === undefined ? undefined : verified === "true" ? true : false,
+    verified: verified === undefined ? undefined : verified === 'true' ? true : false,
   };
 
   // remove null params
@@ -124,11 +132,10 @@ router.get("/", async function (req, res, next) {
 /**
  * Add a review
  */
-router.post("/", async function (req, res, next) {
+router.post('/', async function (req, res, next) {
   if (req.session.passport) {
-    console.log(req.body);
     //^ this should be a middleware check smh
-    console.log(`Adding Review: ${JSON.stringify(req.body)}`);
+    console.log('Adding Review:', req.body);
 
     // check if user is trusted
     const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
@@ -138,13 +145,14 @@ router.post("/", async function (req, res, next) {
         verified: true,
       })
       .count();
-    
+
     // Set on server so the client can't automatically verify their own review.
     req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
     // Verify the captcha
     const verifyResponse = await verifyCaptcha(req.body);
-    if (!verifyResponse?.success) return res.status(400).json({ error: "ReCAPTCHA token is invalid", data: verifyResponse });
+    if (!verifyResponse?.success)
+      return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
     delete req.body.captchaToken; // so it doesn't get stored in DB
 
     //check if review already exists for same professor, course, and user
@@ -155,21 +163,22 @@ router.post("/", async function (req, res, next) {
     };
 
     let reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
-    if (reviews?.length > 0) return res.status(400).json({ error: "Review already exists for this professor and course!" });
+    if (reviews?.length > 0)
+      return res.status(400).json({ error: 'Review already exists for this professor and course!' });
     // add review to mongo
     await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
 
     // echo back body
     res.json(req.body);
   } else {
-    res.json({ error: "Must be logged in to add a review!" });
+    res.json({ error: 'Must be logged in to add a review!' });
   }
 });
 
 /**
  * Delete a review
  */
-router.delete("/", async (req, res, next) => {
+router.delete('/', async (req, res, next) => {
   const checkUser = async () => {
     let review = await getDocuments(COLLECTION_NAMES.REVIEWS, {
       _id: new ObjectID(req.body.id),
@@ -191,18 +200,18 @@ router.delete("/", async (req, res, next) => {
 
     res.json(status);
   } else {
-    res.json({ error: "Must be an admin or review author to delete reviews!" });
+    res.json({ error: 'Must be an admin or review author to delete reviews!' });
   }
 });
 
 /**
  * Upvote or downvote a review
  */
-router.patch("/vote", async function (req, res) {
+router.patch('/vote', async function (req, res) {
   if (req.session.passport != null) {
     //get id and delta score from initial vote
-    let id = req.body["id"];
-    let deltaScore = req.body["upvote"] ? 1 : -1;
+    let id = req.body['id'];
+    let deltaScore = req.body['upvote'] ? 1 : -1;
     //query to search for a vote matching the same review and user
     let currentVotes = {
       userID: req.session.passport.user.id,
@@ -247,13 +256,13 @@ router.patch("/vote", async function (req, res) {
 /**
  * Get whether or not the color of a button should be colored
  */
-router.patch("/getVoteColor", async function (req, res) {
+router.patch('/getVoteColor', async function (req, res) {
   //make sure user is logged in
   if (req.session.passport != null) {
     //query of the user's email and the review id
     let query = {
       userID: req.session.passport.user.email,
-      reviewID: req.body["id"],
+      reviewID: req.body['id'],
     };
     //get any existing vote in the db
     let existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
@@ -275,10 +284,10 @@ router.patch("/getVoteColor", async function (req, res) {
 /**
  * Get multiple review colors
  */
-router.patch("/getVoteColors", async function (req, res) {
+router.patch('/getVoteColors', async function (req, res) {
   if (req.session.passport != null) {
     //query of the user's email and the review id
-    let ids = req.body["ids"];
+    let ids = req.body['ids'];
     let colors = [];
 
     let q = {
@@ -299,29 +308,33 @@ router.patch("/getVoteColors", async function (req, res) {
 /*
  * Verify a review
  */
-router.patch("/verify", async function (req, res) {
+router.patch('/verify', async function (req, res) {
   if (req.session.passport?.admin) {
     console.log(`Verifying review ${req.body.id}`);
 
-    let status = await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectID(req.body.id) }, { $set: { verified: true } });
+    let status = await updateDocument(
+      COLLECTION_NAMES.REVIEWS,
+      { _id: new ObjectID(req.body.id) },
+      { $set: { verified: true } },
+    );
 
     res.json(status);
   } else {
-    res.json({ error: "Must be an admin to verify reviews!" });
+    res.json({ error: 'Must be an admin to verify reviews!' });
   }
 });
 
 /**
  * Clear all reviews
  */
-router.delete("/clear", async function (req, res) {
-  if (process.env.NODE_ENV != "production") {
+router.delete('/clear', async function (req, res) {
+  if (process.env.NODE_ENV != 'production') {
     let reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
     let status = await reviewsCollection.deleteMany({});
 
     res.json(status);
   } else {
-    res.json({ error: "Can only clear on development environment" });
+    res.json({ error: 'Can only clear on development environment' });
   }
 });
 
