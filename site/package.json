@@ -24,6 +24,7 @@
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.18.0",
     "react-twemoji": "^0.5.0",
+    "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
     "websoc-fuzzy-search": "^0.8.0-rc.1"
   },

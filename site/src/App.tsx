@@ -1,8 +1,5 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './App.scss';
@@ -22,24 +19,24 @@ export default function App() {
   return (
     <Router>
       <AppHeader />
-      <div className='app-body'>
-        <div className='app-sidebar'>
+      <div className="app-body">
+        <div className="app-sidebar">
           <SideBar></SideBar>
         </div>
-        <div className='app-content'>
+        <div className="app-content">
           <Routes>
-            <Route path='/roadmap' element={<RoadmapPage />} />
-            <Route path='/' element={<SearchPage />} />
-            <Route path='/search/:index' element={<SearchPage />} />
-            <Route path='/course/:id' element={<CoursePage />} />
-            <Route path='/professor/:id' element={<ProfessorPage />} />
-            <Route path='/admin/*' element={<AdminPage />} />
-            <Route path='/reviews'  element={<ReviewsPage />} />
-            <Route path='*' element={<ErrorPage />} />
+            <Route path="/roadmap" element={<RoadmapPage />} />
+            <Route path="/" element={<SearchPage />} />
+            <Route path="/search/:index" element={<SearchPage />} />
+            <Route path="/course/:id" element={<CoursePage />} />
+            <Route path="/professor/:id" element={<ProfessorPage />} />
+            <Route path="/admin/*" element={<AdminPage />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
           <Footer />
         </div>
       </div>
     </Router>
-  )
+  );
 }
