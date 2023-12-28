@@ -110,7 +110,7 @@ interface PrereqProps extends CourseGQLData {}
 
 const PrereqTree: FC<PrereqProps> = (props) => {
   let hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
-  let hasDependencies = Object.keys(props.prerequisiteFor).length !== 0;
+  let hasDependencies = Object.keys(props.dependencies).length !== 0;
 
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)
@@ -136,7 +136,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             <>
               <ul style={{ padding: '0', display: 'flex' }}>
                 <div className="dependency-list-branch">
-                  {Object.values(props.prerequisiteFor).map((dependency, index) => (
+                  {Object.values(props.dependencies).map((dependency, index) => (
                     <li key={`dependency-node-${index}`} className={'dependency-node'}>
                       <Node
                         label={`${dependency.department} ${dependency.courseNumber}`}
@@ -168,7 +168,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
             <div style={{ display: 'flex' }}>
-              <PrereqTreeNode prerequisiteNames={props.prerequisiteList} prerequisiteJSON={props.prerequisiteTree} />
+              <PrereqTreeNode prerequisiteNames={props.prerequisites} prerequisiteJSON={props.prerequisiteTree} />
             </div>
           )}
 

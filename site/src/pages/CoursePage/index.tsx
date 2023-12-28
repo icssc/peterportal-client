@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
@@ -13,102 +13,97 @@ import Error from '../../component/Error/Error';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { CourseGQLData } from '../../types/types';
+import { CourseGQLData, CourseGQLResponse, SubProfessor } from '../../types/types';
 import { getCourseTags, searchAPIResult } from '../../helpers/util';
 import './CoursePage.scss';
 
-import axios from "axios";
+import axios from 'axios';
 
 const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
-    const dispatch = useAppDispatch();
-    const courseGQLData = useAppSelector(state => state.popup.course);
-    const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
+  const courseGQLData = useAppSelector((state) => state.popup.course);
+  const [error, setError] = useState('');
 
-    useEffect(() => {
-        // make a gql query if directly landed on this page
-        if (courseGQLData == null || courseGQLData.id !== props.match.params.id) {
-            (searchAPIResult('course', props.match.params.id) as Promise<CourseGQLData>)
-                .then(course => {
-                    if (course) {
-                        Promise.all([
-                            axios.post
-                            (`/api/professors/api/batch`, {"professors": Object.keys(course.instructorHistory)})
-                                .then(r => r.data),
-                            axios.post
-                            (`/api/courses/api/batch`, {"courses": Object.keys(course.prerequisiteList).map((x) => x.replace(/ /g, ""))})
-                                .then(r => r.data),
-                            axios.post
-                            (`/api/courses/api/batch`, {"courses": Object.keys(course.prerequisiteFor).map((x) => x.replace(/ /g, ""))})
-                                .then(r => r.data),
-                        ]).then(([instructorHistory, prerequisiteList, prerequisiteFor]) => {
-                            course.instructorHistory = instructorHistory;
-                            course.prerequisiteList = prerequisiteList;
-                            course.prerequisiteFor = prerequisiteFor;
-                            dispatch(setCourse(course));
-                        })
-                    }
-                    else {
-                        setError(`Course ${props.match.params.id} does not exist!`);
-                    }
-                })
+  useEffect(() => {
+    // make a gql query if directly landed on this page
+    if (courseGQLData == null || courseGQLData.id !== props.match.params.id) {
+      (searchAPIResult('course', props.match.params.id) as unknown as Promise<CourseGQLResponse>).then((course) => {
+        if (course) {
+          dispatch(
+            setCourse({
+              ...course,
+              instructors: Object.fromEntries(course.instructors.map((x) => [x.ucinetid, x])),
+              prerequisites: Object.fromEntries(course.prerequisites.map((x) => [x.id, x])),
+              dependencies: Object.fromEntries(course.dependencies.map((x) => [x.id, x])),
+            }),
+          );
+        } else {
+          setError(`Course ${props.match.params.id} does not exist!`);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    // if course does not exists
-    if (error) {
-        return <Error message={error} />
+      });
     }
-    // loading results
-    else if (!courseGQLData) {
-        return <LoadingPage />;
-    }
-    else {
-        return (
-            <Twemoji options={{ className: 'twemoji' }}>
-                <div className='course-page'>
-                    <div>
-                        <SideInfo searchType='course' name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-                            title={courseGQLData.title} school={courseGQLData.school} description={courseGQLData.description}
-                            tags={getCourseTags(courseGQLData)} course={courseGQLData} />
-                    </div>
-                    <div className='course-page-body'>
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>🌲 Prerequisite Tree</h2>
-                            </div>
-                            <Divider />
-                            <PrereqTree {...courseGQLData} />
-                        </div>
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>🗓️ Schedule of Classes</h2>
-                            </div>
-                            <Divider />
-                            <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
-                        </div>
+  // if course does not exists
+  if (error) {
+    return <Error message={error} />;
+  }
+  // loading results
+  else if (!courseGQLData) {
+    return <LoadingPage />;
+  } else {
+    return (
+      <Twemoji options={{ className: 'twemoji' }}>
+        <div className="course-page">
+          <div>
+            <SideInfo
+              searchType="course"
+              name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+              title={courseGQLData.title}
+              school={courseGQLData.school}
+              description={courseGQLData.description}
+              tags={getCourseTags(courseGQLData)}
+              course={courseGQLData}
+            />
+          </div>
+          <div className="course-page-body">
+            <div className="course-page-section">
+              <div>
+                <h2>🌲 Prerequisite Tree</h2>
+              </div>
+              <Divider />
+              <PrereqTree {...courseGQLData} />
+            </div>
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>📊 Grade Distribution</h2>
-                            </div>
-                            <Divider />
-                            <GradeDist course={courseGQLData} />
-                        </div>
+            <div className="course-page-section">
+              <div>
+                <h2>🗓️ Schedule of Classes</h2>
+              </div>
+              <Divider />
+              <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
+            </div>
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>💬 Reviews</h2>
-                            </div>
-                            <Divider />
-                            <Review course={courseGQLData} />
-                        </div>
-                    </div>
-                </div>
-            </Twemoji>
-        )
-    }
-}
+            <div className="course-page-section">
+              <div>
+                <h2>📊 Grade Distribution</h2>
+              </div>
+              <Divider />
+              <GradeDist course={courseGQLData} />
+            </div>
+
+            <div className="course-page-section">
+              <div>
+                <h2>💬 Reviews</h2>
+              </div>
+              <Divider />
+              <Review course={courseGQLData} />
+            </div>
+          </div>
+        </div>
+      </Twemoji>
+    );
+  }
+};
 
 export default CoursePage;

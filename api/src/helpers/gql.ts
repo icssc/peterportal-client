@@ -1,11 +1,11 @@
 export function getCourseQuery(courseIDs: string[]) {
-    // start of query 
-    let result = 'query {';
-    
-    // request fields for each course
-    courseIDs.forEach((courseID, i) => {
-        // use number id here because cannot use special character names
-        result += `
+  // start of query
+  let result = 'query {';
+
+  // request fields for each course
+  courseIDs.forEach((courseID, i) => {
+    // use number id here because cannot use special character names
+    result += `
         ${'_' + i}: course(courseId: "${courseID}") {
             id
             department
@@ -17,11 +17,25 @@ export function getCourseQuery(courseIDs: string[]) {
             maxUnits
             description
             departmentName
-            instructorHistory
+            instructors {
+              ucinetid
+              name
+              shortenedName
+            }
             prerequisiteTree
-            prerequisiteList
+            prerequisites {
+              id
+              department
+              courseNumber
+              title
+            }
             prerequisiteText
-            prerequisiteFor
+            dependencies {
+              id
+              department
+              courseNumber
+              title
+            }
             repeatability
             concurrent
             sameAs
@@ -32,22 +46,22 @@ export function getCourseQuery(courseIDs: string[]) {
             geText
             terms
         },
-        `
-    })
-    
-    // close off query
-    result += '}';
-    return result;
+        `;
+  });
+
+  // close off query
+  result += '}';
+  return result;
 }
 
 export function getProfessorQuery(ucinetids: string[]) {
-    // start of query 
-    let result = 'query {';
-    
-    // request fields for each course
-    ucinetids.forEach((ucinetid, i) => {
-        // use number id here because cannot use special character names
-        result += `
+  // start of query
+  let result = 'query {';
+
+  // request fields for each course
+  ucinetids.forEach((ucinetid, i) => {
+    // use number id here because cannot use special character names
+    result += `
         ${'_' + i}: instructor(ucinetid: "${ucinetid}"){
             name
             shortenedName
@@ -56,12 +70,17 @@ export function getProfessorQuery(ucinetids: string[]) {
             department
             schools
             relatedDepartments
-            courseHistory
+            courses {
+              id
+              department
+              courseNumber
+              title
+            }
         },
-        `
-    })
-    
-    // close off query
-    result += '}';
-    return result;
+        `;
+  });
+
+  // close off query
+  result += '}';
+  return result;
 }

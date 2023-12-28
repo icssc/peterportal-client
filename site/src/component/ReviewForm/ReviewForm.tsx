@@ -57,7 +57,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies, setCookie] = useCookies(['user']);
@@ -86,9 +86,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
     if (res.status === 400) {
-      alert(res.data.error ?? "You have already submitted a review for this course/professor");
-    } else if (res.data.hasOwnProperty("error")) {
-      alert("You must be logged in to add a review!");
+      alert(res.data.error ?? 'You have already submitted a review for this course/professor');
+    } else if (res.data.hasOwnProperty('error')) {
+      alert('You must be logged in to add a review!');
     } else {
       setSubmitted(true);
     }
@@ -109,7 +109,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       return;
     }
     if (!captchaToken) {
-      alert("Please complete the CAPTCHA");
+      alert('Please complete the CAPTCHA');
       return;
     }
 
@@ -179,8 +179,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <option disabled={true} value="">
           Instructor
         </option>
-        {Object.keys(props.course?.instructorHistory).map((ucinetid) => {
-          const name = props.course?.instructorHistory[ucinetid].shortenedName;
+        {Object.keys(props.course?.instructors).map((ucinetid) => {
+          const name = props.course?.instructors[ucinetid].shortenedName;
           return (
             <option key={ucinetid} value={ucinetid}>
               {name}
@@ -211,11 +211,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <option disabled={true} value="">
           Course
         </option>
-        {Object.keys(props.professor?.courseHistory).map((courseID) => {
+        {Object.keys(props.professor?.courses).map((courseID) => {
           const name =
-            props.professor?.courseHistory[courseID].department +
-            ' ' +
-            props.professor?.courseHistory[courseID].courseNumber;
+            props.professor?.courses[courseID].department + ' ' + props.professor?.courses[courseID].courseNumber;
           return (
             <option key={courseID} value={courseID}>
               {name}
@@ -452,7 +450,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className="d-inline"
                 sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => setCaptchaToken(token ?? "")}
+                onChange={(token) => setCaptchaToken(token ?? '')}
               />
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
