@@ -524,7 +524,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       onClick={(e: React.MouseEvent<HTMLInputElement>) => { selectTag(tag) }}>
                       {tag}
                     </Badge>
-                  ))}
+                  )}
                 </div>
               </Form.Group>
             </Col>

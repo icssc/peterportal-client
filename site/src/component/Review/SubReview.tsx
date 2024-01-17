@@ -222,7 +222,7 @@ const SubReview: FC<SubReviewProps> = ({
           <Badge pill className='p-3 mr-2 mt-2' variant='info' key={tag}>
             {tag}
           </Badge>
-        ))}
+        )}
       </div>
       <div className='subreview-footer' id={review._id}>
         <p>Helpful?</p>
