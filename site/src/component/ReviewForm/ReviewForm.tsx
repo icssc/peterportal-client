@@ -82,16 +82,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [verified, setVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies, setCookie] = useCookies(["user"]);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
-    if (cookies.hasOwnProperty('user')) {
+    if (cookies.hasOwnProperty("user")) {
       setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
@@ -101,8 +101,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     // upon opening this form
     if (showForm) {
       // if not logged in, close the form
-      if (!cookies.hasOwnProperty('user')) {
-        alert('You must be logged in to add a review!');
+      if (!cookies.hasOwnProperty("user")) {
+        alert("You must be logged in to add a review!");
         props.closeForm();
       }
       console.log('useEffect run user ID: ' + userID);
@@ -146,6 +146,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       } else {
         dispatch(addReview(res.data));
       }
+    const res = await axios.post<ReviewData>("/api/reviews", review).catch((err) => err.response);
+    if (res.status === 400) {
+      alert(res.data.error ?? "You have already submitted a review for this course/professor");
+    } else if (res.data.hasOwnProperty("error")) {
+      alert("You must be logged in to add a review!");
+    } else {
+      setSubmitted(true);
+      dispatch(addReview(res.data));
     }
   };
 
@@ -164,8 +172,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       return;
     }
 
-    if (!verified) {
-      alert('Please complete the CAPTCHA');
+    if (!captchaToken) {
+      alert("Please complete the CAPTCHA");
       return;
     }
     if (props.editable === false) {
@@ -248,91 +256,69 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         newSelectedTags.push(tag);
         setSelectedTags(newSelectedTags);
       } else {
-        alert('Cannot select more than 3 tags');
+        alert("Cannot select more than 3 tags");
       }
     }
   };
 
   // select instructor if in course context
   const instructorSelect = props.course && (
-    <Form.Group controlId='instructor'>
+    <Form.Group controlId="instructor">
       <Form.Label>Taken With</Form.Label>
       <Form.Control
-        as='select'
-        name='instructor'
-        id='instructor'
+        as="select"
+        name="instructor"
+        id="instructor"
         required
-        onChange={(e) =>
-          setProfessor(document.getElementsByName(e.target.value)[0].id)
-        }
+        onChange={(e) => setProfessor(document.getElementsByName(e.target.value)[0].id)}
       >
-        <option disabled={true} selected value=''>
+        <option disabled={true} selected value="">
           Instructor
         </option>
-        {Object.keys(props.course?.instructor_history!).map((ucinetid) => {
-          const name =
-            props.course?.instructor_history[ucinetid].shortened_name;
+        {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
+          const name = props.course?.instructor_history[ucinetid].shortened_name;
           return (
             // @ts-ignore name attribute isn't supported
-            <option key={ucinetid} name={name} id={ucinetid}>
+            <option key={"review-form-professor-" + i} name={name} id={ucinetid}>
               {name}
             </option>
           );
         })}
       </Form.Control>
       <Form.Text muted>
-        <a
-          href='https://forms.gle/qAhCng7Ygua7SZ358'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
+        <a href="https://forms.gle/qAhCng7Ygua7SZ358" target="_blank" rel="noopener noreferrer">
           Can't find your professor?
         </a>
       </Form.Text>
-      <Form.Control.Feedback type='invalid'>
-        Missing instructor
-      </Form.Control.Feedback>
+      <Form.Control.Feedback type="invalid">Missing instructor</Form.Control.Feedback>
     </Form.Group>
   );
 
   // select course if in professor context
   const courseSelect = props.professor && (
-    <Form.Group controlId='course'>
+    <Form.Group controlId="course">
       <Form.Label>Course Taken</Form.Label>
-      <Form.Control
-        as='select'
-        name='course'
-        id='course'
-        required
-        onChange={(e) =>
-          setCourse(document.getElementsByName(e.target.value)[0].id)
-        }
-      >
-        <option disabled={true} selected value=''>
+      <Form.Control as="select" name="course" id="course" required onChange={(e) => setCourse(document.getElementsByName(e.target.value)[0].id)}>
+        <option disabled={true} selected value="">
           Course
         </option>
-        {Object.keys(props.professor?.course_history!).map((courseID) => {
-          const name =
-            props.professor?.course_history[courseID].department +
-            ' ' +
-            props.professor?.course_history[courseID].number;
+        {Object.keys(props.professor?.course_history!).map((courseID, i) => {
+          const name = props.professor?.course_history[courseID].department + " " + props.professor?.course_history[courseID].number;
           return (
             // @ts-ignore name attribute isn't supported
-            <option key={courseID} name={name} id={courseID}>
+            <option key={"review-form-course-" + i} name={name} id={courseID}>
               {name}
             </option>
           );
         })}
       </Form.Control>
-      <Form.Control.Feedback type='invalid'>
-        Missing course
-      </Form.Control.Feedback>
+      <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback>
     </Form.Group>
   );
 
   const reviewForm = (
     <Form noValidate validated={validated} onSubmit={submitForm}>
-      <Row className='review-form-ratings'>
+      <Row className="review-form-ratings">
         <Col>
           <Row>
             <Col>
@@ -355,7 +341,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               )}
             </Col>
           </Row>
-          <Row className='mt-4' lg={2} md={1}>
+          <Row className="mt-4" lg={2} md={1}>
             <Col>
               <div className='review-form-section review-form-row review-form-taken'>
                 {/* {!props.editable && instructorSelect}
@@ -384,7 +370,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               </div>
             </Col>
             <Col>
-              <Form.Group className='review-form-section'>
+              <Form.Group className="review-form-section">
                 <Form.Label>Taken During</Form.Label>
                 <div className='review-form-row'>
                   <Form.Group controlId='quarter' className='mr-3'>
@@ -441,16 +427,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className='mt-4'>
+          <Row className="mt-4">
             <Col>
-              <Form.Group className='review-form-section'>
-                <Form.Label>
-                  Rate the {props.course ? 'Course' : 'Professor'}
-                </Form.Label>
+              <Form.Group className="review-form-section">
+                <Form.Label>Rate the {props.course ? "Course" : "Professor"}</Form.Label>
                 <RangeSlider
                   min={1}
                   max={5}
-                  tooltip='on'
+                  tooltip="on"
                   value={quality}
                   onChange={(e: React.FormEvent<HTMLInputElement>) =>
                     setQuality(parseInt(e.currentTarget.value))
@@ -459,14 +443,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className='mt-4'>
+          <Row className="mt-4">
             <Col>
-              <Form.Group className='review-form-section'>
+              <Form.Group className="review-form-section">
                 <Form.Label>Level of Difficulty</Form.Label>
                 <RangeSlider
                   min={1}
                   max={5}
-                  tooltip='on'
+                  tooltip="on"
                   value={difficulty}
                   onChange={(e: React.FormEvent<HTMLInputElement>) =>
                     setDifficulty(parseInt(e.currentTarget.value))
@@ -475,37 +459,31 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               </Form.Group>
             </Col>
           </Row>
-          <Row className='mt-4'>
+          <Row className="mt-4">
             <Col>
-              <Form.Group className='review-form-section review-form-switches'>
+              <Form.Group className="review-form-section review-form-switches">
                 <Row>
                   <Col>
                     <Form.Check
                       inline
-                      type='switch'
-                      id='takeAgain'
-                      label='Would Take Again'
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setTakeAgain(e.target.checked)
-                      }
+                      type="switch"
+                      id="takeAgain"
+                      label="Would Take Again"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
                     />
                     <Form.Check
                       inline
-                      type='switch'
-                      id='textbook'
-                      label='Use Textbook'
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setTextbook(e.target.checked)
-                      }
+                      type="switch"
+                      id="textbook"
+                      label="Use Textbook"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
                     />
                     <Form.Check
                       inline
-                      type='switch'
-                      id='attendance'
-                      label='Mandatory Attendance'
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setAttendance(e.target.checked)
-                      }
+                      type="switch"
+                      id="attendance"
+                      label="Mandatory Attendance"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
                     />
                   </Col>
                 </Row>
@@ -516,26 +494,31 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <Form.Group className='review-form-section'>
+              <Form.Group className="review-form-section">
                 <Form.Label>Select up to 3 tags</Form.Label>
                 <div>
-                  {tags.map((tag, i) =>
-                    <Badge key={tag} pill className='p-3 mr-2 mt-2' variant={selectedTags.includes(tag) ? 'success' : 'info'} id={`tag-${i}`}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) => { selectTag(tag) }}>
+                  {tags.map((tag, i) => (
+                    <Badge
+                      key={tag}
+                      pill
+                      className="p-3 mr-2 mt-2"
+                      variant={selectedTags.includes(tag) ? "success" : "info"}
+                      id={`tag-${i}`}
+                      onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                        selectTag(tag);
+                      }}
+                    >
                       {tag}
                     </Badge>
-                  )}
+                  ))}
                 </div>
               </Form.Group>
             </Col>
           </Row>
           <Row>
             <Col>
-              <Form.Group className='review-form-section'>
-                <Form.Label>
-                  Tell us more about this{' '}
-                  {props.course ? 'course' : 'professor'}
-                </Form.Label>
+              <Form.Group className="review-form-section">
+                <Form.Label>Tell us more about this {props.course ? "course" : "professor"}</Form.Label>
                 <Form.Control
                   as='textarea'
                   placeholder="Here's your chance to be more specific..."
@@ -550,24 +533,16 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   }}
                 />
                 {/* <textarea rows={5} /> */}
-                <div className='char-limit'>
-                  {overCharLimit ? (
-                    <p style={{ color: 'red' }}>
-                      Your review exceeds the character limit
-                    </p>
-                  ) : null}
-                  <p
-                    style={content.length > 500 ? { color: 'red' } : {}}
-                    className='chars'
-                  >
+                <div className="char-limit">
+                  {overCharLimit ? <p style={{ color: "red" }}>Your review exceeds the character limit</p> : null}
+                  <p style={content.length > 500 ? { color: "red" } : {}} className="chars">
                     {content.length}/500
                   </p>
                 </div>
                 <Form.Text>
-                  <Icon name='warning sign' />
-                  <span style={{ color: '#333333' }}>
-                    Refrain from using profanity, name-calling, or derogatory
-                    terms. Thank you for your contribution!
+                  <Icon name="warning sign" />
+                  <span style={{ color: "#333333" }}>
+                    Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!
                   </span>
                 </Form.Text>
               </Form.Group>
@@ -575,18 +550,18 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           </Row>
           <Row>
             <Col>
-              <Form.Group className='review-form-section'>
+              <Form.Group className="review-form-section">
                 <Row>
                   <Col>
                     <Form.Check
                       inline
-                      type='switch'
-                      id='anonymouse'
-                      label='Post as Anonymous'
+                      type="switch"
+                      id="anonymouse"
+                      label="Post as Anonymous"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         // set name as anonymous
                         if (e.target.checked) {
-                          setUserName('Anonymous Peter');
+                          setUserName("Anonymous Peter");
                         }
                         // use real name
                         else {
@@ -600,34 +575,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col className='mb-3 review-form-submit'>
+            <Col className="mb-3 review-form-submit">
               <ReCAPTCHA
-                className='d-inline'
-                sitekey='6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4'
-                onChange={(token) => {
-                  // if verified
-                  if (token) {
-                    setVerified(true);
-                  }
-                  // captcha expired
-                  else {
-                    setVerified(false);
-                  }
-                }}
+                className="d-inline"
+                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
+                onChange={(token) => setCaptchaToken(token ?? "")}
               />
               <div>
-                <Button
-                  className='py-2 px-4 float-right'
-                  type='submit'
-                  variant='secondary'
-                >
+                <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
                   Submit
                 </Button>
-                <Button
-                  className='py-2 px-4 mr-3 float-right'
-                  variant='outline-secondary'
-                  onClick={props.closeForm}
-                >
+                <Button className="py-2 px-4 mr-3 float-right" variant="outline-secondary" onClick={props.closeForm}>
                   Cancel
                 </Button>
               </div>
@@ -640,10 +598,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   return (
     <Modal show={showForm} onHide={props.closeForm} centered animation={false}>
-      <div className='review-form'>
+      <div className="review-form">
         {submitted ? (
-          <div className='submitted-form'>
-            <Icon name='check circle' size='huge' />
+          <div className="submitted-form">
+            <Icon name="check circle" size="huge" />
             <h1>Thank You</h1>
             <p>Your form has been submitted successfully.</p>
           </div>
