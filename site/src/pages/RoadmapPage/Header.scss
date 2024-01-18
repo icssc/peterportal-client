@@ -13,6 +13,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   
   #title {
     font-size: 1.5em;
