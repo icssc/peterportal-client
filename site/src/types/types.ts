@@ -159,6 +159,7 @@ export type PlannerData = PlannerYearData[];
 
 export interface PlannerYearData {
     startYear: number;
+    name: string;
     quarters: PlannerQuarterData[];
 }
 
@@ -171,6 +172,7 @@ export type SavedPlannerData = SavedPlannerYearData[];
 
 export interface SavedPlannerYearData {
     startYear: number;
+    name: string;
     quarters: SavedPlannerQuarterData[];
 }
 

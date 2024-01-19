@@ -48,6 +48,12 @@ interface EditYearPayload {
     index: number;
 }
 
+// Payload to pass in to edit a year name
+interface EditNamePayload {
+    name: string;
+    index: number;
+}
+
 // Payload to pass in to add a quarter
 interface AddQuarterPayload {
     startYear: number,
@@ -138,12 +144,21 @@ export const roadmapSlice = createSlice({
         addYear: (state, action: PayloadAction<AddYearPayload>) => {
             let currentYears = state.yearPlans.map(e => e.startYear);
             let newYear = action.payload.yearData.startYear;
+            let currentNames = state.yearPlans.map(e => e.name);
+            let newName = action.payload.yearData.name;
 
             // if duplicate year
             if (currentYears.includes(newYear)) {
                 alert(`${newYear}-${newYear + 1} has already been added as Year ${currentYears.indexOf(newYear) + 1}!`);
                 return;
             }
+            // if duplicate name
+            if (currentNames.includes(newName)) {
+                let year = state.yearPlans[currentNames.indexOf(newName)].startYear;
+                alert(`${newName} already exists from ${year} - ${year + 1}!`);
+                return;
+            }
+
             // check if where to put newYear
             let index = currentYears.length;
             for (let i = 0; i < currentYears.length; i++) {
@@ -170,6 +185,21 @@ export const roadmapSlice = createSlice({
             state.yearPlans[yearIndex].startYear = newYear;
             state.yearPlans.sort((a, b) => a.startYear - b.startYear);
 
+        },
+        editName: (state, action: PayloadAction<EditNamePayload>) => {
+            let currentNames = state.yearPlans.map(e => e.name);
+            let newName = action.payload.name;
+            let yearIndex = action.payload.index;
+
+            // if duplicate name
+            if (currentNames.includes(newName)) {
+                let year = state.yearPlans[yearIndex].startYear;
+                alert(`${newName} already exists from ${year} - ${year + 1}!`);
+                return;
+            }
+
+            // edit name
+            state.yearPlans[yearIndex].name = newName;
         },
         deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
             state.yearPlans.splice(action.payload.yearIndex, 1);
@@ -217,7 +247,7 @@ export const roadmapSlice = createSlice({
     },
 })
 
-export const { moveCourse, deleteCourse, addQuarter, deleteQuarter, clearQuarter, clearYear, addYear, editYear, deleteYear, clearPlanner,
+export const { moveCourse, deleteCourse, addQuarter, deleteQuarter, clearQuarter, clearYear, addYear, editYear, editName, deleteYear, clearPlanner,
     setActiveCourse, setYearPlans, setInvalidCourses, setShowTransfer, addTransfer, setTransfer,
     setTransfers, deleteTransfer, setShowSearch, setShowAddCourse } = roadmapSlice.actions
 
