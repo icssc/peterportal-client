@@ -55,6 +55,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
                       e.preventDefault();
                     }
                   }}
+                  maxLength={35}
                   placeholder={placeholderName}
                 ></Form.Control>
               </Form.Group>
