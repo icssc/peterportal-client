@@ -91,6 +91,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       alert('You must be logged in to add a review!');
     } else {
       setSubmitted(true);
+      dispatch(addReview(res.data));
     }
   };
 
@@ -141,7 +142,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     } else {
       setOverCharLimit(false);
       postReview(review);
-      setSubmitted(true);
     }
   };
 
