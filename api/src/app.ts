@@ -32,10 +32,10 @@ import { SESSION_LENGTH } from './config/constants';
 const app = express();
 
 // Setup mongo store for sessions
-let mongoStore = MongoDBStore(session);
+const mongoStore = MongoDBStore(session);
 
 if (process.env.MONGO_URL) {
-  let store = new mongoStore({
+  const store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
     collection: COLLECTION_NAMES.SESSIONS,

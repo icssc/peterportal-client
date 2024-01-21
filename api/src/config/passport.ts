@@ -29,7 +29,7 @@ passport.use(
       if (profile.emails && profile.emails.length! > 0) {
         email = profile.emails[0].value;
       }
-      var userData = {
+      const userData = {
         id: profile.id,
         email: email,
         name: profile.displayName,

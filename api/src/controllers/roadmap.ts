@@ -9,7 +9,7 @@ import {
   replaceDocument,
 } from '../helpers/mongo';
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * Get a roadmap

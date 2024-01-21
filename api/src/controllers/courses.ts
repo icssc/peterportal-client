@@ -5,13 +5,13 @@
 import express, { Request } from 'express';
 import fetch from 'node-fetch';
 import { getCourseQuery } from '../helpers/gql';
-var router = express.Router();
+const router = express.Router();
 
 /**
  * PPAPI proxy for course data
  */
 router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
-  let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
+  const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -29,7 +29,7 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
   if (req.body.courses.length == 0) {
     res.json({});
   } else {
-    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+    const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
  * PPAPI proxy for grade distribution
  */
 router.get('/api/grades', (req: Request<{}, {}, {}, { department: string; number: string }>, res) => {
-  let r = fetch(
+  const r = fetch(
     process.env.PUBLIC_API_URL +
       'grades/raw?department=' +
       encodeURIComponent(req.query.department) +

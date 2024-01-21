@@ -14,13 +14,13 @@ import {
 } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * Get all reports
  */
 router.get('/', async (req, res, next) => {
-  let reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
+  const reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
   res.json(reports);
 });
@@ -48,7 +48,7 @@ router.delete('/', async (req, res, next) => {
     });
   } else {
     console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
-    let query: GenericObject = {};
+    const query: GenericObject = {};
     if (req.body.reviewID) query['reviewID'] = req.body.reviewID;
 
     if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified

@@ -44,16 +44,16 @@ function getDB(): Promise<Db> {
           db = client.db(DB_NAME);
 
           // get existing mongo collection
-          let collectionNames = Object.values(COLLECTION_NAMES);
-          let collections = await db.listCollections().toArray();
-          let existingCollectionNames: string[] = [];
+          const collectionNames = Object.values(COLLECTION_NAMES);
+          const collections = await db.listCollections().toArray();
+          const existingCollectionNames: string[] = [];
           collections.forEach((collection) => {
             existingCollectionNames.push(collection['name']);
           });
 
           // create collections that dont exist
           for (let i = 0; i < collectionNames.length; ++i) {
-            let collectionName = collectionNames[i];
+            const collectionName = collectionNames[i];
             if (!existingCollectionNames.includes(collectionName)) {
               await db.createCollection(collectionName);
             }
@@ -181,8 +181,8 @@ function getDocuments(collectionName: string, query: GenericObject): Promise<Gen
     // get collection
     getCollection(collectionName).then(async (collection) => {
       // get document
-      let results = collection.find(query);
-      let documents = await results.toArray();
+      const results = collection.find(query);
+      const documents = await results.toArray();
       resolve(documents);
     });
   });
@@ -307,7 +307,7 @@ async function getValue(cache: string, key: string): Promise<any> {
       }
       return;
     }
-    let value = await getDocuments(cache, { _id: key });
+    const value = await getDocuments(cache, { _id: key });
     // cache hit
     if (value.length > 0) {
       resolve(value[0]['value']);

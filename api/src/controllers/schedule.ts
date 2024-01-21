@@ -5,7 +5,7 @@
 import express from 'express';
 import fetch from 'node-fetch';
 
-var router = express.Router();
+const router = express.Router();
 
 const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
@@ -14,9 +14,9 @@ router.get('/getTerms', function (req, res) {
   if (!pastYears) {
     pastYears = 1;
   }
-  let d = new Date();
-  let year = d.getFullYear();
-  let terms = [];
+  const d = new Date();
+  const year = d.getFullYear();
+  const terms = [];
   for (let y = year - pastYears; y <= year; ++y) {
     for (let i = 0; i < TERM_SEASONS.length; ++i) {
       terms.push(`${y} ${TERM_SEASONS[i]}`);
