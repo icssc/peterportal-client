@@ -3,13 +3,13 @@
   height: 100%;
 }
 
-
 [data-theme='dark'] {
   .beta-popup .button {
     background-color: var(--overlay3);
   }
 
-  .beta-popup .button:hover, .beta-popup .button:focus {
+  .beta-popup .button:hover,
+  .beta-popup .button:focus {
     background-color: var(--hover);
   }
 

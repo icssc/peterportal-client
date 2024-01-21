@@ -1,19 +1,18 @@
 .transfer {
-    max-height: 75vh;
-    overflow-y: auto;
+  max-height: 75vh;
+  overflow-y: auto;
 }
 
 .list-group {
-    height: max-content;
-    overflow-x: scroll;
+  height: max-content;
+  overflow-x: scroll;
 }
 
 .transfer .list-group .list-group-item {
-    min-width: max-content;
-    background-color: var(--overlay3);
+  min-width: max-content;
+  background-color: var(--overlay3);
 }
 
 .entry {
-    margin-top: 1%;
+  margin-top: 1%;
 }
-

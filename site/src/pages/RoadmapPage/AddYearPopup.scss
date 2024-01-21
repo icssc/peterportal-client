@@ -1,6 +1,7 @@
 [data-theme='dark'] {
   .add-year-form {
-    .form-control, .form-control:focus {
+    .form-control,
+    .form-control:focus {
       background-color: var(--overlay1);
     }
   }

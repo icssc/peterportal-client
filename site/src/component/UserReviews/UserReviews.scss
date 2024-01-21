@@ -1,16 +1,16 @@
 .user-reviews-container {
-    padding: 2rem;
-    background-color: var(--overlay1);
-    border-radius: var(--border-radius);
+  padding: 2rem;
+  background-color: var(--overlay1);
+  border-radius: var(--border-radius);
 }
 
 .user-reviews {
-    border-radius: var(--border-radius);
-    margin-bottom: 3vh;
+  border-radius: var(--border-radius);
+  margin-bottom: 3vh;
 
-    .user-reviews-footer {
-        flex-direction: row;
-        width: 100%;
-        align-items: flex-end;
-    }
+  .user-reviews-footer {
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-end;
+  }
 }

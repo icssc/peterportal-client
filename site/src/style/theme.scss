@@ -8,7 +8,7 @@
   --text: #212529; // default bootstrap color
   --text-dark: #000;
   --text-light: #495057;
-  --hover: #CACBCD; // semantic-ui default
+  --hover: #cacbcd; // semantic-ui default
 }
 
 // dark theme vars
@@ -16,14 +16,14 @@
 // roughly following: https://m2.material.io/design/color/dark-theme.html
 [data-theme='dark'] {
   --background: #121212;
-  --overlay1: #1E1E1E;
+  --overlay1: #1e1e1e;
   --overlay2: #292929;
   --overlay3: #363636;
   --overlay4: #404040;
   --text: #fff;
   --text-dark: #fff;
   --text-light: #fff;
-  --hover: #CACBCD;
+  --hover: #cacbcd;
 
   color-scheme: dark;
 }
@@ -37,12 +37,13 @@
   color: var(--text-dark);
 }
 
-
 [data-theme='dark'] {
   .list-group-item,
   .modal-content,
-  .dropdown-menu, .dropdown-item,
-  .form-control, .form-control:focus {
+  .dropdown-menu,
+  .dropdown-item,
+  .form-control,
+  .form-control:focus {
     color: var(--text);
     background-color: var(--overlay2);
   }
@@ -61,23 +62,24 @@
   background-color: var(--overlay1);
   color: var(--text);
 }
-.bs-popover-top>.arrow::after {
+.bs-popover-top > .arrow::after {
   border-top-color: var(--overlay1);
 }
-.bs-popover-bottom>.arrow::after {
+.bs-popover-bottom > .arrow::after {
   border-bottom-color: var(--overlay1);
 }
-.bs-popover-left>.arrow::after {
+.bs-popover-left > .arrow::after {
   border-left-color: var(--overlay1);
 }
-.bs-popover-right>.arrow::after {
+.bs-popover-right > .arrow::after {
   border-right-color: var(--overlay1);
 }
 // end bootstrap overwrites
 
 // general semantic-ui overwrites. bg/border color may need to be customized per component
 [data-theme='dark'] {
-  .ui, .ui.popup:before {
+  .ui,
+  .ui.popup:before {
     color: var(--text);
     background-color: var(--overlay2);
     border-color: var(--overlay1);
@@ -87,14 +89,15 @@
     box-shadow: -1px -1px 0 0 var(--overlay1);
   }
 
-  .ui.dropdown, .ui.dropdown .menu {
+  .ui.dropdown,
+  .ui.dropdown .menu {
     color: var(--text);
     background-color: var(--overlay2);
     border-color: var(--overlay1);
   }
 
-  .ui.selection.visible.dropdown>.text:not(.default),
-  .ui.dropdown .menu>.item {
+  .ui.selection.visible.dropdown > .text:not(.default),
+  .ui.dropdown .menu > .item {
     color: var(--text);
   }
 
@@ -102,8 +105,8 @@
     border-color: var(--overlay3);
   }
   .ui.dropdown {
-    .menu>.item:hover,
-    .menu>.item.active{
+    .menu > .item:hover,
+    .menu > .item.active {
       background-color: var(--overlay3);
     }
   }

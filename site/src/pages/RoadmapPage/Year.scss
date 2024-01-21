@@ -6,7 +6,9 @@
 }
 
 [data-theme='dark'] {
-  .year-settings-btn:hover, .year-settings-btn:focus, .popover-body .year-settings-btn:active {
+  .year-settings-btn:hover,
+  .year-settings-btn:focus,
+  .popover-body .year-settings-btn:active {
     background-color: var(--overlay2);
   }
 }
@@ -43,7 +45,7 @@
   border-radius: 10px;
   box-shadow: 0px 0px 4px #2484c6;
   flex: 1 1 30%;
-  margin: .75rem;
+  margin: 0.75rem;
 }
 
 .year-accordion-title {

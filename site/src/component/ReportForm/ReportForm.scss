@@ -20,7 +20,7 @@
   textarea {
     color: var(--text);
     border-radius: var(--border-radius);
-    border: 2px solid #EAEBF2;
+    border: 2px solid #eaebf2;
     padding: 1rem;
     resize: none;
     width: 100%;
@@ -58,17 +58,17 @@
 }
 
 .submitted-report-form {
-    text-align: center;
-    width: 100%;
-    i {
-      color: var(--peterportal-secondary-green);
-    }
-    h1 {
-      margin: 15px 0;
-    }
-    p {
-      font-size: 1.25rem;
-    }
+  text-align: center;
+  width: 100%;
+  i {
+    color: var(--peterportal-secondary-green);
+  }
+  h1 {
+    margin: 15px 0;
+  }
+  p {
+    font-size: 1.25rem;
+  }
 }
 
 @media only screen and (max-width: 400px) {

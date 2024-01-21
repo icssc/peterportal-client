@@ -1,130 +1,131 @@
 [data-theme='dark'] {
-    .search-popup {
-        .dropdown, .dropdown .menu {
-            background-color: var(--overlay3);
-            border-color: var(--overlay2);
-        }
-
-        .dropdown:hover {
-            border-color: var(--overlay4);
-        }
-
-        .ui.dropdown {
-            .menu>.item.active,
-            .menu>.item:hover {
-                background-color: var(--overlay4);
-            }
-        }
+  .search-popup {
+    .dropdown,
+    .dropdown .menu {
+      background-color: var(--overlay3);
+      border-color: var(--overlay2);
     }
+
+    .dropdown:hover {
+      border-color: var(--overlay4);
+    }
+
+    .ui.dropdown {
+      .menu > .item.active,
+      .menu > .item:hover {
+        background-color: var(--overlay4);
+      }
+    }
+  }
 }
 
 .search-popup-missing {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    height: 100%;
-    text-align: center;
-    color: #9c9fac;
-    font-size: 1.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  height: 100%;
+  text-align: center;
+  color: #9c9fac;
+  font-size: 1.5em;
 }
 
 .search-popup {
-    background-color: var(--overlay1);
-    padding: 3rem;
-    margin-left: 3vw;
-    height: 85vh;
-    overflow-y: auto;
-    border-radius: var(--border-radius);
-    max-width: 40vw;
+  background-color: var(--overlay1);
+  padding: 3rem;
+  margin-left: 3vw;
+  height: 85vh;
+  overflow-y: auto;
+  border-radius: var(--border-radius);
+  max-width: 40vw;
 }
 
 .search-popup-header {
-    margin-bottom: 3vh;
+  margin-bottom: 3vh;
 }
 
 .search-popup-id {
-    margin-bottom: 0.2rem;
-    font-size: 3rem;
-    display: flex;
-    justify-content: space-between;
+  margin-bottom: 0.2rem;
+  font-size: 3rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .search-popup-title {
-    margin: 0;
+  margin: 0;
 }
 
 .search-popup-more {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 .search-popup-block {
-    background-color: var(--overlay2);
-    border-radius: var(--border-radius);
+  background-color: var(--overlay2);
+  border-radius: var(--border-radius);
 }
 
 .search-popup-infos {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .search-popup-info {
-    display: flex;
-    flex-direction: column;
-    padding: 2vh;
-    width: 45%;
+  display: flex;
+  flex-direction: column;
+  padding: 2vh;
+  width: 45%;
 }
 
 .search-popup-label {
-    margin: 2vh 0 1vh 0;
+  margin: 2vh 0 1vh 0;
 }
 
 .search-popup-carousel {
-    background-color: var(--overlay2);
-    height: 100%;
-    margin: 0 1vw;
-    padding: 2vh 1vw;
+  background-color: var(--overlay2);
+  height: 100%;
+  margin: 0 1vw;
+  padding: 2vh 1vw;
 
-    p {
-        font-weight: bold;
-    }
+  p {
+    font-weight: bold;
+  }
 
-    div {
-        display: flex;
-    }
+  div {
+    display: flex;
+  }
 
-    .search-popup-carousel-score {
-        font-size: 2em;
-    }
+  .search-popup-carousel-score {
+    font-size: 2em;
+  }
 
-    .search-popup-carousel-max-score {
-        margin-left: 0.5vw;
-        display: flex;
-        align-items: center;
-        color: var(--peterportal-mid-gray);
-    }
+  .search-popup-carousel-max-score {
+    margin-left: 0.5vw;
+    display: flex;
+    align-items: center;
+    color: var(--peterportal-mid-gray);
+  }
 }
 
 @media only screen and (max-width: 1300px) {
-    .search-popup-infos {
-        flex-direction: column;
-    }
+  .search-popup-infos {
+    flex-direction: column;
+  }
 
-    .search-popup-info:first-child {
-        margin-bottom: 3vh;
-    }
+  .search-popup-info:first-child {
+    margin-bottom: 3vh;
+  }
 
-    .search-popup-info {
-        width: 90%;
-    }
+  .search-popup-info {
+    width: 90%;
+  }
 
-    .search-popup-id {
-        flex-direction: column-reverse;
+  .search-popup-id {
+    flex-direction: column-reverse;
 
-        a {
-            margin-left: auto;
-        }
+    a {
+      margin-left: auto;
     }
+  }
 }

@@ -3,43 +3,43 @@
 */
 
 import passport from 'passport';
-import { OAuth2Strategy as GoogleStrategy, VerifyOptions } from 'passport-google-oauth'
+import { OAuth2Strategy as GoogleStrategy, VerifyOptions } from 'passport-google-oauth';
 // var FacebookStrategy = require('passport-facebook').Strategy;
 // var GitHubStrategy = require('passport-github').Strategy;
 
 passport.serializeUser(function (user, done) {
-    done(null, user);
+  done(null, user);
 });
 
 passport.deserializeUser(function (user: any, done) {
-    done(null, user);
+  done(null, user);
 });
 
 /**
  * Configuration for Google Strategy
  */
 passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT,
-            clientSecret: process.env.GOOGLE_SECRET,
-            callbackURL: process.env.PRODUCTION_DOMAIN + '/api/users/auth/google/callback',
-        },
-        function (accessToken, refreshToken, profile, done) {
-            let email = '';
-            // get the first registered email
-            if (profile.emails && profile.emails.length! > 0) {
-                email = profile.emails[0].value;
-            }
-            var userData = {
-                id: profile.id,
-                email: email,
-                name: profile.displayName,
-                picture: profile._json.picture
-            };
-            done(null, userData);
-        }
-    )
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT,
+      clientSecret: process.env.GOOGLE_SECRET,
+      callbackURL: process.env.PRODUCTION_DOMAIN + '/api/users/auth/google/callback',
+    },
+    function (accessToken, refreshToken, profile, done) {
+      let email = '';
+      // get the first registered email
+      if (profile.emails && profile.emails.length! > 0) {
+        email = profile.emails[0].value;
+      }
+      var userData = {
+        id: profile.id,
+        email: email,
+        name: profile.displayName,
+        picture: profile._json.picture,
+      };
+      done(null, userData);
+    },
+  ),
 );
 
 // passport.use(new FacebookStrategy({

@@ -1,6 +1,7 @@
 [data-theme='dark'] {
   .review-form {
-    .form-control, .form-control:focus {
+    .form-control,
+    .form-control:focus {
       background-color: var(--overlay3);
     }
   }
@@ -41,7 +42,7 @@
   }
   textarea {
     border-radius: var(--border-radius);
-    border: 2px solid #EAEBF2;
+    border: 2px solid #eaebf2;
     padding: 1rem;
     resize: none;
     width: 100%;
