@@ -3,7 +3,6 @@
 */
 
 import express, { Request } from 'express';
-import fetch from 'node-fetch';
 import { getProfessorQuery } from '../helpers/gql';
 
 const router = express.Router();
