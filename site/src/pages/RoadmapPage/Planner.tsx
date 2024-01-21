@@ -1,24 +1,42 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
-import "./Planner.scss";
-import Header from "./Header";
-import AddYearPopup from "./AddYearPopup";
-import Year from "./Year";
+import './Planner.scss';
+import Header from './Header';
+import AddYearPopup from './AddYearPopup';
+import Year from './Year';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers, addYear } from '../../store/slices/roadmapSlice';
-import { useFirstRender } from "../../hooks/firstRenderer";
-import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, BatchCourseData, MongoRoadmap } from '../../types/types';
+import {
+  selectYearPlans,
+  setYearPlans,
+  setInvalidCourses,
+  setTransfers,
+  addYear,
+} from '../../store/slices/roadmapSlice';
+import { useFirstRender } from '../../hooks/firstRenderer';
+import {
+  InvalidCourseData,
+  SavedRoadmap,
+  PlannerData,
+  PlannerYearData,
+  PlannerQuarterData,
+  SavedPlannerData,
+  SavedPlannerYearData,
+  SavedPlannerQuarterData,
+  BatchCourseData,
+  MongoRoadmap,
+} from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
+import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
-  const transfers = useAppSelector(state => state.roadmap.transfers);
-  
-  const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>);
+  const transfers = useAppSelector((state) => state.roadmap.transfers);
+
+  const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
     // if is first render, load from local storage
@@ -29,61 +47,65 @@ const Planner: FC = () => {
     else {
       validatePlanner();
     }
-  
   }, [data, transfers]);
 
   // remove all unecessary data to store into the database
   const collapsePlanner = (planner: PlannerData): SavedPlannerData => {
-    let savedPlanner: SavedPlannerData = [];
-    planner.forEach(year => {
-      let savedYear: SavedPlannerYearData = { startYear: year.startYear, quarters: [] };
-      year.quarters.forEach(quarter => {
-        let savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-        savedQuarter.courses = quarter.courses.map(course => course.id);
+    const savedPlanner: SavedPlannerData = [];
+    planner.forEach((year) => {
+      const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
+      year.quarters.forEach((quarter) => {
+        const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
+        savedQuarter.courses = quarter.courses.map((course) => course.id);
         savedYear.quarters.push(savedQuarter);
-      })
+      });
       savedPlanner.push(savedYear);
-    })
+    });
     return savedPlanner;
-  }
+  };
 
   // query the lost information from collapsing
   const expandPlanner = async (savedPlanner: SavedPlannerData): Promise<PlannerData> => {
-    return new Promise(async (resolve) => {
-      let courses: string[] = [];
-      // get all courses in the planner
-      savedPlanner.forEach(year => year.quarters.forEach(quarter => { courses = courses.concat(quarter.courses) }))
-      // get the course data for all courses
-      let courseLookup: BatchCourseData = {};
-      // only send request if there are courses
-      if (courses.length > 0) {
-        courseLookup = await searchAPIResults('courses', courses) as BatchCourseData;
-      }
-      let planner: PlannerData = [];
-      savedPlanner.forEach(savedYear => {
-        let year: PlannerYearData = { startYear: savedYear.startYear, quarters: [] };
-        savedYear.quarters.forEach(savedQuarter => {
-          let quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
-          quarter.courses = savedQuarter.courses.map(course => courseLookup[course]);
+    let courses: string[] = [];
+    // get all courses in the planner
+    savedPlanner.forEach((year) =>
+      year.quarters.forEach((quarter) => {
+        courses = courses.concat(quarter.courses);
+      }),
+    );
+    // get the course data for all courses
+    let courseLookup: BatchCourseData = {};
+    // only send request if there are courses
+    if (courses.length > 0) {
+      courseLookup = (await searchAPIResults('courses', courses)) as BatchCourseData;
+    }
+
+    return new Promise((resolve) => {
+      const planner: PlannerData = [];
+      savedPlanner.forEach((savedYear) => {
+        const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
+        savedYear.quarters.forEach((savedQuarter) => {
+          const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
+          quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
           year.quarters.push(quarter);
-        })
+        });
         planner.push(year);
-      })
-      console.log('EXPANDED PLANNER', planner)
+      });
+      console.log('EXPANDED PLANNER', planner);
       resolve(planner);
-    })
-  }
+    });
+  };
 
   const loadRoadmap = async () => {
     console.log('Loading Roadmaps...');
     let roadmap: SavedRoadmap = null!;
-    let localRoadmap = localStorage.getItem('roadmap');
+    const localRoadmap = localStorage.getItem('roadmap');
     // if logged in
-    if (cookies.hasOwnProperty('user')) {
+    if (cookies.user !== undefined) {
       // get data from account
-      let request = await axios.get<MongoRoadmap>('/api/roadmap/get', { params: { id: cookies.user.id } });
+      const request = await axios.get<MongoRoadmap>('/api/roadmap/get', { params: { id: cookies.user.id } });
       // if a roadmap is found
-      if (!request.data.hasOwnProperty('error')) {
+      if (request.data.roadmap !== undefined) {
         roadmap = request.data.roadmap;
       }
     }
@@ -97,22 +119,22 @@ const Planner: FC = () => {
     }
 
     // expand planner and set the state
-    let planner = await expandPlanner(roadmap.planner);
+    const planner = await expandPlanner(roadmap.planner);
     dispatch(setYearPlans(planner));
     dispatch(setTransfers(roadmap.transfers));
-  }
+  };
 
   const saveRoadmap = () => {
     console.log('Saving Roadmaps...');
-    let roadmap: SavedRoadmap = {
+    const roadmap: SavedRoadmap = {
       planner: collapsePlanner(data),
-      transfers: transfers
+      transfers: transfers,
     };
     let savedAccount = false;
     // if logged in
-    if (cookies.hasOwnProperty('user')) {
+    if (cookies.user !== undefined) {
       // save data to account
-      let mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap }
+      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
       axios.post('/api/roadmap', mongoRoadmap);
       savedAccount = true;
     }
@@ -122,26 +144,25 @@ const Planner: FC = () => {
 
     if (savedAccount) {
       alert(`Roadmap saved under ${cookies.user.email}`);
-    }
-    else {
+    } else {
       alert('Roadmap saved locally! Login to save it to your account.');
     }
-  }
+  };
 
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
     let courseCount = 0;
     // sum up all courses
-    data.forEach(year => {
-      year.quarters.forEach(quarter => {
-        quarter.courses.forEach(course => {
-          unitCount += course.units[0];
+    data.forEach((year) => {
+      year.quarters.forEach((quarter) => {
+        quarter.courses.forEach((course) => {
+          unitCount += course.minUnits;
           courseCount += 1;
-        })
-      })
-    })
+        });
+      });
+    });
     // add in transfer courses
-    transfers.forEach(transfer => {
+    transfers.forEach((transfer) => {
       // only count if has both name and units
       if (transfer.units && transfer.name) {
         unitCount += transfer.units;
@@ -153,16 +174,18 @@ const Planner: FC = () => {
 
   const validatePlanner = () => {
     // store courses that have been taken
-    let taken: Set<string> = new Set(transfers.map(transfer => transfer.name));
-    let invalidCourses: InvalidCourseData[] = [];
-    let missing: Set<string> = new Set<string>;
+    const taken: Set<string> = new Set(transfers.map((transfer) => transfer.name));
+    const invalidCourses: InvalidCourseData[] = [];
+    const missing = new Set<string>();
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
-        let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.number));
+        const taking: Set<string> = new Set(
+          quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
+        );
         quarter.courses.forEach((course, ci) => {
           // if has prerequisite
-          if (course.prerequisite_tree) {
-            let required = validateCourse(taken, JSON.parse(course.prerequisite_tree), taking, course.corequisite);
+          if (course.prerequisiteTree) {
+            const required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
             // prerequisite not fulfilled, has some required classes to take
             if (required.size > 0) {
               console.log('invalid course', course.id);
@@ -170,117 +193,119 @@ const Planner: FC = () => {
                 location: {
                   yearIndex: yi,
                   quarterIndex: qi,
-                  courseIndex: ci
+                  courseIndex: ci,
                 },
-                required: Array.from(required)
-              })
+                required: Array.from(required),
+              });
 
               required.forEach((course) => {
                 missing.add(course);
-              })
+              });
             }
           }
-        })
+        });
         // after the quarter is over, add the courses into taken
-        taking.forEach(course => taken.add(course));
-      })
-    })
-
+        taking.forEach((course) => taken.add(course));
+      });
+    });
 
     // set missing courses
     setMissingPrerequisites(missing);
 
     // set the invalid courses
     dispatch(setInvalidCourses(invalidCourses));
-  }
+  };
 
-  type PrerequisiteNode = NestedPrerequisiteNode | string;
-  interface NestedPrerequisiteNode {
-    AND?: PrerequisiteNode[];
-    OR?: PrerequisiteNode[];
-  }
+  type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
   // returns set of courses that need to be taken to fulfill requirements
-  const validateCourse = (taken: Set<string>, prerequisite: PrerequisiteNode, taking: Set<string>, corequisite: string): Set<string> => {
+  const validateCourse = (
+    taken: Set<string>,
+    prerequisite: PrerequisiteNode,
+    taking: Set<string>,
+    corequisite: string,
+  ): Set<string> => {
     // base case just a course
-    if (typeof prerequisite === 'string') {
+    if ('prereqType' in prerequisite) {
+      const id = prerequisite?.courseId ?? prerequisite?.examName ?? '';
       // already taken prerequisite or is currently taking the corequisite
-      if (taken.has(prerequisite) || (corequisite.includes(prerequisite) && taking.has(prerequisite))) {
+      if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
         return new Set();
       }
       // need to take this prerequisite still
       else {
-        return new Set([prerequisite]);
+        return new Set([id]);
       }
     }
     // has nested prerequisites
     else {
       // needs to satisfy all nested
       if (prerequisite.AND) {
-        let required: Set<string> = new Set();
-        prerequisite.AND.forEach(nested => {
+        const required: Set<string> = new Set();
+        prerequisite.AND.forEach((nested) => {
           // combine all the courses that are required
-          validateCourse(taken, nested, taking, corequisite)
-            .forEach(course => required.add(course));
-        })
+          validateCourse(taken, nested, taking, corequisite).forEach((course) => required.add(course));
+        });
         return required;
       }
       // only need to satisfy one nested
       else if (prerequisite.OR) {
-        let required: Set<string> = new Set();
+        const required: Set<string> = new Set();
         let satisfied = false;
-        prerequisite.OR.forEach(nested => {
+        prerequisite.OR.forEach((nested) => {
           // combine all the courses that are required
-          let courses = validateCourse(taken, nested, taking, corequisite)
+          const courses = validateCourse(taken, nested, taking, corequisite);
           // if one is satisfied, no other courses are required
           if (courses.size == 0) {
             satisfied = true;
             return;
           }
-          courses.forEach(course => required.add(course));
-        })
+          courses.forEach((course) => required.add(course));
+        });
         return satisfied ? new Set() : required;
-      }
-      else {
+      } else {
         // should never reach here
         return new Set();
       }
     }
-  }
+  };
   //TODO: Support for Multiple Planner future implementation
   //  - Default year only added when a new planner is created
 
   const initializePlanner = () => {
     if (data.length == 0) {
-      dispatch(addYear(
-        {
+      dispatch(
+        addYear({
           yearData: {
             startYear: new Date().getFullYear(),
-            quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
-          }
-        }
-      ))
-    }
-  
-    return data.map((year, yearIndex) => {
-      return (
-        <Year
-          key={yearIndex}
-          yearIndex={yearIndex}
-          data={year}
-        />
+            name: 'Year 1',
+            quarters: ['fall', 'winter', 'spring'].map((quarter) => {
+              return { name: quarter, courses: [] };
+            }),
+          },
+        }),
       );
-    })
-  }
-  let { unitCount, courseCount } = calculatePlannerOverviewStats();
+    }
+
+    return data.map((year, yearIndex) => {
+      return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+    });
+  };
+  const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
   return (
     <div className="planner">
-      <Header courseCount={courseCount} unitCount={unitCount} saveRoadmap={saveRoadmap} missingPrerequisites={missingPrerequisites} />
-      <section className="years">
-        {initializePlanner()}
-      </section>
-      <AddYearPopup placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1} />
+      <Header
+        courseCount={courseCount}
+        unitCount={unitCount}
+        saveRoadmap={saveRoadmap}
+        missingPrerequisites={missingPrerequisites}
+      />
+      <section className="years">{initializePlanner()}</section>
+      <AddYearPopup
+        placeholderName={'Year ' + (data.length + 1)}
+        placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
+      />
     </div>
   );
 };
