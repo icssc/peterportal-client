@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, FC, useRef } from 'react';
+import { useEffect, FC, useRef } from 'react';
 import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';

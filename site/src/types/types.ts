@@ -83,13 +83,6 @@ export interface WeekData {
   display: string;
 }
 
-export interface GenericObject {
-  /**
-   * Can have any key string and any value type
-   */
-  [key: string]: any;
-}
-
 /**
  * Peter's Roadmaps Type Definitions
  */

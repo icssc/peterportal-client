@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import "./SearchPopup.scss";
 import GradeDist from "../GradeDist/GradeDist";
 import Button from "react-bootstrap/Button";
@@ -16,7 +16,7 @@ import {
 
 interface InfoData {
   title: string;
-  content: string | React.FunctionComponent;
+  content: string;
 }
 
 interface SearchPopupProps {

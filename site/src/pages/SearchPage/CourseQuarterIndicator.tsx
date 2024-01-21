@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Label, Popup } from 'semantic-ui-react';
 
 interface CourseQuarterIndicatorProps {

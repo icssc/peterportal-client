@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { setActiveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Course from './Course';
 import { Draggable } from "react-beautiful-dnd";
-import { isMobile, isBrowser } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import { CourseGQLData } from '../../types/types';
 
@@ -33,7 +33,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
       draggableId={`search-${props.id}-${props.index}`}
       index={props.index}
     >
-      {(provided, snapshot) => {
+      {(provided) => {
         return (
           <div
             ref={provided.innerRef}
@@ -42,6 +42,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
             style={{
               // use inline style here so dnd can calculate size
               margin: ' 0rem 2rem 1rem 2rem',
+              cursor: 'grab',
               ...provided.draggableProps.style
             }}
             onMouseDown={() => { dispatch(setActiveCourse(props)) }}

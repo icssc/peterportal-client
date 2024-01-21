@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
 import type { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
@@ -82,7 +82,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
           <span style={{ margin: 'auto' }}>
             <div className={'prereq-branch'}>
               {
-                Object.entries(phraseMapping).filter(([subtreeType, _]) =>
+                Object.entries(phraseMapping).filter(([subtreeType]) =>
                   Object.prototype.hasOwnProperty.call(prerequisite, subtreeType),
                 )[0][1]
               }
@@ -109,8 +109,8 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
 interface PrereqProps extends CourseGQLData {}
 
 const PrereqTree: FC<PrereqProps> = (props) => {
-  let hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
-  let hasDependencies = Object.keys(props.dependencies).length !== 0;
+  const hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
+  const hasDependencies = Object.keys(props.dependencies).length !== 0;
 
   if (props.id === undefined) return <></>;
   else if (!hasPrereqs && !hasDependencies)

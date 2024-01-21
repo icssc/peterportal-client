@@ -29,6 +29,7 @@ Features include:
 * MongoDB
 * GraphQL
 * TypeScript
+* Vite
 
 ## First time setup
 ### Committee Members
@@ -37,18 +38,19 @@ Features include:
     git clone https://github.com/icssc/peterportal-client
     ```
 
-2. Switch to a branch you will be working on.
+2. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+
+3. `cd` into the cloned repo.
+
+4. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
+
+5. Setup the appropriate environment variables provided by the project lead.
+
+6. Switch to a branch you will be working on for your current task (pick a name that's relevant to the issue).
     ```
     git checkout -b [branch name]
     ```
 
-3. Check your Node version with `node -v`. Make sure you have version 14 or above (18 recommended).
-
-4. Open a terminal window and `cd` into the directory of your repo.
-
-5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
-
-6. Setup the appropriate environment variables provided by the project lead.
 ### Open Source Contributors
 1. Fork the project by clicking the fork button in the top right, above the about section.
 
@@ -57,26 +59,21 @@ Features include:
 git clone https://github.com/<your username>/peterportal-client
 ```
 
-3. Switch to a branch you will be working on.
-```
-git checkout -b [branch name]
-```
+3. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
 
-4. Check your Node version with `node -v`. Make sure you have version 14 or above (18 recommended).
+4. `cd` into the cloned repo.
 
-5. Open a terminal window and `cd` into the directory of your repo.
+5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-6. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
-
-7. Create a .env file in the api directory with the following contents:
+6. Create a .env file in the api directory with the following contents:
 ```
 PUBLIC_API_URL=https://api.peterportal.org/rest/v0/
 PUBLIC_API_GRAPHQL_URL=https://api.peterportal.org/graphql/
 PORT=8080
 ```
-Note: the port should also match the one set up on the frontend's proxy to the backend under `site/src/setupProxy.js` By default this is 8080.
+Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 8080.
 
-8. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
+7. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 ```
 MONGO_URL=<secret>
 SESSION_SECRET=<secret>
@@ -86,10 +83,20 @@ GRECAPTCHA_SECRET=<secret>
 ADMIN_EMAILS=["<your email>"]
 ```
 
+## Open Source Contribution Guide
+1. Choose an issue you would like to work on under the issues tab. Leave a comment letting us know you'll work on this issue.
+
+2. We recommend you switch to a branch you will be working on for each feature.
+```
+git checkout -b [branch name]
+```
+
+3. Once your feature is ready, [open a pull request](https://github.com/icssc/peterportal-client/compare) and a member from our team will review it. Follow the pull request template.
+
 ## Running the project locally (after setup)
 1. Open two terminal windows and `cd` into the directory of your repo in each of them.
 
-2. In the first terminal window, enter the client directory with `cd site`. Then run the React development server using `npm start`. Ensure the server is running on port 3000 by default.
+2. In the first terminal window, enter the client directory with `cd site`. Then run the Vite development server using `npm run dev`. Ensure the server is running on port 3000 by default.
 
 3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 8080 by default.
 
@@ -101,8 +108,7 @@ ADMIN_EMAILS=["<your email>"]
 We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-next)).
 
 ## Bug Report
-🐞 If you encountered any issues or bug, please open an issue @ https://github.com/icssc-projects/peterportal-client/issues/new
-
+🐞 If you encountered any issues or bug, please open an issue @ https://github.com/icssc/peterportal-client/issues/new
 
 ## Other Disclaimer
 ✅ Although we consolidate our data directly from official UCI sources, this application is by all means, not an official UCI tool. We stride to keep our data as accurate as possible with the limited support we have from UCI. Please take that into consideration while using this Website.

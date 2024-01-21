@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
@@ -9,10 +9,6 @@ import './Verify.scss';
 const Verify: FC = () => {
     const [reviews, setReviews] = useState<ReviewData[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
-
-    interface AdminResponse {
-        admin: boolean
-    }
 
     const getUnverifiedReviews = async () => {
         const response: AxiosResponse<ReviewData[]> = await axios.get('/api/reviews?verified=false');

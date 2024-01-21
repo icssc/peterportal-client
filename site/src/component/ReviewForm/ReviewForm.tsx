@@ -1,4 +1,4 @@
-import React, { FC, FormEvent, ChangeEvent, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import './ReviewForm.scss';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
@@ -60,34 +60,34 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
-    if (cookies.hasOwnProperty('user')) {
+    if (cookies.user) {
       setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
-  }, []);
+  }, [cookies]);
 
   useEffect(() => {
     // upon opening this form
     if (showForm) {
       // if not logged in, close the form
-      if (!cookies.hasOwnProperty('user')) {
+      if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
         props.closeForm();
       }
     }
-  }, [showForm]);
+  }, [showForm, props, cookies]);
 
   const postReview = async (review: ReviewData) => {
     const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
     if (res.status === 400) {
       alert(res.data.error ?? 'You have already submitted a review for this course/professor');
-    } else if (res.data.hasOwnProperty('error')) {
+    } else if (res.data.error !== undefined) {
       alert('You must be logged in to add a review!');
     } else {
       setSubmitted(true);
@@ -148,14 +148,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const selectTag = (tag: string) => {
     // remove tag
     if (selectedTags.includes(tag)) {
-      let newSelectedTags = [...selectedTags];
+      const newSelectedTags = [...selectedTags];
       newSelectedTags.splice(newSelectedTags.indexOf(tag), 1);
       setSelectedTags(newSelectedTags);
     }
     // add tag if not over limit
     else {
       if (selectedTags.length < 3) {
-        let newSelectedTags = [...selectedTags];
+        const newSelectedTags = [...selectedTags];
         newSelectedTags.push(tag);
         setSelectedTags(newSelectedTags);
       } else {
@@ -242,20 +242,21 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <div className="review-form-section review-form-row review-form-taken">
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className="review-form-grade" controlId="grade">
+                <Form.Group className="review-form-grade">
                   <Form.Label>Grade</Form.Label>
                   <Form.Control
                     as="select"
                     name="grade"
                     id="grade"
+                    defaultValue=""
                     required
                     onChange={(e) => setGradeReceived(e.target.value)}
                   >
-                    <option disabled={true} selected value="">
+                    <option disabled={true} value="">
                       Grade
                     </option>
-                    {grades.map((grade, i) => (
-                      <option key={i}>{grade}</option>
+                    {grades.map((grade) => (
+                      <option key={grade}>{grade}</option>
                     ))}
                   </Form.Control>
                   <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback>
@@ -266,36 +267,38 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <Form.Group className="review-form-section">
                 <Form.Label>Taken During</Form.Label>
                 <div className="review-form-row">
-                  <Form.Group controlId="quarter" className="mr-3">
+                  <Form.Group className="mr-3">
                     <Form.Control
                       as="select"
                       name="quarter"
                       id="quarter"
+                      defaultValue=""
                       required
                       onChange={(e) => setQuarterTaken(e.target.value)}
                     >
-                      <option disabled={true} selected value="">
+                      <option disabled={true} value="">
                         Quarter
                       </option>
-                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
-                        <option key={`quarter-${i}`}>{quarter}</option>
+                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter) => (
+                        <option key={quarter}>{quarter}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group controlId="year">
+                  <Form.Group>
                     <Form.Control
                       as="select"
                       name="year"
                       id="year"
+                      defaultValue=""
                       required
                       onChange={(e) => setYearTaken(e.target.value)}
                     >
-                      <option disabled={true} selected value="">
+                      <option disabled={true} value="">
                         Year
                       </option>
-                      {Array.from(new Array(10), (x, i) => new Date().getFullYear() - i).map((year, i) => (
-                        <option key={i}>{year}</option>
+                      {Array.from(new Array(10), (_, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year}>{year}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
@@ -370,14 +373,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <Form.Group className="review-form-section">
                 <Form.Label>Select up to 3 tags</Form.Label>
                 <div>
-                  {tags.map((tag, i) => (
+                  {tags.map((tag) => (
                     <Badge
                       key={tag}
                       pill
                       className="p-3 mr-2 mt-2"
                       variant={selectedTags.includes(tag) ? 'success' : 'info'}
-                      id={`tag-${i}`}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                      onClick={() => {
                         selectTag(tag);
                       }}
                     >

@@ -1,7 +1,7 @@
-import React, { FC, useState, useRef, useEffect } from "react";
-import "./AddYearPopup.scss";
-import { PlusCircleFill } from "react-bootstrap-icons";
-import { Button, Form, Popover, Overlay } from "react-bootstrap";
+import React, { FC, useState, useRef, useEffect } from 'react';
+import './AddYearPopup.scss';
+import { PlusCircleFill } from 'react-bootstrap-icons';
+import { Button, Form, Popover, Overlay } from 'react-bootstrap';
 import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 
@@ -18,12 +18,12 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  useEffect(() => { 
+  useEffect(() => {
     setYear(placeholderYear);
     setName(placeholderName);
   }, [placeholderYear, placeholderName]);
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = () => {
     setShow(!show);
   };
 
@@ -34,13 +34,11 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         <div className="add-year-text">Add year</div>
       </Button>
       <Overlay show={show} target={target} placement="top">
-        <Popover id=''>
+        <Popover id="">
           <Popover.Content>
             <Form noValidate validated={validated}>
               <Form.Group>
-                <Form.Label className="add-year-form-label">
-                  Name
-                </Form.Label>
+                <Form.Label className="add-year-form-label">Name</Form.Label>
                 <Form.Control
                   required
                   type="text"
@@ -60,9 +58,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
                 ></Form.Control>
               </Form.Group>
               <Form.Group>
-                <Form.Label className="add-year-form-label">
-                  Start Year
-                </Form.Label>
+                <Form.Label className="add-year-form-label">Start Year</Form.Label>
                 <Form.Control
                   required
                   type="number"
@@ -92,15 +88,17 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
 
                   setValidated(false);
                   setShow(!show);
-                  dispatch(addYear(
-                    {
+                  dispatch(
+                    addYear({
                       yearData: {
                         startYear: year,
                         name: name.trim(),
-                        quarters: ['fall', 'winter', 'spring'].map(quarter => { return { name: quarter, courses: [] } })
-                      }
-                    }
-                  ));
+                        quarters: ['fall', 'winter', 'spring'].map((quarter) => {
+                          return { name: quarter, courses: [] };
+                        }),
+                      },
+                    }),
+                  );
                   setYear(placeholderYear);
                   setName(placeholderName);
                 }}
@@ -111,8 +109,8 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
           </Popover.Content>
         </Popover>
       </Overlay>
-    </div >
+    </div>
   );
-}
+};
 
 export default AddYearPopup;

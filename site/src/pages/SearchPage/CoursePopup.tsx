@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import SearchPopup from '../../component/SearchPopup/SearchPopup';
 import axios from 'axios';
 
@@ -20,9 +20,9 @@ const CoursePopup: FC = () => {
           },
         })
         .then((res) => {
-          let scores: ScoreData[] = [];
+          const scores: ScoreData[] = [];
           // set of ucinetid professors with scores
-          let scoredProfessors = new Set(res.data.map((v) => v.name));
+          const scoredProfessors = new Set(res.data.map((v) => v.name));
           // add known scores
           res.data.forEach((entry) => {
             if (course.instructors[entry.name]) {
@@ -44,7 +44,7 @@ const CoursePopup: FC = () => {
 
   if (course) {
     // include prerequisite and restriction panels
-    let infos = [
+    const infos = [
       {
         title: 'Prerequisite',
         content: course.prerequisiteText,

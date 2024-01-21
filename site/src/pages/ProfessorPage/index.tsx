@@ -1,6 +1,6 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import './ProfessorPage.scss';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
 import { Divider } from 'semantic-ui-react';
@@ -12,26 +12,26 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { ProfessorGQLData, ProfessorGQLResponse, SubCourse } from '../../types/types';
+import { ProfessorGQLData } from '../../types/types';
 import { searchAPIResult } from '../../helpers/util';
 
-const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
+const ProfessorPage: FC = () => {
+  const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const professorGQLData = useAppSelector((state) => state.popup.professor);
   const [error, setError] = useState('');
 
   useEffect(() => {
     // make a gql query if directly landed on this page
-    if (professorGQLData == null || professorGQLData.ucinetid !== props.match.params.id) {
-      searchAPIResult('professor', props.match.params.id).then((professor) => {
+    if (id !== undefined && (professorGQLData == null || professorGQLData.ucinetid != id)) {
+      searchAPIResult('professor', id).then((professor) => {
         if (professor) {
           dispatch(setProfessor(professor as ProfessorGQLData));
         } else {
-          setError(`Professor ${props.match.params.id} does not exist!`);
+          setError(`Professor ${id} does not exist!`);
         }
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // if professor does not exists

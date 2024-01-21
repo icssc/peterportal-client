@@ -2,7 +2,6 @@ import React, { FC, useState } from "react";
 import "./Header.scss";
 import { Button, ButtonGroup, Popover, Overlay } from "react-bootstrap";
 import { ArrowLeftRight, Save, Plus, List, Trash } from "react-bootstrap-icons";
-import html2canvas from 'html2canvas';
 import { setShowTransfer, setShowSearch, clearPlanner } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Transfer from './Transfer';
@@ -17,7 +16,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingPrerequisites }) => {
   const dispatch = useAppDispatch();
-  const [target, setTarget] = useState<any>(null!);
+  const [target, setTarget] = useState<HTMLElement | null>(null);
   const [showMenu, setShowMenu] = useState(false);
 
   const buttons = <>
@@ -44,7 +43,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
 
   const onMenuClick = (event: React.MouseEvent) => {
     setShowMenu(!showMenu);
-    setTarget(event.target);
+    setTarget(event.target as HTMLElement);
   };
 
   return (

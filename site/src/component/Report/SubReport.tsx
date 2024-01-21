@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Divider } from 'semantic-ui-react';
 import './SubReport.scss';
 

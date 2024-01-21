@@ -1,16 +1,16 @@
 import axios, { AxiosResponse } from "axios";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from "src/types/types";
+import { ReviewData } from "../../../src/types/types";
 import './UserReviews.scss';
 import { useCookies } from "react-cookie";
 
 const UserReviews: FC = () => {
     const [reviews, setReviews] = useState<ReviewData[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [cookies, setCookie] = useCookies(['user']);
+    const [cookies] = useCookies(['user']);
 
     const getUserReviews = async () => {
         const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);

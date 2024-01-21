@@ -7,9 +7,9 @@ import fetch from 'node-fetch';
 
 var router = express.Router();
 
-const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall']
+const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
-router.get("/getTerms", function (req, res) {
+router.get('/getTerms', function (req, res) {
   let pastYears: number = parseInt(req.query.years as string);
   if (!pastYears) {
     pastYears = 1;
@@ -23,7 +23,7 @@ router.get("/getTerms", function (req, res) {
     }
   }
   res.json(terms);
-})
+});
 
 /**
  * Get the current week
@@ -31,7 +31,7 @@ router.get("/getTerms", function (req, res) {
 router.get('/api/currentWeek', async function (_, res) {
   const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
   const json = await apiResp.json();
-  res.send(json.payload)
+  res.send(json.payload);
 });
 
 /**
@@ -40,19 +40,19 @@ router.get('/api/currentWeek', async function (_, res) {
 router.get('/api/currentQuarter', async function (_, res) {
   const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
   const json = await apiResp.json();
-  res.send(json.payload[0].longName)
+  res.send(json.payload[0].longName);
 });
-
 
 /**
  * Proxy for WebSOC, using PeterPortal API
  */
 router.get('/api/:term/:department/:number', async function (req, res) {
-  const [year, quarter] = req.params.term.split(" ");
+  const [year, quarter] = req.params.term.split(' ');
   const result = await callPPAPIWebSoc({
-    year, quarter,
+    year,
+    quarter,
     department: req.params.department,
-    courseNumber: req.params.number
+    courseNumber: req.params.number,
   });
   res.send(result);
 });
@@ -61,18 +61,20 @@ router.get('/api/:term/:department/:number', async function (req, res) {
  * Proxy for WebSOC, using PeterPortal API
  */
 router.get('/api/:term/:professor', async function (req, res) {
-  const [year, quarter] = req.params.term.split(" ");
+  const [year, quarter] = req.params.term.split(' ');
   const result = await callPPAPIWebSoc({
-    year, quarter,
-    instructorName: req.params.professor
+    year,
+    quarter,
+    instructorName: req.params.professor,
   });
   res.send(result);
 });
 
 async function callPPAPIWebSoc(params: Record<string, string>) {
-  const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' +
-    new URLSearchParams(params))
-  return await fetch(url).then(response => response.json()).then(json => json.payload);
+  const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' + new URLSearchParams(params));
+  return await fetch(url)
+    .then((response) => response.json())
+    .then((json) => json.payload);
 }
 
 export default router;

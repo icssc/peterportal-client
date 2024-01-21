@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import './Transfer.scss';
 import Button from 'react-bootstrap/Button';
 import { ListGroup } from "react-bootstrap";
@@ -8,12 +8,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CloseButton from 'react-bootstrap/CloseButton';
-import { Pencil, Save } from "react-bootstrap-icons";
 
 import { TransferData } from '../../types/types';
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { List } from "semantic-ui-react";
 
 interface TransferEntryProps extends TransferData {
     index: number;
@@ -74,7 +72,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
 
     const DisplayMissingCourses: FC = () => {
         return <ListGroup horizontal> {
-                Array.from(missingPrereqNames).map((course) => <ListGroup.Item>{course}</ListGroup.Item>)
+                Array.from(missingPrereqNames).map((course) => <ListGroup.Item key={course}>{course}</ListGroup.Item>)
             }
         </ListGroup>
     };

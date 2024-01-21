@@ -1,15 +1,10 @@
-import React, { FC, ChangeEvent, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import axios from 'axios';
 import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
-import Badge from 'react-bootstrap/Badge';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
-import { useAppDispatch } from '../../store/hooks';
 import { ReportData } from '../../types/types';
-import { useCookies } from 'react-cookie';
 import Modal from 'react-bootstrap/Modal';
 import { isMobile } from 'react-device-detect';
 
@@ -21,7 +16,6 @@ interface ReportFormProps {
 }
 
 const ReportForm: FC<ReportFormProps> = (props) => {
-    const dispatch = useAppDispatch();
     const [reason, setReason] = useState<string>('');
     const [reportSubmitted, setReportSubmitted] = useState<boolean>(false);
 
@@ -29,7 +23,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
 
     const postReport = async (report: ReportData) => {
-        const res = await axios.post('/api/reports', report);
+        await axios.post('/api/reports', report);
         setReportSubmitted(true);
     }
 

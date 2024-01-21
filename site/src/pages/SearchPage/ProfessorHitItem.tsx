@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './HitItem.scss';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 import { isMobile } from 'react-device-detect';
@@ -11,7 +11,7 @@ interface ProfessorHitItemProps extends ProfessorGQLData {}
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const activeProfessor = useAppSelector((state) => state.popup.professor);
 
   const onClickName = () => {
@@ -21,7 +21,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     // if click on a professor that is already in popup
     // or if on mobile
     if ((activeProfessor && props.ucinetid == activeProfessor.ucinetid) || isMobile) {
-      history.push(`/professor/${props.ucinetid}`);
+      navigate(`/professor/${props.ucinetid}`);
     }
   };
 

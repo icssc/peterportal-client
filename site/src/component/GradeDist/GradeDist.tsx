@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Divider, Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
+import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -50,7 +50,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     } else if (props.professor) {
       url = `/api/professors/api/grades/${props.professor.shortenedName}`;
     }
-    const res = axios
+    axios
       .get<GradesRaw>(url, {
         params: params,
       })
@@ -92,8 +92,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @return an array of JSON objects recording each quarter
    */
   const createQuarterEntries = () => {
-    let quarters: Set<string> = new Set();
-    let result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
+    const quarters: Set<string> = new Set();
+    const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
 
     gradeDistData
       .filter((entry) => {
@@ -133,8 +133,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @return an array of JSON objects recording professor's names
    */
   const createProfEntries = () => {
-    let professors: Set<string> = new Set();
-    let result: Entry[] = [];
+    const professors: Set<string> = new Set();
+    const result: Entry[] = [];
 
     gradeDistData.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
@@ -149,8 +149,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @return an array of JSON objects recording course's names
    */
   const createCourseEntries = () => {
-    let courses: Set<string> = new Set();
-    let result: Entry[] = [];
+    const courses: Set<string> = new Set();
+    const result: Entry[] = [];
 
     gradeDistData.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
 
@@ -165,7 +165,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @param event an event object recording the mouse movement, etc.
    * @param status details about the status in the dropdown menu
    */
-  const updateCurrentQuarter = (event: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
+  const updateCurrentQuarter = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
     setCurrentQuarter(status.value as string);
   };
 
@@ -174,7 +174,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @param event an event object recording the mouse movement, etc.
    * @param status details about the status in the dropdown menu
    */
-  const updateCurrentProf = (event: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
+  const updateCurrentProf = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
     setCurrentProf(status.value as string);
   };
 
@@ -183,12 +183,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @param event an event object recording the mouse movement, etc.
    * @param status details about the status in the dropdown menu
    */
-  const updateCurrentCourse = (event: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
+  const updateCurrentCourse = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
     setCurrentCourse(status.value as string);
   };
 
   if (gradeDistData !== null && gradeDistData.length !== 0) {
-    let graphProps = {
+    const graphProps = {
       gradeData: gradeDistData,
       quarter: currentQuarter,
       course: currentCourse,
@@ -208,7 +208,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
                   { text: 'Pie', value: 'pie' },
                 ]}
                 value={chartType}
-                onChange={(e, s) => setChartType(s.value as ChartTypes)}
+                onChange={(_, s) => setChartType(s.value as ChartTypes)}
               />
             </Grid.Column>
           )}

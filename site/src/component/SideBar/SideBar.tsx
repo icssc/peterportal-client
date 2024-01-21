@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import { XCircle } from 'react-bootstrap-icons';
@@ -11,15 +11,15 @@ import { useAppSelector, useAppDispatch } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
 
-const SideBar: FC = ({ children }) => {
+const SideBar: FC = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector(state => state.ui.sidebarOpen);
-  const [cookies, setCookie] = useCookies(['user']);
+  const [cookies] = useCookies(['user']);
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
-  const [isAdmin, setIsAdmin] = useState<Boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  let isLoggedIn = cookies.hasOwnProperty('user');
+  const isLoggedIn = cookies.user !== undefined;
 
   interface AdminResponse {
     admin: boolean
@@ -42,13 +42,10 @@ const SideBar: FC = ({ children }) => {
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 
-  let links = <div className='sidebar-links'>
+  const links = <div className='sidebar-links'>
     <ul>
       <li>
-        <NavLink to='/' activeClassName='sidebar-active' onClick={closeSidebar} isActive={(match, location) => {
-          let splitLocation = location.pathname.split('/');
-          return splitLocation.length > 1 && ['search', 'course', 'professor'].includes(splitLocation[1]);
-        }}>
+        <NavLink to='/' className={({ isActive }) => isActive || location.pathname.match(/^\/search\/(courses|professors)$/) ? 'sidebar-active' : ''} onClick={closeSidebar}>
           <div>
             <Icon name='list alternate outline' size='large' />
           </div>
@@ -58,7 +55,7 @@ const SideBar: FC = ({ children }) => {
         </NavLink>
       </li>
       <li>
-        <NavLink to='/roadmap' activeClassName='sidebar-active' onClick={closeSidebar}>
+        <NavLink to='/roadmap' className={({ isActive }) => isActive ? 'sidebar-active' : ''} onClick={closeSidebar}>
           <div>
             <Icon name='map outline' size='large' />
           </div>
@@ -69,7 +66,7 @@ const SideBar: FC = ({ children }) => {
       </li>
       {isLoggedIn && 
       <li>
-        <NavLink to='/reviews' activeClassName='sidebar-active' onClick={closeSidebar}>
+        <NavLink to='/reviews' className={({ isActive }) => isActive ? 'sidebar-active' : ''} onClick={closeSidebar}>
           <div>
             <Icon name='sticky note outline' size='large' />
           </div>
@@ -81,7 +78,7 @@ const SideBar: FC = ({ children }) => {
       }
       {isAdmin && <>
       <li>
-        <NavLink to='/admin/verify' activeClassName='sidebar-active' onClick={closeSidebar}>
+        <NavLink to='/admin/verify' className={({ isActive }) => isActive ? 'sidebar-active' : ''} onClick={closeSidebar}>
           <div>
             <Icon name='check' size='large' />
           </div>
@@ -91,7 +88,7 @@ const SideBar: FC = ({ children }) => {
         </NavLink>
       </li>
       <li>
-        <NavLink to='/admin/reports' activeClassName='sidebar-active' onClick={closeSidebar}>
+        <NavLink to='/admin/reports' className={({ isActive }) => isActive ? 'sidebar-active' : ''} onClick={closeSidebar}>
           <div>
             <Icon name='exclamation triangle' size='large' />
           </div>
