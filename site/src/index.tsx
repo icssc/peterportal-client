@@ -8,15 +8,6 @@ import './index.css';
 import { store } from './store/store';
 import { Provider } from 'react-redux';
 
-// Create a Client
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { ApolloProvider } from '@apollo/client/react';
-
-const client = new ApolloClient({
-  uri: '/api/graphql/',
-  cache: new InMemoryCache()
-});
-
 /**
  * Render App
  */
@@ -24,9 +15,7 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <ApolloProvider client={client}>
-        <App />
-      </ApolloProvider>
+      <App />
     </Provider>
   </React.StrictMode>,
-)
+);
