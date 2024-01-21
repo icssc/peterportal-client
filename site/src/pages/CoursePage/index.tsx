@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react'
+import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
@@ -18,81 +18,84 @@ import { getCourseTags, searchAPIResult } from '../../helpers/util';
 import './CoursePage.scss';
 
 const CoursePage: FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const dispatch = useAppDispatch();
-    const courseGQLData = useAppSelector(state => state.popup.course);
-    const [error, setError] = useState('');
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+  const courseGQLData = useAppSelector((state) => state.popup.course);
+  const [error, setError] = useState('');
 
-    useEffect(() => {
-        // make a gql query if directly landed on this page
-        if (id !== undefined && (courseGQLData == null || courseGQLData.id != id)) {
-            searchAPIResult('course', id)
-                .then(course => {
-                    console.log("COURSE", course)
-                    if (course) {
-                        dispatch(setCourse(course as CourseGQLData))
-                    }
-                    else {
-                        setError(`Course ${id} does not exist!`);
-                    }
-                })
+  useEffect(() => {
+    // make a gql query if directly landed on this page
+    if (id !== undefined && (courseGQLData == null || courseGQLData.id != id)) {
+      searchAPIResult('course', id).then((course) => {
+        console.log('COURSE', course);
+        if (course) {
+          dispatch(setCourse(course as CourseGQLData));
+        } else {
+          setError(`Course ${id} does not exist!`);
         }
-    }, [])
-
-    // if course does not exists
-    if (error) {
-        return <Error message={error} />
+      });
     }
-    // loading results
-    else if (!courseGQLData) {
-        return <LoadingPage />;
-    }
-    else {
-        return (
-            <Twemoji options={{ className: 'twemoji' }}>
-                <div className='course-page'>
-                    <div>
-                        <SideInfo searchType='course' name={courseGQLData.department + ' ' + courseGQLData.number}
-                            title={courseGQLData.title} school={courseGQLData.school} description={courseGQLData.description}
-                            tags={getCourseTags(courseGQLData)} course={courseGQLData} />
-                    </div>
-                    <div className='course-page-body'>
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>🌲 Prerequisite Tree</h2>
-                            </div>
-                            <Divider />
-                            <PrereqTree {...courseGQLData} />
-                        </div>
+  }, []);
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>🗓️ Schedule of Classes</h2>
-                            </div>
-                            <Divider />
-                            <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.number} />
-                        </div>
+  // if course does not exists
+  if (error) {
+    return <Error message={error} />;
+  }
+  // loading results
+  else if (!courseGQLData) {
+    return <LoadingPage />;
+  } else {
+    return (
+      <Twemoji options={{ className: 'twemoji' }}>
+        <div className="course-page">
+          <div>
+            <SideInfo
+              searchType="course"
+              name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+              title={courseGQLData.title}
+              school={courseGQLData.school}
+              description={courseGQLData.description}
+              tags={getCourseTags(courseGQLData)}
+              course={courseGQLData}
+            />
+          </div>
+          <div className="course-page-body">
+            <div className="course-page-section">
+              <div>
+                <h2>🌲 Prerequisite Tree</h2>
+              </div>
+              <Divider />
+              <PrereqTree {...courseGQLData} />
+            </div>
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>📊 Grade Distribution</h2>
-                            </div>
-                            <Divider />
-                            <GradeDist course={courseGQLData} />
-                        </div>
+            <div className="course-page-section">
+              <div>
+                <h2>🗓️ Schedule of Classes</h2>
+              </div>
+              <Divider />
+              <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
+            </div>
 
-                        <div className='course-page-section'>
-                            <div>
-                                <h2>💬 Reviews</h2>
-                            </div>
-                            <Divider />
-                            <Review course={courseGQLData} />
-                        </div>
-                    </div>
-                </div>
-            </Twemoji>
-        )
-    }
-}
+            <div className="course-page-section">
+              <div>
+                <h2>📊 Grade Distribution</h2>
+              </div>
+              <Divider />
+              <GradeDist course={courseGQLData} />
+            </div>
+
+            <div className="course-page-section">
+              <div>
+                <h2>💬 Reviews</h2>
+              </div>
+              <Divider />
+              <Review course={courseGQLData} />
+            </div>
+          </div>
+        </div>
+      </Twemoji>
+    );
+  }
+};
 
 export default CoursePage;

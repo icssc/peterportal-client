@@ -1,66 +1,5 @@
-export interface CourseData {
-  id: string;
-  department: string;
-  number: string;
-  school: string;
-  title: string;
-  course_level: string;
-  department_alias: string[];
-  units: number[];
-  description: string;
-  department_name: string;
-  professor_history: string[];
-  prerequisite_tree: string;
-  prerequisite_list: string[];
-  prerequisite_text: string;
-  prerequisite_for: string[];
-  repeatability: string;
-  grading_option: string;
-  concurrent: string;
-  same_as: string;
-  restriction: string;
-  overlap: string;
-  corequisite: string;
-  ge_list: string[];
-  ge_text: string;
-  terms: string[];
-}
-
-export interface ProfessorData {
-  name: string;
-  shortened_name: string;
-  ucinetid: string;
-  title: string;
-  department: string;
-  schools: string[];
-  related_departments: string[];
-  course_history: string[];
-}
-
 export type BatchCourseData = { [key: string]: CourseGQLData };
 export type BatchProfessorData = { [key: string]: ProfessorGQLData };
-
-export type GradeDistData = GradeData[];
-
-export interface GradeData {
-  year: string;
-  quarter: string;
-  department: string;
-  number: string;
-  code: number;
-  section: string;
-  instructor: string;
-  type: string;
-  gradeACount: number;
-  gradeBCount: number;
-  gradeCCount: number;
-  gradeDCount: number;
-  gradeFCount: number;
-  gradePCount: number;
-  gradeNPCount: number;
-  gradeWCount: number;
-  averageGPA: number;
-}
 
 export interface ReviewData {
   _id?: string;
@@ -151,6 +90,7 @@ export type PlannerData = PlannerYearData[];
 
 export interface PlannerYearData {
   startYear: number;
+  name: string;
   quarters: PlannerQuarterData[];
 }
 
@@ -163,6 +103,7 @@ export type SavedPlannerData = SavedPlannerYearData[];
 
 export interface SavedPlannerYearData {
   startYear: number;
+  name: string;
   quarters: SavedPlannerQuarterData[];
 }
 
@@ -221,50 +162,50 @@ export interface VoteColor {
 export interface CourseGQLData {
   id: string;
   department: string;
-  number: string;
+  courseNumber: string;
   school: string;
   title: string;
-  course_level: string;
-  department_alias: string[];
-  units: number[];
+  courseLevel: string;
+  minUnits: number;
+  maxUnits: number;
   description: string;
-  department_name: string;
-  instructor_history: ProfessorLookup;
-  prerequisite_tree: string;
-  prerequisite_list: CourseLookup;
-  prerequisite_text: string;
-  prerequisite_for: CourseLookup;
+  departmentName: string;
+  instructors: ProfessorLookup;
+  prerequisiteTree: Record<string, unknown>;
+  prerequisites: CourseLookup;
+  prerequisiteText: string;
+  dependencies: CourseLookup;
   repeatability: string;
   concurrent: string;
-  same_as: string;
+  sameAs: string;
   restriction: string;
   overlap: string;
-  corequisite: string;
-  ge_list: string[];
-  ge_text: string;
+  corequisites: string;
+  geList: string[];
+  geText: string;
   terms: string[];
 }
 
 export interface ProfessorGQLData {
   name: string;
-  shortened_name: string;
+  shortenedName: string;
   ucinetid: string;
   title: string;
   department: string;
   schools: string[];
-  related_departments: string[];
-  course_history: CourseLookup;
+  relatedDepartments: string[];
+  courses: CourseLookup;
 }
 
 // PPAPI format
-export type CourseGQLResponse = Omit<CourseGQLData, 'instructor_history' | 'prerequisite_list' | 'prerequisite_for'> & {
-  instructor_history: SubProfessor[];
-  prerequisite_list: SubCourse[];
-  prerequisite_for: SubCourse[];
+export type CourseGQLResponse = Omit<CourseGQLData, 'instructors' | 'prerequisites' | 'dependencies'> & {
+  instructors: SubProfessor[];
+  prerequisites: SubCourse[];
+  dependencies: SubCourse[];
 };
 
-export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'course_history'> & {
-  course_history: SubCourse[];
+export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'courses'> & {
+  courses: SubCourse[];
 };
 
 // maps ucinetid to subprofessor
@@ -281,66 +222,13 @@ export interface CourseLookup {
 export interface SubProfessor {
   name: string;
   ucinetid: string;
-  shortened_name: string;
+  shortenedName: string;
 }
 
 // subset of course details needed for display purposes
 export interface SubCourse {
   id: string;
   department: string;
-  number: string;
-  title: string;
-}
-
-/*
- * WebSoc schedule types
- */
-export interface WebsocResponse {
-  schools: School[];
-}
-export interface School {
-  schoolName: string;
-  schoolComment: string;
-  departments: Department[];
-}
-export interface Department {
-  deptName: string;
-  deptCode: string;
-  deptComment: string;
-  courses: Course[];
-  sectionCodeRangeComments: string[];
-  courseNumberRangeComments: string[];
-}
-export interface Course {
   courseNumber: string;
-  courseTitle: string;
-  courseComment: string;
-  prerequisiteLink: string;
-  sections: Section[];
-}
-export interface Section {
-  sectionCode: string;
-  sectionType: string;
-  sectionNum: string;
-  units: string;
-  instructors: string[];
-  meetings: Meeting[];
-  finalExam: string;
-  maxCapacity: string;
-  numCurrentlyEnrolled: EnrollmentCount;
-  numOnWaitlist: string;
-  numRequested: string;
-  numNewOnlyReserved: string;
-  restrictions: string;
-  status: string;
-  sectionComment: string;
-}
-export interface Meeting {
-  days: string;
-  time: string;
-  bldg: string;
-}
-export interface EnrollmentCount {
-  totalEnrolled: string;
-  sectionEnrolled: string;
+  title: string;
 }

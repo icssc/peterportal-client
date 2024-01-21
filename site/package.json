@@ -26,7 +26,7 @@
     "react-twemoji": "^0.5.0",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
-    "websoc-fuzzy-search": "^0.8.0-rc.1"
+    "websoc-fuzzy-search": "1.0.1"
   },
   "scripts": {
     "start": "vite",
@@ -60,6 +60,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "peterportal-api-next-types": "^1.0.0-rc.3",
     "sass": "^1.49.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"

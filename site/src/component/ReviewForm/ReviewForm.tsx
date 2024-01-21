@@ -109,7 +109,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     if (valid === false) {
       return;
     }
-
     if (!captchaToken) {
       alert('Please complete the CAPTCHA');
       return;
@@ -180,8 +179,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <option disabled={true} value="">
           Instructor
         </option>
-        {Object.keys(props.course?.instructor_history).map((ucinetid) => {
-          const name = props.course?.instructor_history[ucinetid].shortened_name;
+        {Object.keys(props.course?.instructors).map((ucinetid) => {
+          const name = props.course?.instructors[ucinetid].shortenedName;
           return (
             <option key={ucinetid} value={ucinetid}>
               {name}
@@ -197,7 +196,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       <Form.Control.Feedback type="invalid">Missing instructor</Form.Control.Feedback>
     </Form.Group>
   );
-
   // select course if in professor context
   const courseSelect = props.professor && (
     <Form.Group controlId="course">
@@ -213,11 +211,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <option disabled={true} value="">
           Course
         </option>
-        {Object.keys(props.professor?.course_history).map((courseID) => {
+        {Object.keys(props.professor?.courses).map((courseID) => {
           const name =
-            props.professor?.course_history[courseID].department +
-            ' ' +
-            props.professor?.course_history[courseID].number;
+            props.professor?.courses[courseID].department + ' ' + props.professor?.courses[courseID].courseNumber;
           return (
             <option key={courseID} value={courseID}>
               {name}
