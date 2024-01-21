@@ -1,30 +1,30 @@
 .report-form {
-    background-color: var(--peterportal-gray-blue);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    display: flex;
-    grid-gap: 35px;
-    width: fit-content;
-    width: 40vw;
-    height: fit-content;
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto auto;
-    padding: 50px;
-    overflow-y: auto;
-    overflow-x: hidden;
+  background-color: var(--peterportal-gray-blue);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  display: flex;
+  grid-gap: 35px;
+  width: fit-content;
+  width: 40vw;
+  height: fit-content;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto auto;
+  padding: 50px;
+  overflow-y: auto;
+  overflow-x: hidden;
 
-    textarea {
-        border-radius: var(--border-radius);
-        border: 2px solid #EAEBF2;
-        padding: 1rem;
-        resize: none;
-        width: 100%;
-        display: block;
-    }
+  textarea {
+    border-radius: var(--border-radius);
+    border: 2px solid #eaebf2;
+    padding: 1rem;
+    resize: none;
+    width: 100%;
+    display: block;
+  }
 }
 
 .report-form-review-content {
@@ -48,18 +48,18 @@
 }
 
 .submitted-report-form {
-    text-align: center;
-    width: 100%;
-    margin-top: 15%;
-    i {
-      color: var(--peterportal-secondary-green);
-    }
-    h1 {
-      margin: 15px 0;
-    }
-    p {
-      font-size: 1.25rem;
-    }
+  text-align: center;
+  width: 100%;
+  margin-top: 15%;
+  i {
+    color: var(--peterportal-secondary-green);
+  }
+  h1 {
+    margin: 15px 0;
+  }
+  p {
+    font-size: 1.25rem;
+  }
 }
 
 @media only screen and (max-width: 400px) {
