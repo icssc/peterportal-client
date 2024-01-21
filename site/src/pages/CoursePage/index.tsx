@@ -27,16 +27,9 @@ const CoursePage: FC<RouteComponentProps<{ id: string }>> = (props) => {
   useEffect(() => {
     // make a gql query if directly landed on this page
     if (courseGQLData == null || courseGQLData.id !== props.match.params.id) {
-      (searchAPIResult('course', props.match.params.id) as unknown as Promise<CourseGQLResponse>).then((course) => {
+      searchAPIResult('course', props.match.params.id).then((course) => {
         if (course) {
-          dispatch(
-            setCourse({
-              ...course,
-              instructors: Object.fromEntries(course.instructors.map((x) => [x.ucinetid, x])),
-              prerequisites: Object.fromEntries(course.prerequisites.map((x) => [x.id, x])),
-              dependencies: Object.fromEntries(course.dependencies.map((x) => [x.id, x])),
-            }),
-          );
+          dispatch(setCourse(course as CourseGQLData));
         } else {
           setError(`Course ${props.match.params.id} does not exist!`);
         }

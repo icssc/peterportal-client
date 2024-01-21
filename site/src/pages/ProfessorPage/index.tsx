@@ -23,17 +23,13 @@ const ProfessorPage: FC<RouteComponentProps<{ id: string }>> = (props) => {
   useEffect(() => {
     // make a gql query if directly landed on this page
     if (professorGQLData == null || professorGQLData.ucinetid !== props.match.params.id) {
-      (searchAPIResult('professor', props.match.params.id) as unknown as Promise<ProfessorGQLResponse>).then(
-        (professor) => {
-          if (professor) {
-            dispatch(
-              setProfessor({ ...professor, courses: Object.fromEntries(professor.courses.map((x) => [x.id, x])) }),
-            );
-          } else {
-            setError(`Professor ${props.match.params.id} does not exist!`);
-          }
-        },
-      );
+      searchAPIResult('professor', props.match.params.id).then((professor) => {
+        if (professor) {
+          dispatch(setProfessor(professor as ProfessorGQLData));
+        } else {
+          setError(`Professor ${props.match.params.id} does not exist!`);
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

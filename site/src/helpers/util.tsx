@@ -74,7 +74,7 @@ export async function searchAPIResults(
         key = (data[id] as ProfessorGQLResponse).ucinetid;
       }
       // perform transformation
-      transformed[key] = data[id] as unknown as CourseGQLData | ProfessorGQLData;
+      transformed[key] = transformGQLData(index, data[id]);
     }
   }
   console.log('From backend search', transformed);
@@ -83,3 +83,59 @@ export async function searchAPIResults(
 
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
+
+function transformCourseGQL(data: CourseGQLResponse) {
+  let instructorHistoryLookup: ProfessorLookup = {};
+  let prerequisiteListLookup: CourseLookup = {};
+  let prerequisiteForLookup: CourseLookup = {};
+  // maps professor's ucinetid to professor basic details
+  data.instructors.forEach((professor) => {
+    if (professor) {
+      instructorHistoryLookup[professor.ucinetid] = professor;
+    }
+  });
+  // maps course's id to course basic details
+  data.prerequisites.forEach((course) => {
+    if (course) {
+      prerequisiteListLookup[course.id] = course;
+    }
+  });
+  // maps course's id to course basic details
+  data.dependencies.forEach((course) => {
+    if (course) {
+      prerequisiteForLookup[course.id] = course;
+    }
+  });
+  // create copy to override fields with lookups
+  let course = { ...data } as unknown as CourseGQLData;
+  course.instructors = instructorHistoryLookup;
+  course.prerequisites = prerequisiteListLookup;
+  course.dependencies = prerequisiteForLookup;
+
+  return course;
+}
+
+// TODO: should move transformations to backend
+// transforms PPAPI gql schema to our needs
+export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | ProfessorGQLResponse) {
+  if (index == 'courses') {
+    return transformCourseGQL(data as CourseGQLResponse);
+  } else {
+    return transformProfessorGQL(data as ProfessorGQLResponse);
+  }
+}
+
+function transformProfessorGQL(data: ProfessorGQLResponse) {
+  let courseHistoryLookup: CourseLookup = {};
+  // maps course's id to course basic details
+  data.courses.forEach((course) => {
+    if (course) {
+      courseHistoryLookup[course.id] = course;
+    }
+  });
+  // create copy to override fields with lookups
+  let professor = { ...data } as unknown as ProfessorGQLData;
+  professor.courses = courseHistoryLookup;
+
+  return professor;
+}
