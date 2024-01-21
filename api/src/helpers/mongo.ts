@@ -43,7 +43,8 @@ async function getDB(): Promise<Db> {
 }
 
 // TODO: most of these helpers are unnecessary, just use the collection directly
-// we should also consider just switching to mongoose for the type safety and schema validation
+// also there's gotta be a better way to initialize the client and get the db then what we're doing
+// we should consider just switching to mongoose for the type safety and schema validation
 
 /**
  * Gets mongo collection object by name
