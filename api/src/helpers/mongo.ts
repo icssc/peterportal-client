@@ -53,7 +53,7 @@ async function getDB(): Promise<Db> {
  */
 async function getCollection(collectionName: string): Promise<Collection<GenericObject>> {
   const db = await getDB();
-  return db.collection(collectionName)!;
+  return db.collection(collectionName);
 }
 
 /**
