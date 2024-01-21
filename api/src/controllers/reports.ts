@@ -3,7 +3,7 @@
 */
 
 import express from 'express';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { COLLECTION_NAMES, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
 
@@ -37,7 +37,7 @@ router.delete('/', async (req, res) => {
   if (req.body.id) {
     console.log(`Deleting report ${req.body.id}`);
     status = await deleteDocument(COLLECTION_NAMES.REPORTS, {
-      _id: new ObjectID(req.body.id),
+      _id: new ObjectId(req.body.id),
     });
   } else {
     console.log(`Deleting reports with reviewID ${req.body.reviewID}`);

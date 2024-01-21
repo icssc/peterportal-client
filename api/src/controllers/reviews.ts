@@ -3,7 +3,7 @@
 */
 
 import express from 'express';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { ReviewData, VoteData } from '../types/types';
 import {
   COLLECTION_NAMES,
@@ -92,7 +92,7 @@ interface ReviewFilter {
   courseID: string;
   professorID: string;
   userID: string;
-  _id?: ObjectID;
+  _id?: ObjectId;
   verified?: boolean;
 }
 /**
@@ -109,7 +109,7 @@ router.get('/', async function (req, res) {
     courseID,
     professorID,
     userID,
-    _id: reviewID === undefined ? undefined : new ObjectID(reviewID),
+    _id: reviewID === undefined ? undefined : new ObjectId(reviewID),
     verified: verified === undefined ? undefined : verified === 'true' ? true : false,
   };
 
@@ -180,7 +180,7 @@ router.post('/', async function (req, res) {
 router.delete('/', async (req, res) => {
   const checkUser = async () => {
     const review = (await getDocuments(COLLECTION_NAMES.REVIEWS, {
-      _id: new ObjectID(req.body.id),
+      _id: new ObjectId(req.body.id),
     })) as ReviewData[];
 
     return review.length > 0 && review[0].userID === req.session.passport?.user.id;
@@ -189,20 +189,15 @@ router.delete('/', async (req, res) => {
   if (req.session.passport?.admin || (await checkUser())) {
     console.log(`Deleting review ${req.body.id}`);
 
-    // TODO: figure out what these return types are and determine if status variables are needed
-    const status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
-      _id: new ObjectID(req.body.id),
+    await deleteDocument(COLLECTION_NAMES.REVIEWS, {
+      _id: new ObjectId(req.body.id),
     });
 
-    console.log('Status', status);
-
-    const deleteVotesStatus = await deleteDocuments(COLLECTION_NAMES.VOTES, {
+    await deleteDocuments(COLLECTION_NAMES.VOTES, {
       reviewID: req.body.id,
     });
 
-    console.log('deleteVotesStatus', deleteVotesStatus);
-
-    res.json(status);
+    res.status(200).send();
   } else {
     res.json({ error: 'Must be an admin or review author to delete reviews!' });
   }
@@ -231,12 +226,12 @@ router.patch('/vote', async function (req, res) {
       //delete the existing vote from the votes collection
       await deleteDocument(COLLECTION_NAMES.VOTES, currentVotes);
       //update the votes document with a lowered score
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectID(id) }, { $inc: { score: -1 * deltaScore } });
+      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: -1 * deltaScore } });
     } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
       //there is an existing vote but the vote was different
       deltaScore *= 2;
       //*2 to reverse the old vote and implement the new one
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectID(id) }, { $inc: { score: deltaScore } });
+      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: deltaScore } });
       //override old vote with new data
       await updateDocument(COLLECTION_NAMES.VOTES, { _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
 
@@ -245,7 +240,7 @@ router.patch('/vote', async function (req, res) {
       //no old vote, just add in new vote data
       console.log(`Voting Review ${id} with delta ${deltaScore}`);
 
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectID(id) }, { $inc: { score: deltaScore } });
+      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: deltaScore } });
       //sends in vote
       await addDocument(COLLECTION_NAMES.VOTES, {
         userID: req.session.passport.user.id,
@@ -317,7 +312,7 @@ router.patch('/verify', async function (req, res) {
 
     const status = await updateDocument(
       COLLECTION_NAMES.REVIEWS,
-      { _id: new ObjectID(req.body.id) },
+      { _id: new ObjectId(req.body.id) },
       { $set: { verified: true } },
     );
 
