@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Droppable, DroppableProps } from "react-beautiful-dnd";
+import { useEffect, useState } from 'react';
+import { Droppable, DroppableProps } from 'react-beautiful-dnd';
 
 /**
  * react-beautitful-dnd does not work in strict mode in React v18
