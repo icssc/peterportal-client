@@ -13,21 +13,21 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  let { id, department, number, title, units, description, prerequisite_text, corequisite, requiredCourses, onDelete } = props;
+  let { id, department, courseNumber, title, minUnits, maxUnits, description, prerequisiteText, corequisites, requiredCourses, onDelete } = props;
 
   const CoursePopover = <Popover id={'course-popover-' + id}>
     <Popover.Content>
       <div className="course-popover">
-        <div className="popover-name">{department + ' ' + number} {title}</div>
+        <div className="popover-name">{department + ' ' + courseNumber} {title}</div>
         <div className="popover-units">
-          <span className="popover-units-value">{units[0]}</span> units
+          <span className="popover-units-value">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`}</span> units
         </div>
         <div className="popover-description">{description}</div>
-        {prerequisite_text && <div className="popover-detail">
-          <span className="popover-detail-prefix">Prerequisite:</span> {prerequisite_text}
+        {prerequisiteText && <div className="popover-detail">
+          <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
         </div>}
-        {corequisite && <div className="popover-detail">
-          <span className="popover-detail-prefix">Corequisite:</span> {corequisite}
+        {corequisites && <div className="popover-detail">
+          <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
         </div>}
       </div>
     </Popover.Content>
@@ -42,14 +42,14 @@ const Course: FC<CourseProps> = (props) => {
   </Popover>
 
   const courseRoute = () => {
-    return '/course/' + props.department.replace(/\s+/g, '') + props.number.replace(/\s+/g, '')
+    return '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '')
   }
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={courseRoute()} target="_blank" rel="noopener noreferrer">{department + ' ' + number}</a>
+          <a className="name" href={courseRoute()} target="_blank" rel="noopener noreferrer">{department + ' ' + courseNumber}</a>
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="auto"
@@ -73,7 +73,7 @@ const Course: FC<CourseProps> = (props) => {
           delay={100}>
           <ExclamationTriangle />
         </OverlayTrigger>}
-        <div className="units">{units[0]} units</div>
+        <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
       </div>
     </div>
   );

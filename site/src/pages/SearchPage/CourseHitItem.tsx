@@ -37,7 +37,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
       <div className='course-hit-id'>
         <div>
           <h3>
-            {props.department} {props.number} {props.title}
+            {props.department} {props.courseNumber} {props.title}
           </h3>
         </div>
         <CourseQuarterIndicator terms={props.terms} />

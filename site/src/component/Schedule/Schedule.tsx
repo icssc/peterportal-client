@@ -6,7 +6,8 @@ import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 
-import { WebsocResponse, Section } from '../../types/types';
+import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
+import {hourMinuteTo12HourString} from "../../helpers/util";
 
 interface ScheduleProps {
     courseID?: string;
@@ -73,7 +74,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 <Button variant='light' size='lg' className='btn-status-button-open btn-status' disabled={true}> OPEN </Button>
             )
         }
-        else if (section.status == 'WAITL') {
+        else if (section.status == 'Waitl') {
             return (
                 // @ts-ignore
                 <Button variant='light' size='lg' className='btn-status-button-waitl btn-status' disabled={true}> WAITLIST </Button>
@@ -99,7 +100,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 </div>
             )
         }
-        else if (section.status == 'WAITL') {
+        else if (section.status == 'Waitl') {
             return (
                 <div className='progress-bar'>
                     <ProgressBar variant='warning' now={percentage} />
@@ -123,9 +124,19 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 <td className='data-col'>{section.sectionCode}</td>
                 <td className='data-col'>{section.sectionType} {section.sectionNum}</td>
                 <td className='data-col'>{section.units}</td>
-                <td className='data-col'>{section.instructors[0]}</td>
-                <td className='data-col'>{section.meetings[0].time}</td>
-                <td className='data-col'>{section.meetings[0].bldg}</td>
+                <td className='data-col'>{section.instructors.join("\n")}</td>
+                <td className='data-col'>{
+                    section.meetings.map(
+                      meeting => meeting.timeIsTBA
+                        ? "TBA"
+                        : `${meeting.days} ${
+                          hourMinuteTo12HourString(meeting.startTime!)
+                      } - ${
+                          hourMinuteTo12HourString(meeting.endTime!)
+                      }`
+                    ).join("\n")
+                }</td>
+                <td className='data-col'>{section.meetings.map(meeting => meeting.bldg).join("\n")}</td>
 
                 <td className='enrollment-col'>
                     <span className='enrollment-info-text'>

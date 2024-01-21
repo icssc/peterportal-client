@@ -1,21 +1,21 @@
-import React, { FC, FormEvent, ChangeEvent, useState, useEffect } from "react";
-import "./ReviewForm.scss";
-import axios from "axios";
-import { useCookies } from "react-cookie";
-import { Icon } from "semantic-ui-react";
-import Form from "react-bootstrap/Form";
-import Badge from "react-bootstrap/Badge";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import RangeSlider from "react-bootstrap-range-slider";
-import Modal from "react-bootstrap/Modal";
-import ReCAPTCHA from "react-google-recaptcha";
+import React, { FC, FormEvent, ChangeEvent, useState, useEffect } from 'react';
+import './ReviewForm.scss';
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
+import { Icon } from 'semantic-ui-react';
+import Form from 'react-bootstrap/Form';
+import Badge from 'react-bootstrap/Badge';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import RangeSlider from 'react-bootstrap-range-slider';
+import Modal from 'react-bootstrap/Modal';
+import ReCAPTCHA from 'react-google-recaptcha';
 
-import { addReview } from "../../store/slices/reviewSlice";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { ReviewProps } from "../Review/Review";
-import { ReviewData } from "../../types/types";
+import { addReview } from '../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { ReviewProps } from '../Review/Review';
+import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -23,50 +23,50 @@ interface ReviewFormProps extends ReviewProps {
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
   const dispatch = useAppDispatch();
-  const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "P", "NP"];
+  const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'];
   const tags = [
-    "Clear grading criteria",
-    "Tough grader",
-    "Amazing lectures",
-    "Test heavy",
-    "Get ready to read",
-    "Extra credit",
-    "Participation matters",
-    "Graded by few things",
+    'Clear grading criteria',
+    'Tough grader',
+    'Amazing lectures',
+    'Test heavy',
+    'Get ready to read',
+    'Extra credit',
+    'Participation matters',
+    'Graded by few things',
     "Skip class? You won't pass",
-    "Accessible outside class",
-    "Beware of pop quizzes",
-    "Lots of homework",
-    "So many papers",
-    "Lecture heavy",
-    "Group projects",
-    "Gives good feedback",
+    'Accessible outside class',
+    'Beware of pop quizzes',
+    'Lots of homework',
+    'So many papers',
+    'Lecture heavy',
+    'Group projects',
+    'Gives good feedback',
   ];
 
-  const [professor, setProfessor] = useState(props.professor?.ucinetid || "");
-  const [course, setCourse] = useState(props.course?.id || "");
-  const [yearTaken, setYearTaken] = useState("");
-  const [quarterTaken, setQuarterTaken] = useState("");
-  const [gradeReceived, setGradeReceived] = useState("");
-  const [userID, setUserID] = useState("");
-  const [userName, setUserName] = useState("Anonymous Peter");
-  const [content, setContent] = useState("");
+  const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
+  const [course, setCourse] = useState(props.course?.id || '');
+  const [yearTaken, setYearTaken] = useState('');
+  const [quarterTaken, setQuarterTaken] = useState('');
+  const [gradeReceived, setGradeReceived] = useState('');
+  const [userID, setUserID] = useState('');
+  const [userName, setUserName] = useState('Anonymous Peter');
+  const [content, setContent] = useState('');
   const [quality, setQuality] = useState<number>(3);
   const [difficulty, setDifficulty] = useState<number>(3);
   const [takeAgain, setTakeAgain] = useState<boolean>(false);
   const [textbook, setTextbook] = useState<boolean>(false);
   const [attendance, setAttendance] = useState<boolean>(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [cookies, setCookie] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
 
   useEffect(() => {
     // get user info from cookie
-    if (cookies.hasOwnProperty("user")) {
+    if (cookies.hasOwnProperty('user')) {
       setUserID(cookies.user.id);
       setUserName(cookies.user.name);
     }
@@ -76,19 +76,19 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     // upon opening this form
     if (showForm) {
       // if not logged in, close the form
-      if (!cookies.hasOwnProperty("user")) {
-        alert("You must be logged in to add a review!");
+      if (!cookies.hasOwnProperty('user')) {
+        alert('You must be logged in to add a review!');
         props.closeForm();
       }
     }
   }, [showForm]);
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>("/api/reviews", review).catch((err) => err.response);
+    const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
     if (res.status === 400) {
-      alert(res.data.error ?? "You have already submitted a review for this course/professor");
-    } else if (res.data.hasOwnProperty("error")) {
-      alert("You must be logged in to add a review!");
+      alert(res.data.error ?? 'You have already submitted a review for this course/professor');
+    } else if (res.data.hasOwnProperty('error')) {
+      alert('You must be logged in to add a review!');
     } else {
       setSubmitted(true);
       dispatch(addReview(res.data));
@@ -109,9 +109,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     if (valid === false) {
       return;
     }
-
     if (!captchaToken) {
-      alert("Please complete the CAPTCHA");
+      alert('Please complete the CAPTCHA');
       return;
     }
 
@@ -127,10 +126,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       reviewContent: content,
       rating: quality,
       difficulty: difficulty,
-      timestamp: month + "/" + day + "/" + year,
+      timestamp: month + '/' + day + '/' + year,
       gradeReceived: gradeReceived,
       forCredit: true,
-      quarter: yearTaken + " " + quarterTaken,
+      quarter: yearTaken + ' ' + quarterTaken,
       score: 0,
       takeAgain: takeAgain,
       textbook: textbook,
@@ -160,30 +159,30 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         newSelectedTags.push(tag);
         setSelectedTags(newSelectedTags);
       } else {
-        alert("Cannot select more than 3 tags");
+        alert('Cannot select more than 3 tags');
       }
     }
   };
 
   // select instructor if in course context
   const instructorSelect = props.course && (
-    <Form.Group controlId="instructor">
+    <Form.Group>
       <Form.Label>Taken With</Form.Label>
       <Form.Control
         as="select"
         name="instructor"
         id="instructor"
+        defaultValue=""
         required
-        onChange={(e) => setProfessor(document.getElementsByName(e.target.value)[0].id)}
+        onChange={(e) => setProfessor(e.target.value)}
       >
-        <option disabled={true} selected value="">
+        <option disabled={true} value="">
           Instructor
         </option>
-        {Object.keys(props.course?.instructor_history!).map((ucinetid, i) => {
-          const name = props.course?.instructor_history[ucinetid].shortened_name;
+        {Object.keys(props.course?.instructors).map((ucinetid) => {
+          const name = props.course?.instructors[ucinetid].shortenedName;
           return (
-            // @ts-ignore name attribute isn't supported
-            <option key={"review-form-professor-" + i} name={name} id={ucinetid}>
+            <option key={ucinetid} value={ucinetid}>
               {name}
             </option>
           );
@@ -197,20 +196,26 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       <Form.Control.Feedback type="invalid">Missing instructor</Form.Control.Feedback>
     </Form.Group>
   );
-
   // select course if in professor context
   const courseSelect = props.professor && (
     <Form.Group controlId="course">
       <Form.Label>Course Taken</Form.Label>
-      <Form.Control as="select" name="course" id="course" required onChange={(e) => setCourse(document.getElementsByName(e.target.value)[0].id)}>
-        <option disabled={true} selected value="">
+      <Form.Control
+        as="select"
+        name="course"
+        id="course"
+        defaultValue=""
+        required
+        onChange={(e) => setCourse(e.target.value)}
+      >
+        <option disabled={true} value="">
           Course
         </option>
-        {Object.keys(props.professor?.course_history!).map((courseID, i) => {
-          const name = props.professor?.course_history[courseID].department + " " + props.professor?.course_history[courseID].number;
+        {Object.keys(props.professor?.courses).map((courseID) => {
+          const name =
+            props.professor?.courses[courseID].department + ' ' + props.professor?.courses[courseID].courseNumber;
           return (
-            // @ts-ignore name attribute isn't supported
-            <option key={"review-form-course-" + i} name={name} id={courseID}>
+            <option key={courseID} value={courseID}>
               {name}
             </option>
           );
@@ -226,7 +231,10 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>It's your turn to review {props.course ? props.course?.department + " " + props.course?.number : props.professor?.name}</h1>
+              <h1>
+                It's your turn to review{' '}
+                {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
+              </h1>
             </Col>
           </Row>
           <Row className="mt-4" lg={2} md={1}>
@@ -236,7 +244,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 {courseSelect}
                 <Form.Group className="review-form-grade" controlId="grade">
                   <Form.Label>Grade</Form.Label>
-                  <Form.Control as="select" name="grade" id="grade" required onChange={(e) => setGradeReceived(e.target.value)}>
+                  <Form.Control
+                    as="select"
+                    name="grade"
+                    id="grade"
+                    required
+                    onChange={(e) => setGradeReceived(e.target.value)}
+                  >
                     <option disabled={true} selected value="">
                       Grade
                     </option>
@@ -253,18 +267,30 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 <Form.Label>Taken During</Form.Label>
                 <div className="review-form-row">
                   <Form.Group controlId="quarter" className="mr-3">
-                    <Form.Control as="select" name="quarter" id="quarter" required onChange={(e) => setQuarterTaken(e.target.value)}>
+                    <Form.Control
+                      as="select"
+                      name="quarter"
+                      id="quarter"
+                      required
+                      onChange={(e) => setQuarterTaken(e.target.value)}
+                    >
                       <option disabled={true} selected value="">
                         Quarter
                       </option>
-                      {["Fall", "Winter", "Spring", "Summer1", "Summer10wk", "Summer2"].map((quarter, i) => (
+                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter, i) => (
                         <option key={`quarter-${i}`}>{quarter}</option>
                       ))}
                     </Form.Control>
                     <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group controlId="year">
-                    <Form.Control as="select" name="year" id="year" required onChange={(e) => setYearTaken(e.target.value)}>
+                    <Form.Control
+                      as="select"
+                      name="year"
+                      id="year"
+                      required
+                      onChange={(e) => setYearTaken(e.target.value)}
+                    >
                       <option disabled={true} selected value="">
                         Year
                       </option>
@@ -281,7 +307,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className="mt-4">
             <Col>
               <Form.Group className="review-form-section">
-                <Form.Label>Rate the {props.course ? "Course" : "Professor"}</Form.Label>
+                <Form.Label>Rate the {props.course ? 'Course' : 'Professor'}</Form.Label>
                 <RangeSlider
                   min={1}
                   max={5}
@@ -349,7 +375,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       key={tag}
                       pill
                       className="p-3 mr-2 mt-2"
-                      variant={selectedTags.includes(tag) ? "success" : "info"}
+                      variant={selectedTags.includes(tag) ? 'success' : 'info'}
                       id={`tag-${i}`}
                       onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                         selectTag(tag);
@@ -365,11 +391,11 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row>
             <Col>
               <Form.Group className="review-form-section">
-                <Form.Label>Tell us more about this {props.course ? "course" : "professor"}</Form.Label>
+                <Form.Label>Tell us more about this {props.course ? 'course' : 'professor'}</Form.Label>
                 <Form.Control
                   as="textarea"
                   placeholder="Here's your chance to be more specific..."
-                  style={{ height: "15vh", width: "100%" }}
+                  style={{ height: '15vh', width: '100%' }}
                   onChange={(e) => {
                     setContent(e.target.value);
                     if (overCharLimit && e.target.value.length < 500) {
@@ -379,14 +405,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 />
                 {/* <textarea rows={5} /> */}
                 <div className="char-limit">
-                  {overCharLimit ? <p style={{ color: "red" }}>Your review exceeds the character limit</p> : null}
-                  <p style={content.length > 500 ? { color: "red" } : {}} className="chars">
+                  {overCharLimit ? <p style={{ color: 'red' }}>Your review exceeds the character limit</p> : null}
+                  <p style={content.length > 500 ? { color: 'red' } : {}} className="chars">
                     {content.length}/500
                   </p>
                 </div>
                 <Form.Text>
                   <Icon name="warning sign" />
-                  <span style={{ color: "#333333" }}>
+                  <span style={{ color: '#333333' }}>
                     Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!
                   </span>
                 </Form.Text>
@@ -406,7 +432,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         // set name as anonymous
                         if (e.target.checked) {
-                          setUserName("Anonymous Peter");
+                          setUserName('Anonymous Peter');
                         }
                         // use real name
                         else {
@@ -424,7 +450,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className="d-inline"
                 sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => setCaptchaToken(token ?? "")}
+                onChange={(token) => setCaptchaToken(token ?? '')}
               />
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">

@@ -22,7 +22,7 @@ router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
   console.log(req.query.courseID)
 
   r.then((response) => response.json())
-    .then((data) => res.send(data))
+    .then((data) => res.send(data.payload))
 });
 
 /**
@@ -44,7 +44,11 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
     });
 
     r.then((response) => response.json())
-      .then((data) => res.json(data.data))
+        .then((data) => res.json(
+            Object.fromEntries(
+                Object.entries(data.data).filter(([_, x]) => x !== null).map(([_, x]) => [(x as { id: string }).id, x])
+            )
+        ))
   }
 });
 
@@ -53,10 +57,12 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
  */
 router.get('/api/grades',
   (req: Request<{}, {}, {}, { department: string; number: string; }>, res) => {
-    let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?department=' + encodeURIComponent(req.query.department) + '&number=' + req.query.number);
+    let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?department=' + encodeURIComponent(req.query.department) + '&courseNumber=' + req.query.number);
 
     r.then((response) => response.json())
-      .then((data) => res.send(data))
+      .then((data) => {
+        res.send(data.payload)
+      })
   });
 
 export default router;

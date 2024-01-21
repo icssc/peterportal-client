@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveBar, BarTooltipDatum } from '@nivo/bar'
 
-import { GradeDistData } from '../../types/types';
+import { GradesRaw } from "peterportal-api-next-types";
 
 const colors = { 'A': '#60A3D1', 'B': '#81C284', 'C': '#F5D77F', 'D': '#ECAD6D', 'F': '#E8966D', 'P': '#EBEBEB', 'NP': '#EBEBEB' }
 const getColor = (bar: Bar) => colors[bar.id]
@@ -20,7 +20,7 @@ interface Bar {
 }
 
 interface ChartProps {
-  gradeData: GradeDistData;
+  gradeData: GradesRaw;
   quarter: string;
   professor?: string;
   course?: string;
@@ -52,7 +52,7 @@ export default class Chart extends React.Component<ChartProps> {
 
     this.props.gradeData.forEach(data => {
       if ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL')
-        && (data.instructor === this.props.professor || (data.department + ' ' + data.number) === this.props.course)) {
+        && (data.instructors.includes(this.props.professor ?? "") || (data.department + ' ' + data.courseNumber) === this.props.course)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;

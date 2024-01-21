@@ -10,6 +10,7 @@ import { selectYearPlans, setYearPlans, setInvalidCourses, setTransfers, addYear
 import { useFirstRender } from "../../hooks/firstRenderer";
 import { InvalidCourseData, SavedRoadmap, PlannerData, PlannerYearData, PlannerQuarterData, SavedPlannerData, SavedPlannerYearData, SavedPlannerQuarterData, BatchCourseData, MongoRoadmap } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
+import {Prerequisite, PrerequisiteTree} from "peterportal-api-next-types";
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +19,7 @@ const Planner: FC = () => {
   const data = useAppSelector(selectYearPlans);
   const transfers = useAppSelector(state => state.roadmap.transfers);
   
-  const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>);
+  const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
     // if is first render, load from local storage
@@ -135,7 +136,7 @@ const Planner: FC = () => {
     data.forEach(year => {
       year.quarters.forEach(quarter => {
         quarter.courses.forEach(course => {
-          unitCount += course.units[0];
+          unitCount += course.minUnits;
           courseCount += 1;
         })
       })
@@ -155,14 +156,14 @@ const Planner: FC = () => {
     // store courses that have been taken
     let taken: Set<string> = new Set(transfers.map(transfer => transfer.name));
     let invalidCourses: InvalidCourseData[] = [];
-    let missing: Set<string> = new Set<string>;
+    let missing = new Set<string>();
     data.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
-        let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.number));
+        let taking: Set<string> = new Set(quarter.courses.map(course => course.department + ' ' + course.courseNumber));
         quarter.courses.forEach((course, ci) => {
           // if has prerequisite
-          if (course.prerequisite_tree) {
-            let required = validateCourse(taken, JSON.parse(course.prerequisite_tree), taking, course.corequisite);
+          if (course.prerequisiteTree) {
+            let required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
             // prerequisite not fulfilled, has some required classes to take
             if (required.size > 0) {
               console.log('invalid course', course.id);
@@ -194,23 +195,20 @@ const Planner: FC = () => {
     dispatch(setInvalidCourses(invalidCourses));
   }
 
-  type PrerequisiteNode = NestedPrerequisiteNode | string;
-  interface NestedPrerequisiteNode {
-    AND?: PrerequisiteNode[];
-    OR?: PrerequisiteNode[];
-  }
+  type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
   // returns set of courses that need to be taken to fulfill requirements
   const validateCourse = (taken: Set<string>, prerequisite: PrerequisiteNode, taking: Set<string>, corequisite: string): Set<string> => {
     // base case just a course
-    if (typeof prerequisite === 'string') {
+    if ("prereqType" in prerequisite) {
+      const id = prerequisite?.courseId ?? prerequisite?.examName ?? "";
       // already taken prerequisite or is currently taking the corequisite
-      if (taken.has(prerequisite) || (corequisite.includes(prerequisite) && taking.has(prerequisite))) {
+      if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
         return new Set();
       }
       // need to take this prerequisite still
       else {
-        return new Set([prerequisite]);
+        return new Set([id]);
       }
     }
     // has nested prerequisites

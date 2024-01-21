@@ -3,8 +3,6 @@
 */
 
 import express from 'express';
-import { getWeek } from '../helpers/week';
-import { getCurrentQuarter } from '../helpers/currentQuarter';
 import fetch from 'node-fetch';
 
 var router = express.Router();
@@ -30,15 +28,19 @@ router.get("/getTerms", function (req, res) {
 /**
  * Get the current week
  */
-router.get('/api/currentWeek', function (req, res, next) {
-  getWeek().then(week => res.send(week))
+router.get('/api/currentWeek', async function (_, res) {
+  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
+  const json = await apiResp.json();
+  res.send(json.payload)
 });
 
 /**
  * Get the current quarter on websoc
  */
- router.get('/api/currentQuarter', function (req, res, next) {
-  getCurrentQuarter().then(currentQuarter => res.send(currentQuarter))
+router.get('/api/currentQuarter', async function (_, res) {
+  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
+  const json = await apiResp.json();
+  res.send(json.payload[0].longName)
 });
 
 
@@ -46,8 +48,9 @@ router.get('/api/currentWeek', function (req, res, next) {
  * Proxy for WebSOC, using PeterPortal API
  */
 router.get('/api/:term/:department/:number', async function (req, res) {
+  const [year, quarter] = req.params.term.split(" ");
   const result = await callPPAPIWebSoc({
-    term: req.params.term,
+    year, quarter,
     department: req.params.department,
     courseNumber: req.params.number
   });
@@ -58,17 +61,18 @@ router.get('/api/:term/:department/:number', async function (req, res) {
  * Proxy for WebSOC, using PeterPortal API
  */
 router.get('/api/:term/:professor', async function (req, res) {
+  const [year, quarter] = req.params.term.split(" ");
   const result = await callPPAPIWebSoc({
-    term: req.params.term,
+    year, quarter,
     instructorName: req.params.professor
   });
   res.send(result);
 });
 
 async function callPPAPIWebSoc(params: Record<string, string>) {
-  const url: URL = new URL(process.env.PUBLIC_API_URL + 'schedule/soc?' + 
+  const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' +
     new URLSearchParams(params))
-  return await fetch(url).then(response => response.json());
+  return await fetch(url).then(response => response.json()).then(json => json.payload);
 }
 
 export default router;
