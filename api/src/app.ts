@@ -91,7 +91,7 @@ app.use('/api', router);
 /**
  * Error Handler
  */
-app.use(function (req, res, next) {
+app.use(function (req, res) {
   console.error(req);
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });

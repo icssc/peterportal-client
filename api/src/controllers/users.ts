@@ -11,14 +11,14 @@ const router = express.Router();
 /**
  * Get the user's session data
  */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
   res.json(req.session);
 });
 
 /**
  * Get whether or not a user is an admin
  */
-router.get('/isAdmin', function (req, res, next) {
+router.get('/isAdmin', function (req, res) {
   // not logged in
   if (!req.session?.passport) {
     res.json({ admin: false });
@@ -57,7 +57,7 @@ router.get('/auth/google/callback', function (req, res) {
     'google',
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
-    function (err, user, info) {
+    function (err, user) {
       if (err) console.log(err);
       else if (!user) console.log('Invalid login data');
       else {

@@ -166,7 +166,7 @@ function addDocument(collectionName: string, document: GenericObject): Promise<v
  * @param query Query object
  * @returns Mongo Document objects returned from the query
  */
-function getDocuments(collectionName: string, query: GenericObject): Promise<GenericObject[]> {
+function getDocuments(collectionName: string, query: object): Promise<object[]> {
   return new Promise(async (resolve, reject) => {
     try {
       await getDB();
@@ -295,7 +295,7 @@ function deleteDocuments(collectionName: string, query: GenericObject): Promise<
  * @param key Key to look up the cache
  * @returns Cached value
  */
-async function getValue(cache: string, key: string): Promise<any> {
+async function getValue(cache: string, key: string): Promise<unknown> {
   return new Promise(async (resolve, reject) => {
     try {
       await getDB();
@@ -326,7 +326,7 @@ async function getValue(cache: string, key: string): Promise<any> {
  * @param value Value to store in cache
  * @returns Promise that is resolved when value is cached
  */
-async function setValue(cache: string, key: string, value: any): Promise<void> {
+async function setValue(cache: string, key: string, value: unknown): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
       await getDB();

@@ -4,14 +4,7 @@
 
 import express from 'express';
 import { ObjectID } from 'mongodb';
-import {
-  COLLECTION_NAMES,
-  getCollection,
-  addDocument,
-  getDocuments,
-  deleteDocument,
-  deleteDocuments,
-} from '../helpers/mongo';
+import { COLLECTION_NAMES, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
 
 const router = express.Router();
@@ -19,7 +12,7 @@ const router = express.Router();
 /**
  * Get all reports
  */
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   const reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
   res.json(reports);
@@ -28,7 +21,7 @@ router.get('/', async (req, res, next) => {
 /**
  * Add a report
  */
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
   console.log(`Adding Report: ${JSON.stringify(req.body)}`);
 
   await addDocument(COLLECTION_NAMES.REPORTS, req.body);
@@ -39,7 +32,7 @@ router.post('/', async (req, res, next) => {
 /**
  * Delete a report
  */
-router.delete('/', async (req, res, next) => {
+router.delete('/', async (req, res) => {
   let status;
   if (req.body.id) {
     console.log(`Deleting report ${req.body.id}`);

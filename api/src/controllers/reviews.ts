@@ -4,7 +4,7 @@
 
 import express from 'express';
 import { ObjectID } from 'mongodb';
-import { VoteData } from '../types/types';
+import { ReviewData, VoteData } from '../types/types';
 import {
   COLLECTION_NAMES,
   getCollection,
@@ -25,7 +25,7 @@ interface ScoresQuery {
   type: 'course' | 'professor';
   id: string;
 }
-router.get<{}, {}, {}, ScoresQuery>('/scores', async function (req, res) {
+router.get<unknown, unknown, unknown, ScoresQuery>('/scores', async function (req, res) {
   // match filters all reviews with given field
   // group aggregates by field
   let matchField = '';
@@ -47,7 +47,7 @@ router.get<{}, {}, {}, ScoresQuery>('/scores', async function (req, res) {
     ]);
 
     // returns the results in an array
-    const array = await cursor.toArray();
+    const array = (await cursor.toArray()) as ReviewData[];
     // rename _id to name
     const results = array.map((v) => {
       return { name: v._id, score: v.score };
@@ -65,7 +65,7 @@ interface FeaturedQuery {
   type: 'course' | 'professor';
   id: string;
 }
-router.get<{}, {}, {}, FeaturedQuery>('/featured', async function (req, res) {
+router.get<unknown, unknown, unknown, FeaturedQuery>('/featured', async function (req, res) {
   // search by professor or course field
   let field = '';
   if (req.query.type == 'course') {
@@ -98,7 +98,7 @@ interface ReviewFilter {
 /**
  * Query reviews
  */
-router.get('/', async function (req, res, next) {
+router.get('/', async function (req, res) {
   const courseID = req.query.courseID as string;
   const professorID = req.query.professorID as string;
   const userID = req.query.userID as string;
@@ -131,7 +131,7 @@ router.get('/', async function (req, res, next) {
 /**
  * Add a review
  */
-router.post('/', async function (req, res, next) {
+router.post('/', async function (req, res) {
   if (req.session.passport) {
     //^ this should be a middleware check smh
     console.log('Adding Review:', req.body);
@@ -177,11 +177,11 @@ router.post('/', async function (req, res, next) {
 /**
  * Delete a review
  */
-router.delete('/', async (req, res, next) => {
+router.delete('/', async (req, res) => {
   const checkUser = async () => {
-    const review = await getDocuments(COLLECTION_NAMES.REVIEWS, {
+    const review = (await getDocuments(COLLECTION_NAMES.REVIEWS, {
       _id: new ObjectID(req.body.id),
-    });
+    })) as ReviewData[];
 
     return review.length > 0 && review[0].userID === req.session.passport?.user.id;
   };
@@ -189,13 +189,18 @@ router.delete('/', async (req, res, next) => {
   if (req.session.passport?.admin || (await checkUser())) {
     console.log(`Deleting review ${req.body.id}`);
 
+    // TODO: figure out what these return types are and determine if status variables are needed
     const status = await deleteDocument(COLLECTION_NAMES.REVIEWS, {
       _id: new ObjectID(req.body.id),
     });
 
+    console.log('Status', status);
+
     const deleteVotesStatus = await deleteDocuments(COLLECTION_NAMES.VOTES, {
       reviewID: req.body.id,
     });
+
+    console.log('deleteVotesStatus', deleteVotesStatus);
 
     res.json(status);
   } else {
@@ -264,7 +269,7 @@ router.patch('/getVoteColor', async function (req, res) {
       reviewID: req.body['id'],
     };
     //get any existing vote in the db
-    const existingVote = await getDocuments(COLLECTION_NAMES.VOTES, query);
+    const existingVote = (await getDocuments(COLLECTION_NAMES.VOTES, query)) as VoteData[];
     //result an array of either length 1 or empty
     if (existingVote.length == 0) {
       //if empty, both should be uncolored
@@ -287,15 +292,14 @@ router.patch('/getVoteColors', async function (req, res) {
   if (req.session?.passport != null) {
     //query of the user's email and the review id
     const ids = req.body['ids'];
-    const colors = [];
 
     const q = {
       userID: req.session.passport.user.id,
       reviewID: { $in: ids },
     };
 
-    const votes = await getDocuments(COLLECTION_NAMES.VOTES, q);
-    const r: any = {};
+    const votes = (await getDocuments(COLLECTION_NAMES.VOTES, q)) as VoteData[];
+    const r: Record<string, number> = {};
     for (let i = 0; i < votes.length; i++) {
       r[votes[i].reviewID] = votes[i].score;
     }
