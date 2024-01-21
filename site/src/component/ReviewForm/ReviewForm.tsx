@@ -233,7 +233,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             <Col>
               <h1>
                 It's your turn to review{' '}
-                {props.course ? props.course?.department + ' ' + props.course?.number : props.professor?.name}
+                {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
               </h1>
             </Col>
           </Row>
