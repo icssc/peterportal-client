@@ -20,7 +20,7 @@
     "mongodb-client-encryption": "^6.0.0",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
     "typescript": "^5.3.3"
   },

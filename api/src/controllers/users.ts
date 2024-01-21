@@ -5,6 +5,7 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
+import { User } from 'express-session';
 
 const router = express.Router();
 
@@ -57,13 +58,13 @@ router.get('/auth/google/callback', function (req, res) {
     'google',
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
-    function (err, user) {
-      if (err) console.log(err);
-      else if (!user) console.log('Invalid login data');
+    function (err: Error, user: User | false | null) {
+      if (err) console.error(err);
+      else if (!user) console.error('Invalid login data');
       else {
         // manually login
         req.login(user, function (err) {
-          if (err) console.log(err);
+          if (err) console.error(err);
           else {
             // check if user is an admin
             const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS);
