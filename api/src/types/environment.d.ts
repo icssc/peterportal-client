@@ -5,7 +5,7 @@ declare global {
      */
     interface ProcessEnv {
       MONGO_URL: string;
-      NODE_ENV: 'development' | 'production' | 'staging';
+      NODE_ENV?: 'development' | 'production' | 'staging';
       PORT?: string;
       PUBLIC_API_URL: string;
       PUBLIC_API_GRAPHQL_URL: string;

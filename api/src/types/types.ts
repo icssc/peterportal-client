@@ -1,5 +1,3 @@
-import { integer } from 'aws-sdk/clients/cloudfront';
-
 export interface GenericObject {
   /**
    * Can have any key string and any value type

@@ -20,8 +20,6 @@ var router = express.Router();
  * Get all reports
  */
 router.get('/', async (req, res, next) => {
-  console.log('Getting all reports');
-
   let reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
   res.json(reports);
