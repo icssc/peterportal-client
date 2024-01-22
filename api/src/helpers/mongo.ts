@@ -2,7 +2,7 @@
  @module MongoHelper
 */
 
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 import { GenericObject } from '../types/types';
 
 /**
@@ -33,7 +33,7 @@ let db: Db;
  * Get a mongo database object
  * @returns Mongo database object
  */
-async function getDB(): Promise<Db> {
+async function getDB() {
   // if not connected yet, initiate connection
   if (!db) {
     await client.connect();
@@ -51,7 +51,7 @@ async function getDB(): Promise<Db> {
  * @param collectionName Name of collection to retreive
  * @returns Mongo collection object
  */
-async function getCollection(collectionName: string): Promise<Collection<GenericObject>> {
+async function getCollection(collectionName: string) {
   const db = await getDB();
   return db.collection(collectionName);
 }
@@ -62,7 +62,7 @@ async function getCollection(collectionName: string): Promise<Collection<Generic
  * @param id ID of the document
  * @returns True if document ID exists in the given collection
  */
-async function containsID(collectionName: string, id: string): Promise<boolean> {
+async function containsID(collectionName: string, id: string) {
   const collection = await getCollection(collectionName);
   return (await collection.countDocuments({ _id: id })) > 0;
 }
@@ -73,7 +73,7 @@ async function containsID(collectionName: string, id: string): Promise<boolean> 
  * @param document Document object to add
  * @returns Promise that is resolved when document is added
  */
-async function addDocument(collectionName: string, document: GenericObject): Promise<void> {
+async function addDocument(collectionName: string, document: GenericObject) {
   const collection = await getCollection(collectionName);
   collection.insertOne(document);
 }
