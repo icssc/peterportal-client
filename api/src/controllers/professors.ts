@@ -10,7 +10,7 @@ const router = express.Router();
 /**
  * PPAPI proxy for professor data
  */
-router.get('/api', function (req: Request<unknown, unknown, unknown, { ucinetid: string }>, res) {
+router.get('/api', function (req: Request<never, unknown, never, { ucinetid: string }>, res) {
   const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.query.ucinetid);
 
   r.then((response) => response.json()).then((data) => res.send(data));
@@ -19,7 +19,7 @@ router.get('/api', function (req: Request<unknown, unknown, unknown, { ucinetid:
 /**
  * PPAPI proxy for professor data
  */
-router.post('/api/batch', (req: Request<unknown, unknown, { professors: string[] }>, res) => {
+router.post('/api/batch', (req: Request<never, unknown, { professors: string[] }, never>, res) => {
   if (req.body.professors.length == 0) {
     res.json({});
   } else {

@@ -2,7 +2,7 @@
  @module ReviewRoute
 */
 
-import express from 'express';
+import express, { Request } from 'express';
 import { ObjectId } from 'mongodb';
 import { ReviewData, VoteData } from '../types/types';
 import {
@@ -25,7 +25,7 @@ interface ScoresQuery {
   type: 'course' | 'professor';
   id: string;
 }
-router.get<unknown, unknown, unknown, ScoresQuery>('/scores', async function (req, res) {
+router.get('/scores', async function (req: Request<never, unknown, never, ScoresQuery>, res) {
   // match filters all reviews with given field
   // group aggregates by field
   let matchField = '';
@@ -65,7 +65,7 @@ interface FeaturedQuery {
   type: 'course' | 'professor';
   id: string;
 }
-router.get<unknown, unknown, unknown, FeaturedQuery>('/featured', async function (req, res) {
+router.get('/featured', async function (req: Request<never, unknown, never, FeaturedQuery>, res) {
   // search by professor or course field
   let field = '';
   if (req.query.type == 'course') {

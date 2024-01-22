@@ -9,7 +9,7 @@ const router = express.Router();
 /**
  * PPAPI proxy for course data
  */
-router.get('/api', (req: Request<unknown, unknown, unknown, { courseID: string }>, res) => {
+router.get('/api', (req: Request<never, unknown, never, { courseID: string }, never>, res) => {
   const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
     headers: {
       'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ router.get('/api', (req: Request<unknown, unknown, unknown, { courseID: string }
 /**
  * PPAPI proxy for course data
  */
-router.post('/api/batch', (req: Request<unknown, unknown, { courses: string[] }>, res) => {
+router.post('/api/batch', (req: Request<never, unknown, { courses: string[] }, never>, res) => {
   if (req.body.courses.length == 0) {
     res.json({});
   } else {
@@ -53,7 +53,7 @@ router.post('/api/batch', (req: Request<unknown, unknown, { courses: string[] }>
 /**
  * PPAPI proxy for grade distribution
  */
-router.get('/api/grades', (req: Request<unknown, unknown, unknown, { department: string; number: string }>, res) => {
+router.get('/api/grades', (req: Request<never, unknown, never, { department: string; number: string }>, res) => {
   const r = fetch(
     process.env.PUBLIC_API_URL +
       'grades/raw?department=' +

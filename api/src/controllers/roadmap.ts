@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import { COLLECTION_NAMES, containsID, addDocument, getDocuments, replaceDocument } from '../helpers/mongo';
 
 const router = express.Router();
@@ -6,7 +6,7 @@ const router = express.Router();
 /**
  * Get a roadmap
  */
-router.get<unknown, unknown, unknown, { id: string }>('/get', async function (req, res) {
+router.get('/get', async function (req: Request<never, unknown, never, { id: string }>, res) {
   getDocuments(COLLECTION_NAMES.ROADMAPS, { _id: req.query.id }).then((roadmaps) => {
     if (roadmaps.length > 0) {
       res.json(roadmaps[0]);
@@ -19,7 +19,7 @@ router.get<unknown, unknown, unknown, { id: string }>('/get', async function (re
 /**
  * Add a roadmap
  */
-router.post<unknown, unknown, { _id: string }>('/', async function (req, res) {
+router.post('/', async function (req: Request<never, unknown, { _id: string }, never>, res) {
   if (!req.body._id) {
     res.json({ error: 'Invalid input' });
     return;
