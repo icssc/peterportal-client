@@ -19,6 +19,8 @@ import { ReviewData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
+  editable?: boolean;
+  review?: ReviewData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
@@ -42,7 +44,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Group projects',
     'Gives good feedback',
   ];
-
+  const [reviewId, setReviewId] = useState<string | undefined>(props.review?._id);//edit review 
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
@@ -81,17 +83,48 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         props.closeForm();
       }
     }
-  }, [showForm, props, cookies]);
+    //If editable is true
+    console.log("set props into the form: ", props.review)
+    if (props.review) {
+      const [year, quarter] = props.review.quarter.split(' ');
+      setReviewId(props.review?._id);
+      setQuarterTaken(quarter);
+      setYearTaken(year);
+      setGradeReceived(props.review.gradeReceived);
+      console.log("Grade in set data in the form: " + props.review.gradeReceived)
+      setDifficulty(props.review.difficulty);
+      setQuality(props.review.rating);
+      setContent(props.review?.reviewContent);
+      setSelectedTags(props.review?.tags);
+      setAttendance(props.review?.attendance);
+      setTakeAgain(props.review?.takeAgain);
+      setTextbook(props.review?.textbook);
+      setUserName(props.review?.userDisplay);
+      setProfessor(props.review?.professorID);
+      setCourse(props.review?.courseID);
+    }
+  }, [showForm]);
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
-    if (res.status === 400) {
-      alert(res.data.error ?? 'You have already submitted a review for this course/professor');
-    } else if (res.data.error !== undefined) {
-      alert('You must be logged in to add a review!');
+    if (props.editable) {
+      const res = await axios.patch('/api/reviews/updateReview', review);
+      console.log('Inside postReview res.data: ');
+      console.log(res.data);
+      if (res.data.hasOwnProperty('error')) {
+        alert('You must be logged in to edit the review!');
+      }else{
+        //setSubmitted(false);
+      }
     } else {
-      setSubmitted(true);
-      dispatch(addReview(res.data));
+      const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
+      if (res.status === 400) {
+        alert(res.data.error ?? 'You have already submitted a review for this course/professor');
+      } else if (res.data.error !== undefined) {
+        alert('You must be logged in to add a review!');
+      } else {
+        setSubmitted(true);
+        dispatch(addReview(res.data));
+      }
     }
   };
 
@@ -113,35 +146,68 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       alert('Please complete the CAPTCHA');
       return;
     }
-
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const day = date.getDate().toString();
-    const review = {
-      professorID: professor,
-      courseID: course,
-      userID: userID,
-      userDisplay: userName,
-      reviewContent: content,
-      rating: quality,
-      difficulty: difficulty,
-      timestamp: month + '/' + day + '/' + year,
-      gradeReceived: gradeReceived,
-      forCredit: true,
-      quarter: yearTaken + ' ' + quarterTaken,
-      score: 0,
-      takeAgain: takeAgain,
-      textbook: textbook,
-      attendance: attendance,
-      tags: selectedTags,
-      captchaToken: captchaToken,
-    };
-    if (content.length > 500) {
-      setOverCharLimit(true);
+    if (props.editable === false) {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (1 + date.getMonth()).toString();
+      const day = date.getDate().toString();
+      const review = {
+        professorID: professor,
+        courseID: course,
+        userID: userID,
+        userDisplay: userName,
+        reviewContent: content,
+        rating: quality,
+        difficulty: difficulty,
+        timestamp: month + '/' + day + '/' + year,
+        gradeReceived: gradeReceived,
+        forCredit: true,
+        quarter: yearTaken + ' ' + quarterTaken,
+        score: 0,
+        takeAgain: takeAgain,
+        textbook: textbook,
+        attendance: attendance,
+        tags: selectedTags,
+        captchaToken: captchaToken,
+      };
+      if (content.length > 500) {
+        setOverCharLimit(true);
+      } else {
+        setOverCharLimit(false);
+        postReview(review);
+      }
     } else {
-      setOverCharLimit(false);
-      postReview(review);
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (1 + date.getMonth()).toString();
+      const day = date.getDate().toString();
+      const review = {
+        _id: reviewId,
+        professorID: professor,
+        courseID: course,
+        userID: userID,
+        userDisplay: userName,
+        reviewContent: content,
+        rating: quality,
+        difficulty: difficulty,
+        timestamp: month + '/' + day + '/' + year,
+        gradeReceived: gradeReceived,
+        forCredit: true,
+        quarter: yearTaken + ' ' + quarterTaken,
+        score: 0,
+        takeAgain: takeAgain,
+        textbook: textbook,
+        attendance: attendance,
+        tags: selectedTags,
+        verified: false,
+      };
+      if (content.length > 500) {
+        setOverCharLimit(true);
+      } else {
+        setOverCharLimit(false);
+        postReview(review);
+        setSubmitted(true);
+      }
     }
   };
 
@@ -231,10 +297,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>
-                It's your turn to review{' '}
-                {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
-              </h1>
+            {props.editable ? (
+                <h1>
+                  Edit your review for{' '}
+                  {props.review?.courseID + ' ' + props.review?.professorID}
+                </h1>
+              ) : (
+                <h1>
+                  It's your turn to review{' '}
+                  {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
+                </h1>
+              )}
             </Col>
           </Row>
           <Row className="mt-4" lg={2} md={1}>
@@ -487,3 +560,5 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 };
 
 export default ReviewForm;
+
+
