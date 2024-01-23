@@ -11,7 +11,7 @@ import { selectReviews, setFormStatus, setReviews } from '../../store/slices/rev
 import ReviewForm from '../ReviewForm/ReviewForm';
 
 const UserReviews: FC = () => {
-  //const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [cookies] = useCookies(['user']);
   //edit review states 
@@ -22,12 +22,12 @@ const UserReviews: FC = () => {
   const [professorToEdit, setProfessorToEdit] = useState<ProfessorGQLData>();
   const [reviewToEdit, setReviewToEdit] = useState<ReviewData>();
   const dispatch = useAppDispatch();
-  const reviews = useAppSelector(selectReviews);
+  //const reviews = useAppSelector(selectReviews);
   
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);
-    // setReviews(response.data);
-    dispatch(setReviews(response.data));
+    setReviews(response.data);
+    //dispatch(setReviews(response.data));
     setLoaded(true);
   };
 
