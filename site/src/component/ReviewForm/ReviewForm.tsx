@@ -113,7 +113,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       if (res.data.hasOwnProperty('error')) {
         alert('You must be logged in to edit the review!');
       }else{
-        setSubmitted(false);
+        setSubmitted(true);
       }
     } else {
       const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
