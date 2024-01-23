@@ -113,7 +113,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       if (res.data.hasOwnProperty('error')) {
         alert('You must be logged in to edit the review!');
       }else{
-        //setSubmitted(false);
+        setSubmitted(false);
       }
     } else {
       const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
@@ -200,6 +200,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         attendance: attendance,
         tags: selectedTags,
         verified: false,
+        captchaToken: captchaToken,
       };
       if (content.length > 500) {
         setOverCharLimit(true);
@@ -525,8 +526,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <ReCAPTCHA
                 className="d-inline"
                 sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => setCaptchaToken(token ?? '')}
-              />
+                onChange={(token) => setCaptchaToken(token ?? '')}/>
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
                   Submit
