@@ -220,7 +220,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         <Overlay show={showEditYear} target={editYearTarget} placement="left">
           <Popover id={`edit-year-menu-${yearIndex}`}>
             <Popover.Content>
-              <Form noValidate validated={validated}>
+              <Form noValidate validated={validated} className="edit-year-form">
                 <Form.Group>
                   <Form.Label className="edit-year-form-label">Name</Form.Label>
                   <Form.Control

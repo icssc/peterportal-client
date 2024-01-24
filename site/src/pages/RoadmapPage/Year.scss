@@ -11,6 +11,13 @@
   .popover-body .year-settings-btn:active {
     background-color: var(--overlay2);
   }
+
+  .edit-year-form {
+    .form-control,
+    .form-control:focus {
+      background-color: var(--overlay1);
+    }
+  }
 }
 
 .year {

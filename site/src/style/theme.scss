@@ -19,7 +19,8 @@
   --overlay1: #1e1e1e;
   --overlay2: #292929;
   --overlay3: #363636;
-  --overlay4: #404040;
+  // jumps to 10% brighter
+  --overlay4: #4c4c4c;
   --text: #fff;
   --text-dark: #fff;
   --text-light: #fff;
@@ -46,6 +47,10 @@
   .form-control:focus {
     color: var(--text);
     background-color: var(--overlay2);
+  }
+
+  .form-control {
+    border-color: var(--overlay3);
   }
 
   .dropdown-item:hover {

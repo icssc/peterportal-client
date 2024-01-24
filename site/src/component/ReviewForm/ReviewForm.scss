@@ -4,6 +4,9 @@
     .form-control:focus {
       background-color: var(--overlay3);
     }
+    .form-control {
+      border-color: var(--overlay4);
+    }
   }
 }
 

@@ -85,7 +85,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
 
   return (
     <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
+      <Modal.Header className="transfer-header" closeButton>
         <Modal.Title>Transfer Credits</Modal.Title>
       </Modal.Header>
       <Modal.Body className="transfer">
@@ -107,7 +107,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
           </Form>
         </Container>
       </Modal.Body>
-      <Modal.Footer className="d-flex flex-row justify-content-between">
+      <Modal.Footer className="transfer-footer d-flex flex-row justify-content-between">
         <Button variant="primary" onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}>
           Add Entry
         </Button>
