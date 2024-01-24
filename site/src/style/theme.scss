@@ -53,6 +53,10 @@
     border-color: var(--overlay3);
   }
 
+  .custom-control-label::before {
+    background-color: var(--overlay3);
+  }
+
   .dropdown-item:hover {
     background-color: var(--overlay3);
   }
