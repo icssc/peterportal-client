@@ -25,6 +25,8 @@
   --text-dark: #fff;
   --text-light: #fff;
   --hover: #cacbcd;
+  --peterportal-primary-color-1: #268cd3;
+  --zot-blue: var(--peterportal-primary-color-1);
 
   color-scheme: dark;
 }
@@ -59,6 +61,24 @@
 
   .dropdown-item:hover {
     background-color: var(--overlay3);
+  }
+
+  .btn-outline-primary {
+    color: #0f83ff;
+    border-color: #0f83ff;
+
+    &:hover,
+    &:focus {
+      color: white;
+    }
+
+    &:hover {
+      border-color: #007bff;
+    }
+
+    &:focus {
+      border-color: #2767d4;
+    }
   }
 
   .close {
