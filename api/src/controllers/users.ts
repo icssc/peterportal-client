@@ -4,7 +4,7 @@
 
 import express, { Request, Response } from 'express';
 import passport from 'passport';
-import { COLLECTION_NAMES, addDocument, getCollection, getDocuments, updateDocument } from '../helpers/mongo';
+import { COLLECTION_NAMES, addDocument, containsID, getDocuments, updateDocument } from '../helpers/mongo';
 import { SESSION_LENGTH } from '../config/constants';
 
 let router = express.Router();
@@ -16,21 +16,20 @@ router.get('/', function (req, res, next) {
   res.json(req.session);
 });
 
-router.get('/preferences', (req, res) => {
+router.get('/preferences', async (req, res) => {
   if (!req.session.passport) {
     res.json({ error: 'Must be logged in to get preferences.' });
     return;
   }
 
   const userID = req.session.passport.user.id;
+  const preferences = await getDocuments(COLLECTION_NAMES.PREFERENCES, { _id: userID });
 
-  getDocuments(COLLECTION_NAMES.PREFERENCES, { _id: userID }).then((preferences) => {
-    if (preferences.length > 0) {
-      res.json(preferences[0]);
-    } else {
-      res.json({ error: 'No preferences found' });
-    }
-  });
+  if (preferences.length > 0) {
+    res.json(preferences[0]);
+  } else {
+    res.json({ error: 'No preferences found' });
+  }
 });
 
 interface UserPreferences {
@@ -46,8 +45,7 @@ router.post('/preferences', async (req, res) => {
   const userID = req.session.passport.user.id;
 
   // make user's preference doc if it doesn't exist
-  const preferencesCollection = await getCollection(COLLECTION_NAMES.PREFERENCES);
-  if ((await preferencesCollection.find({ _id: userID }).count()) == 0) {
+  if (!(await containsID(COLLECTION_NAMES.PREFERENCES, userID))) {
     await addDocument(COLLECTION_NAMES.PREFERENCES, { _id: userID });
   }
 
