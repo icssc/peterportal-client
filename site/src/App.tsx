@@ -21,15 +21,20 @@ import ThemeContext from './style/theme-context';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 
+function getDefaultDarkModeValue() {
+  switch (localStorage.getItem('theme')) {
+    case 'dark':
+      return true;
+    case 'light':
+      return false;
+    default:
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+}
+
 export default function App() {
   // default darkMode to local or system preferences
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('theme') === 'dark'
-      ? true
-      : localStorage.getItem('theme') === 'light'
-        ? false
-        : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-  );
+  const [darkMode, setDarkMode] = useState(getDefaultDarkModeValue());
   const [cookies] = useCookies(['user']);
 
   useEffect(() => {
@@ -41,16 +46,6 @@ export default function App() {
           setDarkMode(true);
         } else if (theme === 'light') {
           setDarkMode(false);
-        } else {
-          // not defined or set to use local/system prefs
-          setDarkMode(
-            localStorage.getItem('theme') === 'dark'
-              ? true
-              : localStorage.getItem('theme') === 'light'
-                ? false
-                : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-          );
-          setDarkMode(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
         }
       });
     }
@@ -59,7 +54,7 @@ export default function App() {
   useEffect(() => {
     document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     if (cookies.user) {
-      axios.post('/api/users/preferences', { theme: darkMode ? 'dark' : 'light', bs: '123', hello: 'world' });
+      axios.post('/api/users/preferences', { theme: darkMode ? 'dark' : 'light' });
     } else {
       localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     }
