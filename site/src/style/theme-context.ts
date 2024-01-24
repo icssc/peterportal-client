@@ -1,8 +1,15 @@
 import React from 'react';
 
-const ThemeContext = React.createContext<{ darkMode: boolean; toggleTheme: () => void }>({
+export type Theme = 'dark' | 'light' | 'system';
+
+const ThemeContext = React.createContext<{
+  darkMode: boolean;
+  usingSystemTheme: boolean;
+  setTheme: (theme: Theme) => void;
+}>({
   darkMode: false,
-  toggleTheme: () => {},
+  usingSystemTheme: false,
+  setTheme: () => {},
 });
 
 export default ThemeContext;

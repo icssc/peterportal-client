@@ -19,7 +19,7 @@ const SideBar = () => {
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const { darkMode, setTheme } = useContext(ThemeContext);
 
   const isLoggedIn = cookies.user !== undefined;
 
@@ -89,7 +89,7 @@ const SideBar = () => {
         )}
         {showSidebar && (
           <li>
-            <a className="theme-toggle" onClick={toggleTheme}>
+            <a className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
               <div>
                 <Icon name={darkMode ? 'moon outline' : 'sun outline'} size="large" />
               </div>

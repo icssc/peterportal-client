@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,56 +17,72 @@ import AdminPage from './pages/AdminPage';
 import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
-import ThemeContext from './style/theme-context';
+import ThemeContext, { Theme } from './style/theme-context';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 
-function getDefaultDarkModeValue() {
-  switch (localStorage.getItem('theme')) {
-    case 'dark':
-      return true;
-    case 'light':
-      return false;
-    default:
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
+function isSystemDark() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
 export default function App() {
   // default darkMode to local or system preferences
-  const [darkMode, setDarkMode] = useState(getDefaultDarkModeValue());
+  const [usingSystemTheme, setUsingSystemTheme] = useState(
+    localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme'),
+  );
+  const [darkMode, setDarkMode] = useState(
+    usingSystemTheme ? isSystemDark() : localStorage.getItem('theme') === 'dark',
+  );
   const [cookies] = useCookies(['user']);
+
+  /**
+   * Sets the theme state
+   * @param theme
+   */
+  const setThemeState = useCallback((theme: Theme) => {
+    if (theme === 'system') {
+      setDarkMode(isSystemDark());
+      setUsingSystemTheme(true);
+    } else {
+      setDarkMode(theme === 'dark');
+      setUsingSystemTheme(false);
+    }
+  }, []);
+
+  /**
+   * Sets the theme state and saves the users theme preference.
+   * Saves to account if logged in, local storage if not
+   * @param theme
+   */
+  const setTheme = (theme: Theme) => {
+    setThemeState(theme);
+    if (cookies.user) {
+      axios.post('/api/users/preferences', { theme });
+    } else {
+      localStorage.setItem('theme', theme);
+    }
+  };
 
   useEffect(() => {
     // if logged in, load user prefs (theme) from mongo
     if (cookies.user) {
       axios.get('/api/users/preferences').then((res) => {
-        const { theme } = res.data;
-        if (theme === 'dark') {
-          setDarkMode(true);
-        } else if (theme === 'light') {
-          setDarkMode(false);
+        const { theme }: { theme?: Theme } = res.data;
+        if (theme) {
+          setThemeState(theme);
         }
       });
     }
-  }, [cookies.user]);
+  }, [cookies.user, setThemeState]);
 
   useEffect(() => {
+    // Theme styling is controlled by data-theme attribute on body being set to light or dark
     document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-    if (cookies.user) {
-      axios.post('/api/users/preferences', { theme: darkMode ? 'dark' : 'light' });
-    } else {
-      localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-    }
-  }, [cookies.user, darkMode]);
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-  };
+  }, [darkMode]);
 
   return (
     <Router>
-      <ThemeContext.Provider value={{ darkMode: darkMode, toggleTheme: toggleTheme }}>
+      <ThemeContext.Provider value={{ darkMode, usingSystemTheme, setTheme }}>
         <AppHeader />
         <div className="app-body">
           <div className="app-sidebar">

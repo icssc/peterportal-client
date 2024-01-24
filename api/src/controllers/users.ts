@@ -33,7 +33,7 @@ router.get('/preferences', async (req, res) => {
 });
 
 interface UserPreferences {
-  theme?: string;
+  theme?: 'light' | 'dark' | 'system';
 }
 
 router.post('/preferences', async (req, res) => {
