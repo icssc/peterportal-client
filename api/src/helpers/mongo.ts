@@ -19,7 +19,6 @@ const DB_NAME = process.env.NODE_ENV == 'production' ? 'peterPortalDB' : 'peterP
 const COLLECTION_NAMES = {
   SESSIONS: 'sessions',
   REVIEWS: 'reviews',
-  SCHEDULE: 'schedule',
   ROADMAPS: 'roadmaps',
   VOTES: 'votes',
   REPORTS: 'reports',
