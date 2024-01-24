@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
-import cors from 'cors';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 // load env
@@ -24,7 +23,6 @@ import professorsRouter from './controllers/professors';
 import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
-import graphqlRouter from './controllers/graphql';
 import roadmapRouter from './controllers/roadmap';
 import reportsRouter from './controllers/reports';
 
@@ -70,17 +68,10 @@ if (process.env.MONGO_URL) {
 app.use(express.json());
 app.use(logger('dev'));
 app.use(cookieParser());
-app.set('view engine', 'ejs');
-
-// Enable CORS
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Access-Control-Allow-Headers', '*');
+app.use(function (_, res, next) {
   res.header('x-powered-by', 'serverless-express');
   next();
 });
-app.use(cors());
 
 /**
  * Routes - Public
@@ -93,18 +84,9 @@ router.use('/professors', professorsRouter);
 router.use('/schedule', scheduleRouter);
 router.use('/reviews', reviewsRouter);
 router.use('/users', usersRouter);
-router.use('/graphql', graphqlRouter);
 router.use('/roadmap', roadmapRouter);
 router.use('/reports', reportsRouter);
 app.use('/api', router);
-
-app.options(`*`, (req, res) => {
-  res.status(200).send();
-});
-
-app.get(`/test`, (req, res) => {
-  res.status(200).send('Hello World!');
-});
 
 /**
  * Error Handler
@@ -114,7 +96,14 @@ app.use(function (req, res, next) {
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
 
-// export for local dev
-export default app;
+// run local dev server
+const NODE_ENV = process.env.NODE_ENV ?? 'development';
+if (NODE_ENV === 'development') {
+  const port = process.env.PORT ?? 8080;
+  app.listen(port, () => {
+    console.log('Listening on port', port);
+  });
+}
+
 // export for serverless
 export const handler = serverlessExpress({ app });

@@ -107,7 +107,6 @@ router.get('/auth/google/callback', function (req, res) {
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
     function (err, user, info) {
-      console.log('Logging with Google!');
       if (err) console.log(err);
       else if (!user) console.log('Invalid login data');
       else {
@@ -115,7 +114,6 @@ router.get('/auth/google/callback', function (req, res) {
         req.login(user, function (err) {
           if (err) console.log(err);
           else {
-            console.log('GOOGLE AUTHORIZED!');
             // check if user is an admin
             let allowedUsers = JSON.parse(process.env.ADMIN_EMAILS);
             if (allowedUsers.includes(user.email)) {
@@ -126,69 +124,6 @@ router.get('/auth/google/callback', function (req, res) {
             successLogin(req, res);
           }
         });
-      }
-    },
-  )(req, res);
-});
-
-/**
- * Initiate authentication with Facebook
- */
-router.get('/auth/facebook', function (req, res) {
-  req.session.returnTo = req.headers.referer;
-  passport.authenticate('facebook', { scope: ['email'] })(req, res);
-});
-
-/**
- * Callback for Facebook authentication
- */
-router.get(
-  '/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/', session: true }),
-  successLogin,
-);
-
-/**
- * Initiate authentication with Github
- */
-router.get('/auth/github', function (req, res) {
-  console.log('START AUTH GITHUB');
-  req.session.returnTo = req.headers.referer;
-  passport.authenticate('github')(req, res);
-});
-
-/**
- * Callback for Github authentication
- */
-router.get('/auth/github/callback', function (req, res) {
-  passport.authenticate(
-    'github',
-    { failureRedirect: '/', session: true },
-    // provides user information to determine whether or not to authenticate
-    function (err, user, info) {
-      console.log('Logging with Github!');
-      if (err) console.log(err);
-      else if (!user) console.log('Invalid login data');
-      else {
-        // check if user is an admin
-        let allowedUsers = JSON.parse(process.env.GITHUB_ADMIN_USERNAMES);
-        if (allowedUsers.includes(user.username)) {
-          console.log('GITHUB AUTHORIZED!');
-          // manually login
-          req.login(user, function (err) {
-            if (err) console.log(err);
-            else {
-              req.session.passport!.admin = true;
-              successLogin(req, res);
-            }
-          });
-        } else {
-          console.log(`INVALID USER! Expected ${allowedUsers}, Got ${user.username}`);
-          // failed login
-          let returnTo = req.session.returnTo;
-          delete req.session.returnTo;
-          res.redirect(returnTo!);
-        }
       }
     },
   )(req, res);

@@ -4,8 +4,6 @@
 
 import express, { Request } from 'express';
 import fetch from 'node-fetch';
-import { GenericObject } from '../types/types';
-import courseDummy from '../dummy/course.json';
 import { getCourseQuery } from '../helpers/gql';
 var router = express.Router();
 

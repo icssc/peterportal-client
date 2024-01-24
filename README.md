@@ -67,8 +67,8 @@ git clone https://github.com/<your username>/peterportal-client
 
 6. Create a .env file in the api directory with the following contents:
 ```
-PUBLIC_API_URL=https://api.peterportal.org/rest/v0/
-PUBLIC_API_GRAPHQL_URL=https://api.peterportal.org/graphql/
+PUBLIC_API_URL=https://api-next.peterportal.org/v1/rest/
+PUBLIC_API_GRAPHQL_URL=https://api-next.peterportal.org/v1/graphql
 PORT=8080
 ```
 Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 8080.

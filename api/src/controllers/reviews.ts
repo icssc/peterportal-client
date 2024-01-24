@@ -133,9 +133,8 @@ router.get('/', async function (req, res, next) {
  */
 router.post('/', async function (req, res, next) {
   if (req.session.passport) {
-    console.log(req.body);
     //^ this should be a middleware check smh
-    console.log(`Adding Review: ${JSON.stringify(req.body)}`);
+    console.log('Adding Review:', req.body);
 
     // check if user is trusted
     const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
