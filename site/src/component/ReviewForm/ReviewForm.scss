@@ -8,6 +8,14 @@
       border-color: var(--overlay4);
     }
   }
+
+  // monkey patch recaptcha dark theme bug (crop out white borders)
+  .g-recaptcha {
+    overflow: hidden;
+    width: 302px;
+    height: 76px;
+    border-radius: 4px;
+  }
 }
 
 .review-form {

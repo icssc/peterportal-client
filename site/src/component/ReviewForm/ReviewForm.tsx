@@ -451,12 +451,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           </Row>
           <Row>
             <Col className="mb-3 review-form-submit">
-              <ReCAPTCHA
-                className="d-inline"
-                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                theme={darkMode ? 'dark' : 'light'}
-                onChange={(token) => setCaptchaToken(token ?? '')}
-              />
+              <div className="g-recaptcha">
+                <ReCAPTCHA
+                  className="d-inline"
+                  sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
+                  theme={darkMode ? 'dark' : 'light'}
+                  onChange={(token) => setCaptchaToken(token ?? '')}
+                />
+              </div>
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
                   Submit
