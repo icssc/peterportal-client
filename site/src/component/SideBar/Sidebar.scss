@@ -9,7 +9,10 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-
+  transition: transform 0.3s ease-in-out;
+  &.minimized {
+    transform: translateX(-100%);
+  }
   .sidebar-close {
     padding: 2vw;
     width: 100%;
@@ -108,7 +111,7 @@
 
 @media only screen and (max-width: 800px) {
   .sidebar {
-    width: 100vw;
+    width: 50vw;
     z-index: 400;
     background-color: white;
     display: flex;

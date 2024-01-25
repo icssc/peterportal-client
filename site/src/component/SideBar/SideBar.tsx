@@ -1,15 +1,15 @@
 import { FC, useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { Button } from 'react-bootstrap';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
-import './Sidebar.scss';
+import { NavLink } from 'react-router-dom';
+import { Icon } from 'semantic-ui-react';
 import DefaultAvatar from '../../asset/default-avatar.png';
-import { Button } from 'react-bootstrap';
+import './Sidebar.scss';
 
-import { useAppSelector, useAppDispatch } from '../..//store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
+import { useAppDispatch, useAppSelector } from '../..//store/hooks';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
 
 const SideBar: FC = () => {
   const dispatch = useAppDispatch();
@@ -117,47 +117,45 @@ const SideBar: FC = () => {
     </div>
   );
 
-  if (!showSidebar) {
-    return <div className="sidebar mini">{links}</div>;
-  }
   return (
-    <div className="sidebar">
-      {/* Close Button */}
-      <div className="sidebar-close">
-        <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
-      </div>
+    <div>
+      <div className={`sidebar ${showSidebar ? '' : 'minimized'}`}>
+        {/* Close Button */}
+        <div className="sidebar-close">
+          <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
+        </div>
+        {/* Profile Icon and Name */}
+        <div className="sidebar-profile">
+          <img src={picture ? picture : DefaultAvatar} />
+          <p>{name ? name : 'Anonymous Peter'}</p>
+        </div>
 
-      {/* Profile Icon and Name */}
-      <div className="sidebar-profile">
-        <img src={picture ? picture : DefaultAvatar} />
-        <p>{name ? name : 'Anonymous Peter'}</p>
-      </div>
+        {/* Links */}
+        {links}
 
-      {/* Links */}
-      {links}
-
-      {/* Login/Logout */}
-      <div className="sidebar-login">
-        {isLoggedIn && (
-          <a href={`/api/users/logout`}>
-            <Button variant="light">
-              <span className="sidebar-login-icon">
-                <Icon name="sign out" className="sidebar-login-icon" />
-              </span>
-              Log Out
-            </Button>
-          </a>
-        )}
-        {!isLoggedIn && (
-          <a href={`/api/users/auth/google`}>
-            <Button variant="light">
-              <span className="sidebar-login-icon">
-                <Icon name="sign in" className="sidebar-login-icon" />
-              </span>
-              Log In
-            </Button>
-          </a>
-        )}
+        {/* Login/Logout */}
+        <div className="sidebar-login">
+          {isLoggedIn && (
+            <a href={`/api/users/logout`}>
+              <Button variant="light">
+                <span className="sidebar-login-icon">
+                  <Icon name="sign out" className="sidebar-login-icon" />
+                </span>
+                Log Out
+              </Button>
+            </a>
+          )}
+          {!isLoggedIn && (
+            <a href={`/api/users/auth/google`}>
+              <Button variant="light">
+                <span className="sidebar-login-icon">
+                  <Icon name="sign in" className="sidebar-login-icon" />
+                </span>
+                Log In
+              </Button>
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
