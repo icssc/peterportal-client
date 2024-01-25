@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import './AddCoursePopup.scss';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { isMobile } from 'react-device-detect';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import './AddCoursePopup.scss';
 
 interface AddCoursePopupProps {}
 
@@ -16,6 +16,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const [year, setYear] = useState(-1);
   const [quarter, setQuarter] = useState(-1);
   const [validated, setValidated] = useState(false);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
 
   const closeForm = () => {
     // close form
@@ -63,7 +64,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const addCourseForm = (
     <Form noValidate validated={validated} onSubmit={submit}>
       <h2 className="add-course-form-header">Add Course</h2>
-      <p>Where do you want to add this course?</p>
+      <p>
+        Where do you want to add {activeCourse.department} {activeCourse.courseNumber}?
+      </p>
       <Form.Group controlId="year">
         <Form.Label>School Year</Form.Label>
         <Form.Control
