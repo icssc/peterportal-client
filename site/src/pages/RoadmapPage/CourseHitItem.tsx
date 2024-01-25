@@ -1,9 +1,9 @@
 import { FC } from 'react';
-import { setActiveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
-import Course from './Course';
 import { Draggable } from 'react-beautiful-dnd';
 import { isMobile } from 'react-device-detect';
+import { useAppDispatch } from '../../store/hooks';
+import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import Course from './Course';
 
 import { CourseGQLData } from '../../types/types';
 
@@ -20,8 +20,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
         onMouseDown={() => {
           dispatch(setActiveCourse(props));
           dispatch(setShowAddCourse(true));
-          // also hide the search bar to view the roadmap
-          dispatch(setShowSearch(false));
         }}
         // use inline style here so dnd can calculate size
         style={{ margin: ' 0rem 2rem 1rem 2rem' }}

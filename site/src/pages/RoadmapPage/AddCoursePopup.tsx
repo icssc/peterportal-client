@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { isMobile } from 'react-device-detect';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 
 interface AddCoursePopupProps {}
@@ -53,6 +53,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         },
       }),
     );
+
+    // hide the search bar to view the roadmap
+    dispatch(setShowSearch(false));
 
     closeForm();
   };
