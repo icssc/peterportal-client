@@ -134,7 +134,6 @@ router.get('/', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
   if (req.session.passport) {
     //^ this should be a middleware check smh
-    console.log('Adding Review:', req.body);
 
     // check if user is trusted
     const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
@@ -165,6 +164,9 @@ router.post('/', async function (req, res, next) {
     if (reviews?.length > 0)
       return res.status(400).json({ error: 'Review already exists for this professor and course!' });
     // add review to mongo
+    req.body.userDisplay =
+      req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
+    req.body.userID = req.session.passport.user.id;
     await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
 
     // echo back body
