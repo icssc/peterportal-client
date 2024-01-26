@@ -11,7 +11,7 @@
   "dependencies": {
     "@vendia/serverless-express": "^4.10.1",
     "axios": "^1.6.5",
-    "connect-mongodb-session": "^4.0.0",
+    "connect-mongodb-session": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv-flow": "^4.1.0",
     "express": "^4.17.1",
