@@ -5,20 +5,21 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
+import { User } from 'express-session';
 
-let router = express.Router();
+const router = express.Router();
 
 /**
  * Get the user's session data
  */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
   res.json(req.session);
 });
 
 /**
  * Get whether or not a user is an admin
  */
-router.get('/isAdmin', function (req, res, next) {
+router.get('/isAdmin', function (req, res) {
   // not logged in
   if (!req.session?.passport) {
     res.json({ admin: false });
@@ -43,7 +44,7 @@ router.get('/auth/google', function (req, res) {
  */
 router.get('/auth/google/callback', function (req, res) {
   const returnTo = req.session.returnTo;
-  let host: string = req.query.state as string;
+  const host: string = req.query.state as string;
   // all staging auths will redirect their callback to prod since all callback URLs must be registered
   // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
   // staging instances
@@ -57,16 +58,16 @@ router.get('/auth/google/callback', function (req, res) {
     'google',
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
-    function (err, user, info) {
-      if (err) console.log(err);
-      else if (!user) console.log('Invalid login data');
+    function (err: Error, user: User | false | null) {
+      if (err) console.error(err);
+      else if (!user) console.error('Invalid login data');
       else {
         // manually login
         req.login(user, function (err) {
-          if (err) console.log(err);
+          if (err) console.error(err);
           else {
             // check if user is an admin
-            let allowedUsers = JSON.parse(process.env.ADMIN_EMAILS);
+            const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS);
             if (allowedUsers.includes(user.email)) {
               console.log('AUTHORIZED AS ADMIN');
               req.session.passport!.admin = true;
@@ -92,7 +93,7 @@ function successLogin(req: Request, res: Response) {
     maxAge: SESSION_LENGTH,
   });
   // redirect browser to the page they came from
-  let returnTo = req.session.returnTo ?? '/';
+  const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
   res.redirect(returnTo!);
 }
