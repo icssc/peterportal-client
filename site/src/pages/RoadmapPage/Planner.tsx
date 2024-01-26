@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { useBlocker } from 'react-router-dom';
 import axios from 'axios';
 import './Planner.scss';
 import Header from './Header';
@@ -12,6 +11,7 @@ import {
   setYearPlans,
   setInvalidCourses,
   setTransfers,
+  setUnsavedChanges,
   addYear,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
@@ -38,11 +38,6 @@ const Planner: FC = () => {
   const transfers = useAppSelector((state) => state.roadmap.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
-
-  let blocker = useBlocker(
-    ({ currentLocation, nextLocation }) => unsavedChanges && currentLocation.pathname !== nextLocation.pathname,
-  );
 
   useEffect(() => {
     // if is first render, load from local storage
@@ -52,7 +47,9 @@ const Planner: FC = () => {
     // validate planner every time something changes
     else {
       validatePlanner();
-      setUnsavedChanges(true);
+
+      // mark changes as unsaved to alert before leaving page
+      dispatch(setUnsavedChanges(true));
     }
   }, [data, transfers]);
 
@@ -149,7 +146,8 @@ const Planner: FC = () => {
     // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
-    setUnsavedChanges(false);
+    // mark changes as saved to skip alert on page leave
+    dispatch(setUnsavedChanges(false));
 
     if (savedAccount) {
       alert(`Roadmap saved under ${cookies.user.email}`);
@@ -315,15 +313,6 @@ const Planner: FC = () => {
         placeholderName={'Year ' + (data.length + 1)}
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
       />
-
-      {blocker.state === 'blocked' ? (
-        <div>
-          {blocker.proceed()}
-          <p>Are you sure you want to leave?</p>
-          <button onClick={blocker.proceed}>Proceed</button>
-          <button onClick={blocker.reset}>Cancel</button>
-        </div>
-      ) : null}
     </div>
   );
 };

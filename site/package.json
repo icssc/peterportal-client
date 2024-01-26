@@ -21,7 +21,7 @@
     "react-google-recaptcha": "^3.1.0",
     "react-multi-carousel": "^2.6.5",
     "react-redux": "^9.0.4",
-    "react-router-dom": "^6.18.0",
+    "react-router-dom": "^6.21.3",
     "react-twemoji": "^0.5.0",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
