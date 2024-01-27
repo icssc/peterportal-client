@@ -4,7 +4,8 @@
   "scripts": {
     "postinstall": "cd api && npm install && cd ../site && npm install",
     "prepare": "husky install",
-    "format": "prettier --write **/*.{scss,js,ts,tsx}"
+    "format": "prettier --write **/*.{scss,js,ts,tsx}",
+    "lint": "prettier **/*.{scss,js,ts,tsx} --check && cd site && npm run lint && cd ../api && npm run lint"
   },
   "dependencies": {
     "dotenv-flow": "^4.0.1",

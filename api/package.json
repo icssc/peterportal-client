@@ -5,21 +5,21 @@
   "scripts": {
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@vendia/serverless-express": "^4.10.1",
     "axios": "^1.6.5",
-    "connect-mongodb-session": "^3.1.1",
+    "connect-mongodb-session": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv-flow": "^4.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "mongodb": "^3.6.6",
+    "mongodb": "^6.3.0",
     "mongodb-client-encryption": "^6.0.0",
     "morgan": "^1.10.0",
-    "node-fetch": "^2.6.1",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
     "typescript": "^5.3.3"
   },
@@ -30,9 +30,11 @@
     "@types/express": "^4.17.13",
     "@types/express-session": "^1.17.4",
     "@types/morgan": "^1.9.3",
-    "@types/node-fetch": "^2.5.12",
     "@types/passport": "^1.0.7",
     "@types/passport-google-oauth": "^1.0.42",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
     "tsc-watch": "^6.0.4"
   }
 }
