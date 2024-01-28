@@ -4,7 +4,8 @@ import { Icon } from 'semantic-ui-react';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import './Sidebar.scss';
-import DefaultAvatar from '../../asset/default-avatar.png';
+import defaultAvatarLight from '../../asset/default-avatar.png';
+import defaultAvatarDark from '../../asset/default-avatar-dark.png';
 import { Button } from 'react-bootstrap';
 
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
@@ -20,6 +21,7 @@ const SideBar = () => {
   const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { darkMode, setTheme } = useContext(ThemeContext);
+  const defaultAvatar = darkMode ? defaultAvatarDark : defaultAvatarLight;
 
   const isLoggedIn = cookies.user !== undefined;
 
@@ -141,7 +143,7 @@ const SideBar = () => {
 
       {/* Profile Icon and Name */}
       <div className="sidebar-profile">
-        <img src={picture ? picture : DefaultAvatar} />
+        <img src={picture ? picture : defaultAvatar} />
         <p>{name ? name : 'Anonymous Peter'}</p>
       </div>
 
