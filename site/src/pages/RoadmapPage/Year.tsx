@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import './Year.scss';
 import { Button, Form, Popover, Overlay } from 'react-bootstrap';
 import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons';
@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { addQuarter, editYear, editName, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
+import ThemeContext from '../../style/theme-context';
 
 interface YearProps {
   yearIndex: number;
@@ -25,6 +26,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const [validated, setValidated] = useState(false);
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const handleEditClick = (event: React.MouseEvent) => {
     if (showAddQuarter) {
@@ -108,16 +111,16 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 <Button
                   disabled={!(data.quarters && data.quarters.length < 6)}
                   onClick={handleShowAddQuarterClick}
-                  variant="light"
+                  variant={buttonVariant}
                   className="year-settings-btn"
                 >
                   Add Quarter
                 </Button>
-                <Button onClick={handleEditYearClick} variant="light" className="year-settings-btn">
+                <Button onClick={handleEditYearClick} variant={buttonVariant} className="year-settings-btn">
                   Edit Year
                 </Button>
                 <Button
-                  variant="light"
+                  variant={buttonVariant}
                   className="year-settings-btn"
                   id="clear-btn"
                   onClick={() => {
@@ -131,7 +134,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   Clear
                 </Button>
                 <Button
-                  variant="light"
+                  variant={buttonVariant}
                   className="year-settings-btn"
                   id="remove-btn"
                   onClick={() => {
@@ -159,7 +162,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('fall') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'fall')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Fall
@@ -168,7 +171,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('winter') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'winter')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Winter
@@ -177,7 +180,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('spring') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'spring')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Spring
@@ -186,7 +189,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('summer I') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'summer I')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Summer I
@@ -195,7 +198,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('summer II') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'summer II')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Summer II
@@ -204,7 +207,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                 {!data.quarters.map((quarter) => quarter.name).includes('summer 10 Week') && (
                   <Button
                     onClick={() => handleAddQuarterClick(data.startYear, 'summer 10 Week')}
-                    variant="light"
+                    variant={buttonVariant}
                     className="year-settings-btn"
                   >
                     Summer 10 Week
@@ -217,7 +220,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         <Overlay show={showEditYear} target={editYearTarget} placement="left">
           <Popover id={`edit-year-menu-${yearIndex}`}>
             <Popover.Content>
-              <Form noValidate validated={validated}>
+              <Form noValidate validated={validated} className="edit-year-form">
                 <Form.Group>
                   <Form.Label className="edit-year-form-label">Name</Form.Label>
                   <Form.Control

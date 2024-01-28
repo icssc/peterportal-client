@@ -1,5 +1,5 @@
 .report-group {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
   padding: 2rem;
   margin-bottom: 3vh;
@@ -34,7 +34,7 @@
 }
 
 .report-group-subreports-container {
-  background-color: white;
+  background-color: var(--overlay3);
   border-radius: var(--border-radius);
   padding: 1rem;
 }

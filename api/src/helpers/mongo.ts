@@ -22,6 +22,7 @@ const COLLECTION_NAMES = {
   ROADMAPS: 'roadmaps',
   VOTES: 'votes',
   REPORTS: 'reports',
+  PREFERENCES: 'preferences',
 };
 /**
  * Global reference to database

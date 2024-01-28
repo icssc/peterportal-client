@@ -36,7 +36,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
       <Overlay show={show} target={target} placement="top">
         <Popover id="">
           <Popover.Content>
-            <Form noValidate validated={validated}>
+            <Form noValidate validated={validated} className="add-year-form">
               <Form.Group>
                 <Form.Label className="add-year-form-label">Name</Form.Label>
                 <Form.Control

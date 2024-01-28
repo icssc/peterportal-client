@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import './Quarter.scss';
 import { Draggable } from 'react-beautiful-dnd';
 import Course from './Course';
@@ -8,6 +8,7 @@ import { deleteQuarter, clearQuarter, deleteCourse } from '../../store/slices/ro
 import { PlannerQuarterData } from '../../types/types';
 import { Button, Overlay, Popover } from 'react-bootstrap';
 import { ThreeDots } from 'react-bootstrap-icons';
+import ThemeContext from '../../style/theme-context';
 import { StrictModeDroppable } from './StrictModeDroppable';
 
 interface QuarterProps {
@@ -24,6 +25,9 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [threeDotMenuTarget, setThreeDotMenuTarget] = useState<HTMLElement | null>(null);
+
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const handleQuarterMenuClick = (event: React.MouseEvent) => {
     setShowQuarterMenu(!showQuarterMenu);
@@ -102,14 +106,14 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             <Popover.Content>
               <div>
                 <Button
-                  variant="light"
+                  variant={buttonVariant}
                   className="quarter-menu-btn red-menu-btn"
                   onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}
                 >
                   Clear
                 </Button>
                 <Button
-                  variant="light"
+                  variant={buttonVariant}
                   className="quarter-menu-btn red-menu-btn"
                   onClick={() => {
                     dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));

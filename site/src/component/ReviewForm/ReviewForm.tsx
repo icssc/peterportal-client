@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
@@ -16,6 +16,7 @@ import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
+import ThemeContext from '../../style/theme-context';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -63,6 +64,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [cookies] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get user info from cookie
@@ -414,7 +416,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 </div>
                 <Form.Text>
                   <Icon name="warning sign" />
-                  <span style={{ color: '#333333' }}>
+                  <span className="profanity-warning">
                     Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!
                   </span>
                 </Form.Text>
@@ -449,11 +451,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           </Row>
           <Row>
             <Col className="mb-3 review-form-submit">
-              <ReCAPTCHA
-                className="d-inline"
-                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                onChange={(token) => setCaptchaToken(token ?? '')}
-              />
+              <div className="g-recaptcha">
+                <ReCAPTCHA
+                  className="d-inline"
+                  sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
+                  theme={darkMode ? 'dark' : 'light'}
+                  onChange={(token) => setCaptchaToken(token ?? '')}
+                />
+              </div>
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
                   Submit
