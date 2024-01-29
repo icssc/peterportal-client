@@ -99,7 +99,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           <Button
             variant={buttonVariant}
             className="quarter-menu-btn red-menu-btn"
-            onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}
+            onClick={() => {
+              dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
+              setShowQuarterMenu(false);
+            }}
           >
             Clear
           </Button>
