@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import './Quarter.scss';
 import { Draggable } from 'react-beautiful-dnd';
 import Course from './Course';
@@ -8,6 +8,7 @@ import { deleteQuarter, clearQuarter, deleteCourse } from '../../store/slices/ro
 import { PlannerQuarterData } from '../../types/types';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ThreeDots } from 'react-bootstrap-icons';
+import ThemeContext from '../../style/theme-context';
 import { StrictModeDroppable } from './StrictModeDroppable';
 
 interface QuarterProps {
@@ -23,6 +24,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
 
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
+
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
+
   const handleQuarterMenuClick = () => {
     setShowQuarterMenu(!showQuarterMenu);
   };
@@ -87,29 +92,31 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     });
   };
 
-  const popover = <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
-    <Popover.Content>
-      <div>
-        <Button
-          variant="light"
-          className="quarter-menu-btn red-menu-btn"
-          onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}
-        >
-          Clear
-        </Button>
-        <Button
-          variant="light"
-          className="quarter-menu-btn red-menu-btn"
-          onClick={() => {
-            dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
-            setShowQuarterMenu(false);
-          }}
-        >
-          Delete
-        </Button>
-      </div>
-    </Popover.Content>
-  </Popover>
+  const popover = (
+    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
+      <Popover.Content>
+        <div>
+          <Button
+            variant={buttonVariant}
+            className="quarter-menu-btn red-menu-btn"
+            onClick={() => dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }))}
+          >
+            Clear
+          </Button>
+          <Button
+            variant={buttonVariant}
+            className="quarter-menu-btn red-menu-btn"
+            onClick={() => {
+              dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
+              setShowQuarterMenu(false);
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      </Popover.Content>
+    </Popover>
+  );
 
   return (
     <div className="quarter">
@@ -117,7 +124,13 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         <h2 className="quarter-title">
           {quarterTitle} {year}
         </h2>
-        <OverlayTrigger trigger="click" overlay={popover} rootClose onToggle={setShowQuarterMenu} show={showQuarterMenu}>
+        <OverlayTrigger
+          trigger="click"
+          overlay={popover}
+          rootClose
+          onToggle={setShowQuarterMenu}
+          show={showQuarterMenu}
+        >
           <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
         </OverlayTrigger>
       </span>

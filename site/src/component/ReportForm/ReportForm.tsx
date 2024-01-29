@@ -79,7 +79,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   );
 
   return (
-    <Modal show={props.showForm} animation={false} onHide={props.closeForm}>
+    <Modal show={props.showForm} centered animation={false} onHide={props.closeForm}>
       <div className="report-form">
         {reportSubmitted ? (
           <div className="submitted-report-form">

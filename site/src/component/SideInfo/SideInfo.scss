@@ -2,7 +2,7 @@
   width: 40vw;
   height: fit-content;
   max-height: 85vh;
-  background-color: #ffffff;
+  background-color: var(--overlay1);
   border-radius: var(--border-radius);
   padding: 3rem;
   position: sticky;
@@ -62,7 +62,7 @@
 }
 
 .side-info-feature {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
   padding: 2rem;
   width: 45%;
@@ -80,7 +80,7 @@
     font-weight: bold;
     font-size: 2em;
     a {
-      color: black;
+      color: var(--text);
     }
   }
 
@@ -90,7 +90,7 @@
   }
 
   .side-info-feature-stat {
-    background-color: #ffffff;
+    background-color: var(--overlay3);
     border-radius: var(--border-radius);
     padding: 0.5rem;
     width: 45%;

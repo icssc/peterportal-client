@@ -22,80 +22,82 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
     setName(placeholderName);
   }, [placeholderYear, placeholderName]);
 
-  const overlay = <Popover id="add-year-popover">
-    <Popover.Content>
-      <Form noValidate validated={validated}>
-        <Form.Group>
-          <Form.Label className="add-year-form-label">Name</Form.Label>
-          <Form.Control
-            required
-            type="text"
-            name="name"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-            onKeyDown={(e: React.KeyboardEvent) => {
-              // prevent submitting form (reloads the page)
-              if (e.key === 'Enter') {
-                e.preventDefault();
+  const overlay = (
+    <Popover id="add-year-popover">
+      <Popover.Content>
+        <Form noValidate validated={validated} className="add-year-form">
+          <Form.Group>
+            <Form.Label className="add-year-form-label">Name</Form.Label>
+            <Form.Control
+              required
+              type="text"
+              name="name"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                // prevent submitting form (reloads the page)
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                }
+              }}
+              maxLength={35}
+              placeholder={placeholderName}
+            ></Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label className="add-year-form-label">Start Year</Form.Label>
+            <Form.Control
+              required
+              type="number"
+              name="year"
+              value={year}
+              onChange={(e) => {
+                setYear(parseInt(e.target.value));
+              }}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                // prevent submitting form (reloads the page)
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                }
+              }}
+              min={1000}
+              max={9999}
+              placeholder={placeholderYear.toString()}
+            ></Form.Control>
+          </Form.Group>
+          <Button
+            className="popup-btn"
+            onClick={() => {
+              if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
+                setValidated(true);
+                return;
               }
-            }}
-            maxLength={35}
-            placeholder={placeholderName}
-          ></Form.Control>
-        </Form.Group>
-        <Form.Group>
-          <Form.Label className="add-year-form-label">Start Year</Form.Label>
-          <Form.Control
-            required
-            type="number"
-            name="year"
-            value={year}
-            onChange={(e) => {
-              setYear(parseInt(e.target.value));
-            }}
-            onKeyDown={(e: React.KeyboardEvent) => {
-              // prevent submitting form (reloads the page)
-              if (e.key === 'Enter') {
-                e.preventDefault();
-              }
-            }}
-            min={1000}
-            max={9999}
-            placeholder={placeholderYear.toString()}
-          ></Form.Control>
-        </Form.Group>
-        <Button
-          className="popup-btn"
-          onClick={() => {
-            if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
-              setValidated(true);
-              return;
-            }
 
-            setValidated(false);
-            setShow(!show);
-            dispatch(
-              addYear({
-                yearData: {
-                  startYear: year,
-                  name: name.trim(),
-                  quarters: ['fall', 'winter', 'spring'].map((quarter) => {
-                    return { name: quarter, courses: [] };
-                  }),
-                },
-              }),
-            );
-            setYear(placeholderYear);
-            setName(placeholderName);
-          }}
-        >
-          Add Year
-        </Button>
-      </Form>
-    </Popover.Content>
-  </Popover>
+              setValidated(false);
+              setShow(!show);
+              dispatch(
+                addYear({
+                  yearData: {
+                    startYear: year,
+                    name: name.trim(),
+                    quarters: ['fall', 'winter', 'spring'].map((quarter) => {
+                      return { name: quarter, courses: [] };
+                    }),
+                  },
+                }),
+              );
+              setYear(placeholderYear);
+              setName(placeholderName);
+            }}
+          >
+            Add Year
+          </Button>
+        </Form>
+      </Popover.Content>
+    </Popover>
+  );
 
   return (
     <div>
