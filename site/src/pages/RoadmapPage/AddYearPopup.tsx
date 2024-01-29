@@ -101,7 +101,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
 
   return (
     <div>
-      <OverlayTrigger placement="top" overlay={overlay} trigger="click" rootClose>
+      <OverlayTrigger placement="top" overlay={overlay} trigger="click" rootClose onToggle={setShow} show={show}>
         <Button variant="light" className="add-year-btn">
           <PlusCircleFill className="add-year-icon" />
           <div className="add-year-text">Add year</div>
