@@ -91,12 +91,12 @@ const SideBar = () => {
         )}
         {showSidebar && (
           <li>
-            <a className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
+            <button className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
               <div>
                 <Icon name={darkMode ? 'moon outline' : 'sun outline'} size="large" />
               </div>
               <span>Toggle Dark Mode</span>
-            </a>
+            </button>
           </li>
         )}
         {isAdmin && (
@@ -143,7 +143,7 @@ const SideBar = () => {
 
       {/* Profile Icon and Name */}
       <div className="sidebar-profile">
-        <img src={picture ? picture : defaultAvatar} />
+        <img src={picture ? picture : defaultAvatar} alt="profile" />
         <p>{name ? name : 'Anonymous Peter'}</p>
       </div>
 

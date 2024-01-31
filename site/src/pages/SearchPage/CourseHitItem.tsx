@@ -31,8 +31,14 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     }
   };
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      onClickName();
+    }
+  };
+
   return (
-    <div className="hit-item" onClick={onClickName}>
+    <div className="hit-item" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div className="course-hit-id">
         <div>
           <h3>

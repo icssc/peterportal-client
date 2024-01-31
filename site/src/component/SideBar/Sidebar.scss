@@ -1,7 +1,8 @@
 [data-theme='dark'] {
   .sidebar {
     .sidebar-links {
-      ul li a:hover {
+      ul li a:hover,
+      ul li button:hover {
         background-color: var(--overlay2);
       }
     }
@@ -63,13 +64,15 @@
     margin-bottom: 20vh;
 
     ul li {
-      a {
+      a,
+      button {
         color: var(--text);
         display: flex;
         grid-gap: 10px;
         padding: 10px;
       }
-      a:hover {
+      a:hover,
+      button:hover {
         background: rgba(0, 0, 0, 0.05);
         border-radius: 5px;
       }
@@ -97,7 +100,8 @@
       li {
         margin-top: 2vh;
 
-        a {
+        a,
+        button {
           display: flex;
           flex-direction: column;
           margin: 0;
@@ -151,7 +155,8 @@
     .sidebar-links {
       ul {
         li {
-          a {
+          a,
+          button {
             span {
               font-size: smaller;
             }
@@ -160,6 +165,11 @@
       }
     }
   }
+}
+
+.theme-toggle {
+  border: none;
+  background: none;
 }
 
 .theme-toggle:hover {

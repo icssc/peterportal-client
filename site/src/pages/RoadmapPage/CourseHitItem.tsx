@@ -14,15 +14,24 @@ interface CourseHitItemProps extends CourseGQLData {
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
   // do not make course draggable on mobile
+  const onMobileMouseDown = () => {
+    dispatch(setActiveCourse(props));
+    dispatch(setShowAddCourse(true));
+    // also hide the search bar to view the roadmap
+    dispatch(setShowSearch(false));
+  };
+  const onMobileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      onMobileMouseDown();
+    }
+  };
   if (isMobile) {
     return (
       <div
-        onMouseDown={() => {
-          dispatch(setActiveCourse(props));
-          dispatch(setShowAddCourse(true));
-          // also hide the search bar to view the roadmap
-          dispatch(setShowSearch(false));
-        }}
+        tabIndex={0}
+        role="button"
+        onMouseDown={onMobileMouseDown}
+        onKeyDown={onMobileKeyDown}
         // use inline style here so dnd can calculate size
         style={{ margin: ' 0rem 2rem 1rem 2rem' }}
       >
@@ -49,9 +58,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
                 margin: ' 0rem 2rem 1rem 2rem',
                 cursor: 'grab',
                 ...provided.draggableProps.style,
-              }}
-              onMouseDown={() => {
-                dispatch(setActiveCourse(props));
               }}
             >
               <Course {...props} />
