@@ -48,8 +48,13 @@ const Planner: FC = () => {
     else {
       validatePlanner();
 
-      // mark changes as unsaved to alert before leaving page
-      dispatch(setUnsavedChanges(true));
+      // check current roadmap against last-saved roadmap in local storage
+      // if they are different, mark changes as unsaved to enable alert on page leave
+      const roadmap: SavedRoadmap = {
+        planner: collapsePlanner(data),
+        transfers: transfers,
+      };
+      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== JSON.stringify(roadmap)));
     }
   }, [data, transfers]);
 
@@ -146,7 +151,7 @@ const Planner: FC = () => {
     // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
-    // mark changes as saved to skip alert on page leave
+    // mark changes as saved to bypass alert on page leave
     dispatch(setUnsavedChanges(false));
 
     if (savedAccount) {
