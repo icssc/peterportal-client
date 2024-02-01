@@ -68,7 +68,8 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
     <Form noValidate validated={validated} onSubmit={submit}>
       <h2 className="add-course-form-header">Add Course</h2>
       <p>
-        Where do you want to add {activeCourse.department} {activeCourse.courseNumber}?
+        Where do you want to add {activeCourse ? activeCourse.department + ' ' + activeCourse.courseNumber : 'a course'}
+        ?
       </p>
       <Form.Group controlId="year">
         <Form.Label>School Year</Form.Label>
