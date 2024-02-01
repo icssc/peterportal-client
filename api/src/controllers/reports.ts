@@ -1,4 +1,3 @@
-import { use } from 'sst/constructs';
 /**
  @module ReportsRoute
 */
