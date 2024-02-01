@@ -1,6 +1,6 @@
 .course {
-  box-shadow: 0px 0px 4px #2484C6;
-  background: #FFFFFF;
+  box-shadow: 0px 0px 4px var(--zot-blue);
+  background: var(--overlay1);
   border-radius: 15px;
   height: auto;
   font-size: 16px;
@@ -9,7 +9,7 @@
 
   .name {
     font-weight: bold;
-    color: #2484C6;
+    color: var(--zot-blue);
     font-size: 18px;
   }
 
@@ -58,12 +58,11 @@
 }
 
 .course-popover {
-  background: #FFFFFF;
   padding: 5%;
 
   .popover-name {
     font-weight: bold;
-    color: black;
+    color: var(--text-dark);
     font-size: 16px;
   }
 
@@ -83,6 +82,6 @@
     padding-top: 5%;
   }
   .popover-detail-prefix {
-      font-weight: bold;
+    font-weight: bold;
   }
 }

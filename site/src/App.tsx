@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-
-import {
-  BrowserRouter as Router,
-  Switch, Redirect,
-  Route
-} from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+import './style/theme.scss';
 import './App.scss';
-import { Fade } from 'react-bootstrap';
 
 import AppHeader from './component/AppHeader/AppHeader';
 import Footer from './component/Footer/Footer';
@@ -17,47 +13,96 @@ import CoursePage from './pages/CoursePage';
 import ProfessorPage from './pages/ProfessorPage';
 import ErrorPage from './pages/ErrorPage';
 import RoadmapPage from './pages/RoadmapPage';
-import ZotisticsPage from './pages/ZotisticsPage';
 import AdminPage from './pages/AdminPage';
 import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
-import { useAppSelector } from './store/hooks';
+import ThemeContext, { Theme } from './style/theme-context';
+import axios from 'axios';
+import { useCookies } from 'react-cookie';
+
+function isSystemDark() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
 
 export default function App() {
-  const sidebarOpen = useAppSelector(state => state.ui.sidebarOpen);
-  const [isShown, setIsShown] = useState(false);
+  // default darkMode to local or system preferences
+  const [usingSystemTheme, setUsingSystemTheme] = useState(
+    localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme'),
+  );
+  const [darkMode, setDarkMode] = useState(
+    usingSystemTheme ? isSystemDark() : localStorage.getItem('theme') === 'dark',
+  );
+  const [cookies] = useCookies(['user']);
+
+  /**
+   * Sets the theme state
+   * @param theme
+   */
+  const setThemeState = useCallback((theme: Theme) => {
+    if (theme === 'system') {
+      setDarkMode(isSystemDark());
+      setUsingSystemTheme(true);
+    } else {
+      setDarkMode(theme === 'dark');
+      setUsingSystemTheme(false);
+    }
+  }, []);
+
+  /**
+   * Sets the theme state and saves the users theme preference.
+   * Saves to account if logged in, local storage if not
+   * @param theme
+   */
+  const setTheme = (theme: Theme) => {
+    setThemeState(theme);
+    if (cookies.user) {
+      axios.post('/api/users/preferences', { theme });
+    } else {
+      localStorage.setItem('theme', theme);
+    }
+  };
+
+  useEffect(() => {
+    // if logged in, load user prefs (theme) from mongo
+    if (cookies.user) {
+      axios.get('/api/users/preferences').then((res) => {
+        const { theme }: { theme?: Theme } = res.data;
+        if (theme) {
+          setThemeState(theme);
+        }
+      });
+    }
+  }, [cookies.user, setThemeState]);
+
+  useEffect(() => {
+    // Theme styling is controlled by data-theme attribute on body being set to light or dark
+    document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   return (
-    <Router basename={process.env.PUBLIC_URL}>
-      <AppHeader />
-      <div className='app-body'>
-        <div className='app-sidebar'>
-          <SideBar></SideBar>
+    <Router>
+      <ThemeContext.Provider value={{ darkMode, usingSystemTheme, setTheme }}>
+        <AppHeader />
+        <div className="app-body">
+          <div className="app-sidebar">
+            <SideBar></SideBar>
+          </div>
+          <div className="app-content">
+            <Routes>
+              <Route path="/roadmap" element={<RoadmapPage />} />
+              <Route path="/" element={<SearchPage />} />
+              <Route path="/search/:index" element={<SearchPage />} />
+              <Route path="/course/:id" element={<CoursePage />} />
+              <Route path="/professor/:id" element={<ProfessorPage />} />
+              <Route path="/admin/*" element={<AdminPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+            <Footer />
+          </div>
         </div>
-        <div className='app-content'>
-          <Switch>
-            <Route exact path='/'>
-              <Redirect to='/search/courses' />
-            </Route>
-            <Route path='/search/:index' />
-          </Switch>
-          <Switch>
-            <Route exact path='/'>
-              <Redirect to='/search/courses' />
-            </Route>
-            <Route path='/roadmap' component={RoadmapPage} />
-            <Route path='/zotistics' component={ZotisticsPage} />
-            <Route path='/search/:index' component={SearchPage} />
-            <Route path='/course/:id+' component={CoursePage} />
-            <Route path='/professor/:id' component={ProfessorPage} />
-            <Route path='/admin' component={AdminPage} />
-            <Route path='/reviews'  component={ReviewsPage} />
-            <Route component={ErrorPage} />
-          </Switch>
-          <Footer />
-        </div>
-      </div>
+      </ThemeContext.Provider>
     </Router>
-  )
+  );
 }

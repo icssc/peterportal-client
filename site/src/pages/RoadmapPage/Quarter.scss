@@ -1,10 +1,22 @@
+[data-theme='dark'] {
+  .quarter .quarter-header .quarter-title {
+    color: #eee;
+  }
+
+  .quarter-menu-btn:hover,
+  .quarter-menu-btn:focus,
+  .popover-body .quarter-menu-btn:active {
+    background-color: var(--overlay2);
+  }
+}
+
 .quarter {
-  background-color: white;
+  background-color: var(--overlay1);
   border-radius: 10px;
-  box-shadow: 0px 0px 4px #2484c6;
+  box-shadow: 0px 0px 4px var(--zot-blue);
   flex: 1 1 30%;
   height: fit-content;
-  margin: .75rem;
+  margin: 0.75rem;
 
   .quarter-header {
     display: flex;
@@ -19,7 +31,6 @@
     }
 
     .edit-btn {
-      background-color: var(--ring-road-white);
       width: 5%;
       margin-top: 10px;
       margin-right: 1.5rem;
@@ -42,6 +53,9 @@
   padding: 0;
 }
 
-.red-menu-btn {
+.red-menu-btn,
+.red-menu-btn:hover,
+.red-menu-btn:focus,
+.popover-body .quarter-menu-btn.red-menu-btn:active {
   color: red;
 }

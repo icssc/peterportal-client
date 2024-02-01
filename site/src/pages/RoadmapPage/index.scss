@@ -1,6 +1,6 @@
 .roadmap-page {
   font-family: 'Open Sans', sans-serif;
-  height: calc(100vh -  4rem);
+  height: calc(100vh - 4rem);
   overflow: hidden;
   display: flex;
   width: 100%;
@@ -20,12 +20,10 @@
   }
 
   .sidebar-wrapper {
-    background: white;
     border-radius: var(--border-radius);
     margin-left: 1vw;
     width: 25%;
     height: 100%;
-    background-color: white;
     overflow-y: auto;
   }
 

@@ -1,46 +1,37 @@
-@import './width.config.scss';
-
-// index
-// .sidebar-container {
-//   position: sticky;
-//   top: 4rem;
-// }
-
 #content-container {
+  display: flex;
+  flex-grow: 1;
+
+  #search-list {
+    width: 50vw;
     display: flex;
+    flex-direction: column;
+    height: 85vh;
+  }
+
+  #search-popup {
     flex-grow: 1;
+    height: fit-content;
+  }
 
-    #search-list {
-        width: 50vw;
-        display: flex;
-        flex-direction: column;
-        height: 85vh;
-        overflow-y: hidden;
+  .search-hit-container {
+    margin-top: 2vh; // use margin instead of padding so the scroll bar isn't offset/above the first hit item
+    padding-top: 0;
+
+    .hit-item:last-child {
+      margin-bottom: 0; // so scroll bar doesn't extend past the last hit item
     }
-
-    #search-popup {
-        flex-grow: 1;
-        height: fit-content;
-    }
-
-    .search-hit-container {
-        margin-top: 2vh; // use margin instead of padding so the scroll bar isn't offset/above the first hit item
-        padding-top: 0;
-
-        .hit-item:last-child {
-            margin-bottom: 0; // so scroll bar doesn't extend past the last hit item
-        }
-    }
+  }
 }
 
 @media only screen and (max-width: 800px) {
-    #content-container {
-        #search-list {
-            width: 100%;
-        }
-    
-        #search-popup {
-            display: none;
-        }
+  #content-container {
+    #search-list {
+      width: 100%;
     }
-} 
+
+    #search-popup {
+      display: none;
+    }
+  }
+}
