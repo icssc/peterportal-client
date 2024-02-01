@@ -51,7 +51,6 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           {props.department}&nbsp;･&nbsp;
           {props.title}
         </h4>
-
         {Object.keys(props.courses).length > 0 && (
           <p>
             <b>Recently taught:&nbsp;</b>
@@ -59,9 +58,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <a style={{ color: 'black' }} href={'/course/' + item.replace(/\s+/g, '')}>
-                    {item}
-                  </a>
+                  <a href={'/course/' + item.replace(/\s+/g, '')}>{item}</a>
                 </span>
               );
             })}

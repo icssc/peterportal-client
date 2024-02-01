@@ -1,3 +1,24 @@
+[data-theme='dark'] {
+  .search-popup {
+    .dropdown,
+    .dropdown .menu {
+      background-color: var(--overlay3);
+      border-color: var(--overlay2);
+    }
+
+    .dropdown:hover {
+      border-color: var(--overlay4);
+    }
+
+    .ui.dropdown {
+      .menu > .item.active,
+      .menu > .item:hover {
+        background-color: var(--overlay4);
+      }
+    }
+  }
+}
+
 .search-popup-missing {
   display: flex;
   flex-direction: column;
@@ -11,7 +32,7 @@
 }
 
 .search-popup {
-  background-color: #ffffff;
+  background-color: var(--overlay1);
   padding: 3rem;
   margin-left: 3vw;
   height: 85vh;
@@ -36,11 +57,11 @@
 }
 
 .search-popup-more {
-  background-color: #ffffff;
+  background-color: transparent;
 }
 
 .search-popup-block {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
 }
 
@@ -62,7 +83,7 @@
 }
 
 .search-popup-carousel {
-  background-color: var(--peterportal-gray-blue);
+  background-color: var(--overlay2);
   height: 100%;
   margin: 0 1vw;
   padding: 2vh 1vw;

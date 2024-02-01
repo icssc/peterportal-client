@@ -1,0 +1,143 @@
+// light theme vars
+:root {
+  --background: var(--peterportal-gray-blue); // defined in index.css
+  --overlay1: #fff;
+  --overlay2: var(--peterportal-gray-blue);
+  --overlay3: #fff;
+  --overlay4: var(--peterportal-gray-blue);
+  --text: #212529; // default bootstrap color
+  --text-dark: #000;
+  --text-light: #495057;
+  --hover: #cacbcd; // semantic-ui default
+}
+
+// dark theme vars
+// each overlay is about 5% brighter than the previous
+// roughly following: https://m2.material.io/design/color/dark-theme.html
+[data-theme='dark'] {
+  --background: #121212;
+  --overlay1: #1e1e1e;
+  --overlay2: #292929;
+  --overlay3: #363636;
+  // jumps to 10% brighter
+  --overlay4: #4c4c4c;
+  --text: #fff;
+  --text-dark: #fff;
+  --text-light: #fff;
+  --hover: #cacbcd;
+  --peterportal-primary-color-1: #268cd3;
+  --zot-blue: var(--peterportal-primary-color-1);
+
+  color-scheme: dark;
+}
+
+// general bootstrap overwrites. bg/border color may need further customization per component
+.table {
+  color: var(--text);
+}
+
+.form-control::selection {
+  color: var(--text-dark);
+}
+
+[data-theme='dark'] {
+  .list-group-item,
+  .modal-content,
+  .dropdown-menu,
+  .dropdown-item,
+  .form-control,
+  .form-control:focus {
+    color: var(--text);
+    background-color: var(--overlay2);
+  }
+
+  .form-control {
+    border-color: var(--overlay3);
+  }
+
+  .custom-control-label::before {
+    background-color: var(--overlay3);
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--overlay3);
+  }
+
+  .btn-outline-primary {
+    color: #0f83ff;
+    border-color: #0f83ff;
+
+    &:hover,
+    &:focus {
+      color: white;
+    }
+
+    &:hover {
+      border-color: #007bff;
+    }
+
+    &:focus {
+      border-color: #2767d4;
+    }
+  }
+
+  .close {
+    color: var(--text);
+    text-shadow: none;
+  }
+}
+
+.popover-body {
+  background-color: var(--overlay1);
+  color: var(--text);
+}
+.bs-popover-top > .arrow::after {
+  border-top-color: var(--overlay1);
+}
+.bs-popover-bottom > .arrow::after {
+  border-bottom-color: var(--overlay1);
+}
+.bs-popover-left > .arrow::after {
+  border-left-color: var(--overlay1);
+}
+.bs-popover-right > .arrow::after {
+  border-right-color: var(--overlay1);
+}
+// end bootstrap overwrites
+
+// general semantic-ui overwrites. bg/border color may need to be customized per component
+[data-theme='dark'] {
+  .ui,
+  .ui.popup:before {
+    color: var(--text);
+    background-color: var(--overlay2);
+    border-color: var(--overlay1);
+  }
+
+  .ui.bottom.popup:before {
+    box-shadow: -1px -1px 0 0 var(--overlay1);
+  }
+
+  .ui.dropdown,
+  .ui.dropdown .menu {
+    color: var(--text);
+    background-color: var(--overlay2);
+    border-color: var(--overlay1);
+  }
+
+  .ui.selection.visible.dropdown > .text:not(.default),
+  .ui.dropdown .menu > .item {
+    color: var(--text);
+  }
+
+  .ui.dropdown:hover {
+    border-color: var(--overlay3);
+  }
+  .ui.dropdown {
+    .menu > .item:hover,
+    .menu > .item.active {
+      background-color: var(--overlay3);
+    }
+  }
+}
+// end semantic-ui overwrites

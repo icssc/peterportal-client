@@ -3,26 +3,19 @@
   height: 100%;
 }
 
-.ui.segment {
-  // background: linear-gradient(90deg, $primary-color-1 0%, $primary-color-2 100%);
-  padding: 0 !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
+[data-theme='dark'] {
+  .beta-popup .button {
+    background-color: var(--overlay3);
+  }
 
-:root {
-  --bg: #fff;
-  --bg-accent: #eee;
-  --text-color: rgba(0, 0, 0, 0.87);
-  --border: 1px solid #eee;
-  --border-radius: 8px;
-  --speed: 500ms;
-}
+  .beta-popup .button:hover,
+  .beta-popup .button:focus {
+    background-color: var(--hover);
+  }
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  .navbar {
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  }
 }
 
 .navbar {
@@ -30,7 +23,7 @@ ul {
   z-index: 300;
   width: 100%;
   height: 8vh;
-  background-color: var(--bg);
+  background-color: var(--overlay1);
   padding-right: 3vw;
   padding-left: 2vw;
   display: flex;
@@ -75,11 +68,11 @@ ul {
     }
 
     .navbar-toggle {
+      background-color: var(--overlay2);
       margin-left: 5vw;
       display: flex;
       flex-direction: row;
       align-items: center;
-      background-color: #f5f6fc;
       height: 60%;
       border-radius: 1rem;
       width: 12vw;
@@ -94,7 +87,7 @@ ul {
         border-radius: 1rem;
 
         a {
-          color: black;
+          color: var(--text);
         }
       }
 
@@ -137,7 +130,6 @@ ul {
         display: flex;
         flex-direction: row;
         align-items: center;
-        background-color: #f5f6fc;
         height: 60%;
         border-radius: 1rem;
         width: 17vw;
@@ -175,144 +167,6 @@ ul {
       }
     }
   }
-}
-
-.nav-item {
-  width: calc(var(--nav-size) * 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.icon-button {
-  --button-size: calc(var(--nav-size) * 0.65);
-  width: var(--button-size);
-  height: var(--button-size);
-  background-color: var(--bg-accent);
-  border-radius: 50%;
-  padding: 5px;
-  margin: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: filter 300ms;
-  transition: background-color 300ms;
-}
-
-.icon-button:hover {
-  cursor: pointer;
-  filter: brightness(0.9);
-}
-
-.google-login:hover > .icon-button {
-  background-color: #de5246;
-  i.icon {
-    color: #fff !important;
-  }
-}
-
-.facebook-login:hover > .icon-button {
-  background-color: #3b5998;
-  i.icon {
-    color: #fff !important;
-  }
-}
-
-.dark-mode:hover > .icon-button {
-  background-color: #9146ff;
-  i.icon {
-    color: #fff !important;
-  }
-}
-
-.icon-button svg {
-  fill: var(--text-color);
-  width: 15px;
-  height: 15px;
-}
-
-.settings-menu {
-  position: absolute;
-  top: 58px;
-  width: 300px;
-  transform: translateX(-45%);
-  background-color: var(--bg);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  overflow: hidden;
-}
-
-.menu-item {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  border-radius: var(--border-radius);
-  transition: background var(--speed);
-  padding: 0.5rem;
-  color: var(--text-color);
-  text-decoration: none;
-  transition: background-color 300ms;
-  .button-text {
-    padding-left: 12px;
-  }
-}
-
-.menu-item:hover {
-  background-color: #f7f7f7;
-  cursor: pointer;
-  .icon-button {
-    filter: brightness(0.9);
-  }
-}
-
-.icon-right {
-  margin-left: auto;
-}
-
-.menu {
-  width: 100%;
-}
-
-.menu-primary-enter {
-  position: absolute;
-  transform: translateX(-110%);
-}
-
-.menu-primary-enter-active {
-  transform: translateX(0%);
-  transition: all var(--speed) ease;
-}
-
-.menu-primary-exit {
-  position: absolute;
-}
-
-.menu-primary-exit-active {
-  transform: translateX(-110%);
-  transition: all var(--speed) ease;
-}
-
-.menu-secondary-enter {
-  transform: translateX(110%);
-}
-
-.menu-secondary-enter-active {
-  transform: translateX(0%);
-  transition: all var(--speed) ease;
-}
-
-.menu-secondary-exit {
-}
-
-.menu-secondary-exit-active {
-  transform: translateX(110%);
-  transition: all var(--speed) ease;
-}
-
-i.icon {
-  margin: -2px 0 0 0 !important;
 }
 
 .feedback {

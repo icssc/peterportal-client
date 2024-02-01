@@ -5,6 +5,8 @@ body {
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+  background: var(--background);
 }
 
 code {
@@ -27,6 +29,11 @@ code {
   --peterportal-mid-gray: #8d8d8d;
   --peterportal-uci-gold: #ffd200;
   --peterportal-gray-blue: #f5f6fc;
+  --zot-blue: var(--peterportal-primary-color-1);
+  --aldrich-blue: var(--peterportal-primary-color-2);
+  --ring-road-white: #ffffff;
+  --petr-gray: #808080;
+  --border-radius: 8px;
 }
 
 ::-moz-selection {
