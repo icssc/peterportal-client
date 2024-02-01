@@ -1,13 +1,13 @@
 import { FC, useState } from 'react';
-import './Quarter.scss';
 import { Draggable } from 'react-beautiful-dnd';
-import Course from './Course';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { deleteQuarter, clearQuarter, deleteCourse } from '../../store/slices/roadmapSlice';
-import { PlannerQuarterData } from '../../types/types';
 import { Button, Overlay, Popover } from 'react-bootstrap';
-import { ThreeDots } from 'react-bootstrap-icons';
+import { Plus, ThreeDots } from 'react-bootstrap-icons';
+import { isMobile } from 'react-device-detect';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
+import { PlannerQuarterData } from '../../types/types';
+import Course from './Course';
+import './Quarter.scss';
 import { StrictModeDroppable } from './StrictModeDroppable';
 
 interface QuarterProps {
@@ -136,6 +136,21 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           );
         }}
       </StrictModeDroppable>
+
+      {isMobile && (
+        <>
+          <Button
+            variant="light"
+            className="quarter quarter-header"
+            onClick={() => {
+              dispatch(setShowSearch(true));
+            }}
+          >
+            <Plus />
+            Add Course
+          </Button>
+        </>
+      )}
     </div>
   );
 };
