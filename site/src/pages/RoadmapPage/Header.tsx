@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import './Header.scss';
-import { Button, ButtonGroup, Popover, Overlay } from 'react-bootstrap';
-import { ArrowLeftRight, Save, Plus, List, Trash } from 'react-bootstrap-icons';
-import { setShowTransfer, setShowSearch, clearPlanner } from '../../store/slices/roadmapSlice';
+import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
+import { ArrowLeftRight, List, Save, Trash } from 'react-bootstrap-icons';
+import { isBrowser, isMobile } from 'react-device-detect';
 import { useAppDispatch } from '../../store/hooks';
+import { clearPlanner, setShowTransfer } from '../../store/slices/roadmapSlice';
+import './Header.scss';
 import Transfer from './Transfer';
-import { isMobile, isBrowser } from 'react-device-detect';
 
 interface HeaderProps {
   courseCount: number;
@@ -69,16 +69,6 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
       <div>
         {isMobile && (
           <>
-            <Button
-              variant="light"
-              className="header-btn add-course"
-              onClick={() => {
-                dispatch(setShowSearch(true));
-              }}
-            >
-              <Plus className="header-icon mr-1" />
-              Add Course
-            </Button>
             <List className="mx-3" onClick={onMenuClick} />
             <Overlay show={showMenu} target={target} placement="left">
               <Popover id="roadmap-header-buttons">
