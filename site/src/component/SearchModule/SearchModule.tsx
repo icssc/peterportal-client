@@ -40,11 +40,11 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     searchResults('professors', professorSearch.pageNumber, professorSearch.names);
   }, [professorSearch.names, professorSearch.pageNumber]);
 
-  let searchNames = (query: string) => {
+  const searchNames = (query: string) => {
     try {
       // Get all results only when query changes or user reaches the fourth page or after
       const currentPage = index === 'courses' ? courseSearch.pageNumber : professorSearch.pageNumber;
-      let nameResults = wfs({
+      const nameResults = wfs({
         query: query,
         resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
         // Load INITIAL_MAX_PAGE pages first
@@ -80,31 +80,31 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     }
   };
 
-  let searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
+  const searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
     if (!hasFullResults && pageNumber >= FULL_RESULT_THRESHOLD) {
       setHasFullResults(true);
       searchNames(lastQuery);
     }
     // Get the subset of names based on the page
-    let pageNames = names.slice(NUM_RESULTS_PER_PAGE * pageNumber, NUM_RESULTS_PER_PAGE * (pageNumber + 1));
-    let results = await searchAPIResults(index, pageNames);
+    const pageNames = names.slice(NUM_RESULTS_PER_PAGE * pageNumber, NUM_RESULTS_PER_PAGE * (pageNumber + 1));
+    const results = await searchAPIResults(index, pageNames);
     dispatch(setResults({ index, results: Object.values(results) }));
   };
 
-  let searchNamesAfterTimeout = (query: string) => {
+  const searchNamesAfterTimeout = (query: string) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
     }
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       searchNames(query);
       pendingRequest = null;
     }, SEARCH_TIMEOUT_MS);
     pendingRequest = timeout;
   };
 
-  let coursePlaceholder = 'Search a course number or department';
-  let professorPlaceholder = 'Search a professor';
-  let placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
+  const coursePlaceholder = 'Search a course number or department';
+  const professorPlaceholder = 'Search a professor';
+  const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
   return (
     <div className="search-module">
