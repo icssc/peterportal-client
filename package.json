@@ -2,7 +2,7 @@
   "name": "peterportal-root",
   "version": "0.1.0",
   "scripts": {
-    "dev": "concurrently -n backend,frontend \"cd api && npm run dev\" \"cd site && npm run dev\"",
+    "dev": "concurrently -n backend,frontend -c blue,green \"cd api && npm run dev\" \"cd site && npm run dev\"",
     "postinstall": "cd api && npm install && cd ../site && npm install",
     "prepare": "husky install",
     "format": "prettier --write **/*.{scss,js,ts,tsx}",
