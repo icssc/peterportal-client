@@ -48,7 +48,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         label={q.name}
         value={q.id}
         checked={q.checked ?? false}
-        onInput={() => handleClick(i)}
+        onChange={() => handleClick(i)}
       />
     );
   });
