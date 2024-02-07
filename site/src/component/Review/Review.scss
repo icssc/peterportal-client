@@ -144,7 +144,11 @@
 .add-report-button:hover {
   background-color: lightgray;
 }
-
+.gapped {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 @media only screen and (max-width: 600px) {
   .subreview-content {
     flex-direction: column;
