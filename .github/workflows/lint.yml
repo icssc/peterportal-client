@@ -26,6 +26,8 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        env:
+          HUSKY: 0
 
       - name: Lint
         run: npm run lint

@@ -28,6 +28,8 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        env:
+          HUSKY: 0
 
       - name: Remove staging stack
         run: npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend && npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} frontend
