@@ -7,7 +7,7 @@ on:
       - master
 
 concurrency:
-  group: deploy-${{ github.head_ref || github.run_id }}
+  group: clean-up-pr-${{ github.head_ref || github.run_id }}
 
 jobs:
   clean-up-pr:

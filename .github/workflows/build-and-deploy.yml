@@ -18,7 +18,7 @@ jobs:
       url: https://${{ (github.event_name == 'pull_request' && format('staging-{0}.peterportal.org', github.event.pull_request.number)) || 'peterportal.org' }}
 
     concurrency:
-      group: build-${{ github.head_ref || github.run_id }}
+      group: build-and-deploy-${{ github.head_ref || github.run_id }}
       cancel-in-progress: true
 
     steps:
