@@ -123,11 +123,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           show={show}
           placement="bottom"
         >
-          <ThreeDots /* onClick={handleEditClick} */ className="edit-btn" />
+          <ThreeDots className="edit-btn" />
         </OverlayTrigger>
-        {/* <Overlay show={show} target={threeDotMenuTarget} placement="bottom">
-          
-        </Overlay> */}
         <CourseYearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}
           placeholderName={placeholderName}

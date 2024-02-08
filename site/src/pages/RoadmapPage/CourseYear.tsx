@@ -62,15 +62,19 @@ const CourseYearModal: FC<CourseYearModalProps> = (props) => {
 
   const title = type === 'add' ? 'Add Year' : `Editing "${placeholderName}"`;
 
-  const handleHide = () => {
+  const resetForm = () => {
     setName(placeholderName);
     setYear(placeholderYear);
     setQuarters(quarterValues(currentQuarters));
+  };
+
+  const handleHide = () => {
+    resetForm();
     setShow(false);
   };
 
   return (
-    <Modal show={show} onHide={handleHide} centered className="planner-year-modal">
+    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="planner-year-modal">
       <Modal.Header closeButton>
         <h2>{title}</h2>
       </Modal.Header>
