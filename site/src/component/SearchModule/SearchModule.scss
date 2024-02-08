@@ -2,3 +2,16 @@
   border-color: #80bdff;
   padding: 2vh 2vh;
 }
+
+[data-theme='dark'] {
+  .search-bar,
+  .search-bar:focus,
+  .search-module .input-group-text {
+    color: var(--text);
+    background-color: var(--overlay1);
+    border-color: var(--overlay2);
+  }
+  .search-bar:focus {
+    border-color: #80bdff;
+  }
+}

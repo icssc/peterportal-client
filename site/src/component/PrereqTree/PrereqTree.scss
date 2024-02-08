@@ -182,8 +182,13 @@
   }
 }
 
-.missing-tree {
+.prereq-text-box {
   padding: 1em;
-  background-color: #f5f5f5;
   margin-top: 2em;
+  background-color: var(--overlay2);
+}
+
+.prereq ul {
+  margin: 0;
+  padding: 0;
 }

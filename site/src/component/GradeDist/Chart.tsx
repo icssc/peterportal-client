@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
+import ThemeContext from '../../style/theme-context';
 import { type Theme } from '@nivo/core';
 import { GradesRaw } from 'peterportal-api-next-types';
 
@@ -17,18 +18,22 @@ export default class Chart extends React.Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
-  theme: Theme = {
-    tooltip: {
-      container: {
-        background: 'rgba(0,0,0,.87)',
-        color: '#ffffff',
-        fontSize: '1.2rem',
-        outline: 'none',
-        margin: 0,
-        padding: '0.25em 0.5em',
-        borderRadius: '2px',
+
+  getTheme = (darkMode: boolean): Theme => {
+    return {
+      axis: {
+        ticks: {
+          text: {
+            fill: darkMode ? '#eee' : '#333',
+          },
+        },
+        legend: {
+          text: {
+            fill: darkMode ? '#eee' : '#333',
+          },
+        },
       },
-    },
+    };
   };
 
   /*
@@ -106,6 +111,20 @@ export default class Chart extends React.Component<ChartProps> {
     ];
   };
 
+  tooltipStyle: Theme = {
+    tooltip: {
+      container: {
+        background: 'rgba(0,0,0,.87)',
+        color: '#ffffff',
+        fontSize: '1.2rem',
+        outline: 'none',
+        margin: 0,
+        padding: '0.25em 0.5em',
+        borderRadius: '2px',
+      },
+    },
+  };
+
   /*
    * Indicate how the tooltip should look like when users hover over the bar
    * Code is slightly modified from: https://codesandbox.io/s/nivo-scatterplot-
@@ -115,7 +134,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
     return (
-      <div style={this.theme.tooltip?.container}>
+      <div style={this.tooltipStyle.tooltip?.container}>
         <strong>
           {props.label}: {props.data[props.label]}
         </strong>
@@ -143,31 +162,35 @@ export default class Chart extends React.Component<ChartProps> {
 
     return (
       <>
-        <ResponsiveBar
-          data={data}
-          keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
-          indexBy="label"
-          margin={{
-            top: 50,
-            right: marginX,
-            bottom: 50,
-            left: marginX,
-          }}
-          layout="vertical"
-          axisBottom={{
-            tickSize: 10,
-            tickPadding: 5,
-            tickRotation: 0,
-            legend: 'Grade',
-            legendPosition: 'middle',
-            legendOffset: 36,
-          }}
-          enableLabel={false}
-          colors={colors}
-          // theme={this.theme}
-          tooltipLabel={(datum) => String(datum.id)}
-          tooltip={this.styleTooltip}
-        />
+        <ThemeContext.Consumer>
+          {({ darkMode }) => (
+            <ResponsiveBar
+              data={data}
+              keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
+              indexBy="label"
+              margin={{
+                top: 50,
+                right: marginX,
+                bottom: 50,
+                left: marginX,
+              }}
+              layout="vertical"
+              axisBottom={{
+                tickSize: 10,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Grade',
+                legendPosition: 'middle',
+                legendOffset: 36,
+              }}
+              enableLabel={false}
+              colors={colors}
+              theme={this.getTheme(darkMode)}
+              tooltipLabel={(datum) => String(datum.id)}
+              tooltip={this.styleTooltip}
+            />
+          )}
+        </ThemeContext.Consumer>
       </>
     );
   }

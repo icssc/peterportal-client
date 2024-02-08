@@ -6,6 +6,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
 import { CourseGQLData } from '../../types/types';
+import ThemeContext from '../../style/theme-context';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -81,9 +82,13 @@ const Course: FC<CourseProps> = (props) => {
           </OverlayTrigger>
         </div>
         {onDelete && (
-          <Button variant="light" className="course-delete-btn" onClick={onDelete}>
-            <Trash className="course-delete-icon" />
-          </Button>
+          <ThemeContext.Consumer>
+            {({ darkMode }) => (
+              <Button variant={darkMode ? 'dark' : 'light'} className="course-delete-btn" onClick={onDelete}>
+                <Trash className="course-delete-icon" />
+              </Button>
+            )}
+          </ThemeContext.Consumer>
         )}
       </div>
       <div className="title">{title}</div>

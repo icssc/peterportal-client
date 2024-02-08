@@ -3,15 +3,14 @@
 */
 
 import express, { Request } from 'express';
-import fetch from 'node-fetch';
 import { getCourseQuery } from '../helpers/gql';
-var router = express.Router();
+const router = express.Router();
 
 /**
  * PPAPI proxy for course data
  */
-router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
-  let r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
+router.get('/api', (req: Request<never, unknown, never, { courseID: string }, never>, res) => {
+  const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -25,11 +24,11 @@ router.get('/api', (req: Request<{}, {}, {}, { courseID: string }>, res) => {
 /**
  * PPAPI proxy for course data
  */
-router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => {
+router.post('/api/batch', (req: Request<never, unknown, { courses: string[] }, never>, res) => {
   if (req.body.courses.length == 0) {
     res.json({});
   } else {
-    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+    const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,9 +41,9 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
     r.then((response) => response.json()).then((data) =>
       res.json(
         Object.fromEntries(
-          Object.entries(data.data)
-            .filter(([_, x]) => x !== null)
-            .map(([_, x]) => [(x as { id: string }).id, x]),
+          Object.values(data.data)
+            .filter((x) => x !== null)
+            .map((x) => [(x as { id: string }).id, x]),
         ),
       ),
     );
@@ -54,8 +53,8 @@ router.post('/api/batch', (req: Request<{}, {}, { courses: string[] }>, res) => 
 /**
  * PPAPI proxy for grade distribution
  */
-router.get('/api/grades', (req: Request<{}, {}, {}, { department: string; number: string }>, res) => {
-  let r = fetch(
+router.get('/api/grades', (req: Request<never, unknown, never, { department: string; number: string }>, res) => {
+  const r = fetch(
     process.env.PUBLIC_API_URL +
       'grades/raw?department=' +
       encodeURIComponent(req.query.department) +

@@ -1,24 +1,28 @@
-import { FC, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
-import DefaultAvatar from '../../asset/default-avatar.png';
+import defaultAvatarLight from '../../asset/default-avatar.png';
+import defaultAvatarDark from '../../asset/default-avatar-dark.png';
 import './Sidebar.scss';
 
 import axios, { AxiosResponse } from 'axios';
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
+import ThemeContext from '../../style/theme-context';
 
-const SideBar: FC = () => {
+const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const [cookies] = useCookies(['user']);
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const { darkMode, setTheme } = useContext(ThemeContext);
+  const defaultAvatar = darkMode ? defaultAvatarDark : defaultAvatarLight;
 
   const isLoggedIn = cookies.user !== undefined;
 
@@ -86,6 +90,16 @@ const SideBar: FC = () => {
             </NavLink>
           </li>
         )}
+        {showSidebar && (
+          <li>
+            <a className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
+              <div>
+                <Icon name={darkMode ? 'moon outline' : 'sun outline'} size="large" />
+              </div>
+              <span>Toggle Dark Mode</span>
+            </a>
+          </li>
+        )}
         {isAdmin && (
           <>
             <li>
@@ -127,7 +141,7 @@ const SideBar: FC = () => {
         </div>
         {/* Profile Icon and Name */}
         <div className="sidebar-profile">
-          <img src={picture ? picture : DefaultAvatar} />
+          <img src={picture ? picture : defaultAvatar} />
           <p>{name ? name : 'Anonymous Peter'}</p>
         </div>
 
@@ -138,7 +152,7 @@ const SideBar: FC = () => {
         <div className="sidebar-login">
           {isLoggedIn && (
             <a href={`/api/users/logout`}>
-              <Button variant="light">
+              <Button variant={darkMode ? 'dark' : 'light'}>
                 <span className="sidebar-login-icon">
                   <Icon name="sign out" className="sidebar-login-icon" />
                 </span>
@@ -148,7 +162,7 @@ const SideBar: FC = () => {
           )}
           {!isLoggedIn && (
             <a href={`/api/users/auth/google`}>
-              <Button variant="light">
+              <Button variant={darkMode ? 'dark' : 'light'}>
                 <span className="sidebar-login-icon">
                   <Icon name="sign in" className="sidebar-login-icon" />
                 </span>

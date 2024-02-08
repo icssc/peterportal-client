@@ -2,6 +2,7 @@
  @module PassportConfig
 */
 
+import { User } from 'express-session';
 import passport from 'passport';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 
@@ -9,7 +10,7 @@ passport.serializeUser(function (user, done) {
   done(null, user);
 });
 
-passport.deserializeUser(function (user: any, done) {
+passport.deserializeUser(function (user: false | User | null | undefined, done) {
   done(null, user);
 });
 
@@ -29,7 +30,7 @@ passport.use(
       if (profile.emails && profile.emails.length! > 0) {
         email = profile.emails[0].value;
       }
-      var userData = {
+      const userData = {
         id: profile.id,
         email: email,
         name: profile.displayName,

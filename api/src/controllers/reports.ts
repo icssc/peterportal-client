@@ -3,24 +3,19 @@
 */
 
 import express from 'express';
-import { ObjectID } from 'mongodb';
-import {
-  COLLECTION_NAMES,
-  getCollection,
-  addDocument,
-  getDocuments,
-  deleteDocument,
-  deleteDocuments,
-} from '../helpers/mongo';
+import { ObjectId } from 'mongodb';
+import { COLLECTION_NAMES, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * Get all reports
  */
-router.get('/', async (req, res, next) => {
-  let reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
+router.get('/', async (req, res) => {
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
+  const reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
   res.json(reports);
 });
@@ -28,7 +23,7 @@ router.get('/', async (req, res, next) => {
 /**
  * Add a report
  */
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
   console.log(`Adding Report: ${JSON.stringify(req.body)}`);
 
   await addDocument(COLLECTION_NAMES.REPORTS, req.body);
@@ -39,16 +34,18 @@ router.post('/', async (req, res, next) => {
 /**
  * Delete a report
  */
-router.delete('/', async (req, res, next) => {
+router.delete('/', async (req, res) => {
   let status;
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
   if (req.body.id) {
     console.log(`Deleting report ${req.body.id}`);
     status = await deleteDocument(COLLECTION_NAMES.REPORTS, {
-      _id: new ObjectID(req.body.id),
+      _id: new ObjectId(req.body.id),
     });
   } else {
     console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
-    let query: GenericObject = {};
+    const query: GenericObject = {};
     if (req.body.reviewID) query['reviewID'] = req.body.reviewID;
 
     if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified
