@@ -1,8 +1,7 @@
-import { FC, useState, useContext } from 'react';
+import { FC, useState } from 'react';
 import './AddYearPopup.scss';
-import { PlusCircleFill } from 'react-bootstrap-icons';
+import { Plus } from 'react-bootstrap-icons';
 import { Button } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
 import CourseYearModal from './CourseYear';
 import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -14,7 +13,6 @@ interface AddYearPopupProps {
 }
 
 const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear }) => {
-  const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -33,9 +31,9 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
-      <Button variant={darkMode ? 'dark' : 'light'} className="add-year-btn" onClick={() => setShowModal(true)}>
-        <PlusCircleFill className="add-year-icon" />
-        <div className="add-year-text">Add year</div>
+      <Button variant="primary" className="add-year-btn" onClick={() => setShowModal(true)}>
+        <Plus className="add-year-icon" />
+        <div className="add-year-text">Add Year</div>
       </Button>
     </div>
   );

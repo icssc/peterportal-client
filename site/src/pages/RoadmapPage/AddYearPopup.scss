@@ -8,22 +8,23 @@
 }
 
 .add-year-btn {
-  background-color: transparent;
-  color: var(--petr-gray);
+  border-color: var(--peterportal-primary-color-1);
+  background-color: var(--peterportal-primary-color-1);
+  color: var(--ring-road-white);
   border: none;
-  display: block;
+  display: flex;
+  align-items: center;
   margin: 0.5rem;
 }
 
 .add-year-btn:hover,
-.add-year-btn:focus,
-.add-year-btn:active {
-  background-color: transparent;
-  color: var(--petr-gray);
+.add-year-btn:focus {
+  background-color: var(--peterportal-primary-color-1);
 }
 
 .add-year-icon {
-  margin-right: 10px;
+  margin-right: 4px;
+  transform: scale(1.5);
 }
 
 .add-year-text {
