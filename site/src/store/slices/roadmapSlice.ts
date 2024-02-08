@@ -1,16 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
 import {
-  PlannerData,
-  PlannerYearData,
   CourseGQLData,
-  YearIdentifier,
-  QuarterIdentifier,
   CourseIdentifier,
   InvalidCourseData,
-  TransferData,
+  PlannerData,
   PlannerQuarterData,
+  PlannerYearData,
+  QuarterIdentifier,
+  TransferData,
+  YearIdentifier,
 } from '../../types/types';
+import type { RootState } from '../store';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -28,6 +28,8 @@ interface RoadmapState {
   showSearch: boolean;
   // Whether or not to show the add course modal on mobile
   showAddCourse: boolean;
+  // Selected quarter and year for adding a course on mobile
+  currentYearAndQuarter: { year: number; quarter: number } | null;
 }
 
 // Define the initial state using that type
@@ -39,6 +41,7 @@ const initialState: RoadmapState = {
   transfers: [],
   showSearch: false,
   showAddCourse: false,
+  currentYearAndQuarter: null,
 };
 
 // Payload to pass in to move a course
@@ -256,8 +259,12 @@ export const roadmapSlice = createSlice({
     deleteTransfer: (state, action: PayloadAction<number>) => {
       state.transfers.splice(action.payload, 1);
     },
-    setShowSearch: (state, action: PayloadAction<boolean>) => {
-      state.showSearch = action.payload;
+    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
+      state.showSearch = action.payload.show;
+      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
+        console.log('setting currentYearAndQuarter to ', action.payload.year, action.payload.quarter);
+        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
+      }
     },
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;

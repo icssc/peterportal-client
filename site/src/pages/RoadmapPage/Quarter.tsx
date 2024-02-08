@@ -143,7 +143,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             variant="light"
             className="quarter quarter-header"
             onClick={() => {
-              dispatch(setShowSearch(true));
+              dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
             }}
           >
             <Plus />

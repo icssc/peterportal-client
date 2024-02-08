@@ -8,6 +8,7 @@ import DefaultAvatar from '../../asset/default-avatar.png';
 import './Sidebar.scss';
 
 import axios, { AxiosResponse } from 'axios';
+import React from 'react';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 

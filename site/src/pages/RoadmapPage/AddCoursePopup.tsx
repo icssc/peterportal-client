@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -13,11 +13,22 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const dispatch = useAppDispatch();
   const planner = useAppSelector((state) => state.roadmap.yearPlans);
   const showForm = useAppSelector((state) => state.roadmap.showAddCourse);
-  const [year, setYear] = useState(-1);
-  const [quarter, setQuarter] = useState(-1);
+  const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
+  const [year, setYear] = useState(
+    currentYearAndQuarter && currentYearAndQuarter.year !== null ? currentYearAndQuarter.year : -1,
+  );
+  const [quarter, setQuarter] = useState(
+    currentYearAndQuarter && currentYearAndQuarter.quarter !== null ? currentYearAndQuarter.quarter : -1,
+  );
   const [validated, setValidated] = useState(false);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
 
+  useEffect(() => {
+    setYear(currentYearAndQuarter && currentYearAndQuarter.year !== null ? currentYearAndQuarter.year : -1);
+    setQuarter(currentYearAndQuarter && currentYearAndQuarter.quarter !== null ? currentYearAndQuarter.quarter : -1);
+  }, [currentYearAndQuarter]);
+
+  //console.log("receiving year: " + year + "and quarter: " + quarter);
   const closeForm = () => {
     // close form
     dispatch(setShowAddCourse(false));
@@ -55,7 +66,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
     );
 
     // hide the search bar to view the roadmap
-    dispatch(setShowSearch(false));
+    dispatch(setShowSearch({ show: false }));
 
     closeForm();
   };
@@ -78,6 +89,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           name="year"
           id="year"
           required
+          value={year === -1 ? '' : year}
           onChange={(e) => {
             const parsed = parseInt(e.target.value);
             console.log(parsed, isNaN(parsed));
@@ -110,8 +122,10 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
             name="quarter"
             id="quarter"
             required
+            value={quarter === -1 ? '' : quarter}
             onChange={(e) => {
               const parsed = parseInt(e.target.value);
+              console.log(parsed, isNaN(parsed));
               if (!isNaN(parsed)) {
                 setQuarter(parsed);
               }
