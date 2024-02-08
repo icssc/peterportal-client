@@ -1,14 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { addYear } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
-
-interface CourseYearModalProps {
-  placeholderName: string;
-  placeholderYear: number;
-  show: boolean;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { PlannerYearData } from '../../types/types';
 
 interface YearPopupQuarter {
   id: string;
@@ -16,8 +8,17 @@ interface YearPopupQuarter {
   checked?: boolean;
 }
 
-const CourseYearModal: FC<CourseYearModalProps> = ({ placeholderName, placeholderYear, show, setShow }) => {
-  const dispatch = useAppDispatch();
+interface CourseYearModalProps {
+  placeholderName: string;
+  placeholderYear: number;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  type: 'add' | 'edit';
+  saveHandler: (x: PlannerYearData) => void;
+}
+
+const CourseYearModal: FC<CourseYearModalProps> = (props) => {
+  const { placeholderName, placeholderYear, show, setShow, type, saveHandler } = props;
   const [validated, setValidated] = useState(false);
 
   const [name, setName] = useState(placeholderName);
@@ -49,10 +50,18 @@ const CourseYearModal: FC<CourseYearModalProps> = ({ placeholderName, placeholde
     );
   });
 
+  const title = type === 'add' ? 'Add Year' : `Editing "${placeholderName}"`;
+
+  const handleHide = () => {
+    setName(placeholderName);
+    setYear(placeholderYear);
+    setShow(false);
+  };
+
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered className="planner-year-modal">
+    <Modal show={show} onHide={handleHide} centered className="planner-year-modal">
       <Modal.Header closeButton>
-        <h2>Add Year</h2>
+        <h2>{title}</h2>
       </Modal.Header>
       <Modal.Body>
         <Form noValidate validated={validated} className="add-year-form">
@@ -102,26 +111,23 @@ const CourseYearModal: FC<CourseYearModalProps> = ({ placeholderName, placeholde
         </Form>
         <Button
           variant="primary"
-          // className="popup-btn"
           onClick={() => {
             if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
-              setValidated(false);
-              return;
+              return setValidated(false);
             }
 
             setValidated(false);
             setShow(false);
-            const yearData = {
+            saveHandler({
               startYear: year,
               name: name.trim(),
-              quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.name, courses: [] })),
-            };
-            dispatch(addYear({ yearData }));
+              quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
+            });
             setYear(placeholderYear);
             setName(placeholderName);
           }}
         >
-          Add to Roadmap
+          {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
         </Button>
       </Modal.Body>
     </Modal>

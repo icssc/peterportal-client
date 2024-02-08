@@ -1,13 +1,14 @@
 import React, { FC, useContext, useState } from 'react';
 import './Year.scss';
-import { Button, Form, Popover, Overlay } from 'react-bootstrap';
+import { Button, Popover, Overlay } from 'react-bootstrap';
 import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons';
 import Quarter from './Quarter';
 import { useAppDispatch } from '../../store/hooks';
-import { addQuarter, editYear, editName, deleteYear, clearYear } from '../../store/slices/roadmapSlice';
+import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } from '../../store/slices/roadmapSlice';
 
 import { PlannerYearData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import CourseYearModal from './CourseYear';
 
 interface YearProps {
   yearIndex: number;
@@ -21,11 +22,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [showAddQuarter, setShowAddQuarter] = useState(false);
   const [showEditYear, setShowEditYear] = useState(false);
   const [threeDotMenuTarget, setThreeDotMenuTarget] = useState<HTMLElement | null>(null);
-  const [addQuarterTarget, setAddQuarterTarget] = useState<HTMLElement | null>(null);
-  const [editYearTarget, setEditYearTarget] = useState<HTMLElement | null>(null!);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
-  const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
 
@@ -43,22 +41,11 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     }
   };
 
-  const handleShowAddQuarterClick = (event: React.MouseEvent) => {
-    setShowEditYear(false); // hide any other currently displayed menu bar options
-    setShowAddQuarter(!showAddQuarter);
-    setAddQuarterTarget(event.target as HTMLElement);
-  };
-
-  const handleAddQuarterClick = (year: number, quarter: string) => {
-    dispatch(addQuarter({ startYear: year, quarterData: { name: quarter, courses: [] } }));
-  };
-
-  const handleEditYearClick = (event: React.MouseEvent) => {
+  const handleEditYearClick = (/* event: React.MouseEvent */) => {
     setShowAddQuarter(false); // hide any other currently displayed menu bar options
     setPlaceholderYear(data.startYear); // set default year to current year
     setPlaceholderName(data.name);
     setShowEditYear(!showEditYear);
-    setEditYearTarget(event.target as HTMLElement);
   };
 
   const calculateYearStats = () => {
@@ -108,14 +95,14 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           <Popover id={`year-menu-${yearIndex}`}>
             <Popover.Content className="year-settings-popup">
               <div>
-                <Button
+                {/* <Button
                   disabled={!(data.quarters && data.quarters.length < 6)}
                   onClick={handleShowAddQuarterClick}
                   variant={buttonVariant}
                   className="year-settings-btn"
                 >
                   Add Quarter
-                </Button>
+                </Button> */}
                 <Button onClick={handleEditYearClick} variant={buttonVariant} className="year-settings-btn">
                   Edit Year
                 </Button>
@@ -151,148 +138,36 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </Popover.Content>
           </Popover>
         </Overlay>
-        <Overlay
-          show={showAddQuarter && data.quarters && data.quarters.length < 6}
-          target={addQuarterTarget}
-          placement="left"
-        >
-          <Popover id={`add-quarter-menu-${yearIndex}`}>
-            <Popover.Content>
-              <div>
-                {!data.quarters.map((quarter) => quarter.name).includes('fall') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'fall')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Fall
-                  </Button>
-                )}
-                {!data.quarters.map((quarter) => quarter.name).includes('winter') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'winter')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Winter
-                  </Button>
-                )}
-                {!data.quarters.map((quarter) => quarter.name).includes('spring') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'spring')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Spring
-                  </Button>
-                )}
-                {!data.quarters.map((quarter) => quarter.name).includes('summer I') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'summer I')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Summer I
-                  </Button>
-                )}
-                {!data.quarters.map((quarter) => quarter.name).includes('summer II') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'summer II')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Summer II
-                  </Button>
-                )}
-                {!data.quarters.map((quarter) => quarter.name).includes('summer 10 Week') && (
-                  <Button
-                    onClick={() => handleAddQuarterClick(data.startYear, 'summer 10 Week')}
-                    variant={buttonVariant}
-                    className="year-settings-btn"
-                  >
-                    Summer 10 Week
-                  </Button>
-                )}
-              </div>
-            </Popover.Content>
-          </Popover>
-        </Overlay>
-        <Overlay show={showEditYear} target={editYearTarget} placement="left">
-          <Popover id={`edit-year-menu-${yearIndex}`}>
-            <Popover.Content>
-              <Form noValidate validated={validated} className="edit-year-form">
-                <Form.Group>
-                  <Form.Label className="edit-year-form-label">Name</Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    name="name"
-                    value={placeholderName}
-                    onChange={(e) => {
-                      setPlaceholderName(e.target.value);
-                    }}
-                    onKeyDown={(e: React.KeyboardEvent) => {
-                      // prevent submitting form (reloads the page)
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                    maxLength={35}
-                    placeholder={placeholderName}
-                  ></Form.Control>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label className="edit-year-form-label">Start Year</Form.Label>
-                  <Form.Control
-                    required
-                    type="number"
-                    name="year"
-                    value={placeholderYear}
-                    onChange={(e) => {
-                      setPlaceholderYear(parseInt(e.target.value));
-                    }}
-                    onKeyDown={(e: React.KeyboardEvent) => {
-                      // prevent submitting form (reloads the page)
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                    min={1000}
-                    max={9999}
-                    placeholder={placeholderYear.toString()}
-                  ></Form.Control>
-                </Form.Group>
-                <Button
-                  className="edit-year-popup-btn"
-                  onClick={() => {
-                    if (
-                      placeholderName === '' ||
-                      placeholderYear < 1000 ||
-                      placeholderYear > 9999 ||
-                      Number.isNaN(placeholderYear)
-                    ) {
-                      setValidated(true);
-                      return;
-                    }
-
-                    setValidated(false);
-                    setPlaceholderName(placeholderName.trim());
-                    setShowEditYear(!showEditYear);
-                    setShow(!show);
-                    if (placeholderYear !== data.startYear) {
-                      dispatch(editYear({ startYear: placeholderYear, index: yearIndex }));
-                    }
-                    if (placeholderName !== data.name) {
-                      dispatch(editName({ name: placeholderName.trim(), index: yearIndex }));
-                    }
-                  }}
-                >
-                  Confirm
-                </Button>
-              </Form>
-            </Popover.Content>
-          </Popover>
-        </Overlay>
+        <CourseYearModal
+          key={`edit-year-${placeholderYear}-${placeholderName}`}
+          placeholderName={placeholderName}
+          placeholderYear={placeholderYear}
+          show={showEditYear}
+          setShow={setShowEditYear}
+          saveHandler={({ startYear, name, quarters }) => {
+            setShowEditYear(false);
+            if (startYear !== data.startYear) {
+              setPlaceholderYear(startYear);
+              dispatch(editYear({ startYear, index: yearIndex }));
+            }
+            if (name !== data.name) {
+              setPlaceholderName(name);
+              dispatch(editName({ name, index: yearIndex }));
+            }
+            const existing = data.quarters;
+            let removed = 0;
+            existing.forEach(({ name }, index) => {
+              const remove = !quarters.find((q) => q.name === name);
+              // Increment removed because the index of the quarters will change
+              if (remove) dispatch(deleteQuarter({ yearIndex, quarterIndex: index - removed++ }));
+            });
+            const addQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
+            for (const { name } of addQuarters) {
+              dispatch(addQuarter({ startYear, quarterData: { name, courses: [] } }));
+            }
+          }}
+          type="edit"
+        />
       </div>
       {showContent && (
         <div className="year-accordion-content">
