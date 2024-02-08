@@ -1,6 +1,6 @@
-import React, { FC, useContext, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import './Year.scss';
-import { Button, Popover, Overlay } from 'react-bootstrap';
+import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons';
 import Quarter from './Quarter';
 import { useAppDispatch } from '../../store/hooks';
@@ -19,33 +19,17 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
   const [showContent, setShowContent] = useState(true);
   const [show, setShow] = useState(false);
-  const [showAddQuarter, setShowAddQuarter] = useState(false);
   const [showEditYear, setShowEditYear] = useState(false);
-  const [threeDotMenuTarget, setThreeDotMenuTarget] = useState<HTMLElement | null>(null);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
 
-  const handleEditClick = (event: React.MouseEvent) => {
-    if (showAddQuarter) {
-      /* hide both overlays */
-      setShowAddQuarter(!showAddQuarter);
-      setShow(!show);
-    } else if (showEditYear) {
-      setShowEditYear(!showEditYear);
-      setShow(!show);
-    } else {
-      setShow(!show);
-      setThreeDotMenuTarget(event.target as HTMLElement);
-    }
-  };
-
   const handleEditYearClick = (/* event: React.MouseEvent */) => {
-    setShowAddQuarter(false); // hide any other currently displayed menu bar options
     setPlaceholderYear(data.startYear); // set default year to current year
     setPlaceholderName(data.name);
-    setShowEditYear(!showEditYear);
+    setShowEditYear(true);
+    setShow(false); // when opening the modal, close the options menu
   };
 
   const calculateYearStats = () => {
@@ -61,6 +45,46 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   };
 
   const { unitCount, courseCount } = calculateYearStats();
+
+  const editYearOverlay = (
+    <Popover id={`year-menu-${yearIndex}`}>
+      <Popover.Content className="year-settings-popup">
+        <div>
+          <Button onClick={handleEditYearClick} variant={buttonVariant} className="year-settings-btn">
+            Edit Year
+          </Button>
+          <Button
+            variant={buttonVariant}
+            className="year-settings-btn"
+            id="clear-btn"
+            onClick={() => {
+              dispatch(
+                clearYear({
+                  yearIndex: yearIndex,
+                }),
+              );
+            }}
+          >
+            Clear
+          </Button>
+          <Button
+            variant={buttonVariant}
+            className="year-settings-btn"
+            id="remove-btn"
+            onClick={() => {
+              dispatch(
+                deleteYear({
+                  yearIndex: yearIndex,
+                }),
+              );
+            }}
+          >
+            Remove
+          </Button>
+        </div>
+      </Popover.Content>
+    </Popover>
+  );
 
   return (
     <div className="year">
@@ -90,54 +114,20 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
             </span>
           </span>
         </Button>
-        <ThreeDots onClick={handleEditClick} className="edit-btn" />
-        <Overlay show={show} target={threeDotMenuTarget} placement="bottom">
-          <Popover id={`year-menu-${yearIndex}`}>
-            <Popover.Content className="year-settings-popup">
-              <div>
-                {/* <Button
-                  disabled={!(data.quarters && data.quarters.length < 6)}
-                  onClick={handleShowAddQuarterClick}
-                  variant={buttonVariant}
-                  className="year-settings-btn"
-                >
-                  Add Quarter
-                </Button> */}
-                <Button onClick={handleEditYearClick} variant={buttonVariant} className="year-settings-btn">
-                  Edit Year
-                </Button>
-                <Button
-                  variant={buttonVariant}
-                  className="year-settings-btn"
-                  id="clear-btn"
-                  onClick={() => {
-                    dispatch(
-                      clearYear({
-                        yearIndex: yearIndex,
-                      }),
-                    );
-                  }}
-                >
-                  Clear
-                </Button>
-                <Button
-                  variant={buttonVariant}
-                  className="year-settings-btn"
-                  id="remove-btn"
-                  onClick={() => {
-                    dispatch(
-                      deleteYear({
-                        yearIndex: yearIndex,
-                      }),
-                    );
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-            </Popover.Content>
-          </Popover>
-        </Overlay>
+
+        <OverlayTrigger
+          trigger="click"
+          overlay={editYearOverlay}
+          rootClose
+          onToggle={setShow}
+          show={show}
+          placement="bottom"
+        >
+          <ThreeDots /* onClick={handleEditClick} */ className="edit-btn" />
+        </OverlayTrigger>
+        {/* <Overlay show={show} target={threeDotMenuTarget} placement="bottom">
+          
+        </Overlay> */}
         <CourseYearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}
           placeholderName={placeholderName}
