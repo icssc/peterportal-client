@@ -11,6 +11,8 @@ import './AppHeader.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
+import Profile from './Profile';
+import { isDesktop, isMobile } from 'react-device-detect';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -43,9 +45,11 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Hamburger Menu */}
-          <div className="navbar-menu">
-            <List className="navbar-menu-icon" onClick={toggleMenu} />
-          </div>
+          {isMobile && (
+            <div className="navbar-menu">
+              <List className="navbar-menu-icon" onClick={toggleMenu} />
+            </div>
+          )}
 
           {/* Toggle Course and Professor */}
           {(coursesActive || professorsActive) && (
@@ -82,7 +86,7 @@ const AppHeader: FC = () => {
         </div>
 
         {/* Week */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <Popup
               className="beta-popup"
@@ -135,6 +139,7 @@ const AppHeader: FC = () => {
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {week}
           </p>
+          {isDesktop && <Profile />}
         </div>
       </div>
     </header>

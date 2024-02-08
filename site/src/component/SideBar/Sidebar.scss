@@ -60,10 +60,11 @@
 
   .sidebar-links {
     min-width: 60%;
-    margin-bottom: 20vh;
+    margin-bottom: 2em;
 
     ul li {
-      a {
+      a,
+      .theme-button {
         color: var(--text);
         display: flex;
         grid-gap: 10px;
@@ -77,12 +78,34 @@
   }
 
   .sidebar-login {
-    margin-bottom: 5vh;
+    margin-bottom: 20vh;
 
     .sidebar-login-icon {
       margin-right: 0.4vw;
     }
   }
+}
+
+.theme-button .dropdown {
+  width: 100%;
+
+  button {
+    background-color: transparent;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    border: none;
+  }
+
+  .dropdown-item.active {
+    background-color: transparent;
+    color: var(--peterportal-primary-color-1);
+  }
+}
+
+.theme-button .show.dropdown button {
+  outline: none;
+  background-color: transparent;
 }
 
 .sidebar.mini {
@@ -130,16 +153,8 @@
   .sidebar {
     width: 100vw;
     z-index: 400;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-
-    .sidebar-login {
-      margin-top: -20vh;
-      margin-bottom: 35vh;
-    }
   }
+
   .sidebar.mini {
     display: none;
   }
