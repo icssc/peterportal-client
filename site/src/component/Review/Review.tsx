@@ -23,7 +23,7 @@ enum SortingOption {
 const Review: FC<ReviewProps> = (props) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [voteColors, setVoteColors] = useState([]);
+  const [voteColors, setVoteColors] = useState({});
   const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
 
@@ -46,47 +46,24 @@ const Review: FC<ReviewProps> = (props) => {
       })
       .then(async (res: AxiosResponse<ReviewData[]>) => {
         const data = res.data.filter((review) => review !== null);
-        const reviewIDs = [];
-        for (let i = 0; i < data.length; i++) {
-          reviewIDs.push(data[i]._id);
-        }
         const req = {
-          ids: reviewIDs as string[],
+          ids: data.map((review) => review._id!),
         };
         const colors = await getColors(req);
+        console.log(colors);
         setVoteColors(colors);
         dispatch(setReviews(data));
       });
   };
 
-  const updateVoteColors = async () => {
-    const reviewIDs = [];
-    for (let i = 0; i < reviewData.length; i++) {
-      reviewIDs.push(reviewData[i]._id);
-    }
-    const req = {
-      ids: reviewIDs as string[],
-    };
-    const colors = await getColors(req);
-    setVoteColors(colors);
-  };
-
-  const getU = (id: string | undefined) => {
+  const getVoteColor = (id: string | undefined) => {
     const temp = voteColors as object;
     const v = temp[id as keyof typeof temp] as unknown as number;
-    if (v == 1) {
-      return {
-        colors: [true, false],
-      };
-    } else if (v == -1) {
-      return {
-        colors: [false, true],
-      };
-    }
-    return {
-      colors: [false, false],
-    };
+    console.log('Color for ', id, ' ', v);
+
+    return v ?? 0;
   };
+
   useEffect(() => {
     // prevent reviews from carrying over
     dispatch(setReviews([]));
@@ -160,8 +137,7 @@ const Review: FC<ReviewProps> = (props) => {
               key={review._id}
               course={props.course}
               professor={props.professor}
-              colors={getU(review._id) as VoteColor}
-              colorUpdater={updateVoteColors}
+              userVote={getVoteColor(review._id)}
             />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>

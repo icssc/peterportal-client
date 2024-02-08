@@ -7,32 +7,24 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { PersonFill } from 'react-bootstrap-icons';
-import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
+import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  colors?: VoteColor;
-  colorUpdater?: () => void;
+  userVote: number;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) => {
   const [score, setScore] = useState(review.score);
   const [cookies] = useCookies(['user']);
-  let upvoteClass;
-  let downvoteClass;
-  if (colors != undefined && colors.colors != undefined) {
-    upvoteClass = colors.colors[0] ? 'upvote coloredUpvote' : 'upvote';
-    downvoteClass = colors.colors[1] ? 'downvote coloredDownvote' : 'downvote';
-  } else {
-    upvoteClass = 'upvote';
-    downvoteClass = 'downvote';
-  }
+  const [vote, setVote] = useState(userVote);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const voteReq = async (vote: VoteRequest) => {
-    const res = await axios.patch('/api/reviews/vote', vote);
+
+  const sendVote = async (voteReq: VoteRequest) => {
+    const res = await axios.patch('/api/reviews/vote', voteReq);
     return res.data.deltaScore;
   };
 
@@ -42,16 +34,30 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       return;
     }
 
-    const votes = {
-      id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+    const voteReq = {
+      id: review._id!,
       upvote: true,
     };
-    const deltaScore = await voteReq(votes);
 
-    setScore(score + deltaScore);
-    if (colorUpdater != undefined) {
-      colorUpdater();
+    let newVote;
+    let newScore;
+    if (vote === 1) {
+      newVote = 0;
+      newScore = score - 1;
+    } else if (vote === 0) {
+      newVote = 1;
+      newScore = score + 1;
+    } else {
+      newVote = 1;
+      newScore = score + 2;
     }
+    setScore(newScore);
+    setVote(newVote);
+    let deltaScore = await sendVote(voteReq).catch((err) => {
+      console.error('Error sending upvote:', err);
+      setScore(score);
+      setVote(vote);
+    });
   };
 
   const downvote = async (e: MouseEvent) => {
@@ -59,15 +65,30 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       alert('You must be logged in to vote.');
       return;
     }
-    const votes = {
-      id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
+    const voteReq = {
+      id: review._id!,
       upvote: false,
     };
-    const deltaScore = await voteReq(votes);
-    setScore(score + deltaScore);
-    if (colorUpdater != undefined) {
-      colorUpdater();
+
+    let newVote;
+    let newScore;
+    if (vote === 1) {
+      newVote = -1;
+      newScore = score - 2;
+    } else if (vote === 0) {
+      newVote = -1;
+      newScore = score - 1;
+    } else {
+      newVote = 0;
+      newScore = score + 1;
     }
+    setScore(newScore);
+    setVote(newVote);
+    let deltaScore = await sendVote(voteReq).catch((err) => {
+      console.error('Error sending downvote:', err);
+      setScore(score);
+      setVote(vote);
+    });
   };
 
   const openReportForm = () => {
@@ -76,6 +97,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
 
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
+
+  const upvoteClassname = vote === 1 ? 'upvote coloredUpvote' : 'upvote';
+  const downvoteClassname = vote === -1 ? 'downvote coloredDownvote' : 'downvote';
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
@@ -171,11 +195,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       </div>
       <div className="subreview-footer" id={review._id}>
         <p>Helpful?</p>
-        <button className={upvoteClass} onClick={upvote}>
+        <button className={upvoteClassname} onClick={upvote}>
           &#9650;
         </button>
         <p>{score}</p>
-        <button className={downvoteClass} onClick={downvote}>
+        <button className={downvoteClassname} onClick={downvote}>
           &#9660;
         </button>
         <button type="button" className="add-report-button" onClick={openReportForm}>

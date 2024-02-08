@@ -152,7 +152,8 @@ export interface MongoRoadmap {
 }
 
 export interface VoteColor {
-  colors: boolean[];
+  colors?: boolean[];
+  vote: number;
 }
 
 /**
