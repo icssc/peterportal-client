@@ -166,6 +166,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               dispatch(addQuarter({ startYear, quarterData: { name, courses: [] } }));
             }
           }}
+          currentQuarters={data.quarters.map((q) => q.name)}
           type="edit"
         />
       </div>
