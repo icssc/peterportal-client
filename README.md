@@ -94,11 +94,13 @@ git checkout -b [branch name]
 3. Once your feature is ready, [open a pull request](https://github.com/icssc/peterportal-client/compare) and a member from our team will review it. Follow the pull request template.
 
 ## Running the project locally (after setup)
-1. Open two terminal windows and `cd` into the directory of your repo in each of them.
+1. Open a terminal in the root directory of the repo.
 
-2. In the first terminal window, enter the client directory with `cd site`. Then run the Vite development server using `npm run dev`. Ensure the server is running on port 3000 by default.
+2. Run `npm run dev` to start both the backend Express server and frontend Vite dev server
 
-3. In the second terminal window, enter the API directory with `cd api`. Then run the Express development server using `npm run dev`. Ensure the server is running on port 8080 by default.
+3. Visit the link printed to the console by Vite!
+
+Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `npm run dev`
 
 ## Our Mission
 🎇 Our mission is to improve the UCI student experience with course planning
