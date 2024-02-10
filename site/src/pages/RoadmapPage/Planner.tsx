@@ -40,8 +40,18 @@ const Planner: FC = () => {
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
-    // if is first render, load from local storage
-    if (isFirstRenderer) {
+    // stringify current roadmap
+    const roadmapStr = JSON.stringify({
+      planner: collapsePlanner(data),
+      transfers: transfers,
+    });
+
+    // stringified value of an empty roadmap
+    const emptyRoadmap =
+      '{"planner":[{"startYear":2024,"name":"Year 1","quarters":[{"name":"fall","courses":[]},{"name":"winter","courses":[]},{"name":"spring","courses":[]}]}],"transfers":[]}';
+
+    // if first render and current roadmap is empty, load from local storage
+    if (isFirstRenderer && roadmapStr === emptyRoadmap) {
       loadRoadmap();
     }
     // validate planner every time something changes
@@ -50,11 +60,7 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      const roadmap: SavedRoadmap = {
-        planner: collapsePlanner(data),
-        transfers: transfers,
-      };
-      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== JSON.stringify(roadmap)));
+      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
     }
   }, [data, transfers]);
 
