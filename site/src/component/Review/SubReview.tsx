@@ -6,6 +6,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
+import { PersonFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { FaPen } from 'react-icons/fa';
@@ -45,6 +46,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       alert('You must be logged in to vote.');
       return;
     }
+
     const votes = {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: true,
@@ -78,10 +80,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   };
 
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
+  const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
       <Badge variant="primary">Verified</Badge>
+    </OverlayTrigger>
+  );
+
+  const authorBadge = (
+    <OverlayTrigger overlay={authorOverlay}>
+      <PersonFill size={25} fill="green"></PersonFill>
     </OverlayTrigger>
   );
 
@@ -146,9 +155,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
           </div>
           <div>
             <div className="subreview-author">
-              <p>
-                <span className="mr-1">Posted by {review.userDisplay}</span>
+              <p className=" gapped">
+                <span className=" mr-1">Posted by {review.userDisplay}</span>
                 {review.verified && verifiedBadge}
+                {cookies.user?.id === review.userID && authorBadge}
               </p>
               <p>
                 {new Date(review.timestamp).toLocaleString('default', {

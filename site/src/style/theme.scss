@@ -85,6 +85,27 @@
     color: var(--text);
     text-shadow: none;
   }
+
+  .page-link {
+    background-color: var(--overlay1);
+    border-color: var(--overlay2);
+
+    &:hover,
+    &:focus {
+      background-color: var(--overlay2);
+      color: #1284ff;
+    }
+  }
+
+  .page-item.active .page-link:hover {
+    background-color: #1284ff;
+    color: #fff;
+  }
+
+  .page-item.disabled .page-link {
+    background-color: var(--overlay1);
+    border-color: var(--overlay2);
+  }
 }
 
 .popover-body {
