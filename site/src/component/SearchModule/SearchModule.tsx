@@ -11,7 +11,7 @@ import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
-const SEARCH_TIMEOUT_MS = 500;
+const SEARCH_TIMEOUT_MS = 300;
 const FULL_RESULT_THRESHOLD = 3;
 const INITIAL_MAX_PAGE = 5;
 
