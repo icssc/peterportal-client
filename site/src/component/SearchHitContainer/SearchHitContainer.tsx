@@ -44,27 +44,22 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
     throw 'Professor Component not provided';
   }
 
-  function NoResults() {
-    // prevent no results from showing when page is first loaded
-    // (no results have been fetched yet for initial blank search query)
-    // also prevent if names is not empty (search has been made, awaiting results)
-    if (isFirstRender || names.length > 0) {
-      return;
-    }
-
-    return (
-      <div className="no-results">
-        <img src={noResultsImg} alt="No results found" />
-        Sorry, we couldn't find any results for that search!
-      </div>
-    );
-  }
+  /**
+   * if its first render, we are waiting for initial results
+   * if names is non-empty but results is empty, we are waiting for results
+   * otherwise, if results is still empty, we have no results for the search
+   */
+  const noResults = results.length === 0 && !(isFirstRender || names.length > 0);
 
   return (
     <div ref={containerDivRef} className="search-hit-container">
-      {results.length === 0 ? (
-        <NoResults />
-      ) : (
+      {noResults && (
+        <div className="no-results">
+          <img src={noResultsImg} alt="No results found" />
+          Sorry, we couldn't find any results for that search!
+        </div>
+      )}
+      {results.length > 0 && (
         <SearchResults
           index={index}
           results={results}
