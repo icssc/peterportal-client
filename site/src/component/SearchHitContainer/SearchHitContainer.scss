@@ -4,6 +4,16 @@
 }
 
 .no-results {
-  padding: 2vh 2vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  font-size: 1.5rem;
+  padding: 2rem;
   text-align: center;
+
+  img {
+    width: 400px;
+    max-width: 100%;
+  }
 }

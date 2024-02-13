@@ -12,34 +12,23 @@ interface SearchPaginationProps {
 /* SearchPagination is the page buttons at the bottom of the search results */
 const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   const dispatch = useAppDispatch();
-  const coursePageNumber = useAppSelector((state) => state.search.courses.pageNumber);
-  const professorPageNumber = useAppSelector((state) => state.search.professors.pageNumber);
-
-  const courseData = useAppSelector((state) => state.search.courses);
-  const professorData = useAppSelector((state) => state.search.professors);
+  const searchData = useAppSelector((state) => state.search[index]);
 
   const clickPageNumber = (pageNumber: number) => {
     dispatch(setPageNumber({ index, pageNumber }));
   };
 
-  let numPages = 0;
-  let active = 0;
-  if (index === 'courses') {
-    numPages = Math.ceil(courseData.names.length / NUM_RESULTS_PER_PAGE);
-    active = coursePageNumber;
-  } else if (index === 'professors') {
-    numPages = Math.ceil(professorData.names.length / NUM_RESULTS_PER_PAGE);
-    active = professorPageNumber;
-  }
+  const numPages = Math.ceil(searchData.names.length / NUM_RESULTS_PER_PAGE);
+  const activePage = searchData.pageNumber;
 
   // only show 5 page numbers at a time
   const items = [];
-  let startPageNumber = Math.max(0, active - 2);
+  let startPageNumber = Math.max(0, activePage - 2);
   const endPageNumber = Math.min(numPages, startPageNumber + 5); // exclusive
   startPageNumber = Math.max(0, endPageNumber - 5);
   for (let i = startPageNumber; i < endPageNumber; i++) {
     items.push(
-      <Pagination.Item key={i} active={i === active} onClick={() => clickPageNumber(i)}>
+      <Pagination.Item key={i} active={i === activePage} onClick={() => clickPageNumber(i)}>
         {i + 1}
       </Pagination.Item>,
     );
@@ -49,10 +38,10 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     // hide if there is no page or only one page
     numPages <= 1 ? null : (
       <Pagination>
-        <Pagination.First onClick={() => clickPageNumber(0)} disabled={active === 0} />
-        <Pagination.Prev onClick={() => clickPageNumber(active - 1)} disabled={active === 0} />
+        <Pagination.First onClick={() => clickPageNumber(0)} disabled={activePage === 0} />
+        <Pagination.Prev onClick={() => clickPageNumber(activePage - 1)} disabled={activePage === 0} />
         {items}
-        <Pagination.Next onClick={() => clickPageNumber(active + 1)} disabled={active === numPages - 1} />
+        <Pagination.Next onClick={() => clickPageNumber(activePage + 1)} disabled={activePage === numPages - 1} />
       </Pagination>
     )
   );
