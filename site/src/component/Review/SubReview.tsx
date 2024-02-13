@@ -6,11 +6,10 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
-// import * as Icon from 'react-bootstrap-icons';
 import { FaPen } from 'react-icons/fa';
+
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
@@ -24,8 +23,8 @@ interface SubReviewProps {
 const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater, editable, editReview }) => {
   const [score, setScore] = useState(review.score);
   const [cookies] = useCookies(['user']);
-  //Edit Review
 
+  //Edit Review
   let upvoteClass;
   let downvoteClass;
   if (colors != undefined && colors.colors != undefined) {

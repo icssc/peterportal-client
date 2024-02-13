@@ -11,7 +11,6 @@ import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import ReCAPTCHA from 'react-google-recaptcha';
-
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
