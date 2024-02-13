@@ -51,7 +51,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             ).ucinetid,
         ) as string[];
       }
-      console.log('From frontend search', names);
       dispatch(setNames({ index, names }));
       // reset page number and hasFullResults flag if query changes
       if (query !== search.lastQuery) {
