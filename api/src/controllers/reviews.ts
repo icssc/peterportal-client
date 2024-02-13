@@ -347,11 +347,9 @@ router.patch('/updateReview', async function (req, res) {
     const query = {
       _id: new ObjectId(req.body._id),
     };
-
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, ...updateWithoutId } = updatedReviewBody;
-
     await updateDocument(COLLECTION_NAMES.REVIEWS, query, { $set: updateWithoutId });
-    console.log('HELLO3');
     const responseWithId = {
       _id: query._id,
       ...updateWithoutId,
