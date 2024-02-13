@@ -75,6 +75,7 @@ const UserReviews: FC = () => {
   const deleteReview = async (reviewID: string) => {
     await axios.delete('/api/reviews', { data: { id: reviewID } });
     setReviews(reviews.filter((review) => review._id !== reviewID));
+    handleClose();
   };
 
   //Edit Review
