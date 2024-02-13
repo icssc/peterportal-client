@@ -4,12 +4,11 @@ import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
-import defaultAvatarLight from '../../asset/default-avatar.png';
 import defaultAvatarDark from '../../asset/default-avatar-dark.png';
+import defaultAvatarLight from '../../asset/default-avatar.png';
 import './Sidebar.scss';
 
 import axios, { AxiosResponse } from 'axios';
-import React from 'react';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import ThemeContext from '../../style/theme-context';
