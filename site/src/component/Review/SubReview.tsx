@@ -9,8 +9,8 @@ import { Link } from 'react-router-dom';
 
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
-import * as Icon from 'react-bootstrap-icons';
-
+// import * as Icon from 'react-bootstrap-icons';
+import { FaPen } from 'react-icons/fa';
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
@@ -18,19 +18,13 @@ interface SubReviewProps {
   colors?: VoteColor;
   colorUpdater?: () => void;
   editable?: boolean;
-  editReview?: (
-    review: ReviewData,
-    course?: CourseGQLData,
-    professor?: ProfessorGQLData
-  ) => void;
-
+  editReview?: (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => void;
 }
 
 const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater, editable, editReview }) => {
   const [score, setScore] = useState(review.score);
   const [cookies] = useCookies(['user']);
   //Edit Review
-  
 
   let upvoteClass;
   let downvoteClass;
@@ -92,12 +86,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
     </OverlayTrigger>
   );
 
-  console.log("In Sub Review, coures: " + course + " Professor: " + professor);
   return (
     <div className="subreview">
       {editable && editReview && (
-        <div style={{float: 'right', width: '3%', height: '3%'}}>
-          <Icon.PenFill onClick={() => editReview(review, course, professor)} />
+        <div className="edit-pen-icon" onClick={() => editReview(review, course, professor)}>
+          <FaPen />
         </div>
       )}
       <div>

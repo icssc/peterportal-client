@@ -340,40 +340,27 @@ router.delete('/clear', async function (req, res) {
 /**
  * Updating the review
  */
-router.patch("/updateReview", async function (req, res) {
+router.patch('/updateReview', async function (req, res) {
   if (req.session.passport) {
     const updatedReviewBody = req.body;
-    console.log("updatedReview before query: ", req.body);
-    // const reviewId = req.body._id;
-    // console.log("patch reviewId: ", reviewId);
 
     const query = {
-      _id: new ObjectID(req.body._id)
+      _id: new ObjectId(req.body._id),
     };
-    
-    console.log(`Update Review: ${JSON.stringify(updatedReviewBody)}`);
-    console.log("HELLO1");
-    const { _id, ...updateWithoutId } = updatedReviewBody;
-    console.log("HELLO2");
-    console.log(`Update without _id: ${JSON.stringify(updateWithoutId)}`);
 
-    await updateDocument(
-    COLLECTION_NAMES.REVIEWS,
-    query,
-    { $set: updateWithoutId }
-    );
-    console.log("HELLO3");
-      const responseWithId = {
-        _id: query._id, 
-        ...updateWithoutId
-      };
-      console.log(`response with _id: ${JSON.stringify(updateWithoutId)}`);
-      console.log("HELLO4");
-      res.json(responseWithId);
-      console.log("HELLO5");
-    } else {
-      res.status(401).json({ error: 'Must be logged in to update a review.' });
-    }
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+
+    await updateDocument(COLLECTION_NAMES.REVIEWS, query, { $set: updateWithoutId });
+    console.log('HELLO3');
+    const responseWithId = {
+      _id: query._id,
+      ...updateWithoutId,
+    };
+
+    res.json(responseWithId);
+  } else {
+    res.status(401).json({ error: 'Must be logged in to update a review.' });
+  }
 });
 
 export default router;

@@ -208,3 +208,20 @@
     }
   }
 }
+
+/* Edit review icon */
+.edit-pen-icon {
+  float: right;
+  font-size: 1.5rem;
+  width: 3rem;
+  text-align: center;
+  padding: 0.1rem;
+  border-radius: 55%;
+}
+
+.edit-pen-icon:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+  background: var(--peterportal-mid-gray);
+  color: white;
+}

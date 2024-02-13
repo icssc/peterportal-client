@@ -6,28 +6,31 @@ import { Divider } from 'semantic-ui-react';
 import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest } from '../../../src/types/types';
 import './UserReviews.scss';
 import { useCookies } from 'react-cookie';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { selectReviews, setFormStatus, setReviews } from '../../store/slices/reviewSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { setFormStatus } from '../../store/slices/reviewSlice';
 import ReviewForm from '../ReviewForm/ReviewForm';
+import Modal from 'react-bootstrap/Modal';
 
 const UserReviews: FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [cookies] = useCookies(['user']);
-  //edit review states 
-  const [professorData] = useState<Map<string, ProfessorGQLData> > (new Map());
-  const [courseData] = useState<Map<string, CourseGQLData> > (new Map());
+  //edit review states
+  const [professorData] = useState<Map<string, ProfessorGQLData>>(new Map());
+  const [courseData] = useState<Map<string, CourseGQLData>>(new Map());
   const [voteColors, setVoteColors] = useState([]);
   const [courseToEdit, setCourseToEdit] = useState<CourseGQLData>();
   const [professorToEdit, setProfessorToEdit] = useState<ProfessorGQLData>();
   const [reviewToEdit, setReviewToEdit] = useState<ReviewData>();
   const dispatch = useAppDispatch();
-  //const reviews = useAppSelector(selectReviews);
-  
+  //delete review
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);
     setReviews(response.data);
-    //dispatch(setReviews(response.data));
     setLoaded(true);
   };
 
@@ -35,7 +38,7 @@ const UserReviews: FC = () => {
     const res = await axios.patch('/api/reviews/getVoteColors', vote);
     return res.data;
   };
-  
+
   const updateVoteColors = async () => {
     let reviewIDs = [];
     for (let i = 0; i < reviews.length; i++) {
@@ -68,22 +71,18 @@ const UserReviews: FC = () => {
     getUserReviews();
   }, []);
 
+  //Delete Review
   const deleteReview = async (reviewID: string) => {
     await axios.delete('/api/reviews', { data: { id: reviewID } });
     setReviews(reviews.filter((review) => review._id !== reviewID));
   };
 
-  //Edit Review 
-  
-  const editReview = (
-    review: ReviewData,
-    course?: CourseGQLData,
-    professor?: ProfessorGQLData
-  )=> {
+  //Edit Review
+  const editReview = (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => {
     setCourseToEdit(course);
     setProfessorToEdit(professor);
     setReviewToEdit(review);
-    console.log("Data received from SubReview:", {
+    console.log('Data received from SubReview:', {
       course,
       professor,
       review,
@@ -91,8 +90,8 @@ const UserReviews: FC = () => {
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
     console.log('Edit Review clicked!');
-  }
-  
+  };
+
   const closeForm = async () => {
     dispatch(setFormStatus(false));
     document.body.style.overflow = 'visible';
@@ -111,29 +110,47 @@ const UserReviews: FC = () => {
         {reviews.map((review, i) => (
           <div key={`user-reviews-${i}`} className="user-reviews">
             <Divider />
-            <SubReview 
-              review = {review}
-              course = {courseData.get(review.courseID)}
-              professor = {professorData.get(review.professorID)}
+            <SubReview
+              review={review}
+              course={courseData.get(review.courseID)}
+              professor={professorData.get(review.professorID)}
               colors={getU(review._id)}
               colorUpdater={updateVoteColors}
               editable={true}
               editReview={editReview}
             />
             <div className="user-reviews-footer">
-              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review._id!)}>
-                Delete
-              </Button>
+              <div className="delete-review-dialog">
+                <Button variant="danger" className="mr-3" onClick={handleShow}>
+                  Delete
+                </Button>
+                <Modal show={show} onHide={handleClose} backdrop="static" keyboard={true} centered autoFocus>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Delete Review Confirmation</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    Deleting a review will remove it permanently. Are you sure you want to proceed?
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                      Close
+                    </Button>
+                    <Button variant="danger" onClick={() => deleteReview(review._id!)}>
+                      Delete
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </div>
             </div>
           </div>
         ))}
-          <ReviewForm
-            course={courseToEdit}
-            professor={professorToEdit}
-            review={reviewToEdit}
-            closeForm={closeForm}
-            editable={true}
-          />
+        <ReviewForm
+          course={courseToEdit}
+          professor={professorToEdit}
+          review={reviewToEdit}
+          closeForm={closeForm}
+          editable={true}
+        />
       </div>
     );
   }

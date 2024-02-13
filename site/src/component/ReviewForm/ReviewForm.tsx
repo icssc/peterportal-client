@@ -45,7 +45,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Group projects',
     'Gives good feedback',
   ];
-  const [reviewId, setReviewId] = useState<string | undefined>(props.review?._id);//edit review 
+  const [reviewId, setReviewId] = useState<string | undefined>(props.review?._id); //edit review
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
@@ -83,17 +83,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
         props.closeForm();
+      } else {
+        setSubmitted(false);
       }
     }
     //If editable is true
-    console.log("set props into the form: ", props.review)
     if (props.review) {
       const [year, quarter] = props.review.quarter.split(' ');
       setReviewId(props.review?._id);
       setQuarterTaken(quarter);
       setYearTaken(year);
       setGradeReceived(props.review.gradeReceived);
-      console.log("Grade in set data in the form: " + props.review.gradeReceived)
       setDifficulty(props.review.difficulty);
       setQuality(props.review.rating);
       setContent(props.review?.reviewContent);
@@ -110,11 +110,9 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const postReview = async (review: ReviewData) => {
     if (props.editable) {
       const res = await axios.patch('/api/reviews/updateReview', review);
-      console.log('Inside postReview res.data: ');
-      console.log(res.data);
       if (res.data.hasOwnProperty('error')) {
         alert('You must be logged in to edit the review!');
-      }else{
+      } else {
         setSubmitted(true);
       }
     } else {
@@ -300,11 +298,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-            {props.editable ? (
-                <h1>
-                  Edit your review for{' '}
-                  {props.review?.courseID + ' ' + props.review?.professorID}
-                </h1>
+              {props.editable ? (
+                <h1>Edit your review for {props.review?.courseID + ' ' + props.review?.professorID}</h1>
               ) : (
                 <h1>
                   It's your turn to review{' '}
@@ -327,6 +322,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                     defaultValue=""
                     required
                     onChange={(e) => setGradeReceived(e.target.value)}
+                    value={gradeReceived}
                   >
                     <option disabled={true} value="">
                       Grade
@@ -351,6 +347,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       defaultValue=""
                       required
                       onChange={(e) => setQuarterTaken(e.target.value)}
+                      value={quarterTaken}
                     >
                       <option disabled={true} value="">
                         Quarter
@@ -369,6 +366,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       defaultValue=""
                       required
                       onChange={(e) => setYearTaken(e.target.value)}
+                      value={yearTaken}
                     >
                       <option disabled={true} value="">
                         Year
@@ -422,6 +420,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="takeAgain"
                       label="Would Take Again"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
+                      checked={takeAgain}
                     />
                     <Form.Check
                       inline
@@ -429,6 +428,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="textbook"
                       label="Use Textbook"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
+                      checked={textbook}
                     />
                     <Form.Check
                       inline
@@ -436,6 +436,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="attendance"
                       label="Mandatory Attendance"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
+                      checked={attendance}
                     />
                   </Col>
                 </Row>
@@ -480,6 +481,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       setOverCharLimit(false);
                     }
                   }}
+                  value={props.editable ? content : props.review?.reviewContent}
                 />
                 {/* <textarea rows={5} /> */}
                 <div className="char-limit">
@@ -517,6 +519,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                           setUserName(cookies.user.name);
                         }
                       }}
+                      checked={userName === 'Anonymous Peter'}
                     />
                   </Col>
                 </Row>
@@ -566,5 +569,3 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 };
 
 export default ReviewForm;
-
-
