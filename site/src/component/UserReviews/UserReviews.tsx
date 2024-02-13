@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest } from '../../../src/types/types';
+import { CourseGQLData, ProfessorGQLData, ReviewData } from '../../../src/types/types';
 import './UserReviews.scss';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch } from '../../store/hooks';
@@ -18,7 +18,6 @@ const UserReviews: FC = () => {
   //edit review states
   const [professorData] = useState<Map<string, ProfessorGQLData>>(new Map());
   const [courseData] = useState<Map<string, CourseGQLData>>(new Map());
-  const [voteColors, setVoteColors] = useState([]);
   const [courseToEdit, setCourseToEdit] = useState<CourseGQLData>();
   const [professorToEdit, setProfessorToEdit] = useState<ProfessorGQLData>();
   const [reviewToEdit, setReviewToEdit] = useState<ReviewData>();
@@ -34,39 +33,6 @@ const UserReviews: FC = () => {
     setLoaded(true);
   };
 
-  const getColors = async (vote: VoteColorsRequest) => {
-    const res = await axios.patch('/api/reviews/getVoteColors', vote);
-    return res.data;
-  };
-
-  const updateVoteColors = async () => {
-    const reviewIDs = [];
-    for (let i = 0; i < reviews.length; i++) {
-      reviewIDs.push(reviews[i]._id);
-    }
-    const req = {
-      ids: reviewIDs as string[],
-    };
-    const colors = await getColors(req);
-    setVoteColors(colors);
-  };
-
-  const getU = (id: string | undefined) => {
-    const temp = voteColors as Object;
-    const v = temp[id as keyof typeof temp] as unknown as number;
-    if (v == 1) {
-      return {
-        colors: [true, false],
-      };
-    } else if (v == -1) {
-      return {
-        colors: [false, true],
-      };
-    }
-    return {
-      colors: [false, false],
-    };
-  };
   useEffect(() => {
     getUserReviews();
   }, []);
@@ -115,8 +81,6 @@ const UserReviews: FC = () => {
               review={review}
               course={courseData.get(review.courseID)}
               professor={professorData.get(review.professorID)}
-              colors={getU(review._id)}
-              colorUpdater={updateVoteColors}
               editable={true}
               editReview={editReview}
             />
