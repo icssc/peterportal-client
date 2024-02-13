@@ -23,9 +23,10 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
   const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
+  const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
   const searchNames = useCallback(
-    (query: string) => {
+    (query: string, pageNumber: number, lastQuery?: string) => {
       // Get all results only when query changes or user reaches the fourth page or after
       const nameResults = wfs({
         query: query,
@@ -33,7 +34,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         // Load INITIAL_MAX_PAGE pages first
         // when user reaches the 4th page or after, load all results
         numResults:
-          search.lastQuery !== query || search.pageNumber < FULL_RESULT_THRESHOLD
+          lastQuery !== query || pageNumber < FULL_RESULT_THRESHOLD
             ? NUM_RESULTS_PER_PAGE * INITIAL_MAX_PAGE
             : undefined,
       });
@@ -52,14 +53,21 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       }
       dispatch(setNames({ index, names }));
       // reset page number and hasFullResults flag if query changes
-      if (query !== search.lastQuery) {
+      if (query !== lastQuery) {
         dispatch(setPageNumber({ index, pageNumber: 0 }));
         dispatch(setHasFullResults({ index, hasFullResults: false }));
         dispatch(setLastQuery({ index, lastQuery: query }));
       }
     },
-    [dispatch, search.pageNumber, search.lastQuery, index],
+    [dispatch, index],
   );
+
+  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
+  // make sure this runs before everything else for best performance and avoiding bugs
+  if (index !== prevIndex) {
+    setPrevIndex(index);
+    searchNames('', 0);
+  }
 
   const searchResults = useCallback(async () => {
     if (search.names.length === 0) {
@@ -68,7 +76,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     }
     if (!search.hasFullResults && search.pageNumber >= FULL_RESULT_THRESHOLD) {
       dispatch(setHasFullResults({ index, hasFullResults: true }));
-      searchNames(search.lastQuery);
+      searchNames(search.lastQuery, search.pageNumber, search.lastQuery);
       return;
     }
     // Get the subset of names based on the page
@@ -80,12 +88,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     dispatch(setResults({ index, results: Object.values(results) }));
   }, [dispatch, search.names, search.pageNumber, index, search.hasFullResults, search.lastQuery, searchNames]);
 
-  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
-  useEffect(() => {
-    searchResults();
-  }, [index, searchResults]);
-
-  // reset page number and clear results on unmount
+  // clear results and reset page number when component unmounts
   // results will persist otherwise, e.g. current page of results from catalogue carries over to roadmap search container
   useEffect(() => {
     return () => {
@@ -96,17 +99,17 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     };
   }, [dispatch]);
 
-  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
+  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
   useEffect(() => {
-    searchNames('');
-  }, [index, searchNames]);
+    searchResults();
+  }, [index, searchResults]);
 
   const searchNamesAfterTimeout = (query: string) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
     }
     const timeout = setTimeout(() => {
-      searchNames(query);
+      searchNames(query, 0);
       setPendingRequest(null);
     }, SEARCH_TIMEOUT_MS);
     setPendingRequest(timeout);

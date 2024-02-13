@@ -77,6 +77,7 @@ export async function searchAPIResults(
       transformed[key] = transformGQLData(index, data[id]);
     }
   }
+  console.log('api', transformed);
   return transformed;
 }
 
