@@ -40,20 +40,20 @@ const UserReviews: FC = () => {
   };
 
   const updateVoteColors = async () => {
-    let reviewIDs = [];
+    const reviewIDs = [];
     for (let i = 0; i < reviews.length; i++) {
       reviewIDs.push(reviews[i]._id);
     }
     const req = {
       ids: reviewIDs as string[],
     };
-    let colors = await getColors(req);
+    const colors = await getColors(req);
     setVoteColors(colors);
   };
 
   const getU = (id: string | undefined) => {
-    let temp = voteColors as Object;
-    let v = temp[id as keyof typeof temp] as unknown as number;
+    const temp = voteColors as Object;
+    const v = temp[id as keyof typeof temp] as unknown as number;
     if (v == 1) {
       return {
         colors: [true, false],
