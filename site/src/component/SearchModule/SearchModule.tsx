@@ -23,7 +23,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
   const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
-  const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
   const searchNames = useCallback(
     (query: string) => {
@@ -97,6 +96,11 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     };
   }, [dispatch]);
 
+  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
+  useEffect(() => {
+    searchNames('');
+  }, [index, searchNames]);
+
   const searchNamesAfterTimeout = (query: string) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
@@ -107,12 +111,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     }, SEARCH_TIMEOUT_MS);
     setPendingRequest(timeout);
   };
-
-  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
-  if (index !== prevIndex) {
-    searchNames('');
-    setPrevIndex(index);
-  }
 
   const coursePlaceholder = 'Search a course number or department';
   const professorPlaceholder = 'Search a professor';
