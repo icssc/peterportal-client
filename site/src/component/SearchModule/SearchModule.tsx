@@ -108,7 +108,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     setPendingRequest(timeout);
   };
 
-  // Search empty string to load some results
+  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
   if (index !== prevIndex) {
     searchNames('');
     setPrevIndex(index);
