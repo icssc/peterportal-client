@@ -36,6 +36,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
 
   return (
     // hide if there is no page or only one page
+    // last button intentionally left out since first 5 pages are fuzzy searched initially (we don't know what the last page # is)
     numPages <= 1 ? null : (
       <Pagination>
         <Pagination.First onClick={() => clickPageNumber(0)} disabled={activePage === 0} />
