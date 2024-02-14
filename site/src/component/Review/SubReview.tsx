@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useState } from 'react';
+import { FC, useState } from 'react';
 import axios from 'axios';
 import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
@@ -28,7 +28,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
     return res.data.deltaScore;
   };
 
-  const upvote = async (e: MouseEvent) => {
+  const upvote = async () => {
     if (cookies.user === undefined) {
       alert('You must be logged in to vote.');
       return;
@@ -53,14 +53,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
     }
     setScore(newScore);
     setVote(newVote);
-    let deltaScore = await sendVote(voteReq).catch((err) => {
+    await sendVote(voteReq).catch((err) => {
       console.error('Error sending upvote:', err);
       setScore(score);
       setVote(vote);
     });
   };
 
-  const downvote = async (e: MouseEvent) => {
+  const downvote = async () => {
     if (cookies.user === undefined) {
       alert('You must be logged in to vote.');
       return;
@@ -84,7 +84,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
     }
     setScore(newScore);
     setVote(newVote);
-    let deltaScore = await sendVote(voteReq).catch((err) => {
+    await sendVote(voteReq).catch((err) => {
       console.error('Error sending downvote:', err);
       setScore(score);
       setVote(vote);
