@@ -47,8 +47,20 @@ const Planner: FC = () => {
     });
 
     // stringified value of an empty roadmap
-    const emptyRoadmap =
-      '{"planner":[{"startYear":2024,"name":"Year 1","quarters":[{"name":"fall","courses":[]},{"name":"winter","courses":[]},{"name":"spring","courses":[]}]}],"transfers":[]}';
+    const emptyRoadmap = JSON.stringify({
+      planner: [
+        {
+          startYear: 2024,
+          name: 'Year 1',
+          quarters: [
+            { name: 'fall', courses: [] },
+            { name: 'winter', courses: [] },
+            { name: 'spring', courses: [] },
+          ],
+        },
+      ],
+      transfers: [],
+    } as SavedRoadmap);
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
