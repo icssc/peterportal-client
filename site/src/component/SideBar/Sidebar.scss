@@ -27,15 +27,10 @@
   }
 
   .sidebar-close {
-    padding: 2vw;
-    width: 100%;
-
-    .sidebar-close-icon {
-      width: 3vh;
-      height: 3vh;
-      float: right;
-      cursor: pointer;
-    }
+    padding: 1em;
+    margin-left: auto;
+    border: none;
+    background: none;
   }
 
   .sidebar-profile {

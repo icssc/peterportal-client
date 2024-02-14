@@ -163,9 +163,9 @@ const SideBar = () => {
   return (
     <div className="sidebar">
       {/* Close Button */}
-      <div className="sidebar-close">
-        <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
-      </div>
+      <button className="sidebar-close" onClick={closeSidebar}>
+        <XCircle className="sidebar-close-icon" size={'3vh'} />
+      </button>
 
       {/* Profile Icon and Name */}
       <div className="sidebar-profile">
