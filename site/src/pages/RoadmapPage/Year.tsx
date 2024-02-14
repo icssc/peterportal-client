@@ -8,7 +8,7 @@ import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } 
 
 import { PlannerYearData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
-import CourseYearModal from './CourseYear';
+import CourseYearModal from './YearModal';
 
 interface YearProps {
   yearIndex: number;

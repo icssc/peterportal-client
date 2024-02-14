@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import './AddYearPopup.scss';
 import { Plus } from 'react-bootstrap-icons';
 import { Button } from 'react-bootstrap';
-import CourseYearModal from './CourseYear';
+import CourseYearModal from './YearModal';
 import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { PlannerYearData } from '../../types/types';

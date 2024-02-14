@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../types/types';
+import './YearModal.scss';
 
 interface YearPopupQuarter {
   id: string;
