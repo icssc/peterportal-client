@@ -28,6 +28,8 @@ interface RoadmapState {
   showSearch: boolean;
   // Whether or not to show the add course modal on mobile
   showAddCourse: boolean;
+  // Whether or not to alert the user of unsaved changes before leaving
+  unsavedChanges: boolean;
 }
 
 // Define the initial state using that type
@@ -39,6 +41,7 @@ const initialState: RoadmapState = {
   transfers: [],
   showSearch: false,
   showAddCourse: false,
+  unsavedChanges: false,
 };
 
 // Payload to pass in to move a course
@@ -75,6 +78,9 @@ interface SetTransferPayload {
   index: number;
   transfer: TransferData;
 }
+
+// onbeforeunload event listener
+const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
 export const roadmapSlice = createSlice({
   name: 'roadmap',
@@ -262,6 +268,17 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
+    setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
+      state.unsavedChanges = action.payload;
+
+      // when there are unsaved changes, add event listener for alert on page leave
+      if (state.unsavedChanges) {
+        window.addEventListener('beforeunload', alertUnsaved);
+      } else {
+        // remove listener after saving changes
+        window.removeEventListener('beforeunload', alertUnsaved);
+      }
+    },
   },
 });
 
@@ -287,6 +304,7 @@ export const {
   deleteTransfer,
   setShowSearch,
   setShowAddCourse,
+  setUnsavedChanges,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
