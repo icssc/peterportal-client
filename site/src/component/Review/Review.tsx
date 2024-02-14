@@ -6,7 +6,7 @@ import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, ReviewData } from '../../types/types';
 import { Checkbox, Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
@@ -23,14 +23,8 @@ enum SortingOption {
 const Review: FC<ReviewProps> = (props) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [voteColors, setVoteColors] = useState({});
   const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
-
-  const getColors = async (vote: VoteColorsRequest) => {
-    const res = await axios.patch('/api/reviews/getVoteColors', vote);
-    return res.data;
-  };
 
   const getReviews = async () => {
     interface paramsProps {
@@ -46,21 +40,8 @@ const Review: FC<ReviewProps> = (props) => {
       })
       .then(async (res: AxiosResponse<ReviewData[]>) => {
         const data = res.data.filter((review) => review !== null);
-        const req = {
-          ids: data.map((review) => review._id!),
-        };
-        const colors = await getColors(req);
-        setVoteColors(colors);
         dispatch(setReviews(data));
       });
-  };
-
-  const getVoteColor = (id: string | undefined) => {
-    const temp = voteColors as object;
-    const v = temp[id as keyof typeof temp] as unknown as number;
-    console.log('Color for ', id, ' ', v);
-
-    return v ?? 0;
   };
 
   useEffect(() => {
