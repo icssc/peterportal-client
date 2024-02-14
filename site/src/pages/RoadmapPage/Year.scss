@@ -1,15 +1,23 @@
-* {
-  --zot-blue: #2484c6;
-  --aldrich-blue: #74d1f6;
-  --ring-road-white: #ffffff;
-  --petr-gray: #808080;
+[data-theme='dark'] {
+  .year-settings-btn:hover,
+  .year-settings-btn:focus,
+  .popover-body .year-settings-btn:active {
+    background-color: var(--overlay2);
+  }
+
+  .edit-year-form {
+    .form-control,
+    .form-control:focus {
+      background-color: var(--overlay1);
+    }
+  }
 }
 
 .year {
   margin: 1rem 0;
   padding: 1rem;
   align-items: center;
-  background-color: var(--ring-road-white);
+  background-color: var(--overlay1);
   border-radius: var(--border-radius);
   border-collapse: separate;
   display: inline-block;
@@ -29,15 +37,13 @@
 .year-accordion,
 .year-accordion-content {
   border-radius: var(--border-radius);
-  background-color: var(--ring-road-white);
   display: flex;
   flex-wrap: wrap;
 }
 
 .empty-quarter {
-  background-color: white;
   border-radius: 10px;
-  box-shadow: 0px 0px 4px #2484c6;
+  box-shadow: 0px 0px 4px var(--zot-blue);
   flex: 1 1 30%;
   margin: 0.75rem;
 }
@@ -59,8 +65,8 @@
 }
 
 #year-title {
+  color: var(--text);
   font-size: 1.2rem;
-  color: black;
 }
 
 #year-accordion-icon {
@@ -85,7 +91,6 @@
 }
 
 .edit-btn {
-  background-color: var(--ring-road-white);
   width: 5%;
   margin-top: 10px;
 }
