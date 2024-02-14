@@ -19,28 +19,28 @@ interface YearModalProps {
   currentQuarters: string[];
 }
 
+const quarterValues: (selectedNames: string[]) => YearPopupQuarter[] = (data: string[]) => {
+  const base: YearPopupQuarter[] = [
+    { id: 'fall', name: 'Fall' },
+    { id: 'winter', name: 'Winter' },
+    { id: 'spring', name: 'Spring' },
+    { id: 'summer 1', name: 'Summer 1' },
+    { id: 'summer 2', name: 'Summer 2' },
+    { id: 'summer 10 Week', name: 'Summer 10 Week' },
+  ];
+  data.forEach((name) => {
+    const match = base.find((q) => q.id === name);
+    if (match) match.checked = true;
+  });
+  return base;
+};
+
 const YearModal: FC<YearModalProps> = (props) => {
   const { placeholderName, placeholderYear, show, setShow, type, saveHandler, currentQuarters } = props;
   const [validated, setValidated] = useState(false);
 
   const [name, setName] = useState(placeholderName);
   const [year, setYear] = useState(placeholderYear);
-
-  const quarterValues: (selectedNames: string[]) => YearPopupQuarter[] = (data: string[]) => {
-    const base: YearPopupQuarter[] = [
-      { id: 'fall', name: 'Fall' },
-      { id: 'winter', name: 'Winter' },
-      { id: 'spring', name: 'Spring' },
-      { id: 'summer 1', name: 'Summer 1' },
-      { id: 'summer 2', name: 'Summer 2' },
-      { id: 'summer 10 Week', name: 'Summer 10 Week' },
-    ];
-    data.forEach((name) => {
-      const match = base.find((q) => q.id === name);
-      if (match) match.checked = true;
-    });
-    return base;
-  };
 
   const [quarters, setQuarters] = useState<YearPopupQuarter[]>(quarterValues(currentQuarters));
   const quarterCheckboxes = quarters.map((q, i) => {
