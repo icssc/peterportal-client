@@ -45,8 +45,9 @@ const CourseYearModal: FC<CourseYearModalProps> = (props) => {
   const [quarters, setQuarters] = useState<YearPopupQuarter[]>(quarterValues(currentQuarters));
   const quarterCheckboxes = quarters.map((q, i) => {
     const handleClick = (i: number) => {
-      quarters[i].checked = !quarters[i].checked;
-      setQuarters(quarters.slice());
+      const newQuarters = quarters.slice();
+      newQuarters[i].checked = !newQuarters[i].checked;
+      setQuarters(newQuarters);
     };
     return (
       <Form.Check
