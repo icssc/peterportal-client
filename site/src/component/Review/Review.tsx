@@ -6,7 +6,7 @@ import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest } from '../../types/types';
 import { Checkbox, Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
@@ -50,7 +50,6 @@ const Review: FC<ReviewProps> = (props) => {
           ids: data.map((review) => review._id!),
         };
         const colors = await getColors(req);
-        console.log(colors);
         setVoteColors(colors);
         dispatch(setReviews(data));
       });
@@ -137,7 +136,7 @@ const Review: FC<ReviewProps> = (props) => {
               key={review._id}
               course={props.course}
               professor={props.professor}
-              userVote={getVoteColor(review._id)}
+              userVote={review.userVote!}
             />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>

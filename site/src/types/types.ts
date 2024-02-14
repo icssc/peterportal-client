@@ -21,6 +21,7 @@ export interface ReviewData {
   tags: string[];
   verified?: boolean;
   captchaToken?: string;
+  userVote?: number;
 }
 
 export interface ReportData {

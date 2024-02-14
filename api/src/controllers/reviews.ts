@@ -10,6 +10,7 @@ import {
   getCollection,
   addDocument,
   getDocuments,
+  aggregateDocuments,
   updateDocument,
   deleteDocument,
   deleteDocuments,
@@ -120,7 +121,66 @@ router.get('/', async function (req, res) {
     }
   }
 
-  const reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
+  const pipeline = [
+    {
+      $match: query,
+    },
+    {
+      $addFields: {
+        _id: {
+          $toString: '$_id',
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'votes',
+        let: {
+          cmpUserID: req.session.passport?.user.id,
+          cmpReviewID: '$_id',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$$cmpUserID', '$userID'],
+                  },
+                  {
+                    $eq: ['$$cmpReviewID', '$reviewID'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'userVote',
+      },
+    },
+    {
+      $addFields: {
+        userVote: {
+          $cond: {
+            if: {
+              $ne: ['$userVote', []],
+            },
+            then: {
+              $getField: {
+                field: 'score',
+                input: {
+                  $first: '$userVote',
+                },
+              },
+            },
+            else: 0,
+          },
+        },
+      },
+    },
+  ];
+
+  const reviews = await aggregateDocuments(COLLECTION_NAMES.REVIEWS, pipeline);
   if (reviews) {
     res.json(reviews);
   } else {

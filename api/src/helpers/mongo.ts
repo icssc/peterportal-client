@@ -92,6 +92,19 @@ async function getDocuments(collectionName: string, query: object): Promise<obje
 }
 
 /**
+ * Aggregates documents from a collection according to the given pipeline
+ * @param collectionName Name of collection
+ * @param query Query object
+ * @returns Mongo Document objects returned from the query
+ */
+async function aggregateDocuments(collectionName: string, pipeline: object[]): Promise<object[]> {
+  const collection = await getCollection(collectionName);
+  const results = collection.aggregate(pipeline);
+  const documents = await results.toArray();
+  return documents;
+}
+
+/**
  * Updates a document from a collection
  * @param collectionName Name of collection
  * @param query Query object
@@ -145,6 +158,7 @@ export {
   containsID,
   addDocument,
   getDocuments,
+  aggregateDocuments,
   updateDocument,
   replaceDocument,
   deleteDocument,
