@@ -101,7 +101,7 @@ const Profile = () => {
           </li>
           <li>
             <button
-              className={`theme-popover__link${usingSystemTheme ? ' active' : ''}`}
+              className={`profile-popover__link${usingSystemTheme ? ' active' : ''}`}
               onClick={() => setTheme('system')}
             >
               <div>
