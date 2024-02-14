@@ -53,3 +53,9 @@ jobs:
           environment: ${{ format('staging-{0}', github.event.pull_request.number) }}
           token: ${{ secrets.GITHUB_TOKEN }}
           onlyDeactivateDeployments: true
+
+      - name: Delete staging URL comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: staging url
+          delete: true
