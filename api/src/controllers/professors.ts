@@ -3,16 +3,15 @@
 */
 
 import express, { Request } from 'express';
-import fetch from 'node-fetch';
 import { getProfessorQuery } from '../helpers/gql';
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * PPAPI proxy for professor data
  */
-router.get('/api', function (req: Request<{}, {}, {}, { ucinetid: string }>, res) {
-  let r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.query.ucinetid);
+router.get('/api', function (req: Request<never, unknown, never, { ucinetid: string }>, res) {
+  const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.query.ucinetid);
 
   r.then((response) => response.json()).then((data) => res.send(data));
 });
@@ -20,11 +19,11 @@ router.get('/api', function (req: Request<{}, {}, {}, { ucinetid: string }>, res
 /**
  * PPAPI proxy for professor data
  */
-router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) => {
+router.post('/api/batch', (req: Request<never, unknown, { professors: string[] }, never>, res) => {
   if (req.body.professors.length == 0) {
     res.json({});
   } else {
-    let r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+    const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,8 +40,8 @@ router.post('/api/batch', (req: Request<{}, {}, { professors: string[] }>, res) 
 /**
  * PPAPI proxy for grade distribution
  */
-router.get('/api/grades/:name', function (req, res, next) {
-  let r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(req.params.name));
+router.get('/api/grades/:name', function (req, res) {
+  const r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(req.params.name));
 
   let status = 200;
 

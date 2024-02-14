@@ -85,6 +85,7 @@ const AppHeader: FC = () => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <Popup
+              className="beta-popup"
               style={{ padding: '36px', width: '400px' }}
               position="bottom right"
               trigger={

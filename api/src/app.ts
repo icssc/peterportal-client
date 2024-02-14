@@ -32,10 +32,10 @@ import { SESSION_LENGTH } from './config/constants';
 const app = express();
 
 // Setup mongo store for sessions
-let mongoStore = MongoDBStore(session);
+const mongoStore = MongoDBStore(session);
 
 if (process.env.MONGO_URL) {
-  let store = new mongoStore({
+  const store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
     collection: COLLECTION_NAMES.SESSIONS,
@@ -91,7 +91,7 @@ app.use('/api', router);
 /**
  * Error Handler
  */
-app.use(function (req, res, next) {
+app.use(function (req, res) {
   console.error(req);
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
