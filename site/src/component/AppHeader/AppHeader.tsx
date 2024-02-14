@@ -47,7 +47,7 @@ const AppHeader: FC = () => {
           {/* Hamburger Menu */}
           {isMobile && (
             <button className="navbar-menu" onClick={toggleMenu}>
-              <List className="navbar-menu-icon" />
+              <List className="navbar-menu-icon" size={'3vh'} />
             </button>
           )}
 
