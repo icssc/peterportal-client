@@ -47,9 +47,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Remove deployment
+      - name: Deactivate deployment
         uses: strumwolf/delete-deployment-environment@v3.0.0
         with:
           environment: ${{ format('staging-{0}', github.event.pull_request.number) }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          onlyRemoveDeployments: true
+          onlyDeactivateDeployments: true
