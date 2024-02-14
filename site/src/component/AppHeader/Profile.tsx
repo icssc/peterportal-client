@@ -29,8 +29,8 @@ const Profile = () => {
       <div className="profile-popover__header">
         <img src={picture} alt={name} />
         <span>
-          <h1>{name}</h1>
-          <h2>{email}</h2>
+          <h1 title={name}>{name}</h1>
+          <h2 title={email}>{email}</h2>
         </span>
       </div>
       <div className="profile-popover__links">
@@ -101,7 +101,7 @@ const Profile = () => {
           </li>
           <li>
             <button
-              className={`profile-popover__link${usingSystemTheme ? ' active' : ''}`}
+              className={`theme-popover__link${usingSystemTheme ? ' active' : ''}`}
               onClick={() => setTheme('system')}
             >
               <div>
@@ -138,7 +138,7 @@ const Profile = () => {
                 {
                   name: 'offset',
                   options: {
-                    offset: [-100, 15],
+                    offset: [-150, 15],
                   },
                 },
               ],

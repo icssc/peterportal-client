@@ -17,7 +17,8 @@
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
   border: 1px solid var(--background);
-  max-width: 94vw;
+  width: 350px;
+  max-width: 100vw;
 
   .arrow::before {
     border-bottom-color: var(--background);
@@ -25,11 +26,15 @@
 
   h1 {
     font-size: 1.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   h2 {
     font-size: 1em;
     color: var(--text-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -37,6 +42,11 @@
   display: flex;
   min-height: 6vh;
   margin-bottom: 0.75em;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+  }
 
   img {
     margin-right: 0.75em;
