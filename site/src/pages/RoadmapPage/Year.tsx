@@ -8,7 +8,7 @@ import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } 
 
 import { PlannerYearData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
-import CourseYearModal from './YearModal';
+import YearModal from './YearModal';
 
 interface YearProps {
   yearIndex: number;
@@ -125,7 +125,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         >
           <ThreeDots className="edit-btn" />
         </OverlayTrigger>
-        <CourseYearModal
+        <YearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}
           placeholderName={placeholderName ?? 'Year ' + yearIndex}
           placeholderYear={placeholderYear}

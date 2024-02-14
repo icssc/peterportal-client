@@ -9,7 +9,7 @@ interface YearPopupQuarter {
   checked?: boolean;
 }
 
-interface CourseYearModalProps {
+interface YearModalProps {
   placeholderName: string;
   placeholderYear: number;
   show: boolean;
@@ -19,7 +19,7 @@ interface CourseYearModalProps {
   currentQuarters: string[];
 }
 
-const CourseYearModal: FC<CourseYearModalProps> = (props) => {
+const YearModal: FC<YearModalProps> = (props) => {
   const { placeholderName, placeholderYear, show, setShow, type, saveHandler, currentQuarters } = props;
   const [validated, setValidated] = useState(false);
 
@@ -151,4 +151,4 @@ const CourseYearModal: FC<CourseYearModalProps> = (props) => {
   );
 };
 
-export default CourseYearModal;
+export default YearModal;
