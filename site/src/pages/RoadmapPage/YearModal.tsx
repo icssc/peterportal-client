@@ -56,6 +56,7 @@ const YearModal: FC<YearModalProps> = (props) => {
         id={'quarter-checkbox-' + q.id}
         label={q.name}
         value={q.id}
+        // Prop must be assigned a value that is not undefined
         checked={q.checked ?? false}
         onChange={() => handleClick(i)}
       />
