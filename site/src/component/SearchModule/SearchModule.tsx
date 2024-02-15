@@ -1,107 +1,143 @@
-import React, { useState, useEffect, Component, FC } from 'react';
+import { useState, useEffect, FC, useCallback } from 'react';
 import './SearchModule.scss';
 import wfs from 'websoc-fuzzy-search';
-import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Search } from 'react-bootstrap-icons';
 
-
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setNames, setResults } from '../../store/slices/searchSlice';
+import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
 import { searchAPIResults } from '../../helpers/util';
-import { SearchIndex, BatchCourseData, CourseGQLResponse, ProfessorGQLResponse, BatchProfessorData } from '../../types/types';
+import { SearchIndex } from '../../types/types';
+import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
-const PAGE_SIZE = 10;
-const SEARCH_TIMEOUT_MS = 500;
+const SEARCH_TIMEOUT_MS = 300;
+const FULL_RESULT_THRESHOLD = 3;
+const INITIAL_MAX_PAGE = 5;
 
 interface SearchModuleProps {
-    index: SearchIndex;
+  index: SearchIndex;
 }
 
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
-    const dispatch = useAppDispatch();
-    const courseSearch = useAppSelector(state => state.search.courses);
-    const professorSearch = useAppSelector(state => state.search.professors);
-    let pendingRequest: NodeJS.Timeout | null = null;
+  const dispatch = useAppDispatch();
+  const search = useAppSelector((state) => state.search[index]);
+  const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
+  const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
-    // Search empty string to load some results
-    useEffect(() => {
-        searchNames('');
-    }, [])
+  const searchNames = useCallback(
+    (query: string, pageNumber: number, lastQuery?: string) => {
+      // Get all results only when query changes or user reaches the fourth page or after
+      const nameResults = wfs({
+        query: query,
+        resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
+        // Load INITIAL_MAX_PAGE pages first
+        // when user reaches the 4th page or after, load all results
+        numResults:
+          lastQuery !== query || pageNumber < FULL_RESULT_THRESHOLD
+            ? NUM_RESULTS_PER_PAGE * INITIAL_MAX_PAGE
+            : undefined,
+      });
+      let names: string[] = [];
+      if (index === 'courses') {
+        names = Object.keys(nameResults ?? {});
+      } else if (index === 'professors') {
+        names = Object.keys(nameResults ?? {}).map(
+          (n) =>
+            (
+              (nameResults ?? {})[n].metadata as {
+                ucinetid: string;
+              }
+            ).ucinetid,
+        ) as string[];
+      }
+      dispatch(setNames({ index, names }));
+      // reset page number and hasFullResults flag if query changes
+      if (query !== lastQuery) {
+        dispatch(setPageNumber({ index, pageNumber: 0 }));
+        dispatch(setHasFullResults({ index, hasFullResults: false }));
+        dispatch(setLastQuery({ index, lastQuery: query }));
+      }
+    },
+    [dispatch, index],
+  );
 
-    // Refresh search results when names and page number changes
-    useEffect(() => {
-        searchResults('courses', courseSearch.pageNumber, courseSearch.names);
-    }, [courseSearch.names, courseSearch.pageNumber])
-    useEffect(() => {
-        searchResults('professors', professorSearch.pageNumber, professorSearch.names);
-    }, [professorSearch.names, professorSearch.pageNumber])
+  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
+  // make sure this runs before everything else for best performance and avoiding bugs
+  if (index !== prevIndex) {
+    setPrevIndex(index);
+    searchNames('', 0);
+  }
 
-    let searchNames = (query: string) => {
-        try {
-            /*
-                TODO: Search optimization
-                - Currently sending a query request for every input change
-                - Goal is to have only one query request pending
-                - Use setTimeout/clearTimeout to keep track of pending query request
-            */
-            let nameResults = wfs({
-                query: query,
-                numResults: PAGE_SIZE * 5,
-                resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
-                filterOptions: {
-                }
-            })
-            let names: string[] = [];
-            if (index == 'courses') {
-                names = Object.keys(nameResults);
-            }
-            else if (index == 'professors') {
-                names = Object.keys(nameResults).map(n => nameResults[n].metadata.ucinetid) as string[];
-            }
-            console.log('From frontend search', names)
-            dispatch(setNames({ index, names }));
-        }
-        catch (e) {
-            console.log(e)
-        }
+  const searchResults = useCallback(async () => {
+    if (search.names.length === 0) {
+      dispatch(setResults({ index, results: [] }));
+      return;
     }
-
-    let searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
-        // Get the subset of names based on the page
-        let pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1))
-        let results = await searchAPIResults(index, pageNames);
-        dispatch(setResults({ index, results: Object.values(results) }));
+    if (!search.hasFullResults && search.pageNumber >= FULL_RESULT_THRESHOLD) {
+      dispatch(setHasFullResults({ index, hasFullResults: true }));
+      searchNames(search.lastQuery, search.pageNumber, search.lastQuery);
+      return;
     }
+    // Get the subset of names based on the page
+    const pageNames = search.names.slice(
+      NUM_RESULTS_PER_PAGE * search.pageNumber,
+      NUM_RESULTS_PER_PAGE * (search.pageNumber + 1),
+    );
+    const results = await searchAPIResults(index, pageNames);
+    dispatch(setResults({ index, results: Object.values(results) }));
+  }, [dispatch, search.names, search.pageNumber, index, search.hasFullResults, search.lastQuery, searchNames]);
 
-    let searchNamesAfterTimeout = (query: string) => {
-        if (pendingRequest) {
-            clearTimeout(pendingRequest);
-        }
-        let timeout = setTimeout(() => {
-            searchNames(query);
-            pendingRequest = null;
-        }, SEARCH_TIMEOUT_MS);
-        pendingRequest = timeout;
+  // clear results and reset page number when component unmounts
+  // results will persist otherwise, e.g. current page of results from catalogue carries over to roadmap search container
+  useEffect(() => {
+    return () => {
+      dispatch(setPageNumber({ index: 'courses', pageNumber: 0 }));
+      dispatch(setPageNumber({ index: 'professors', pageNumber: 0 }));
+      dispatch(setResults({ index: 'courses', results: [] }));
+      dispatch(setResults({ index: 'professors', results: [] }));
+    };
+  }, [dispatch]);
+
+  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
+  useEffect(() => {
+    searchResults();
+  }, [index, searchResults]);
+
+  const searchNamesAfterTimeout = (query: string) => {
+    if (pendingRequest) {
+      clearTimeout(pendingRequest);
     }
+    const timeout = setTimeout(() => {
+      searchNames(query, 0);
+      setPendingRequest(null);
+    }, SEARCH_TIMEOUT_MS);
+    setPendingRequest(timeout);
+  };
 
-    let coursePlaceholder = 'Search a course number or department';
-    let professorPlaceholder = 'Search a professor';
-    let placeholder = index == 'courses' ? coursePlaceholder : professorPlaceholder;
+  const coursePlaceholder = 'Search a course number or department';
+  const professorPlaceholder = 'Search a professor';
+  const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
-    return <div className='search-module'>
-        <Form.Group className="mb-3">
-            <InputGroup>
-                <InputGroup.Prepend>
-                    <InputGroup.Text>
-                        <Search />
-                    </InputGroup.Text>
-                </InputGroup.Prepend>
-                <Form.Control className='search-bar' type="text" placeholder={placeholder} onChange={(e) => searchNamesAfterTimeout(e.target.value)} />
-            </InputGroup>
-        </Form.Group>
+  return (
+    <div className="search-module">
+      <Form.Group className="mb-3">
+        <InputGroup>
+          <InputGroup.Prepend>
+            <InputGroup.Text>
+              <Search />
+            </InputGroup.Text>
+          </InputGroup.Prepend>
+          <Form.Control
+            className="search-bar"
+            type="text"
+            placeholder={placeholder}
+            onChange={(e) => searchNamesAfterTimeout(e.target.value)}
+          />
+        </InputGroup>
+      </Form.Group>
     </div>
-}
+  );
+};
 
 export default SearchModule;

@@ -3,57 +3,57 @@
 */
 
 import express from 'express';
-import { ObjectID } from 'mongodb';
-import { COLLECTION_NAMES, getCollection, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
+import { ObjectId } from 'mongodb';
+import { COLLECTION_NAMES, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
 
-var router = express.Router();
+const router = express.Router();
 
 /**
  * Get all reports
  */
-router.get('/', async (req, res, next) => {
-    console.log('Getting all reports');
-    
-    let reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
+router.get('/', async (req, res) => {
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
+  const reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
-    res.json(reports);
+  res.json(reports);
 });
 
 /**
  * Add a report
  */
-router.post('/', async (req, res, next) => {
-    console.log(`Adding Report: ${JSON.stringify(req.body)}`);
+router.post('/', async (req, res) => {
+  console.log(`Adding Report: ${JSON.stringify(req.body)}`);
 
-    await addDocument(COLLECTION_NAMES.REPORTS, req.body);
+  await addDocument(COLLECTION_NAMES.REPORTS, req.body);
 
-    res.json(req.body);
+  res.json(req.body);
 });
 
 /**
  * Delete a report
  */
-router.delete('/', async (req, res, next) => {
-    
-    let status;
-    if (req.body.id) {
-        console.log(`Deleting report ${req.body.id}`);
-        status = await deleteDocument(COLLECTION_NAMES.REPORTS, {
-            _id: new ObjectID(req.body.id)
-        });
-    }
-    else {
-        console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
-        let query: GenericObject = {};
-        if (req.body.reviewID) query['reviewID'] = req.body.reviewID;
+router.delete('/', async (req, res) => {
+  let status;
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
+  if (req.body.id) {
+    console.log(`Deleting report ${req.body.id}`);
+    status = await deleteDocument(COLLECTION_NAMES.REPORTS, {
+      _id: new ObjectId(req.body.id),
+    });
+  } else {
+    console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
+    const query: GenericObject = {};
+    if (req.body.reviewID) query['reviewID'] = req.body.reviewID;
 
-        if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified
-        
-        status = await deleteDocuments(COLLECTION_NAMES.REPORTS, query);
-    }
+    if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified
 
-    res.json(status);
-})
+    status = await deleteDocuments(COLLECTION_NAMES.REPORTS, query);
+  }
+
+  res.json(status);
+});
 
 export default router;

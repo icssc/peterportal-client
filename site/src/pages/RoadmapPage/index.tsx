@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useReducer, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
@@ -6,33 +6,37 @@ import { DragDropContext, DropResult, DragUpdate } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
-import { isMobile, isBrowser } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import RoadmapMultiplan from './RoadmapMultiplan';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
-  const showSearch = useAppSelector(state => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showSearch);
+  const showSearch = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showSearch);
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
       // no destination
-      if(!result.destination) { return }
+      if (!result.destination) {
+        return;
+      }
 
       // dragging to search bar
       if (result.destination.droppableId === 'search') {
         // removing from quarter
         if (result.source.droppableId != 'search') {
-          let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
-          dispatch(deleteCourse({
-            yearIndex: parseInt(yearIndex),
-            quarterIndex: parseInt(quarterIndex),
-            courseIndex: result.source.index
-          }))
+          const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+          dispatch(
+            deleteCourse({
+              yearIndex: parseInt(yearIndex),
+              quarterIndex: parseInt(quarterIndex),
+              courseIndex: result.source.index,
+            }),
+          );
         }
         return;
       }
 
-      let movePayload = {
+      const movePayload = {
         from: {
           yearIndex: -1,
           quarterIndex: -1,
@@ -41,23 +45,23 @@ const RoadmapPage: FC = () => {
         to: {
           yearIndex: -1,
           quarterIndex: -1,
-          courseIndex: -1
-        }
+          courseIndex: -1,
+        },
       };
 
-      console.log(result.source.droppableId, '=>', result.destination.droppableId)
+      console.log(result.source.droppableId, '=>', result.destination.droppableId);
 
       // roadmap to roadmap has source
       if (result.source.droppableId != 'search') {
-        let [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+        const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
         movePayload.from.yearIndex = parseInt(yearIndex);
         movePayload.from.quarterIndex = parseInt(quarterIndex);
         movePayload.from.courseIndex = result.source.index;
       }
-      // search to roadmap has no source (use activeCourse in global state)      
+      // search to roadmap has no source (use activeCourse in global state)
 
       // both have destination
-      let [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
+      const [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
       movePayload.to.yearIndex = parseInt(yearIndex);
       movePayload.to.quarterIndex = parseInt(quarterIndex);
       movePayload.to.courseIndex = result.destination.index;
@@ -68,32 +72,36 @@ const RoadmapPage: FC = () => {
   }, []);
 
   const onDragUpdate = useCallback((initial: DragUpdate) => {
-    console.log(initial)
+    console.log(initial);
   }, []);
 
   // do not conditionally renderer because it would remount planner which would discard unsaved changes
-  const mobileVersion = <>
-    <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
-      <Planner />
-    </div>
-    <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
-      <SearchSidebar />
-    </div>
-  </>
+  const mobileVersion = (
+    <>
+      <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
+        <Planner />
+      </div>
+      <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
+        <SearchSidebar />
+      </div>
+    </>
+  );
 
-  const desktopVersion = <>
-    <div className='main-wrapper'>
-      <Planner />
-    </div>
-    <div className='sidebar-wrapper'>
-      <SearchSidebar />
-    </div>
-  </>
+  const desktopVersion = (
+    <>
+      <div className="main-wrapper">
+        <Planner />
+      </div>
+      <div className="sidebar-wrapper">
+        <SearchSidebar />
+      </div>
+    </>
+  );
 
   return (
     <>
       <RoadmapMultiplan />
-      <div className='roadmap-page'>
+      <div className="roadmap-page">
         <AddCoursePopup />
         <DragDropContext onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
           {isMobile && mobileVersion}

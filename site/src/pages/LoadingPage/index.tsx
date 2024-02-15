@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 const LoadingPage: FC = () => {
-    return (
-        <div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <h1>Loading data...</h1>
-            </div>
-        </div>
-    )
-}
+  return (
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <h1>Loading data...</h1>
+      </div>
+    </div>
+  );
+};
 
 export default LoadingPage;

@@ -25,7 +25,6 @@
 
 ## Final Checks:
 - [ ] Verify successful deployment
-- [ ] Delete branch
 
 (optional)
 - [ ] Write tests
