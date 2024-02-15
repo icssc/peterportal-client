@@ -43,7 +43,7 @@ export default function App() {
    */
   if (darkMode != prevDarkMode) {
     // Theme styling is controlled by data-theme attribute on body being set to light or dark
-    document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     setPrevDarkMode(darkMode);
   }
 
