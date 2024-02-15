@@ -18,6 +18,11 @@
   }
 }
 
+.school-term {
+  margin-bottom: 0;
+  margin-right: 0.75em;
+}
+
 .navbar {
   position: sticky;
   z-index: 300;
@@ -51,12 +56,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
-
-      .navbar-menu-icon {
-        width: 3vh;
-        height: 3vh;
-      }
+      border: none;
+      background: none;
     }
 
     .desktop-toggle {
