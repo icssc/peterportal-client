@@ -63,7 +63,7 @@ const CoursePage: FC = () => {
                 <h2>🌲 Prerequisite Tree</h2>
               </div>
               <Divider />
-              <PrereqTree {...courseGQLData} />
+              <PrereqTree key={id} {...courseGQLData} />
             </div>
 
             <div className="course-page-section">
