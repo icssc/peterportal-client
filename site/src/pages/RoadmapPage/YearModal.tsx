@@ -19,18 +19,18 @@ interface YearModalProps {
   currentQuarters: string[];
 }
 
-const quarterValues: (selectedNames: string[]) => YearPopupQuarter[] = (data: string[]) => {
+const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
   const base: YearPopupQuarter[] = [
     { id: 'fall', name: 'Fall' },
     { id: 'winter', name: 'Winter' },
     { id: 'spring', name: 'Spring' },
-    { id: 'summer 1', name: 'Summer 1' },
-    { id: 'summer 2', name: 'Summer 2' },
+    { id: 'summer I', name: 'Summer I' },
+    { id: 'summer II', name: 'Summer II' },
     { id: 'summer 10 Week', name: 'Summer 10 Week' },
   ];
-  data.forEach((name) => {
-    const match = base.find((q) => q.id === name);
-    if (match) match.checked = true;
+  quarterIds.forEach((id) => {
+    const quarter = base.find((q) => q.id === id)!;
+    quarter.checked = true;
   });
   return base;
 };
