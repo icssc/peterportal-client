@@ -24,10 +24,8 @@ const CoursePage: FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // make a gql query if directly landed on this page
-    if (id !== undefined && (courseGQLData == null || courseGQLData.id != id)) {
+    if (id !== undefined) {
       searchAPIResult('course', id).then((course) => {
-        console.log('COURSE', course);
         if (course) {
           dispatch(setCourse(course as CourseGQLData));
         } else {
@@ -35,7 +33,7 @@ const CoursePage: FC = () => {
         }
       });
     }
-  }, [dispatch, id, courseGQLData]);
+  }, [dispatch, id]);
 
   // if course does not exists
   if (error) {
