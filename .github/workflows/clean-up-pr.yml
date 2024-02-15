@@ -7,7 +7,7 @@ on:
       - master
 
 concurrency:
-  group: deploy-${{ github.head_ref || github.run_id }}
+  group: clean-up-pr-${{ github.head_ref || github.run_id }}
 
 jobs:
   clean-up-pr:
@@ -18,16 +18,18 @@ jobs:
 
     steps:
       - name: Check Out Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
       - name: Install Dependencies
         run: npm install
+        env:
+          HUSKY: 0
 
       - name: Remove staging stack
         run: npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend && npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} frontend
@@ -44,3 +46,10 @@ jobs:
           PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deactivate deployment
+        uses: strumwolf/delete-deployment-environment@v3.0.0
+        with:
+          environment: ${{ format('staging-{0}', github.event.pull_request.number) }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          onlyDeactivateDeployments: true
