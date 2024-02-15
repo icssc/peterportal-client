@@ -35,7 +35,7 @@ const CoursePage: FC = () => {
         }
       });
     }
-  }, []);
+  }, [dispatch, id, courseGQLData]);
 
   // if course does not exists
   if (error) {

@@ -32,7 +32,7 @@ const ProfessorPage: FC = () => {
         }
       });
     }
-  }, []);
+  }, [dispatch, id, professorGQLData]);
 
   // if professor does not exists
   if (error) {

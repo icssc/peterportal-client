@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 import { isMobile } from 'react-device-detect';
@@ -58,7 +58,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <a href={'/course/' + item.replace(/\s+/g, '')}>{item}</a>
+                  <Link to={'/course/' + item.replace(/\s+/g, '')}>{item}</Link>
                 </span>
               );
             })}
