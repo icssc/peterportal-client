@@ -28,6 +28,7 @@ const CoursePage: FC = () => {
       searchAPIResult('course', id).then((course) => {
         if (course) {
           dispatch(setCourse(course as CourseGQLData));
+          setError('');
         } else {
           setError(`Course ${id} does not exist!`);
         }
