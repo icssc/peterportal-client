@@ -35,7 +35,7 @@ const Planner: FC = () => {
   const [cookies] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
-  const transfers = useAppSelector((state) => state.roadmap.transfers);
+  const transfers = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
