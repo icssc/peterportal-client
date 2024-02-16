@@ -5,8 +5,14 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build_and_deploy:
@@ -15,11 +21,7 @@ jobs:
     if: (github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'no deploy'))
     environment:
       name: ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'production'  }}
-      url: https://${{ (github.event_name == 'pull_request' && format('staging-{0}.peterportal.org', github.event.pull_request.number)) || 'peterportal.org' }}
-
-    concurrency:
-      group: build-and-deploy-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
+      url: https://${{ (github.event_name == 'pull_request' && format('staging-{0}.', github.event.pull_request.number)) || '' }}peterportal.org
 
     steps:
       - name: Check Out Repo
