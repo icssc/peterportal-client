@@ -35,7 +35,7 @@ interface RoadmapState {
 
 // Define the initial state using that type
 const initialState: RoadmapState = {
-  yearPlans: [defaultYear()],
+  yearPlans: [defaultYear() as PlannerYearData],
   activeCourse: null!,
   invalidCourses: [],
   showTransfer: false,
