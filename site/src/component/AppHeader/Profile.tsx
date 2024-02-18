@@ -144,7 +144,11 @@ const Profile = () => {
               ],
             }}
           >
-            <img src={picture} alt={name} className="navbar-profile-pic" />
+            {({ ref, ...triggerHandler }) => (
+              <button {...triggerHandler} className="profile-button">
+                <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
+              </button>
+            )}
           </OverlayTrigger>
         </div>
       ) : (
