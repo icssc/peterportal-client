@@ -5,6 +5,8 @@ interface SearchData {
   names: string[];
   pageNumber: number;
   results: CourseGQLData[] | ProfessorGQLData[];
+  hasFullResults: boolean;
+  lastQuery: string;
 }
 
 // Define a type for the slice state
@@ -19,11 +21,15 @@ const initialState: SearchState = {
     names: [],
     pageNumber: 0,
     results: [],
+    hasFullResults: false,
+    lastQuery: '',
   },
   professors: {
     names: [],
     pageNumber: 0,
     results: [],
+    hasFullResults: false,
+    lastQuery: '',
   },
 };
 
@@ -42,9 +48,18 @@ export const searchSlice = createSlice({
     setResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchData['results'] }>) => {
       state[action.payload.index].results = action.payload.results;
     },
+    setHasFullResults: (
+      state,
+      action: PayloadAction<{ index: SearchIndex; hasFullResults: SearchData['hasFullResults'] }>,
+    ) => {
+      state[action.payload.index].hasFullResults = action.payload.hasFullResults;
+    },
+    setLastQuery: (state, action: PayloadAction<{ index: SearchIndex; lastQuery: string }>) => {
+      state[action.payload.index].lastQuery = action.payload.lastQuery;
+    },
   },
 });
 
-export const { setNames, setPageNumber, setResults } = searchSlice.actions;
+export const { setNames, setPageNumber, setResults, setHasFullResults, setLastQuery } = searchSlice.actions;
 
 export default searchSlice.reducer;
