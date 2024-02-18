@@ -90,13 +90,11 @@
   width: 100%;
 }
 
-.edit-btn {
-  width: 5%;
-  margin-top: 10px;
-}
-
-.edit-btn:hover {
-  cursor: pointer;
+.year-edit-btn {
+  background: none;
+  border: none;
+  margin-right: 1.25rem;
+  padding-bottom: 0.5rem;
 }
 
 .year-settings-btn {

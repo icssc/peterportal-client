@@ -134,7 +134,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           onToggle={setShowQuarterMenu}
           show={showQuarterMenu}
         >
-          <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
+          {({ ref, ...triggerHandler }) => (
+            <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
+              <ThreeDots />
+            </button>
+          )}
         </OverlayTrigger>
       </span>
       <div className="quarter-units">
