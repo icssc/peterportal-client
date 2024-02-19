@@ -7,6 +7,7 @@ import './style/theme.scss';
 import './App.scss';
 
 import AppHeader from './component/AppHeader/AppHeader';
+import ChangelogModal from './component/ChangelogModal/ChangelogModal';
 import Footer from './component/Footer/Footer';
 import SearchPage from './pages/SearchPage';
 import CoursePage from './pages/CoursePage';
@@ -35,6 +36,8 @@ export default function App() {
   );
   const [cookies] = useCookies(['user']);
   const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
+
+  const [showModal, setShowModal] = useState(false);
 
   /**
    * we run this check at render-time and compare with previous state because a useEffect
@@ -75,6 +78,11 @@ export default function App() {
     }
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+    localStorage.removeItem('showModal');
+  };
+
   useEffect(() => {
     // if logged in, load user prefs (theme) from mongo
     if (cookies.user) {
@@ -86,6 +94,15 @@ export default function App() {
       });
     }
   }, [cookies.user, setThemeState]);
+
+  useEffect(() => {
+    // display the changelog modal if it is the user's first time seeing it (tracked in local storage)
+    let seen = localStorage.getItem('showModal');
+    if (!seen) {
+      setShowModal(true);
+      localStorage.setItem('showModal', '1');
+    }
+  }, []);
 
   return (
     <Router>
@@ -108,6 +125,7 @@ export default function App() {
             </Routes>
             <Footer />
           </div>
+          <div className="changelog-modal">{showModal && <ChangelogModal closeForm={closeModal} />}</div>
         </div>
       </ThemeContext.Provider>
     </Router>
