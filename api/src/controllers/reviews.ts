@@ -314,57 +314,6 @@ router.patch('/vote', async function (req, res) {
   }
 });
 
-/**
- * Get whether or not the color of a button should be colored
- */
-router.patch('/getVoteColor', async function (req, res) {
-  //make sure user is logged in
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const query = {
-      userID: req.session.passport.user.email,
-      reviewID: req.body['id'],
-    };
-    //get any existing vote in the db
-    const existingVote = (await getDocuments(COLLECTION_NAMES.VOTES, query)) as VoteData[];
-    //result an array of either length 1 or empty
-    if (existingVote.length == 0) {
-      //if empty, both should be uncolored
-      res.json([false, false]);
-    } else {
-      //if not empty, there is a vote, so color it accordingly
-      if (existingVote[0].score == 1) {
-        res.json([true, false]);
-      } else {
-        res.json([false, true]);
-      }
-    }
-  }
-});
-
-/**
- * Get multiple review colors
- */
-router.patch('/getVoteColors', async function (req, res) {
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const ids = req.body['ids'];
-
-    const q = {
-      userID: req.session.passport.user.id,
-      reviewID: { $in: ids },
-    };
-
-    const votes = (await getDocuments(COLLECTION_NAMES.VOTES, q)) as VoteData[];
-    const r: Record<string, number> = {};
-    for (let i = 0; i < votes.length; i++) {
-      r[votes[i].reviewID] = votes[i].score;
-    }
-    res.json(r);
-  } else {
-    res.json({});
-  }
-});
 /*
  * Verify a review
  */

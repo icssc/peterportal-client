@@ -14,13 +14,11 @@ interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  userVote: number;
+  updateScore: (newUserVote: number) => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) => {
-  const [score, setScore] = useState(review.score);
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, updateScore }) => {
   const [cookies] = useCookies(['user']);
-  const [vote, setVote] = useState(userVote);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
@@ -40,23 +38,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
     };
 
     let newVote;
-    let newScore;
-    if (vote === 1) {
+    if (review.userVote === 1) {
       newVote = 0;
-      newScore = score - 1;
-    } else if (vote === 0) {
+    } else if (review.userVote === 0) {
       newVote = 1;
-      newScore = score + 1;
     } else {
       newVote = 1;
-      newScore = score + 2;
     }
-    setScore(newScore);
-    setVote(newVote);
+    updateScore(newVote);
     await sendVote(voteReq).catch((err) => {
       console.error('Error sending upvote:', err);
-      setScore(score);
-      setVote(vote);
+      updateScore(review.userVote);
     });
   };
 
@@ -71,23 +63,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
     };
 
     let newVote;
-    let newScore;
-    if (vote === 1) {
+    if (review.userVote === 1) {
       newVote = -1;
-      newScore = score - 2;
-    } else if (vote === 0) {
+    } else if (review.userVote === 0) {
       newVote = -1;
-      newScore = score - 1;
     } else {
       newVote = 0;
-      newScore = score + 1;
     }
-    setScore(newScore);
-    setVote(newVote);
+    updateScore(newVote);
     await sendVote(voteReq).catch((err) => {
       console.error('Error sending downvote:', err);
-      setScore(score);
-      setVote(vote);
+      updateScore(review.userVote);
     });
   };
 
@@ -98,8 +84,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
-  const upvoteClassname = vote === 1 ? 'upvote coloredUpvote' : 'upvote';
-  const downvoteClassname = vote === -1 ? 'downvote coloredDownvote' : 'downvote';
+  const upvoteClassname = review.userVote === 1 ? 'upvote coloredUpvote' : 'upvote';
+  const downvoteClassname = review.userVote === -1 ? 'downvote coloredDownvote' : 'downvote';
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
@@ -198,7 +184,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, userVote }) 
         <button className={upvoteClassname} onClick={upvote}>
           &#9650;
         </button>
-        <p>{score}</p>
+        <p>{review.score}</p>
         <button className={downvoteClassname} onClick={downvote}>
           &#9660;
         </button>
