@@ -11,7 +11,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 // load env
 dotenv.config();
 
@@ -95,6 +95,26 @@ app.use('/api', router);
 app.use(function (req, res) {
   console.error(req);
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
+});
+
+let conn: null | Mongoose = null;
+const uri = process.env.MONGO_URL;
+export const connect = async () => {
+  if (conn == null) {
+    conn = await mongoose.connect(uri, {
+      dbName: DB_NAME,
+      serverSelectionTimeoutMS: 5000,
+    });
+  }
+  return conn;
+};
+app.use(async function (req, res, next) {
+  try {
+    connect();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 // run local dev server
