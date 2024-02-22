@@ -29,6 +29,7 @@ import {
 } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
+import { defaultYear } from '../../helpers/planner';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -47,8 +48,10 @@ const Planner: FC = () => {
     });
 
     // stringified value of an empty roadmap
-    const emptyRoadmap =
-      '{"planner":[{"startYear":2024,"name":"Year 1","quarters":[{"name":"fall","courses":[]},{"name":"winter","courses":[]},{"name":"spring","courses":[]}]}],"transfers":[]}';
+    const emptyRoadmap = JSON.stringify({
+      planner: [defaultYear()],
+      transfers: [],
+    } as SavedRoadmap);
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
@@ -287,28 +290,7 @@ const Planner: FC = () => {
       }
     }
   };
-  //TODO: Support for Multiple Planner future implementation
-  //  - Default year only added when a new planner is created
 
-  const initializePlanner = () => {
-    if (data.length == 0) {
-      dispatch(
-        addYear({
-          yearData: {
-            startYear: new Date().getFullYear(),
-            name: 'Year 1',
-            quarters: ['fall', 'winter', 'spring'].map((quarter) => {
-              return { name: quarter, courses: [] };
-            }),
-          },
-        }),
-      );
-    }
-
-    return data.map((year, yearIndex) => {
-      return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-    });
-  };
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
   return (
@@ -319,7 +301,11 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years">{initializePlanner()}</section>
+      <section className="years">
+        {data.map((year, yearIndex) => {
+          return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+        })}
+      </section>
       <AddYearPopup
         placeholderName={'Year ' + (data.length + 1)}
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}

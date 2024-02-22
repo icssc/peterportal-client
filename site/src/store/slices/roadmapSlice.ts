@@ -11,6 +11,7 @@ import {
   TransferData,
   PlannerQuarterData,
 } from '../../types/types';
+import { defaultYear } from '../../helpers/planner';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -34,7 +35,7 @@ interface RoadmapState {
 
 // Define the initial state using that type
 const initialState: RoadmapState = {
-  yearPlans: [],
+  yearPlans: [defaultYear() as PlannerYearData],
   activeCourse: null!,
   invalidCourses: [],
   showTransfer: false,
