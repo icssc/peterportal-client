@@ -25,6 +25,7 @@ const Review: FC<ReviewProps> = (props) => {
   const reviewData = useAppSelector(selectReviews);
   const [voteColors, setVoteColors] = useState([]);
   const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+  const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
 
   const getColors = async (vote: VoteColorsRequest) => {
@@ -102,6 +103,16 @@ const Review: FC<ReviewProps> = (props) => {
     sortedReviews = reviewData.slice(0);
   }
 
+  if (filterOption.length > 0) {
+    if (props.course) {
+      // filter course reviews by specific professor
+      sortedReviews = sortedReviews.filter((review) => review.professorID === filterOption);
+    } else if (props.professor) {
+      // filter professor reviews by specific course
+      sortedReviews = sortedReviews.filter((review) => review.courseID === filterOption);
+    }
+  }
+
   switch (sortingOption) {
     case SortingOption.MOST_RECENT:
       sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -116,6 +127,20 @@ const Review: FC<ReviewProps> = (props) => {
         (a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
       break;
+  }
+
+  // calculate frequencies of professors or courses in list of reviews
+  let reviewFreq = new Map<string, number>();
+  if (props.course) {
+    reviewFreq = sortedReviews.reduce(
+      (acc, review) => acc.set(review.professorID, (acc.get(review.professorID) || 0) + 1),
+      reviewFreq,
+    );
+  } else if (props.professor) {
+    reviewFreq = sortedReviews.reduce(
+      (acc, review) => acc.set(review.courseID, (acc.get(review.courseID) || 0) + 1),
+      reviewFreq,
+    );
   }
 
   const openReviewForm = () => {
@@ -146,6 +171,58 @@ const Review: FC<ReviewProps> = (props) => {
               value={sortingOption}
               onChange={(_, s) => setSortingOption(s.value as SortingOption)}
             />
+            {props.course && (
+              <Dropdown
+                placeholder="Professor"
+                scrolling
+                selection
+                options={
+                  // include option for filter to be empty
+                  [{ text: 'All Professors', value: '' }].concat(
+                    // map course's instructors to dropdown options
+                    Object.keys(props.course?.instructors)
+                      .map((profID) => {
+                        const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
+                        return {
+                          text: name,
+                          value: profID,
+                        };
+                      })
+                      .sort((a, b) => a.text.localeCompare(b.text)),
+                  )
+                }
+                value={filterOption}
+                onChange={(_, s) => setFilterOption(s.value as string)}
+              />
+            )}
+            {props.professor && (
+              <Dropdown
+                placeholder="Course"
+                scrolling
+                selection
+                options={
+                  // include option for filter to be empty
+                  [{ text: 'All Courses', value: '' }].concat(
+                    // map professor's courses to dropdown options
+                    Object.keys(props.professor?.courses)
+                      .map((courseID) => {
+                        const name =
+                          props.professor?.courses[courseID].department +
+                          ' ' +
+                          props.professor?.courses[courseID].courseNumber +
+                          ` (${reviewFreq.get(courseID) || 0})`;
+                        return {
+                          text: name,
+                          value: courseID,
+                        };
+                      })
+                      .sort((a, b) => a.text.localeCompare(b.text)),
+                  )
+                }
+                value={filterOption}
+                onChange={(_, s) => setFilterOption(s.value as string)}
+              />
+            )}
             <div id="checkbox">
               <Checkbox
                 label="Show verified reviews only"
