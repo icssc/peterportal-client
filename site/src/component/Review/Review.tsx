@@ -183,7 +183,7 @@ const Review: FC<ReviewProps> = (props) => {
                     Object.keys(props.course?.instructors)
                       .map((profID) => {
                         const name =
-                          `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})` as string;
+                          `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
                         return {
                           text: name,
                           value: profID,
