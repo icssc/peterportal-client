@@ -182,8 +182,7 @@ const Review: FC<ReviewProps> = (props) => {
                     // map course's instructors to dropdown options
                     Object.keys(props.course?.instructors)
                       .map((profID) => {
-                        const name =
-                          `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
+                        const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
                         return {
                           text: name,
                           value: profID,
