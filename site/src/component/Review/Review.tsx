@@ -130,7 +130,7 @@ const Review: FC<ReviewProps> = (props) => {
   }
 
   // calculate frequencies of professors or courses in list of reviews
-  let reviewFreq = new Map();
+  let reviewFreq = new Map<string, number>();
   if (props.course) {
     reviewFreq = sortedReviews.reduce(
       (acc, review) => acc.set(review.professorID, (acc.get(review.professorID) || 0) + 1),
