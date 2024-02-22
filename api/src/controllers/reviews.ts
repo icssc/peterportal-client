@@ -200,7 +200,7 @@ router.delete('/', async (req, res) => {
     });
 
     // also delete any reports for the deleted review
-    console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
+    console.log(`Deleting reports with reviewID ${req.body.id}`);
     await deleteDocuments(COLLECTION_NAMES.REPORTS, {
       reviewID: req.body.id,
     });
