@@ -1,0 +1,26 @@
+.modal-content {
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.modal-header {
+  font-weight: bold;
+}
+
+.modal-body {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.modal-img {
+  max-width: 70vw;
+  max-height: 50vh;
+  object-fit: contain;
+}
+
+@media only screen and (max-width: 800px) {
+  .modal-img {
+    max-width: 90vw;
+    max-height: 50vh;
+  }
+}

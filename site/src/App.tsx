@@ -37,8 +37,6 @@ export default function App() {
   const [cookies] = useCookies(['user']);
   const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
 
-  const [showModal, setShowModal] = useState(false);
-
   /**
    * we run this check at render-time and compare with previous state because a useEffect
    * would cause a flicker for dark mode users on page load since the first render would be without
@@ -78,11 +76,6 @@ export default function App() {
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    localStorage.removeItem('showModal');
-  };
-
   useEffect(() => {
     // if logged in, load user prefs (theme) from mongo
     if (cookies.user) {
@@ -94,15 +87,6 @@ export default function App() {
       });
     }
   }, [cookies.user, setThemeState]);
-
-  useEffect(() => {
-    // display the changelog modal if it is the user's first time seeing it (tracked in local storage)
-    let seen = localStorage.getItem('showModal');
-    if (!seen) {
-      setShowModal(true);
-      localStorage.setItem('showModal', '1');
-    }
-  }, []);
 
   return (
     <Router>
@@ -125,7 +109,7 @@ export default function App() {
             </Routes>
             <Footer />
           </div>
-          <div className="changelog-modal">{showModal && <ChangelogModal closeForm={closeModal} />}</div>
+          <div className="changelog-modal">{<ChangelogModal />}</div>
         </div>
       </ThemeContext.Provider>
     </Router>
