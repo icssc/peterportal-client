@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useContext, useRef, useState } from 'react';
 import './Year.scss';
 import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons';
@@ -24,6 +24,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
+  const yearRef = useRef<HTMLDivElement>(null);
 
   const handleEditYearClick = (/* event: React.MouseEvent */) => {
     setPlaceholderYear(data.startYear); // set default year to current year
@@ -47,8 +48,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const { unitCount, courseCount } = calculateYearStats();
 
   const editYearOverlay = (
-    <Popover id={`year-menu-${yearIndex}`}>
-      <Popover.Content className="year-settings-popup">
+    <Popover id={`year-menu-${yearIndex}`} className="year-settings-popover">
+      <Popover.Content>
         <div>
           <Button onClick={handleEditYearClick} variant={buttonVariant} className="year-settings-btn">
             Edit Year
@@ -87,7 +88,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   );
 
   return (
-    <div className="year">
+    <div className="year" ref={yearRef}>
       <div className="yearTitleBar">
         <Button
           variant="link"
@@ -122,6 +123,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           onToggle={setShow}
           show={show}
           placement="bottom"
+          container={yearRef}
         >
           <ThreeDots className="edit-btn" />
         </OverlayTrigger>
