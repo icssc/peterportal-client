@@ -125,7 +125,6 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
             value={quarter === -1 ? '' : quarter}
             onChange={(e) => {
               const parsed = parseInt(e.target.value);
-              console.log(parsed, isNaN(parsed));
               if (!isNaN(parsed)) {
                 setQuarter(parsed);
               }
