@@ -11,6 +11,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
+import mongoose from 'mongoose';
 // load env
 dotenv.config();
 
@@ -41,7 +42,7 @@ if (process.env.MONGO_URL) {
     collection: COLLECTION_NAMES.SESSIONS,
   });
   // Catch errors
-  store.on('error', function (error) {
+  mongoose.connection.on('error', function (error) {
     console.log(error);
   });
   // Setup Passport and Sessions

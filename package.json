@@ -9,12 +9,14 @@
   },
   "dependencies": {
     "dotenv-flow": "^4.0.1",
+    "mongoose": "^8.1.1",
     "sst": "^2.38.7"
   },
   "engines": {
     "node": "^18 || ^20"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.11.97",
     "husky": "^8.0.0",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.0"

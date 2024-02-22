@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 
 const voteSchema = new mongoose.Schema({
-  reviewId: {
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  reviewID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review',
-  },
-  reason: {
-    type: String,
-    required: true,
   },
   timestamp: {
     type: Date,
