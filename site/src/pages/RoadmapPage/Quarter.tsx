@@ -5,8 +5,9 @@ import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { isMobile } from 'react-device-detect';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
-import { PlannerQuarterData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import { PlannerQuarterData } from '../../types/types';
+import './Quarter.scss';
 import { StrictModeDroppable } from './StrictModeDroppable';
 
 import Course from './Course';

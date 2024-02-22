@@ -131,48 +131,52 @@ const SideBar = () => {
     </div>
   );
 
-  return (
-    <div>
-      <div className={`sidebar ${showSidebar ? '' : 'minimized'}`}>
-        {/* Close Button */}
-        <div className="sidebar-close">
-          <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
-        </div>
-        {/* Profile Icon and Name */}
-        <div className="sidebar-profile">
-          <img src={picture ? picture : defaultAvatar} />
-          <p>{name ? name : 'Anonymous Peter'}</p>
-        </div>
+  if (!showSidebar) {
+    return <div className="sidebar mini">{links}</div>;
+  } else {
+    return (
+      <div>
+        <div className={`sidebar ${showSidebar ? '' : 'minimized'}`}>
+          {/* Close Button */}
+          <div className="sidebar-close">
+            <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
+          </div>
+          {/* Profile Icon and Name */}
+          <div className="sidebar-profile">
+            <img src={picture ? picture : defaultAvatar} />
+            <p>{name ? name : 'Anonymous Peter'}</p>
+          </div>
 
-        {/* Links */}
-        {links}
+          {/* Links */}
+          {links}
 
-        {/* Login/Logout */}
-        <div className="sidebar-login">
-          {isLoggedIn && (
-            <a href={`/api/users/logout`}>
-              <Button variant={darkMode ? 'dark' : 'light'}>
-                <span className="sidebar-login-icon">
-                  <Icon name="sign out" className="sidebar-login-icon" />
-                </span>
-                Log Out
-              </Button>
-            </a>
-          )}
-          {!isLoggedIn && (
-            <a href={`/api/users/auth/google`}>
-              <Button variant={darkMode ? 'dark' : 'light'}>
-                <span className="sidebar-login-icon">
-                  <Icon name="sign in" className="sidebar-login-icon" />
-                </span>
-                Log In
-              </Button>
-            </a>
-          )}
+          {/* Login/Logout */}
+          <div className="sidebar-login">
+            {isLoggedIn && (
+              <a href={`/api/users/logout`}>
+                <Button variant={darkMode ? 'dark' : 'light'}>
+                  <span className="sidebar-login-icon">
+                    <Icon name="sign out" className="sidebar-login-icon" />
+                  </span>
+                  Log Out
+                </Button>
+              </a>
+            )}
+            {!isLoggedIn && (
+              <a href={`/api/users/auth/google`}>
+                <Button variant={darkMode ? 'dark' : 'light'}>
+                  <span className="sidebar-login-icon">
+                    <Icon name="sign in" className="sidebar-login-icon" />
+                  </span>
+                  Log In
+                </Button>
+              </a>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default SideBar;
