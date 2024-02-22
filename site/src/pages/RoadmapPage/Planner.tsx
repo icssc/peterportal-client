@@ -12,7 +12,6 @@ import {
   setInvalidCourses,
   setTransfers,
   setUnsavedChanges,
-  addYear,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import {
