@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import { NavLink } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import defaultAvatarDark from '../../asset/default-avatar-dark.png';
+import { Button, Dropdown } from 'react-bootstrap';
 import defaultAvatarLight from '../../asset/default-avatar.png';
 import './Sidebar.scss';
 
@@ -20,7 +20,7 @@ const SideBar = () => {
   const [name, setName] = useState('');
   const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const { darkMode, setTheme } = useContext(ThemeContext);
+  const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
   const defaultAvatar = darkMode ? defaultAvatarDark : defaultAvatarLight;
 
   const isLoggedIn = cookies.user !== undefined;
@@ -29,20 +29,20 @@ const SideBar = () => {
     admin: boolean;
   }
 
-  const checkAdmin = async () => {
-    const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
-    const admin = res.data.admin;
-    setIsAdmin(admin);
-  };
-
   useEffect(() => {
     // if the user is logged in
     if (isLoggedIn) {
       setName(cookies.user.name);
       setPicture(cookies.user.picture);
+      // useEffect's function is not allowed to be async, create async checkAdmin function within
+      const checkAdmin = async () => {
+        const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
+        const admin = res.data.admin;
+        setIsAdmin(admin);
+      };
+      checkAdmin();
     }
-    checkAdmin();
-  });
+  }, [cookies.user, isLoggedIn]);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 
@@ -75,29 +75,55 @@ const SideBar = () => {
             <span>Peter's Roadmap</span>
           </NavLink>
         </li>
-        {isLoggedIn && (
-          <li>
-            <NavLink
-              to="/reviews"
-              className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-              onClick={closeSidebar}
-            >
-              <div>
-                <Icon name="sticky note outline" size="large" />
-              </div>
-              <span>Reviews</span>
-            </NavLink>
-          </li>
-        )}
         {showSidebar && (
-          <li>
-            <a className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
-              <div>
-                <Icon name={darkMode ? 'moon outline' : 'sun outline'} size="large" />
+          <>
+            {isLoggedIn && (
+              <li>
+                <NavLink
+                  to="/reviews"
+                  className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+                  onClick={closeSidebar}
+                >
+                  <div>
+                    <Icon name="sticky note outline" size="large" />
+                  </div>
+                  <span>Reviews</span>
+                </NavLink>
+              </li>
+            )}
+            <li>
+              <div className="theme-button">
+                <div>
+                  <Icon name={usingSystemTheme ? 'laptop' : darkMode ? 'moon outline' : 'sun outline'} size="large" />
+                </div>
+                <Dropdown>
+                  <Dropdown.Toggle variant={darkMode ? 'dark' : 'light'} id="dropdown-basic">
+                    Theme
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      className={`${!usingSystemTheme && !darkMode ? 'active' : ''}`}
+                      onSelect={() => setTheme('light')}
+                    >
+                      Light
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      className={`${!usingSystemTheme && darkMode ? 'active' : ''}`}
+                      onSelect={() => setTheme('dark')}
+                    >
+                      Dark
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      className={`${usingSystemTheme ? 'active' : ''}`}
+                      onSelect={() => setTheme('system')}
+                    >
+                      System
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </div>
-              <span>Toggle Dark Mode</span>
-            </a>
-          </li>
+            </li>
+          </>
         )}
         {isAdmin && (
           <>
@@ -136,11 +162,12 @@ const SideBar = () => {
   } else {
     return (
       <div>
-        <div className={`sidebar ${showSidebar ? '' : 'minimized'}`}>
+        <div className="sidebar">
           {/* Close Button */}
-          <div className="sidebar-close">
-            <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
-          </div>
+          <button className="sidebar-close" onClick={closeSidebar}>
+            <XCircle className="sidebar-close-icon" size={'3vh'} />
+          </button>
+
           {/* Profile Icon and Name */}
           <div className="sidebar-profile">
             <img src={picture ? picture : defaultAvatar} />
