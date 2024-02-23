@@ -26,6 +26,7 @@ const ProfessorPage: FC = () => {
       searchAPIResult('professor', id).then((professor) => {
         if (professor) {
           dispatch(setProfessor(professor as ProfessorGQLData));
+          setError('');
         } else {
           setError(`Professor ${id} does not exist!`);
         }
