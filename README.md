@@ -73,26 +73,9 @@ git clone https://github.com/<your username>/peterportal-client
 
 5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-6. Create a .env file in the api directory with the following contents:
-
-```
-PUBLIC_API_URL=https://api-next.peterportal.org/v1/rest/
-PUBLIC_API_GRAPHQL_URL=https://api-next.peterportal.org/v1/graphql
-PORT=8080
-```
-
-Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 8080.
+6. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
 
 7. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
-
-```
-MONGO_URL=<secret>
-SESSION_SECRET=<secret>
-GOOGLE_CLIENT=<client>
-GOOGLE_SECRET=<secret>
-GRECAPTCHA_SECRET=<secret>
-ADMIN_EMAILS=["<your email>"]
-```
 
 ## Open Source Contribution Guide
 
