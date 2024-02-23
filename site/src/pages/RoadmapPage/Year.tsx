@@ -127,7 +127,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         </OverlayTrigger>
         <YearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}
-          placeholderName={placeholderName ?? 'Year ' + yearIndex}
+          placeholderName={placeholderName ?? 'Year ' + (yearIndex + 1)}
           placeholderYear={placeholderYear}
           show={showEditYear}
           setShow={setShowEditYear}
