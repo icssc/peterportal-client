@@ -63,6 +63,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   yearIndex: yearIndex,
                 }),
               );
+              setShow(false);
             }}
           >
             Clear
@@ -77,6 +78,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   yearIndex: yearIndex,
                 }),
               );
+              setShow(false);
             }}
           >
             Remove
