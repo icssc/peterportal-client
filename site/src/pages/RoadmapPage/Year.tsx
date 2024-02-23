@@ -24,7 +24,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
-  const yearRef = useRef<HTMLDivElement>(null);
+  const yearContainerRef = useRef<HTMLDivElement>(null);
 
   const handleEditYearClick = (/* event: React.MouseEvent */) => {
     setPlaceholderYear(data.startYear); // set default year to current year
@@ -88,7 +88,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   );
 
   return (
-    <div className="year" ref={yearRef}>
+    <div className="year" ref={yearContainerRef}>
       <div className="yearTitleBar">
         <Button
           variant="link"
@@ -123,7 +123,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           onToggle={setShow}
           show={show}
           placement="bottom"
-          container={yearRef}
+          container={yearContainerRef}
         >
           <ThreeDots className="edit-btn" />
         </OverlayTrigger>

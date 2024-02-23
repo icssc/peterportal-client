@@ -22,7 +22,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
-  const quarterRef = useRef<HTMLDivElement>(null);
+  const quarterContainerRef = useRef<HTMLDivElement>(null);
 
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
 
@@ -123,7 +123,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   );
 
   return (
-    <div className="quarter" ref={quarterRef}>
+    <div className="quarter" ref={quarterContainerRef}>
       <span className="quarter-header">
         <h2 className="quarter-title">
           {quarterTitle} {year}
@@ -134,7 +134,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           rootClose
           onToggle={setShowQuarterMenu}
           show={showQuarterMenu}
-          container={quarterRef}
+          container={quarterContainerRef}
         >
           <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
         </OverlayTrigger>
