@@ -17,6 +17,7 @@
   flex: 1 1 30%;
   height: fit-content;
   margin: 0.75rem;
+  position: relative;
 
   .quarter-header {
     display: flex;
@@ -51,6 +52,10 @@
   border: 0px;
   background: transparent;
   padding: 0;
+}
+
+.quarter-menu-popover {
+  z-index: 1;
 }
 
 .red-menu-btn,
