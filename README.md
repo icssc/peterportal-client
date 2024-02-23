@@ -76,7 +76,6 @@ git clone https://github.com/<your username>/peterportal-client
 6. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
 
 7. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
-```
 
 ## Open Source Contribution Guide
 
