@@ -52,6 +52,7 @@ interface TreeProps {
   prerequisiteNames: CourseLookup;
   prerequisiteJSON: PrerequisiteNode;
   key?: string;
+  index?: number;
 }
 
 const PrereqTreeNode: FC<TreeProps> = (props) => {
@@ -62,7 +63,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
   if (isValueNode) {
     const prereq = prerequisite as Prerequisite;
     return (
-      <li key={props.key} className={'prerequisite-node'}>
+      <li key={props.index} className={'prerequisite-node'}>
         <Node
           label={`${prereq.courseId ?? prereq.examName ?? ''}${
             prereq?.minGrade ? ` (min grade = ${prereq?.minGrade})` : ''
@@ -92,8 +93,9 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
             <ul className="prereq-list">
               {prereqTree[Object.keys(prerequisite)[0]].map((child, index) => (
                 <PrereqTreeNode
-                  key={`${JSON.stringify(child)}${index}`}
+                  key={`tree-${index}`}
                   prerequisiteNames={props.prerequisiteNames}
+                  index={index}
                   prerequisiteJSON={child}
                 />
               ))}
@@ -167,11 +169,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
             <div style={{ display: 'flex' }}>
-              <PrereqTreeNode
-                key={props.id}
-                prerequisiteNames={props.prerequisites}
-                prerequisiteJSON={props.prerequisiteTree}
-              />
+              <PrereqTreeNode prerequisiteNames={props.prerequisites} prerequisiteJSON={props.prerequisiteTree} />
             </div>
           )}
 
