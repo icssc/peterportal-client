@@ -72,7 +72,7 @@ const CoursePage: FC = () => {
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <Divider />
-              <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
+              <Schedule key={courseGQLData.id} courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
             </div>
 
             <div className="course-page-section">
