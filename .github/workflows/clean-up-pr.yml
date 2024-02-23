@@ -3,18 +3,17 @@ name: Clean up PR
 on:
   pull_request:
     types: [closed]
-    branches:
-      - master
 
 concurrency:
-  group: clean-up-pr-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  STAGE: staging-${{ github.event.pull_request.number }}
 
 jobs:
   clean-up-pr:
     runs-on: ubuntu-latest
-    env:
-      STAGING_PREFIX: staging-${{ github.event.pull_request.number }}.
-      STAGE_NAME: staging-${{ github.event.pull_request.number }}
 
     steps:
       - name: Check Out Repo
@@ -32,7 +31,7 @@ jobs:
           HUSKY: 0
 
       - name: Remove staging stack
-        run: npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} backend && npx sst remove --stage ${{ format('staging-{0}', github.event.pull_request.number) }} frontend
+        run: npx sst remove --stage $STAGE backend && npx sst remove --stage $STAGE frontend
         env:
           CI: false
           PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
@@ -50,6 +49,6 @@ jobs:
       - name: Deactivate deployment
         uses: strumwolf/delete-deployment-environment@v3.0.0
         with:
-          environment: ${{ format('staging-{0}', github.event.pull_request.number) }}
+          environment: $STAGE
           token: ${{ secrets.GITHUB_TOKEN }}
           onlyDeactivateDeployments: true

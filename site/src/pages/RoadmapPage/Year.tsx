@@ -63,6 +63,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   yearIndex: yearIndex,
                 }),
               );
+              setShow(false);
             }}
           >
             Clear
@@ -77,6 +78,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
                   yearIndex: yearIndex,
                 }),
               );
+              setShow(false);
             }}
           >
             Remove
@@ -127,7 +129,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         </OverlayTrigger>
         <YearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}
-          placeholderName={placeholderName ?? 'Year ' + yearIndex}
+          placeholderName={placeholderName ?? 'Year ' + (yearIndex + 1)}
           placeholderYear={placeholderYear}
           show={showEditYear}
           setShow={setShowEditYear}
