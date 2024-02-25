@@ -47,6 +47,7 @@ const Reports: FC = () => {
 
   const acceptReports = async (reviewID: string) => {
     await axios.delete('/api/reviews', { data: { id: reviewID } });
+    // reports are automatically deleted when deleting a review
     setData(data.filter((review) => review.reviewID !== reviewID));
   };
 
