@@ -5,14 +5,15 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 
 const DESCRIPTION = 'You can now view recently added features to the PeterPortal website, listed in this modal.';
-const IMAGE_URL = 'https://media.tenor.com/FMJCWGaIwT0AAAAM/cat-thumbs-up.gif';
+const IMAGE_URL =
+  'https://media.tenor.com/ufm_0t3ACEAAAAAM/ginger-cat-ginger-cat-eating-then-staring-at-the-camera.gif';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     // display the changelog modal if it is the user's first time seeing it (tracked in local storage)
-    let seen = localStorage.getItem('changelogSeen');
+    const seen = localStorage.getItem('changelogSeen');
     if (seen === null) {
       setShowModal(true);
 
@@ -26,25 +27,29 @@ const ChangelogModal = () => {
   };
 
   return (
-    <Modal className="modal-card" show={showModal} centered animation={false}>
-      <h2 className="modal-header">
-        What's New - {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
-      </h2>
+    <div onClick={closeModal}>
+      <Modal
+        className="modal-card"
+        show={showModal}
+        centered
+        animation={false}
+        onClick={(e: MouseEvent) => e.stopPropagation()}
+      >
+        <h2 className="modal-header">
+          What's New - {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+        </h2>
 
-      <p className="modal-body">{DESCRIPTION}</p>
+        <p className="modal-body">{DESCRIPTION}</p>
 
-      <img className="modal-img" src={IMAGE_URL} />
+        <img className="modal-img" src={IMAGE_URL} />
 
-      <p className="modal-body">
-        If you have any feedback or features you would like to see, check out the feedback form!
-      </p>
-
-      <Row className="justify-content-center">
-        <Button className="py-2 px-4" variant="outline-secondary" onClick={closeModal}>
-          Close
-        </Button>
-      </Row>
-    </Modal>
+        <Row className="justify-content-center my-2">
+          <Button className="py-2 px-4" variant="outline-secondary" onClick={closeModal}>
+            Close
+          </Button>
+        </Row>
+      </Modal>
+    </div>
   );
 };
 
