@@ -9,6 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@trpc/server": "^10.45.1",
     "@vendia/serverless-express": "^4.10.1",
     "axios": "^1.6.5",
     "connect-mongodb-session": "^5.0.0",
@@ -21,7 +22,8 @@
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/connect-mongodb-session": "^2.4.2",

@@ -21,6 +21,8 @@ import ThemeContext, { Theme } from './style/theme-context';
 import axios from 'axios';
 import { useCookies } from 'react-cookie';
 
+import trpc from './trpc';
+
 function isSystemDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
@@ -85,6 +87,8 @@ export default function App() {
         }
       });
     }
+
+    trpc.greeting.query().then((res) => console.log(res));
   }, [cookies.user, setThemeState]);
 
   return (

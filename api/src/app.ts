@@ -11,6 +11,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
+import * as trpcExpress from '@trpc/server/adapters/express';
 // load env
 dotenv.config();
 
@@ -27,6 +28,7 @@ import roadmapRouter from './controllers/roadmap';
 import reportsRouter from './controllers/reports';
 
 import { SESSION_LENGTH } from './config/constants';
+import { initTRPC } from '@trpc/server';
 
 // instantiate app
 const app = express();
@@ -95,6 +97,30 @@ app.use(function (req, res) {
   console.error(req);
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
+
+const createContext = ({ req }: trpcExpress.CreateExpressContextOptions) => ({ session: req.session });
+type Context = Awaited<ReturnType<typeof createContext>>;
+const t = initTRPC.context<Context>().create();
+const publicProcedure = t.procedure;
+
+const appRouter = t.router({
+  greeting: publicProcedure.query(({ ctx }) => {
+    console.log(ctx.session.passport?.user);
+    return 'hello' + ctx.session.passport?.user.name;
+  }),
+});
+
+// Export only the type of a router!
+// This prevents us from importing server code on the client.
+export type AppRouter = typeof appRouter;
+
+router.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext,
+  }),
+);
 
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
