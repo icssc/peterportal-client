@@ -19,7 +19,7 @@ export default {
     }
 
     app
-      .stack(FrontendStack, { stackName: `${app.name}-${app.stage}-frontend` })
-      .stack(BackendStack, { stackName: `${app.name}-${app.stage}-backend` });
+      .stack(BackendStack, { stackName: `${app.name}-${app.stage}-backend` })
+      .stack(FrontendStack, { stackName: `${app.name}-${app.stage}-frontend` });
   },
 };
