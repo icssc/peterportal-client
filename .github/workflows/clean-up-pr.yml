@@ -31,20 +31,9 @@ jobs:
           HUSKY: 0
 
       - name: Remove staging stack
-        run: npx sst remove --stage $STAGE backend && npx sst remove --stage $STAGE frontend
+        run: npx sst remove --stage $STAGE
         env:
           CI: false
-          PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
-          PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
-          MONGO_URL: ${{secrets.MONGO_URL}}
-          SESSION_SECRET: ${{secrets.SESSION_SECRET}}
-          GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}
-          GOOGLE_SECRET: ${{secrets.GOOGLE_SECRET}}
-          GRECAPTCHA_SECRET: ${{secrets.GRECAPTCHA_SECRET}}
-          ADMIN_EMAILS: ${{secrets.ADMIN_EMAILS}}
-          PRODUCTION_DOMAIN: ${{secrets.PRODUCTION_DOMAIN}}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Deactivate deployment
         uses: strumwolf/delete-deployment-environment@v3.0.0
