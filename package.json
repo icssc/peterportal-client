@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "dotenv-flow": "^4.0.1",
-    "react-responsive": "^9.0.2",
     "sst": "^2.38.7"
   },
   "engines": {
