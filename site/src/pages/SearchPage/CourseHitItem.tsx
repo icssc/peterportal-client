@@ -3,12 +3,11 @@ import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
 import CourseQuarterIndicator from './CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge';
-import { isMobile } from 'react-device-detect';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags } from '../../helpers/util';
+import { getCourseTags, useIsMobile } from '../../helpers/util';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
@@ -16,6 +15,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
+  const isMobile = useIsMobile();
 
   // data to be displayed in pills
   const pillData = getCourseTags(props);

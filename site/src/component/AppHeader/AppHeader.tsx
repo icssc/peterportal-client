@@ -12,7 +12,7 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import { isDesktop, isMobile } from 'react-device-detect';
+import { useIsDesktop, useIsMobile } from '../../helpers/util';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -39,6 +39,9 @@ const AppHeader: FC = () => {
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   };
+
+  const isDesktop = useIsDesktop();
+  const isMobile = useIsMobile();
 
   return (
     <header className="navbar">
