@@ -8,9 +8,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  STAGE: staging-${{ github.event.pull_request.number }}
-
 jobs:
   clean-up-pr:
     runs-on: ubuntu-latest
@@ -31,7 +28,7 @@ jobs:
           HUSKY: 0
 
       - name: Remove staging stack
-        run: npx sst remove --stage $STAGE
+        run: npx sst remove --stage staging-${{ github.event.pull_request.number }}
         env:
           CI: false
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -40,6 +37,6 @@ jobs:
       - name: Deactivate deployment
         uses: strumwolf/delete-deployment-environment@v3.0.0
         with:
-          environment: $STAGE
+          environment: staging-${{ github.event.pull_request.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
           onlyDeactivateDeployments: true
