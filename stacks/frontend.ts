@@ -21,7 +21,12 @@ export function FrontendStack({ app, stack }: StackContext) {
    * distribution forwards the request to the lambda function
    * we want to preserve the origial host so we put it in a different header
    * by using this cloudfront function
+   *
    * this also fixes an issue with query strings
+   * from sst source code:
+   * 'Note: form action requests contain "/" in request query string
+   * ie. POST request with query string "?/action"
+   * CloudFront does not allow query string with "/". It needs to be encoded.'
    */
   const forwardHostFunction = new Function(stack, 'CloudFrontFunction', {
     // this code is copy/pasted from a sveltekit site deployed with SST
