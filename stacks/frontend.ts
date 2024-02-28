@@ -10,8 +10,10 @@ export function FrontendStack({ app, stack }: StackContext) {
   const apiOrigin = new FunctionUrlOrigin(functionUrl as unknown as IFunctionUrl);
 
   let domainName: string;
+  let domainAlias: string | undefined;
   if (app.stage === 'prod') {
     domainName = 'peterportal.org';
+    domainAlias = 'www.peterportal.org';
   } else if (app.stage === 'dev') {
     domainName = 'dev.peterportal.org';
   } else if (app.stage.match(/^staging-(\d+)$/)) {
@@ -24,7 +26,7 @@ export function FrontendStack({ app, stack }: StackContext) {
   new StaticSite(stack, 'Site', {
     customDomain: {
       domainName: domainName,
-      domainAlias: app.stage === 'prod' ? 'www.peterportal.org' : undefined,
+      domainAlias: domainAlias,
       hostedZone: 'peterportal.org',
     },
     path: './site',
