@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Row from 'react-bootstrap/Row';
 
 const DESCRIPTION = 'You can now view recently added features to the PeterPortal website, listed in this modal.';
 const IMAGE_URL =
