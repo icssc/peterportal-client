@@ -7,7 +7,7 @@ import { App } from 'sst/constructs';
 dotenv.config();
 
 export default {
-  config(_input) {
+  config() {
     return {
       name: 'peterportal-client',
       region: 'us-west-1',
