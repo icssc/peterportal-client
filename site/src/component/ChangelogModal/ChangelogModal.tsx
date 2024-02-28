@@ -11,14 +11,17 @@ const IMAGE_URL =
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
 
+  const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+
   useEffect(() => {
     // display the changelog modal if it is the user's first time seeing it (tracked in local storage)
-    const seen = localStorage.getItem('changelogSeen');
-    if (seen === null) {
+    const lastSeen = localStorage.getItem('changelogSeen');
+
+    if (lastSeen !== currentMonth) {
       setShowModal(true);
 
       // mark as seen so it is not displayed after seeing it once
-      localStorage.setItem('changelogSeen', '1');
+      localStorage.setItem('changelogSeen', currentMonth);
     }
   }, []);
 
@@ -29,22 +32,21 @@ const ChangelogModal = () => {
   return (
     <div onClick={closeModal}>
       <Modal
-        className="modal-card"
+        className="changelog-modal"
         show={showModal}
         centered
         animation={false}
         onClick={(e: MouseEvent) => e.stopPropagation()}
       >
-        <h2 className="modal-header">
-          What's New - {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
-        </h2>
+        <Modal.Header closeButton>
+          <h2>What's New - {currentMonth}</h2>
+        </Modal.Header>
 
         <p className="modal-body">{DESCRIPTION}</p>
-
         <img className="modal-img" src={IMAGE_URL} />
 
         <Row className="justify-content-center my-2">
-          <Button className="py-2 px-4" variant="outline-secondary" onClick={closeModal}>
+          <Button className="py-2 px-4" variant="secondary" onClick={closeModal}>
             Close
           </Button>
         </Row>
