@@ -343,5 +343,28 @@ router.delete('/clear', async function (req, res) {
     res.json({ error: 'Can only clear on development environment' });
   }
 });
+/**
+ * Updating the review
+ */
+router.patch('/updateReview', async function (req, res) {
+  if (req.session.passport) {
+    const updatedReviewBody = req.body;
+
+    const query = {
+      _id: new ObjectId(req.body._id),
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+    await updateDocument(COLLECTION_NAMES.REVIEWS, query, { $set: updateWithoutId });
+    const responseWithId = {
+      _id: query._id,
+      ...updateWithoutId,
+    };
+
+    res.json(responseWithId);
+  } else {
+    res.status(401).json({ error: 'Must be logged in to update a review.' });
+  }
+});
 
 export default router;
