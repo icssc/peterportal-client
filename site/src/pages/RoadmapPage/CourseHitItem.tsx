@@ -3,9 +3,9 @@ import { setActiveCourse, setShowAddCourse, setShowSearch } from '../../store/sl
 import { useAppDispatch } from '../../store/hooks';
 import Course from './Course';
 import { Draggable } from 'react-beautiful-dnd';
-import { isMobile } from 'react-device-detect';
 
 import { CourseGQLData } from '../../types/types';
+import { useIsMobile } from '../../helpers/util';
 
 interface CourseHitItemProps extends CourseGQLData {
   index: number;
@@ -14,6 +14,7 @@ interface CourseHitItemProps extends CourseGQLData {
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
   // do not make course draggable on mobile
+  const isMobile = useIsMobile();
   if (isMobile) {
     return (
       <div
