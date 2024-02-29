@@ -84,7 +84,12 @@ const Course: FC<CourseProps> = (props) => {
         {onDelete && (
           <ThemeContext.Consumer>
             {({ darkMode }) => (
-              <Button variant={darkMode ? 'dark' : 'light'} className="course-delete-btn" onClick={onDelete}>
+              <Button
+                variant={darkMode ? 'dark' : 'light'}
+                className="course-delete-btn"
+                onClick={onDelete}
+                aria-label="delete"
+              >
                 <Trash className="course-delete-icon" />
               </Button>
             )}

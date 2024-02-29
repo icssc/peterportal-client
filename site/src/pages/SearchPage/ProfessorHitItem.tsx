@@ -26,8 +26,14 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
   };
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      onClickName();
+    }
+  };
+
   return (
-    <div className="hit-item" onClick={onClickName}>
+    <div className="hit-item" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div
         style={{
           marginRight: '16px',
