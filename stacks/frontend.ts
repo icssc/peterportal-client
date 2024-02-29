@@ -46,10 +46,10 @@ export function FrontendStack({ app, stack }: StackContext) {
   });
 
   let domainName: string;
-  // let domainAlias: string | undefined;
+  let domainAlias: string | undefined;
   if (app.stage === 'prod') {
     domainName = 'peterportal.org';
-    // domainAlias = 'www.peterportal.org';
+    domainAlias = 'www.peterportal.org';
   } else if (app.stage === 'dev') {
     domainName = 'dev.peterportal.org';
   } else if (app.stage.match(/^staging-(\d+)$/)) {
@@ -62,7 +62,7 @@ export function FrontendStack({ app, stack }: StackContext) {
   new StaticSite(stack, 'Site', {
     customDomain: {
       domainName: domainName,
-      // domainAlias: domainAlias,
+      domainAlias: domainAlias,
       hostedZone: 'peterportal.org',
     },
     path: './site',
