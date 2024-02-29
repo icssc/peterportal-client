@@ -2,17 +2,18 @@ import { FC, useCallback } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
-import { DragDropContext, DropResult, DragUpdate, DragStart } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult, DragStart } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
-import { isMobile } from 'react-device-detect';
 import { CourseGQLData } from '../../types/types';
+import { useIsMobile } from '../../helpers/util';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
+  const isMobile = useIsMobile();
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.reason === 'DROP') {
@@ -50,8 +51,6 @@ const RoadmapPage: FC = () => {
         },
       };
 
-      console.log(result.source.droppableId, '=>', result.destination.droppableId);
-
       // roadmap to roadmap has source
       if (result.source.droppableId != 'search') {
         const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
@@ -67,13 +66,8 @@ const RoadmapPage: FC = () => {
       movePayload.to.quarterIndex = parseInt(quarterIndex);
       movePayload.to.courseIndex = result.destination.index;
 
-      console.log(movePayload);
       dispatch(moveCourse(movePayload));
     }
-  }, []);
-
-  const onDragUpdate = useCallback((initial: DragUpdate) => {
-    console.log(initial);
   }, []);
 
   const onDragStart = useCallback(
@@ -113,7 +107,7 @@ const RoadmapPage: FC = () => {
     <>
       <div className="roadmap-page">
         <AddCoursePopup />
-        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd} onDragUpdate={onDragUpdate}>
+        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           {isMobile && mobileVersion}
           {!isMobile && desktopVersion}
         </DragDropContext>

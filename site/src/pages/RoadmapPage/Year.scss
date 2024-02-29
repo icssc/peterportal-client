@@ -22,6 +22,7 @@
   border-collapse: separate;
   display: inline-block;
   width: 100%;
+  position: relative;
 }
 
 .yearTitleBar {
@@ -104,6 +105,10 @@
   border: 0px;
   background: transparent;
   padding: 0;
+}
+
+.year-settings-popover {
+  z-index: 1;
 }
 
 .edit-year-form-label {

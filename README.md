@@ -7,12 +7,14 @@ PeterPortal is a web application aimed to aid UCI students with course discovery
 Features include:
 
 - Course catalog with:
-  _ Grade distribution graphs/charts
-  _ Visual prerequisite trees
-  _ Schedule of classes
-  _ Reviews
-  ![catalogue](https://github.com/icssc/peterportal-client/assets/8922227/e2e34103-a73e-4fd9-af44-69b707d1e910)
-  ![coursepage](https://github.com/icssc/peterportal-client/assets/8922227/2df5a284-0040-4720-a9be-c08978b6bfb1)
+  - Grade distribution graphs/charts
+  - Visual prerequisite trees
+  - Schedule of classes
+  - Reviews
+
+![catalogue](https://github.com/icssc/peterportal-client/assets/8922227/e2e34103-a73e-4fd9-af44-69b707d1e910)
+![coursepage](https://github.com/icssc/peterportal-client/assets/8922227/2df5a284-0040-4720-a9be-c08978b6bfb1)
+
 - Professor catalog with:
   - Schedule of classes
   - Grade distribution graphs/charts
@@ -71,26 +73,9 @@ git clone https://github.com/<your username>/peterportal-client
 
 5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-6. Create a .env file in the api directory with the following contents:
-
-```
-PUBLIC_API_URL=https://api-next.peterportal.org/v1/rest/
-PUBLIC_API_GRAPHQL_URL=https://api-next.peterportal.org/v1/graphql
-PORT=8080
-```
-
-Note: the port should also match the one set up on the frontend's proxy to the backend under `site/vite.config.ts` By default this is 8080.
+6. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
 
 7. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
-
-```
-MONGO_URL=<secret>
-SESSION_SECRET=<secret>
-GOOGLE_CLIENT=<client>
-GOOGLE_SECRET=<secret>
-GRECAPTCHA_SECRET=<secret>
-ADMIN_EMAILS=["<your email>"]
-```
 
 ## Open Source Contribution Guide
 
