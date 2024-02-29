@@ -33,6 +33,7 @@ const ChangelogModal = () => {
         show={showModal}
         centered
         animation={false}
+        onHide={closeModal}
         onClick={(e: MouseEvent) => e.stopPropagation()}
       >
         <Modal.Header closeButton>
