@@ -9,8 +9,9 @@
     "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && npm run lint && cd ../api && npm run lint"
   },
   "dependencies": {
+    "aws-cdk-lib": "2.124.0",
     "dotenv-flow": "^4.0.1",
-    "sst": "^2.38.7"
+    "sst": "2.40.3"
   },
   "engines": {
     "node": "^18 || ^20"

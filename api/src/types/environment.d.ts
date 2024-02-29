@@ -4,7 +4,6 @@ declare global {
      * Define schema for environment variables
      */
     interface ProcessEnv {
-      MONGO_URL: string;
       NODE_ENV?: 'development' | 'production' | 'staging';
       PORT?: string;
       PUBLIC_API_URL: string;
@@ -15,7 +14,6 @@ declare global {
       GOOGLE_SECRET: string;
       GRECAPTCHA_SECRET: string;
       PRODUCTION_DOMAIN: string;
-      GITHUB_ADMIN_USERNAMES: string;
       ADMIN_EMAILS: string;
     }
   }
