@@ -27,6 +27,10 @@
     max-height: 50vh;
     object-fit: contain;
   }
+  
+  button.close {
+    font-size: 32px;
+  }
 
   @media only screen and (max-width: 800px) {
     .modal-img {
