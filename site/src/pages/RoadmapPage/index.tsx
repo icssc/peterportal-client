@@ -2,15 +2,17 @@ import { FC, useCallback } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult, DragStart } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, deleteCourse } from '../../store/slices/roadmapSlice';
+import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
+import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
   const isMobile = useIsMobile();
 
   const onDragEnd = useCallback((result: DropResult) => {
@@ -68,6 +70,16 @@ const RoadmapPage: FC = () => {
     }
   }, []);
 
+  const onDragStart = useCallback(
+    (start: DragStart) => {
+      if (start.source.droppableId === 'search') {
+        const activeCourse = searchResults[start.source.index];
+        dispatch(setActiveCourse(activeCourse));
+      }
+    },
+    [dispatch, searchResults],
+  );
+
   // do not conditionally renderer because it would remount planner which would discard unsaved changes
   const mobileVersion = (
     <>
@@ -95,7 +107,7 @@ const RoadmapPage: FC = () => {
     <>
       <div className="roadmap-page">
         <AddCoursePopup />
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           {isMobile && mobileVersion}
           {!isMobile && desktopVersion}
         </DragDropContext>

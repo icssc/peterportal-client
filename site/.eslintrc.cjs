@@ -8,6 +8,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
     'prettier',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
@@ -17,6 +18,11 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react/no-unescaped-entities': 'off',
     'no-console': ['warn', { allow: ['warn', 'error'] }],
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
   settings: {
     react: {
