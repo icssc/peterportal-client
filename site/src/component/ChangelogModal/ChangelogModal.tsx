@@ -36,7 +36,7 @@ const ChangelogModal = () => {
         onClick={(e: MouseEvent) => e.stopPropagation()}
       >
         <Modal.Header closeButton>
-          <h2>What's New - {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+          <h2>What's New - {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
         </Modal.Header>
 
         <p className="modal-body">{DESCRIPTION}</p>
