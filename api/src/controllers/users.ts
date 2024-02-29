@@ -24,7 +24,7 @@ router.get('/preferences', async (req, res) => {
   }
 
   const userID = req.session.passport.user.id;
-  const preference = await Preference.findById(userID);
+  const preference = await Preference.findOne({ userID: userID });
 
   preference ? res.json(preference) : res.json({ error: 'No preferences found' });
 });
@@ -42,8 +42,8 @@ router.post('/preferences', async (req, res) => {
   const userID = req.session.passport.user.id;
 
   // make user's preference doc if it doesn't exist
-  if (!(await Preference.exists({ _id: userID }))) {
-    await Preference.create({ _id: userID });
+  if (!(await Preference.exists({ userID }))) {
+    await Preference.create({ userID, theme: req.body.theme });
   }
 
   // grab valid preferences from request body
@@ -53,7 +53,7 @@ router.post('/preferences', async (req, res) => {
   }
 
   // set the preferences
-  await Preference.findByIdAndUpdate(userID, preferences);
+  await Preference.updateOne({ userID }, preferences);
 
   // echo back body
   res.json(req.body);

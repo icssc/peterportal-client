@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 
 const voteSchema = new mongoose.Schema({
   userID: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
   },
   reviewID: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'Review',
   },
   timestamp: {

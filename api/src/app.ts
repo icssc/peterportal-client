@@ -109,22 +109,31 @@ export const connect = async () => {
   return conn;
 };
 app.use(async function (req, res, next) {
-  try {
-    connect();
-    next();
-  } catch (error) {
-    next(error);
-  }
+  await connect();
+  next();
 });
 
+let serverlessExpressInstance: ReturnType<typeof serverlessExpress>;
+async function setup(event: unknown, context: unknown) {
+  await connect();
+  serverlessExpressInstance = serverlessExpress({ app });
+  return serverlessExpressInstance(event, context);
+}
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
 if (NODE_ENV === 'development') {
   const port = process.env.PORT ?? 8080;
-  app.listen(port, () => {
-    console.log('Listening on port', port);
+  connect().then(() => {
+    app.listen(port, () => {
+      console.log('Listening on port', port);
+    });
   });
 }
 
+export const handler = async (event: unknown, context: unknown) => {
+  if (serverlessExpressInstance) {
+    return serverlessExpressInstance(event, context);
+  }
+  return setup(event, context);
+};
 // export for serverless
-export const handler = serverlessExpress({ app });

@@ -5,6 +5,10 @@ const preferenceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userID: {
+    type: String,
+    required: true,
+  },
 });
 
 const Preference = mongoose.model('Preference', preferenceSchema);

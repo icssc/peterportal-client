@@ -5,8 +5,8 @@ const router = express.Router();
 /**
  * Get a roadmap
  */
-router.get('/get', async function (req: Request<never, unknown, never, { id: string }>, res) {
-  Roadmap.findById(req.query.id).then((roadmap) => {
+router.get('/get', async function (req: Request<never, unknown, Record<string, unknown>, { id: string }>, res) {
+  Roadmap.findOne({ userID: req.body?._id }).then((roadmap) => {
     if (roadmap) {
       res.json(roadmap);
     } else {
@@ -18,17 +18,17 @@ router.get('/get', async function (req: Request<never, unknown, never, { id: str
 /**
  * Add a roadmap
  */
-router.post('/', async function (req: Request<never, unknown, { _id: string }, never>, res) {
+router.post('/', async function (req: Request<never, unknown, Record<string, unknown>, never>, res) {
   if (!req.body._id) {
     res.json({ error: 'Invalid input' });
     return;
   }
   console.log(`Adding Roadmap: ${JSON.stringify(req.body)}`);
-  if (await Roadmap.exists({ _id: req.body._id })) {
-    await Roadmap.replaceOne({ _id: req.body._id }, req.body);
+  if (await Roadmap.exists({ userID: req.body._id })) {
+    await Roadmap.replaceOne({ userID: req.body._id }, { roadmap: req.body.roadmap, userID: req.body._id });
   } else {
     // add roadmap to mongo
-    await new Roadmap(req.body).save();
+    await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id }).save();
   }
 
   res.json({});
