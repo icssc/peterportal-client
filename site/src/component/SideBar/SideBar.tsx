@@ -169,7 +169,7 @@ const SideBar = () => {
 
       {/* Profile Icon and Name */}
       <div className="sidebar-profile">
-        <img src={picture ? picture : defaultAvatar} />
+        <img src={picture ? picture : defaultAvatar} alt="profile" />
         <p>{name ? name : 'Anonymous Peter'}</p>
       </div>
 

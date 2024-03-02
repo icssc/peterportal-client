@@ -127,7 +127,11 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           placement="bottom"
           container={yearContainerRef}
         >
-          <ThreeDots className="edit-btn" />
+          {({ ref, ...triggerHandler }) => (
+            <button ref={ref} {...triggerHandler} className="year-edit-btn">
+              <ThreeDots />
+            </button>
+          )}
         </OverlayTrigger>
         <YearModal
           key={`edit-year-${placeholderYear}-${placeholderName}`}

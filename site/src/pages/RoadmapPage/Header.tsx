@@ -5,7 +5,7 @@ import { ArrowLeftRight, Save, Plus, List, Trash } from 'react-bootstrap-icons';
 import { setShowTransfer, setShowSearch, clearPlanner } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import Transfer from './Transfer';
-import { isMobile, isBrowser } from 'react-device-detect';
+import { useIsDesktop, useIsMobile } from '../../helpers/util';
 
 interface HeaderProps {
   courseCount: number;
@@ -18,6 +18,9 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
   const dispatch = useAppDispatch();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+
+  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
 
   const buttons = (
     <>
@@ -89,7 +92,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
             </Overlay>
           </>
         )}
-        {isBrowser && <ButtonGroup>{buttons}</ButtonGroup>}
+        {isDesktop && <ButtonGroup>{buttons}</ButtonGroup>}
       </div>
     </div>
   );

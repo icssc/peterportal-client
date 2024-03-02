@@ -3,19 +3,16 @@
   border-radius: var(--border-radius);
   padding: 2rem;
   margin-bottom: 3vh;
-
-  label {
-    font-weight: bold;
-  }
 }
 
 .report-group-identifier {
   margin: 0;
-  // font-weight: bold;
   font-size: x-large;
-  // a {
-  //   color: black;
-  // }
+}
+
+.report-group-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .report-group-user-display {
@@ -24,10 +21,7 @@
 
 .report-group-content {
   margin: 1vh 0;
-  label {
-    font-weight: bold;
-  }
-  p {
+  p:nth-child(2) {
     font-style: italic;
     margin-left: 1vw;
   }
