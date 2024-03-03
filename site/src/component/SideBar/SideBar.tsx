@@ -53,14 +53,26 @@ const SideBar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive || location.pathname.match(/^\/search\/(courses|professors)$/) ? 'sidebar-active' : ''
+              isActive || location.pathname === '/search/courses' ? 'sidebar-active' : ''
             }
             onClick={closeSidebar}
           >
             <div>
               <Icon name="list alternate outline" size="large" />
             </div>
-            <span>Catalogue</span>
+            <span>Courses</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/search/professors"
+            className={({ isActive }) => isActive ? 'sidebar-active' : ''}
+            onClick={closeSidebar}
+          >
+            <div>
+              <Icon name="users" size="large" />
+            </div>
+            <span>Professors</span>
           </NavLink>
         </li>
         <li>
@@ -72,7 +84,7 @@ const SideBar = () => {
             <div>
               <Icon name="map outline" size="large" />
             </div>
-            <span>Peter's Roadmap</span>
+            <span>Roadmap</span>
           </NavLink>
         </li>
         {showSidebar && (

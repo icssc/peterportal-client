@@ -41,44 +41,15 @@ const AppHeader: FC = () => {
   };
 
   const isDesktop = useIsDesktop();
-  const isMobile = useIsMobile();
 
   return (
     <header className="navbar">
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Hamburger Menu */}
-          {isMobile && (
-            <button className="navbar-menu" onClick={toggleMenu}>
-              <List className="navbar-menu-icon" size={'3vh'} />
-            </button>
-          )}
-
-          {/* Toggle Course and Professor */}
-          {(coursesActive || professorsActive) && (
-            <div className="navbar-toggle">
-              <div className="desktop-toggle">
-                <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
-                  <Link to={'/search/courses'}>Courses</Link>
-                </div>
-                <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
-                  <Link to={'/search/professors'}>Professors</Link>
-                </div>
-              </div>
-              <div className="mobile-toggle">
-                {coursesActive === true && (
-                  <div className={`navbar-toggle-item active`}>
-                    <Link to={'/search/professors'}>Professors</Link>
-                  </div>
-                )}
-                {professorsActive === true && (
-                  <div className={`navbar-toggle-item active`}>
-                    <Link to={'/search/courses'}>Courses</Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          <button className="navbar-menu" onClick={toggleMenu}>
+            <List className="navbar-menu-icon" size='32px' />
+          </button>
         </div>
 
         {/* Logo */}

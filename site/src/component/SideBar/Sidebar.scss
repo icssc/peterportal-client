@@ -59,6 +59,7 @@
     margin-bottom: 2em;
 
     ul li {
+      a, button { transition: background-color 0.2s; }
       a,
       .theme-button {
         color: var(--text);
@@ -68,7 +69,7 @@
       }
       a:hover,
       button:hover {
-        background: rgba(0, 0, 0, 0.05);
+        background: #9992;
         border-radius: 5px;
       }
     }
@@ -107,36 +108,36 @@
 
 .sidebar.mini {
   position: static;
-  width: 5vw;
+  width: 72px;
+  padding-block: 16px;
 
   .sidebar-links {
-    margin-top: 4vh;
+    margin: 0;
     width: 100%;
 
-    ul {
-      li {
-        margin-top: 2vh;
+    ul li {
+      &:not(:first-child) {
+        margin-top: 8px;
+      }
 
-        a,
-        button {
-          display: flex;
-          flex-direction: column;
+      .icon { font-size: 24px; }
+
+      a,
+      button {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 72px;
+        margin: 0;
+        gap: 0;
+        padding: 4px 0;
+        
+        i.icon {
           margin: 0;
-          padding-left: 0;
-          padding-right: 0;
-
-          div {
-            display: flex;
-            justify-content: center;
-
-            i.icon {
-              margin: 0;
-            }
-          }
-
-          span {
-            text-align: center;
-          }
+        }
+        span {
+          font-size: 12px;
         }
       }
     }
@@ -158,23 +159,6 @@
   }
 }
 
-@media only screen and (max-width: 1500px) {
-  .sidebar.mini {
-    width: 7vw;
-    .sidebar-links {
-      ul {
-        li {
-          a,
-          button {
-            span {
-              font-size: smaller;
-            }
-          }
-        }
-      }
-    }
-  }
-}
 
 .theme-toggle {
   border: none;

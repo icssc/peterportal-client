@@ -30,7 +30,7 @@
   height: 8vh;
   background-color: var(--overlay1);
   padding-right: 3vw;
-  padding-left: 2vw;
+  padding-left: 16px;
   display: flex;
   top: 0;
 
@@ -58,6 +58,7 @@
       align-items: center;
       border: none;
       background: none;
+      padding: 4px;
     }
 
     .desktop-toggle {
