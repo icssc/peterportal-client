@@ -1,6 +1,6 @@
 #peterportal-logo {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: 32px;
 }
 
 [data-theme='dark'] {
@@ -27,7 +27,7 @@
   position: sticky;
   z-index: 300;
   width: 100%;
-  height: 8vh;
+  height: 72px;
   background-color: var(--overlay1);
   padding-right: 3vw;
   padding-left: 16px;

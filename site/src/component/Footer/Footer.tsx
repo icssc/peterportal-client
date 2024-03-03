@@ -8,10 +8,11 @@ const Footer: FC = () => {
         <div className="links">
           <a href="https://github.com/icssc">GitHub</a>
           <a href="https://docs.api-next.peterportal.org">API</a>
+          <a href="https://forms.gle/JjwBmELq26daroTh9">Feedback</a>
         </div>
         <div className="copyright">
           <p>
-            Made with ♥ by <a href="https://icssc.club/">ICSSC Projects Committee</a>
+            ♥ <a href="https://icssc.club/">ICSSC</a>
           </p>
         </div>
       </footer>

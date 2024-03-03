@@ -1,24 +1,13 @@
-[data-theme='dark'] {
-  .sidebar {
-    .sidebar-links {
-      ul li a:hover,
-      ul li button:hover {
-        background-color: var(--overlay2);
-      }
-    }
-  }
-}
-
 .sidebar {
   position: fixed;
-  width: 20vw;
+  width: 300px;
   height: 100vh;
   top: 0;
   z-index: 400;
   background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 
   ul {
@@ -32,6 +21,8 @@
     margin-left: auto;
     border: none;
     background: none;
+    height: 56px;
+    margin: 8px 8px 8px auto;
   }
 
   .sidebar-profile {
@@ -54,34 +45,65 @@
     }
   }
 
-  .sidebar-links {
-    min-width: 60%;
-    margin-bottom: 2em;
+  .sidebar-links ul li {
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
 
-    ul li {
-      a, button { transition: background-color 0.2s; }
-      a,
-      .theme-button {
-        color: var(--text);
-        display: flex;
-        grid-gap: 10px;
-        padding: 10px;
-      }
-      a:hover,
-      button:hover {
-        background: #9992;
-        border-radius: 5px;
-      }
+    a,
+    button {
+      transition: background-color 0.2s;
+    }
+    a,
+    .theme-button {
+      color: var(--text);
+      display: flex;
+      gap: 16px;
+      padding: 10px;
+    }
+    a:hover,
+    button:hover {
+      background: #9992;
+      border-radius: 5px;
     }
   }
 
-  .sidebar-login {
-    margin-bottom: 20vh;
+  &:not(.mini) {
+    box-shadow: 0px 4px 24px rgba(196, 198, 209, 0.24);
 
-    .sidebar-login-icon {
-      margin-right: 0.4vw;
+    .sidebar-links {
+      padding: 16px;
+      width: 100%;
+    }
+    li a {
+      height: 56px;
+      position: relative;
+      top: 0px;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      gap: 16px;
     }
   }
+
+  left: -300px;
+  transition: left 0.5s;
+  &.enter-active,
+  &.enter-done {
+    left: 0;
+  }
+
+  .full-name + span {
+    display: none;
+  }
+
+  // .sidebar-login {
+  //   margin-bottom: 20vh;
+
+  //   .sidebar-login-icon {
+  //     margin-right: 0.4vw;
+  //   }
+  // }
 }
 
 .theme-button .dropdown {
@@ -115,50 +137,46 @@
     margin: 0;
     width: 100%;
 
-    ul li {
-      &:not(:first-child) {
-        margin-top: 8px;
-      }
-
-      .icon { font-size: 24px; }
-
-      a,
-      button {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        align-items: center;
-        height: 72px;
-        margin: 0;
-        gap: 0;
-        padding: 4px 0;
-        
-        i.icon {
-          margin: 0;
-        }
-        span {
-          font-size: 12px;
-        }
+    .full-name {
+      display: none;
+      + span {
+        display: inline;
       }
     }
+  }
+
+  .sidebar-links ul li {
+    .icon {
+      font-size: 24px;
+    }
+
+    a,
+    button {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 72px;
+      margin: 0;
+      gap: 0;
+      padding: 4px 0;
+      i.icon {
+        margin: 0;
+      }
+      span {
+        font-size: 12px;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    display: none;
   }
 }
 
 .sidebar-active {
   color: var(--peterportal-primary-color-1) !important;
 }
-
-@media only screen and (max-width: 800px) {
-  .sidebar {
-    width: 100vw;
-    z-index: 400;
-  }
-
-  .sidebar.mini {
-    display: none;
-  }
-}
-
 
 .theme-toggle {
   border: none;
