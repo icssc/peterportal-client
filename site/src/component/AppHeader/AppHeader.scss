@@ -111,7 +111,7 @@
       right: 0;
       margin-left: auto;
       margin-right: auto;
-      width: 7vw;
+      width: fit-content;
     }
 
     @media only screen and (max-width: 800px) {
@@ -160,7 +160,6 @@
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        width: 18vw;
       }
 
       .school-term {
