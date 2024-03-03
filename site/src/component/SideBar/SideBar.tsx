@@ -52,9 +52,7 @@ const SideBar = () => {
         <li>
           <NavLink
             to="/"
-            className={({ isActive }) =>
-              isActive || location.pathname === '/search/courses' ? 'sidebar-active' : ''
-            }
+            className={({ isActive }) => (isActive || location.pathname === '/search/courses' ? 'sidebar-active' : '')}
             onClick={closeSidebar}
           >
             <div>
@@ -66,7 +64,7 @@ const SideBar = () => {
         <li>
           <NavLink
             to="/search/professors"
-            className={({ isActive }) => isActive ? 'sidebar-active' : ''}
+            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
             onClick={closeSidebar}
           >
             <div>
@@ -169,49 +167,51 @@ const SideBar = () => {
     </div>
   );
 
-  if (!showSidebar) {
-    return <div className="sidebar mini">{links}</div>;
-  }
   return (
-    <div className="sidebar">
-      {/* Close Button */}
-      <button className="sidebar-close" onClick={closeSidebar}>
-        <XCircle className="sidebar-close-icon" size={'3vh'} />
-      </button>
+    <>
+      <div className="sidebar mini">{links}</div>
+      {showSidebar && (
+        <div className="sidebar">
+          {/* Close Button */}
+          <button className="sidebar-close" onClick={closeSidebar}>
+            <XCircle className="sidebar-close-icon" size={'3vh'} />
+          </button>
 
-      {/* Profile Icon and Name */}
-      <div className="sidebar-profile">
-        <img src={picture ? picture : defaultAvatar} alt="profile" />
-        <p>{name ? name : 'Anonymous Peter'}</p>
-      </div>
+          {/* Profile Icon and Name */}
+          <div className="sidebar-profile">
+            <img src={picture ? picture : defaultAvatar} alt="profile" />
+            <p>{name ? name : 'Anonymous Peter'}</p>
+          </div>
 
-      {/* Links */}
-      {links}
+          {/* Links */}
+          {links}
 
-      {/* Login/Logout */}
-      <div className="sidebar-login">
-        {isLoggedIn && (
-          <a href={`/api/users/logout`}>
-            <Button variant={darkMode ? 'dark' : 'light'}>
-              <span className="sidebar-login-icon">
-                <Icon name="sign out" className="sidebar-login-icon" />
-              </span>
-              Log Out
-            </Button>
-          </a>
-        )}
-        {!isLoggedIn && (
-          <a href={`/api/users/auth/google`}>
-            <Button variant={darkMode ? 'dark' : 'light'}>
-              <span className="sidebar-login-icon">
-                <Icon name="sign in" className="sidebar-login-icon" />
-              </span>
-              Log In
-            </Button>
-          </a>
-        )}
-      </div>
-    </div>
+          {/* Login/Logout */}
+          <div className="sidebar-login">
+            {isLoggedIn && (
+              <a href={`/api/users/logout`}>
+                <Button variant={darkMode ? 'dark' : 'light'}>
+                  <span className="sidebar-login-icon">
+                    <Icon name="sign out" className="sidebar-login-icon" />
+                  </span>
+                  Log Out
+                </Button>
+              </a>
+            )}
+            {!isLoggedIn && (
+              <a href={`/api/users/auth/google`}>
+                <Button variant={darkMode ? 'dark' : 'light'}>
+                  <span className="sidebar-login-icon">
+                    <Icon name="sign in" className="sidebar-login-icon" />
+                  </span>
+                  Log In
+                </Button>
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
