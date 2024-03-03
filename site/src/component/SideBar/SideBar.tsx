@@ -118,9 +118,14 @@ const SideBar = () => {
     <>
       <div className="sidebar mini">{links}</div>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
+        {/* Clicking this is only an alternative action to something that is already accessible */}
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */}
+        <div className="sidebar-overlay" onClick={closeSidebar}></div>
+      </CSSTransition>
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
         <div className="sidebar">
           {/* Close Button */}
-          <button className="sidebar-close" onClick={closeSidebar}>
+          <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
             <XCircle className="sidebar-close-icon" size={'3vh'} />
           </button>
 

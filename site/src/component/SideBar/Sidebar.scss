@@ -96,14 +96,30 @@
   .full-name + span {
     display: none;
   }
+}
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #6664;
+  z-index: 399;
+  opacity: 0;
+  transition: opacity 0.5s;
+  cursor: default;
 
-  // .sidebar-login {
-  //   margin-bottom: 20vh;
+  &.enter-active,
+  &.enter-done {
+    opacity: 1;
+  }
+  &.exit {
+    pointer-events: none;
+    opacity: 0;
+  }
+}
 
-  //   .sidebar-login-icon {
-  //     margin-right: 0.4vw;
-  //   }
-  // }
+[data-theme='dark'] {
+  .sidebar:not(.mini) {
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  }
 }
 
 .theme-button .dropdown {
