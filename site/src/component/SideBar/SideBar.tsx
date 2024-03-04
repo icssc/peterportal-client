@@ -125,9 +125,12 @@ const SideBar = () => {
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
         <div className="sidebar">
           {/* Close Button */}
-          <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
-            <XCircle className="sidebar-close-icon" size="28px" />
-          </button>
+          <div className="button-container">
+            <img alt="PeterPortal" id="peterportal-logo" src="/src/asset/peterportal-banner-logo.svg" />
+            <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
+              <XCircle className="sidebar-close-icon" size="28px" />
+            </button>
+          </div>
 
           {links}
 
