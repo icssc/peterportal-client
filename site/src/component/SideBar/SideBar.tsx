@@ -5,6 +5,7 @@ import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
 import './Sidebar.scss';
 import { CSSTransition } from 'react-transition-group';
+import Logo from '../../asset/peterportal-banner-logo.svg';
 
 import { useAppSelector, useAppDispatch } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
@@ -126,7 +127,7 @@ const SideBar = () => {
         <div className="sidebar">
           {/* Close Button */}
           <div className="button-container">
-            <img alt="PeterPortal" id="peterportal-logo" src="/src/asset/peterportal-banner-logo.svg" />
+            <img alt="PeterPortal" id="peterportal-logo" src={Logo} />
             <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
               <XCircle className="sidebar-close-icon" size="28px" />
             </button>
