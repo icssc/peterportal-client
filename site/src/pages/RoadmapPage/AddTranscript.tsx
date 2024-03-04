@@ -6,7 +6,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { CourseGQLData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
-import { transformQuarterName } from '../../helpers/planner';
+import { normalizeQuarterName } from '../../helpers/planner';
 
 interface TransferUnitDetails {
   date: string;
@@ -112,7 +112,7 @@ function toPlannerQuarter(
   const year = parseInt(quarter.name.split(' ')[0]);
   // Removes the year number and "Session/Quarter" at the end
   const tName = quarter.name.split(' ').slice(1, -1).join(' ') as QuarterName;
-  const name = transformQuarterName(tName);
+  const name = normalizeQuarterName(tName);
 
   return {
     startYear: name === 'Fall' ? year : year - 1,

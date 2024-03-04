@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { PlannerYearData, QuarterName } from '../../types/types';
 import './YearModal.scss';
-import { quarterDisplayNames, quarterNames, transformQuarterName } from '../../helpers/planner';
+import { quarterDisplayNames, quarterNames, normalizeQuarterName } from '../../helpers/planner';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -22,7 +22,7 @@ interface YearModalProps {
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
   const base: YearPopupQuarter[] = quarterNames.map(n => ({ id: n }));
   quarterIds.forEach((id) => {
-    const translated = transformQuarterName(id);
+    const translated = normalizeQuarterName(id);
     const quarter = base.find((q) => q.id === translated)!;
     quarter.checked = true;
   });

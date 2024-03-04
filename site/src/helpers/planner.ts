@@ -21,15 +21,20 @@ export const quarterDisplayNames: Record<QuarterName, string> = {
   'Summer10wk': 'Summer 10 Week'
 }
 
-export function transformQuarterName (name: string): QuarterName {
+export function normalizeQuarterName (name: string): QuarterName {
   if (quarterNames.includes(name as QuarterName)) return name as QuarterName;
   const lookup: { [k: string]: QuarterName } = {
     'fall': 'Fall',
     'winter': 'Winter',
     'spring': 'Spring',
+    // Old Lowercase Display Names
     'summer I': 'Summer1',
     'summer II': 'Summer2',
-    'summer 10 Week': 'Summer10wk'
+    'summer 10 Week': 'Summer10wk',
+    // Transcript Names
+    'First Summer': 'Summer1',
+    'Second Summer': 'Summer2',
+    'Special / 10-Week Summer': 'Summer10wk'
   };
   if (!lookup[name]) throw TypeError('Invalid Quarter Name: ' + name);
   return lookup[name];
