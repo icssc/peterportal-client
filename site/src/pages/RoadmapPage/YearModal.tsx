@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { PlannerYearData } from '../../types/types';
+import { PlannerYearData, QuarterName } from '../../types/types';
 import './YearModal.scss';
+import { quarterDisplayNames, quarterNames, transformQuarterName } from '../../helpers/planner';
 
 interface YearPopupQuarter {
-  id: string;
-  name: string;
+  id: QuarterName;
   checked?: boolean;
 }
 
@@ -16,20 +16,14 @@ interface YearModalProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   type: 'add' | 'edit';
   saveHandler: (x: PlannerYearData) => void;
-  currentQuarters: string[];
+  currentQuarters: QuarterName[];
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
-  const base: YearPopupQuarter[] = [
-    { id: 'fall', name: 'Fall' },
-    { id: 'winter', name: 'Winter' },
-    { id: 'spring', name: 'Spring' },
-    { id: 'summer I', name: 'Summer I' },
-    { id: 'summer II', name: 'Summer II' },
-    { id: 'summer 10 Week', name: 'Summer 10 Week' },
-  ];
+  const base: YearPopupQuarter[] = quarterNames.map(n => ({ id: n }));
   quarterIds.forEach((id) => {
-    const quarter = base.find((q) => q.id === id)!;
+    const translated = transformQuarterName(id);
+    const quarter = base.find((q) => q.id === translated)!;
     quarter.checked = true;
   });
   return base;
@@ -54,7 +48,7 @@ const YearModal: FC<YearModalProps> = (props) => {
         key={q.id}
         type="checkbox"
         id={'quarter-checkbox-' + q.id}
-        label={q.name}
+        label={quarterDisplayNames[q.id]}
         value={q.id}
         // Prop must be assigned a value that is not undefined
         checked={q.checked ?? false}

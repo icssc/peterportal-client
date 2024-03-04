@@ -27,7 +27,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         placeholderYear={placeholderYear}
         type="add"
         saveHandler={saveHandler}
-        currentQuarters={['fall', 'winter', 'spring']}
+        currentQuarters={['Fall', 'Winter', 'Spring']}
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
