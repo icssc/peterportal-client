@@ -1,6 +1,9 @@
 #peterportal-logo {
   width: auto;
   height: 32px;
+  @media (min-width: 800px) {
+    height: 36px;
+  }
 }
 
 [data-theme='dark'] {

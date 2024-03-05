@@ -127,7 +127,7 @@ const SideBar = () => {
         <div className="sidebar">
           {/* Close Button */}
           <div className="button-container">
-            <img alt="PeterPortal" id="peterportal-logo" src={Logo} />
+            <img alt="PeterPortal" src={Logo} height="32" />
             <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
               <XCircle className="sidebar-close-icon" size="28px" />
             </button>
