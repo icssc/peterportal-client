@@ -1,5 +1,5 @@
 import { FC, useContext, useState } from 'react';
-import './AddTranscript.scss';
+import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
@@ -155,7 +155,7 @@ async function processTranscript(file: Blob) {
   return { transfers, years };
 }
 
-const AddTranscript: FC = () => {
+const ImportTranscriptPopup: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState<Blob | null>(null);
@@ -231,4 +231,4 @@ const AddTranscript: FC = () => {
   );
 };
 
-export default AddTranscript;
+export default ImportTranscriptPopup;

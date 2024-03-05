@@ -29,7 +29,7 @@ import {
 import { searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
 import { defaultYear, normalizeQuarterName } from '../../helpers/planner';
-import AddTranscript from './AddTranscript';
+import ImportTranscriptPopup from './ImportTranscriptPopup';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -307,7 +307,7 @@ const Planner: FC = () => {
         placeholderName={'Year ' + (data.length + 1)}
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
       />
-      <AddTranscript />
+      <ImportTranscriptPopup />
       <br />
       <br />
     </div>
