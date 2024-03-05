@@ -11,6 +11,7 @@ import {
   BatchProfessorData,
   SearchType,
 } from '../types/types';
+import { useMediaQuery } from 'react-responsive';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -137,4 +138,13 @@ function transformProfessorGQL(data: ProfessorGQLResponse) {
   professor.courses = courseHistoryLookup;
 
   return professor;
+}
+
+export function useIsDesktop() {
+  const isDesktop = useMediaQuery({ minWidth: 800 });
+  return isDesktop;
+}
+export function useIsMobile() {
+  const isMobile = useMediaQuery({ maxWidth: 799.9 });
+  return isMobile;
 }

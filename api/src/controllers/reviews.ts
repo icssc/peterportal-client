@@ -199,6 +199,12 @@ router.delete('/', async (req, res) => {
       reviewID: req.body.id,
     });
 
+    // also delete any reports for the deleted review
+    console.log(`Deleting reports with reviewID ${req.body.id}`);
+    await deleteDocuments(COLLECTION_NAMES.REPORTS, {
+      reviewID: req.body.id,
+    });
+
     res.status(200).send();
   } else {
     res.json({ error: 'Must be an admin or review author to delete reviews!' });
