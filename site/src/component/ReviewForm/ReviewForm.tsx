@@ -15,7 +15,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { addReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import { QuarterName, ReviewData } from '../../types/types';
+import { ReviewData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { quarterNames } from '../../helpers/planner';
 

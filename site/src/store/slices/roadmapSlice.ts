@@ -136,11 +136,7 @@ export const roadmapSlice = createSlice({
 
       // if duplicate quarter
       if (currentQuarters.includes(newQuarter.name)) {
-        alert(
-          `${
-            quarterDisplayNames[newQuarter.name]
-          } has already been added to Year ${yearIndex}!`,
-        );
+        alert(`${quarterDisplayNames[newQuarter.name]} has already been added to Year ${yearIndex}!`);
         return;
       }
 
