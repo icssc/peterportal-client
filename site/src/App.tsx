@@ -109,7 +109,7 @@ export default function App() {
             </Routes>
             <Footer />
           </div>
-          <div className="changelog-modal">{<ChangelogModal />}</div>
+          {/* <div className="changelog-modal">{<ChangelogModal />}</div> */}
         </div>
       </ThemeContext.Provider>
     </Router>

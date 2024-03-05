@@ -1,13 +1,14 @@
 .changelog-modal {
   .modal-content {
+    border: none;
     background-color: var(--overlay2);
-    border-radius: var(--border-radius);
-    padding: 1rem;
+    padding: 4px 8px 8px;
   }
 
   .modal-header {
     align-items: center;
     border-bottom: none;
+    padding-bottom: 0;
   }
 
   h2 {
@@ -22,7 +23,7 @@
   }
 
   .modal-img {
-    margin: 1rem 0;
+    margin: 1rem;
     max-width: 70vw;
     max-height: 50vh;
     object-fit: contain;
