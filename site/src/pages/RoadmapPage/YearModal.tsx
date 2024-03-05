@@ -20,7 +20,7 @@ interface YearModalProps {
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
-  const base: YearPopupQuarter[] = quarterNames.map(n => ({ id: n }));
+  const base: YearPopupQuarter[] = quarterNames.map((n) => ({ id: n }));
   quarterIds.forEach((id) => {
     const translated = normalizeQuarterName(id);
     const quarter = base.find((q) => q.id === translated)!;
@@ -71,14 +71,14 @@ const YearModal: FC<YearModalProps> = (props) => {
   };
 
   return (
-    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="planner-year-modal">
+    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
       <Modal.Header closeButton>
         <h2>{title}</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate validated={validated} className="add-year-form">
+        <Form noValidate validated={validated} className="ppc-modal-form">
           <Form.Group>
-            <Form.Label className="add-year-form-label">Name</Form.Label>
+            <Form.Label className="ppc-modal-form-label">Name</Form.Label>
             <Form.Control
               required
               type="text"
@@ -96,7 +96,7 @@ const YearModal: FC<YearModalProps> = (props) => {
             ></Form.Control>
           </Form.Group>
           <Form.Group>
-            <Form.Label className="add-year-form-label">Start Year</Form.Label>
+            <Form.Label className="ppc-modal-form-label">Start Year</Form.Label>
             <Form.Control
               required
               type="number"

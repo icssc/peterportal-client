@@ -1,4 +1,5 @@
 import { FC, useContext, useState } from 'react';
+import './AddTranscript.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
@@ -177,12 +178,12 @@ const AddTranscript: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="planner-year-modal">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
         <Modal.Header closeButton>
           <h2>Import from Transcript</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form className="add-year-form">
+          <Form className="ppc-modal-form">
             <Form.Group>
               <p>
                 <b>Warning:</b> This will overwrite your current planner data.
@@ -200,7 +201,7 @@ const AddTranscript: FC = () => {
               </ol>
             </Form.Group>
             <Form.Group>
-              <Form.Label className="add-year-form-label">Transcript File</Form.Label>
+              <Form.Label className="ppc-modal-form-label">Transcript File</Form.Label>
               <Form.Control
                 required
                 type="file"
@@ -218,9 +219,13 @@ const AddTranscript: FC = () => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button variant={darkMode ? 'dark' : 'light'} onClick={() => setShowModal(true)}>
-        <FileEarmarkText className="add-year-icon" />
-        <div className="add-year-text">Import Transcript</div>
+      <Button
+        variant={darkMode ? 'dark' : 'light'}
+        className="ppc-btn add-transcript-btn"
+        onClick={() => setShowModal(true)}
+      >
+        <FileEarmarkText className="add-transcript-icon" />
+        <div>Import Transcript</div>
       </Button>
     </>
   );
