@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { PlannerYearData, QuarterName } from '../../types/types';
-import './YearModal.scss';
 import { quarterDisplayNames, quarterNames, normalizeQuarterName } from '../../helpers/planner';
 
 interface YearPopupQuarter {
