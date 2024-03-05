@@ -6,19 +6,12 @@ const Footer: FC = () => {
     <>
       <footer className="footer">
         <div className="links">
-          <a href="https://github.com/icssc" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-          <a href="https://docs.api-next.peterportal.org" target="_blank" rel="noreferrer">
-            API
-          </a>
+          <a href="https://github.com/icssc">GitHub</a>
+          <a href="https://docs.api-next.peterportal.org">API</a>
         </div>
         <div className="copyright">
           <p>
-            Made with ♥ by{' '}
-            <a href="https://icssc.club/" target="_blank" rel="noreferrer">
-              ICSSC Projects Committee
-            </a>
+            Made with ♥ by <a href="https://icssc.club/">ICSSC Projects Committee</a>
           </p>
         </div>
       </footer>
