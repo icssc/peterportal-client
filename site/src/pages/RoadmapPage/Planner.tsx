@@ -24,7 +24,7 @@ import {
   SavedPlannerYearData,
   SavedPlannerQuarterData,
   BatchCourseData,
-  MongoRoadmap
+  MongoRoadmap,
 } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
@@ -103,7 +103,7 @@ const Planner: FC = () => {
       savedPlanner.forEach((savedYear) => {
         const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
         savedYear.quarters.forEach((savedQuarter) => {
-          const transformedName = normalizeQuarterName(savedQuarter.name)
+          const transformedName = normalizeQuarterName(savedQuarter.name);
           const quarter: PlannerQuarterData = { name: transformedName, courses: [] };
           quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
           year.quarters.push(quarter);

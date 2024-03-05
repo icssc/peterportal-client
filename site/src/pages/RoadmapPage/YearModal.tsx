@@ -20,7 +20,7 @@ interface YearModalProps {
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
-  const base: YearPopupQuarter[] = quarterNames.map(n => ({ id: n }));
+  const base: YearPopupQuarter[] = quarterNames.map((n) => ({ id: n }));
   quarterIds.forEach((id) => {
     const translated = normalizeQuarterName(id);
     const quarter = base.find((q) => q.id === translated)!;
