@@ -40,10 +40,10 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
           </div>
         </div>
         <div className="report-group-content">
-          <label>Review Content:</label>
+          <p className="report-group-label">Review Content:</p>
           <p>{review.reviewContent}</p>
         </div>
-        <label>Reports on this review:</label>
+        <p className="report-group-label">Reports on this review:</p>
         <div className="report-group-subreports-container">
           {props.reports.map((report, i) => {
             return (

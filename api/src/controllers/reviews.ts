@@ -173,6 +173,7 @@ router.delete('/', async (req, res) => {
     console.log(`Deleting review ${req.body.id}`);
     await Review.deleteOne({ _id: req.body.id });
     await Vote.deleteMany({ reviewID: req.body.id });
+
     res.status(200).send();
   } else {
     res.json({ error: 'Must be an admin or review author to delete reviews!' });

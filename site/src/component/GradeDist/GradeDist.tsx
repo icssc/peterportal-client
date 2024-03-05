@@ -44,7 +44,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     if (props.course) {
       url = `/api/courses/api/grades`;
       params = {
-        department: props.course.department.replace(/ /g, ''),
+        department: props.course.department,
         number: props.course.courseNumber,
       };
     } else if (props.professor) {

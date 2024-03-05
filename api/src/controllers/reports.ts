@@ -13,6 +13,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   // get all reports in collection
   const reports = await Report.find({});
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
 
   res.json(reports);
 });
@@ -33,6 +35,8 @@ router.post('/', async (req, res) => {
  */
 router.delete('/', async (req, res) => {
   let status;
+  if (!req.session.passport) return res.status(401).send('Unathenticated');
+  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
   if (req.body.id) {
     console.log(`Deleting report ${req.body.id}`);
     status = await Report.deleteOne({ _id: req.body.id });

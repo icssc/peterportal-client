@@ -5,7 +5,6 @@ import './AddCoursePopup.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import Modal from 'react-bootstrap/Modal';
-import { isMobile } from 'react-device-detect';
 
 interface AddCoursePopupProps {}
 
@@ -126,15 +125,10 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Form.Group>
       )}
       <div className="d-flex justify-content-end">
-        <Button
-          className="py-2 px-4 mr-3"
-          variant="outline-secondary"
-          size={isMobile ? 'sm' : undefined}
-          onClick={closeForm}
-        >
+        <Button className="py-2 px-4 mr-3" variant="outline-secondary" onClick={closeForm}>
           Cancel
         </Button>
-        <Button className="py-2 px-4" type="submit" variant="secondary" size={isMobile ? 'sm' : undefined}>
+        <Button className="py-2 px-4" type="submit" variant="secondary">
           Submit
         </Button>
       </div>

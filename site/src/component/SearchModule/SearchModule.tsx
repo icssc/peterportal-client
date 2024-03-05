@@ -1,17 +1,19 @@
-import { FC, useEffect } from 'react';
-import { Search } from 'react-bootstrap-icons';
+import { useState, useEffect, FC, useCallback } from 'react';
+import './SearchModule.scss';
+import wfs from 'websoc-fuzzy-search';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import wfs from 'websoc-fuzzy-search';
-import './SearchModule.scss';
+import { Search } from 'react-bootstrap-icons';
 
-import { searchAPIResults } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setNames, setResults } from '../../store/slices/searchSlice';
+import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
+import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex } from '../../types/types';
+import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
-const PAGE_SIZE = 10;
-const SEARCH_TIMEOUT_MS = 500;
+const SEARCH_TIMEOUT_MS = 300;
+const FULL_RESULT_THRESHOLD = 3;
+const INITIAL_MAX_PAGE = 5;
 
 interface SearchModuleProps {
   index: SearchIndex;
@@ -19,36 +21,22 @@ interface SearchModuleProps {
 
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
-  const courseSearch = useAppSelector((state) => state.search.courses);
-  const professorSearch = useAppSelector((state) => state.search.professors);
-  let pendingRequest: NodeJS.Timeout | null = null;
+  const search = useAppSelector((state) => state.search[index]);
+  const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
+  const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
-  // Search empty string to load some results
-  useEffect(() => {
-    searchNames('');
-  }, [index]);
-
-  // Refresh search results when names and page number changes
-  useEffect(() => {
-    searchResults('courses', courseSearch.pageNumber, courseSearch.names);
-  }, [courseSearch.names, courseSearch.pageNumber]);
-  useEffect(() => {
-    searchResults('professors', professorSearch.pageNumber, professorSearch.names);
-  }, [professorSearch.names, professorSearch.pageNumber]);
-
-  const searchNames = (query: string) => {
-    try {
-      /*
-                TODO: Search optimization
-                - Currently sending a query request for every input change
-                - Goal is to have only one query request pending
-                - Use setTimeout/clearTimeout to keep track of pending query request
-            */
+  const searchNames = useCallback(
+    (query: string, pageNumber: number, lastQuery?: string) => {
+      // Get all results only when query changes or user reaches the fourth page or after
       const nameResults = wfs({
         query: query,
-        numResults: PAGE_SIZE * 5,
         resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
-        filterOptions: {},
+        // Load INITIAL_MAX_PAGE pages first
+        // when user reaches the 4th page or after, load all results
+        numResults:
+          lastQuery !== query || pageNumber < FULL_RESULT_THRESHOLD
+            ? NUM_RESULTS_PER_PAGE * INITIAL_MAX_PAGE
+            : undefined,
       });
       let names: string[] = [];
       if (index === 'courses') {
@@ -63,29 +51,68 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             ).ucinetid,
         ) as string[];
       }
-      console.log('From frontend search', names);
       dispatch(setNames({ index, names }));
-    } catch (e) {
-      console.log(e);
-    }
-  };
+      // reset page number and hasFullResults flag if query changes
+      if (query !== lastQuery) {
+        dispatch(setPageNumber({ index, pageNumber: 0 }));
+        dispatch(setHasFullResults({ index, hasFullResults: false }));
+        dispatch(setLastQuery({ index, lastQuery: query }));
+      }
+    },
+    [dispatch, index],
+  );
 
-  const searchResults = async (index: SearchIndex, pageNumber: number, names: string[]) => {
+  // Search empty string to load some results on intial visit/when switching between courses and professors tabs
+  // make sure this runs before everything else for best performance and avoiding bugs
+  if (index !== prevIndex) {
+    setPrevIndex(index);
+    searchNames('', 0);
+  }
+
+  const searchResults = useCallback(async () => {
+    if (search.names.length === 0) {
+      dispatch(setResults({ index, results: [] }));
+      return;
+    }
+    if (!search.hasFullResults && search.pageNumber >= FULL_RESULT_THRESHOLD) {
+      dispatch(setHasFullResults({ index, hasFullResults: true }));
+      searchNames(search.lastQuery, search.pageNumber, search.lastQuery);
+      return;
+    }
     // Get the subset of names based on the page
-    const pageNames = names.slice(PAGE_SIZE * pageNumber, PAGE_SIZE * (pageNumber + 1));
+    const pageNames = search.names.slice(
+      NUM_RESULTS_PER_PAGE * search.pageNumber,
+      NUM_RESULTS_PER_PAGE * (search.pageNumber + 1),
+    );
     const results = await searchAPIResults(index, pageNames);
     dispatch(setResults({ index, results: Object.values(results) }));
-  };
+  }, [dispatch, search.names, search.pageNumber, index, search.hasFullResults, search.lastQuery, searchNames]);
+
+  // clear results and reset page number when component unmounts
+  // results will persist otherwise, e.g. current page of results from catalogue carries over to roadmap search container
+  useEffect(() => {
+    return () => {
+      dispatch(setPageNumber({ index: 'courses', pageNumber: 0 }));
+      dispatch(setPageNumber({ index: 'professors', pageNumber: 0 }));
+      dispatch(setResults({ index: 'courses', results: [] }));
+      dispatch(setResults({ index: 'professors', results: [] }));
+    };
+  }, [dispatch]);
+
+  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
+  useEffect(() => {
+    searchResults();
+  }, [index, searchResults]);
 
   const searchNamesAfterTimeout = (query: string) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
     }
     const timeout = setTimeout(() => {
-      searchNames(query);
-      pendingRequest = null;
+      searchNames(query, 0);
+      setPendingRequest(null);
     }, SEARCH_TIMEOUT_MS);
-    pendingRequest = timeout;
+    setPendingRequest(timeout);
   };
 
   const coursePlaceholder = 'Search a course number or department';
@@ -103,6 +130,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           </InputGroup.Prepend>
           <Form.Control
             className="search-bar"
+            aria-label="search"
             type="text"
             placeholder={placeholder}
             onChange={(e) => searchNamesAfterTimeout(e.target.value)}
