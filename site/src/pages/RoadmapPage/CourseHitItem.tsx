@@ -9,6 +9,7 @@ import { useIsMobile } from '../../helpers/util';
 
 interface CourseHitItemProps extends CourseGQLData {
   index: number;
+  unmatchedPrerequisites: string[];
 }
 
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {

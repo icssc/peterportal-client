@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { InfoCircle, ExclamationTriangle, Trash } from 'react-bootstrap-icons';
+import { InfoCircle, ExclamationTriangle, Trash, JournalX } from 'react-bootstrap-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -10,6 +10,7 @@ import ThemeContext from '../../style/theme-context';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
+  unmatchedPrerequisites: string[];
   onDelete?: () => void;
 }
 
@@ -25,9 +26,9 @@ const Course: FC<CourseProps> = (props) => {
     prerequisiteText,
     corequisites,
     requiredCourses,
+    unmatchedPrerequisites,
     onDelete,
   } = props;
-
   const CoursePopover = (
     <Popover id={'course-popover-' + id}>
       <Popover.Content>
@@ -50,6 +51,18 @@ const Course: FC<CourseProps> = (props) => {
               <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
             </div>
           )}
+        </div>
+      </Popover.Content>
+    </Popover>
+  );
+  const UnmatchedPrereqPopover = (
+    <Popover id={'course-popover-' + id}>
+      <Popover.Content>
+        <div className="course-popover">
+          <div className="popover-name">You still need the following prerequisites</div>
+        </div>
+        <div className="popover-detail">
+          <span className="popover-detail-prefix">Prerequisites:</span> {unmatchedPrerequisites?.join(', ')}
         </div>
       </Popover.Content>
     </Popover>
@@ -78,9 +91,16 @@ const Course: FC<CourseProps> = (props) => {
             {department + ' ' + courseNumber}
           </a>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle className="info-circle" />
+            <InfoCircle />
           </OverlayTrigger>
         </div>
+        {unmatchedPrerequisites?.length > 0 && (
+          <div className="course-and-info">
+            <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
+              <JournalX size={20} />
+            </OverlayTrigger>
+          </div>
+        )}
         {onDelete && (
           <ThemeContext.Consumer>
             {({ darkMode }) => (

@@ -12,7 +12,7 @@ import { useFirstRender } from '../../hooks/firstRenderer';
 // investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
 interface SearchHitContainerProps {
   index: SearchIndex;
-  CourseHitItem: FC<CourseGQLData & { index: number }>;
+  CourseHitItem: FC<CourseGQLData & { index: number; unmatchedPrerequisites: string[] }>;
   ProfessorHitItem?: FC<ProfessorGQLData & { index: number }>;
 }
 
@@ -22,8 +22,20 @@ const SearchResults = ({
   CourseHitItem,
   ProfessorHitItem,
 }: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
+  const roadmap = useAppSelector((state) => state.roadmap);
+  const allExistingCourses = roadmap?.yearPlans.flatMap((yearPlan) =>
+    yearPlan.quarters.flatMap((quarter) => quarter.courses),
+  );
+
   if (index === 'courses') {
-    return (results as CourseGQLData[]).map((course, i) => <CourseHitItem key={course.id} index={i} {...course} />);
+    return (results as CourseGQLData[]).map((course, i) => (
+      <CourseHitItem
+        key={course.id}
+        index={i}
+        {...course}
+        unmatchedPrerequisites={checkPrerequisites(course, allExistingCourses)}
+      />
+    ));
   } else {
     return (results as ProfessorGQLData[]).map((professor, i) => (
       <ProfessorHitItem key={professor.ucinetid} index={i} {...professor} />
@@ -31,6 +43,12 @@ const SearchResults = ({
   }
 };
 
+function checkPrerequisites(course: CourseGQLData, takenCourses: CourseGQLData[]): string[] {
+  return Object.keys(course.prerequisites).filter((prereq) => {
+    const prereqCourse = takenCourses.find((course) => course.id === prereq);
+    if (!prereqCourse) return true;
+  });
+}
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
   const { names, results } = useAppSelector((state) => state.search[index]);
   const containerDivRef = useRef<HTMLDivElement>(null);
