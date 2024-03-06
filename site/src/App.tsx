@@ -7,7 +7,6 @@ import './style/theme.scss';
 import './App.scss';
 
 import AppHeader from './component/AppHeader/AppHeader';
-import Footer from './component/Footer/Footer';
 import SearchPage from './pages/SearchPage';
 import CoursePage from './pages/CoursePage';
 import ProfessorPage from './pages/ProfessorPage';
@@ -106,7 +105,6 @@ export default function App() {
               <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
-            <Footer />
           </div>
         </div>
       </ThemeContext.Provider>

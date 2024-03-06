@@ -51,12 +51,6 @@
   color: red;
 }
 
-.footer {
-  padding: 0px;
-  display: flex;
-  justify-content: space-between;
-}
-
 .course-popover {
   padding: 5%;
 
@@ -84,4 +78,14 @@
   .popover-detail-prefix {
     font-weight: bold;
   }
+}
+
+.course-footer {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  margin-top: auto;
+  width: 100%;
 }
