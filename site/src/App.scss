@@ -1,6 +1,10 @@
+button {
+  color: inherit;
+}
+
 .app-body {
   display: flex;
-  height: 92vh;
+  height: calc(100% - 72px);
   overflow: hidden;
 }
 
