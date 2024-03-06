@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
-import CourseQuarterIndicator from './CourseQuarterIndicator';
+import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';

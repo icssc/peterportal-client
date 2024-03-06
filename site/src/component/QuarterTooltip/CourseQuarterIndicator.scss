@@ -1,0 +1,36 @@
+.quarter-indicator-container {
+  display: flex;
+  margin-left: auto;
+  
+  .quarter-indicator-row {
+    display: inline;
+
+    .emoji {
+      font-size: 18px;
+    }
+  
+    .emoji-label {
+      margin-left: 6px;
+    }
+  }
+}
+
+.not-offered-text {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.tooltip-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.tooltip-chart-section {
+  margin: 16px 0;
+}
+
+.term-chart-container {
+  display: inline-flex;
+  height: 200px;
+  width: 300px;
+}
