@@ -29,8 +29,8 @@ const Profile = () => {
       <div className="profile-popover__header">
         <img src={picture} alt={name} width="50" height="50" />
         <div>
-          <h1>{name}</h1>
-          <h2>{email}</h2>
+          <h1 title={name}>{name}</h1>
+          <h2 title={email}>{email}</h2>
         </div>
       </div>
       <div className="profile-popover__links">
