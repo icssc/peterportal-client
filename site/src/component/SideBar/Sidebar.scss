@@ -68,8 +68,7 @@
     button {
       transition: background-color 0.2s;
     }
-    a,
-    .theme-button {
+    a {
       color: var(--text);
       display: flex;
       gap: 16px;
@@ -137,28 +136,6 @@
   .sidebar .button-container img {
     --is-dark: 1;
   }
-}
-
-.theme-button .dropdown {
-  width: 100%;
-
-  button {
-    background-color: transparent;
-    padding: 0;
-    width: 100%;
-    text-align: left;
-    border: none;
-  }
-
-  .dropdown-item.active {
-    background-color: transparent;
-    color: var(--peterportal-primary-color-1);
-  }
-}
-
-.theme-button .show.dropdown button {
-  outline: none;
-  background-color: transparent;
 }
 
 .sidebar.mini {
