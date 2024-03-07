@@ -6,7 +6,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-
+import { PersonFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 
@@ -41,6 +41,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
       alert('You must be logged in to vote.');
       return;
     }
+
     const votes = {
       id: ((e.target as HTMLElement).parentNode! as Element).getAttribute('id')!,
       upvote: true,
@@ -74,10 +75,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
   };
 
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
+  const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
       <Badge variant="primary">Verified</Badge>
+    </OverlayTrigger>
+  );
+
+  const authorBadge = (
+    <OverlayTrigger overlay={authorOverlay}>
+      <PersonFill size={25} fill="green"></PersonFill>
     </OverlayTrigger>
   );
 
@@ -87,12 +95,12 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
         <h3 className="subreview-identifier">
           {professor && (
             <Link to={{ pathname: `/course/${review.courseID}` }}>
-              {professor.courses[review.courseID].department + ' ' + professor.courses[review.courseID].courseNumber}
+              {professor.courses[review.courseID]?.department + ' ' + professor.courses[review.courseID]?.courseNumber}
             </Link>
           )}
           {course && (
             <Link to={{ pathname: `/professor/${review.professorID}` }}>
-              {Object.values(course.instructors)?.find(({ ucinetid }) => ucinetid === review.professorID)?.name}
+              {course.instructors[review.professorID]?.name}
             </Link>
           )}
           {!course && !professor && (
@@ -137,9 +145,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
           </div>
           <div>
             <div className="subreview-author">
-              <p>
-                <span className="mr-1">Posted by {review.userDisplay}</span>
+              <p className=" gapped">
+                <span className=" mr-1">Posted by {review.userDisplay}</span>
                 {review.verified && verifiedBadge}
+                {cookies.user?.id === review.userID && authorBadge}
               </p>
               <p>
                 {new Date(review.timestamp).toLocaleString('default', {

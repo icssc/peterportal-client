@@ -11,7 +11,7 @@ import {
   setYearPlans,
   setInvalidCourses,
   setTransfers,
-  addYear,
+  setUnsavedChanges,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import {
@@ -28,6 +28,7 @@ import {
 } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
+import { defaultYear } from '../../helpers/planner';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -39,13 +40,29 @@ const Planner: FC = () => {
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
-    // if is first render, load from local storage
-    if (isFirstRenderer) {
+    // stringify current roadmap
+    const roadmapStr = JSON.stringify({
+      planner: collapsePlanner(data),
+      transfers: transfers,
+    });
+
+    // stringified value of an empty roadmap
+    const emptyRoadmap = JSON.stringify({
+      planner: [defaultYear()],
+      transfers: [],
+    } as SavedRoadmap);
+
+    // if first render and current roadmap is empty, load from local storage
+    if (isFirstRenderer && roadmapStr === emptyRoadmap) {
       loadRoadmap();
     }
     // validate planner every time something changes
     else {
       validatePlanner();
+
+      // check current roadmap against last-saved roadmap in local storage
+      // if they are different, mark changes as unsaved to enable alert on page leave
+      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
     }
   }, [data, transfers]);
 
@@ -141,6 +158,9 @@ const Planner: FC = () => {
 
     // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
+
+    // mark changes as saved to bypass alert on page leave
+    dispatch(setUnsavedChanges(false));
 
     if (savedAccount) {
       alert(`Roadmap saved under ${cookies.user.email}`);
@@ -269,28 +289,7 @@ const Planner: FC = () => {
       }
     }
   };
-  //TODO: Support for Multiple Planner future implementation
-  //  - Default year only added when a new planner is created
 
-  const initializePlanner = () => {
-    if (data.length == 0) {
-      dispatch(
-        addYear({
-          yearData: {
-            startYear: new Date().getFullYear(),
-            name: 'Year 1',
-            quarters: ['fall', 'winter', 'spring'].map((quarter) => {
-              return { name: quarter, courses: [] };
-            }),
-          },
-        }),
-      );
-    }
-
-    return data.map((year, yearIndex) => {
-      return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-    });
-  };
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
   return (
@@ -301,7 +300,11 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years">{initializePlanner()}</section>
+      <section className="years">
+        {data.map((year, yearIndex) => {
+          return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+        })}
+      </section>
       <AddYearPopup
         placeholderName={'Year ' + (data.length + 1)}
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}

@@ -2,19 +2,26 @@
   "name": "peterportal-root",
   "version": "0.1.0",
   "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"cd api && npm run dev\" \"cd site && npm run dev\"",
     "postinstall": "cd api && npm install && cd ../site && npm install",
     "prepare": "husky install",
-    "format": "prettier --write **/*.{scss,js,ts,tsx}",
-    "lint": "prettier **/*.{scss,js,ts,tsx} --check && cd site && npm run lint && cd ../api && npm run lint"
+    "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
+    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && npm run lint && cd ../api && npm run lint"
   },
   "dependencies": {
+    "aws-cdk-lib": "2.124.0",
     "dotenv-flow": "^4.0.1",
-    "sst": "^2.38.7"
+    "sst": "2.40.3"
   },
   "engines": {
     "node": "^18 || ^20"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.0"

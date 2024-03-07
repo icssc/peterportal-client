@@ -7,7 +7,6 @@ import './style/theme.scss';
 import './App.scss';
 
 import AppHeader from './component/AppHeader/AppHeader';
-import Footer from './component/Footer/Footer';
 import SearchPage from './pages/SearchPage';
 import CoursePage from './pages/CoursePage';
 import ProfessorPage from './pages/ProfessorPage';
@@ -34,6 +33,18 @@ export default function App() {
     usingSystemTheme ? isSystemDark() : localStorage.getItem('theme') === 'dark',
   );
   const [cookies] = useCookies(['user']);
+  const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
+
+  /**
+   * we run this check at render-time and compare with previous state because a useEffect
+   * would cause a flicker for dark mode users on page load since the first render would be without
+   * the data-theme property set (light would be used by default)
+   */
+  if (darkMode != prevDarkMode) {
+    // Theme styling is controlled by data-theme attribute on body being set to light or dark
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    setPrevDarkMode(darkMode);
+  }
 
   /**
    * Sets the theme state
@@ -75,11 +86,6 @@ export default function App() {
     }
   }, [cookies.user, setThemeState]);
 
-  useEffect(() => {
-    // Theme styling is controlled by data-theme attribute on body being set to light or dark
-    document.querySelector('body')!.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
-
   return (
     <Router>
       <ThemeContext.Provider value={{ darkMode, usingSystemTheme, setTheme }}>
@@ -99,7 +105,6 @@ export default function App() {
               <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
-            <Footer />
           </div>
         </div>
       </ThemeContext.Provider>

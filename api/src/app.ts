@@ -69,8 +69,17 @@ if (process.env.MONGO_URL) {
 app.use(express.json());
 app.use(logger('dev'));
 app.use(cookieParser());
-app.use(function (_, res, next) {
+app.use(function (req, res, next) {
   res.header('x-powered-by', 'serverless-express');
+  /**
+   * on prod/staging, host will be overwritten by lambda function url
+   * original host (e.g. peterportal.org or staging-###.peterportal.org) is
+   * preserved in x-forwarded-host
+   * see stacks/frontend.ts for more info
+   */
+  if (req.headers['x-forwarded-host']) {
+    req.headers.host = req.headers['x-forwarded-host'] as string;
+  }
   next();
 });
 

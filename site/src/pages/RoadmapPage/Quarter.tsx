@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useContext, useRef, useState } from 'react';
 import './Quarter.scss';
 import { Draggable } from 'react-beautiful-dnd';
 import Course from './Course';
@@ -22,6 +22,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
+  const quarterContainerRef = useRef<HTMLDivElement>(null);
 
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
 
@@ -93,7 +94,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   };
 
   const popover = (
-    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
+    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`} className="quarter-menu-popover">
       <Popover.Content>
         <div>
           <Button
@@ -122,7 +123,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   );
 
   return (
-    <div className="quarter">
+    <div className="quarter" ref={quarterContainerRef}>
       <span className="quarter-header">
         <h2 className="quarter-title">
           {quarterTitle} {year}
@@ -133,8 +134,13 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           rootClose
           onToggle={setShowQuarterMenu}
           show={showQuarterMenu}
+          container={quarterContainerRef}
         >
-          <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
+          {({ ref, ...triggerHandler }) => (
+            <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
+              <ThreeDots />
+            </button>
+          )}
         </OverlayTrigger>
       </span>
       <div className="quarter-units">

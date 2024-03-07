@@ -4,6 +4,7 @@ import { Grid, Popup } from 'semantic-ui-react';
 import type { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
+import { Link } from 'react-router-dom';
 
 interface NodeProps {
   node: string;
@@ -26,14 +27,14 @@ const Node: FC<NodeProps> = (props) => {
       <Popup
         trigger={
           !props.label.startsWith('AP ') ? (
-            <a
-              href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
+            <Link
+              to={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
               role="button"
               style={{ padding: '0.5rem' }}
               className={`node ui button`}
             >
               {props.label}
-            </a>
+            </Link>
           ) : (
             <button style={{ padding: '0.5rem' }} className={`node ui button`}>{`${props.label}`}</button>
           )
