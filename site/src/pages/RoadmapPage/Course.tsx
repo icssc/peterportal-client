@@ -95,7 +95,7 @@ const Course: FC<CourseProps> = (props) => {
         )}
       </div>
       <div className="title">{title}</div>
-      <div className="footer">
+      <div className="course-footer">
         {requiredCourses && (
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />
