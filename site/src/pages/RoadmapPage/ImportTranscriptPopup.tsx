@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { CourseGQLData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
-import { normalizeQuarterName } from '../../helpers/planner';
+import { normalizeQuarterName, quarterNames } from '../../helpers/planner';
 
 interface TransferUnitDetails {
   date: string;
@@ -122,7 +122,7 @@ function toPlannerQuarter(
 }
 
 function groupIntoYears(quarters: { startYear: number; quarterData: PlannerQuarterData }[]) {
-  return quarters.reduce(
+  const years = quarters.reduce(
     (years, q) => {
       const yearIdx = Object.keys(years).length + 1;
 
@@ -133,6 +133,14 @@ function groupIntoYears(quarters: { startYear: number; quarterData: PlannerQuart
     },
     {} as { [k: string]: PlannerYearData },
   );
+  const baseQtrs: QuarterName[] = ['Fall', 'Winter', 'Spring'];
+  Object.values(years).forEach((year) => {
+    baseQtrs.forEach(
+      (name) => !year.quarters.find((q) => q.name === name) && year.quarters.push({ name, courses: [] }),
+    );
+    year.quarters.sort((a, b) => quarterNames.indexOf(a.name) - quarterNames.indexOf(b.name));
+  });
+  return years;
 }
 
 async function processTranscript(file: Blob) {
