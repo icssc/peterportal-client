@@ -10,6 +10,7 @@ import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } 
 import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
+import SearchFilter from '../SearchFilter/SearchFilter';
 
 const SEARCH_TIMEOUT_MS = 300;
 const FULL_RESULT_THRESHOLD = 3;
@@ -19,15 +20,28 @@ interface SearchModuleProps {
   index: SearchIndex;
 }
 
+// type GECategory = Parameters<typeof wfs>[0];
+type GECategory = 'GE-1A' | 'GE-1B' | 'GE-2' | 'GE-3' | 'GE-4' | 'GE-5A' | 'GE-5B' | 'GE-6' | 'GE-7' | 'GE-8';
+
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
   const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
   const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
+  const [selectedGE, setSelectedGE] = useState<string>('');
+
+  const onGEChange = (ge: string) => {
+    setSelectedGE(ge);
+  };
+
   const searchNames = useCallback(
     (query: string, pageNumber: number, lastQuery?: string) => {
       // Get all results only when query changes or user reaches the fourth page or after
+      // const filterOptions: Object = {};
+      // if (selectedGE)
+      //   filterOptions.geList = [selectedGE];
+
       const nameResults = wfs({
         query: query,
         resultType: index === 'courses' ? 'COURSE' : 'INSTRUCTOR',
@@ -37,7 +51,12 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           lastQuery !== query || pageNumber < FULL_RESULT_THRESHOLD
             ? NUM_RESULTS_PER_PAGE * INITIAL_MAX_PAGE
             : undefined,
+        // filterOptions: {}
+        filterOptions: {
+          ...(selectedGE !== '' && { geList: [selectedGE as GECategory] }),
+        },
       });
+
       let names: string[] = [];
       if (index === 'courses') {
         names = Object.keys(nameResults ?? {});
@@ -136,6 +155,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             onChange={(e) => searchNamesAfterTimeout(e.target.value)}
           />
         </InputGroup>
+        <SearchFilter onGEChange={onGEChange} />
       </Form.Group>
     </div>
   );
