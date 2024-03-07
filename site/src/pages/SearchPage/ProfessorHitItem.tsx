@@ -1,17 +1,18 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
-import { isMobile } from 'react-device-detect';
 
 import { ProfessorGQLData } from '../../types/types';
+import { useIsMobile } from '../../helpers/util';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const activeProfessor = useAppSelector((state) => state.popup.professor);
 
   const onClickName = () => {
@@ -25,8 +26,14 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
   };
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      onClickName();
+    }
+  };
+
   return (
-    <div className="hit-item" onClick={onClickName}>
+    <div className="hit-item" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div
         style={{
           marginRight: '16px',
@@ -58,7 +65,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <a href={'/course/' + item.replace(/\s+/g, '')}>{item}</a>
+                  <Link to={'/course/' + item.replace(/\s+/g, '')}>{item}</Link>
                 </span>
               );
             })}

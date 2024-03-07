@@ -27,15 +27,15 @@ const Profile = () => {
   const DefaultTab = (
     <>
       <div className="profile-popover__header">
-        <img src={picture} alt={name} />
-        <span>
+        <img src={picture} alt={name} width="50" height="50" />
+        <div>
           <h1 title={name}>{name}</h1>
           <h2 title={email}>{email}</h2>
-        </span>
+        </div>
       </div>
       <div className="profile-popover__links">
         <ul>
-          <li className="divider-before">
+          <li>
             <NavLink
               className={({ isActive }) => 'profile-popover__link' + (isActive ? ' active' : '')}
               to="/reviews"
@@ -55,7 +55,7 @@ const Profile = () => {
               Theme
             </button>
           </li>
-          <li className="divider-before">
+          <li>
             <a href={`/api/users/logout`} className="profile-popover__link">
               <div>
                 <Icon name="sign out" size="large" />
@@ -72,12 +72,12 @@ const Profile = () => {
     <>
       <div className="profile-popover__header">
         <button onClick={() => setTab('default')}>
-          <ArrowLeftCircleFill />
+          <ArrowLeftCircleFill /> <span>Back</span>
         </button>
       </div>
       <div className="profile-popover__links">
         <ul>
-          <li className="divider-before">
+          <li>
             <button
               className={`theme-popover__link${!usingSystemTheme && !darkMode ? ' active' : ''}`}
               onClick={() => setTheme('light')}
@@ -138,13 +138,17 @@ const Profile = () => {
                 {
                   name: 'offset',
                   options: {
-                    offset: [-150, 15],
+                    offset: [-135, 8],
                   },
                 },
               ],
             }}
           >
-            <img src={picture} alt={name} className="navbar-profile-pic" />
+            {({ ref, ...triggerHandler }) => (
+              <button {...triggerHandler} className="profile-button">
+                <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
+              </button>
+            )}
           </OverlayTrigger>
         </div>
       ) : (
