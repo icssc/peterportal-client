@@ -46,19 +46,20 @@ const CoursePage: FC = () => {
     return <LoadingPage />;
   } else {
     return (
-      <Twemoji options={{ className: 'twemoji' }}>
-        <div className="course-page">
-          <div>
-            <SideInfo
-              searchType="course"
-              name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-              title={courseGQLData.title}
-              school={courseGQLData.school}
-              description={courseGQLData.description}
-              tags={getCourseTags(courseGQLData)}
-              course={courseGQLData}
-            />
-          </div>
+      <div className="course-page">
+        <div>
+          <SideInfo
+            searchType="course"
+            name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+            title={courseGQLData.title}
+            school={courseGQLData.school}
+            description={courseGQLData.description}
+            tags={getCourseTags(courseGQLData)}
+            course={courseGQLData}
+            terms={courseGQLData.terms}
+          />
+        </div>
+        <Twemoji options={{ className: 'twemoji' }}>
           <div className="course-page-body">
             <div className="course-page-section">
               <div>
@@ -92,8 +93,8 @@ const CoursePage: FC = () => {
               <Review course={courseGQLData} />
             </div>
           </div>
-        </div>
-      </Twemoji>
+        </Twemoji>
+      </div>
     );
   }
 };

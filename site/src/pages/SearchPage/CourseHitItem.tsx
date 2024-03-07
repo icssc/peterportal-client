@@ -45,7 +45,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
             {props.department} {props.courseNumber} {props.title}
           </h3>
         </div>
-        <CourseQuarterIndicator terms={props.terms} />
+        <CourseQuarterIndicator terms={props.terms} size="sm" />
       </div>
 
       <div>
