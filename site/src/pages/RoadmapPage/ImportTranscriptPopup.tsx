@@ -43,7 +43,8 @@ function processRow(row: HTMLElement, transfers: TransferUnitDetails[], quarters
   // No quarters at UCI Yet; these are transferred credits
   if (!quarters.length) {
     if (text.startsWith('Units Transferred')) return;
-    const [raw, name, score, units, date] = text.match(/([^(]+)\s\(Score\s(\d),\sUnits ([\d.]+)\)\s([\d/]+)/) || [];
+    const [raw, name, score, units, date] =
+      text.match(/^((?:.(?!\(Score|\(Units))+)\s\((?:Score\s(\d))?(?:,\s)?Units ([\d.]+)\).*?(\d+\/\d+)/) || [];
     if (!raw) return;
     transfers.push({ raw, name, score: Number(score), units: Number(units), date });
     return;
