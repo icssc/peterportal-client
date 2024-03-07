@@ -6,7 +6,8 @@ const router = express.Router();
  * Get a roadmap
  */
 router.get('/get', async function (req: Request<never, unknown, Record<string, unknown>, { id: string }>, res) {
-  Roadmap.findOne({ userID: req.body?._id }).then((roadmap) => {
+  const userID = req.query.id;
+  Roadmap.findOne({ userID }).then((roadmap) => {
     if (roadmap) {
       res.json(roadmap);
     } else {
