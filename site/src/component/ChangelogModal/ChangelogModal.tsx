@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
+import changelogImage from '../../asset/transcript.jpg';
 
-const DESCRIPTION = 'You can now view recently added features to the PeterPortal website, listed in this modal.';
-const IMAGE_URL =
-  'https://media.tenor.com/ufm_0t3ACEAAAAAM/ginger-cat-ginger-cat-eating-then-staring-at-the-camera.gif';
-const LAST_UPDATED = '02/27/2024';
+const DESCRIPTION = 'You can now import an HTML copy of your unofficial transcript to your roadmap!';
+const LAST_UPDATED = '03/08/2024';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -29,11 +28,13 @@ const ChangelogModal = () => {
   return (
     <Modal className="changelog-modal" show={showModal} centered onHide={closeModal}>
       <Modal.Header closeButton>
-        <h2>What's New - {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+        <h2>
+          What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
+        </h2>
       </Modal.Header>
 
       <p className="modal-body">{DESCRIPTION}</p>
-      <img className="modal-img" src={IMAGE_URL} alt="Screenshot or gif of new changes" />
+      <img className="modal-img" src={changelogImage} alt="Screenshot or gif of new changes" />
     </Modal>
   );
 };
