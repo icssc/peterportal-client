@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { InfoCircle, ExclamationTriangle, Trash, JournalX } from 'react-bootstrap-icons';
+import { InfoCircle, ExclamationTriangle, Trash } from 'react-bootstrap-icons';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -97,7 +97,7 @@ const Course: FC<CourseProps> = (props) => {
         {unmatchedPrerequisites?.length > 0 && (
           <div className="course-and-info">
             <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
-              <JournalX size={20} />
+              <ExclamationTriangle />
             </OverlayTrigger>
           </div>
         )}
