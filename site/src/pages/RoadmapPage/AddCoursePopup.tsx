@@ -117,7 +117,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
               );
             })}
           </Form.Control>
-          <Form.Control.Feedback type="invalid">Missing qurter</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
         </Form.Group>
       )}
       <div className="d-flex justify-content-end">

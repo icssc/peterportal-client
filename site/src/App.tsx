@@ -7,6 +7,7 @@ import './style/theme.scss';
 import './App.scss';
 
 import AppHeader from './component/AppHeader/AppHeader';
+// import ChangelogModal from './component/ChangelogModal/ChangelogModal';
 import SearchPage from './pages/SearchPage';
 import CoursePage from './pages/CoursePage';
 import ProfessorPage from './pages/ProfessorPage';
@@ -106,6 +107,7 @@ export default function App() {
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </div>
+          {/* <div className="changelog-modal">{<ChangelogModal />}</div> */}
         </div>
       </ThemeContext.Provider>
     </Router>
