@@ -37,6 +37,7 @@ export default class Chart extends React.Component<ChartProps> {
       winterCount = 0,
       springCount = 0;
 
+    // for summer, count unique years rather than total terms (e.g. count SS1 2023 and SS2 2023 as one)
     let summerYears = new Set<String>;
 
     this.props.terms.forEach((data) => {
@@ -138,19 +139,22 @@ export default class Chart extends React.Component<ChartProps> {
               data={data}
               keys={['fall', 'winter', 'spring', 'summer']}
               margin={{
-                top: 50,
+                top: 25,
                 right: marginX,
-                bottom: 50,
+                bottom: 25,
                 left: marginX,
               }}
               layout="vertical"
               axisBottom={{
-                tickSize: 10,
+                tickSize: 5,
                 tickPadding: 5,
                 tickRotation: 0,
                 legend: 'Term',
                 legendPosition: 'middle',
                 legendOffset: 36,
+              }}
+              axisLeft={{
+                tickValues: Array.from({length: greatestCount}, (_, i) => i+1)  // integers from 1 to max
               }}
               enableLabel={false}
               colors={colors}
