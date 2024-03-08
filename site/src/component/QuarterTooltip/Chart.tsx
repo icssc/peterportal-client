@@ -41,8 +41,7 @@ export default class Chart extends React.Component<ChartProps> {
     const summerYears = new Set<string>();
 
     this.props.terms.forEach((data) => {
-      const year = data.split(' ')[0];
-      const term = data.split(' ')[1];
+      const [year, term] = data.split(' ');
       if (term === 'Fall') {
         fallCount++;
       } else if (term === 'Winter') {
