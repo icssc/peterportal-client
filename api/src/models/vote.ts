@@ -14,6 +14,11 @@ const voteSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  score: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 const Vote = mongoose.model('Vote', voteSchema);

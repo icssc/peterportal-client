@@ -45,10 +45,13 @@ if (process.env.MONGO_URL) {
   mongoose.connection.on('error', function (error) {
     console.log(error);
   });
+  store.on('error', function (error) {
+    console.log(error);
+  });
   // Setup Passport and Sessions
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: SESSION_LENGTH },
@@ -110,17 +113,13 @@ let conn: null | Mongoose = null;
 const uri = process.env.MONGO_URL;
 export const connect = async () => {
   if (conn == null) {
-    conn = await mongoose.connect(uri, {
+    conn = await mongoose.connect(uri!, {
       dbName: DB_NAME,
       serverSelectionTimeoutMS: 5000,
     });
   }
   return conn;
 };
-app.use(async function (req, res, next) {
-  await connect();
-  next();
-});
 
 let serverlessExpressInstance: ReturnType<typeof serverlessExpress>;
 async function setup(event: unknown, context: unknown) {
