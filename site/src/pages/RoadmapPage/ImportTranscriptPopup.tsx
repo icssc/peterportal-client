@@ -6,8 +6,9 @@ import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
-import { BatchCourseData, CourseGQLData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
+import { BatchCourseData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
 import { normalizeQuarterName, quarterNames } from '../../helpers/planner';
+import { searchAPIResults } from '../../helpers/util';
 
 interface TransferUnitDetails {
   date: string;
@@ -29,6 +30,10 @@ interface TranscriptCourse {
 interface TranscriptQuarter {
   name: string;
   courses: TranscriptCourse[];
+}
+
+function toCourseID(course: TranscriptCourse) {
+  return (course.dept + course.code).replace(/\s/g, '');
 }
 
 function processRow(row: HTMLElement, transfers: TransferUnitDetails[], quarters: TranscriptQuarter[]): void {
@@ -70,39 +75,9 @@ async function htmlFromFile(file: Blob): Promise<HTMLElement> {
 }
 
 async function transcriptCourseDetails(quarters: TranscriptQuarter[]): Promise<BatchCourseData> {
-  const courseEntries = quarters
-    .flatMap((q) => q.courses)
-    .map((c, i) => {
-      const dept = JSON.stringify(c.dept);
-      const cNum = JSON.stringify(c.code);
-      return `_${i}: courses(department: ${dept}, courseNumber: ${cNum}) { ...Details }`;
-    });
-
-  const query = `fragment Details on Course {
-    id, department, courseNumber, school, title, courseLevel,
-    minUnits, maxUnits, description, departmentName,
-    instructors { ucinetid, name, shortenedName },
-    prerequisiteTree, prerequisiteText,
-    prerequisites { id, department, courseNumber, title },
-    dependencies { id, department, courseNumber, title },
-    repeatability, concurrent, sameAs, restriction, overlap,
-    corequisites, geList, geText, terms
-  }
-  query CourseDetails { ${courseEntries.join(',\n')} }`;
-
-  const response = await fetch('https://api-next.peterportal.org/v1/graphql', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ query }),
-  }).then((x) => x.json());
-
-  // Query Response is { data: { [key: string]: [CourseData] } }
-  // Transform this response into a lookup { courseID: {CourseData} }
-  return Object.fromEntries(
-    Object.values<CourseGQLData[]>(response.data)
-      .flat()
-      .map((c) => [c.department + c.courseNumber, c]),
-  );
+  const courseIDs = quarters.flatMap((q) => q.courses).map(toCourseID);
+  const results = (await searchAPIResults('courses', courseIDs)) as BatchCourseData;
+  return results;
 }
 
 function toPlannerQuarter(
@@ -116,7 +91,7 @@ function toPlannerQuarter(
 
   return {
     startYear: name === 'Fall' ? year : year - 1,
-    quarterData: { name, courses: quarter.courses.map((c) => courses[c.dept + c.code]) },
+    quarterData: { name, courses: quarter.courses.map((c) => courses[toCourseID(c)]) },
   };
 }
 
