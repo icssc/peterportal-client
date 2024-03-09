@@ -308,8 +308,6 @@ const Planner: FC = () => {
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
       />
       <ImportTranscriptPopup />
-      <br />
-      <br />
     </div>
   );
 };

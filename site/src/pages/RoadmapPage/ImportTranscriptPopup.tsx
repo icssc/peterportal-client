@@ -6,7 +6,7 @@ import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
-import { CourseGQLData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
+import { BatchCourseData, CourseGQLData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
 import { normalizeQuarterName, quarterNames } from '../../helpers/planner';
 
 interface TransferUnitDetails {
@@ -69,9 +69,7 @@ async function htmlFromFile(file: Blob): Promise<HTMLElement> {
   return parseHTML(fileText);
 }
 
-type CourseLookup = { [k: string]: CourseGQLData };
-
-async function transcriptCourseDetails(quarters: TranscriptQuarter[]): Promise<CourseLookup> {
+async function transcriptCourseDetails(quarters: TranscriptQuarter[]): Promise<BatchCourseData> {
   const courseEntries = quarters
     .flatMap((q) => q.courses)
     .map((c, i) => {
@@ -109,7 +107,7 @@ async function transcriptCourseDetails(quarters: TranscriptQuarter[]): Promise<C
 
 function toPlannerQuarter(
   quarter: TranscriptQuarter,
-  courses: CourseLookup,
+  courses: BatchCourseData,
 ): { startYear: number; quarterData: PlannerQuarterData } {
   const year = parseInt(quarter.name.split(' ')[0]);
   // Removes the year number and "Session/Quarter" at the end
