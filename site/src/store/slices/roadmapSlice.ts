@@ -232,7 +232,7 @@ export const roadmapSlice = createSlice({
     },
     clearPlanner: (state) => {
       if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.yearPlans = [];
+        state.yearPlans = initialState.yearPlans;
       }
     },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
