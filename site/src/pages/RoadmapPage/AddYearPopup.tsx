@@ -19,7 +19,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
   const saveHandler = (yearData: PlannerYearData) => dispatch(addYear({ yearData }));
 
   return (
-    <div>
+    <>
       <YearModal
         show={showModal}
         setShow={setShowModal}
@@ -27,15 +27,15 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         placeholderYear={placeholderYear}
         type="add"
         saveHandler={saveHandler}
-        currentQuarters={['fall', 'winter', 'spring']}
+        currentQuarters={['Fall', 'Winter', 'Spring']}
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
-      <Button variant="primary" className="add-year-btn" onClick={() => setShowModal(true)}>
+      <Button variant="primary" className="ppc-btn" onClick={() => setShowModal(true)}>
         <Plus className="add-year-icon" />
-        <div className="add-year-text">Add Year</div>
+        <div>Add Year</div>
       </Button>
-    </div>
+    </>
   );
 };
 
