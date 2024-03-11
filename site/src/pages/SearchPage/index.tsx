@@ -17,7 +17,7 @@ const SearchPage: FC = () => {
     <>
       <div id="content-container">
         <div id="search-list">
-          <SearchModule index={index} />
+          <SearchModule key={index} index={index} />
           <SearchHitContainer index={index} CourseHitItem={CourseHitItem} ProfessorHitItem={ProfessorHitItem} />
         </div>
         <div id="search-popup">

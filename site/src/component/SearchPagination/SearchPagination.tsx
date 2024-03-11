@@ -43,6 +43,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
         <Pagination.Prev onClick={() => clickPageNumber(activePage - 1)} disabled={activePage === 0} />
         {items}
         <Pagination.Next onClick={() => clickPageNumber(activePage + 1)} disabled={activePage === numPages - 1} />
+        <Pagination.Last onClick={() => clickPageNumber(numPages - 1)} disabled={activePage === numPages - 1} />
       </Pagination>
     )
   );

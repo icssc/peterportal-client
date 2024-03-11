@@ -5,7 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setQuery, setPageNumber, setResults } from '../../store/slices/searchSlice';
+import { setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
 import { CourseGQLData, CourseGQLResponse, ProfessorGQLData, SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
@@ -21,25 +21,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
   const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
-  // const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
-
-  // // Search empty string to load some results on intial visit/when switching between courses and professors tabs
-  // // make sure this runs before everything else for best performance and avoiding bugs
-  // if (index !== prevIndex) {
-  //   setPrevIndex(index);
-  //   fuzzySearch('');
-  // }
-
-  // clear results and reset page number when component unmounts
-  // results will persist otherwise, e.g. current page of results from catalogue carries over to roadmap search container
-  useEffect(() => {
-    return () => {
-      dispatch(setPageNumber({ index: 'courses', pageNumber: 0 }));
-      dispatch(setPageNumber({ index: 'professors', pageNumber: 0 }));
-      dispatch(setResults({ index: 'courses', results: [], count: 0 }));
-      dispatch(setResults({ index: 'professors', results: [], count: 0 }));
-    };
-  }, [dispatch]);
 
   interface SearchResults {
     count: number;
@@ -59,11 +40,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           `https://staging-141.api-next.peterportal.org/v1/rest/search?${params}`,
         )
       ).data.payload;
-      console.log(count, results);
       const transformedData = results.map((result) => transformGQLData(index, result)) as
         | CourseGQLData[]
         | ProfessorGQLData[];
-      console.log(transformedData);
       dispatch(setResults({ index, results: transformedData, count }));
     },
     [dispatch, index, search.pageNumber],
@@ -74,7 +53,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     fuzzySearch(search.query);
   }, [search.query, fuzzySearch]);
 
-  const searchNamesAfterTimeout = (query: string) => {
+  const searchAfterTimeout = (query: string) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
     }
@@ -103,7 +82,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             aria-label="search"
             type="text"
             placeholder={placeholder}
-            onChange={(e) => searchNamesAfterTimeout(e.target.value)}
+            onChange={(e) => searchAfterTimeout(e.target.value)}
             defaultValue={search.query}
           />
         </InputGroup>

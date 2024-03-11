@@ -3,6 +3,7 @@ import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types'
 
 interface SearchData {
   query: string;
+  lastQuery: string;
   pageNumber: number;
   results: CourseGQLData[] | ProfessorGQLData[];
   count: number;
@@ -18,12 +19,14 @@ interface SearchState {
 const initialState: SearchState = {
   courses: {
     query: '',
+    lastQuery: '',
     pageNumber: 0,
     results: [],
     count: 0,
   },
   professors: {
     query: '',
+    lastQuery: '',
     pageNumber: 0,
     results: [],
     count: 0,
@@ -48,7 +51,10 @@ export const searchSlice = createSlice({
     ) => {
       state[action.payload.index].results = action.payload.results;
       state[action.payload.index].count = action.payload.count;
-      state[action.payload.index].pageNumber = 0;
+      if (state[action.payload.index].lastQuery !== state[action.payload.index].query) {
+        state[action.payload.index].pageNumber = 0;
+        state[action.payload.index].lastQuery = state[action.payload.index].query;
+      }
     },
   },
 });
