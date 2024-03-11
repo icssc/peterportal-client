@@ -61,7 +61,7 @@ interface SideInfoProps {
   tags: string[];
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  terms: string[];
+  terms?: string[];
 }
 
 interface AverageReview {
@@ -150,7 +150,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             <h2>{props.title}</h2>
             <h3>{props.school}</h3>
           </span>
-          <CourseQuarterIndicator terms={props.terms} size="lg" />
+          {props.terms && <CourseQuarterIndicator terms={props.terms} size="lg" />}
         </div>
 
         <h4>{props.description}</h4>
