@@ -4,11 +4,11 @@ import axios from 'axios';
 
 import { useAppSelector } from '../../store/hooks';
 import { selectProfessor } from '../../store/slices/popupSlice';
-import { ScoreData, ReviewData } from '../../types/types';
+import { ScoreData, FeaturedReviewData } from '../../types/types';
 
 const ProfessorPopup: FC = () => {
   const professor = useAppSelector(selectProfessor);
-  const [featured, setFeatured] = useState<ReviewData>(null!);
+  const [featured, setFeatured] = useState<FeaturedReviewData>(null!);
   const [scores, setScores] = useState<ScoreData[]>([]);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const ProfessorPopup: FC = () => {
         res.data.sort((a, b) => b.score - a.score);
         setScores(res.data);
       });
-      axios.get<ReviewData[]>('/api/reviews/featured', { params: reviewParams }).then((res) => {
+      axios.get<FeaturedReviewData[]>('/api/reviews/featured', { params: reviewParams }).then((res) => {
         // if has a featured review
         if (res.data.length > 0) {
           setFeatured(res.data[0]);
