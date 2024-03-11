@@ -18,7 +18,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     dispatch(setPageNumber({ index, pageNumber }));
   };
 
-  const numPages = Math.ceil(searchData.names.length / NUM_RESULTS_PER_PAGE);
+  const numPages = Math.ceil(searchData.count / NUM_RESULTS_PER_PAGE);
   const activePage = searchData.pageNumber;
 
   // only show 5 page numbers at a time
