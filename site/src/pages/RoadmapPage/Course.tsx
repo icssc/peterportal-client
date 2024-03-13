@@ -11,7 +11,7 @@ import ThemeContext from '../../style/theme-context';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
-  unmatchedPrerequisites: string[];
+  unmatchedPrerequisites?: string[];
   onDelete?: () => void;
 }
 
@@ -118,7 +118,7 @@ const Course: FC<CourseProps> = (props) => {
             <ExclamationTriangle />
           </OverlayTrigger>
         )}
-        {unmatchedPrerequisites?.length > 0 && (
+        {unmatchedPrerequisites && (
           <div className="course-and-info">
             <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
               <ExclamationTriangle />
