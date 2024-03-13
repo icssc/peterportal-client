@@ -8,6 +8,7 @@ import { ReviewData, VoteData } from '../types/types';
 import { verifyCaptcha } from '../helpers/recaptcha';
 import Review from '../models/review';
 import Vote from '../models/vote';
+import Report from '../models/report';
 const router = express.Router();
 
 /**
@@ -165,15 +166,13 @@ router.post('/', async function (req, res) {
  */
 router.delete('/', async (req, res) => {
   const checkUser = async () => {
-    const review = (await Review.find({ _id: req.body.id })) as ReviewData[];
-    return review.length > 0 && review[0].userID === req.session.passport?.user.id;
+    return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
   };
 
   if (req.session.passport?.admin || (await checkUser())) {
-    console.log(`Deleting review ${req.body.id}`);
     await Review.deleteOne({ _id: req.body.id });
     await Vote.deleteMany({ reviewID: req.body.id });
-
+    await Report.deleteMany({ reviewID: req.body.id });
     res.status(200).send();
   } else {
     res.json({ error: 'Must be an admin or review author to delete reviews!' });
@@ -222,6 +221,7 @@ router.patch('/vote', async function (req, res) {
       res.json({ deltaScore: deltaScore });
     }
   }
+  //
 });
 
 /**
@@ -258,17 +258,12 @@ router.patch('/getVoteColor', async function (req, res) {
 router.patch('/getVoteColors', async function (req, res) {
   if (req.session?.passport != null) {
     //query of the user's email and the review id
-    const ids = req.body['ids'];
-
-    const q = {
-      userID: req.session.passport.user.id,
-      reviewID: { $in: ids },
-    };
-    const votes = (await Vote.find(q)) as VoteData[];
-    const r: Record<string, number> = {};
-    for (let i = 0; i < votes.length; i++) {
-      r[votes[i].reviewID] = votes[i].score;
-    }
+    const ids: string[] = req.body.ids;
+    const votes = await Vote.find({ userID: req.session.passport.user.id, reviewID: { $in: ids } });
+    const r: { [key: string]: number } = votes.reduce((acc: { [key: string]: number }, v) => {
+      acc[v.reviewID.toString()] = v.score;
+      return acc;
+    }, {});
     res.json(r);
   } else {
     res.json({});

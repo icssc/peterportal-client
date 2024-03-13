@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 
 const reportSchema = new mongoose.Schema({
   reviewID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Review',
+    required: true,
   },
   reason: {
     type: String,

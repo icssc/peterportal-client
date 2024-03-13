@@ -3,11 +3,12 @@ import mongoose from 'mongoose';
 const voteSchema = new mongoose.Schema({
   userID: {
     type: String,
-    ref: 'User',
+    required: true,
   },
   reviewID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Review',
+    required: true,
   },
   timestamp: {
     type: Date,
@@ -17,7 +18,7 @@ const voteSchema = new mongoose.Schema({
   score: {
     type: Number,
     required: true,
-    default: 0,
+    enum: [-1, 1],
   },
 });
 

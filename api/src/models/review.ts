@@ -65,7 +65,6 @@ const reviewSchema = new mongoose.Schema({
   quarter: {
     type: String,
     required: true,
-    match: /^20[0-9]{2} (Winter|Summer|Fall|Spring)$/,
   },
   timestamp: {
     type: Date,
