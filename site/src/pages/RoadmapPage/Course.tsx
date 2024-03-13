@@ -92,13 +92,6 @@ const Course: FC<CourseProps> = (props) => {
             <InfoCircle />
           </OverlayTrigger>
         </div>
-        {unmatchedPrerequisites?.length > 0 && (
-          <div className="course-and-info">
-            <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
-              <ExclamationTriangle />
-            </OverlayTrigger>
-          </div>
-        )}
         {onDelete && (
           <ThemeContext.Consumer>
             {({ darkMode }) => (
@@ -120,6 +113,13 @@ const Course: FC<CourseProps> = (props) => {
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />
           </OverlayTrigger>
+        )}
+        {unmatchedPrerequisites?.length > 0 && (
+          <div className="course-and-info">
+            <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
+              <ExclamationTriangle />
+            </OverlayTrigger>
+          </div>
         )}
         <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
       </div>
