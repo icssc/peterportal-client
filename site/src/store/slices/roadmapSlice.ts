@@ -11,7 +11,7 @@ import {
   TransferData,
   PlannerQuarterData,
 } from '../../types/types';
-import { defaultYear } from '../../helpers/planner';
+import { defaultYear, quarterDisplayNames } from '../../helpers/planner';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -136,11 +136,7 @@ export const roadmapSlice = createSlice({
 
       // if duplicate quarter
       if (currentQuarters.includes(newQuarter.name)) {
-        alert(
-          `${
-            newQuarter.name.charAt(0).toUpperCase() + newQuarter.name.slice(1)
-          } has already been added to Year ${yearIndex}!`,
-        );
+        alert(`${quarterDisplayNames[newQuarter.name]} has already been added to Year ${yearIndex}!`);
         return;
       }
 
@@ -150,7 +146,7 @@ export const roadmapSlice = createSlice({
         for (let i = 0; i < currentQuarters.length; i++) {
           if (
             currentQuarters[i].length > newQuarter.name.length ||
-            (currentQuarters[i].length == newQuarter.name.length && newQuarter.name === 'winter')
+            (currentQuarters[i].length == newQuarter.name.length && newQuarter.name === 'Winter')
           ) {
             // only scenario where name length can't distinguish ordering is spring vs winter
             index = i;
@@ -236,7 +232,7 @@ export const roadmapSlice = createSlice({
     },
     clearPlanner: (state) => {
       if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.yearPlans = [];
+        state.yearPlans = initialState.yearPlans;
       }
     },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {

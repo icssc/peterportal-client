@@ -5,6 +5,7 @@ import './AddCoursePopup.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import Modal from 'react-bootstrap/Modal';
+import { quarterDisplayNames } from '../../helpers/planner';
 
 interface AddCoursePopupProps {}
 
@@ -55,10 +56,6 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
     closeForm();
   };
 
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
   const addCourseForm = (
     <Form noValidate validated={validated} onSubmit={submit}>
       <h2 className="add-course-form-header">Add Course</h2>
@@ -72,7 +69,6 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           required
           onChange={(e) => {
             const parsed = parseInt(e.target.value);
-            console.log(parsed, isNaN(parsed));
             if (isNaN(parsed)) {
               setYear(-1);
             } else {
@@ -113,7 +109,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
               Quarter
             </option>
             {planner[year].quarters.map((plannerQuarter, i) => {
-              const value = capitalizeFirstLetter(plannerQuarter.name);
+              const value = quarterDisplayNames[plannerQuarter.name];
               return (
                 <option key={'add-course-form-quarter-' + i} value={i}>
                   {value}
@@ -121,7 +117,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
               );
             })}
           </Form.Control>
-          <Form.Control.Feedback type="invalid">Missing qurter</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
         </Form.Group>
       )}
       <div className="d-flex justify-content-end">

@@ -1,0 +1,66 @@
+.quarter-indicator-container {
+  display: flex;
+  margin-left: auto;
+  float: right;
+
+  .quarter-indicator-row {
+    display: flex;
+    justify-content: end;
+    max-height: 36px;
+
+    .emoji-xs {
+      font-size: 16px;
+    }
+
+    .emoji-sm {
+      font-size: 18px;
+    }
+
+    .emoji-lg {
+      font-size: 24px;
+    }
+  }
+}
+
+.quarter-tooltip {
+  .emoji-xs,
+  .emoji-sm,
+  .emoji-lg {
+    font-size: 14px;
+  }
+
+  .emoji-label {
+    margin-left: 4px;
+  }
+
+  .not-offered-text {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  .tooltip-column {
+    display: flex;
+    flex-direction: column;
+    margin: 4px;
+  }
+
+  .tooltip-chart-section {
+    margin: 16px 0;
+  }
+
+  .term-chart-container {
+    display: inline-flex;
+    height: 200px;
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .quarter-indicator-container {
+    .quarter-indicator-row {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+    }
+  }
+}
