@@ -2,6 +2,7 @@ import { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash } from 'react-bootstrap-icons';
+import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -27,6 +28,7 @@ const Course: FC<CourseProps> = (props) => {
     corequisites,
     requiredCourses,
     unmatchedPrerequisites,
+    terms,
     onDelete,
   } = props;
   const CoursePopover = (
@@ -92,7 +94,7 @@ const Course: FC<CourseProps> = (props) => {
             <InfoCircle />
           </OverlayTrigger>
         </div>
-        {onDelete && (
+        {onDelete ? (
           <ThemeContext.Consumer>
             {({ darkMode }) => (
               <Button
@@ -105,6 +107,8 @@ const Course: FC<CourseProps> = (props) => {
               </Button>
             )}
           </ThemeContext.Consumer>
+        ) : (
+          <CourseQuarterIndicator terms={terms} size="xs" />
         )}
       </div>
       <div className="title">{title}</div>
