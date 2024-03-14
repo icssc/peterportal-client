@@ -28,7 +28,6 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
     setQuarter(currentYearAndQuarter && currentYearAndQuarter.quarter !== null ? currentYearAndQuarter.quarter : -1);
   }, [currentYearAndQuarter]);
 
-  //console.log("receiving year: " + year + "and quarter: " + quarter);
   const closeForm = () => {
     // close form
     dispatch(setShowAddCourse(false));
