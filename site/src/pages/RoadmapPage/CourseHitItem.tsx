@@ -5,7 +5,6 @@ import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSli
 import Course from './Course';
 
 import { useIsMobile } from '../../helpers/util';
-import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { CourseGQLData } from '../../types/types';
 
 interface CourseHitItemProps extends CourseGQLData {
