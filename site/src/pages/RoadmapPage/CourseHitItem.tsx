@@ -20,7 +20,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     dispatch(setActiveCourse(props));
     dispatch(setShowAddCourse(true));
     // also hide the search bar to view the roadmap
-    dispatch(setShowSearch({ show: false }));
   };
   const onMobileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
