@@ -162,14 +162,14 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       {isMobile && (
         <>
           <Button
-            variant="light"
+            variant={buttonVariant}
             className="quarter quarter-header"
             onClick={() => {
               dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
             }}
           >
-            <Plus />
-            Add Course
+            <Plus className="plus-icon" />
+            <div className="quarter-add-course">Add Course</div>
           </Button>
         </>
       )}

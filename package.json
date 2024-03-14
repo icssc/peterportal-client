@@ -11,6 +11,7 @@
   "dependencies": {
     "aws-cdk-lib": "2.124.0",
     "dotenv-flow": "^4.0.1",
+    "react-device-detect": "^2.2.3",
     "sst": "2.40.3"
   },
   "engines": {
