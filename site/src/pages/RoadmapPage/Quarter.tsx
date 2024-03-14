@@ -2,8 +2,8 @@ import { FC, useContext, useRef, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
-import { isMobile } from 'react-device-detect';
 import { quarterDisplayNames } from '../../helpers/planner';
+import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
 import ThemeContext from '../../style/theme-context';
@@ -25,7 +25,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
   const quarterContainerRef = useRef<HTMLDivElement>(null);
-
+  const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
 
   const { darkMode } = useContext(ThemeContext);
