@@ -5,6 +5,7 @@ import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSli
 import Course from './Course';
 
 import { useIsMobile } from '../../helpers/util';
+import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { CourseGQLData } from '../../types/types';
 
 interface CourseHitItemProps extends CourseGQLData {
@@ -19,7 +20,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     dispatch(setActiveCourse(props));
     dispatch(setShowAddCourse(true));
     // also hide the search bar to view the roadmap
-    dispatch(setShowSearch(false));
+    dispatch(setShowSearch({ show: false }));
   };
   const onMobileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
