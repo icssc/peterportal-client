@@ -5,6 +5,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -60,6 +61,7 @@ interface SideInfoProps {
   tags: string[];
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  terms?: string[];
 }
 
 interface AverageReview {
@@ -142,9 +144,15 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   return (
     <div className="side-info">
       <div className="side-info-data">
-        <h1>{props.name}</h1>
-        <h2>{props.title}</h2>
-        <h3>{props.school}</h3>
+        <div className="name-row">
+          <span>
+            <h1>{props.name}</h1>
+            <h2>{props.title}</h2>
+            <h3>{props.school}</h3>
+          </span>
+          {props.terms && <CourseQuarterIndicator terms={props.terms} size="lg" />}
+        </div>
+
         <h4>{props.description}</h4>
         <div>
           {props.tags.map((tag, i) => (

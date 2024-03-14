@@ -1,5 +1,4 @@
 import './SearchSidebar.scss';
-import { isMobile } from 'react-device-detect';
 
 import CloseButton from 'react-bootstrap/CloseButton';
 import SearchModule from '../../component/SearchModule/SearchModule';
@@ -9,9 +8,12 @@ import CourseHitItem from './CourseHitItem';
 import { useAppDispatch } from '../../store/hooks';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { StrictModeDroppable } from './StrictModeDroppable';
+import { useIsMobile } from '../../helpers/util';
 
 const SearchSidebar = () => {
   const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
+
   return (
     <div className="search-sidebar">
       {isMobile && (

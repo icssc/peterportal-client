@@ -5,7 +5,7 @@ import Pie from './Pie';
 import './GradeDist.scss';
 import axios from 'axios';
 
-import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, QuarterName } from '../../types/types';
 import { GradesRaw } from 'peterportal-api-next-types';
 
 interface GradeDistProps {
@@ -22,7 +22,7 @@ interface Entry {
 type ChartTypes = 'bar' | 'pie';
 
 const GradeDist: FC<GradeDistProps> = (props) => {
-  const quarterOrder = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
+  const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
   /*
    * Initialize a GradeDist block on the webpage.
    * @param props attributes received from the parent element
@@ -44,7 +44,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     if (props.course) {
       url = `/api/courses/api/grades`;
       params = {
-        department: props.course.department.replace(/ /g, ''),
+        department: props.course.department,
         number: props.course.courseNumber,
       };
     } else if (props.professor) {
@@ -116,8 +116,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         if (b.value === 'ALL') {
           return 1;
         }
-        const [thisQuarter, thisYear] = a.value.split(' ');
-        const [thatQuarter, thatYear] = b.value.split(' ');
+        const [thisQuarter, thisYear] = a.value.split(' ') as [QuarterName, string];
+        const [thatQuarter, thatYear] = b.value.split(' ') as [QuarterName, string];
         if (thisYear === thatYear) {
           return quarterOrder.indexOf(thatQuarter) - quarterOrder.indexOf(thisQuarter);
         } else {

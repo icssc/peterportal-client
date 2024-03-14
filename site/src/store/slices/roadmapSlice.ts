@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { defaultYear, quarterDisplayNames } from '../../helpers/planner';
 import {
   CourseGQLData,
   CourseIdentifier,
@@ -28,19 +29,22 @@ interface RoadmapState {
   showSearch: boolean;
   // Whether or not to show the add course modal on mobile
   showAddCourse: boolean;
+  // Whether or not to alert the user of unsaved changes before leaving
+  unsavedChanges: boolean;
   // Selected quarter and year for adding a course on mobile
   currentYearAndQuarter: { year: number; quarter: number } | null;
 }
 
 // Define the initial state using that type
 const initialState: RoadmapState = {
-  yearPlans: [],
+  yearPlans: [defaultYear() as PlannerYearData],
   activeCourse: null!,
   invalidCourses: [],
   showTransfer: false,
   transfers: [],
   showSearch: false,
   showAddCourse: false,
+  unsavedChanges: false,
   currentYearAndQuarter: null,
 };
 
@@ -78,6 +82,9 @@ interface SetTransferPayload {
   index: number;
   transfer: TransferData;
 }
+
+// onbeforeunload event listener
+const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
 export const roadmapSlice = createSlice({
   name: 'roadmap',
@@ -132,11 +139,7 @@ export const roadmapSlice = createSlice({
 
       // if duplicate quarter
       if (currentQuarters.includes(newQuarter.name)) {
-        alert(
-          `${
-            newQuarter.name.charAt(0).toUpperCase() + newQuarter.name.slice(1)
-          } has already been added to Year ${yearIndex}!`,
-        );
+        alert(`${quarterDisplayNames[newQuarter.name]} has already been added to Year ${yearIndex}!`);
         return;
       }
 
@@ -146,7 +149,7 @@ export const roadmapSlice = createSlice({
         for (let i = 0; i < currentQuarters.length; i++) {
           if (
             currentQuarters[i].length > newQuarter.name.length ||
-            (currentQuarters[i].length == newQuarter.name.length && newQuarter.name === 'winter')
+            (currentQuarters[i].length == newQuarter.name.length && newQuarter.name === 'Winter')
           ) {
             // only scenario where name length can't distinguish ordering is spring vs winter
             index = i;
@@ -232,7 +235,7 @@ export const roadmapSlice = createSlice({
     },
     clearPlanner: (state) => {
       if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.yearPlans = [];
+        state.yearPlans = initialState.yearPlans;
       }
     },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
@@ -268,6 +271,17 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
+    setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
+      state.unsavedChanges = action.payload;
+
+      // when there are unsaved changes, add event listener for alert on page leave
+      if (state.unsavedChanges) {
+        window.addEventListener('beforeunload', alertUnsaved);
+      } else {
+        // remove listener after saving changes
+        window.removeEventListener('beforeunload', alertUnsaved);
+      }
+    },
   },
 });
 
@@ -293,6 +307,7 @@ export const {
   deleteTransfer,
   setShowSearch,
   setShowAddCourse,
+  setUnsavedChanges,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

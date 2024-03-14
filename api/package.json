@@ -6,7 +6,7 @@
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
   },
   "dependencies": {
     "@vendia/serverless-express": "^4.10.1",
@@ -35,6 +35,7 @@
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
     "tsc-watch": "^6.0.4"
   }
 }

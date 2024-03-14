@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
 import { ArrowLeftRight, List, Save, Trash } from 'react-bootstrap-icons';
-import { isBrowser, isMobile } from 'react-device-detect';
+import { useIsDesktop, useIsMobile } from '../../helpers/util';
 import { useAppDispatch } from '../../store/hooks';
 import { clearPlanner, setShowTransfer } from '../../store/slices/roadmapSlice';
 import './Header.scss';
@@ -18,6 +18,9 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
   const dispatch = useAppDispatch();
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+
+  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
 
   const buttons = (
     <>
@@ -79,7 +82,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
             </Overlay>
           </>
         )}
-        {isBrowser && <ButtonGroup>{buttons}</ButtonGroup>}
+        {isDesktop && <ButtonGroup>{buttons}</ButtonGroup>}
       </div>
     </div>
   );

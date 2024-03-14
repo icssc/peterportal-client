@@ -1,6 +1,9 @@
 #peterportal-logo {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: 32px;
+  @media (min-width: 800px) {
+    height: 36px;
+  }
 }
 
 [data-theme='dark'] {
@@ -18,14 +21,19 @@
   }
 }
 
+.school-term {
+  margin-bottom: 0;
+  margin-right: 0.75em;
+}
+
 .navbar {
   position: sticky;
   z-index: 300;
   width: 100%;
-  height: 8vh;
+  height: 72px;
   background-color: var(--overlay1);
   padding-right: 3vw;
-  padding-left: 2vw;
+  padding-left: 16px;
   display: flex;
   top: 0;
 
@@ -51,53 +59,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
-
-      .navbar-menu-icon {
-        width: 3vh;
-        height: 3vh;
-      }
-    }
-
-    .desktop-toggle {
-      display: contents;
-    }
-
-    .mobile-toggle {
-      display: none;
-    }
-
-    .navbar-toggle {
-      background-color: var(--overlay2);
-      margin-left: 5vw;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      height: 60%;
-      border-radius: 1rem;
-      width: 12vw;
-
-      .navbar-toggle-item {
-        width: 50%;
-        height: 100%;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 1rem;
-
-        a {
-          color: var(--text);
-        }
-      }
-
-      .active {
-        background-color: var(--peterportal-secondary-orange);
-
-        a {
-          color: white;
-        }
-      }
+      border: none;
+      background: none;
+      padding: 4px;
     }
 
     .navbar-logo {
@@ -109,44 +73,12 @@
       right: 0;
       margin-left: auto;
       margin-right: auto;
-      width: 7vw;
+      width: fit-content;
     }
 
     @media only screen and (max-width: 800px) {
       .beta {
         display: none;
-      }
-
-      .desktop-toggle {
-        display: none;
-      }
-
-      .mobile-toggle {
-        display: contents;
-      }
-
-      .navbar-toggle {
-        margin-left: 5vw;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        height: 60%;
-        border-radius: 1rem;
-        width: 17vw;
-
-        .navbar-toggle-item {
-          width: 100%;
-          height: 100%;
-          text-align: center;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 1rem;
-
-          a {
-            font-size: 10px;
-          }
-        }
       }
 
       .navbar-logo {
@@ -158,7 +90,6 @@
         right: 0;
         margin-left: auto;
         margin-right: auto;
-        width: 18vw;
       }
 
       .school-term {
@@ -173,14 +104,4 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-@media only screen and (max-width: 1300px) {
-  .navbar {
-    .navbar-nav {
-      .navbar-toggle {
-        width: 20vw;
-      }
-    }
-  }
 }
