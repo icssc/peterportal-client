@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import { quarterNames } from '../../helpers/planner';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -281,7 +282,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       <option disabled={true} value="">
                         Quarter
                       </option>
-                      {['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'].map((quarter) => (
+                      {quarterNames.map((quarter) => (
                         <option key={quarter}>{quarter}</option>
                       ))}
                     </Form.Control>

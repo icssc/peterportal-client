@@ -6,7 +6,7 @@
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
   },
   "dependencies": {
     "@trpc/server": "^10.45.1",
@@ -17,8 +17,7 @@
     "dotenv-flow": "^4.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "mongodb": "^6.3.0",
-    "mongodb-client-encryption": "^6.0.0",
+    "mongoose": "^8.2.0",
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",

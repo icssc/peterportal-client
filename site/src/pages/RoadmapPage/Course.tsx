@@ -2,6 +2,7 @@ import { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash } from 'react-bootstrap-icons';
+import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -25,6 +26,7 @@ const Course: FC<CourseProps> = (props) => {
     prerequisiteText,
     corequisites,
     requiredCourses,
+    terms,
     onDelete,
   } = props;
 
@@ -66,22 +68,20 @@ const Course: FC<CourseProps> = (props) => {
     </Popover>
   );
 
-  const courseRoute = () => {
-    return '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
-  };
+  const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={courseRoute()} target="_blank" rel="noopener noreferrer">
+          <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
             {department + ' ' + courseNumber}
           </a>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
             <InfoCircle className="info-circle" />
           </OverlayTrigger>
         </div>
-        {onDelete && (
+        {onDelete ? (
           <ThemeContext.Consumer>
             {({ darkMode }) => (
               <Button
@@ -94,10 +94,12 @@ const Course: FC<CourseProps> = (props) => {
               </Button>
             )}
           </ThemeContext.Consumer>
+        ) : (
+          <CourseQuarterIndicator terms={terms} size="xs" />
         )}
       </div>
       <div className="title">{title}</div>
-      <div className="footer">
+      <div className="course-footer">
         {requiredCourses && (
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />

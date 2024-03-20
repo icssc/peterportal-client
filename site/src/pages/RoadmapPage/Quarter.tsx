@@ -10,6 +10,7 @@ import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ThreeDots } from 'react-bootstrap-icons';
 import ThemeContext from '../../style/theme-context';
 import { StrictModeDroppable } from './StrictModeDroppable';
+import { quarterDisplayNames } from '../../helpers/planner';
 
 interface QuarterProps {
   year: number;
@@ -20,7 +21,7 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
-  const quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+  const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
   const quarterContainerRef = useRef<HTMLDivElement>(null);
 

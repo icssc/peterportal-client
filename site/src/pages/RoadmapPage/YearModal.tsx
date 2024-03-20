@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { PlannerYearData } from '../../types/types';
-import './YearModal.scss';
+import { PlannerYearData, QuarterName } from '../../types/types';
+import { quarterDisplayNames, quarterNames, normalizeQuarterName } from '../../helpers/planner';
 
 interface YearPopupQuarter {
-  id: string;
-  name: string;
+  id: QuarterName;
   checked?: boolean;
 }
 
@@ -16,20 +15,14 @@ interface YearModalProps {
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   type: 'add' | 'edit';
   saveHandler: (x: PlannerYearData) => void;
-  currentQuarters: string[];
+  currentQuarters: QuarterName[];
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
-  const base: YearPopupQuarter[] = [
-    { id: 'fall', name: 'Fall' },
-    { id: 'winter', name: 'Winter' },
-    { id: 'spring', name: 'Spring' },
-    { id: 'summer I', name: 'Summer I' },
-    { id: 'summer II', name: 'Summer II' },
-    { id: 'summer 10 Week', name: 'Summer 10 Week' },
-  ];
+  const base: YearPopupQuarter[] = quarterNames.map((n) => ({ id: n }));
   quarterIds.forEach((id) => {
-    const quarter = base.find((q) => q.id === id)!;
+    const translated = normalizeQuarterName(id);
+    const quarter = base.find((q) => q.id === translated)!;
     quarter.checked = true;
   });
   return base;
@@ -54,7 +47,7 @@ const YearModal: FC<YearModalProps> = (props) => {
         key={q.id}
         type="checkbox"
         id={'quarter-checkbox-' + q.id}
-        label={q.name}
+        label={quarterDisplayNames[q.id]}
         value={q.id}
         // Prop must be assigned a value that is not undefined
         checked={q.checked ?? false}
@@ -77,14 +70,14 @@ const YearModal: FC<YearModalProps> = (props) => {
   };
 
   return (
-    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="planner-year-modal">
+    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
       <Modal.Header closeButton>
         <h2>{title}</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate validated={validated} className="add-year-form">
+        <Form noValidate validated={validated} className="ppc-modal-form">
           <Form.Group>
-            <Form.Label className="add-year-form-label">Name</Form.Label>
+            <Form.Label className="ppc-modal-form-label">Name</Form.Label>
             <Form.Control
               required
               type="text"
@@ -102,7 +95,7 @@ const YearModal: FC<YearModalProps> = (props) => {
             ></Form.Control>
           </Form.Group>
           <Form.Group>
-            <Form.Label className="add-year-form-label">Start Year</Form.Label>
+            <Form.Label className="ppc-modal-form-label">Start Year</Form.Label>
             <Form.Control
               required
               type="number"
