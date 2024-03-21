@@ -20,8 +20,8 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
 
   useEffect(() => {
-    setYear(currentYearAndQuarter && currentYearAndQuarter.year !== null ? currentYearAndQuarter.year : -1);
-    setQuarter(currentYearAndQuarter && currentYearAndQuarter.quarter !== null ? currentYearAndQuarter.quarter : -1);
+    setYear(currentYearAndQuarter?.year ?? -1);
+    setQuarter(currentYearAndQuarter?.quarter ?? -1);
   }, [currentYearAndQuarter]);
 
   const closeForm = () => {
