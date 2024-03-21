@@ -1,16 +1,17 @@
 import { FC, useContext, useRef, useState } from 'react';
-import './Quarter.scss';
 import { Draggable } from 'react-beautiful-dnd';
-import Course from './Course';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { deleteQuarter, clearQuarter, deleteCourse } from '../../store/slices/roadmapSlice';
-import { PlannerQuarterData } from '../../types/types';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { ThreeDots } from 'react-bootstrap-icons';
-import ThemeContext from '../../style/theme-context';
-import { StrictModeDroppable } from './StrictModeDroppable';
+import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
+import { useIsMobile } from '../../helpers/util';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
+import ThemeContext from '../../style/theme-context';
+import { PlannerQuarterData } from '../../types/types';
+import './Quarter.scss';
+import { StrictModeDroppable } from './StrictModeDroppable';
+
+import Course from './Course';
 
 interface QuarterProps {
   year: number;
@@ -24,7 +25,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
   const quarterContainerRef = useRef<HTMLDivElement>(null);
-
+  const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
 
   const { darkMode } = useContext(ThemeContext);
@@ -157,6 +158,21 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           );
         }}
       </StrictModeDroppable>
+
+      {isMobile && (
+        <>
+          <Button
+            variant={buttonVariant}
+            className="quarter quarter-header"
+            onClick={() => {
+              dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
+            }}
+          >
+            <Plus className="plus-icon" />
+            <div className="quarter-add-course">Add Course</div>
+          </Button>
+        </>
+      )}
     </div>
   );
 };

@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
-import './Sidebar.scss';
+import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+import { Icon } from 'semantic-ui-react';
 import Logo from '../../asset/peterportal-banner-logo.svg';
+import './Sidebar.scss';
 
-import { useAppSelector, useAppDispatch } from '../..//store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
+import { useAppDispatch, useAppSelector } from '../..//store/hooks';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
 
 const SideBar = () => {
