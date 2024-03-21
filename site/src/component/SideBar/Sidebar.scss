@@ -9,10 +9,6 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  transition: transform 0.3s ease-in-out;
-  &.minimized {
-    transform: translateX(-100%);
-  }
   ul {
     list-style: none;
     margin: 0;
