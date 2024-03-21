@@ -14,12 +14,8 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const planner = useAppSelector((state) => state.roadmap.yearPlans);
   const showForm = useAppSelector((state) => state.roadmap.showAddCourse);
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
-  const [year, setYear] = useState(
-    currentYearAndQuarter && currentYearAndQuarter.year !== null ? currentYearAndQuarter.year : -1,
-  );
-  const [quarter, setQuarter] = useState(
-    currentYearAndQuarter && currentYearAndQuarter.quarter !== null ? currentYearAndQuarter.quarter : -1,
-  );
+  const [year, setYear] = useState(currentYearAndQuarter?.year ?? -1);
+  const [quarter, setQuarter] = useState(currentYearAndQuarter?.quarter ?? -1);
   const [validated, setValidated] = useState(false);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
 
