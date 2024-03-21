@@ -26,10 +26,9 @@ import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import usersRouter from './controllers/users';
 import roadmapRouter from './controllers/roadmap';
-import reportsRouter from './controllers/reports';
 
 import { SESSION_LENGTH } from './config/constants';
-import { initTRPC } from '@trpc/server';
+import { appRouter, createContext } from './helpers/trpc';
 
 // instantiate app
 const app = express();
@@ -93,15 +92,22 @@ app.use(function (req, res, next) {
  */
 
 // Enable custom routes
-const router = express.Router();
-router.use('/courses', coursesRouter);
-router.use('/professors', professorsRouter);
-router.use('/schedule', scheduleRouter);
-router.use('/reviews', reviewsRouter);
-router.use('/users', usersRouter);
-router.use('/roadmap', roadmapRouter);
-router.use('/reports', reportsRouter);
-app.use('/api', router);
+const expressRouter = express.Router();
+expressRouter.use('/courses', coursesRouter);
+expressRouter.use('/professors', professorsRouter);
+expressRouter.use('/schedule', scheduleRouter);
+expressRouter.use('/reviews', reviewsRouter);
+expressRouter.use('/users', usersRouter);
+expressRouter.use('/roadmap', roadmapRouter);
+expressRouter.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext,
+  }),
+);
+
+app.use('/api', expressRouter);
 
 /**
  * Error Handler
@@ -110,30 +116,6 @@ app.use(function (req, res) {
   console.error(req);
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
-
-const createContext = ({ req }: trpcExpress.CreateExpressContextOptions) => ({ session: req.session });
-type Context = Awaited<ReturnType<typeof createContext>>;
-const t = initTRPC.context<Context>().create();
-const publicProcedure = t.procedure;
-
-const appRouter = t.router({
-  greeting: publicProcedure.query(({ ctx }) => {
-    console.log(ctx.session.passport?.user);
-    return 'hello' + ctx.session.passport?.user.name;
-  }),
-});
-
-// Export only the type of a router!
-// This prevents us from importing server code on the client.
-export type AppRouter = typeof appRouter;
-
-router.use(
-  '/trpc',
-  trpcExpress.createExpressMiddleware({
-    router: appRouter,
-    createContext,
-  }),
-);
 
 let conn: null | Mongoose = null;
 const uri = process.env.MONGO_URL;

@@ -6,7 +6,8 @@
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"npm start\"",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit",
+    "prepare": "ts-patch install && typia patch"
   },
   "dependencies": {
     "@trpc/server": "^10.45.1",
@@ -21,7 +22,7 @@
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
-    "typescript": "^5.3.3",
+    "typia": "^5.5.7",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -37,6 +38,9 @@
     "@typescript-eslint/parser": "^6.19.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "tsc-watch": "^6.0.4"
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.2",
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.4.2"
   }
 }

@@ -10,6 +10,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "plugins": [
+      {
+        "transform": "typia/lib/transform",
+      },
+    ],
+    "strictNullChecks": true,
   },
   "include": ["src/"],
 }

@@ -2,55 +2,33 @@
  @module ReportsRoute
 */
 
-import express from 'express';
-import { GenericObject } from '../types/types';
-import Report from '../models/report';
-const router = express.Router();
+import Report, { ReportType } from '../models/report';
+import { adminProcedure, publicProcedure, router } from '../helpers/trpc';
+import typia from 'typia';
 
-/**
- * Get all reports
- */
-router.get('/', async (req, res) => {
-  // get all reports in collection
-  const reports = await Report.find({});
-  if (!req.session.passport) return res.status(401).send('Unathenticated');
-  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
+const reportsRouter = router({
+  get: adminProcedure.query(async () => {
+    const reports = await Report.find();
+    return reports;
+  }),
+  add: publicProcedure.input(typia.createAssert<ReportType>()).mutation(async ({ input }) => {
+    const report = new Report(input);
+    await report.save();
 
-  res.json(reports);
+    return input;
+  }),
+  delete: adminProcedure.input(typia.createAssert<{ id?: string; reviewID?: string }>()).mutation(async ({ input }) => {
+    if (input.id) {
+      // delete report by report id
+      return await Report.deleteOne({ _id: input.id });
+    } else if (input.reviewID) {
+      //  delete report(s) by review id
+      return await Report.deleteMany({ reviewID: input.reviewID });
+    } else {
+      // no id or reviewID specified
+      return false;
+    }
+  }),
 });
 
-/**
- * Add a report
- */
-router.post('/', async (req, res) => {
-  console.log(`Adding Report: ${JSON.stringify(req.body)}`);
-  const report = new Report(req.body);
-  await report.save();
-
-  res.json(req.body);
-});
-
-/**
- * Delete a report
- */
-router.delete('/', async (req, res) => {
-  let status;
-  if (!req.session.passport) return res.status(401).send('Unathenticated');
-  if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
-  if (req.body.id) {
-    console.log(`Deleting report ${req.body.id}`);
-    status = await Report.deleteOne({ _id: req.body.id });
-  } else {
-    console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
-    const query: GenericObject = {};
-    if (req.body.reviewID) query['reviewID'] = req.body.reviewID;
-
-    if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified
-
-    status = await Report.deleteMany(query);
-  }
-
-  res.json(status);
-});
-
-export default router;
+export default reportsRouter;
