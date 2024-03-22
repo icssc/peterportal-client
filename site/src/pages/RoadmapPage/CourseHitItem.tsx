@@ -9,6 +9,7 @@ import { CourseGQLData } from '../../types/types';
 
 interface CourseHitItemProps extends CourseGQLData {
   index: number;
+  unmatchedPrerequisites: string[];
 }
 
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {

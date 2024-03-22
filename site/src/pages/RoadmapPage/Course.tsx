@@ -11,6 +11,7 @@ import ThemeContext from '../../style/theme-context';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
+  unmatchedPrerequisites?: string[];
   onDelete?: () => void;
 }
 
@@ -26,10 +27,10 @@ const Course: FC<CourseProps> = (props) => {
     prerequisiteText,
     corequisites,
     requiredCourses,
+    unmatchedPrerequisites,
     terms,
     onDelete,
   } = props;
-
   const CoursePopover = (
     <Popover id={'course-popover-' + id}>
       <Popover.Content>
@@ -56,6 +57,18 @@ const Course: FC<CourseProps> = (props) => {
       </Popover.Content>
     </Popover>
   );
+  const UnmatchedPrereqPopover = (
+    <Popover id={'course-popover-' + id}>
+      <Popover.Content>
+        <div className="course-popover">
+          <div className="popover-name">You still need the following prerequisites</div>
+        </div>
+        <div className="popover-detail">
+          <span className="popover-detail-prefix">Prerequisites:</span> {unmatchedPrerequisites?.join(', ')}
+        </div>
+      </Popover.Content>
+    </Popover>
+  );
 
   const WarningPopover = (
     <Popover id={'warning-popover-' + id}>
@@ -78,7 +91,7 @@ const Course: FC<CourseProps> = (props) => {
             {department + ' ' + courseNumber}
           </a>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle className="info-circle" />
+            <InfoCircle />
           </OverlayTrigger>
         </div>
         {onDelete ? (
@@ -104,6 +117,13 @@ const Course: FC<CourseProps> = (props) => {
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />
           </OverlayTrigger>
+        )}
+        {unmatchedPrerequisites && (
+          <div className="course-and-info">
+            <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
+              <ExclamationTriangle />
+            </OverlayTrigger>
+          </div>
         )}
         <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
       </div>
