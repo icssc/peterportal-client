@@ -1,27 +1,22 @@
-import { useContext, useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { useEffect, useState } from 'react';
 import { XCircle } from 'react-bootstrap-icons';
 import { useCookies } from 'react-cookie';
+import { NavLink } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
+import { Icon } from 'semantic-ui-react';
+import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
-import defaultAvatarLight from '../../asset/default-avatar.png';
-import defaultAvatarDark from '../../asset/default-avatar-dark.png';
-import { Button } from 'react-bootstrap';
 
-import { useAppSelector, useAppDispatch } from '../..//store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import axios, { AxiosResponse } from 'axios';
-import ThemeContext from '../../style/theme-context';
+import { useAppDispatch, useAppSelector } from '../..//store/hooks';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
+import Footer from '../Footer/Footer';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const [cookies] = useCookies(['user']);
-  const [name, setName] = useState('');
-  const [picture, setPicture] = useState('');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const { darkMode, setTheme } = useContext(ThemeContext);
-  const defaultAvatar = darkMode ? defaultAvatarDark : defaultAvatarLight;
 
   const isLoggedIn = cookies.user !== undefined;
 
@@ -29,20 +24,18 @@ const SideBar = () => {
     admin: boolean;
   }
 
-  const checkAdmin = async () => {
-    const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
-    const admin = res.data.admin;
-    setIsAdmin(admin);
-  };
-
   useEffect(() => {
     // if the user is logged in
     if (isLoggedIn) {
-      setName(cookies.user.name);
-      setPicture(cookies.user.picture);
+      // useEffect's function is not allowed to be async, create async checkAdmin function within
+      const checkAdmin = async () => {
+        const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
+        const admin = res.data.admin;
+        setIsAdmin(admin);
+      };
+      checkAdmin();
     }
-    checkAdmin();
-  });
+  }, [cookies.user, isLoggedIn]);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 
@@ -52,15 +45,27 @@ const SideBar = () => {
         <li>
           <NavLink
             to="/"
-            className={({ isActive }) =>
-              isActive || location.pathname.match(/^\/search\/(courses|professors)$/) ? 'sidebar-active' : ''
-            }
+            className={({ isActive }) => (isActive || location.pathname === '/search/courses' ? 'sidebar-active' : '')}
             onClick={closeSidebar}
           >
             <div>
               <Icon name="list alternate outline" size="large" />
             </div>
-            <span>Catalogue</span>
+            <span className="full-name">Course Catalog</span>
+            <span>Courses</span>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/search/professors"
+            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+            onClick={closeSidebar}
+          >
+            <div>
+              <Icon name="users" size="large" />
+            </div>
+            <span className="full-name">Professors</span>
+            <span>Professors</span>
           </NavLink>
         </li>
         <li>
@@ -72,33 +77,10 @@ const SideBar = () => {
             <div>
               <Icon name="map outline" size="large" />
             </div>
-            <span>Peter's Roadmap</span>
+            <span className="full-name">Peter's Roadmap</span>
+            <span>Roadmap</span>
           </NavLink>
         </li>
-        {isLoggedIn && (
-          <li>
-            <NavLink
-              to="/reviews"
-              className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-              onClick={closeSidebar}
-            >
-              <div>
-                <Icon name="sticky note outline" size="large" />
-              </div>
-              <span>Reviews</span>
-            </NavLink>
-          </li>
-        )}
-        {showSidebar && (
-          <li>
-            <a className="theme-toggle" onClick={() => setTheme(darkMode ? 'light' : 'dark')}>
-              <div>
-                <Icon name={darkMode ? 'moon outline' : 'sun outline'} size="large" />
-              </div>
-              <span>Toggle Dark Mode</span>
-            </a>
-          </li>
-        )}
         {isAdmin && (
           <>
             <li>
@@ -110,7 +92,8 @@ const SideBar = () => {
                 <div>
                   <Icon name="check" size="large" />
                 </div>
-                <span>Verify Reviews</span>
+                <span className="full-name">Verify Reviews</span>
+                <span>Verification</span>
               </NavLink>
             </li>
             <li>
@@ -122,7 +105,8 @@ const SideBar = () => {
                 <div>
                   <Icon name="exclamation triangle" size="large" />
                 </div>
-                <span>View Reports</span>
+                <span className="full-name">View Reports</span>
+                <span>Reports</span>
               </NavLink>
             </li>{' '}
           </>
@@ -131,49 +115,30 @@ const SideBar = () => {
     </div>
   );
 
-  if (!showSidebar) {
-    return <div className="sidebar mini">{links}</div>;
-  }
   return (
-    <div className="sidebar">
-      {/* Close Button */}
-      <div className="sidebar-close">
-        <XCircle className="sidebar-close-icon" onClick={closeSidebar} />
-      </div>
+    <>
+      <div className="sidebar mini">{links}</div>
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
+        {/* Clicking this is only an alternative action to something that is already accessible */}
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */}
+        <div className="sidebar-overlay" onClick={closeSidebar}></div>
+      </CSSTransition>
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
+        <div className="sidebar">
+          {/* Close Button */}
+          <div className="button-container">
+            <img alt="PeterPortal" src={Logo} height="32" />
+            <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
+              <XCircle className="sidebar-close-icon" size="28px" />
+            </button>
+          </div>
 
-      {/* Profile Icon and Name */}
-      <div className="sidebar-profile">
-        <img src={picture ? picture : defaultAvatar} />
-        <p>{name ? name : 'Anonymous Peter'}</p>
-      </div>
+          {links}
 
-      {/* Links */}
-      {links}
-
-      {/* Login/Logout */}
-      <div className="sidebar-login">
-        {isLoggedIn && (
-          <a href={`/api/users/logout`}>
-            <Button variant={darkMode ? 'dark' : 'light'}>
-              <span className="sidebar-login-icon">
-                <Icon name="sign out" className="sidebar-login-icon" />
-              </span>
-              Log Out
-            </Button>
-          </a>
-        )}
-        {!isLoggedIn && (
-          <a href={`/api/users/auth/google`}>
-            <Button variant={darkMode ? 'dark' : 'light'}>
-              <span className="sidebar-login-icon">
-                <Icon name="sign in" className="sidebar-login-icon" />
-              </span>
-              Log In
-            </Button>
-          </a>
-        )}
-      </div>
-    </div>
+          <Footer />
+        </div>
+      </CSSTransition>
+    </>
   );
 };
 

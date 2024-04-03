@@ -1,69 +1,69 @@
 .schedule-quarter {
-	color: grey;
+  color: grey;
 }
-.schedule-table{
-	display: center;
-	margin-left: auto;
-	margin-right: auto;
+.schedule-table {
+  display: center;
+  margin-left: auto;
+  margin-right: auto;
 }
-.enrollment-col{
-	width: 250px;
-	height: 60px;
-	padding-top: 30px;
-}
-
-.data-col{
-	height:60px;
+.enrollment-col {
+  width: 250px;
+  height: 60px;
+  padding-top: 30px;
 }
 
-.progress-bar{
-	position: relative;
-	border-radius: 50px;
-	height: 10px;
+.data-col {
+  height: 60px;
 }
 
-.enrollment-percentage{
-	color: #949494;
-	display: inline;
-	float: right;
-	margin-right: 10px;
-	font-size: 12px;
+.progress-bar {
+  position: relative;
+  border-radius: 50px;
+  height: 10px;
 }
-.enrollment-info-text{
-	display: inline;
+
+.enrollment-percentage {
+  color: #949494;
+  display: inline;
+  float: right;
+  margin-right: 10px;
+  font-size: 12px;
+}
+.enrollment-info-text {
+  display: inline;
 }
 
 .btn-status {
-	height: 40px;
-	width: 80px;
-	border-radius: 90px;
-	justify-content: center;
-	font-weight: bold;
-	font-size: inherit;
+  height: 40px;
+  width: 80px;
+  border-radius: 90px;
+  justify-content: center;
+  font-weight: bold;
+  font-size: inherit;
 }
 
-.btn-status-button-open{
-	background-color: #D5FFD4 !important;
-	color: green;
+.btn-status-button-open {
+  background-color: #d5ffd4 !important;
+  color: green;
 }
 
-.btn-status-button-waitl{
-	background-color: #FFF2D8 !important;
-	color: #FFAE1C;
+.btn-status-button-waitl {
+  background-color: #fff2d8 !important;
+  color: #ffae1c;
 }
 
-.btn-status-button-full{
-	background-color: #FFE4E4 !important;
-	color: #FA5252;
+.btn-status-button-full {
+  background-color: #ffe4e4 !important;
+  color: #fa5252;
 }
 
-.progress-bar>div{
-	position: relative;
-	background-color:#D5FFD4;
-	border-radius: 50px;
-	height: 10px;
+.progress-bar > div {
+  position: relative;
+  background-color: #d5ffd4;
+  border-radius: 50px;
+  height: 10px;
 }
 
-.col-tableHolder{
-	margin-left: 50px;
+.col-tableHolder {
+  margin-left: 50px;
 }

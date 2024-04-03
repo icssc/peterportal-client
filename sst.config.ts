@@ -7,7 +7,7 @@ import { App } from 'sst/constructs';
 dotenv.config();
 
 export default {
-  config(_input) {
+  config() {
     return {
       name: 'peterportal-client',
       region: 'us-west-1',
@@ -19,7 +19,7 @@ export default {
     }
 
     app
-      .stack(FrontendStack, { stackName: `${app.name}-${app.stage}-frontend` })
-      .stack(BackendStack, { stackName: `${app.name}-${app.stage}-backend` });
+      .stack(BackendStack, { stackName: `${app.name}-${app.stage}-backend` })
+      .stack(FrontendStack, { stackName: `${app.name}-${app.stage}-frontend` });
   },
 };

@@ -130,6 +130,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           </InputGroup.Prepend>
           <Form.Control
             className="search-bar"
+            aria-label="search"
             type="text"
             placeholder={placeholder}
             onChange={(e) => searchNamesAfterTimeout(e.target.value)}

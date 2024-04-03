@@ -1,0 +1,141 @@
+.navbar-profile {
+  height: 70%;
+}
+
+.navbar-profile-pic {
+  height: 100%;
+  border-radius: 100%;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.profile-button {
+  background: none;
+  border: none;
+  height: 100%;
+}
+
+#profile-popover {
+  font-size: 1rem;
+  padding: 1em;
+  background-color: var(--overlay1);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--background);
+  width: 310px;
+  max-width: 100vw;
+  box-shadow: 0 0 12px rgba(196, 198, 209, 0.24);
+
+  .arrow::before {
+    border-bottom-color: var(--background);
+  }
+
+  h1 {
+    font-size: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-size: 14px;
+    color: var(--text-light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+[data-theme='dark'] {
+  #profile-popover {
+    box-shadow: 2px 4px 24px rgba(0, 0, 0, 0.24);
+  }
+}
+
+.profile-popover__header {
+  display: flex;
+  height: 50px;
+  margin-bottom: 0.75em;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  img {
+    margin-right: 12px;
+    height: 50px;
+    border-radius: 100%;
+  }
+
+  button {
+    border: none;
+    background: none;
+    font-size: 20px;
+    line-height: 1em;
+    padding: 0 0.5em;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    span {
+      font-size: 18px;
+    }
+  }
+
+  button:hover {
+    background-color: var(--overlay2);
+  }
+}
+
+.profile-popover__links {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+  }
+
+  li div {
+    display: inline;
+  }
+
+  a {
+    color: var(--text);
+  }
+
+  button {
+    border: none;
+    background: none;
+    width: 100%;
+  }
+}
+
+.profile-popover__link,
+.theme-popover__link {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--border-radius);
+
+  &:hover {
+    background-color: var(--overlay2);
+  }
+}
+
+.profile-popover__link.active,
+.theme-popover__link.active {
+  color: var(--peterportal-primary-color-1);
+}
+
+i.login-icon {
+  margin-right: 0.75em;
+}
+
+.theme-button:hover,
+.theme-popover__link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}

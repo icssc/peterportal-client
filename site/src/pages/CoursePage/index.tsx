@@ -24,18 +24,17 @@ const CoursePage: FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // make a gql query if directly landed on this page
-    if (id !== undefined && (courseGQLData == null || courseGQLData.id != id)) {
+    if (id !== undefined) {
       searchAPIResult('course', id).then((course) => {
-        console.log('COURSE', course);
         if (course) {
           dispatch(setCourse(course as CourseGQLData));
+          setError('');
         } else {
           setError(`Course ${id} does not exist!`);
         }
       });
     }
-  }, []);
+  }, [dispatch, id]);
 
   // if course does not exists
   if (error) {
@@ -46,26 +45,27 @@ const CoursePage: FC = () => {
     return <LoadingPage />;
   } else {
     return (
-      <Twemoji options={{ className: 'twemoji' }}>
-        <div className="course-page">
-          <div>
-            <SideInfo
-              searchType="course"
-              name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-              title={courseGQLData.title}
-              school={courseGQLData.school}
-              description={courseGQLData.description}
-              tags={getCourseTags(courseGQLData)}
-              course={courseGQLData}
-            />
-          </div>
+      <div className="course-page">
+        <div>
+          <SideInfo
+            searchType="course"
+            name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+            title={courseGQLData.title}
+            school={courseGQLData.school}
+            description={courseGQLData.description}
+            tags={getCourseTags(courseGQLData)}
+            course={courseGQLData}
+            terms={courseGQLData.terms}
+          />
+        </div>
+        <Twemoji options={{ className: 'twemoji' }}>
           <div className="course-page-body">
             <div className="course-page-section">
               <div>
                 <h2>🌲 Prerequisite Tree</h2>
               </div>
               <Divider />
-              <PrereqTree {...courseGQLData} />
+              <PrereqTree key={courseGQLData.id} {...courseGQLData} />
             </div>
 
             <div className="course-page-section">
@@ -73,7 +73,7 @@ const CoursePage: FC = () => {
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <Divider />
-              <Schedule courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
+              <Schedule key={courseGQLData.id} courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
             </div>
 
             <div className="course-page-section">
@@ -89,11 +89,11 @@ const CoursePage: FC = () => {
                 <h2>💬 Reviews</h2>
               </div>
               <Divider />
-              <Review course={courseGQLData} />
+              <Review key={courseGQLData.id} course={courseGQLData} />
             </div>
           </div>
-        </div>
-      </Twemoji>
+        </Twemoji>
+      </div>
     );
   }
 };

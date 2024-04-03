@@ -8,6 +8,7 @@ import searching from '../../asset/searching.webp';
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
 import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
+import { Link } from 'react-router-dom';
 
 interface InfoData {
   title: string;
@@ -75,11 +76,11 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
         <div className="search-popup-header">
           <h2 className="search-popup-id">
             {props.name}
-            <a href={`/${props.searchType}/${props.id}`}>
+            <Link to={`/${props.searchType}/${props.id}`}>
               <Button type="button" className="search-popup-more btn btn-outline-primary">
                 More Information
               </Button>
-            </a>
+            </Link>
           </h2>
           <h5 className="search-popup-title">{props.title}</h5>
         </div>
@@ -110,7 +111,9 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                       <span className="search-popup-carousel-score">{score.score == -1 ? '?' : score.score}</span>
                       <span className="search-popup-carousel-max-score">/ 5.0</span>
                     </div>
-                    <a href={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.key}`}>{score.name}</a>
+                    <Link to={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.key}`}>
+                      {score.name}
+                    </Link>
                   </div>
                 ))}
               </Carousel>
