@@ -1,8 +1,14 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
 import reportsRouter from '../controllers/reports';
+import usersRouter from '../controllers/users';
 
-export const createContext = ({ req }: trpcExpress.CreateExpressContextOptions) => ({ session: req.session });
+export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
+  session: req.session,
+  user: req.user,
+  req,
+  res,
+});
 type Context = Awaited<ReturnType<typeof createContext>>;
 const trpc = initTRPC.context<Context>().create();
 export const router = trpc.router;
@@ -14,6 +20,7 @@ export const appRouter = trpc.router({
     return 'hello' + ctx.session.passport?.user.name;
   }),
   reports: reportsRouter,
+  users: usersRouter,
 });
 
 // Export only the type of a router!

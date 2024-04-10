@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import axios from 'axios';
 import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import { ReportData } from '../../types/types';
 import Modal from 'react-bootstrap/Modal';
+import trpc from '../../trpc';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -21,7 +21,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   const [validated, setValidated] = useState<boolean>(false);
 
   const postReport = async (report: ReportData) => {
-    await axios.post('/api/reports', report);
+    await trpc.reports.add.mutate(report);
     setReportSubmitted(true);
   };
 

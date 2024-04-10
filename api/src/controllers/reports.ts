@@ -2,21 +2,36 @@
  @module ReportsRoute
 */
 
-import Report, { ReportType } from '../models/report';
+import Report from '../models/report';
 import { adminProcedure, publicProcedure, router } from '../helpers/trpc';
 import typia from 'typia';
 
+interface ReportData {
+  reviewID: string;
+  reason: string;
+  timestamp: string;
+}
+
 const reportsRouter = router({
+  /**
+   * Get all reports
+   */
   get: adminProcedure.query(async () => {
     const reports = await Report.find();
     return reports;
   }),
-  add: publicProcedure.input(typia.createAssert<ReportType>()).mutation(async ({ input }) => {
+  /**
+   * Add a report
+   */
+  add: publicProcedure.input(typia.createAssert<ReportData>()).mutation(async ({ input }) => {
     const report = new Report(input);
     await report.save();
 
     return input;
   }),
+  /**
+   * Delete a report
+   */
   delete: adminProcedure.input(typia.createAssert<{ id?: string; reviewID?: string }>()).mutation(async ({ input }) => {
     if (input.id) {
       // delete report by report id

@@ -24,7 +24,6 @@ import coursesRouter from './controllers/courses';
 import professorsRouter from './controllers/professors';
 import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
-import usersRouter from './controllers/users';
 import roadmapRouter from './controllers/roadmap';
 
 import { SESSION_LENGTH } from './config/constants';
@@ -97,7 +96,6 @@ expressRouter.use('/courses', coursesRouter);
 expressRouter.use('/professors', professorsRouter);
 expressRouter.use('/schedule', scheduleRouter);
 expressRouter.use('/reviews', reviewsRouter);
-expressRouter.use('/users', usersRouter);
 expressRouter.use('/roadmap', roadmapRouter);
 expressRouter.use(
   '/trpc',

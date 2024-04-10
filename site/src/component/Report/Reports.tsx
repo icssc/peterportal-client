@@ -1,8 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { ReportData } from '../../types/types';
 import ReportGroup from './ReportGroup';
 import './Reports.scss';
+import trpc from '../../trpc';
 
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
@@ -14,12 +15,12 @@ const Reports: FC = () => {
   }
 
   const getData = async () => {
-    const reports: AxiosResponse<ReportData[]> = await axios.get('/api/reports');
-    const reportsData: ReportData[] = reports.data;
+    const reports = (await trpc.reports.get.query()) as ReportData[];
+    console.log(reports);
 
     const reportsDisplay: ReviewDisplay[] = [];
 
-    reportsData.forEach((report) => {
+    reports.forEach((report) => {
       let i;
       if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewID === reviewDisplay.reviewID)) < 0) {
         reportsDisplay.push({
@@ -52,7 +53,7 @@ const Reports: FC = () => {
   };
 
   const denyReports = async (reviewID: string) => {
-    await axios.delete('/api/reports', { data: { reviewID: reviewID } });
+    await trpc.reports.delete.mutate({ reviewID: reviewID });
     setData(data.filter((review) => review.reviewID !== reviewID));
   };
 
