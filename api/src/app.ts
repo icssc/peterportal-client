@@ -25,9 +25,11 @@ import professorsRouter from './controllers/professors';
 import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import roadmapRouter from './controllers/roadmap';
+import authRouter from './controllers/auth';
 
 import { SESSION_LENGTH } from './config/constants';
-import { appRouter, createContext } from './helpers/trpc';
+import { createContext } from './helpers/trpc';
+import { appRouter } from './controllers';
 
 // instantiate app
 const app = express();
@@ -97,6 +99,7 @@ expressRouter.use('/professors', professorsRouter);
 expressRouter.use('/schedule', scheduleRouter);
 expressRouter.use('/reviews', reviewsRouter);
 expressRouter.use('/roadmap', roadmapRouter);
+expressRouter.use('/users/auth', authRouter);
 expressRouter.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
