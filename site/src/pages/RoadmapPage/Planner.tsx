@@ -36,7 +36,7 @@ const Planner: FC = () => {
   const [cookies] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
-  const transfers = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.transfers);
+  const transfers = useAppSelector((state) => state.roadmap.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
@@ -61,6 +61,7 @@ const Planner: FC = () => {
     else {
       validatePlanner();
 
+      // TODO: idk if this works properly for multiplanner
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
       dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));

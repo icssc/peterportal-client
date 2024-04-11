@@ -19,18 +19,12 @@ interface RoadmapPlanState {
   yearPlans: PlannerData;
   // Store the location of invalid courses (do not meet prerequisites)
   invalidCourses: InvalidCourseData[];
-  // Whether or not to show the transfer modal
-  showTransfer: boolean; // TODO: move transfer stuff to slice state, should be shared across all plans
-  // Store transfer course data
-  transfers: TransferData[];
 }
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
   yearPlans: [defaultYear() as PlannerYearData],
   invalidCourses: [],
-  showTransfer: false,
-  transfers: [],
 };
 
 /** added for multiple planner */
@@ -69,6 +63,10 @@ interface RoadmapSliceState {
   showAddCourse: boolean;
   // Store the course data of the active dragging item
   activeCourse?: CourseGQLData;
+  // Whether or not to show the transfer modal
+  showTransfer: boolean;
+  // Store transfer course data
+  transfers: TransferData[];
 }
 
 // define initial empty plans
@@ -79,6 +77,8 @@ const initialSliceState: RoadmapSliceState = {
   currentYearAndQuarter: null,
   showSearch: false,
   showAddCourse: false,
+  showTransfer: false,
+  transfers: [],
 };
 /** added for multiple planner */
 
@@ -293,19 +293,19 @@ export const roadmapSlice = createSlice({
       state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
     },
     setShowTransfer: (state, action: PayloadAction<boolean>) => {
-      state.plans[state.currentPlanIndex].content.showTransfer = action.payload;
+      state.showTransfer = action.payload;
     },
     addTransfer: (state, action: PayloadAction<TransferData>) => {
-      state.plans[state.currentPlanIndex].content.transfers.push(action.payload);
+      state.transfers.push(action.payload);
     },
     setTransfer: (state, action: PayloadAction<SetTransferPayload>) => {
-      state.plans[state.currentPlanIndex].content.transfers[action.payload.index] = action.payload.transfer;
+      state.transfers[action.payload.index] = action.payload.transfer;
     },
     setTransfers: (state, action: PayloadAction<TransferData[]>) => {
-      state.plans[state.currentPlanIndex].content.transfers = action.payload;
+      state.transfers = action.payload;
     },
     deleteTransfer: (state, action: PayloadAction<number>) => {
-      state.plans[state.currentPlanIndex].content.transfers.splice(action.payload, 1);
+      state.transfers.splice(action.payload, 1);
     },
     setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
       state.showSearch = action.payload.show;
