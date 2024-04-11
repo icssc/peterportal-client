@@ -22,17 +22,17 @@ const ProfessorPage: FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // make a gql query if directly landed on this page
-    if (id !== undefined && (professorGQLData == null || professorGQLData.ucinetid != id)) {
+    if (id !== undefined) {
       searchAPIResult('professor', id).then((professor) => {
         if (professor) {
           dispatch(setProfessor(professor as ProfessorGQLData));
+          setError('');
         } else {
           setError(`Professor ${id} does not exist!`);
         }
       });
     }
-  }, []);
+  }, [dispatch, id]);
 
   // if professor does not exists
   if (error) {

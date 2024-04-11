@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
   deleteRoadmapPlan,
-  initialState,
+  initialPlanState,
   setPlanIndex,
   setPlanName,
 } from '../../store/slices/roadmapSlice';
@@ -35,7 +35,7 @@ const RoadmapMultiplan: FC = () => {
   const { name } = allPlans.plans[currentPlanIndex];
 
   const addNewPlan = (name: string) => {
-    dispatch(addRoadmapPlan({ name: name, content: initialState }));
+    dispatch(addRoadmapPlan({ name: name, content: initialPlanState }));
   };
 
   const deleteCurrentPlan = () => {
@@ -104,7 +104,6 @@ const RoadmapMultiplan: FC = () => {
             <DialogTitle>New Plan</DialogTitle>
             <DialogContent>
               <TextField
-                autoFocus
                 margin="dense"
                 id="name"
                 label="Plan Name"
@@ -131,7 +130,6 @@ const RoadmapMultiplan: FC = () => {
             <DialogTitle>Edit Plan Name</DialogTitle>
             <DialogContent>
               <TextField
-                autoFocus
                 margin="dense"
                 id="name"
                 label=""

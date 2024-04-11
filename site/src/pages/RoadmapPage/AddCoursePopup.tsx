@@ -1,10 +1,10 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import { isMobile } from 'react-device-detect';
+import { quarterDisplayNames } from '../../helpers/planner';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 
 interface AddCoursePopupProps {}
@@ -12,10 +12,17 @@ interface AddCoursePopupProps {}
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const dispatch = useAppDispatch();
   const planner = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans);
-  const showForm = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.showAddCourse);
-  const [year, setYear] = useState(-1);
-  const [quarter, setQuarter] = useState(-1);
+  const showForm = useAppSelector((state) => state.roadmap.showAddCourse);
+  const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
+  const [year, setYear] = useState(currentYearAndQuarter?.year ?? -1);
+  const [quarter, setQuarter] = useState(currentYearAndQuarter?.quarter ?? -1);
   const [validated, setValidated] = useState(false);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+
+  useEffect(() => {
+    setYear(currentYearAndQuarter?.year ?? -1);
+    setQuarter(currentYearAndQuarter?.quarter ?? -1);
+  }, [currentYearAndQuarter]);
 
   const closeForm = () => {
     // close form
@@ -53,17 +60,19 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
       }),
     );
 
+    // hide the search bar to view the roadmap
+    dispatch(setShowSearch({ show: false }));
+
     closeForm();
   };
-
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
 
   const addCourseForm = (
     <Form noValidate validated={validated} onSubmit={submit}>
       <h2 className="add-course-form-header">Add Course</h2>
-      <p>Where do you want to add this course?</p>
+      <p>
+        Where do you want to add {activeCourse ? activeCourse.department + ' ' + activeCourse.courseNumber : 'a course'}
+        ?
+      </p>
       <Form.Group controlId="year">
         <Form.Label>School Year</Form.Label>
         <Form.Control
@@ -71,9 +80,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           name="year"
           id="year"
           required
+          value={year === -1 ? '' : year}
           onChange={(e) => {
             const parsed = parseInt(e.target.value);
-            console.log(parsed, isNaN(parsed));
             if (isNaN(parsed)) {
               setYear(-1);
             } else {
@@ -103,6 +112,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
             name="quarter"
             id="quarter"
             required
+            value={quarter === -1 ? '' : quarter}
             onChange={(e) => {
               const parsed = parseInt(e.target.value);
               if (!isNaN(parsed)) {
@@ -114,7 +124,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
               Quarter
             </option>
             {planner[year].quarters.map((plannerQuarter, i) => {
-              const value = capitalizeFirstLetter(plannerQuarter.name);
+              const value = quarterDisplayNames[plannerQuarter.name];
               return (
                 <option key={'add-course-form-quarter-' + i} value={i}>
                   {value}
@@ -122,19 +132,14 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
               );
             })}
           </Form.Control>
-          <Form.Control.Feedback type="invalid">Missing qurter</Form.Control.Feedback>
+          <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
         </Form.Group>
       )}
       <div className="d-flex justify-content-end">
-        <Button
-          className="py-2 px-4 mr-3"
-          variant="outline-secondary"
-          size={isMobile ? 'sm' : undefined}
-          onClick={closeForm}
-        >
+        <Button className="py-2 px-4 mr-3" variant="outline-secondary" onClick={closeForm}>
           Cancel
         </Button>
-        <Button className="py-2 px-4" type="submit" variant="secondary" size={isMobile ? 'sm' : undefined}>
+        <Button className="py-2 px-4" type="submit" variant="secondary">
           Submit
         </Button>
       </div>

@@ -28,7 +28,8 @@ import {
 } from '../../types/types';
 import { searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
-import { defaultYear } from '../../helpers/planner';
+import { defaultYear, normalizeQuarterName } from '../../helpers/planner';
+import ImportTranscriptPopup from './ImportTranscriptPopup';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -102,19 +103,18 @@ const Planner: FC = () => {
       savedPlanner.forEach((savedYear) => {
         const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
         savedYear.quarters.forEach((savedQuarter) => {
-          const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
+          const transformedName = normalizeQuarterName(savedQuarter.name);
+          const quarter: PlannerQuarterData = { name: transformedName, courses: [] };
           quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
           year.quarters.push(quarter);
         });
         planner.push(year);
       });
-      console.log('EXPANDED PLANNER', planner);
       resolve(planner);
     });
   };
 
   const loadRoadmap = async () => {
-    console.log('Loading Roadmaps...');
     let roadmap: SavedRoadmap = null!;
     const localRoadmap = localStorage.getItem('roadmap');
     // if logged in
@@ -142,7 +142,6 @@ const Planner: FC = () => {
   };
 
   const saveRoadmap = () => {
-    console.log('Saving Roadmaps...');
     const roadmap: SavedRoadmap = {
       planner: collapsePlanner(data),
       transfers: transfers,
@@ -208,7 +207,6 @@ const Planner: FC = () => {
             const required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
             // prerequisite not fulfilled, has some required classes to take
             if (required.size > 0) {
-              console.log('invalid course', course.id);
               invalidCourses.push({
                 location: {
                   yearIndex: yi,
@@ -309,6 +307,7 @@ const Planner: FC = () => {
         placeholderName={'Year ' + (data.length + 1)}
         placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
       />
+      <ImportTranscriptPopup />
     </div>
   );
 };

@@ -5,17 +5,10 @@
 import express, { Request } from 'express';
 import { ObjectId } from 'mongodb';
 import { ReviewData, VoteData } from '../types/types';
-import {
-  COLLECTION_NAMES,
-  getCollection,
-  addDocument,
-  getDocuments,
-  updateDocument,
-  deleteDocument,
-  deleteDocuments,
-} from '../helpers/mongo';
 import { verifyCaptcha } from '../helpers/recaptcha';
-
+import Review from '../models/review';
+import Vote from '../models/vote';
+import Report from '../models/report';
 const router = express.Router();
 
 /**
@@ -39,23 +32,19 @@ router.get('/scores', async function (req: Request<never, unknown, never, Scores
   }
 
   // execute aggregation on the reviews collection
-  const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-  if (reviewsCollection) {
-    const cursor = reviewsCollection.aggregate([
-      { $match: { [matchField]: req.query.id } },
-      { $group: { _id: groupField, score: { $avg: '$rating' } } },
-    ]);
 
-    // returns the results in an array
-    const array = (await cursor.toArray()) as ReviewData[];
-    // rename _id to name
-    const results = array.map((v) => {
-      return { name: v._id, score: v.score };
-    });
-    res.json(results);
-  } else {
-    res.json([]);
-  }
+  const aggreg = await Review.aggregate([
+    { $match: { [matchField]: req.query.id } },
+    { $group: { _id: groupField, score: { $avg: '$rating' } } },
+  ]);
+
+  // returns the results in an array
+  const array = aggreg as ReviewData[];
+  // rename _id to name
+  const results = array.map((v) => {
+    return { name: v._id, score: v.score };
+  });
+  res.json(results);
 });
 
 /**
@@ -75,14 +64,11 @@ router.get('/featured', async function (req: Request<never, unknown, never, Feat
   }
 
   // find first review with the highest score
-  const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
+  const reviewsCollection = await Review.find({ [field]: req.query.id })
+    .sort({ score: -1 })
+    .limit(1);
   if (reviewsCollection) {
-    const cursor = reviewsCollection
-      .find({ [field]: req.query.id })
-      .sort({ score: -1 })
-      .limit(1);
-    const results = await cursor.toArray();
-    res.json(results);
+    res.json(reviewsCollection);
   } else {
     res.json([]);
   }
@@ -120,7 +106,7 @@ router.get('/', async function (req, res) {
     }
   }
 
-  const reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
+  const reviews = await Review.find(query);
   if (reviews) {
     res.json(reviews);
   } else {
@@ -136,13 +122,12 @@ router.post('/', async function (req, res) {
     //^ this should be a middleware check smh
 
     // check if user is trusted
-    const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-    const verifiedCount = await reviewsCollection
-      .find({
-        userID: req.session.passport.user.id,
-        verified: true,
-      })
-      .count();
+    const verifiedCount = await Review.find({
+      userID: req.session.passport.user.id,
+      verified: true,
+    })
+      .countDocuments()
+      .exec();
 
     // Set on server so the client can't automatically verify their own review.
     req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
@@ -160,14 +145,14 @@ router.post('/', async function (req, res) {
       userID: req.session.passport.user.id,
     };
 
-    const reviews = await getDocuments(COLLECTION_NAMES.REVIEWS, query);
+    const reviews = await Review.find(query);
     if (reviews?.length > 0)
       return res.status(400).json({ error: 'Review already exists for this professor and course!' });
     // add review to mongo
     req.body.userDisplay =
       req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
     req.body.userID = req.session.passport.user.id;
-    await addDocument(COLLECTION_NAMES.REVIEWS, req.body);
+    await new Review(req.body).save();
 
     // echo back body
     res.json(req.body);
@@ -181,24 +166,13 @@ router.post('/', async function (req, res) {
  */
 router.delete('/', async (req, res) => {
   const checkUser = async () => {
-    const review = (await getDocuments(COLLECTION_NAMES.REVIEWS, {
-      _id: new ObjectId(req.body.id),
-    })) as ReviewData[];
-
-    return review.length > 0 && review[0].userID === req.session.passport?.user.id;
+    return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
   };
 
   if (req.session.passport?.admin || (await checkUser())) {
-    console.log(`Deleting review ${req.body.id}`);
-
-    await deleteDocument(COLLECTION_NAMES.REVIEWS, {
-      _id: new ObjectId(req.body.id),
-    });
-
-    await deleteDocuments(COLLECTION_NAMES.VOTES, {
-      reviewID: req.body.id,
-    });
-
+    await Review.deleteOne({ _id: req.body.id });
+    await Vote.deleteMany({ reviewID: req.body.id });
+    await Report.deleteMany({ reviewID: req.body.id });
     res.status(200).send();
   } else {
     res.json({ error: 'Must be an admin or review author to delete reviews!' });
@@ -219,39 +193,35 @@ router.patch('/vote', async function (req, res) {
       reviewID: id,
     };
     //either length 1 or 0 array(ideally) 0 if no existing vote, 1 if existing vote
-    const existingVote = (await getDocuments(COLLECTION_NAMES.VOTES, currentVotes)) as VoteData[];
+    const existingVote = (await Vote.find(currentVotes)) as VoteData[];
     //check if there is an existing vote and it has the same vote as the previous vote
     if (existingVote.length != 0 && deltaScore == existingVote[0].score) {
       //remove the vote
       res.json({ deltaScore: -1 * deltaScore });
 
       //delete the existing vote from the votes collection
-      await deleteDocument(COLLECTION_NAMES.VOTES, currentVotes);
+      await Vote.deleteMany(currentVotes);
       //update the votes document with a lowered score
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: -1 * deltaScore } });
+      await Review.updateOne({ _id: id }, { $inc: { score: -1 * deltaScore } });
     } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
       //there is an existing vote but the vote was different
       deltaScore *= 2;
       //*2 to reverse the old vote and implement the new one
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: deltaScore } });
+      await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
       //override old vote with new data
-      await updateDocument(COLLECTION_NAMES.VOTES, { _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
+      await Vote.updateOne({ _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
 
       res.json({ deltaScore: deltaScore });
     } else {
       //no old vote, just add in new vote data
       console.log(`Voting Review ${id} with delta ${deltaScore}`);
-
-      await updateDocument(COLLECTION_NAMES.REVIEWS, { _id: new ObjectId(id) }, { $inc: { score: deltaScore } });
+      await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
       //sends in vote
-      await addDocument(COLLECTION_NAMES.VOTES, {
-        userID: req.session.passport.user.id,
-        reviewID: id,
-        score: deltaScore,
-      });
+      await new Vote({ userID: req.session.passport.user.id, reviewID: id, score: deltaScore }).save();
       res.json({ deltaScore: deltaScore });
     }
   }
+  //
 });
 
 /**
@@ -266,7 +236,7 @@ router.patch('/getVoteColor', async function (req, res) {
       reviewID: req.body['id'],
     };
     //get any existing vote in the db
-    const existingVote = (await getDocuments(COLLECTION_NAMES.VOTES, query)) as VoteData[];
+    const existingVote = (await Vote.find(query)) as VoteData[];
     //result an array of either length 1 or empty
     if (existingVote.length == 0) {
       //if empty, both should be uncolored
@@ -288,18 +258,12 @@ router.patch('/getVoteColor', async function (req, res) {
 router.patch('/getVoteColors', async function (req, res) {
   if (req.session?.passport != null) {
     //query of the user's email and the review id
-    const ids = req.body['ids'];
-
-    const q = {
-      userID: req.session.passport.user.id,
-      reviewID: { $in: ids },
-    };
-
-    const votes = (await getDocuments(COLLECTION_NAMES.VOTES, q)) as VoteData[];
-    const r: Record<string, number> = {};
-    for (let i = 0; i < votes.length; i++) {
-      r[votes[i].reviewID] = votes[i].score;
-    }
+    const ids: string[] = req.body.ids;
+    const votes = await Vote.find({ userID: req.session.passport.user.id, reviewID: { $in: ids } });
+    const r: { [key: string]: number } = votes.reduce((acc: { [key: string]: number }, v) => {
+      acc[v.reviewID.toString()] = v.score;
+      return acc;
+    }, {});
     res.json(r);
   } else {
     res.json({});
@@ -311,13 +275,7 @@ router.patch('/getVoteColors', async function (req, res) {
 router.patch('/verify', async function (req, res) {
   if (req.session.passport?.admin) {
     console.log(`Verifying review ${req.body.id}`);
-
-    const status = await updateDocument(
-      COLLECTION_NAMES.REVIEWS,
-      { _id: new ObjectId(req.body.id) },
-      { $set: { verified: true } },
-    );
-
+    const status = await Review.updateOne({ _id: req.body.id }, { verified: true });
     res.json(status);
   } else {
     res.json({ error: 'Must be an admin to verify reviews!' });
@@ -329,9 +287,7 @@ router.patch('/verify', async function (req, res) {
  */
 router.delete('/clear', async function (req, res) {
   if (process.env.NODE_ENV != 'production') {
-    const reviewsCollection = await getCollection(COLLECTION_NAMES.REVIEWS);
-    const status = await reviewsCollection.deleteMany({});
-
+    const status = await Review.deleteMany({});
     res.json(status);
   } else {
     res.json({ error: 'Can only clear on development environment' });

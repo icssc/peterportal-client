@@ -1,26 +1,6 @@
-.add-year-btn {
-  border-color: var(--peterportal-primary-color-1);
-  background-color: var(--peterportal-primary-color-1);
-  color: var(--ring-road-white);
-  border: none;
-  display: flex;
-  align-items: center;
-  margin: 0.5rem;
-}
-
-.add-year-btn:hover,
-.add-year-btn:focus {
-  background-color: var(--peterportal-primary-color-1);
-}
-
 .add-year-icon {
   margin-right: 4px;
   transform: scale(1.5);
-}
-
-.add-year-text {
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .popup-btn {

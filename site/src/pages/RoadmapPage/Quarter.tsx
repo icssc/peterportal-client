@@ -1,15 +1,17 @@
-import { FC, useContext, useState } from 'react';
-import './Quarter.scss';
+import { FC, useContext, useRef, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import Course from './Course';
-
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { deleteQuarter, clearQuarter, deleteCourse } from '../../store/slices/roadmapSlice';
-import { PlannerQuarterData } from '../../types/types';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { ThreeDots } from 'react-bootstrap-icons';
+import { Plus, ThreeDots } from 'react-bootstrap-icons';
+import { quarterDisplayNames } from '../../helpers/planner';
+import { useIsMobile } from '../../helpers/util';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
 import ThemeContext from '../../style/theme-context';
+import { PlannerQuarterData } from '../../types/types';
+import './Quarter.scss';
 import { StrictModeDroppable } from './StrictModeDroppable';
+
+import Course from './Course';
 
 interface QuarterProps {
   year: number;
@@ -20,11 +22,12 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
-  const quarterTitle = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+  const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector(
     (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
   );
-
+  const quarterContainerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
 
   const { darkMode } = useContext(ThemeContext);
@@ -95,7 +98,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   };
 
   const popover = (
-    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`}>
+    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`} className="quarter-menu-popover">
       <Popover.Content>
         <div>
           <Button
@@ -124,7 +127,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   );
 
   return (
-    <div className="quarter">
+    <div className="quarter" ref={quarterContainerRef}>
       <span className="quarter-header">
         <h2 className="quarter-title">
           {quarterTitle} {year}
@@ -135,8 +138,13 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           rootClose
           onToggle={setShowQuarterMenu}
           show={showQuarterMenu}
+          container={quarterContainerRef}
         >
-          <ThreeDots onClick={handleQuarterMenuClick} className="edit-btn" />
+          {({ ref, ...triggerHandler }) => (
+            <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
+              <ThreeDots />
+            </button>
+          )}
         </OverlayTrigger>
       </span>
       <div className="quarter-units">
@@ -152,6 +160,21 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           );
         }}
       </StrictModeDroppable>
+
+      {isMobile && (
+        <>
+          <Button
+            variant={buttonVariant}
+            className="quarter quarter-header"
+            onClick={() => {
+              dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
+            }}
+          >
+            <Plus className="plus-icon" />
+            <div className="quarter-add-course">Add Course</div>
+          </Button>
+        </>
+      )}
     </div>
   );
 };
