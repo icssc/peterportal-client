@@ -22,11 +22,11 @@ const usersRouter = router({
   /**
    * Get the user's theme preferences
    */
-  getPreferences: userProcedure.query(async ({ ctx }) => {
+  getPreferences: userProcedure.query(async ({ ctx }): Promise<UserPreferences> => {
     const userID = ctx.session.passport?.user.id;
     const preference = await Preference.findOne({ userID: userID });
 
-    return preference ? preference : { error: 'No preferences found' };
+    return (preference ? preference : {}) as UserPreferences;
   }),
 
   /**

@@ -1,10 +1,8 @@
 import { useState, useEffect, FC } from 'react';
 import { Icon, Popup, Grid, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 
 import { List } from 'react-bootstrap-icons';
-import { WeekData } from '../../types/types';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './AppHeader.scss';
@@ -12,6 +10,7 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
+import trpc from '../../trpc';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +19,7 @@ const AppHeader: FC = () => {
 
   useEffect(() => {
     // Get the current week data
-    axios.get<WeekData>('/api/schedule/api/currentWeek').then((res) => {
+    trpc.schedule.currentWeek.query().then((res) => {
       /** @todo make this less code-smelly */
       setWeek(res.data.display.split(' • ')[0]);
     });

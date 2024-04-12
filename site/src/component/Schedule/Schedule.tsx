@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -7,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 
 import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
+import trpc from '../../trpc';
 
 interface ScheduleProps {
   courseID?: string;
@@ -24,28 +24,27 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
   useEffect(() => {
     // get the current quarter used in websoc
-    axios.get<string>('/api/schedule/api/currentQuarter').then((res) => {
+    trpc.schedule.currentQuarter.query().then((res) => {
       setQuarter(res.data);
       fetchScheduleDataFromAPI(res.data);
     });
   }, [props.courseID, props.professorID]);
 
   const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
-    let url = '';
+    let apiResponse!: WebsocResponse;
     if (props.courseID) {
       const courseIDSplit = props.courseID.split(' ');
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      url = `/api/schedule/api/${currentQuarter}/${department}/${number}`;
+      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: currentQuarter, department, number });
     } else if (props.professorID) {
-      url = `/api/schedule/api/${currentQuarter}/${props.professorID}`;
+      apiResponse = await trpc.schedule.getTermProf.query({ term: currentQuarter, professor: props.professorID });
     }
 
-    const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);
     try {
       const data: ScheduleData = {};
-      apiResponse.data.schools.forEach((school) => {
+      apiResponse.schools.forEach((school) => {
         school.departments.forEach((department) => {
           department.courses.forEach((course) => {
             data[department.deptCode + course.courseNumber] = course.sections;

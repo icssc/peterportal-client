@@ -1,5 +1,8 @@
 import { publicProcedure, router } from '../helpers/trpc';
+import coursesRouter from './courses';
+import professorsRouter from './professors';
 import reportsRouter from './reports';
+import scheduleRouter from './schedule';
 import usersRouter from './users';
 
 export const appRouter = router({
@@ -7,7 +10,10 @@ export const appRouter = router({
     console.log(ctx.session.passport?.user);
     return 'hello ' + ctx.session.passport?.user.name;
   }),
+  courses: coursesRouter,
+  professors: professorsRouter,
   reports: reportsRouter,
+  schedule: scheduleRouter,
   users: usersRouter,
 });
 

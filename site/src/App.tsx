@@ -18,7 +18,6 @@ import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
 import ThemeContext, { Theme } from './style/theme-context';
-import axios from 'axios';
 import { useCookies } from 'react-cookie';
 
 import trpc from './trpc';
@@ -71,7 +70,7 @@ export default function App() {
   const setTheme = (theme: Theme) => {
     setThemeState(theme);
     if (cookies.user) {
-      axios.post('/api/users/preferences', { theme });
+      trpc.users.setPreferences.mutate({ theme });
     } else {
       localStorage.setItem('theme', theme);
     }
@@ -80,15 +79,14 @@ export default function App() {
   useEffect(() => {
     // if logged in, load user prefs (theme) from mongo
     if (cookies.user) {
-      axios.get('/api/users/preferences').then((res) => {
-        const { theme }: { theme?: Theme } = res.data;
-        if (theme) {
-          setThemeState(theme);
+      trpc.users.getPreferences.query().then((res) => {
+        if (res.theme) {
+          setThemeState(res.theme);
         }
       });
     }
 
-    trpc.greeting.query().then((res) => console.log(res));
+    // trpc.greeting.query().then((res) => console.log(res));
   }, [cookies.user, setThemeState]);
 
   return (

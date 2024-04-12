@@ -2,78 +2,86 @@
  @module ScheduleRoute
 */
 
-import express from 'express';
-
-const router = express.Router();
+import { publicProcedure, router } from '../helpers/trpc';
+import typia from 'typia';
 
 const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
-router.get('/getTerms', function (req, res) {
-  let pastYears: number = parseInt(req.query.years as string);
-  if (!pastYears) {
-    pastYears = 1;
-  }
-  const d = new Date();
-  const year = d.getFullYear();
-  const terms = [];
-  for (let y = year - pastYears; y <= year; ++y) {
-    for (let i = 0; i < TERM_SEASONS.length; ++i) {
-      terms.push(`${y} ${TERM_SEASONS[i]}`);
-    }
-  }
-  res.json(terms);
-});
-
-/**
- * Get the current week
- */
-router.get('/api/currentWeek', async function (_, res) {
-  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
-  const json = await apiResp.json();
-  res.send(json.payload);
-});
-
-/**
- * Get the current quarter on websoc
- */
-router.get('/api/currentQuarter', async function (_, res) {
-  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
-  const json = await apiResp.json();
-  res.send(json.payload[0].longName);
-});
-
-/**
- * Proxy for WebSOC, using PeterPortal API
- */
-router.get('/api/:term/:department/:number', async function (req, res) {
-  const [year, quarter] = req.params.term.split(' ');
-  const result = await callPPAPIWebSoc({
-    year,
-    quarter,
-    department: req.params.department,
-    courseNumber: req.params.number,
-  });
-  res.send(result);
-});
-
-/**
- * Proxy for WebSOC, using PeterPortal API
- */
-router.get('/api/:term/:professor', async function (req, res) {
-  const [year, quarter] = req.params.term.split(' ');
-  const result = await callPPAPIWebSoc({
-    year,
-    quarter,
-    instructorName: req.params.professor,
-  });
-  res.send(result);
-});
-
-async function callPPAPIWebSoc(params: Record<string, string>) {
+const callPPAPIWebSoc = async (params: Record<string, string>) => {
   const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' + new URLSearchParams(params));
   return await fetch(url)
     .then((response) => response.json())
     .then((json) => json.payload);
-}
+};
 
-export default router;
+const scheduleRouter = router({
+  /**
+   * Get terms from years
+   */
+  getTerms: publicProcedure.input(typia.createAssert<{ years: string }>()).query(async ({ input }) => {
+    let pastYears: number = parseInt(input.years);
+    if (!pastYears) {
+      pastYears = 1;
+    }
+    const d = new Date();
+    const year = d.getFullYear();
+    const terms = [];
+    for (let y = year - pastYears; y <= year; ++y) {
+      for (let i = 0; i < TERM_SEASONS.length; ++i) {
+        terms.push(`${y} ${TERM_SEASONS[i]}`);
+      }
+    }
+    return terms;
+  }),
+
+  /**
+   * Get the current week
+   */
+  currentWeek: publicProcedure.query(async () => {
+    const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
+    const json = await apiResp.json();
+    return json.payload;
+  }),
+
+  /**
+   * Get the current quarter on websoc
+   */
+  currentQuarter: publicProcedure.query(async () => {
+    const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
+    const json = await apiResp.json();
+    return json.payload[0].longName;
+  }),
+
+  /**
+   * Proxy for WebSOC, using PeterPortal API
+   */
+  getTermDeptNum: publicProcedure
+    .input(typia.createAssert<{ term: string; department: string; number: string }>())
+    .query(async ({ input }) => {
+      const [year, quarter] = input.term.split(' ');
+      const result = await callPPAPIWebSoc({
+        year,
+        quarter,
+        department: input.department,
+        courseNumber: input.number,
+      });
+      return result;
+    }),
+
+  /**
+   * Proxy for WebSOC, using PeterPortal API
+   */
+  getTermProf: publicProcedure
+    .input(typia.createAssert<{ term: string; professor: string }>())
+    .query(async ({ input }) => {
+      const [year, quarter] = input.term.split(' ');
+      const result = await callPPAPIWebSoc({
+        year,
+        quarter,
+        instructorName: input.professor,
+      });
+      return result;
+    }),
+});
+
+export default scheduleRouter;

@@ -2,53 +2,53 @@
  @module ProfessorsRoute
 */
 
-import express, { Request } from 'express';
 import { getProfessorQuery } from '../helpers/gql';
+import { publicProcedure, router } from '../helpers/trpc';
+import typia from 'typia';
 
-const router = express.Router();
+const professorsRouter = router({
+  /**
+   * PPAPI proxy for getting professor data
+   */
+  get: publicProcedure.input(typia.createAssert<{ ucinetid: string }>()).query(async ({ input }) => {
+    const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + input.ucinetid);
 
-/**
- * PPAPI proxy for professor data
- */
-router.get('/api', function (req: Request<never, unknown, never, { ucinetid: string }>, res) {
-  const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + req.query.ucinetid);
+    return r.then((response) => response.json());
+  }),
 
-  r.then((response) => response.json()).then((data) => res.send(data));
+  /**
+   * PPAPI proxy for batch professor data
+   */
+  batch: publicProcedure.input(typia.createAssert<{ professors: string[] }>()).mutation(async ({ input }) => {
+    if (input.professors.length == 0) {
+      return {};
+    } else {
+      const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: getProfessorQuery(input.professors),
+        }),
+      });
+
+      return r.then((response) => response.json()).then((data) => data.data);
+    }
+  }),
+
+  /**
+   * PPAPI proxy for grade distribution
+   */
+  grades: publicProcedure.input(typia.createAssert<{ name: string }>()).query(async ({ input }) => {
+    const r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(input.name));
+
+    return r
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => data.payload);
+  }),
 });
 
-/**
- * PPAPI proxy for professor data
- */
-router.post('/api/batch', (req: Request<never, unknown, { professors: string[] }, never>, res) => {
-  if (req.body.professors.length == 0) {
-    res.json({});
-  } else {
-    const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: getProfessorQuery(req.body.professors),
-      }),
-    });
-
-    r.then((response) => response.json()).then((data) => res.json(data.data));
-  }
-});
-
-/**
- * PPAPI proxy for grade distribution
- */
-router.get('/api/grades/:name', function (req, res) {
-  const r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(req.params.name));
-
-  let status = 200;
-
-  r.then((response) => {
-    status = response.status;
-    return response.json();
-  }).then((data) => res.status(status).send(data.payload));
-});
-
-export default router;
+export default professorsRouter;

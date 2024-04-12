@@ -7,10 +7,10 @@ import { Icon } from 'semantic-ui-react';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
 
-import axios, { AxiosResponse } from 'axios';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
+import trpc from '../../trpc';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -29,9 +29,9 @@ const SideBar = () => {
     if (isLoggedIn) {
       // useEffect's function is not allowed to be async, create async checkAdmin function within
       const checkAdmin = async () => {
-        const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
-        const admin = res.data.admin;
-        setIsAdmin(admin);
+        const res: AdminResponse = await trpc.users.isAdmin.query();
+        const isAdmin: boolean = res.admin;
+        setIsAdmin(isAdmin);
       };
       checkAdmin();
     }

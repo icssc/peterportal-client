@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import { CourseGQLData, ProfessorGQLData, QuarterName } from '../../types/types';
 import { GradesRaw } from 'peterportal-api-next-types';
+import trpc from '../../trpc';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -39,22 +40,22 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   const fetchGradeDistData = () => {
     let url = '';
-    let params = {};
+    let request;
     // course context
     if (props.course) {
-      url = `/api/courses/api/grades`;
-      params = {
+      const params = {
         department: props.course.department,
         number: props.course.courseNumber,
       };
+      request = trpc.courses.grades.query(params);
+      trpc.courses.grades.query(params);
     } else if (props.professor) {
       url = `/api/professors/api/grades/${props.professor.shortenedName}`;
+      request = axios.get<GradesRaw>(url, { params: {} });
     }
-    axios
-      .get<GradesRaw>(url, {
-        params: params,
-      })
-      .then((res) => {
+
+    request
+      ?.then((res) => {
         setGradeDistData(res.data);
       })
       .catch((error) => {

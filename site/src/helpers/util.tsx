@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   SearchIndex,
   CourseGQLData,
@@ -12,6 +11,7 @@ import {
   SearchType,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
+import trpc from '../trpc';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -60,9 +60,11 @@ export async function searchAPIResults(
   index: SearchIndex,
   names: string[],
 ): Promise<BatchCourseData | BatchProfessorData> {
-  const res = await axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/api/${index}/api/batch`, {
-    [index]: names,
-  });
+  const res =
+    index === 'courses'
+      ? await trpc.courses.batch.mutate({ courses: names })
+      : await trpc.professors.batch.mutate({ professors: names });
+
   const data = res.data;
   const transformed: BatchCourseData | BatchProfessorData = {};
   for (const id in data) {
