@@ -11,6 +11,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
+import mongoose, { Mongoose } from 'mongoose';
 // load env
 dotenv.config();
 
@@ -41,13 +42,16 @@ if (process.env.MONGO_URL) {
     collection: COLLECTION_NAMES.SESSIONS,
   });
   // Catch errors
+  mongoose.connection.on('error', function (error) {
+    console.log(error);
+  });
   store.on('error', function (error) {
     console.log(error);
   });
   // Setup Passport and Sessions
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: process.env.SESSION_SECRET!,
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: SESSION_LENGTH },
@@ -105,14 +109,39 @@ app.use(function (req, res) {
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
 
+let conn: null | Mongoose = null;
+const uri = process.env.MONGO_URL;
+export const connect = async () => {
+  if (conn == null) {
+    conn = await mongoose.connect(uri!, {
+      dbName: DB_NAME,
+      serverSelectionTimeoutMS: 5000,
+    });
+  }
+  return conn;
+};
+
+let serverlessExpressInstance: ReturnType<typeof serverlessExpress>;
+async function setup(event: unknown, context: unknown) {
+  await connect();
+  serverlessExpressInstance = serverlessExpress({ app });
+  return serverlessExpressInstance(event, context);
+}
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
 if (NODE_ENV === 'development') {
   const port = process.env.PORT ?? 8080;
-  app.listen(port, () => {
-    console.log('Listening on port', port);
+  connect().then(() => {
+    app.listen(port, () => {
+      console.log('Listening on port', port);
+    });
   });
 }
 
+export const handler = async (event: unknown, context: unknown) => {
+  if (serverlessExpressInstance) {
+    return serverlessExpressInstance(event, context);
+  }
+  return setup(event, context);
+};
 // export for serverless
-export const handler = serverlessExpress({ app });

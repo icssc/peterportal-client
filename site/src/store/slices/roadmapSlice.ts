@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
+import { defaultYear, quarterDisplayNames } from '../../helpers/planner';
 import {
-  PlannerData,
-  PlannerYearData,
   CourseGQLData,
-  YearIdentifier,
-  QuarterIdentifier,
   CourseIdentifier,
   InvalidCourseData,
-  TransferData,
+  PlannerData,
   PlannerQuarterData,
+  PlannerYearData,
+  QuarterIdentifier,
+  TransferData,
+  YearIdentifier,
 } from '../../types/types';
-import { defaultYear, quarterDisplayNames } from '../../helpers/planner';
+import type { RootState } from '../store';
 
 // Define a type for the slice state
 interface RoadmapState {
@@ -31,6 +31,8 @@ interface RoadmapState {
   showAddCourse: boolean;
   // Whether or not to alert the user of unsaved changes before leaving
   unsavedChanges: boolean;
+  // Selected quarter and year for adding a course on mobile
+  currentYearAndQuarter: { year: number; quarter: number } | null;
 }
 
 // Define the initial state using that type
@@ -43,6 +45,7 @@ const initialState: RoadmapState = {
   showSearch: false,
   showAddCourse: false,
   unsavedChanges: false,
+  currentYearAndQuarter: null,
 };
 
 // Payload to pass in to move a course
@@ -259,8 +262,11 @@ export const roadmapSlice = createSlice({
     deleteTransfer: (state, action: PayloadAction<number>) => {
       state.transfers.splice(action.payload, 1);
     },
-    setShowSearch: (state, action: PayloadAction<boolean>) => {
-      state.showSearch = action.payload;
+    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
+      state.showSearch = action.payload.show;
+      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
+        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
+      }
     },
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;

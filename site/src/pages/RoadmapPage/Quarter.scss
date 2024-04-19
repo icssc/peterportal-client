@@ -1,6 +1,10 @@
 [data-theme='dark'] {
-  .quarter .quarter-header .quarter-title {
+  .quarter .quarter-header .quarter-title,
+  .quarter .quarter-add-course {
     color: #eee;
+  }
+  .plus-icon {
+    fill: #eee;
   }
 
   .quarter-menu-btn:hover,
@@ -44,6 +48,11 @@
     color: #808080;
     font-size: 16px;
   }
+
+  .quarter-add-course {
+    color: #202e47;
+    font-size: 15px;
+  }
 }
 
 .quarter-menu-btn {
@@ -57,6 +66,10 @@
 
 .quarter-menu-popover {
   z-index: 1;
+}
+
+.plus-icon {
+  fill: #000000;
 }
 
 .red-menu-btn,
