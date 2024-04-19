@@ -24,9 +24,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
   useEffect(() => {
     // get the current quarter used in websoc
-    trpc.schedule.currentQuarter.query().then((res) => {
-      setQuarter(res.data);
-      fetchScheduleDataFromAPI(res.data);
+    trpc.schedule.currentQuarter.query().then((data) => {
+      setQuarter(data);
+      fetchScheduleDataFromAPI(data);
     });
   }, [props.courseID, props.professorID]);
 

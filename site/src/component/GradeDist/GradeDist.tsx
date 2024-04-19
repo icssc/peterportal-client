@@ -3,7 +3,6 @@ import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
-import axios from 'axios';
 
 import { CourseGQLData, ProfessorGQLData, QuarterName } from '../../types/types';
 import { GradesRaw } from 'peterportal-api-next-types';
@@ -39,7 +38,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   const fetchGradeDistData = () => {
-    let url = '';
     let request;
     // course context
     if (props.course) {
@@ -48,15 +46,16 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         number: props.course.courseNumber,
       };
       request = trpc.courses.grades.query(params);
-      trpc.courses.grades.query(params);
     } else if (props.professor) {
-      url = `/api/professors/api/grades/${props.professor.shortenedName}`;
-      request = axios.get<GradesRaw>(url, { params: {} });
+      const params = {
+        name: props.professor.shortenedName,
+      };
+      request = trpc.professors.grades.query(params);
     }
 
     request
       ?.then((res) => {
-        setGradeDistData(res.data);
+        setGradeDistData(res);
       })
       .catch((error) => {
         setGradeDistData([]);

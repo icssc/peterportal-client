@@ -21,7 +21,7 @@ const AppHeader: FC = () => {
     // Get the current week data
     trpc.schedule.currentWeek.query().then((res) => {
       /** @todo make this less code-smelly */
-      setWeek(res.data.display.split(' • ')[0]);
+      setWeek(res.display.split(' • ')[0]);
     });
   }, []);
 

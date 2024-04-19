@@ -60,12 +60,11 @@ export async function searchAPIResults(
   index: SearchIndex,
   names: string[],
 ): Promise<BatchCourseData | BatchProfessorData> {
-  const res =
+  const data =
     index === 'courses'
       ? await trpc.courses.batch.mutate({ courses: names })
       : await trpc.professors.batch.mutate({ professors: names });
 
-  const data = res.data;
   const transformed: BatchCourseData | BatchProfessorData = {};
   for (const id in data) {
     if (data[id]) {

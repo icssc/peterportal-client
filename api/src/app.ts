@@ -20,9 +20,6 @@ dotenv.config();
 import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
 
 // Custom Routes
-import coursesRouter from './controllers/courses';
-import professorsRouter from './controllers/professors';
-import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
 import roadmapRouter from './controllers/roadmap';
 import authRouter from './controllers/auth';
@@ -94,9 +91,6 @@ app.use(function (req, res, next) {
 
 // Enable custom routes
 const expressRouter = express.Router();
-expressRouter.use('/courses', coursesRouter);
-expressRouter.use('/professors', professorsRouter);
-expressRouter.use('/schedule', scheduleRouter);
 expressRouter.use('/reviews', reviewsRouter);
 expressRouter.use('/roadmap', roadmapRouter);
 expressRouter.use('/users/auth', authRouter);
