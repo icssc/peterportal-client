@@ -7,8 +7,8 @@ import usersRouter from './users';
 
 export const appRouter = router({
   greeting: publicProcedure.query(({ ctx }) => {
-    console.log(ctx.session.passport?.user);
-    return 'hello ' + ctx.session.passport?.user.name;
+    console.log(ctx.req.session.passport?.user);
+    return 'hello ' + ctx.req.session.passport?.user.name;
   }),
   courses: coursesRouter,
   professors: professorsRouter,

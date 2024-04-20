@@ -16,14 +16,14 @@ const usersRouter = router({
    * Get the user's session data
    */
   get: publicProcedure.query(async ({ ctx }) => {
-    return ctx.session;
+    return ctx.req.session;
   }),
 
   /**
    * Get the user's theme preferences
    */
   getPreferences: userProcedure.query(async ({ ctx }): Promise<UserPreferences> => {
-    const userID = ctx.session.passport?.user.id;
+    const userID = ctx.req.session.passport?.user.id;
     const preference = await Preference.findOne({ userID: userID });
 
     return (preference ? preference : {}) as UserPreferences;
@@ -33,7 +33,7 @@ const usersRouter = router({
    * Configure the user's theme preferences
    */
   setPreferences: userProcedure.input(typia.createAssert<UserPreferences>()).mutation(async ({ input, ctx }) => {
-    const userID = ctx.session.passport?.user.id;
+    const userID = ctx.req.session.passport?.user.id;
 
     // make user's preference doc if it doesn't exist
     if (!(await Preference.exists({ userID }))) {
@@ -58,10 +58,10 @@ const usersRouter = router({
    */
   isAdmin: publicProcedure.query(async ({ ctx }) => {
     // not logged in
-    if (!ctx.session?.passport) {
+    if (!ctx.req.session?.passport) {
       return { admin: false };
     } else {
-      return { admin: ctx.session.passport.admin as boolean };
+      return { admin: ctx.req.session.passport.admin as boolean };
     }
   }),
 });
