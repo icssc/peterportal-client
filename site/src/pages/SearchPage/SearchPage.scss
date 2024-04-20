@@ -1,12 +1,13 @@
 #content-container {
   display: flex;
   flex-grow: 1;
+  height: 100%;
 
   #search-list {
     width: 50vw;
     display: flex;
     flex-direction: column;
-    height: 85vh;
+    height: 100%;
   }
 
   #search-popup {
