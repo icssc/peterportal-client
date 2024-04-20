@@ -29,7 +29,7 @@ const coursesRouter = router({
     if (input.courses.length == 0) {
       return {};
     } else {
-      const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
+      const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL!, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
