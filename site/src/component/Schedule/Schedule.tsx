@@ -24,9 +24,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
   useEffect(() => {
     // get the current quarter used in websoc
-    axios.get<string>('/api/schedule/api/currentQuarter').then((res) => {
-      setQuarter(res.data);
-      fetchScheduleDataFromAPI(res.data);
+    axios.get('/api/schedule/api/currentQuarter').then((res) => {
+      setQuarter(res.data.longName);
+      fetchScheduleDataFromAPI(res.data.shortName);
     });
   }, [props.courseID, props.professorID]);
 
