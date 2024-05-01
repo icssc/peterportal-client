@@ -27,19 +27,37 @@ jobs:
       - name: Check Out Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install
         env:
           HUSKY: 0
 
       - name: Build and deploy
-        run: npx sst deploy --stage ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'prod'  }}
+        run: pnpm sst deploy --stage ${{ (github.event_name == 'pull_request' && format('staging-{0}', github.event.pull_request.number)) || 'prod'  }}
         env:
           CI: false
           PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
