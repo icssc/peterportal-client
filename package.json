@@ -2,10 +2,10 @@
   "name": "peterportal-root",
   "version": "0.1.0",
   "scripts": {
-    "dev": "concurrently -n backend,frontend -c blue,green \"cd api && npm run dev\" \"cd site && npm run dev\"",
+    "dev": "concurrently -n backend,frontend -c blue,green \"cd api && pnpm dev\" \"cd site && pnpm dev\"",
     "prepare": "husky install",
     "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
-    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && npm run lint && cd ../api && npm run lint"
+    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && pnpm lint && cd ../api && pnpm lint"
   },
   "dependencies": {
     "aws-cdk-lib": "2.124.0",
