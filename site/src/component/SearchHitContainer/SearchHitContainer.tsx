@@ -32,7 +32,7 @@ const SearchResults = ({
 };
 
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
-  const { names, results } = useAppSelector((state) => state.search[index]);
+  const { results } = useAppSelector((state) => state.search[index]);
   const containerDivRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useFirstRender();
 
@@ -45,11 +45,9 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
   }
 
   /**
-   * if its first render, we are waiting for initial results
-   * if names is non-empty but results is empty, we are waiting for results
-   * otherwise, if results is still empty, we have no results for the search
+   * TODO: verify and/or setup new condition for checking on waiting for initial search (once implemented) - currently using isFirstRender
    */
-  const noResults = results.length === 0 && !(isFirstRender || names.length > 0);
+  const noResults = results.length === 0 && !isFirstRender;
 
   return (
     <div ref={containerDivRef} className="search-hit-container">

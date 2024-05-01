@@ -26,8 +26,7 @@
     "react-transition-group": "^4.4.5",
     "react-twemoji": "^0.5.0",
     "semantic-ui-css": "^2.5.0",
-    "semantic-ui-react": "^2.1.4",
-    "websoc-fuzzy-search": "1.0.1"
+    "semantic-ui-react": "^2.1.4"
   },
   "scripts": {
     "start": "vite",

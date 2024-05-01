@@ -18,7 +18,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     dispatch(setPageNumber({ index, pageNumber }));
   };
 
-  const numPages = Math.ceil(searchData.names.length / NUM_RESULTS_PER_PAGE);
+  const numPages = Math.ceil(searchData.count / NUM_RESULTS_PER_PAGE);
   const activePage = searchData.pageNumber;
 
   // only show 5 page numbers at a time
@@ -43,6 +43,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
         <Pagination.Prev onClick={() => clickPageNumber(activePage - 1)} disabled={activePage === 0} />
         {items}
         <Pagination.Next onClick={() => clickPageNumber(activePage + 1)} disabled={activePage === numPages - 1} />
+        <Pagination.Last onClick={() => clickPageNumber(numPages - 1)} disabled={activePage === numPages - 1} />
       </Pagination>
     )
   );
