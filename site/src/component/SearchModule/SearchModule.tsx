@@ -22,7 +22,7 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
-  const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
+  const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
   const searchNames = useCallback(

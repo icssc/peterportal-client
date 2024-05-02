@@ -8,16 +8,16 @@
     "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && pnpm lint && cd ../api && pnpm lint"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.124.0",
+    "aws-cdk-lib": "2.132.1",
     "dotenv-flow": "^4.0.1",
-    "sst": "2.40.3"
+    "sst": "2.41.5"
   },
   "engines": {
     "node": "^18 || ^20"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.0.2",
-    "@typescript-eslint/parser": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",

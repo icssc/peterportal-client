@@ -3,7 +3,6 @@
 */
 
 import express, { Request } from 'express';
-import { ObjectId } from 'mongodb';
 import { ReviewData, VoteData } from '../types/types';
 import { verifyCaptcha } from '../helpers/recaptcha';
 import Review from '../models/review';
@@ -78,7 +77,7 @@ interface ReviewFilter {
   courseID: string;
   professorID: string;
   userID: string;
-  _id?: ObjectId;
+  _id?: string;
   verified?: boolean;
 }
 /**
@@ -95,7 +94,7 @@ router.get('/', async function (req, res) {
     courseID,
     professorID,
     userID,
-    _id: reviewID === undefined ? undefined : new ObjectId(reviewID),
+    _id: reviewID === undefined ? undefined : reviewID,
     verified: verified === undefined ? undefined : verified === 'true' ? true : false,
   };
 
