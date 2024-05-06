@@ -43,14 +43,14 @@ const scheduleRouter = router({
     return json.payload;
   }),
 
-  /**
-   * Get the current quarter on websoc
-   */
-  currentQuarter: publicProcedure.query(async () => {
-    const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
-    const json = await apiResp.json();
-    return json.payload[0].longName;
-  }),
+/**
+ * Get the current quarter on websoc
+ */
+router.get('/api/currentQuarter', async function (_, res) {
+  const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
+  const json = await apiResp.json();
+  res.send(json.payload[0]);
+});
 
   /**
    * Proxy for WebSOC, using PeterPortal API
