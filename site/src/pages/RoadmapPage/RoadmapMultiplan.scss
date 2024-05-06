@@ -1,6 +1,32 @@
 .multi-plan-selector {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  height: 60px;
+  .select-item {
+    display: flex;
+    gap: 4px;
+    padding: 4px 8px;
+    align-items: center;
+  }
+  .dropdown-item {
+    display: contents;
+    color: inherit;
+  }
+  .dropdown-item .button {
+    padding: 8px 20px 8px 12px;
+    text-align: left;
+  }
+  .dropdown-item > * {
+    width: 100%;
+  }
+  .button {
+    padding: 6px;
+    margin: 0;
+    background-color: transparent;
+    &:hover,
+    &:focus {
+      background-color: #8882;
+      color: inherit;
+    }
+    &:active {
+      background-color: #8884;
+    }
+  }
 }

@@ -8,7 +8,6 @@ import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/ro
 import AddCoursePopup from './AddCoursePopup';
 import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
-import RoadmapMultiplan from './RoadmapMultiplan';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -106,7 +105,6 @@ const RoadmapPage: FC = () => {
 
   return (
     <>
-      <RoadmapMultiplan />
       <div className="roadmap-page">
         <AddCoursePopup />
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>

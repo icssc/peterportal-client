@@ -29,7 +29,7 @@ export const initialPlanState: RoadmapPlanState = {
 
 /** added for multiple planner */
 // create roadmap plan object
-interface RoadmapPlan {
+export interface RoadmapPlan {
   name: string;
   content: RoadmapPlanState;
 }
@@ -45,7 +45,7 @@ interface SetPlanNamePayload {
 
 // default plan to display for uesr
 const defaultPlan: RoadmapPlan = {
-  name: 'Schedule 1',
+  name: "Peter's Roadmap",
   content: initialPlanState,
 };
 

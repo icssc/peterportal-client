@@ -6,6 +6,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { clearPlanner, setShowTransfer } from '../../store/slices/roadmapSlice';
 import './Header.scss';
 import Transfer from './Transfer';
+import RoadmapMultiplan from './RoadmapMultiplan';
 
 interface HeaderProps {
   courseCount: number;
@@ -63,7 +64,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
     <div className="header">
       <Transfer missingPrereqNames={missingPrerequisites} />
       <div>
-        <div id="title">Peter's Roadmap</div>
+        <RoadmapMultiplan />
         <span id="planner-stats">
           Total: <span id="course-count">{courseCount}</span> {courseCount === 1 ? 'course' : 'courses'},{' '}
           <span id="unit-count">{unitCount}</span> {unitCount === 1 ? 'unit' : 'units'}
