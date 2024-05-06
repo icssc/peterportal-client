@@ -3,7 +3,7 @@ import { TRPCError, initTRPC } from '@trpc/server';
 
 export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
   req,
-  session: req.session,
+  session: req.session as Express.Request['session'],
   res,
 });
 type Context = Awaited<ReturnType<typeof createContext>>;
