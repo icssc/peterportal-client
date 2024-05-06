@@ -12,7 +12,7 @@ import { Dropdown } from 'semantic-ui-react';
 interface ScheduleProps {
   courseID?: string;
   professorID?: string;
-  termsOffered: string[];
+  termsOffered?: string[];
 }
 
 interface ScheduleData {
@@ -175,26 +175,29 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     return (
       <div>
-        <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
-        <Dropdown
-          placeholder={currentQuarter}
-          scrolling
-          selection
-          options={
-            // in dropdown options, prepend current quarter to the list of past terms
-            [
-              { text: currentQuarter, value: currentQuarter },
-              ...props.termsOffered.map((term) => {
-                return {
-                  text: term,
-                  value: term,
-                };
-              }),
-            ]
-          }
-          value={selectedQuarter}
-          onChange={(_, s) => setSelectedQuarter(s.value as string)}
-        />
+        {props.termsOffered ? (
+          <Dropdown
+            placeholder={currentQuarter}
+            scrolling
+            selection
+            options={
+              // in dropdown options, prepend current quarter to the list of past terms
+              [
+                { text: currentQuarter, value: currentQuarter },
+                ...props.termsOffered.map((term) => {
+                  return {
+                    text: term,
+                    value: term,
+                  };
+                }),
+              ]
+            }
+            value={selectedQuarter}
+            onChange={(_, s) => setSelectedQuarter(s.value as string)}
+          />
+        ) : (
+          <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
+        )}
         <Table responsive borderless className="schedule-table">
           <thead>
             <tr>
