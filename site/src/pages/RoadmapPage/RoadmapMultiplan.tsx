@@ -1,8 +1,3 @@
-// import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
 import { FC, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
@@ -13,7 +8,6 @@ import {
   setPlanIndex,
   setPlanName,
 } from '../../store/slices/roadmapSlice';
-import { Box } from '@mui/material';
 import Dropdown from 'react-bootstrap/esm/Dropdown';
 import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
@@ -55,9 +49,8 @@ const RoadmapMultiplan: FC = () => {
   const allPlans = useAppSelector((state) => state.roadmap);
   const [currentPlanIndex, setCurrentPlanIndex] = useState(allPlans.currentPlanIndex);
   const [isOpen, setIsOpen] = useState(false);
-  // const [isEdit, setIsEdit] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
-  const [isDelete, setIsDelete] = useState(false);
+  const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -70,10 +63,11 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const deleteCurrentPlan = () => {
-    setCurrentPlanIndex(0);
-    dispatch(setPlanIndex(0));
-    dispatch(deleteRoadmapPlan({ planIndex: currentPlanIndex }));
-    setIsDelete(false);
+    const newIndex = delIdx === currentPlanIndex ? 0 : currentPlanIndex - Number(delIdx < currentPlanIndex);
+    setCurrentPlanIndex(newIndex);
+    dispatch(setPlanIndex(newIndex));
+    dispatch(deleteRoadmapPlan({ planIndex: delIdx }));
+    setDelIdx(-1);
   };
 
   const handleSubmitNewPlan = () => {
@@ -106,7 +100,7 @@ const RoadmapMultiplan: FC = () => {
                 setCurrentPlanIndex(index);
               }}
               editHandler={() => setEditIdx(index)}
-              deleteHandler={() => setIsDelete(true)}
+              deleteHandler={() => setDelIdx(index)}
             />
           ))}
           {/* <Dropdown.Item onClick={() => }>Edit Plan Name</Dropdown.Item> */}
@@ -121,6 +115,7 @@ const RoadmapMultiplan: FC = () => {
         </Dropdown.Menu>
       </Dropdown>
 
+      {/* Create Roadmap Modal */}
       <Modal
         show={isOpen}
         onShow={() => {
@@ -165,6 +160,7 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Body>
       </Modal>
 
+      {/* Edit Roadmap Modal */}
       <Modal
         show={editIdx !== -1}
         onShow={() => {
@@ -207,58 +203,35 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Edit Plan Name */}
-      <Dialog
-        open={false}
-        onClose={() => setEditIdx(-1)}
-        PaperProps={{ sx: { width: '30%', height: '20%' } }}
-        style={{ marginTop: 20 }}
+      {/* Delete Roadmap Modal */}
+      <Modal
+        show={delIdx !== -1}
+        onShow={() => {
+          setNewPlanName(allPlans.plans[delIdx].name);
+        }}
+        onHide={() => setDelIdx(-1)}
+        centered
+        className="ppc-modal"
       >
-        <DialogTitle>Edit Plan Name</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            id="name"
-            label=""
-            type="email"
-            fullWidth
-            variant="standard"
-            placeholder=""
-            defaultValue={allPlans.plans[allPlans.currentPlanIndex].name}
-            onChange={(e) => {
-              setNewPlanName(e.target.value);
+        <Modal.Header closeButton>
+          <h2>Delete Roadmap</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate className="ppc-modal-form">
+            <Form.Group>
+              <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
+            </Form.Group>
+          </Form>
+          <Button2
+            variant="danger"
+            onClick={() => {
+              deleteCurrentPlan();
             }}
-            style={{ width: '100%' }}
-          />
-          <Button style={{ float: 'right' }} onClick={() => modifyPlanName()}>
-            Submit
-          </Button>
-        </DialogContent>
-      </Dialog>
-      {/* Delete dialog */}
-      <Dialog
-        open={isDelete}
-        onClose={() => setIsDelete(false)}
-        PaperProps={{ sx: { width: '30%', height: '20%' } }}
-        style={{ marginTop: 20 }}
-      >
-        <DialogTitle>Delete Plan</DialogTitle>
-        <DialogContent>
-          <p>Are you sure about deleting current plan?</p>
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <Button onClick={() => setIsDelete(false)}>Cancel</Button>
-            <Button sx={{ color: 'red' }} onClick={() => deleteCurrentPlan()}>
-              Delete
-            </Button>
-          </Box>
-        </DialogContent>
-      </Dialog>
-      {/* <Button
-        style={{ alignItems: 'center', color: 'red', marginTop: 10, height: 30 }}
-        onClick={() => setIsDelete(true)}
-      >
-        Delete Plan
-      </Button> */}
+          >
+            I am sure
+          </Button2>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
