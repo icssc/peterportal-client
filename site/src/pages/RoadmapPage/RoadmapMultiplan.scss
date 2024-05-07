@@ -34,4 +34,15 @@
       background-color: #8884;
     }
   }
+  .btn-primary {
+    border: 2px solid var(--aldrich-blue);
+    background-color: transparent;
+    border-radius: 4px;
+    font-weight: bold;
+    &[aria-expanded='true'],
+    &:not(.disabled):active {
+      border-color: var(--zot-blue);
+      background-color: #0062cc88;
+    }
+  }
 }

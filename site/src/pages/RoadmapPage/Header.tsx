@@ -63,14 +63,14 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
   return (
     <div className="header">
       <Transfer missingPrereqNames={missingPrerequisites} />
-      <div>
+      <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
           Total: <span id="course-count">{courseCount}</span> {courseCount === 1 ? 'course' : 'courses'},{' '}
           <span id="unit-count">{unitCount}</span> {unitCount === 1 ? 'unit' : 'units'}
         </span>
       </div>
-      <div>
+      <div className="planner-right">
         {isMobile && (
           <>
             <List className="mx-3" onClick={onMenuClick} />
