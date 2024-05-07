@@ -289,6 +289,9 @@ export const roadmapSlice = createSlice({
     setYearPlans: (state, action: PayloadAction<PlannerData>) => {
       state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
     },
+    setAllPlans: (state, action: PayloadAction<RoadmapPlan[]>) => {
+      state.plans = action.payload;
+    },
     setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
       state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
     },
@@ -365,6 +368,7 @@ export const {
   clearPlanner,
   setActiveCourse,
   setYearPlans,
+  setAllPlans,
   setInvalidCourses,
   setShowTransfer,
   addTransfer,
@@ -386,5 +390,7 @@ export const {
 // Other code such as selectors can use the imported `RootState` type
 export const selectYearPlans = (state: RootState) =>
   state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans;
+
+export const selectAllPlans = (state: RootState) => state.roadmap.plans;
 
 export default roadmapSlice.reducer;

@@ -8,10 +8,12 @@ import Year from './Year';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
   selectYearPlans,
-  setYearPlans,
   setInvalidCourses,
   setTransfers,
   setUnsavedChanges,
+  selectAllPlans,
+  RoadmapPlan,
+  setAllPlans,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import {
@@ -35,21 +37,23 @@ const Planner: FC = () => {
   const dispatch = useAppDispatch();
   const [cookies] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
-  const data = useAppSelector(selectYearPlans);
+  const currentPlanData = useAppSelector(selectYearPlans);
+  const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
     // stringify current roadmap
+    // console.log(allPlanData, currentPlanData)
     const roadmapStr = JSON.stringify({
-      planner: collapsePlanner(data),
+      planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     });
 
     // stringified value of an empty roadmap
     const emptyRoadmap = JSON.stringify({
-      planner: [defaultYear()],
+      planners: [{ name: "Peter's Roadmap", content: [defaultYear()] }],
       transfers: [],
     } as SavedRoadmap);
 
@@ -66,11 +70,11 @@ const Planner: FC = () => {
       // if they are different, mark changes as unsaved to enable alert on page leave
       dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
     }
-  }, [data, transfers]);
+  }, [currentPlanData, transfers]);
 
   // remove all unecessary data to store into the database
-  const collapsePlanner = (planner: PlannerData): SavedPlannerData => {
-    const savedPlanner: SavedPlannerData = [];
+  const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
+    const savedPlanner: SavedPlannerYearData[] = [];
     planner.forEach((year) => {
       const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
       year.quarters.forEach((quarter) => {
@@ -83,8 +87,12 @@ const Planner: FC = () => {
     return savedPlanner;
   };
 
+  const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
+    return plans.map((p) => ({ name: p.name, content: collapsePlanner(p.content.yearPlans) }));
+  };
+
   // query the lost information from collapsing
-  const expandPlanner = async (savedPlanner: SavedPlannerData): Promise<PlannerData> => {
+  const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
     let courses: string[] = [];
     // get all courses in the planner
     savedPlanner.forEach((year) =>
@@ -115,6 +123,15 @@ const Planner: FC = () => {
     });
   };
 
+  const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<RoadmapPlan[]> => {
+    return await Promise.all(
+      plans.map(async (p) => {
+        const content = await expandPlanner(p.content);
+        return { name: p.name, content: { yearPlans: content, invalidCourses: [] } };
+      }),
+    );
+  };
+
   const loadRoadmap = async () => {
     let roadmap: SavedRoadmap = null!;
     const localRoadmap = localStorage.getItem('roadmap');
@@ -137,14 +154,14 @@ const Planner: FC = () => {
     }
 
     // expand planner and set the state
-    const planner = await expandPlanner(roadmap.planner);
-    dispatch(setYearPlans(planner));
+    const planners = await expandAllPlanners(roadmap.planners);
+    dispatch(setAllPlans(planners));
     dispatch(setTransfers(roadmap.transfers));
   };
 
   const saveRoadmap = () => {
     const roadmap: SavedRoadmap = {
-      planner: collapsePlanner(data),
+      planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
     let savedAccount = false;
@@ -173,7 +190,7 @@ const Planner: FC = () => {
     let unitCount = 0;
     let courseCount = 0;
     // sum up all courses
-    data.forEach((year) => {
+    currentPlanData.forEach((year) => {
       year.quarters.forEach((quarter) => {
         quarter.courses.forEach((course) => {
           unitCount += course.minUnits;
@@ -197,7 +214,7 @@ const Planner: FC = () => {
     const taken: Set<string> = new Set(transfers.map((transfer) => transfer.name));
     const invalidCourses: InvalidCourseData[] = [];
     const missing = new Set<string>();
-    data.forEach((year, yi) => {
+    currentPlanData.forEach((year, yi) => {
       year.quarters.forEach((quarter, qi) => {
         const taking: Set<string> = new Set(
           quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
@@ -300,13 +317,17 @@ const Planner: FC = () => {
         missingPrerequisites={missingPrerequisites}
       />
       <section className="years">
-        {data.map((year, yearIndex) => {
+        {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
       </section>
       <AddYearPopup
-        placeholderName={'Year ' + (data.length + 1)}
-        placeholderYear={data.length === 0 ? new Date().getFullYear() : data[data.length - 1].startYear + 1}
+        placeholderName={'Year ' + (currentPlanData.length + 1)}
+        placeholderYear={
+          currentPlanData.length === 0
+            ? new Date().getFullYear()
+            : currentPlanData[currentPlanData.length - 1].startYear + 1
+        }
       />
       <ImportTranscriptPopup />
     </div>
