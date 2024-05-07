@@ -32,7 +32,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   return (
     <div className="select-item">
       <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
-        <Button>{plan.name}</Button>
+        <Button className="planner-name-btn">{plan.name}</Button>
       </Dropdown.Item>
       <Button onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
@@ -85,7 +85,18 @@ const RoadmapMultiplan: FC = () => {
 
   return (
     <div className="multi-plan-selector">
-      <Dropdown show={showDropdown} onToggle={(s) => setShowDropdown(s)}>
+      <Dropdown
+        show={showDropdown}
+        onToggle={(s, e) => {
+          const target = e.target as HTMLElement;
+          // Stay open if something in this menu is clicked unless it's switching roadmaps
+          const inMenu =
+            document.querySelector('.multi-plan-selector')!.contains(target) &&
+            !target.classList.contains('planner-name-btn');
+          const inDialog = document.querySelector('.multiplan-modal')?.contains(target) ?? false;
+          setShowDropdown(s || inMenu || inDialog);
+        }}
+      >
         <Dropdown.Toggle id="dropdown-basic">
           <span>{name}</span> {/** @todo this is an active title */}
         </Dropdown.Toggle>
@@ -125,7 +136,7 @@ const RoadmapMultiplan: FC = () => {
         }}
         onHide={() => setIsOpen(false)}
         centered
-        className="ppc-modal"
+        className="ppc-modal multiplan-modal"
       >
         <Modal.Header closeButton>
           <h2>New Roadmap</h2>
@@ -168,7 +179,7 @@ const RoadmapMultiplan: FC = () => {
         }}
         onHide={() => setEditIdx(-1)}
         centered
-        className="ppc-modal"
+        className="ppc-modal multiplan-modal"
       >
         <Modal.Header closeButton>
           <h2>Edit Roadmap</h2>
@@ -211,7 +222,7 @@ const RoadmapMultiplan: FC = () => {
         }}
         onHide={() => setDelIdx(-1)}
         centered
-        className="ppc-modal"
+        className="ppc-modal multiplan-modal"
       >
         <Modal.Header closeButton>
           <h2>Delete Roadmap</h2>
