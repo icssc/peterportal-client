@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/transcript.jpg';
+import changelogImage from '../../asset/multiplanner.png';
 
-const DESCRIPTION = 'You can now import an HTML copy of your unofficial transcript to your roadmap!';
-const LAST_UPDATED = '03/08/2024';
+const DESCRIPTION = 'You are now able to add, edit, and delete multiple 4-year plans within your roadmap!';
+const LAST_UPDATED = '05/06/2024';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
