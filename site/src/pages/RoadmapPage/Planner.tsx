@@ -153,8 +153,14 @@ const Planner: FC = () => {
       return;
     }
 
+    // Support conversions from the old format
+    const loadedData =
+      'planners' in roadmap
+        ? roadmap.planners
+        : [{ name: "Peter's Roadmap", content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
+
     // expand planner and set the state
-    const planners = await expandAllPlanners(roadmap.planners);
+    const planners = await expandAllPlanners(loadedData);
     dispatch(setAllPlans(planners));
     dispatch(setTransfers(roadmap.transfers));
   };
