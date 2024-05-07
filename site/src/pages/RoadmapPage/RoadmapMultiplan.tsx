@@ -18,6 +18,7 @@ import Dropdown from 'react-bootstrap/esm/Dropdown';
 import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { Button } from 'semantic-ui-react';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -39,10 +40,10 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
       <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
         <Button>{plan.name}</Button>
       </Dropdown.Item>
-      <Button variant={'dark'} onClick={editHandler}>
+      <Button onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
       </Button>
-      <Button variant={''} onClick={deleteHandler}>
+      <Button onClick={deleteHandler}>
         <Icon.TrashFill width="16" height="16" />
       </Button>
     </div>
@@ -54,7 +55,8 @@ const RoadmapMultiplan: FC = () => {
   const allPlans = useAppSelector((state) => state.roadmap);
   const [currentPlanIndex, setCurrentPlanIndex] = useState(allPlans.currentPlanIndex);
   const [isOpen, setIsOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
+  // const [isEdit, setIsEdit] = useState(false);
+  const [editIdx, setEditIdx] = useState(-1);
   const [isDelete, setIsDelete] = useState(false);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -83,8 +85,8 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    setIsEdit(false);
-    dispatch(setPlanName({ index: allPlans.currentPlanIndex, name: newPlanName }));
+    dispatch(setPlanName({ index: editIdx, name: newPlanName }));
+    setEditIdx(-1);
   };
 
   return (
@@ -103,73 +105,112 @@ const RoadmapMultiplan: FC = () => {
                 dispatch(setPlanIndex(index));
                 setCurrentPlanIndex(index);
               }}
-              editHandler={() => setIsEdit(true)}
+              editHandler={() => setEditIdx(index)}
               deleteHandler={() => setIsDelete(true)}
             />
           ))}
           {/* <Dropdown.Item onClick={() => }>Edit Plan Name</Dropdown.Item> */}
-          <div className="select-item">
+          <div className="select-item add-item">
             <Dropdown.Item onClick={() => setIsOpen(true)}>
-              <Button>Add Plan</Button>
+              <Button>
+                <Icon.PlusLg width="16" height="16" />
+                New Roadmap
+              </Button>
             </Dropdown.Item>
           </div>
         </Dropdown.Menu>
       </Dropdown>
-      {/* <InputLabel style={{ width: 'min-content' }} id="demo-simple-select-standard-label">
-            {name}
-          </InputLabel> */}
-      {/* A plan selector I guess???? */}
-      {/* <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
-            sx={{ width: 'auto' }}
-            value={''}
-            label={name}
-            onChange={(e) => {
-              const newIndex = +e.target.value;
-              // console.log("selected index", newIndex);
-              dispatch(setPlanIndex(newIndex));
-              setCurrentPlanIndex(newIndex);
+
+      <Modal
+        show={isOpen}
+        onShow={() => {
+          setIsOpen(true);
+          const planCount = allPlans.plans?.length ?? 0;
+          setNewPlanName(`Roadmap ${planCount + 1}`);
+        }}
+        onHide={() => setIsOpen(false)}
+        centered
+        className="ppc-modal"
+      >
+        <Modal.Header closeButton>
+          <h2>New Roadmap</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate className="ppc-modal-form">
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                name="roadmap_name"
+                value={newPlanName}
+                onChange={(e) => setNewPlanName(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  // prevent submitting form (reloads the page)
+                  if (e.key === 'Enter') e.preventDefault();
+                }}
+                maxLength={35}
+                placeholder="Peter's Roadmap"
+              ></Form.Control>
+            </Form.Group>
+          </Form>
+          <Button2
+            variant="primary"
+            onClick={() => {
+              handleSubmitNewPlan();
             }}
           >
-            {allPlans.plans.map((plan, index) => {
-              return (
-                <MenuItem key={plan.name} value={index}>
-                  {plan.name}
-                </MenuItem>
-              );
-            })}
-          </Select> */}
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        PaperProps={{ sx: { width: '30%', height: '20%' } }}
-        style={{ marginTop: 20 }}
+            Create Roadmap
+          </Button2>
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={editIdx !== -1}
+        onShow={() => {
+          setNewPlanName(allPlans.plans[editIdx].name);
+        }}
+        onHide={() => setEditIdx(-1)}
+        centered
+        className="ppc-modal"
       >
-        <DialogTitle>New Plan</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="dense"
-            id="name"
-            label="Plan Name"
-            type="email"
-            fullWidth
-            variant="standard"
-            placeholder="plan name"
-            onChange={(e) => {
-              setNewPlanName(e.target.value);
+        <Modal.Header closeButton>
+          <h2>Edit Roadmap</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate className="ppc-modal-form">
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                name="roadmap_name"
+                value={newPlanName}
+                onChange={(e) => setNewPlanName(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  // prevent submitting form (reloads the page)
+                  if (e.key === 'Enter') e.preventDefault();
+                }}
+                maxLength={35}
+                placeholder="Peter's Roadmap"
+              ></Form.Control>
+            </Form.Group>
+          </Form>
+          <Button2
+            variant="primary"
+            onClick={() => {
+              modifyPlanName();
             }}
-            style={{ width: '100%' }}
-          />
-          <Button style={{ float: 'right' }} onClick={() => handleSubmitNewPlan()}>
-            Submit
-          </Button>
-        </DialogContent>
-      </Dialog>
+          >
+            Save Roadmap
+          </Button2>
+        </Modal.Body>
+      </Modal>
+
       {/* Edit Plan Name */}
       <Dialog
-        open={isEdit}
-        onClose={() => setIsEdit(false)}
+        open={false}
+        onClose={() => setEditIdx(-1)}
         PaperProps={{ sx: { width: '30%', height: '20%' } }}
         style={{ marginTop: 20 }}
       >

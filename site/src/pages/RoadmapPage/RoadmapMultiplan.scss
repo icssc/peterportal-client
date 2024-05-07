@@ -5,6 +5,11 @@
     padding: 4px 8px;
     align-items: center;
   }
+  .add-item .button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
   .dropdown-item {
     display: contents;
     color: inherit;
