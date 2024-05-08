@@ -1,11 +1,20 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
+import type { Session, SessionData } from 'express-session';
 
-export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
+interface CustomRequest extends Request {
+  // session: {
+  //   passport: PassportData;
+  // }
+  session: Session & Partial<SessionData>;
+}
+
+export const createContext = (req: CustomRequest, res: trpcExpress.CreateExpressContextOptions['res']) => ({
   req,
-  session: (req as Express.Request).session,
+  session: req.session,
   res,
 });
+
 type Context = Awaited<ReturnType<typeof createContext>>;
 const trpc = initTRPC.context<Context>().create();
 export const router = trpc.router;
