@@ -94,7 +94,7 @@ router.get('/', async function (req, res) {
     courseID,
     professorID,
     userID,
-    _id: reviewID === undefined ? undefined : reviewID,
+    _id: reviewID,
     verified: verified === undefined ? undefined : verified === 'true' ? true : false,
   };
 
