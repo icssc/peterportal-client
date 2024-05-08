@@ -1,10 +1,17 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
-import type { PassportData } from 'express-session';
 
 interface CustomRequest extends Request {
   session: {
-    passport: PassportData;
+    passport: {
+      admin: boolean;
+      user: {
+        id: string;
+        email: string;
+        name: string;
+        picture: string;
+      };
+    };
   };
 }
 
