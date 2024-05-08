@@ -1,6 +1,10 @@
 [data-theme='dark'] {
-  .quarter .quarter-header .quarter-title {
+  .quarter .quarter-header .quarter-title,
+  .quarter .quarter-add-course {
     color: #eee;
+  }
+  .plus-icon {
+    fill: #eee;
   }
 
   .quarter-menu-btn:hover,
@@ -17,6 +21,7 @@
   flex: 1 1 30%;
   height: fit-content;
   margin: 0.75rem;
+  position: relative;
 
   .quarter-header {
     display: flex;
@@ -30,10 +35,11 @@
       padding: 1rem 0rem 0rem 2rem;
     }
 
-    .edit-btn {
-      width: 5%;
-      margin-top: 10px;
-      margin-right: 1.5rem;
+    .quarter-edit-btn {
+      background: none;
+      border: none;
+      margin-top: 0.25rem;
+      margin-right: 1.25rem;
     }
   }
 
@@ -41,6 +47,11 @@
     padding: 0rem 0rem 1rem 2rem;
     color: #808080;
     font-size: 16px;
+  }
+
+  .quarter-add-course {
+    color: #202e47;
+    font-size: 15px;
   }
 }
 
@@ -51,6 +62,14 @@
   border: 0px;
   background: transparent;
   padding: 0;
+}
+
+.quarter-menu-popover {
+  z-index: 1;
+}
+
+.plus-icon {
+  fill: #000000;
 }
 
 .red-menu-btn,

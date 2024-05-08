@@ -1,6 +1,6 @@
 import { useState, useEffect, FC } from 'react';
 import { Icon, Popup, Grid, Label } from 'semantic-ui-react';
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { List } from 'react-bootstrap-icons';
@@ -12,27 +12,17 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import { isDesktop, isMobile } from 'react-device-detect';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const location = useLocation();
   const [week, setWeek] = useState('');
-
-  const splitLocation = location.pathname.split('/');
-  const coursesActive =
-    splitLocation[1] === '' ||
-    (splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'courses') ||
-    (splitLocation.length > 1 && splitLocation[1] == 'course');
-  const professorsActive =
-    (splitLocation.length > 0 && splitLocation[splitLocation.length - 1] == 'professors') ||
-    (splitLocation.length > 1 && splitLocation[1] == 'professor');
 
   useEffect(() => {
     // Get the current week data
     axios.get<WeekData>('/api/schedule/api/currentWeek').then((res) => {
-      setWeek(res.data.display);
+      /** @todo make this less code-smelly */
+      setWeek(res.data.display.split(' • ')[0]);
     });
   }, []);
 
@@ -45,37 +35,9 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Hamburger Menu */}
-          {isMobile && (
-            <button className="navbar-menu" onClick={toggleMenu}>
-              <List className="navbar-menu-icon" size={'3vh'} />
-            </button>
-          )}
-
-          {/* Toggle Course and Professor */}
-          {(coursesActive || professorsActive) && (
-            <div className="navbar-toggle">
-              <div className="desktop-toggle">
-                <div className={`navbar-toggle-item ${coursesActive ? 'active' : ''}`}>
-                  <Link to={'/search/courses'}>Courses</Link>
-                </div>
-                <div className={`navbar-toggle-item ${professorsActive ? 'active' : ''}`}>
-                  <Link to={'/search/professors'}>Professors</Link>
-                </div>
-              </div>
-              <div className="mobile-toggle">
-                {coursesActive === true && (
-                  <div className={`navbar-toggle-item active`}>
-                    <Link to={'/search/professors'}>Professors</Link>
-                  </div>
-                )}
-                {professorsActive === true && (
-                  <div className={`navbar-toggle-item active`}>
-                    <Link to={'/search/courses'}>Courses</Link>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          <button className="navbar-menu" onClick={toggleMenu}>
+            <List className="navbar-menu-icon" size="32px" />
+          </button>
         </div>
 
         {/* Logo */}
@@ -139,7 +101,7 @@ const AppHeader: FC = () => {
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {week}
           </p>
-          {isDesktop && <Profile />}
+          <Profile />
         </div>
       </div>
     </header>

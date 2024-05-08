@@ -3,19 +3,18 @@
 */
 
 import express from 'express';
-import { ObjectId } from 'mongodb';
-import { COLLECTION_NAMES, addDocument, getDocuments, deleteDocument, deleteDocuments } from '../helpers/mongo';
 import { GenericObject } from '../types/types';
-
+import Report from '../models/report';
 const router = express.Router();
 
 /**
  * Get all reports
  */
 router.get('/', async (req, res) => {
+  // get all reports in collection
+  const reports = await Report.find({});
   if (!req.session.passport) return res.status(401).send('Unathenticated');
   if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
-  const reports = await getDocuments(COLLECTION_NAMES.REPORTS, {}); // get all reports in collection
 
   res.json(reports);
 });
@@ -25,8 +24,8 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   console.log(`Adding Report: ${JSON.stringify(req.body)}`);
-
-  await addDocument(COLLECTION_NAMES.REPORTS, req.body);
+  const report = new Report(req.body);
+  await report.save();
 
   res.json(req.body);
 });
@@ -40,9 +39,7 @@ router.delete('/', async (req, res) => {
   if (!req.session.passport.admin) return res.status(403).send('Unauthorized');
   if (req.body.id) {
     console.log(`Deleting report ${req.body.id}`);
-    status = await deleteDocument(COLLECTION_NAMES.REPORTS, {
-      _id: new ObjectId(req.body.id),
-    });
+    status = await Report.deleteOne({ _id: req.body.id });
   } else {
     console.log(`Deleting reports with reviewID ${req.body.reviewID}`);
     const query: GenericObject = {};
@@ -50,7 +47,7 @@ router.delete('/', async (req, res) => {
 
     if (Object.keys(query).length === 0) return; // avoid deleting all documents if no filters are specified
 
-    status = await deleteDocuments(COLLECTION_NAMES.REPORTS, query);
+    status = await Report.deleteMany(query);
   }
 
   res.json(status);

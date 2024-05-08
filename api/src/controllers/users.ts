@@ -4,9 +4,9 @@
 
 import express, { Request, Response } from 'express';
 import passport from 'passport';
-import { COLLECTION_NAMES, addDocument, containsID, getDocuments, updateDocument } from '../helpers/mongo';
 import { SESSION_LENGTH } from '../config/constants';
 import { User } from 'express-session';
+import Preference from '../models/preference';
 
 const router = express.Router();
 
@@ -24,13 +24,9 @@ router.get('/preferences', async (req, res) => {
   }
 
   const userID = req.session.passport.user.id;
-  const preferences = await getDocuments(COLLECTION_NAMES.PREFERENCES, { _id: userID });
+  const preference = await Preference.findOne({ userID: userID });
 
-  if (preferences.length > 0) {
-    res.json(preferences[0]);
-  } else {
-    res.json({ error: 'No preferences found' });
-  }
+  preference ? res.json(preference) : res.json({ error: 'No preferences found' });
 });
 
 interface UserPreferences {
@@ -46,8 +42,8 @@ router.post('/preferences', async (req, res) => {
   const userID = req.session.passport.user.id;
 
   // make user's preference doc if it doesn't exist
-  if (!(await containsID(COLLECTION_NAMES.PREFERENCES, userID))) {
-    await addDocument(COLLECTION_NAMES.PREFERENCES, { _id: userID });
+  if (!(await Preference.exists({ userID }))) {
+    await Preference.create({ userID, theme: req.body.theme });
   }
 
   // grab valid preferences from request body
@@ -57,7 +53,7 @@ router.post('/preferences', async (req, res) => {
   }
 
   // set the preferences
-  await updateDocument(COLLECTION_NAMES.PREFERENCES, { _id: userID }, { $set: preferences });
+  await Preference.updateOne({ userID }, preferences);
 
   // echo back body
   res.json(req.body);
@@ -114,7 +110,7 @@ router.get('/auth/google/callback', function (req, res) {
           if (err) console.error(err);
           else {
             // check if user is an admin
-            const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS);
+            const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
             if (allowedUsers.includes(user.email)) {
               console.log('AUTHORIZED AS ADMIN');
               req.session.passport!.admin = true;

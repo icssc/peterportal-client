@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import { ReportData } from '../../types/types';
 import Modal from 'react-bootstrap/Modal';
-import { isMobile } from 'react-device-detect';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -63,15 +62,10 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         />
       </Form.Group>
       <div className="d-flex justify-content-end">
-        <Button
-          className="py-2 px-4 mr-3"
-          variant="outline-secondary"
-          size={isMobile ? 'sm' : undefined}
-          onClick={props.closeForm}
-        >
+        <Button className="py-2 px-4 mr-3" variant="outline-secondary" onClick={props.closeForm}>
           Cancel
         </Button>
-        <Button className="py-2 px-4" type="submit" variant="secondary" size={isMobile ? 'sm' : undefined}>
+        <Button className="py-2 px-4" type="submit" variant="secondary">
           Submit
         </Button>
       </div>

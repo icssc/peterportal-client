@@ -90,7 +90,7 @@ export interface PlannerYearData {
 }
 
 export interface PlannerQuarterData {
-  name: string;
+  name: QuarterName;
   courses: CourseGQLData[];
 }
 
@@ -111,6 +111,8 @@ export interface SavedPlannerQuarterData {
 export interface YearIdentifier {
   yearIndex: number;
 }
+
+export type QuarterName = 'Fall' | 'Winter' | 'Spring' | 'Summer1' | 'Summer2' | 'Summer10wk';
 
 // Specify the location of a quarter
 export interface QuarterIdentifier extends YearIdentifier {
