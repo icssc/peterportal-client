@@ -1,12 +1,11 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
-import type { Session, SessionData } from 'express-session';
+import type { PassportData } from 'express-session';
 
 interface CustomRequest extends Request {
-  // session: {
-  //   passport: PassportData;
-  // }
-  session: Session & Partial<SessionData>;
+  session: {
+    passport: PassportData;
+  };
 }
 
 export const createContext = (req: CustomRequest, res: trpcExpress.CreateExpressContextOptions['res']) => ({
