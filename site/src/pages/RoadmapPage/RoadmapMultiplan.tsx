@@ -55,6 +55,8 @@ const RoadmapMultiplan: FC = () => {
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
+
   // name: name of the plan, content: stores the content of plan
   // const { name, content } = allPlans.plans[currentPlanIndex];
   const { name } = allPlans.plans[currentPlanIndex];
@@ -72,6 +74,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
+    if (isDuplicateName()) return alert('A plan with that name already exists');
     setIsOpen(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
@@ -80,6 +83,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
+    if (isDuplicateName()) return alert('A plan with that name already exists');
     dispatch(setPlanName({ index: editIdx, name: newPlanName }));
     setEditIdx(-1);
   };
