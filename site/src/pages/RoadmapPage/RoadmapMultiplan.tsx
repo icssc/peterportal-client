@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
+  defaultPlan,
   deleteRoadmapPlan,
   initialPlanState,
   RoadmapPlan,
@@ -156,7 +157,7 @@ const RoadmapMultiplan: FC = () => {
                   if (e.key === 'Enter') e.preventDefault();
                 }}
                 maxLength={35}
-                placeholder="Peter's Roadmap"
+                placeholder={defaultPlan.name}
               ></Form.Control>
             </Form.Group>
           </Form>
@@ -199,7 +200,7 @@ const RoadmapMultiplan: FC = () => {
                   if (e.key === 'Enter') e.preventDefault();
                 }}
                 maxLength={35}
-                placeholder="Peter's Roadmap"
+                placeholder={defaultPlan.name}
               ></Form.Control>
             </Form.Group>
           </Form>

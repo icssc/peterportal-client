@@ -44,7 +44,7 @@ interface SetPlanNamePayload {
 }
 
 // default plan to display for uesr
-const defaultPlan: RoadmapPlan = {
+export const defaultPlan: RoadmapPlan = {
   name: "Peter's Roadmap",
   content: initialPlanState,
 };
@@ -384,8 +384,6 @@ export const {
   setPlanName,
   setUnsavedChanges,
 } = roadmapSlice.actions;
-
-// export const { setRoadmapPlan, addRoadmapPlan, deleteRoadmapPlan } = roadmapMultiplePlanSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectYearPlans = (state: RootState) =>

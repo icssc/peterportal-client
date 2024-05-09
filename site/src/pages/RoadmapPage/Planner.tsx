@@ -14,6 +14,7 @@ import {
   selectAllPlans,
   RoadmapPlan,
   setAllPlans,
+  defaultPlan,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import {
@@ -45,7 +46,6 @@ const Planner: FC = () => {
 
   useEffect(() => {
     // stringify current roadmap
-    // console.log(allPlanData, currentPlanData)
     const roadmapStr = JSON.stringify({
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
@@ -53,7 +53,7 @@ const Planner: FC = () => {
 
     // stringified value of an empty roadmap
     const emptyRoadmap = JSON.stringify({
-      planners: [{ name: "Peter's Roadmap", content: [defaultYear()] }],
+      planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
       transfers: [],
     } as SavedRoadmap);
 
@@ -157,7 +157,7 @@ const Planner: FC = () => {
     const loadedData =
       'planners' in roadmap
         ? roadmap.planners
-        : [{ name: "Peter's Roadmap", content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
+        : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
 
     // expand planner and set the state
     const planners = await expandAllPlanners(loadedData);
