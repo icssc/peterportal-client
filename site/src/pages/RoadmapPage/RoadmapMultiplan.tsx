@@ -133,7 +133,9 @@ const RoadmapMultiplan: FC = () => {
         onShow={() => {
           setIsOpen(true);
           const planCount = allPlans.plans?.length ?? 0;
-          setNewPlanName(`Roadmap ${planCount + 1}`);
+          let newIdx = planCount + 1;
+          while (allPlans.plans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
+          setNewPlanName(`Roadmap ${newIdx}`);
         }}
         onHide={() => setIsOpen(false)}
         centered
