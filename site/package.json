@@ -4,9 +4,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@apollo/client": "^3.3.15",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
     "@nivo/bar": "^0.84.0",
     "@nivo/core": "^0.84.0",
     "@nivo/pie": "^0.84.0",
