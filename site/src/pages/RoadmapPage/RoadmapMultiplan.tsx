@@ -98,8 +98,8 @@ const RoadmapMultiplan: FC = () => {
           setShowDropdown(s || inMenu || inDialog);
         }}
       >
-        <Dropdown.Toggle id="dropdown-basic">
-          <span>{name}</span> {/** @todo this is an active title */}
+        <Dropdown.Toggle id="dropdown-basic" onClick={() => setShowDropdown(!showDropdown)}>
+          <span>{name}</span>
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {allPlans.plans.map((plan, index) => (
