@@ -74,6 +74,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
+    if (!newPlanName) return alert('Name cannot be empty');
     if (isDuplicateName()) return alert('A plan with that name already exists');
     setIsOpen(false);
     addNewPlan(newPlanName);
@@ -83,6 +84,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
+    if (!newPlanName) return alert('Name cannot be empty');
     if (isDuplicateName()) return alert('A plan with that name already exists');
     dispatch(setPlanName({ index: editIdx, name: newPlanName }));
     setEditIdx(-1);
