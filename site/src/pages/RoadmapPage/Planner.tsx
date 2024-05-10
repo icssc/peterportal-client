@@ -110,7 +110,6 @@ const Planner: FC = () => {
         dispatch(setInvalidCourses(invalid));
       });
 
-      // TODO: idk if this works properly for multiplanner
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
       dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
