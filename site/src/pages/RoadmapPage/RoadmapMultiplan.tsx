@@ -121,7 +121,6 @@ const RoadmapMultiplan: FC = () => {
               deleteHandler={() => setDelIdx(index)}
             />
           ))}
-          {/* <Dropdown.Item onClick={() => }>Edit Plan Name</Dropdown.Item> */}
           <div className="select-item add-item">
             <Dropdown.Item onClick={() => setIsOpen(true)}>
               <Button>
