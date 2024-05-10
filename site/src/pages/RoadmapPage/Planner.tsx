@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React, { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import './Planner.scss';
@@ -12,27 +13,14 @@ import {
   setTransfers,
   setUnsavedChanges,
   selectAllPlans,
-  RoadmapPlan,
   setAllPlans,
   defaultPlan,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
-import {
-  InvalidCourseData,
-  SavedRoadmap,
-  PlannerData,
-  PlannerYearData,
-  PlannerQuarterData,
-  SavedPlannerData,
-  SavedPlannerYearData,
-  SavedPlannerQuarterData,
-  BatchCourseData,
-  MongoRoadmap,
-} from '../../types/types';
-import { searchAPIResults } from '../../helpers/util';
-import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
-import { defaultYear, normalizeQuarterName } from '../../helpers/planner';
+import { SavedRoadmap, MongoRoadmap } from '../../types/types';
+import { defaultYear } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
+import { collapseAllPlanners, loadRoadmap, validatePlanner } from './planner';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -43,127 +31,10 @@ const Planner: FC = () => {
   const transfers = useAppSelector((state) => state.roadmap.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
-
-  useEffect(() => {
-    // stringify current roadmap
-    const roadmapStr = JSON.stringify({
-      planners: collapseAllPlanners(allPlanData),
-      transfers: transfers,
-    });
-
-    // stringified value of an empty roadmap
-    const emptyRoadmap = JSON.stringify({
-      planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
-      transfers: [],
-    } as SavedRoadmap);
-
-    // if first render and current roadmap is empty, load from local storage
-    if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap();
-    }
-    // validate planner every time something changes
-    else {
-      validatePlanner();
-
-      // TODO: idk if this works properly for multiplanner
-      // check current roadmap against last-saved roadmap in local storage
-      // if they are different, mark changes as unsaved to enable alert on page leave
-      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
-    }
-  }, [currentPlanData, transfers]);
-
-  // remove all unecessary data to store into the database
-  const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
-    const savedPlanner: SavedPlannerYearData[] = [];
-    planner.forEach((year) => {
-      const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
-      year.quarters.forEach((quarter) => {
-        const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-        savedQuarter.courses = quarter.courses.map((course) => course.id);
-        savedYear.quarters.push(savedQuarter);
-      });
-      savedPlanner.push(savedYear);
-    });
-    return savedPlanner;
-  };
-
-  const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
-    return plans.map((p) => ({ name: p.name, content: collapsePlanner(p.content.yearPlans) }));
-  };
-
-  // query the lost information from collapsing
-  const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-    let courses: string[] = [];
-    // get all courses in the planner
-    savedPlanner.forEach((year) =>
-      year.quarters.forEach((quarter) => {
-        courses = courses.concat(quarter.courses);
-      }),
-    );
-    // get the course data for all courses
-    let courseLookup: BatchCourseData = {};
-    // only send request if there are courses
-    if (courses.length > 0) {
-      courseLookup = (await searchAPIResults('courses', courses)) as BatchCourseData;
-    }
-
-    return new Promise((resolve) => {
-      const planner: PlannerData = [];
-      savedPlanner.forEach((savedYear) => {
-        const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
-        savedYear.quarters.forEach((savedQuarter) => {
-          const transformedName = normalizeQuarterName(savedQuarter.name);
-          const quarter: PlannerQuarterData = { name: transformedName, courses: [] };
-          quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
-          year.quarters.push(quarter);
-        });
-        planner.push(year);
-      });
-      resolve(planner);
-    });
-  };
-
-  const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<RoadmapPlan[]> => {
-    return await Promise.all(
-      plans.map(async (p) => {
-        const content = await expandPlanner(p.content);
-        return { name: p.name, content: { yearPlans: content, invalidCourses: [] } };
-      }),
-    );
-  };
-
-  const loadRoadmap = async () => {
-    let roadmap: SavedRoadmap = null!;
-    const localRoadmap = localStorage.getItem('roadmap');
-    // if logged in
-    if (cookies.user !== undefined) {
-      // get data from account
-      const request = await axios.get<MongoRoadmap>('/api/roadmap/get', { params: { id: cookies.user.id } });
-      // if a roadmap is found
-      if (request.data.roadmap !== undefined) {
-        roadmap = request.data.roadmap;
-      }
-    }
-    // check local storage next
-    if (!roadmap && localRoadmap) {
-      roadmap = JSON.parse(localRoadmap);
-    }
-    // no saved planner
-    if (!roadmap) {
-      return;
-    }
-
-    // Support conversions from the old format
-    const loadedData =
-      'planners' in roadmap
-        ? roadmap.planners
-        : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
-
-    // expand planner and set the state
-    const planners = await expandAllPlanners(loadedData);
-    dispatch(setAllPlans(planners));
-    dispatch(setTransfers(roadmap.transfers));
-  };
+  const roadmapStr = JSON.stringify({
+    planners: collapseAllPlanners(allPlanData),
+    transfers: transfers,
+  });
 
   const saveRoadmap = () => {
     const roadmap: SavedRoadmap = {
@@ -215,102 +86,37 @@ const Planner: FC = () => {
     return { unitCount, courseCount };
   };
 
-  const validatePlanner = () => {
-    // store courses that have been taken
-    const taken: Set<string> = new Set(transfers.map((transfer) => transfer.name));
-    const invalidCourses: InvalidCourseData[] = [];
-    const missing = new Set<string>();
-    currentPlanData.forEach((year, yi) => {
-      year.quarters.forEach((quarter, qi) => {
-        const taking: Set<string> = new Set(
-          quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
-        );
-        quarter.courses.forEach((course, ci) => {
-          // if has prerequisite
-          if (course.prerequisiteTree) {
-            const required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
-            // prerequisite not fulfilled, has some required classes to take
-            if (required.size > 0) {
-              invalidCourses.push({
-                location: {
-                  yearIndex: yi,
-                  quarterIndex: qi,
-                  courseIndex: ci,
-                },
-                required: Array.from(required),
-              });
+  useEffect(() => {
+    // stringify current roadmap
 
-              required.forEach((course) => {
-                missing.add(course);
-              });
-            }
-          }
-        });
-        // after the quarter is over, add the courses into taken
-        taking.forEach((course) => taken.add(course));
+    // stringified value of an empty roadmap
+    const emptyRoadmap = JSON.stringify({
+      planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
+      transfers: [],
+    } as SavedRoadmap);
+
+    // if first render and current roadmap is empty, load from local storage
+    if (isFirstRenderer && roadmapStr === emptyRoadmap) {
+      loadRoadmap(cookies, (planners, roadmap) => {
+        dispatch(setAllPlans(planners));
+        dispatch(setTransfers(roadmap.transfers));
       });
-    });
-
-    // set missing courses
-    setMissingPrerequisites(missing);
-
-    // set the invalid courses
-    dispatch(setInvalidCourses(invalidCourses));
-  };
-
-  type PrerequisiteNode = Prerequisite | PrerequisiteTree;
-
-  // returns set of courses that need to be taken to fulfill requirements
-  const validateCourse = (
-    taken: Set<string>,
-    prerequisite: PrerequisiteNode,
-    taking: Set<string>,
-    corequisite: string,
-  ): Set<string> => {
-    // base case just a course
-    if ('prereqType' in prerequisite) {
-      const id = prerequisite?.courseId ?? prerequisite?.examName ?? '';
-      // already taken prerequisite or is currently taking the corequisite
-      if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
-        return new Set();
-      }
-      // need to take this prerequisite still
-      else {
-        return new Set([id]);
-      }
     }
-    // has nested prerequisites
+    // validate planner every time something changes
     else {
-      // needs to satisfy all nested
-      if (prerequisite.AND) {
-        const required: Set<string> = new Set();
-        prerequisite.AND.forEach((nested) => {
-          // combine all the courses that are required
-          validateCourse(taken, nested, taking, corequisite).forEach((course) => required.add(course));
-        });
-        return required;
-      }
-      // only need to satisfy one nested
-      else if (prerequisite.OR) {
-        const required: Set<string> = new Set();
-        let satisfied = false;
-        prerequisite.OR.forEach((nested) => {
-          // combine all the courses that are required
-          const courses = validateCourse(taken, nested, taking, corequisite);
-          // if one is satisfied, no other courses are required
-          if (courses.size == 0) {
-            satisfied = true;
-            return;
-          }
-          courses.forEach((course) => required.add(course));
-        });
-        return satisfied ? new Set() : required;
-      } else {
-        // should never reach here
-        return new Set();
-      }
+      validatePlanner(transfers, currentPlanData, (missing, invalid) => {
+        // set missing courses
+        setMissingPrerequisites(missing);
+        // set the invalid courses
+        dispatch(setInvalidCourses(invalid));
+      });
+
+      // TODO: idk if this works properly for multiplanner
+      // check current roadmap against last-saved roadmap in local storage
+      // if they are different, mark changes as unsaved to enable alert on page leave
+      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
     }
-  };
+  }, [cookies, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
