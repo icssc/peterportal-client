@@ -13,10 +13,25 @@
   #title {
     font-size: 1.5em;
   }
+
+  .planner-left {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+    align-items: center;
+    gap: 8px 12px;
+  }
+
+  .planner-right {
+    @media (min-width: 860px) {
+      button {
+        white-space: nowrap;
+      }
+    }
+  }
 }
 
 #planner-stats {
-  margin-left: 1rem;
   font-size: 1em;
 }
 
