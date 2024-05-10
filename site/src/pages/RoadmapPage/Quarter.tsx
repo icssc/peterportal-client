@@ -23,7 +23,9 @@ interface QuarterProps {
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = quarterDisplayNames[data.name];
-  const invalidCourses = useAppSelector((state) => state.roadmap.invalidCourses);
+  const invalidCourses = useAppSelector(
+    (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
+  );
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
