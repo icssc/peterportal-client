@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import axios from 'axios';
 import './Planner.scss';
@@ -20,7 +19,7 @@ import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap, MongoRoadmap } from '../../types/types';
 import { defaultYear } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
-import { collapseAllPlanners, loadRoadmap, validatePlanner } from './planner';
+import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
