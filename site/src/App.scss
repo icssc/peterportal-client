@@ -1,19 +1,148 @@
+button {
+  color: inherit;
+}
+
 .app-body {
-    display: flex;
-    height: 92vh;
-    overflow: hidden;
+  display: flex;
+  height: calc(100% - 72px);
+  overflow: hidden;
 }
 
 .app-content {
-    display: flex;
-    flex-direction: column;
-    padding-top: 3vh;
-    padding-left: 3vw;
-    padding-right: 3vw;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background-color: var(--peterportal-gray-blue);
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 36px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--background);
+  box-sizing: border-box;
+}
+
+.ppc-btn {
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  margin: 4px;
+
+  &.btn-primary {
+    color: var(--ring-road-white);
+    border-color: var(--peterportal-primary-color-1);
+    background-color: var(--peterportal-primary-color-1);
+    &:hover,
+    &:focus {
+      background-color: var(--peterportal-primary-color-1);
+    }
+  }
+}
+
+.ppc-modal {
+  font-size: 18px;
+
+  .modal-header {
+    align-items: center;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .modal-content {
+    border: none;
+    background-color: var(--overlay2);
+    padding: 4px 8px 8px;
+  }
+  .modal-dialog {
+    max-width: 400px;
+  }
+  h2 {
+    margin-bottom: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  button.close {
+    margin: -4px -4px;
+    padding: 4px 8px;
+    font-size: 32px;
+    overflow: hidden;
+  }
+
+  .form-group {
+    > label {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    input.form-group-input {
+      font-size: 16px;
+      padding: 4px 12px;
+    }
+    input.form-check-input {
+      width: 1.2em;
+      height: 1.2em;
+      margin-top: 0.15em;
+      transition: background-color 0.2s;
+    }
+    .form-check {
+      padding-block: 2px;
+      align-items: center;
+      .form-check-label {
+        margin-left: 12px;
+      }
+    }
+    input[type='file'] {
+      font-size: 16px;
+    }
+  }
+
+  a {
+    color: #1b76b4;
+  }
+  button.btn-primary {
+    border-color: var(--peterportal-primary-color-1);
+    background-color: var(--peterportal-primary-color-1);
+  }
+}
+
+[data-theme='dark'] .ppc-modal a {
+  color: var(--peterportal-primary-color-2);
+}
+
+[data-theme='dark'] {
+  .ppc-modal-form {
+    .form-control,
+    .form-control:focus {
+      background-color: var(--overlay1);
+    }
+  }
+}
+
+.ppc-modal-form-label {
+  font-weight: bold;
+}
+
+.form-check-input {
+  --bs-form-check-bg: var(--overlay1);
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--bs-form-check-bg);
+  background-image: var(--bs-form-check-bg-image);
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 1px solid #8888;
+  border-radius: 0.25rem;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.25em;
+  transition: box-shadow 0.2s;
+  &:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem #0d6efd40;
+    outline: 0;
+  }
+  &:checked {
+    background-color: var(--peterportal-primary-color-1);
+    border-color: var(--peterportal-primary-color-1);
+    &[type='checkbox'] {
+      --bs-form-check-bg-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
+    }
+  }
 }

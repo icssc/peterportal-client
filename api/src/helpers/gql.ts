@@ -1,86 +1,86 @@
 export function getCourseQuery(courseIDs: string[]) {
-    // start of query 
-    let result = 'query {';
-    
-    // request fields for each course
-    courseIDs.forEach((courseID, i) => {
-        // use number id here because cannot use special character names
-        result += `
-        ${'_' + i}: course(id: "${courseID}"){
+  // start of query
+  let result = 'query {';
+
+  // request fields for each course
+  courseIDs.forEach((courseID, i) => {
+    // use number id here because cannot use special character names
+    result += `
+        ${'_' + i}: course(courseId: "${courseID}") {
             id
             department
-            number
+            courseNumber
             school
             title
-            course_level
-            department_alias
-            units
+            courseLevel
+            minUnits
+            maxUnits
             description
-            department_name
-            instructor_history{
-                name
-                ucinetid
-                shortened_name
+            departmentName
+            instructors {
+              ucinetid
+              name
+              shortenedName
             }
-            prerequisite_tree
-            prerequisite_list {
-                id
-                department
-                number
-                title
+            prerequisiteTree
+            prerequisites {
+              id
+              department
+              courseNumber
+              title
             }
-            prerequisite_text
-            prerequisite_for {
-                id
-                department
-                number
-                title        
+            prerequisiteText
+            dependencies {
+              id
+              department
+              courseNumber
+              title
             }
             repeatability
             concurrent
-            same_as
+            sameAs
             restriction
             overlap
-            corequisite
-            ge_list
-            ge_text
+            corequisites
+            geList
+            geText
             terms
         },
-        `
-    })
-    
-    // close off query
-    result += '}';
-    return result;
+        `;
+  });
+
+  // close off query
+  result += '}';
+  return result;
 }
 
 export function getProfessorQuery(ucinetids: string[]) {
-    // start of query 
-    let result = 'query {';
-    
-    // request fields for each course
-    ucinetids.forEach((ucinetid, i) => {
-        // use number id here because cannot use special character names
-        result += `
+  // start of query
+  let result = 'query {';
+
+  // request fields for each course
+  ucinetids.forEach((ucinetid, i) => {
+    // use number id here because cannot use special character names
+    result += `
         ${'_' + i}: instructor(ucinetid: "${ucinetid}"){
             name
-            shortened_name
+            shortenedName
             ucinetid
             title
             department
             schools
-            related_departments
-            course_history {
-                id
-                department
-                number
-                title
+            relatedDepartments
+            courses {
+              id
+              department
+              courseNumber
+              title
             }
         },
-        `
-    })
-    
-    // close off query
-    result += '}';
-    return result;
+        `;
+  });
+
+  // close off query
+  result += '}';
+  return result;
 }

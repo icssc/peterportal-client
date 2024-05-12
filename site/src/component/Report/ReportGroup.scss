@@ -1,48 +1,41 @@
 .report-group {
-    background-color: var(--peterportal-gray-blue);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    margin-bottom: 3vh;
-
-    label {
-        font-weight: bold;
-    }
+  background-color: var(--overlay2);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin-bottom: 3vh;
 }
 
 .report-group-identifier {
-    margin: 0;
-    // font-weight: bold;
-    font-size: x-large;
-    // a {
-    //   color: black;
-    // }
+  margin: 0;
+  font-size: x-large;
+}
+
+.report-group-label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .report-group-user-display {
-    font-size: medium;
+  font-size: medium;
 }
 
 .report-group-content {
-    margin: 1vh 0;
-    label {
-        font-weight: bold;
-    }
-    p {
-        font-style: italic;
-        margin-left: 1vw;
-    }
+  margin: 1vh 0;
+  p:nth-child(2) {
+    font-style: italic;
+    margin-left: 1vw;
+  }
 }
 
 .report-group-subreports-container {
-    background-color: white;
-    border-radius: var(--border-radius);
-    padding: 1rem;
+  background-color: var(--overlay3);
+  border-radius: var(--border-radius);
+  padding: 1rem;
 }
 
 .report-group-footer {
-    flex-direction: row;
-    width: 100%;
-    margin-top: 15px;
-    align-items: flex-end;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 15px;
+  align-items: flex-end;
 }
-

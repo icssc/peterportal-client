@@ -1,29 +1,6 @@
-.add-year-btn {
-  background-color: transparent;
-  color: var(--petr-gray);
-  border: none;
-  display: block;
-  margin: 0.5rem;
-}
-
-.add-year-btn:hover,
-.add-year-btn:focus,
-.add-year-btn:active {
-  background-color: transparent;
-  color: var(--petr-gray);
-}
-
 .add-year-icon {
-  margin-right: 10px;
-}
-
-.add-year-text {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.add-year-form-label {
-  font-weight: bold;
+  margin-right: 4px;
+  transform: scale(1.5);
 }
 
 .popup-btn {
@@ -31,8 +8,4 @@
   background-color: var(--peterportal-primary-color-1);
   color: var(--ring-road-white);
   border-radius: 1.25rem;
-}
-
-h5 {
-  font-weight: bold;
 }

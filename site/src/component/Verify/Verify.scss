@@ -1,17 +1,16 @@
 .verify-container {
-    padding: 2rem;
-    background-color: white;
-    border-radius: var(--border-radius);
+  padding: 2rem;
+  background-color: var(--overlay1);
+  border-radius: var(--border-radius);
 }
 
 .verify {
-    background-color: white;
-    border-radius: var(--border-radius);
-    margin-bottom: 3vh;
+  border-radius: var(--border-radius);
+  margin-bottom: 3vh;
 
-    .verify-footer {
-        flex-direction: row;
-        width: 100%;
-        align-items: flex-end;
-    }
+  .verify-footer {
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-end;
+  }
 }

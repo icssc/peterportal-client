@@ -1,25 +1,41 @@
 .sidebar {
   position: fixed;
-  width: 20vw;
+  width: 300px;
   height: 100vh;
   top: 0;
   z-index: 400;
-  background-color: white;
+  background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-  .sidebar-close {
-    padding: 2vw;
+  .button-container {
     width: 100%;
-
-    .sidebar-close-icon {
-      width: 3vh;
-      height: 3vh;
-      float: right;
-      cursor: pointer;
+    height: 60px;
+    margin: 6px 0 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 26px;
+    img {
+      --is-dark: 0;
+      transform-origin: 0 50%;
+      transform: scale(1.1);
+      filter: brightness(0) invert(var(--is-dark));
+      -webkit-filter: brightness(0) invert(var(--is-dark));
     }
+  }
+  .sidebar-close {
+    margin-left: auto;
+    border: none;
+    background: none;
+    padding: 0;
   }
 
   .sidebar-profile {
@@ -42,63 +58,128 @@
     }
   }
 
-  .sidebar-links {
-    min-width: 60%;
-    margin-bottom: 20vh;
+  .sidebar-links ul li {
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
 
-    ul li {
-      a {
-        color: black;
-        display: flex;
-        grid-gap: 10px;
-        padding: 10px;
-      }
-      a:hover {
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 5px;
-      }
+    a,
+    button {
+      transition: background-color 0.2s;
+    }
+    a {
+      color: var(--text);
+      display: flex;
+      gap: 16px;
+      padding: 10px;
+    }
+    a:hover,
+    button:hover {
+      background: #9992;
+      border-radius: 5px;
     }
   }
 
-  .sidebar-login {
-    margin-bottom: 5vh; 
+  &:not(.mini) {
+    box-shadow: 0px 4px 24px rgba(196, 198, 209, 0.24);
 
-    .sidebar-login-icon {
-      margin-right: 1vw;
+    .sidebar-links {
+      padding: 4px 16px 16px;
+      width: 100%;
     }
+    li a {
+      height: 56px;
+      position: relative;
+      top: 0px;
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      gap: 16px;
+    }
+  }
+
+  left: -300px;
+  transition: left 0.5s;
+  &.enter-active,
+  &.enter-done {
+    left: 0;
+  }
+
+  .full-name + span {
+    display: none;
+  }
+}
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #6664;
+  z-index: 399;
+  opacity: 0;
+  transition: opacity 0.5s;
+  cursor: default;
+
+  &.enter-active,
+  &.enter-done {
+    opacity: 1;
+  }
+  &.exit {
+    pointer-events: none;
+    opacity: 0;
+  }
+}
+
+[data-theme='dark'] {
+  .sidebar:not(.mini) {
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.24);
+  }
+  .sidebar .button-container img {
+    --is-dark: 1;
   }
 }
 
 .sidebar.mini {
   position: static;
-  width: 5vw;
+  width: 72px;
+  padding-block: 16px;
 
   .sidebar-links {
-    margin-top: 4vh;
+    margin: 0;
     width: 100%;
 
-    ul {
-      li {
-        margin-top: 2vh;
-
-        a {
-          display: flex;
-          flex-direction: column;
-          margin: 0;
-          padding-left: 0;
-          padding-right: 0;
-
-          div {
-            display: flex;
-            justify-content: center;
-          }
-
-          span {
-            text-align: center;
-          }
-        }
+    .full-name {
+      display: none;
+      + span {
+        display: inline;
       }
     }
+  }
+
+  .sidebar-links ul li {
+    .icon {
+      font-size: 24px;
+    }
+
+    a,
+    button {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 72px;
+      margin: 0;
+      gap: 0;
+      padding: 4px 0;
+      i.icon {
+        margin: 0;
+      }
+      span {
+        font-size: 12px;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    display: none;
   }
 }
 
@@ -106,39 +187,12 @@
   color: var(--peterportal-primary-color-1) !important;
 }
 
-@media only screen and (max-width: 800px) {
-  .sidebar {
-    width: 100vw;
-    z-index: 400;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-
-    .sidebar-login {
-      margin-top: -20vh;
-      margin-bottom: 35vh; 
-    }
-  }
-  .sidebar.mini {
-    display: none;
-  }
+.theme-toggle {
+  border: none;
+  background: none;
 }
 
-@media only screen and (max-width: 1500px) {
-  .sidebar.mini {
-    width: 7vw;
-    .sidebar-links {
-      ul {
-        li {
-          a {
-            span {
-              font-size: smaller;
-            }
-          }
-        }
-      }
-    }
-  }
+.theme-toggle:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
