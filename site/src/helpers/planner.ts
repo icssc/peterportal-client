@@ -142,7 +142,7 @@ export const loadRoadmap = async (
 
   if (!roadmap && localRoadmap) {
     roadmap = localRoadmap;
-  } else if (roadmap && localRoadmap && (localRoadmap.timestamp ?? 0 > roadmap.timestamp ?? 0)) {
+  } else if (roadmap && localRoadmap && (localRoadmap.timestamp ?? 0) > (roadmap.timestamp ?? 0)) {
     isLocalNewer = true;
   } else if (!roadmap && !localRoadmap) {
     // no saved planner

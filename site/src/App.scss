@@ -53,6 +53,10 @@ button {
   .modal-dialog {
     max-width: 400px;
   }
+  .modal-footer {
+    border-top: none;
+    justify-content: flex-start;
+  }
   h2 {
     margin-bottom: 0;
     font-size: 1.8rem;

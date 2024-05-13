@@ -131,7 +131,9 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
+      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? '');
+      delete localRoadmap.timestamp;
+      dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
   }, [cookies, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
 
@@ -139,26 +141,29 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Header
-        courseCount={courseCount}
-        unitCount={unitCount}
-        saveRoadmap={saveRoadmap}
-        missingPrerequisites={missingPrerequisites}
-      />
       <Modal
         show={showSyncModal}
         onHide={() => {
           setShowSyncModal(false);
         }}
+        className="ppc-modal"
+        centered
       >
-        <Modal.Header closeButton></Modal.Header>
-        <Modal.Body>Detect local roadmap in the storage. Do you want to load local roadmap instead?</Modal.Body>
+        <Modal.Header closeButton>
+          <h2>Cloud roadmap out-of-date</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Your roadmap saved locally is newer than the one saved to the cloud. Would you like to use the local one
+            instead?
+          </p>
+        </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-            No
+          <Button variant="danger" onClick={handleLoadLocal}>
+            Yes, Use Local
           </Button>
-          <Button variant="primary" onClick={handleLoadLocal}>
-            Yes
+          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+            No, Use Cloud
           </Button>
         </Modal.Footer>
       </Modal>
