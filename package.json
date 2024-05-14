@@ -12,7 +12,6 @@
     "dotenv-flow": "^4.0.1",
     "sst": "2.41.5"
   },
-  "packageManager": "pnpm@9.1.0",
   "engines": {
     "node": "^18 || ^20",
     "pnpm": "^9"
