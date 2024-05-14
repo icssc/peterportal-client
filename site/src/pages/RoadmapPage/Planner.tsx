@@ -131,7 +131,7 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? '');
+      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? '{}');
       delete localRoadmap.timestamp;
       dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }

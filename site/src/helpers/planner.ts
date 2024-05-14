@@ -127,7 +127,7 @@ export const loadRoadmap = async (
   loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
-  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? '');
+  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
   // if logged in
   if (cookies.user !== undefined) {
     // get data from account
