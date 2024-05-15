@@ -69,9 +69,6 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   const show = useAppSelector((state) => state.roadmap.showTransfer);
   const handleClose = () => dispatch(setShowTransfer(false));
 
-  // console.log("missing courses: ", missingPrereqNames);
-  // console.log("missing courses: ", missingPrereqNames);
-
   const DisplayMissingCourses: FC = () => {
     return (
       <ListGroup horizontal>
