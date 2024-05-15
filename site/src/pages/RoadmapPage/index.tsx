@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC, useCallback } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
@@ -79,10 +79,6 @@ const RoadmapPage: FC = () => {
     },
     [dispatch, searchResults],
   );
-
-  useEffect(() => {
-    document.title = `Roadmap | PeterPortal`;
-  }, []);
 
   // do not conditionally renderer because it would remount planner which would discard unsaved changes
   const mobileVersion = (
