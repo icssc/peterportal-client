@@ -14,6 +14,7 @@ interface CourseProps extends CourseGQLData {
   onDelete?: () => void;
   onAddToBag?: () => void;
   isInBag?: boolean;
+  removeFromBag?: () => void;
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -32,6 +33,7 @@ const Course: FC<CourseProps> = (props) => {
     onDelete,
     onAddToBag,
     isInBag,
+    removeFromBag,
   } = props;
 
   const CoursePopover = (
@@ -105,7 +107,7 @@ const Course: FC<CourseProps> = (props) => {
       <div className="title">{title}</div>
       <div className="course-footer">
         {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
-        {isInBag && <BagFill></BagFill>}
+        {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
 
         {requiredCourses && (
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>

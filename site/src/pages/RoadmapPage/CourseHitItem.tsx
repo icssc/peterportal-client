@@ -1,7 +1,12 @@
 import { FC } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { addCourseToBag, setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import {
+  addCourseToBag,
+  removeCourseFromBag,
+  setActiveCourse,
+  setShowAddCourse,
+} from '../../store/slices/roadmapSlice';
 import Course from './Course';
 
 import { useIsMobile } from '../../helpers/util';
@@ -32,6 +37,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     if (props.id === undefined) return;
     if (coursebag.some((course) => course.id === props.id)) return;
     dispatch(addCourseToBag(props));
+  };
+  const removeFromBag = () => {
+    dispatch(removeCourseFromBag(props));
   };
 
   if (isMobile) {
@@ -69,7 +77,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
                 ...provided.draggableProps.style,
               }}
             >
-              <Course {...props} onAddToBag={onAddToBag} isInBag={isInBag} />
+              <Course {...props} onAddToBag={onAddToBag} isInBag={isInBag} removeFromBag={removeFromBag} />
             </div>
           );
         }}
