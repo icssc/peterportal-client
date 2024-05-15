@@ -29,6 +29,7 @@ const CoursePage: FC = () => {
         if (course) {
           dispatch(setCourse(course as CourseGQLData));
           setError('');
+          document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | Peterportal`;
         } else {
           setError(`Course ${id} does not exist!`);
         }
