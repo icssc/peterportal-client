@@ -21,7 +21,7 @@ export interface ReviewData {
   tags: string[];
   verified?: boolean;
   captchaToken?: string;
-  userVote: number;
+  userVote?: number;
 }
 
 export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
