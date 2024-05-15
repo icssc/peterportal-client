@@ -19,8 +19,7 @@
   border-radius: 10px;
   box-shadow: 0px 0px 4px var(--zot-blue);
   flex: 1 1 30%;
-  min-width: 290px;
-  margin: 0.75rem;
+  min-width: 250px;
   position: relative;
   overflow: hidden;
 
@@ -34,8 +33,7 @@
       color: #202e47;
       font-weight: bold;
       font-size: 18px;
-      // padding: 1rem 0rem 0rem 2rem;
-      padding: 10px;
+      padding: 10px 0 10px 12px;
       margin: 0;
       margin-right: auto;
     }
@@ -43,14 +41,13 @@
     .quarter-edit-btn {
       background: none;
       border: none;
-      margin-right: 10px;
-      // margin-top: 0.25rem;
-      // margin-right: 1.25rem;
+      margin-right: 8px;
+      padding: 0;
+      width: 20px;
     }
   }
 
   .quarter-units {
-    // padding: 0rem 0rem 1rem 2rem;
     color: #808080;
     font-size: 16px;
   }
