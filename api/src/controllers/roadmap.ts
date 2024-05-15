@@ -26,10 +26,13 @@ router.post('/', async function (req: Request<never, unknown, Record<string, unk
   }
   console.log(`Adding Roadmap: ${JSON.stringify(req.body)}`);
   if (await Roadmap.exists({ userID: req.body._id })) {
-    await Roadmap.replaceOne({ userID: req.body._id }, { roadmap: req.body.roadmap, userID: req.body._id });
+    await Roadmap.replaceOne(
+      { userID: req.body._id },
+      { roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag },
+    );
   } else {
     // add roadmap to mongo
-    await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id }).save();
+    await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag }).save();
   }
 
   res.json({});

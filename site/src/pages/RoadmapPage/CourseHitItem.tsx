@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { useAppDispatch } from '../../store/hooks';
-import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { addCourseToBag, setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import Course from './Course';
 
 import { useIsMobile } from '../../helpers/util';
@@ -14,6 +14,8 @@ interface CourseHitItemProps extends CourseGQLData {
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
+  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
+  const isInBag = coursebag.some((course) => course.id === props.id);
   // do not make course draggable on mobile
   const onMobileMouseDown = () => {
     dispatch(setActiveCourse(props));
@@ -25,6 +27,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
       onMobileMouseDown();
     }
   };
+  const onAddToBag = () => {
+    if (!props) return;
+    if (props.id === undefined) return;
+    if (coursebag.some((course) => course.id === props.id)) return;
+    dispatch(addCourseToBag(props));
+  };
+
   if (isMobile) {
     return (
       <div
@@ -60,7 +69,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
                 ...provided.draggableProps.style,
               }}
             >
-              <Course {...props} />
+              <Course {...props} onAddToBag={onAddToBag} isInBag={isInBag} />
             </div>
           );
         }}

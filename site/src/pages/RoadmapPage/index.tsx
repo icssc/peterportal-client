@@ -4,7 +4,13 @@ import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult, DragStart } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/roadmapSlice';
+import {
+  moveCourse,
+  deleteCourse,
+  setActiveCourse,
+  addCourseToBag,
+  removeCourseFromBag,
+} from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
 import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
@@ -13,19 +19,21 @@ const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
+  const courseBag = useAppSelector((state) => state.roadmap.coursebag);
   const isMobile = useIsMobile();
+  const roadmap = useAppSelector((state) => state.roadmap.yearPlans);
+  const onDragEnd = useCallback(
+    (result: DropResult) => {
+      if (result.reason === 'DROP') {
+        // no destination
+        if (!result.destination) {
+          return;
+        }
 
-  const onDragEnd = useCallback((result: DropResult) => {
-    if (result.reason === 'DROP') {
-      // no destination
-      if (!result.destination) {
-        return;
-      }
+        // dragging to search bar
+        if (result.destination.droppableId === 'search' && result.source.droppableId != 'search') {
+          // removing from quarter
 
-      // dragging to search bar
-      if (result.destination.droppableId === 'search') {
-        // removing from quarter
-        if (result.source.droppableId != 'search') {
           const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
           dispatch(
             deleteCourse({
@@ -34,41 +42,63 @@ const RoadmapPage: FC = () => {
               courseIndex: result.source.index,
             }),
           );
+          return;
         }
-        return;
+        //move from planner to coursebag
+        if (result.destination.droppableId === 'coursebag' && result.source.droppableId != 'coursebag') {
+          const [yearIndex, quarterIndex]: string[] = result.source.droppableId.split('-');
+          const course = roadmap[parseInt(yearIndex)].quarters[parseInt(quarterIndex)].courses[result.source.index];
+          dispatch(addCourseToBag(course));
+          dispatch(
+            deleteCourse({
+              yearIndex: parseInt(yearIndex),
+              quarterIndex: parseInt(quarterIndex),
+              courseIndex: result.source.index,
+            }),
+          );
+
+          return;
+        }
+
+        if (result.source.droppableId === 'coursebag' && result.destination.droppableId != 'coursebag') {
+          const course = courseBag[result.source.index];
+          console.log(course);
+          dispatch(removeCourseFromBag(course));
+        }
+
+        const movePayload = {
+          from: {
+            yearIndex: -1,
+            quarterIndex: -1,
+            courseIndex: -1,
+          },
+          to: {
+            yearIndex: -1,
+            quarterIndex: -1,
+            courseIndex: -1,
+          },
+        };
+
+        // roadmap to roadmap has source
+        if (result.source.droppableId != 'search' && result.source.droppableId != 'coursebag') {
+          const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
+          movePayload.from.yearIndex = parseInt(yearIndex);
+          movePayload.from.quarterIndex = parseInt(quarterIndex);
+          movePayload.from.courseIndex = result.source.index;
+        }
+        // search to roadmap has no source (use activeCourse in global state)
+
+        // both have destination
+        const [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
+        movePayload.to.yearIndex = parseInt(yearIndex);
+        movePayload.to.quarterIndex = parseInt(quarterIndex);
+        movePayload.to.courseIndex = result.destination.index;
+
+        dispatch(moveCourse(movePayload));
       }
-
-      const movePayload = {
-        from: {
-          yearIndex: -1,
-          quarterIndex: -1,
-          courseIndex: -1,
-        },
-        to: {
-          yearIndex: -1,
-          quarterIndex: -1,
-          courseIndex: -1,
-        },
-      };
-
-      // roadmap to roadmap has source
-      if (result.source.droppableId != 'search') {
-        const [yearIndex, quarterIndex] = result.source.droppableId.split('-');
-        movePayload.from.yearIndex = parseInt(yearIndex);
-        movePayload.from.quarterIndex = parseInt(quarterIndex);
-        movePayload.from.courseIndex = result.source.index;
-      }
-      // search to roadmap has no source (use activeCourse in global state)
-
-      // both have destination
-      const [yearIndex, quarterIndex] = result.destination.droppableId.split('-');
-      movePayload.to.yearIndex = parseInt(yearIndex);
-      movePayload.to.quarterIndex = parseInt(quarterIndex);
-      movePayload.to.courseIndex = result.destination.index;
-
-      dispatch(moveCourse(movePayload));
-    }
-  }, []);
+    },
+    [courseBag, dispatch, roadmap],
+  );
 
   const onDragStart = useCallback(
     (start: DragStart) => {
@@ -76,8 +106,12 @@ const RoadmapPage: FC = () => {
         const activeCourse = searchResults[start.source.index];
         dispatch(setActiveCourse(activeCourse));
       }
+      if (start.source.droppableId === 'coursebag') {
+        const activeCourse = courseBag[start.source.index];
+        dispatch(setActiveCourse(activeCourse));
+      }
     },
-    [dispatch, searchResults],
+    [dispatch, searchResults, courseBag],
   );
 
   // do not conditionally renderer because it would remount planner which would discard unsaved changes

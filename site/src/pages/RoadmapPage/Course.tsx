@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { InfoCircle, ExclamationTriangle, Trash } from 'react-bootstrap-icons';
+import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -12,6 +12,8 @@ import ThemeContext from '../../style/theme-context';
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
   onDelete?: () => void;
+  onAddToBag?: () => void;
+  isInBag?: boolean;
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -28,6 +30,8 @@ const Course: FC<CourseProps> = (props) => {
     requiredCourses,
     terms,
     onDelete,
+    onAddToBag,
+    isInBag,
   } = props;
 
   const CoursePopover = (
@@ -100,6 +104,9 @@ const Course: FC<CourseProps> = (props) => {
       </div>
       <div className="title">{title}</div>
       <div className="course-footer">
+        {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
+        {isInBag && <BagFill></BagFill>}
+
         {requiredCourses && (
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />

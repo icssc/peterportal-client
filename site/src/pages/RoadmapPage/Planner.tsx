@@ -12,6 +12,7 @@ import {
   setInvalidCourses,
   setTransfers,
   setUnsavedChanges,
+  setCoursebag,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import {
@@ -25,8 +26,10 @@ import {
   SavedPlannerQuarterData,
   BatchCourseData,
   MongoRoadmap,
+  Coursebag,
+  CourseGQLData,
 } from '../../types/types';
-import { searchAPIResults } from '../../helpers/util';
+import { searchAPIResult, searchAPIResults } from '../../helpers/util';
 import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
 import { defaultYear, normalizeQuarterName } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
@@ -36,12 +39,14 @@ const Planner: FC = () => {
   const [cookies] = useCookies(['user']);
   const isFirstRenderer = useFirstRender();
   const data = useAppSelector(selectYearPlans);
+  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
 
   useEffect(() => {
     // stringify current roadmap
+
     const roadmapStr = JSON.stringify({
       planner: collapsePlanner(data),
       transfers: transfers,
@@ -116,6 +121,7 @@ const Planner: FC = () => {
 
   const loadRoadmap = async () => {
     let roadmap: SavedRoadmap = null!;
+    const coursebag: Coursebag = [];
     const localRoadmap = localStorage.getItem('roadmap');
     // if logged in
     if (cookies.user !== undefined) {
@@ -125,6 +131,10 @@ const Planner: FC = () => {
       if (request.data.roadmap !== undefined) {
         roadmap = request.data.roadmap;
       }
+      const courses = (await Promise.all(
+        request.data.coursebag.map((course) => searchAPIResult('course', course)),
+      )) as CourseGQLData[];
+      coursebag.push(...courses);
     }
     // check local storage next
     if (!roadmap && localRoadmap) {
@@ -139,6 +149,7 @@ const Planner: FC = () => {
     const planner = await expandPlanner(roadmap.planner);
     dispatch(setYearPlans(planner));
     dispatch(setTransfers(roadmap.transfers));
+    dispatch(setCoursebag(coursebag));
   };
 
   const saveRoadmap = () => {
@@ -146,11 +157,12 @@ const Planner: FC = () => {
       planner: collapsePlanner(data),
       transfers: transfers,
     };
+    const collapsedCoursebag = coursebag.map((course) => course.id);
     let savedAccount = false;
     // if logged in
     if (cookies.user !== undefined) {
       // save data to account
-      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
+      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap, coursebag: collapsedCoursebag };
       axios.post('/api/roadmap', mongoRoadmap);
       savedAccount = true;
     }

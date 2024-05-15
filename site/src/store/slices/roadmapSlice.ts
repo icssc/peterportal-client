@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { defaultYear, quarterDisplayNames } from '../../helpers/planner';
 import {
+  Coursebag,
   CourseGQLData,
   CourseIdentifier,
   InvalidCourseData,
@@ -33,6 +34,9 @@ interface RoadmapState {
   unsavedChanges: boolean;
   // Selected quarter and year for adding a course on mobile
   currentYearAndQuarter: { year: number; quarter: number } | null;
+  // Store the course data of the active dragging item
+  coursebag: Coursebag;
+  showCourseBag: boolean;
 }
 
 // Define the initial state using that type
@@ -46,6 +50,8 @@ const initialState: RoadmapState = {
   showAddCourse: false,
   unsavedChanges: false,
   currentYearAndQuarter: null,
+  coursebag: [],
+  showCourseBag: false,
 };
 
 // Payload to pass in to move a course
@@ -271,6 +277,18 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
+    setCoursebag(state, action: PayloadAction<Coursebag>) {
+      state.coursebag = action.payload;
+    },
+    addCourseToBag: (state, action: PayloadAction<CourseGQLData>) => {
+      state.coursebag.push(action.payload);
+    },
+    removeCourseFromBag: (state, action: PayloadAction<CourseGQLData>) => {
+      state.coursebag = state.coursebag.filter((course) => course.id !== action.payload.id);
+    },
+    setShowCourseBag: (state, action: PayloadAction<boolean>) => {
+      state.showCourseBag = action.payload;
+    },
     setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
       state.unsavedChanges = action.payload;
 
@@ -308,6 +326,10 @@ export const {
   setShowSearch,
   setShowAddCourse,
   setUnsavedChanges,
+  addCourseToBag,
+  removeCourseFromBag,
+  setShowCourseBag,
+  setCoursebag,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
