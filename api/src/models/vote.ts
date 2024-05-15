@@ -6,8 +6,8 @@ const voteSchema = new mongoose.Schema({
     required: true,
   },
   reviewID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Review',
+    type: String,
+    // ref: 'Review',
     required: true,
   },
   timestamp: {

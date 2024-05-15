@@ -273,7 +273,6 @@ router.patch('/vote', async function (req, res) {
       res.json({ deltaScore: deltaScore });
     } else {
       //no old vote, just add in new vote data
-      console.log(`Voting Review ${id} with delta ${deltaScore}`);
       await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
       //sends in vote
       await new Vote({ userID: req.session.passport.user.id, reviewID: id, score: deltaScore }).save();

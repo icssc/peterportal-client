@@ -45,20 +45,6 @@ const Review: FC<ReviewProps> = (props) => {
       });
   };
 
-  const updateScore = (reviewID: string, newUserVote: number) => {
-    dispatch(
-      setReviews(
-        reviewData.map((review) => {
-          if (review._id === reviewID) {
-            return { ...review, score: review.score + (newUserVote - review.userVote), userVote: newUserVote };
-          } else {
-            return review;
-          }
-        }),
-      ),
-    );
-  };
-
   useEffect(() => {
     // prevent reviews from carrying over
     dispatch(setReviews([]));
@@ -208,7 +194,7 @@ const Review: FC<ReviewProps> = (props) => {
               key={review._id}
               course={props.course}
               professor={props.professor}
-              updateScore={(newUserVote) => updateScore(review._id!, newUserVote)}
+              // updateScore={(newUserVote) => updateScore(review._id!, newUserVote)}
             />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>

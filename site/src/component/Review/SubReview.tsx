@@ -9,21 +9,43 @@ import { Link } from 'react-router-dom';
 import { PersonFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  updateScore: (newUserVote: number) => void;
+  updateScore?: (newUserVote: number) => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, updateScore }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+  const dispatch = useAppDispatch();
+  const reviewData = useAppSelector(selectReviews);
   const [cookies] = useCookies(['user']);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', voteReq);
     return res.data.deltaScore;
+  };
+
+  const updateScore = (newUserVote: number) => {
+    dispatch(
+      setReviews(
+        reviewData.map((otherReview) => {
+          if (otherReview._id === review._id) {
+            return {
+              ...otherReview,
+              score: otherReview.score + (newUserVote - otherReview.userVote),
+              userVote: newUserVote,
+            };
+          } else {
+            return otherReview;
+          }
+        }),
+      ),
+    );
   };
 
   const upvote = async () => {
