@@ -150,20 +150,20 @@ const Planner: FC = () => {
         centered
       >
         <Modal.Header closeButton>
-          <h2>Cloud roadmap out-of-date</h2>
+          <h2>Roadmap Out of Sync</h2>
         </Modal.Header>
         <Modal.Body>
           <p>
-            Your roadmap saved locally is newer than the one saved to the cloud. Would you like to use the local one
-            instead?
+            This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
+            load your roadmap from?
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleLoadLocal}>
-            Yes, Use Local
+          <Button variant="primary" onClick={handleLoadLocal}>
+            This Device
           </Button>
           <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-            No, Use Cloud
+            My Account
           </Button>
         </Modal.Footer>
       </Modal>
