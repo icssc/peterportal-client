@@ -124,10 +124,10 @@ interface RoadmapCookies {
 
 export const loadRoadmap = async (
   cookies: RoadmapCookies,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap) => void,
+  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
-  const localRoadmap = localStorage.getItem('roadmap');
+  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
   // if logged in
   if (cookies.user !== undefined) {
     // get data from account
@@ -137,12 +137,15 @@ export const loadRoadmap = async (
       roadmap = request.data.roadmap;
     }
   }
-  // check local storage next
+
+  let isLocalNewer = false;
+
   if (!roadmap && localRoadmap) {
-    roadmap = JSON.parse(localRoadmap);
-  }
-  // no saved planner
-  if (!roadmap) {
+    roadmap = localRoadmap;
+  } else if (roadmap && localRoadmap && (localRoadmap.timestamp ?? 0) > (roadmap.timestamp ?? 0)) {
+    isLocalNewer = true;
+  } else if (!roadmap && !localRoadmap) {
+    // no saved planner
     return;
   }
 
@@ -154,7 +157,7 @@ export const loadRoadmap = async (
 
   // expand planner and set the state
   const planners = await expandAllPlanners(loadedData);
-  loadHandler(planners, roadmap);
+  loadHandler(planners, roadmap, isLocalNewer);
 };
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;
