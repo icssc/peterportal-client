@@ -65,11 +65,19 @@
     border: 1px solid #268cd366;
     border-inline-width: 0;
     margin-bottom: -2px;
-    height: 100%;
+    height: calc(100% - 40px);
 
     &:empty {
-      padding-bottom: 16px;
+      padding: 12px 32px 20px;
       border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      &::before {
+        content: 'Drag courses here to add them to your roadmap';
+        max-width: 200px;
+      }
     }
 
     > .quarter-course .course {
