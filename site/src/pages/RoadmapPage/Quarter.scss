@@ -22,6 +22,8 @@
   min-width: 250px;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   .quarter-header {
     display: flex;
@@ -65,7 +67,7 @@
     border: 1px solid #268cd366;
     border-inline-width: 0;
     margin-bottom: -2px;
-    height: calc(100% - 40px);
+    height: 100%;
 
     &:empty {
       padding: 12px 32px 20px;
