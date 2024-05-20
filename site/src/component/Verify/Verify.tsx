@@ -18,7 +18,7 @@ const Verify: FC = () => {
 
   useEffect(() => {
     getUnverifiedReviews();
-    document.title = 'Verify Reviews | Peterportal';
+    document.title = 'Verify Reviews | PeterPortal';
   }, []);
 
   const verifyReview = async (reviewID: string) => {
