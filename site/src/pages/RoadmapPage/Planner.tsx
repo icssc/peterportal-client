@@ -40,14 +40,6 @@ const Planner: FC = () => {
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
-    let savedAccount = false;
-    // if logged in
-    if (cookies.user !== undefined) {
-      // save data to account
-      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
-      axios.post('/api/roadmap', mongoRoadmap);
-      savedAccount = true;
-    }
 
     // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
@@ -55,8 +47,18 @@ const Planner: FC = () => {
     // mark changes as saved to bypass alert on page leave
     dispatch(setUnsavedChanges(false));
 
-    if (savedAccount) {
-      alert(`Roadmap saved under ${cookies.user.email}`);
+    // if logged in
+    if (cookies.user !== undefined) {
+      // save data to account
+      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
+      axios.post('/api/roadmap', mongoRoadmap).then((res) => {
+        // error saving to account, saved locally
+        if (res.data.error) {
+          alert('Roadmap saved locally! Login to save it to your account.');
+        } else {
+          alert(`Roadmap saved under ${cookies.user.email}`);
+        }
+      });
     } else {
       alert('Roadmap saved locally! Login to save it to your account.');
     }
