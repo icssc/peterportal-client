@@ -37,7 +37,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           if (otherReview._id === review._id) {
             return {
               ...otherReview,
-              score: otherReview.score + (newUserVote - otherReview.userVote),
+              score: otherReview.score + (newUserVote - otherReview.userVote!),
               userVote: newUserVote,
             };
           } else {
@@ -70,7 +70,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     updateScore(newVote);
     await sendVote(voteReq).catch((err) => {
       console.error('Error sending upvote:', err);
-      updateScore(review.userVote);
+      updateScore(review.userVote!);
     });
   };
 
@@ -95,7 +95,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     updateScore(newVote);
     await sendVote(voteReq).catch((err) => {
       console.error('Error sending downvote:', err);
-      updateScore(review.userVote);
+      updateScore(review.userVote!);
     });
   };
 
