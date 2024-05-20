@@ -145,6 +145,7 @@ export function useIsDesktop() {
   const isDesktop = useMediaQuery({ minWidth: 800 });
   return isDesktop;
 }
+
 export function useIsMobile() {
   const isMobile = useMediaQuery({ maxWidth: 799.9 });
   return isMobile;

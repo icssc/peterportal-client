@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './SearchPage.scss';
 import 'react-multi-carousel/lib/styles.css';
@@ -13,6 +13,11 @@ import { SearchIndex } from '../../types/types';
 
 const SearchPage: FC = () => {
   const { index = 'courses' } = useParams<{ index: SearchIndex }>();
+
+  useEffect(() => {
+    document.title = `${index === 'courses' ? 'Courses' : 'Professors'} | PeterPortal`;
+  }, [index]);
+
   return (
     <>
       <div id="content-container">

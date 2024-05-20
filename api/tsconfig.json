@@ -12,10 +12,10 @@
     "resolveJsonModule": true,
     "plugins": [
       {
-        "transform": "typia/lib/transform",
-      },
+        "transform": "typia/lib/transform"
+      }
     ],
-    "strictNullChecks": true,
+    "strictNullChecks": true
   },
-  "include": ["src/"],
+  "include": ["src/"]
 }

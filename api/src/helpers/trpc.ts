@@ -1,21 +1,7 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
 
-interface CustomRequest extends Request {
-  session: {
-    passport: {
-      admin: boolean;
-      user: {
-        id: string;
-        email: string;
-        name: string;
-        picture: string;
-      };
-    };
-  };
-}
-
-export const createContext = (req: CustomRequest, res: trpcExpress.CreateExpressContextOptions['res']) => ({
+export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
   req,
   session: req.session,
   res,
