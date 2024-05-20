@@ -146,6 +146,7 @@ export interface TransferData {
 
 // Bundle planner and transfer data in one object
 export interface SavedRoadmap {
+  timestamp: number;
   planners: SavedPlannerData[];
   transfers: TransferData[];
 }
