@@ -47,9 +47,8 @@ const Planner: FC = () => {
     // mark changes as saved to bypass alert on page leave
     dispatch(setUnsavedChanges(false));
 
-    // if logged in
+    // if logged in, save data to account
     if (cookies.user !== undefined) {
-      // save data to account
       const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
       axios.post('/api/roadmap', mongoRoadmap).then((res) => {
         // error saving to account, saved locally
