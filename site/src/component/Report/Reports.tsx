@@ -43,6 +43,7 @@ const Reports: FC = () => {
 
   useEffect(() => {
     getData();
+    document.title = 'View Reports | PeterPortal';
   }, []);
 
   const acceptReports = async (reviewID: string) => {

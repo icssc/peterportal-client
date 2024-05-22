@@ -125,11 +125,11 @@ interface RoadmapCookies {
 
 export const loadRoadmap = async (
   cookies: RoadmapCookies,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, coursebag: Coursebag) => void,
+  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, coursebag: Coursebag, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
   let coursebagStrings: string[] = [];
-  const localRoadmap = localStorage.getItem('roadmap');
+  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
   // if logged in
   if (cookies.user !== undefined) {
     // get data from account
@@ -142,12 +142,15 @@ export const loadRoadmap = async (
       coursebagStrings = request.data.coursebag;
     }
   }
-  // check local storage next
+
+  let isLocalNewer = false;
+
   if (!roadmap && localRoadmap) {
-    roadmap = JSON.parse(localRoadmap);
-  }
-  // no saved planner
-  if (!roadmap) {
+    roadmap = localRoadmap;
+  } else if (roadmap && localRoadmap && (localRoadmap.timestamp ?? 0) > (roadmap.timestamp ?? 0)) {
+    isLocalNewer = true;
+  } else if (!roadmap && !localRoadmap) {
+    // no saved planner
     return;
   }
 
@@ -160,7 +163,7 @@ export const loadRoadmap = async (
   const planners = await expandAllPlanners(loadedData);
   const coursesObj: BatchCourseData = (await searchAPIResults('courses', coursebagStrings)) as BatchCourseData;
   const coursebag = coursebagStrings.map((id) => coursesObj[id]);
-  loadHandler(planners, roadmap, coursebag);
+  loadHandler(planners, roadmap,coursebag, isLocalNewer);
 };
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;

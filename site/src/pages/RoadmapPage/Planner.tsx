@@ -18,9 +18,10 @@ import {
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap, MongoRoadmap } from '../../types/types';
-import { defaultYear } from '../../helpers/planner';
+import { defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
+import { Button, Modal } from 'react-bootstrap';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -30,6 +31,8 @@ const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const coursebag = useAppSelector((state) => state.roadmap.coursebag);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
@@ -37,8 +40,22 @@ const Planner: FC = () => {
     transfers: transfers,
   });
 
+  const handleLoadLocal = async () => {
+    let roadmap: SavedRoadmap = null!;
+    const roadmapItem = localStorage.getItem('roadmap');
+    if (roadmapItem) {
+      roadmap = JSON.parse(roadmapItem);
+    }
+
+    const planner = await expandAllPlanners(roadmap.planners);
+    dispatch(setAllPlans(planner));
+    dispatch(setTransfers(roadmap.transfers));
+    setShowSyncModal(false);
+  };
+
   const saveRoadmap = () => {
     const roadmap: SavedRoadmap = {
+      timestamp: Date.now(),
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
@@ -99,17 +116,20 @@ const Planner: FC = () => {
     const emptyRoadmap = JSON.stringify({
       planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
       transfers: [],
-    } as SavedRoadmap);
+    } as Omit<SavedRoadmap, 'timestamp'>);
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(cookies, (planners, roadmap, coursebag) => {
+
+      loadRoadmap(cookies, (planners, roadmap,coursebag, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
         dispatch(setCoursebag(coursebag));
+        if (isLocalNewer) {
+          setShowSyncModal(true);
+        }
       });
     }
-    // validate planner every time something changes
     else {
       validatePlanner(transfers, currentPlanData, (missing, invalid) => {
         // set missing courses
@@ -120,7 +140,9 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      dispatch(setUnsavedChanges(localStorage.getItem('roadmap') !== roadmapStr));
+      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap);
+      delete localRoadmap.timestamp;
+      dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
   }, [cookies, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
 
@@ -128,6 +150,32 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
+      <Modal
+        show={showSyncModal}
+        onHide={() => {
+          setShowSyncModal(false);
+        }}
+        className="ppc-modal"
+        centered
+      >
+        <Modal.Header closeButton>
+          <h2>Roadmap Out of Sync</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
+            load your roadmap from?
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleLoadLocal}>
+            This Device
+          </Button>
+          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+            My Account
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Header
         courseCount={courseCount}
         unitCount={unitCount}

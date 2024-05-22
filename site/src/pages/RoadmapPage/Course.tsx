@@ -80,12 +80,20 @@ const Course: FC<CourseProps> = (props) => {
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
-            {department + ' ' + courseNumber}
-          </a>
+          <span>
+            <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
+              {department + ' ' + courseNumber}
+            </a>
+            <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
+          </span>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
             <InfoCircle className="info-circle" />
           </OverlayTrigger>
+          {requiredCourses && (
+            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
+              <ExclamationTriangle />
+            </OverlayTrigger>
+          )}
         </div>
         {onDelete ? (
           <ThemeContext.Consumer>
@@ -108,14 +116,14 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-footer">
         {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
         {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
-
+      {/* <div className="course-footer">
         {requiredCourses && (
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
             <ExclamationTriangle />
           </OverlayTrigger>
         )}
-        <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
-      </div>
+        {/* <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div> * /}
+      </div> */}
     </div>
   );
 };
