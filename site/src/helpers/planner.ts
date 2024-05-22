@@ -163,7 +163,7 @@ export const loadRoadmap = async (
   const planners = await expandAllPlanners(loadedData);
   const coursesObj: BatchCourseData = (await searchAPIResults('courses', coursebagStrings)) as BatchCourseData;
   const coursebag = coursebagStrings.map((id) => coursesObj[id]);
-  loadHandler(planners, roadmap,coursebag, isLocalNewer);
+  loadHandler(planners, roadmap, coursebag, isLocalNewer);
 };
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;
