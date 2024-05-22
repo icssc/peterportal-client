@@ -76,6 +76,7 @@ export function getProfessorQuery(ucinetids: string[]) {
               courseNumber
               title
             }
+            courseHistory
         },
         `;
   });
