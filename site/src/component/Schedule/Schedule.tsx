@@ -7,10 +7,12 @@ import Button from 'react-bootstrap/Button';
 import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
+import { Dropdown } from 'semantic-ui-react';
 
 interface ScheduleProps {
   courseID?: string;
   professorID?: string;
+  termsOffered?: string[];
 }
 
 interface ScheduleData {
@@ -20,18 +22,27 @@ interface ScheduleData {
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
-  const [quarter, setQuarter] = useState<string>('');
+  const [currentQuarter, setCurrentQuarter] = useState<string>('');
+  const [selectedQuarter, setSelectedQuarter] = useState<string>('');
 
   useEffect(() => {
     // get the current quarter used in websoc
     trpc.schedule.currentQuarter.query().then((data) => {
-      setQuarter(data);
-      fetchScheduleDataFromAPI(data);
+      // use it as the default in the dropdown
+      setCurrentQuarter(data);
+      setSelectedQuarter(data);
     });
-  }, [props.courseID, props.professorID]);
+  }, []);
 
-  const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
+  useEffect(() => {
+    if (selectedQuarter !== '') {
+      fetchScheduleDataFromAPI(selectedQuarter);
+    }
+  }, [selectedQuarter, props.courseID, props.professorID]);
+
+  const fetchScheduleDataFromAPI = async (selectedQuarter: string) => {
     let apiResponse!: WebsocResponse;
+
     if (props.courseID) {
       const courseIDSplit = props.courseID.split(' ');
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
@@ -164,7 +175,29 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     return (
       <div>
-        <div className="schedule-quarter">Showing results for {quarter}</div>
+        {props.termsOffered ? (
+          <Dropdown
+            placeholder={currentQuarter}
+            scrolling
+            selection
+            options={
+              // in dropdown options, prepend current quarter to the list of past terms
+              [
+                { text: currentQuarter, value: currentQuarter },
+                ...props.termsOffered.map((term) => {
+                  return {
+                    text: term,
+                    value: term,
+                  };
+                }),
+              ]
+            }
+            value={selectedQuarter}
+            onChange={(_, s) => setSelectedQuarter(s.value as string)}
+          />
+        ) : (
+          <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
+        )}
         <Table responsive borderless className="schedule-table">
           <thead>
             <tr>
