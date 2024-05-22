@@ -33,7 +33,6 @@ const Planner: FC = () => {
   const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const [showSyncModal, setShowSyncModal] = useState(false);
 
-
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData),
@@ -120,8 +119,7 @@ const Planner: FC = () => {
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-
-      loadRoadmap(cookies, (planners, roadmap,coursebag, isLocalNewer) => {
+      loadRoadmap(cookies, (planners, roadmap, coursebag, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
         dispatch(setCoursebag(coursebag));
@@ -129,8 +127,7 @@ const Planner: FC = () => {
           setShowSyncModal(true);
         }
       });
-    }
-    else {
+    } else {
       validatePlanner(transfers, currentPlanData, (missing, invalid) => {
         // set missing courses
         setMissingPrerequisites(missing);
