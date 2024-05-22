@@ -36,11 +36,11 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
   useEffect(() => {
     if (selectedQuarter !== '') {
-      fetchScheduleDataFromAPI(selectedQuarter);
+      fetchScheduleDataFromAPI();
     }
   }, [selectedQuarter, props.courseID, props.professorID]);
 
-  const fetchScheduleDataFromAPI = async (selectedQuarter: string) => {
+  const fetchScheduleDataFromAPI = async () => {
     let apiResponse!: WebsocResponse;
 
     if (props.courseID) {
@@ -48,9 +48,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: currentQuarter, department, number });
+      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number });
     } else if (props.professorID) {
-      apiResponse = await trpc.schedule.getTermProf.query({ term: currentQuarter, professor: props.professorID });
+      apiResponse = await trpc.schedule.getTermProf.query({ term: selectedQuarter, professor: props.professorID });
     }
 
     try {
