@@ -11,7 +11,7 @@ interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const dispatch = useAppDispatch();
-  const planner = useAppSelector((state) => state.roadmap.yearPlans);
+  const planner = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans);
   const showForm = useAppSelector((state) => state.roadmap.showAddCourse);
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const [year, setYear] = useState(currentYearAndQuarter?.year ?? -1);

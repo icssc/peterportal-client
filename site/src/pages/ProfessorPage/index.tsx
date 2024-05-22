@@ -27,6 +27,7 @@ const ProfessorPage: FC = () => {
         if (professor) {
           dispatch(setProfessor(professor as ProfessorGQLData));
           setError('');
+          document.title = `${(professor as ProfessorGQLData).name} | PeterPortal`;
         } else {
           setError(`Professor ${id} does not exist!`);
         }
