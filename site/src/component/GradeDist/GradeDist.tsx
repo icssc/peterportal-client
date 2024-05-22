@@ -187,6 +187,48 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     setCurrentCourse(status.value as string);
   };
 
+  const optionsRow = (
+    <Grid.Row id="menu">
+      {props.minify && (
+        <Grid.Column className="gradedist-filter">
+          <Dropdown
+            placeholder="Chart Type"
+            scrolling
+            selection
+            options={[
+              { text: 'Bar', value: 'bar' },
+              { text: 'Pie', value: 'pie' },
+            ]}
+            value={chartType}
+            onChange={(_, s) => setChartType(s.value as ChartTypes)}
+          />
+        </Grid.Column>
+      )}
+
+      <Grid.Column className="gradedist-filter">
+        <Dropdown
+          placeholder={props.course ? 'Professor' : 'Course'}
+          scrolling
+          selection
+          options={props.course ? profEntries : courseEntries}
+          value={props.course ? currentProf : currentCourse}
+          onChange={props.course ? updateCurrentProf : updateCurrentCourse}
+        />
+      </Grid.Column>
+
+      <Grid.Column className="gradedist-filter">
+        <Dropdown
+          placeholder="Quarter"
+          scrolling
+          selection
+          options={quarterEntries}
+          value={currentQuarter}
+          onChange={updateCurrentQuarter}
+        />
+      </Grid.Column>
+    </Grid.Row>
+  );
+
   if (gradeDistData !== null && gradeDistData.length !== 0) {
     const graphProps = {
       gradeData: gradeDistData,
@@ -196,45 +238,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     };
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
-        <Grid.Row id="menu">
-          {props.minify && (
-            <Grid.Column className="gradedist-filter">
-              <Dropdown
-                placeholder="Chart Type"
-                scrolling
-                selection
-                options={[
-                  { text: 'Bar', value: 'bar' },
-                  { text: 'Pie', value: 'pie' },
-                ]}
-                value={chartType}
-                onChange={(_, s) => setChartType(s.value as ChartTypes)}
-              />
-            </Grid.Column>
-          )}
-
-          <Grid.Column className="gradedist-filter">
-            <Dropdown
-              placeholder={props.course ? 'Professor' : 'Course'}
-              scrolling
-              selection
-              options={props.course ? profEntries : courseEntries}
-              value={props.course ? currentProf : currentCourse}
-              onChange={props.course ? updateCurrentProf : updateCurrentCourse}
-            />
-          </Grid.Column>
-
-          <Grid.Column className="gradedist-filter">
-            <Dropdown
-              placeholder="Quarter"
-              scrolling
-              selection
-              options={quarterEntries}
-              value={currentQuarter}
-              onChange={updateCurrentQuarter}
-            />
-          </Grid.Column>
-        </Grid.Row>
+        {optionsRow}
 
         <Grid.Row id="chart">
           {((props.minify && chartType == 'bar') || !props.minify) && (
@@ -252,10 +256,24 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     );
   } else if (gradeDistData == null) {
     // null if still fetching, display loading message
-    return <>Loading Distribution..</>;
+    return (
+      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
+        {optionsRow}
+        <center style={{ height: 400 }}>
+          <p>Loading Distribution..</p>
+        </center>
+      </div>
+    );
   } else {
     // gradeDistData is empty, did not receive any data from API call or received an error, display an error message
-    return <>Error: could not retrieve grade distribution data.</>;
+    return (
+      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
+        {optionsRow}
+        <center style={{ height: 400 }}>
+          <p>Error: could not retrieve grade distribution data.</p>
+        </center>
+      </div>
+    );
   }
 };
 
