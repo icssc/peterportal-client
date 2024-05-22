@@ -99,7 +99,10 @@ export interface PlannerQuarterData {
   courses: CourseGQLData[];
 }
 
-export type SavedPlannerData = SavedPlannerYearData[];
+export type SavedPlannerData = {
+  name: string;
+  content: SavedPlannerYearData[];
+};
 
 export interface SavedPlannerYearData {
   startYear: number;
@@ -143,7 +146,7 @@ export interface TransferData {
 
 // Bundle planner and transfer data in one object
 export interface SavedRoadmap {
-  planner: SavedPlannerData;
+  planners: SavedPlannerData[];
   transfers: TransferData[];
 }
 

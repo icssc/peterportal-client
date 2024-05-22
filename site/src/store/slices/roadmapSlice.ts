@@ -15,21 +15,45 @@ import {
 import type { RootState } from '../store';
 
 // Define a type for the slice state
-interface RoadmapState {
+interface RoadmapPlanState {
   // Store planner data
   yearPlans: PlannerData;
-  // Store the course data of the active dragging item
-  activeCourse: CourseGQLData;
   // Store the location of invalid courses (do not meet prerequisites)
   invalidCourses: InvalidCourseData[];
-  // Whether or not to show the transfer modal
-  showTransfer: boolean;
-  // Store transfer course data
-  transfers: TransferData[];
-  // Whether or not to show the search bar on mobile
-  showSearch: boolean;
-  // Whether or not to show the add course modal on mobile
-  showAddCourse: boolean;
+}
+
+// Define the initial state using that type
+export const initialPlanState: RoadmapPlanState = {
+  yearPlans: [defaultYear() as PlannerYearData],
+  invalidCourses: [],
+};
+
+/** added for multiple planner */
+// create roadmap plan object
+export interface RoadmapPlan {
+  name: string;
+  content: RoadmapPlanState;
+}
+
+interface RoadmapPlanIdentifier {
+  planIndex: number;
+}
+
+interface SetPlanNamePayload {
+  index: number;
+  name: string;
+}
+
+// default plan to display for uesr
+export const defaultPlan: RoadmapPlan = {
+  name: "Peter's Roadmap",
+  content: initialPlanState,
+};
+
+// have an array of RoadmapPlan; use index to access them later
+interface RoadmapSliceState {
+  plans: RoadmapPlan[];
+  currentPlanIndex: number;
   // Whether or not to alert the user of unsaved changes before leaving
   unsavedChanges: boolean;
   // Selected quarter and year for adding a course on mobile
@@ -37,22 +61,32 @@ interface RoadmapState {
   // Store the course data of the active dragging item
   coursebag: Coursebag;
   showCourseBag: boolean;
+  // Whether or not to show the search bar on mobile
+  showSearch: boolean;
+  // Whether or not to show the add course modal on mobile
+  showAddCourse: boolean;
+  // Store the course data of the active dragging item
+  activeCourse?: CourseGQLData;
+  // Whether or not to show the transfer modal
+  showTransfer: boolean;
+  // Store transfer course data
+  transfers: TransferData[];
 }
 
-// Define the initial state using that type
-const initialState: RoadmapState = {
-  yearPlans: [defaultYear() as PlannerYearData],
-  activeCourse: null!,
-  invalidCourses: [],
-  showTransfer: false,
-  transfers: [],
-  showSearch: false,
-  showAddCourse: false,
+// define initial empty plans
+const initialSliceState: RoadmapSliceState = {
+  plans: [defaultPlan],
+  currentPlanIndex: 0,
   unsavedChanges: false,
   currentYearAndQuarter: null,
+  showSearch: false,
+  showAddCourse: false,
+  showTransfer: false,
+  transfers: [],
   coursebag: [],
   showCourseBag: false,
 };
+/** added for multiple planner */
 
 // Payload to pass in to move a course
 interface MoveCoursePayload {
@@ -95,7 +129,7 @@ const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   // `createSlice` will infer the state type from the `initialState` argument
-  initialState,
+  initialState: initialSliceState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
@@ -106,11 +140,12 @@ export const roadmapSlice = createSlice({
       const fromQuarter = action.payload.from.quarterIndex;
       const fromCourse = action.payload.from.courseIndex;
 
-      let removed: CourseGQLData = null!;
+      let removed: CourseGQLData | undefined;
       // not from the searchbar
       if (fromYear != -1) {
         // remove course from list
-        const courseList = state.yearPlans[fromYear].quarters[fromQuarter].courses;
+        const courseList =
+          state.plans[state.currentPlanIndex].content.yearPlans[fromYear].quarters[fromQuarter].courses;
         [removed] = courseList.splice(fromCourse, 1);
       }
       // from the searchbar
@@ -120,18 +155,17 @@ export const roadmapSlice = createSlice({
       }
 
       // add course to list
-      const courseList = state.yearPlans[toYear].quarters[toQuarter].courses;
+      const courseList = state.plans[state.currentPlanIndex].content.yearPlans[toYear].quarters[toQuarter].courses;
       courseList.splice(toCourse, 0, removed!);
     },
     deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
-      state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses.splice(
-        action.payload.courseIndex,
-        1,
-      );
+      state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[
+        action.payload.quarterIndex
+      ].courses.splice(action.payload.courseIndex, 1);
     },
     addQuarter: (state, action: PayloadAction<AddQuarterPayload>) => {
       const startYear = action.payload.startYear;
-      const currentYears = state.yearPlans.map((e) => e.startYear);
+      const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
       const newQuarter = action.payload.quarterData;
 
       // if year doesn't exist
@@ -141,7 +175,9 @@ export const roadmapSlice = createSlice({
       }
 
       const yearIndex: number = currentYears.indexOf(startYear);
-      const currentQuarters = state.yearPlans[yearIndex].quarters.map((e) => e.name);
+      const currentQuarters = state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].quarters.map(
+        (e) => e.name,
+      );
 
       // if duplicate quarter
       if (currentQuarters.includes(newQuarter.name)) {
@@ -164,18 +200,23 @@ export const roadmapSlice = createSlice({
         }
       }
 
-      state.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
+      state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].quarters.splice(index, 0, newQuarter);
     },
     deleteQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
-      state.yearPlans[action.payload.yearIndex].quarters.splice(action.payload.quarterIndex, 1);
+      state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters.splice(
+        action.payload.quarterIndex,
+        1,
+      );
     },
     clearQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
-      state.yearPlans[action.payload.yearIndex].quarters[action.payload.quarterIndex].courses = [];
+      state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[
+        action.payload.quarterIndex
+      ].courses = [];
     },
     addYear: (state, action: PayloadAction<AddYearPayload>) => {
-      const currentYears = state.yearPlans.map((e) => e.startYear);
+      const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
       const newYear = action.payload.yearData.startYear;
-      const currentNames = state.yearPlans.map((e) => e.name);
+      const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
       const newName = action.payload.yearData.name;
 
       // if duplicate year
@@ -185,7 +226,7 @@ export const roadmapSlice = createSlice({
       }
       // if duplicate name
       if (currentNames.includes(newName)) {
-        const year = state.yearPlans[currentNames.indexOf(newName)].startYear;
+        const year = state.plans[state.currentPlanIndex].content.yearPlans[currentNames.indexOf(newName)].startYear;
         alert(`${newName} already exists from ${year} - ${year + 1}!`);
         return;
       }
@@ -199,10 +240,10 @@ export const roadmapSlice = createSlice({
         }
       }
 
-      state.yearPlans.splice(index, 0, action.payload.yearData);
+      state.plans[state.currentPlanIndex].content.yearPlans.splice(index, 0, action.payload.yearData);
     },
     editYear: (state, action: PayloadAction<EditYearPayload>) => {
-      const currentYears = state.yearPlans.map((e) => e.startYear);
+      const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
       const newYear = action.payload.startYear;
       const yearIndex = action.payload.index;
 
@@ -213,45 +254,52 @@ export const roadmapSlice = createSlice({
       }
 
       // edit year & sort years
-      state.yearPlans[yearIndex].startYear = newYear;
-      state.yearPlans.sort((a, b) => a.startYear - b.startYear);
+      state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].startYear = newYear;
+      state.plans[state.currentPlanIndex].content.yearPlans.sort((a, b) => a.startYear - b.startYear);
+    },
+    deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
+      state.plans[state.currentPlanIndex].content.yearPlans.splice(action.payload.yearIndex, 1);
+    },
+    clearYear: (state, action: PayloadAction<YearIdentifier>) => {
+      for (
+        let i = 0;
+        i < state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters.length;
+        i++
+      ) {
+        state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[i].courses = [];
+      }
     },
     editName: (state, action: PayloadAction<EditNamePayload>) => {
-      const currentNames = state.yearPlans.map((e) => e.name);
+      const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
       const newName = action.payload.name;
       const yearIndex = action.payload.index;
 
       // if duplicate name
       if (currentNames.includes(newName)) {
-        const year = state.yearPlans[yearIndex].startYear;
+        const year = state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].startYear;
         alert(`${newName} already exists from ${year} - ${year + 1}!`);
         return;
       }
 
       // edit name
-      state.yearPlans[yearIndex].name = newName;
-    },
-    deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
-      state.yearPlans.splice(action.payload.yearIndex, 1);
-    },
-    clearYear: (state, action: PayloadAction<YearIdentifier>) => {
-      for (let i = 0; i < state.yearPlans[action.payload.yearIndex].quarters.length; i++) {
-        state.yearPlans[action.payload.yearIndex].quarters[i].courses = [];
-      }
+      state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].name = newName;
     },
     clearPlanner: (state) => {
       if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.yearPlans = initialState.yearPlans;
+        state.plans[state.currentPlanIndex].content.yearPlans = initialPlanState.yearPlans;
       }
     },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
       state.activeCourse = action.payload;
     },
     setYearPlans: (state, action: PayloadAction<PlannerData>) => {
-      state.yearPlans = action.payload;
+      state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
+    },
+    setAllPlans: (state, action: PayloadAction<RoadmapPlan[]>) => {
+      state.plans = action.payload;
     },
     setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
-      state.invalidCourses = action.payload;
+      state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
     },
     setShowTransfer: (state, action: PayloadAction<boolean>) => {
       state.showTransfer = action.payload;
@@ -277,6 +325,27 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
+    /** added for multiple plans */
+    setRoadmapPlan: (state, action: PayloadAction<RoadmapSliceState>) => {
+      state.plans = action.payload.plans;
+    },
+    addRoadmapPlan: (state, action: PayloadAction<RoadmapPlan>) => {
+      state.plans.push(action.payload);
+    },
+    deleteRoadmapPlan: (state, action: PayloadAction<RoadmapPlanIdentifier>) => {
+      state.plans.splice(action.payload.planIndex, 1);
+      if (state.plans.length === 0) {
+        state.plans.push(defaultPlan);
+      }
+    },
+    setPlanIndex: (state, action: PayloadAction<number>) => {
+      state.currentPlanIndex = action.payload;
+    },
+    setPlanName: (state, action: PayloadAction<SetPlanNamePayload>) => {
+      const index = action.payload.index;
+      state.plans[index].name = action.payload.name;
+    },
+    /** added for multiple plans */
     setCoursebag(state, action: PayloadAction<Coursebag>) {
       state.coursebag = action.payload;
     },
@@ -317,6 +386,7 @@ export const {
   clearPlanner,
   setActiveCourse,
   setYearPlans,
+  setAllPlans,
   setInvalidCourses,
   setShowTransfer,
   addTransfer,
@@ -325,6 +395,11 @@ export const {
   deleteTransfer,
   setShowSearch,
   setShowAddCourse,
+  setRoadmapPlan,
+  addRoadmapPlan,
+  deleteRoadmapPlan,
+  setPlanIndex,
+  setPlanName,
   setUnsavedChanges,
   addCourseToBag,
   removeCourseFromBag,
@@ -333,6 +408,9 @@ export const {
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectYearPlans = (state: RootState) => state.roadmap.yearPlans;
+export const selectYearPlans = (state: RootState) =>
+  state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans;
+
+export const selectAllPlans = (state: RootState) => state.roadmap.plans;
 
 export default roadmapSlice.reducer;

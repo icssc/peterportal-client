@@ -41,7 +41,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
         transfer: { name, units },
       }),
     );
-  }, [name, units]);
+  }, [dispatch, name, props.index, units]);
 
   return (
     <Row className="g-2 mb-1" xs={3}>
@@ -68,9 +68,6 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const show = useAppSelector((state) => state.roadmap.showTransfer);
   const handleClose = () => dispatch(setShowTransfer(false));
-
-  // console.log("missing courses: ", missingPrereqNames);
-  // console.log("missing courses: ", missingPrereqNames);
 
   const DisplayMissingCourses: FC = () => {
     return (

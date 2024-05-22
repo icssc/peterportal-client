@@ -21,7 +21,8 @@ const RoadmapPage: FC = () => {
   const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
   const courseBag = useAppSelector((state) => state.roadmap.coursebag);
   const isMobile = useIsMobile();
-  const roadmap = useAppSelector((state) => state.roadmap.yearPlans);
+  const roadmaps = useAppSelector((state) => state.roadmap.plans);
+  const roadmap = roadmaps[useAppSelector((state) => state.roadmap.currentPlanIndex)].content.yearPlans;
   const onDragEnd = useCallback(
     (result: DropResult) => {
       if (result.reason === 'DROP') {
@@ -62,7 +63,7 @@ const RoadmapPage: FC = () => {
 
         if (result.source.droppableId === 'coursebag' && result.destination.droppableId != 'coursebag') {
           const course = courseBag[result.source.index];
-          console.log(course);
+
           dispatch(removeCourseFromBag(course));
         }
 

@@ -3,7 +3,7 @@ import './SearchModule.scss';
 import wfs from 'websoc-fuzzy-search';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Search, Bag } from 'react-bootstrap-icons';
+import { Bag, Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
@@ -11,7 +11,6 @@ import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowCourseBag } from '../../store/slices/roadmapSlice';
-import { useLocation } from 'react-router-dom';
 
 const SEARCH_TIMEOUT_MS = 300;
 const FULL_RESULT_THRESHOLD = 3;
@@ -24,9 +23,8 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
-  const { showCourseBag } = useAppSelector((state) => state.roadmap);
-
-  const [pendingRequest, setPendingRequest] = useState<NodeJS.Timeout | null>(null);
+  const showCourseBag = useAppSelector((state) => state.roadmap.showCourseBag);
+  const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
   const searchNames = useCallback(
@@ -122,7 +120,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const coursePlaceholder = 'Search a course number or department';
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
-  const location = useLocation();
+
   return (
     <div className="search-module">
       <Form.Group className="mb-3">
