@@ -27,7 +27,6 @@ const Course: FC<CourseProps> = (props) => {
     prerequisiteText,
     corequisites,
     requiredCourses,
-    unmatchedPrerequisites,
     terms,
     onDelete,
   } = props;
@@ -53,18 +52,6 @@ const Course: FC<CourseProps> = (props) => {
               <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
             </div>
           )}
-        </div>
-      </Popover.Content>
-    </Popover>
-  );
-  const UnmatchedPrereqPopover = (
-    <Popover id={'course-popover-' + id}>
-      <Popover.Content>
-        <div className="course-popover">
-          <div className="popover-name">You still need the following prerequisites</div>
-        </div>
-        <div className="popover-detail">
-          <span className="popover-detail-prefix">Prerequisites:</span> {unmatchedPrerequisites?.join(', ')}
         </div>
       </Popover.Content>
     </Popover>
@@ -118,13 +105,7 @@ const Course: FC<CourseProps> = (props) => {
             <ExclamationTriangle />
           </OverlayTrigger>
         )}
-        {unmatchedPrerequisites && (
-          <div className="course-and-info">
-            <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={UnmatchedPrereqPopover} delay={100}>
-              <ExclamationTriangle />
-            </OverlayTrigger>
-          </div>
-        )}
+
         <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div>
       </div>
     </div>
