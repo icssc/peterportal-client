@@ -1,15 +1,15 @@
 import express, { Request } from 'express';
-import { COLLECTION_NAMES, containsID, addDocument, getDocuments, replaceDocument } from '../helpers/mongo';
-
+import Roadmap from '../models/roadmap';
 const router = express.Router();
 
 /**
  * Get a roadmap
  */
-router.get('/get', async function (req: Request<never, unknown, never, { id: string }>, res) {
-  getDocuments(COLLECTION_NAMES.ROADMAPS, { _id: req.query.id }).then((roadmaps) => {
-    if (roadmaps.length > 0) {
-      res.json(roadmaps[0]);
+router.get('/get', async function (req: Request<never, unknown, Record<string, unknown>, { id: string }>, res) {
+  const userID = req.query.id;
+  Roadmap.findOne({ userID }).then((roadmap) => {
+    if (roadmap) {
+      res.json(roadmap);
     } else {
       res.json({ error: 'No roadmap found!' });
     }
@@ -19,19 +19,17 @@ router.get('/get', async function (req: Request<never, unknown, never, { id: str
 /**
  * Add a roadmap
  */
-router.post('/', async function (req: Request<never, unknown, { _id: string }, never>, res) {
+router.post('/', async function (req: Request<never, unknown, Record<string, unknown>, never>, res) {
   if (!req.body._id) {
     res.json({ error: 'Invalid input' });
     return;
   }
   console.log(`Adding Roadmap: ${JSON.stringify(req.body)}`);
-
-  if (await containsID(COLLECTION_NAMES.ROADMAPS, req.body._id)) {
-    // overwrite
-    await replaceDocument(COLLECTION_NAMES.ROADMAPS, { _id: req.body._id }, req.body);
+  if (await Roadmap.exists({ userID: req.body._id })) {
+    await Roadmap.replaceOne({ userID: req.body._id }, { roadmap: req.body.roadmap, userID: req.body._id });
   } else {
     // add roadmap to mongo
-    await addDocument(COLLECTION_NAMES.ROADMAPS, req.body);
+    await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id }).save();
   }
 
   res.json({});

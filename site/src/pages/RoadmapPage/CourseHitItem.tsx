@@ -1,11 +1,11 @@
 import { FC } from 'react';
-import { setActiveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
-import Course from './Course';
 import { Draggable } from 'react-beautiful-dnd';
+import { useAppDispatch } from '../../store/hooks';
+import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import Course from './Course';
 
-import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
+import { CourseGQLData } from '../../types/types';
 
 interface CourseHitItemProps extends CourseGQLData {
   index: number;
@@ -20,7 +20,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     dispatch(setActiveCourse(props));
     dispatch(setShowAddCourse(true));
     // also hide the search bar to view the roadmap
-    dispatch(setShowSearch(false));
   };
   const onMobileKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {

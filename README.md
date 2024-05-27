@@ -36,6 +36,12 @@ Features include:
 
 ## First time setup
 
+### Prerequisites
+
+1. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+
+2. We use pnpm as our package manager. If you don't have pnpm, install it with `npm i -g pnpm`
+
 ### Committee Members
 
 1. Clone the repository to your local machine:
@@ -44,15 +50,13 @@ Features include:
    git clone https://github.com/icssc/peterportal-client
    ```
 
-2. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+2. `cd` into the cloned repo.
 
-3. `cd` into the cloned repo.
+3. Run `pnpm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-4. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
+4. Setup the appropriate environment variables provided by the project lead.
 
-5. Setup the appropriate environment variables provided by the project lead.
-
-6. Switch to a branch you will be working on for your current task (pick a name that's relevant to the issue).
+5. Switch to a branch you will be working on for your current task (pick a name that's relevant to the issue).
    ```
    git checkout -b [branch name]
    ```
@@ -67,15 +71,13 @@ Features include:
 git clone https://github.com/<your username>/peterportal-client
 ```
 
-3. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+3. `cd` into the cloned repo.
 
-4. `cd` into the cloned repo.
+4. Run `pnpm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-5. Run `npm install` to install all node dependencies for the site and API. This may take a few minutes.
+5. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
 
-6. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
-
-7. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
+6. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 
 ## Open Source Contribution Guide
 
@@ -93,11 +95,11 @@ git checkout -b [branch name]
 
 1. Open a terminal in the root directory of the repo.
 
-2. Run `npm run dev` to start both the backend Express server and frontend Vite dev server
+2. Run `pnpm run dev` to start both the backend Express server and frontend Vite dev server
 
 3. Visit the link printed to the console by Vite!
 
-Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `npm run dev`
+Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `pnpm run dev`
 
 ## Our Mission
 

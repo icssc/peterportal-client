@@ -67,7 +67,7 @@ export function FrontendStack({ app, stack }: StackContext) {
     },
     path: './site',
     buildOutput: 'dist',
-    buildCommand: 'npm run build',
+    buildCommand: 'pnpm build',
     cdk: {
       distribution: {
         additionalBehaviors: {

@@ -1,14 +1,14 @@
 import './SearchSidebar.scss';
 
 import CloseButton from 'react-bootstrap/CloseButton';
-import SearchModule from '../../component/SearchModule/SearchModule';
 import SearchHitContainer from '../../component/SearchHitContainer/SearchHitContainer';
+import SearchModule from '../../component/SearchModule/SearchModule';
 import CourseHitItem from './CourseHitItem';
 
+import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch } from '../../store/hooks';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { StrictModeDroppable } from './StrictModeDroppable';
-import { useIsMobile } from '../../helpers/util';
 
 const SearchSidebar = () => {
   const dispatch = useAppDispatch();
@@ -21,7 +21,7 @@ const SearchSidebar = () => {
           <CloseButton
             className="close-icon"
             onClick={() => {
-              dispatch(setShowSearch(false));
+              dispatch(setShowSearch({ show: false }));
             }}
           />
         </div>
