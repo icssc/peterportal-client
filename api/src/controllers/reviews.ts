@@ -64,7 +64,7 @@ router.get('/featured', async function (req: Request<never, unknown, never, Feat
 
   // find first review with the highest score
   const reviewsCollection = await Review.find({ [field]: req.query.id })
-    .sort({ score: -1 })
+    .sort({ reviewContent: -1, score: -1, verified: -1 })
     .limit(1);
   if (reviewsCollection) {
     res.json(reviewsCollection);
