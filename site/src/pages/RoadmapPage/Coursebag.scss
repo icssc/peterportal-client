@@ -1,0 +1,29 @@
+.coursebag-container {
+  padding-top: 2vh;
+  overflow-y: auto;
+  height: 100%;
+}
+.coursebag-title {
+  font-size: 2rem;
+  font-weight: 500;
+  padding: 0 1.8rem;
+}
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  font-size: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+
+  img {
+    width: 400px;
+    max-width: 100%;
+  }
+}
+
+.search-pagination {
+  display: flex;
+  justify-content: center;
+}

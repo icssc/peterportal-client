@@ -41,7 +41,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
         transfer: { name, units },
       }),
     );
-  }, [name, units]);
+  }, [dispatch, name, props.index, units]);
 
   return (
     <Row className="g-2 mb-1" xs={3}>

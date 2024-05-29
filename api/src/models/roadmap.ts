@@ -9,6 +9,10 @@ const roadmapSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  coursebag: {
+    type: [String],
+    required: true,
+  },
 });
 
 const Roadmap = mongoose.model('Roadmap', roadmapSchema);
