@@ -7,10 +7,12 @@ import Button from 'react-bootstrap/Button';
 
 import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
+import { Dropdown } from 'semantic-ui-react';
 
 interface ScheduleProps {
   courseID?: string;
   professorID?: string;
+  termsOffered?: string[];
 }
 
 interface ScheduleData {
@@ -20,26 +22,34 @@ interface ScheduleData {
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
-  const [quarter, setQuarter] = useState<string>('');
+  const [currentQuarter, setCurrentQuarter] = useState<string>('');
+  const [selectedQuarter, setSelectedQuarter] = useState<string>('');
 
   useEffect(() => {
     // get the current quarter used in websoc
-    axios.get('/api/schedule/api/currentQuarter').then((res) => {
-      setQuarter(res.data.longName);
-      fetchScheduleDataFromAPI(res.data.shortName);
+    axios.get<string>('/api/schedule/api/currentQuarter').then((res) => {
+      // use it as the default in the dropdown
+      setCurrentQuarter(res.data);
+      setSelectedQuarter(res.data);
     });
-  }, [props.courseID, props.professorID]);
+  }, []);
 
-  const fetchScheduleDataFromAPI = async (currentQuarter: string) => {
+  useEffect(() => {
+    if (selectedQuarter !== '') {
+      fetchScheduleDataFromAPI(selectedQuarter);
+    }
+  }, [selectedQuarter, props.courseID, props.professorID]);
+
+  const fetchScheduleDataFromAPI = async (selectedQuarter: string) => {
     let url = '';
     if (props.courseID) {
       const courseIDSplit = props.courseID.split(' ');
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      url = `/api/schedule/api/${currentQuarter}/${department}/${number}`;
+      url = `/api/schedule/api/${selectedQuarter}/${department}/${number}`;
     } else if (props.professorID) {
-      url = `/api/schedule/api/${currentQuarter}/${props.professorID}`;
+      url = `/api/schedule/api/${selectedQuarter}/${props.professorID}`;
     }
 
     const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);
@@ -165,7 +175,29 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     return (
       <div>
-        <div className="schedule-quarter">Showing results for {quarter}</div>
+        {props.termsOffered ? (
+          <Dropdown
+            placeholder={currentQuarter}
+            scrolling
+            selection
+            options={
+              // in dropdown options, prepend current quarter to the list of past terms
+              [
+                { text: currentQuarter, value: currentQuarter },
+                ...props.termsOffered.map((term) => {
+                  return {
+                    text: term,
+                    value: term,
+                  };
+                }),
+              ]
+            }
+            value={selectedQuarter}
+            onChange={(_, s) => setSelectedQuarter(s.value as string)}
+          />
+        ) : (
+          <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
+        )}
         <Table responsive borderless className="schedule-table">
           <thead>
             <tr>

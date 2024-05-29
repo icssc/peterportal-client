@@ -27,12 +27,42 @@ const ProfessorPage: FC = () => {
         if (professor) {
           dispatch(setProfessor(professor as ProfessorGQLData));
           setError('');
+          document.title = `${(professor as ProfessorGQLData).name} | PeterPortal`;
         } else {
           setError(`Professor ${id} does not exist!`);
         }
       });
     }
   }, [dispatch, id]);
+
+  const unionTerms = (courseHistory: Record<string, string[]>) => {
+    // quarters mapped to the order of when they occur in the calendar year
+    const quartersOrdered: Record<string, string> = {
+      Winter: 'a',
+      Spring: 'b',
+      Summer1: 'c',
+      Summer2: 'd',
+      Summer10wk: 'e',
+      Fall: 'f',
+    };
+
+    // get array of arrays of term names
+    const allTerms = Object.values(courseHistory);
+
+    // flatten and take union of array
+    const union = [...new Set(allTerms.flat())];
+
+    // sort so that the most recent term appears first in the dropdown
+    union.sort((a, b) => {
+      const [yearA, qtrA]: string[] = a.split(' ');
+      const [yearB, qtrB]: string[] = b.split(' ');
+      // first compare years (descending)
+      // if years are equal, compare terms (most recent first)
+      return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
+    });
+
+    return union;
+  };
 
   // if professor does not exists
   if (error) {
@@ -62,7 +92,10 @@ const ProfessorPage: FC = () => {
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <Divider />
-              <Schedule professorID={professorGQLData.shortenedName} />
+              <Schedule
+                professorID={professorGQLData.shortenedName}
+                termsOffered={unionTerms(professorGQLData.courseHistory)}
+              />
             </div>
 
             <div className="professor-page-section">

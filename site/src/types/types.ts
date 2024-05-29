@@ -141,6 +141,7 @@ export interface TransferData {
 
 // Bundle planner and transfer data in one object
 export interface SavedRoadmap {
+  timestamp: number;
   planners: SavedPlannerData[];
   transfers: TransferData[];
 }
@@ -191,6 +192,7 @@ export interface ProfessorGQLData {
   schools: string[];
   relatedDepartments: string[];
   courses: CourseLookup;
+  courseHistory: Record<string, string[]>;
 }
 
 // PPAPI format

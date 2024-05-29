@@ -19,39 +19,89 @@
   border-radius: 10px;
   box-shadow: 0px 0px 4px var(--zot-blue);
   flex: 1 1 30%;
-  height: fit-content;
-  margin: 0.75rem;
+  min-width: 250px;
   position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   .quarter-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 6px;
 
     .quarter-title {
       color: #202e47;
       font-weight: bold;
-      font-size: 20px;
-      padding: 1rem 0rem 0rem 2rem;
+      font-size: 18px;
+      padding: 10px 0 10px 12px;
+      margin: 0;
+      margin-right: auto;
     }
 
     .quarter-edit-btn {
       background: none;
       border: none;
-      margin-top: 0.25rem;
-      margin-right: 1.25rem;
+      margin-right: 8px;
+      padding: 0;
+      width: 20px;
     }
   }
 
   .quarter-units {
-    padding: 0rem 0rem 1rem 2rem;
     color: #808080;
     font-size: 16px;
   }
 
   .quarter-add-course {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #202e47;
-    font-size: 15px;
+    font-size: 16px;
+  }
+
+  .quarter-course-list {
+    border: 1px solid #268cd366;
+    border-inline-width: 0;
+    margin-bottom: -2px;
+    height: 100%;
+
+    &:empty {
+      padding: 12px 32px 20px;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      &::before {
+        content: 'Drag courses here to add them to your roadmap';
+        max-width: 200px;
+      }
+    }
+
+    > .quarter-course .course {
+      box-shadow: none;
+      border: 1px solid #268cd366;
+      border-radius: 0;
+      &.invalid .course-and-info {
+        color: orange;
+      }
+    }
+  }
+
+  .course {
+    margin-inline: -1px;
+  }
+}
+
+// Although :has is not super widely supported, this style is not critical to page functionality.
+// It should be fine to make it work for just browsers that do support it.
+body:has(> #profile-popover) {
+  .quarter-add-course {
+    transition: background-color 0s;
   }
 }
 

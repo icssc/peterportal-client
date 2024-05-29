@@ -20,6 +20,7 @@ const ReviewsPage: FC = () => {
 
   useEffect(() => {
     checkLoggedIn();
+    document.title = 'Your Reviews | PeterPortal';
   }, []);
 
   if (!loaded) {
