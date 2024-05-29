@@ -46,7 +46,8 @@ jobs:
           HUSKY: 0
 
       - name: Remove staging stack
-        run: pnpm sst remove --stage staging-${{ github.event.pull_request.number }}
+        # need to clean up frontend stack first then backend stack or else backend stack doesn't get removed
+        run: pnpm sst remove --stage staging-${{ github.event.pull_request.number }} frontend && pnpm sst remove --stage staging-${{ github.event.pull_request.number }} backend
         env:
           CI: false
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
