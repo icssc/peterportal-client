@@ -105,7 +105,66 @@ router.get('/', async function (req, res) {
     }
   }
 
-  const reviews = await Review.find(query);
+  const pipeline = [
+    {
+      $match: query,
+    },
+    {
+      $addFields: {
+        _id: {
+          $toString: '$_id',
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'votes',
+        let: {
+          cmpUserID: req.session.passport?.user.id,
+          cmpReviewID: '$_id',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$$cmpUserID', '$userID'],
+                  },
+                  {
+                    $eq: ['$$cmpReviewID', '$reviewID'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'userVote',
+      },
+    },
+    {
+      $addFields: {
+        userVote: {
+          $cond: {
+            if: {
+              $ne: ['$userVote', []],
+            },
+            then: {
+              $getField: {
+                field: 'score',
+                input: {
+                  $first: '$userVote',
+                },
+              },
+            },
+            else: 0,
+          },
+        },
+      },
+    },
+  ];
+
+  const reviews = await Review.aggregate(pipeline);
   if (reviews) {
     res.json(reviews);
   } else {
@@ -213,7 +272,6 @@ router.patch('/vote', async function (req, res) {
       res.json({ deltaScore: deltaScore });
     } else {
       //no old vote, just add in new vote data
-      console.log(`Voting Review ${id} with delta ${deltaScore}`);
       await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
       //sends in vote
       await new Vote({ userID: req.session.passport.user.id, reviewID: id, score: deltaScore }).save();
@@ -223,51 +281,6 @@ router.patch('/vote', async function (req, res) {
   //
 });
 
-/**
- * Get whether or not the color of a button should be colored
- */
-router.patch('/getVoteColor', async function (req, res) {
-  //make sure user is logged in
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const query = {
-      userID: req.session.passport.user.email,
-      reviewID: req.body['id'],
-    };
-    //get any existing vote in the db
-    const existingVote = (await Vote.find(query)) as VoteData[];
-    //result an array of either length 1 or empty
-    if (existingVote.length == 0) {
-      //if empty, both should be uncolored
-      res.json([false, false]);
-    } else {
-      //if not empty, there is a vote, so color it accordingly
-      if (existingVote[0].score == 1) {
-        res.json([true, false]);
-      } else {
-        res.json([false, true]);
-      }
-    }
-  }
-});
-
-/**
- * Get multiple review colors
- */
-router.patch('/getVoteColors', async function (req, res) {
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const ids: string[] = req.body.ids;
-    const votes = await Vote.find({ userID: req.session.passport.user.id, reviewID: { $in: ids } });
-    const r: { [key: string]: number } = votes.reduce((acc: { [key: string]: number }, v) => {
-      acc[v.reviewID.toString()] = v.score;
-      return acc;
-    }, {});
-    res.json(r);
-  } else {
-    res.json({});
-  }
-});
 /*
  * Verify a review
  */
