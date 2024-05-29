@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { PersonFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData, VoteColor } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
+import { FaPen } from 'react-icons/fa';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -16,11 +17,15 @@ interface SubReviewProps {
   professor?: ProfessorGQLData;
   colors?: VoteColor;
   colorUpdater?: () => void;
+  editable?: boolean;
+  editReview?: (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colorUpdater, editable, editReview }) => {
   const [score, setScore] = useState(review.score);
   const [cookies] = useCookies(['user']);
+
+  //Edit Review
   let upvoteClass;
   let downvoteClass;
   if (colors != undefined && colors.colors != undefined) {
@@ -91,6 +96,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, colors, colo
 
   return (
     <div className="subreview">
+      {editable && editReview && (
+        <div className="edit-pen-icon" onClick={() => editReview(review, course, professor)}>
+          <FaPen />
+        </div>
+      )}
       <div>
         <h3 className="subreview-identifier">
           {professor && (
