@@ -91,7 +91,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     if (res.status === 400) {
       alert(res.data.error ?? 'You have already submitted a review for this course/professor');
     } else if (res.data.error !== undefined) {
-      alert('You must be logged in to add a review!');
+      alert('Error submitting review');
     } else {
       setSubmitted(true);
       dispatch(addReview(res.data));
