@@ -259,33 +259,32 @@ router.delete('/', async (req, res) => {
  */
 router.patch('/vote', async function (req, res) {
   if (req.session?.passport != null) {
-    try {
-      //get id and delta score from initial vote
-      const id = req.body['id'];
-      let deltaScore = req.body['upvote'] ? 1 : -1;
-      //query to search for a vote matching the same review and user
-      const currentVotes = {
-        userID: req.session.passport.user.id,
-        reviewID: id,
-      };
-      //either length 1 or 0 array(ideally) 0 if no existing vote, 1 if existing vote
-      const existingVote = (await Vote.find(currentVotes)) as VoteData[];
-      //check if there is an existing vote and it has the same vote as the previous vote
-      if (existingVote.length != 0 && deltaScore == existingVote[0].score) {
-        //remove the vote
-        res.json({ deltaScore: -1 * deltaScore });
+    //get id and delta score from initial vote
+    const id = req.body['id'];
+    let deltaScore = req.body['upvote'] ? 1 : -1;
+    //query to search for a vote matching the same review and user
+    const currentVotes = {
+      userID: req.session.passport.user.id,
+      reviewID: id,
+    };
+    //either length 1 or 0 array(ideally) 0 if no existing vote, 1 if existing vote
+    const existingVote = (await Vote.find(currentVotes)) as VoteData[];
+    //check if there is an existing vote and it has the same vote as the previous vote
+    if (existingVote.length != 0 && deltaScore == existingVote[0].score) {
+      //remove the vote
+      res.json({ deltaScore: -1 * deltaScore });
 
-        //delete the existing vote from the votes collection
-        await Vote.deleteMany(currentVotes);
-        //update the votes document with a lowered score
-        await Review.updateOne({ _id: id }, { $inc: { score: -1 * deltaScore } });
-      } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
-        //there is an existing vote but the vote was different
-        deltaScore *= 2;
-        //*2 to reverse the old vote and implement the new one
-        await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
-        //override old vote with new data
-        await Vote.updateOne({ _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
+      //delete the existing vote from the votes collection
+      await Vote.deleteMany(currentVotes);
+      //update the votes document with a lowered score
+      await Review.updateOne({ _id: id }, { $inc: { score: -1 * deltaScore } });
+    } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
+      //there is an existing vote but the vote was different
+      deltaScore *= 2;
+      //*2 to reverse the old vote and implement the new one
+      await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
+      //override old vote with new data
+      await Vote.updateOne({ _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
 
       res.json({ deltaScore: deltaScore });
     } else {
