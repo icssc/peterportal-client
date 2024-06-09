@@ -21,7 +21,10 @@ export interface ReviewData {
   tags: string[];
   verified?: boolean;
   captchaToken?: string;
+  userVote?: number;
 }
+
+export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
 
 export interface ReportData {
   _id?: string;
@@ -46,14 +49,6 @@ export type PrerequisiteJSONNode = PrerequisiteJSON | string;
 export interface VoteRequest {
   id: string;
   upvote: boolean;
-}
-
-export interface VoteColorRequest {
-  id: string;
-}
-
-export interface VoteColorsRequest {
-  ids: string[];
 }
 
 export interface ScoreData {
@@ -146,6 +141,7 @@ export interface TransferData {
 
 // Bundle planner and transfer data in one object
 export interface SavedRoadmap {
+  timestamp: number;
   planners: SavedPlannerData[];
   transfers: TransferData[];
 }
@@ -154,10 +150,6 @@ export interface SavedRoadmap {
 export interface MongoRoadmap {
   _id: string;
   roadmap: SavedRoadmap;
-}
-
-export interface VoteColor {
-  colors: boolean[];
 }
 
 /**
@@ -200,6 +192,7 @@ export interface ProfessorGQLData {
   schools: string[];
   relatedDepartments: string[];
   courses: CourseLookup;
+  courseHistory: Record<string, string[]>;
 }
 
 // PPAPI format

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
@@ -89,6 +89,10 @@ const RoadmapMultiplan: FC = () => {
     dispatch(setPlanName({ index: editIdx, name: newPlanName }));
     setEditIdx(-1);
   };
+
+  useEffect(() => {
+    document.title = `${allPlans.plans[currentPlanIndex].name} | PeterPortal`;
+  }, [currentPlanIndex]);
 
   return (
     <div className="multi-plan-selector">
