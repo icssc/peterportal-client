@@ -4,23 +4,26 @@
   border-radius: 15px;
   height: auto;
   font-size: 16px;
-  padding: 10px 20px;
+  padding: 12px;
   position: relative;
+
+  .course-and-info {
+    color: var(--zot-blue);
+    a {
+      color: inherit;
+    }
+  }
 
   .name {
     font-weight: bold;
-    color: var(--zot-blue);
-    font-size: 18px;
   }
 
   .title {
-    font-size: 16px;
+    margin-top: 4px;
   }
 
   .units {
     margin-left: auto;
-    color: #808080;
-    font-size: 14px;
   }
 }
 
@@ -45,6 +48,11 @@
   background-color: transparent;
   font-weight: bold;
   border: none;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .course-delete-icon {

@@ -82,8 +82,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
+                className="quarter-course"
                 style={{
-                  margin: '0rem 2rem 1rem 2rem',
                   cursor: 'grab',
                   ...provided.draggableProps.style,
                 }}
@@ -128,10 +128,13 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   return (
     <div className="quarter" ref={quarterContainerRef}>
-      <span className="quarter-header">
+      <div className="quarter-header">
         <h2 className="quarter-title">
           {quarterTitle} {year}
         </h2>
+        <div className="quarter-units">
+          {unitCount} {unitCount === 1 ? 'unit' : 'units'}
+        </div>
         <OverlayTrigger
           trigger="click"
           overlay={popover}
@@ -139,6 +142,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           onToggle={setShowQuarterMenu}
           show={showQuarterMenu}
           container={quarterContainerRef}
+          placement="bottom"
         >
           {({ ref, ...triggerHandler }) => (
             <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
@@ -146,14 +150,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             </button>
           )}
         </OverlayTrigger>
-      </span>
-      <div className="quarter-units">
-        {unitCount} {unitCount === 1 ? 'unit' : 'units'}
       </div>
       <StrictModeDroppable droppableId={yearIndex + '-' + quarterIndex} type="COURSE">
         {(provided) => {
           return (
-            <div ref={provided.innerRef} {...provided.droppableProps} style={{ paddingBottom: '1rem' }}>
+            <div ref={provided.innerRef} {...provided.droppableProps} className="quarter-course-list">
               {renderCourses()}
               {provided.placeholder}
             </div>
@@ -165,13 +166,13 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         <>
           <Button
             variant={buttonVariant}
-            className="quarter quarter-header"
+            className="quarter-add-course"
             onClick={() => {
               dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
             }}
           >
             <Plus className="plus-icon" />
-            <div className="quarter-add-course">Add Course</div>
+            <span>Add Course</span>
           </Button>
         </>
       )}

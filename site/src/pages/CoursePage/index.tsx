@@ -29,6 +29,7 @@ const CoursePage: FC = () => {
         if (course) {
           dispatch(setCourse(course as CourseGQLData));
           setError('');
+          document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | PeterPortal`;
         } else {
           setError(`Course ${id} does not exist!`);
         }
@@ -73,7 +74,11 @@ const CoursePage: FC = () => {
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <Divider />
-              <Schedule key={courseGQLData.id} courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber} />
+              <Schedule
+                key={courseGQLData.id}
+                courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+                termsOffered={courseGQLData.terms}
+              />
             </div>
 
             <div className="course-page-section">

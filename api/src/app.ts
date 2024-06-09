@@ -53,18 +53,26 @@ store?.on('error', function (error) {
   console.log(error);
 });
 // Setup Passport and Sessions
+if (!process.env.SESSION_SECRET) {
+  console.log('SESSION_SECRET env var is not defined!');
+}
 app.use(
   session({
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET ?? 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: SESSION_LENGTH },
     store: store,
   }),
 );
-app.use(passport.initialize());
-app.use(passport.session());
-require('./config/passport');
+
+if (process.env.GOOGLE_CLIENT && process.env.GOOGLE_SECRET) {
+  app.use(passport.initialize());
+  app.use(passport.session());
+  require('./config/passport');
+} else {
+  console.log('GOOGLE_CLIENT and/or GOOGLE_SECRET env var(s) not defined! Google login will not be available.');
+}
 
 /**
  * Configure Express.js Middleware
