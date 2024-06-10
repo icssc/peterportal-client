@@ -56,7 +56,7 @@ const Profile = () => {
             </button>
           </li>
           <li>
-            <a href={`/api/users/logout`} className="profile-popover__link">
+            <a href={'/api/users/auth/logout'} className="profile-popover__link">
               <div>
                 <Icon name="sign out" size="large" />
               </div>

@@ -47,7 +47,7 @@ declare module 'express-session' {
     returnTo: string;
   }
 
-  interface PassportData {
+  export interface PassportData {
     /**
      * True if is validated as an admin
      */

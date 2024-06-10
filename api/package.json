@@ -6,9 +6,11 @@
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"pnpm start\"",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit",
+    "prepare": "ts-patch install && typia patch"
   },
   "dependencies": {
+    "@trpc/server": "^10.45.1",
     "@vendia/serverless-express": "^4.12.6",
     "axios": "^1.6.8",
     "connect-mongodb-session": "^5.0.0",
@@ -20,7 +22,7 @@
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typia": "^5.5.10"
   },
   "devDependencies": {
     "@types/connect-mongodb-session": "^2.4.7",
@@ -35,6 +37,9 @@
     "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "tsc-watch": "^6.2.0"
+    "ts-node": "^10.9.2",
+    "ts-patch": "^3.1.2",
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.4.2"
   }
 }

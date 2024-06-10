@@ -8,6 +8,7 @@
     "@nivo/core": "^0.84.0",
     "@nivo/pie": "^0.84.0",
     "@reduxjs/toolkit": "^2.2.3",
+    "@trpc/client": "^10.45.1",
     "axios": "^1.6.8",
     "bootstrap": "^4.6.2",
     "node-html-parser": "^6.1.13",

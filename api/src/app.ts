@@ -11,6 +11,7 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
+import * as trpcExpress from '@trpc/server/adapters/express';
 import mongoose, { Mongoose } from 'mongoose';
 // load env
 dotenv.config();
@@ -19,15 +20,13 @@ dotenv.config();
 import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
 
 // Custom Routes
-import coursesRouter from './controllers/courses';
-import professorsRouter from './controllers/professors';
-import scheduleRouter from './controllers/schedule';
 import reviewsRouter from './controllers/reviews';
-import usersRouter from './controllers/users';
 import roadmapRouter from './controllers/roadmap';
-import reportsRouter from './controllers/reports';
+import authRouter from './controllers/auth';
 
 import { SESSION_LENGTH } from './config/constants';
+import { createContext } from './helpers/trpc';
+import { appRouter } from './controllers';
 
 // instantiate app
 const app = express();
@@ -91,15 +90,19 @@ app.use(function (req, res, next) {
  */
 
 // Enable custom routes
-const router = express.Router();
-router.use('/courses', coursesRouter);
-router.use('/professors', professorsRouter);
-router.use('/schedule', scheduleRouter);
-router.use('/reviews', reviewsRouter);
-router.use('/users', usersRouter);
-router.use('/roadmap', roadmapRouter);
-router.use('/reports', reportsRouter);
-app.use('/api', router);
+const expressRouter = express.Router();
+expressRouter.use('/reviews', reviewsRouter);
+expressRouter.use('/roadmap', roadmapRouter);
+expressRouter.use('/users/auth', authRouter);
+expressRouter.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext,
+  }),
+);
+
+app.use('/api', expressRouter);
 
 /**
  * Error Handler
