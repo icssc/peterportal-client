@@ -68,7 +68,6 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const show = useAppSelector((state) => state.roadmap.showTransfer);
   const handleClose = () => dispatch(setShowTransfer(false));
-
   const DisplayMissingCourses: FC = () => {
     return (
       <ListGroup horizontal>
@@ -94,8 +93,12 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
           Notice: entered course names need to match exactly as displayed on the UCI catalog (eg. "AP computer science"
           must be entered as "AP COMP SCI A")
         </p>
-        <p>Missing Prerequisites</p>
-        <DisplayMissingCourses />
+        {missingPrereqNames?.size > 0 && (
+          <>
+            <p>Missing Prerequisites</p>
+            <DisplayMissingCourses />
+          </>
+        )}
         <Container className="entry">
           <Form>
             {transfers.map((transfer, i) => (
