@@ -139,14 +139,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     setValidated(true);
 
     // do not proceed if not valid
-    if (valid === false) {
+    if (!valid) {
       return;
     }
-    if (!captchaToken) {
+    if (!props.editable && !captchaToken) {
       alert('Please complete the CAPTCHA');
       return;
     }
-    if (props.editable === false) {
+    if (!props.editable) {
       const date = new Date();
       const year = date.getFullYear();
       const month = (1 + date.getMonth()).toString();
@@ -527,15 +527,17 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col className="mb-3 review-form-submit">
-              <div className="g-recaptcha">
-                <ReCAPTCHA
-                  className="d-inline"
-                  sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                  theme={darkMode ? 'dark' : 'light'}
-                  onChange={(token) => setCaptchaToken(token ?? '')}
-                />
-              </div>
+            <Col className={props.editable ? 'mb-3' : 'mb-3 review-form-captcha-submit'}>
+              {!props.editable && (
+                <div className="g-recaptcha">
+                  <ReCAPTCHA
+                    className="d-inline"
+                    sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
+                    theme={darkMode ? 'dark' : 'light'}
+                    onChange={(token) => setCaptchaToken(token ?? '')}
+                  />
+                </div>
+              )}
               <div>
                 <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
                   Submit
