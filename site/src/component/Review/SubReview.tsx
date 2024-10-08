@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import axios from 'axios';
 import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
@@ -6,11 +6,13 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { Pen, PersonFill } from 'react-bootstrap-icons';
+import { PencilFill, PersonFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { Button } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -25,6 +27,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
   const reviewData = useAppSelector(selectReviews);
   const [cookies] = useCookies(['user']);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
+  const { darkMode } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
 
   const sendVote = async (voteReq: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', voteReq);
@@ -125,9 +129,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
   return (
     <div className="subreview">
       {editable && editReview && (
-        <button className="edit-pen-icon" onClick={() => editReview(review, course, professor)}>
-          <Pen />
-        </button>
+        <Button variant={theme} className="edit-button" onClick={() => editReview(review, course, professor)}>
+          <PencilFill width="16" height="16" />
+        </Button>
       )}
       <div>
         <h3 className="subreview-identifier">
