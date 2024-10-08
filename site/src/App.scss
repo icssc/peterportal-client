@@ -11,9 +11,7 @@ button {
 .app-content {
   display: flex;
   flex-direction: column;
-  padding-top: 3vh;
-  padding-left: 3vw;
-  padding-right: 3vw;
+  padding: 32px 36px;
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -54,6 +52,10 @@ button {
   }
   .modal-dialog {
     max-width: 400px;
+  }
+  .modal-footer {
+    border-top: none;
+    justify-content: flex-start;
   }
   h2 {
     margin-bottom: 0;

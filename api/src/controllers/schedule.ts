@@ -39,7 +39,7 @@ router.get('/api/currentWeek', async function (_, res) {
 router.get('/api/currentQuarter', async function (_, res) {
   const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
   const json = await apiResp.json();
-  res.send(json.payload[0].longName);
+  res.send(json.payload[0].shortName);
 });
 
 /**
