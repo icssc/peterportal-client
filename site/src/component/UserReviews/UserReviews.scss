@@ -7,15 +7,4 @@
 .user-reviews {
   border-radius: var(--border-radius);
   margin-bottom: 3vh;
-
-  .user-reviews-footer {
-    flex-direction: row;
-    width: 100%;
-    align-items: flex-end;
-  }
-}
-
-//Delete modal
-.delete-review-modal {
-  text-align: center !important;
 }

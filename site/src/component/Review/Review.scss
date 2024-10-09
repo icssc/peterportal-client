@@ -213,6 +213,9 @@
   }
 }
 
-.edit-button {
+.edit-buttons {
+  display: flex;
+  flex-direction: row;
   float: right;
+  gap: 10px;
 }

@@ -109,7 +109,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   const postReview = async (review: ReviewData) => {
     if (props.editable) {
-      const res = await axios.patch('/api/reviews/updateReview', review);
+      const res = await axios.patch('/api/reviews/update', review);
       if (res.data.hasOwnProperty.call(res.data, 'error')) {
         alert('You must be logged in to edit the review!');
       } else {

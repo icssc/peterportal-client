@@ -236,12 +236,11 @@ router.post('/', async function (req, res) {
  * Delete a review
  */
 router.delete('/', async (req, res) => {
+  console.log(req.body);
   try {
-    const checkUser = async () => {
-      return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
-    };
+    const usersOwnsReview = await Review.exists({ _id: req.body.id as string, userID: req.session.passport?.user.id });
 
-    if (req.session.passport?.admin || (await checkUser())) {
+    if (req.session.passport?.admin || usersOwnsReview) {
       await Review.deleteOne({ _id: req.body.id });
       await Vote.deleteMany({ reviewID: req.body.id });
       await Report.deleteMany({ reviewID: req.body.id });
@@ -335,7 +334,7 @@ router.delete('/clear', async function (req, res) {
 /**
  * Updating the review
  */
-router.patch('/updateReview', async function (req, res) {
+router.patch('/update', async function (req, res) {
   if (req.session.passport) {
     const updatedReviewBody = req.body;
 

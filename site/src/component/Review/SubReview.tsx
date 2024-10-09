@@ -6,12 +6,12 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { PencilFill, PersonFill } from 'react-bootstrap-icons';
+import { PencilFill, PersonFill, TrashFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
 
 interface SubReviewProps {
@@ -29,6 +29,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const { darkMode } = useContext(ThemeContext);
   const theme = darkMode ? 'dark' : 'light';
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', voteReq);
@@ -51,6 +52,12 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
         }),
       ),
     );
+  };
+
+  const deleteReview = async (reviewID: string) => {
+    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    dispatch(setReviews(reviewData.filter((review) => review._id !== reviewID)));
+    setShowDeleteModal(false);
   };
 
   const upvote = async () => {
@@ -129,9 +136,28 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
   return (
     <div className="subreview">
       {editable && editReview && (
-        <Button variant={theme} className="edit-button" onClick={() => editReview(review, course, professor)}>
-          <PencilFill width="16" height="16" />
-        </Button>
+        <div className="edit-buttons">
+          <Button variant={theme} className="edit-button" onClick={() => editReview(review, course, professor)}>
+            <PencilFill width="16" height="16" />
+          </Button>
+          <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
+            <TrashFill width="16" height="16" />
+          </Button>
+          <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+            <Modal.Header closeButton>
+              <h2>Delete Review</h2>
+            </Modal.Header>
+            <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={() => deleteReview(review._id!)}>
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
       )}
       <div>
         <h3 className="subreview-identifier">
