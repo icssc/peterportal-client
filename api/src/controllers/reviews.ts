@@ -10,6 +10,14 @@ import Vote from '../models/vote';
 import Report from '../models/report';
 const router = express.Router();
 
+async function userWroteReview(userID: string | undefined, reviewID: string) {
+  if (!userID) {
+    return false;
+  }
+
+  return await Review.exists({ _id: reviewID, userID: userID });
+}
+
 /**
  * Get review scores
  */
@@ -238,9 +246,7 @@ router.post('/', async function (req, res) {
 router.delete('/', async (req, res) => {
   console.log(req.body);
   try {
-    const usersOwnsReview = await Review.exists({ _id: req.body.id as string, userID: req.session.passport?.user.id });
-
-    if (req.session.passport?.admin || usersOwnsReview) {
+    if (req.session.passport?.admin || (await userWroteReview(req.session.passport?.user.id, req.body.id))) {
       await Review.deleteOne({ _id: req.body.id });
       await Vote.deleteMany({ reviewID: req.body.id });
       await Report.deleteMany({ reviewID: req.body.id });
@@ -336,6 +342,10 @@ router.delete('/clear', async function (req, res) {
  */
 router.patch('/update', async function (req, res) {
   if (req.session.passport) {
+    if (!(await userWroteReview(req.session.passport.user.id, req.body._id))) {
+      return res.json({ error: 'You are not the author of this review.' });
+    }
+
     const updatedReviewBody = req.body;
 
     const { _id, ...updateWithoutId } = updatedReviewBody;
