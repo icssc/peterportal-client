@@ -139,7 +139,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
-      <PersonFill size={25} fill="green"></PersonFill>
+      <Badge variant="success" style={{ padding: '1px' }}>
+        <PersonFill size={14}></PersonFill>
+      </Badge>
     </OverlayTrigger>
   );
 
