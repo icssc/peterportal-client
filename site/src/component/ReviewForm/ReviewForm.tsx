@@ -11,9 +11,8 @@ import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import ReCAPTCHA from 'react-google-recaptcha';
-
-import { addReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { addReview, editReview } from '../../store/slices/reviewSlice';
+import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -21,6 +20,9 @@ import { quarterNames } from '../../helpers/planner';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
+  show: boolean;
+  editable?: boolean;
+  review?: ReviewData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = (props) => {
@@ -44,7 +46,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Group projects',
     'Gives good feedback',
   ];
-
+  const [reviewId, setReviewId] = useState<string | undefined>(props.review?._id); //edit review
   const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
   const [course, setCourse] = useState(props.course?.id || '');
   const [yearTaken, setYearTaken] = useState('');
@@ -64,7 +66,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
-  const showForm = useAppSelector((state) => state.review.formOpen);
   const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
@@ -77,24 +78,54 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   useEffect(() => {
     // upon opening this form
-    if (showForm) {
+    if (props.show) {
       // if not logged in, close the form
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
         props.closeForm();
+      } else {
+        setSubmitted(false);
       }
     }
-  }, [showForm, props, cookies]);
+    //If editable is true
+    if (props.review) {
+      const [year, quarter] = props.review.quarter.split(' ');
+      setReviewId(props.review?._id);
+      setQuarterTaken(quarter);
+      setYearTaken(year);
+      setGradeReceived(props.review.gradeReceived);
+      setDifficulty(props.review.difficulty);
+      setQuality(props.review.rating);
+      setContent(props.review?.reviewContent);
+      setSelectedTags(props.review?.tags);
+      setAttendance(props.review?.attendance);
+      setTakeAgain(props.review?.takeAgain);
+      setTextbook(props.review?.textbook);
+      setUserName(props.review?.userDisplay);
+      setProfessor(props.review?.professorID);
+      setCourse(props.review?.courseID);
+    }
+  }, [props.show]);
 
   const postReview = async (review: ReviewData) => {
-    const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
-    if (res.status === 400) {
-      alert(res.data.error ?? 'You have already submitted a review for this course/professor');
-    } else if (res.data.error !== undefined) {
-      alert('Error submitting review');
+    if (props.editable) {
+      const res = await axios.patch('/api/reviews/update', review);
+      if (res.data.hasOwnProperty.call(res.data, 'error')) {
+        alert('You must be logged in to edit the review!');
+      } else {
+        setSubmitted(true);
+        dispatch(editReview(res.data));
+      }
     } else {
-      setSubmitted(true);
-      dispatch(addReview(res.data));
+      const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
+      if (res.status === 400) {
+        alert(res.data.error ?? 'You have already submitted a review for this course/professor');
+      } else if (res.data.error !== undefined) {
+        alert('You must be logged in to add a review!');
+      } else {
+        setSubmitted(true);
+        dispatch(addReview(res.data));
+      }
     }
   };
 
@@ -109,42 +140,76 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     setValidated(true);
 
     // do not proceed if not valid
-    if (valid === false) {
+    if (!valid) {
       return;
     }
-    if (!captchaToken) {
+    if (!props.editable && !captchaToken) {
       alert('Please complete the CAPTCHA');
       return;
     }
-
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const day = date.getDate().toString();
-    const review = {
-      professorID: professor,
-      courseID: course,
-      userID: userID,
-      userDisplay: userName,
-      reviewContent: content,
-      rating: quality,
-      difficulty: difficulty,
-      timestamp: month + '/' + day + '/' + year,
-      gradeReceived: gradeReceived,
-      forCredit: true,
-      quarter: yearTaken + ' ' + quarterTaken,
-      score: 0,
-      takeAgain: takeAgain,
-      textbook: textbook,
-      attendance: attendance,
-      tags: selectedTags,
-      captchaToken: captchaToken,
-    };
-    if (content.length > 500) {
-      setOverCharLimit(true);
+    if (!props.editable) {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (1 + date.getMonth()).toString();
+      const day = date.getDate().toString();
+      const review = {
+        professorID: professor,
+        courseID: course,
+        userID: userID,
+        userDisplay: userName,
+        reviewContent: content,
+        rating: quality,
+        difficulty: difficulty,
+        timestamp: month + '/' + day + '/' + year,
+        gradeReceived: gradeReceived,
+        forCredit: true,
+        quarter: yearTaken + ' ' + quarterTaken,
+        score: 0,
+        takeAgain: takeAgain,
+        textbook: textbook,
+        attendance: attendance,
+        tags: selectedTags,
+        captchaToken: captchaToken,
+      };
+      if (content.length > 500) {
+        setOverCharLimit(true);
+      } else {
+        setOverCharLimit(false);
+        postReview(review);
+      }
     } else {
-      setOverCharLimit(false);
-      postReview(review);
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (1 + date.getMonth()).toString();
+      const day = date.getDate().toString();
+      const review = {
+        _id: reviewId,
+        professorID: professor,
+        courseID: course,
+        userID: userID,
+        userDisplay: userName,
+        reviewContent: content,
+        rating: quality,
+        difficulty: difficulty,
+        timestamp: month + '/' + day + '/' + year,
+        gradeReceived: gradeReceived,
+        forCredit: true,
+        quarter: yearTaken + ' ' + quarterTaken,
+        score: 0,
+        takeAgain: takeAgain,
+        textbook: textbook,
+        attendance: attendance,
+        tags: selectedTags,
+        verified: false,
+        captchaToken: captchaToken,
+      };
+      if (content.length > 500) {
+        setOverCharLimit(true);
+      } else {
+        setOverCharLimit(false);
+        postReview(review);
+        setSubmitted(true);
+      }
     }
   };
 
@@ -234,10 +299,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         <Col>
           <Row>
             <Col>
-              <h1>
-                It's your turn to review{' '}
-                {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
-              </h1>
+              {props.editable ? (
+                <h1>Edit your review for {props.review?.courseID + ' ' + props.review?.professorID}</h1>
+              ) : (
+                <h1>
+                  It's your turn to review{' '}
+                  {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
+                </h1>
+              )}
             </Col>
           </Row>
           <Row className="mt-4" lg={2} md={1}>
@@ -245,7 +314,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <div className="review-form-section review-form-row review-form-taken">
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className="review-form-grade">
+                <Form.Group>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control
                     as="select"
@@ -254,6 +323,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                     defaultValue=""
                     required
                     onChange={(e) => setGradeReceived(e.target.value)}
+                    value={gradeReceived}
                   >
                     <option disabled={true} value="">
                       Grade
@@ -278,6 +348,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       defaultValue=""
                       required
                       onChange={(e) => setQuarterTaken(e.target.value)}
+                      value={quarterTaken}
                     >
                       <option disabled={true} value="">
                         Quarter
@@ -296,6 +367,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       defaultValue=""
                       required
                       onChange={(e) => setYearTaken(e.target.value)}
+                      value={yearTaken}
                     >
                       <option disabled={true} value="">
                         Year
@@ -349,6 +421,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="takeAgain"
                       label="Would Take Again"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
+                      checked={takeAgain}
                     />
                     <Form.Check
                       inline
@@ -356,6 +429,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="textbook"
                       label="Use Textbook"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
+                      checked={textbook}
                     />
                     <Form.Check
                       inline
@@ -363,6 +437,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       id="attendance"
                       label="Mandatory Attendance"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
+                      checked={attendance}
                     />
                   </Col>
                 </Row>
@@ -407,6 +482,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       setOverCharLimit(false);
                     }
                   }}
+                  value={props.editable ? content : props.review?.reviewContent}
                 />
                 {/* <textarea rows={5} /> */}
                 <div className="char-limit">
@@ -444,6 +520,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                           setUserName(cookies.user.name);
                         }
                       }}
+                      checked={userName === 'Anonymous Peter'}
                     />
                   </Col>
                 </Row>
@@ -451,21 +528,23 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col className="mb-3 review-form-submit">
-              <div className="g-recaptcha">
-                <ReCAPTCHA
-                  className="d-inline"
-                  sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                  theme={darkMode ? 'dark' : 'light'}
-                  onChange={(token) => setCaptchaToken(token ?? '')}
-                />
-              </div>
-              <div>
-                <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
-                  Submit
-                </Button>
-                <Button className="py-2 px-4 mr-3 float-right" variant="outline-secondary" onClick={props.closeForm}>
+            <Col className={props.editable ? 'mb-3' : 'mb-3 review-form-captcha-submit'}>
+              {!props.editable && (
+                <div className="g-recaptcha">
+                  <ReCAPTCHA
+                    className="d-inline"
+                    sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
+                    theme={darkMode ? 'dark' : 'light'}
+                    onChange={(token) => setCaptchaToken(token ?? '')}
+                  />
+                </div>
+              )}
+              <div className="review-form-submit-cancel-buttons">
+                <Button className="py-2 px-4" variant="outline-secondary" onClick={props.closeForm}>
                   Cancel
+                </Button>
+                <Button className="py-2 px-4" type="submit" variant="secondary">
+                  Submit
                 </Button>
               </div>
             </Col>
@@ -476,7 +555,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   );
 
   return (
-    <Modal show={showForm} onHide={props.closeForm} centered animation={false}>
+    <Modal show={props.show} onHide={props.closeForm} centered animation={false}>
       <div className="review-form">
         {submitted ? (
           <div className="submitted-form">

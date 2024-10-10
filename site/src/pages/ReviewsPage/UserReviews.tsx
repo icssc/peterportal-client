@@ -1,31 +1,28 @@
 import axios, { AxiosResponse } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
-import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from '../../../src/types/types';
+import { ReviewData } from '../../types/types';
 import './UserReviews.scss';
 import { useCookies } from 'react-cookie';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 
 const UserReviews: FC = () => {
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const reviews = useAppSelector(selectReviews);
   const [loaded, setLoaded] = useState<boolean>(false);
   const [cookies] = useCookies(['user']);
+  const dispatch = useAppDispatch();
 
   const getUserReviews = async () => {
     const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);
-    setReviews(response.data);
+    dispatch(setReviews(response.data));
     setLoaded(true);
   };
 
   useEffect(() => {
     getUserReviews();
   }, []);
-
-  const deleteReview = async (reviewID: string) => {
-    await axios.delete('/api/reviews', { data: { id: reviewID } });
-    setReviews(reviews.filter((review) => review._id !== reviewID));
-  };
 
   if (!loaded) {
     return <p>Loading...</p>;
@@ -36,15 +33,10 @@ const UserReviews: FC = () => {
       <div className="user-reviews-container">
         <h1>Your Reviews</h1>
         <p>Deleting a review will remove it permanently.</p>
-        {reviews.map((review, i) => (
-          <div key={`user-reviews-${i}`} className="user-reviews">
+        {reviews.map((review) => (
+          <div key={review._id!} className="user-reviews">
             <Divider />
-            <SubReview review={review}></SubReview>
-            <div className="user-reviews-footer">
-              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review._id!)}>
-                Delete
-              </Button>
-            </div>
+            <SubReview review={review} />
           </div>
         ))}
       </div>

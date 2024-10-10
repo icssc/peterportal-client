@@ -26,6 +26,13 @@ export const reviewSlice = createSlice({
     setReviews: (state, action: PayloadAction<ReviewData[]>) => {
       state.reviews = action.payload;
     },
+    editReview: (state, action: PayloadAction<ReviewData>) => {
+      for (let i = 0; i < state.reviews.length; i++) {
+        if (state.reviews[i]._id === action.payload._id) {
+          state.reviews[i] = action.payload;
+        }
+      }
+    },
     setFormStatus: (state, action: PayloadAction<boolean>) => {
       state.formOpen = action.payload;
     },
@@ -35,7 +42,7 @@ export const reviewSlice = createSlice({
   },
 });
 
-export const { addReview, setReviews, setFormStatus, toggleFormStatus } = reviewSlice.actions;
+export const { addReview, setReviews, editReview, setFormStatus, toggleFormStatus } = reviewSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectReviews = (state: RootState) => state.review.reviews;

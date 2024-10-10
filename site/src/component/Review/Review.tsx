@@ -26,6 +26,7 @@ const Review: FC<ReviewProps> = (props) => {
   const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
+  const showForm = useAppSelector((state) => state.review.formOpen);
 
   const getReviews = async () => {
     interface paramsProps {
@@ -189,19 +190,13 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           </div>
           {sortedReviews.map((review) => (
-            <SubReview
-              review={review}
-              key={review._id}
-              course={props.course}
-              professor={props.professor}
-              // updateScore={(newUserVote) => updateScore(review._id!, newUserVote)}
-            />
+            <SubReview review={review} key={review._id} course={props.course} professor={props.professor} />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>
             + Add Review
           </button>
         </div>
-        <ReviewForm closeForm={closeForm} {...props} />
+        <ReviewForm closeForm={closeForm} show={showForm} {...props} />
       </>
     );
   }
