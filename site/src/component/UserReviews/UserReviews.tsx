@@ -14,8 +14,6 @@ const UserReviews: FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [cookies] = useCookies(['user']);
   //edit review states
-  const [professorData] = useState<Map<string, ProfessorGQLData>>(new Map());
-  const [courseData] = useState<Map<string, CourseGQLData>>(new Map());
   const [courseToEdit, setCourseToEdit] = useState<CourseGQLData>();
   const [professorToEdit, setProfessorToEdit] = useState<ProfessorGQLData>();
   const [reviewToEdit, setReviewToEdit] = useState<ReviewData>();
@@ -31,21 +29,13 @@ const UserReviews: FC = () => {
     getUserReviews();
   }, []);
 
-  //Delete Review
-
   //Edit Review
   const editReview = (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => {
     setCourseToEdit(course);
     setProfessorToEdit(professor);
     setReviewToEdit(review);
-    console.log('Data received from SubReview:', {
-      course,
-      professor,
-      review,
-    });
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
-    console.log('Edit Review clicked!');
   };
 
   const closeForm = async () => {
@@ -66,13 +56,7 @@ const UserReviews: FC = () => {
         {reviews.map((review) => (
           <div key={review._id!} className="user-reviews">
             <Divider />
-            <SubReview
-              review={review}
-              course={courseData.get(review.courseID)}
-              professor={professorData.get(review.professorID)}
-              editable={true}
-              editReview={editReview}
-            />
+            <SubReview review={review} editable={true} editReview={editReview} />
           </div>
         ))}
         <ReviewForm
