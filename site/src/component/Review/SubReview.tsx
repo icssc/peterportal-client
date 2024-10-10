@@ -173,7 +173,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
           )}
           {!course && !professor && (
             <div>
-              {review.courseID} {review.professorID}
+              <Link to={{ pathname: `/course/${review.courseID}` }}>{review.courseID}</Link>{' '}
+              <Link to={{ pathname: `/professor/${review.professorID}` }}>{review.professorID}</Link>
             </div>
           )}
         </h3>
