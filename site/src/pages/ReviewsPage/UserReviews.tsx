@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from '../../../src/types/types';
+import { ReviewData } from '../../types/types';
 import './UserReviews.scss';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
