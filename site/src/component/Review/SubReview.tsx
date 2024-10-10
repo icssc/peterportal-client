@@ -27,7 +27,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [cookies] = useCookies(['user']);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const { darkMode } = useContext(ThemeContext);
-  const theme = darkMode ? 'dark' : 'light';
+  const buttonVariant = darkMode ? 'dark' : 'secondary';
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -149,7 +149,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     <div className="subreview">
       {cookies.user?.id === review.userID && (
         <div className="edit-buttons">
-          <Button variant={theme} className="edit-button" onClick={openReviewForm}>
+          <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
             <PencilFill width="16" height="16" />
           </Button>
           <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
