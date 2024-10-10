@@ -11,8 +11,8 @@ import Button from 'react-bootstrap/Button';
 import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { addReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { addReview, editReview } from '../../store/slices/reviewSlice';
+import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import { ReviewData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -20,6 +20,7 @@ import { quarterNames } from '../../helpers/planner';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
+  show: boolean;
   editable?: boolean;
   review?: ReviewData;
 }
@@ -65,7 +66,6 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies] = useCookies(['user']);
   const [validated, setValidated] = useState(false);
-  const showForm = useAppSelector((state) => state.review.formOpen);
   const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
 
   useEffect(() => {
     // upon opening this form
-    if (showForm) {
+    if (props.show) {
       // if not logged in, close the form
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
@@ -105,7 +105,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       setProfessor(props.review?.professorID);
       setCourse(props.review?.courseID);
     }
-  }, [showForm]);
+  }, [props.show]);
 
   const postReview = async (review: ReviewData) => {
     if (props.editable) {
@@ -114,6 +114,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         alert('You must be logged in to edit the review!');
       } else {
         setSubmitted(true);
+        dispatch(editReview(res.data));
       }
     } else {
       const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
@@ -313,7 +314,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
               <div className="review-form-section review-form-row review-form-taken">
                 {instructorSelect}
                 {courseSelect}
-                <Form.Group className="review-form-grade">
+                <Form.Group>
                   <Form.Label>Grade</Form.Label>
                   <Form.Control
                     as="select"
@@ -538,12 +539,12 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                   />
                 </div>
               )}
-              <div>
-                <Button className="py-2 px-4 float-right" type="submit" variant="secondary">
-                  Submit
-                </Button>
-                <Button className="py-2 px-4 mr-3 float-right" variant="outline-secondary" onClick={props.closeForm}>
+              <div className="review-form-submit-cancel-buttons">
+                <Button className="py-2 px-4" variant="outline-secondary" onClick={props.closeForm}>
                   Cancel
+                </Button>
+                <Button className="py-2 px-4" type="submit" variant="secondary">
+                  Submit
                 </Button>
               </div>
             </Col>
@@ -554,7 +555,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   );
 
   return (
-    <Modal show={showForm} onHide={props.closeForm} centered animation={false}>
+    <Modal show={props.show} onHide={props.closeForm} centered animation={false}>
       <div className="review-form">
         {submitted ? (
           <div className="submitted-form">

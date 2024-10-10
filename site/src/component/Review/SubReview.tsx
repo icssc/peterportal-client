@@ -13,16 +13,15 @@ import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  editable?: boolean;
-  editReview?: (review: ReviewData, course?: CourseGQLData, professor?: ProfessorGQLData) => void;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, editReview }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const [cookies] = useCookies(['user']);
@@ -30,6 +29,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
   const { darkMode } = useContext(ThemeContext);
   const theme = darkMode ? 'dark' : 'light';
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', voteReq);
@@ -115,6 +115,16 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
     setReportFormOpen(true);
   };
 
+  const openReviewForm = () => {
+    setShowReviewForm(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeReviewForm = () => {
+    setShowReviewForm(false);
+    document.body.style.overflow = 'visible';
+  };
+
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
@@ -135,9 +145,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
 
   return (
     <div className="subreview">
-      {editable && editReview && (
+      {cookies.user?.id === review.userID && (
         <div className="edit-buttons">
-          <Button variant={theme} className="edit-button" onClick={() => editReview(review, course, professor)}>
+          <Button variant={theme} className="edit-button" onClick={openReviewForm}>
             <PencilFill width="16" height="16" />
           </Button>
           <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
@@ -255,6 +265,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, editable, ed
           reviewID={review._id}
           reviewContent={review.reviewContent}
           closeForm={() => setReportFormOpen(false)}
+        />
+        <ReviewForm
+          course={course}
+          professor={professor}
+          review={review}
+          closeForm={closeReviewForm}
+          show={showReviewForm}
+          editable={true}
         />
       </div>
     </div>
