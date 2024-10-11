@@ -23,8 +23,8 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
   };
 
   useEffect(() => {
-    getReviewData(props.reviewID!);
-  }, []);
+    getReviewData(props.reviewID);
+  }, [props.reviewID]);
 
   if (!review) {
     return <></>;
