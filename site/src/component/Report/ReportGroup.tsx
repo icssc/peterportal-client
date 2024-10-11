@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Button from 'react-bootstrap/Button';
-import { ReportData, ReviewData } from '../../types/types';
+import { ReviewData } from '../../types/types';
 import SubReport from './SubReport';
 import './ReportGroup.scss';
+import { ReportData } from '@peterportal/types';
 
 interface ReportGroupProps {
   reviewID: string;
@@ -18,7 +19,6 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
   const getReviewData = async (reviewID: string) => {
     const res: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?reviewID=${reviewID}`);
     const review: ReviewData = res.data[0];
-    console.log(review);
     setReview(review);
   };
 

@@ -17,10 +17,11 @@ import AdminPage from './pages/AdminPage';
 import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
-import ThemeContext, { Theme } from './style/theme-context';
+import ThemeContext from './style/theme-context';
 import { useCookies } from 'react-cookie';
 
 import trpc from './trpc';
+import { Theme } from '@peterportal/types';
 
 function isSystemDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;

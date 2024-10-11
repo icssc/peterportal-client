@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { FC, useEffect, useState } from 'react';
-import { ReportData } from '../../types/types';
 import ReportGroup from './ReportGroup';
 import './Reports.scss';
 import trpc from '../../trpc';
+import { ReportData } from '@peterportal/types';
 
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
@@ -15,8 +15,7 @@ const Reports: FC = () => {
   }
 
   const getData = async () => {
-    const reports = (await trpc.reports.get.query()) as ReportData[];
-    console.log(reports);
+    const reports = await trpc.reports.get.query();
 
     const reportsDisplay: ReviewDisplay[] = [];
 

@@ -3,9 +3,9 @@ import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
-import { ReportData } from '../../types/types';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
+import { ReportSubmission } from '@peterportal/types';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -20,7 +20,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
   const [validated, setValidated] = useState<boolean>(false);
 
-  const postReport = async (report: ReportData) => {
+  const postReport = async (report: ReportSubmission) => {
     await trpc.reports.add.mutate(report);
     setReportSubmitted(true);
   };
@@ -31,14 +31,9 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     if (reason.length === 0) return;
     setValidated(true);
 
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const day = date.getDate().toString();
     const report = {
       reviewID: props.reviewID!,
       reason,
-      timestamp: month + '/' + day + '/' + year,
     };
     postReport(report);
   };

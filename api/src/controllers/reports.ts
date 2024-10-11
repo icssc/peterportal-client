@@ -5,20 +5,20 @@
 import Report from '../models/report';
 import { adminProcedure, publicProcedure, router } from '../helpers/trpc';
 import { z } from 'zod';
-import { reportData } from '@peterportal/types';
+import { ReportData, reportSubmission } from '@peterportal/types';
 
 const reportsRouter = router({
   /**
    * Get all reports
    */
   get: adminProcedure.query(async () => {
-    const reports = await Report.find();
+    const reports = await Report.find<ReportData>();
     return reports;
   }),
   /**
    * Add a report
    */
-  add: publicProcedure.input(reportData).mutation(async ({ input }) => {
+  add: publicProcedure.input(reportSubmission).mutation(async ({ input }) => {
     const report = new Report(input);
     await report.save();
 

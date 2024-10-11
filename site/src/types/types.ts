@@ -26,13 +26,6 @@ export interface ReviewData {
 
 export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
 
-export interface ReportData {
-  _id?: string;
-  reviewID: string;
-  reason: string;
-  timestamp: string;
-}
-
 export interface PassportData {
   email: string;
   name: string;
