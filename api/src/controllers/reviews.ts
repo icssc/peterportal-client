@@ -244,7 +244,6 @@ router.post('/', async function (req, res) {
  * Delete a review
  */
 router.delete('/', async (req, res) => {
-  console.log(req.body);
   try {
     if (req.session.passport?.admin || (await userWroteReview(req.session.passport?.user.id, req.body.id))) {
       await Review.deleteOne({ _id: req.body.id });
