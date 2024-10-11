@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './PrereqTree.scss';
 import { Grid, Popup } from 'semantic-ui-react';
-import type { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
+import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';

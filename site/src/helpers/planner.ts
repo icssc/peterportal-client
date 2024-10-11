@@ -1,4 +1,4 @@
-import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
+import { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
 import {
