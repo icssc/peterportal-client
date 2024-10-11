@@ -34,34 +34,43 @@ const app = express();
 // Setup mongo store for sessions
 const mongoStore = MongoDBStore(session);
 
+let store: undefined | MongoDBStore.MongoDBStore;
 if (process.env.MONGO_URL) {
-  const store = new mongoStore({
+  store = new mongoStore({
     uri: process.env.MONGO_URL,
     databaseName: DB_NAME,
     collection: COLLECTION_NAMES.SESSIONS,
   });
-  // Catch errors
-  mongoose.connection.on('error', function (error) {
-    console.log(error);
-  });
-  store.on('error', function (error) {
-    console.log(error);
-  });
-  // Setup Passport and Sessions
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET!,
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: SESSION_LENGTH },
-      store: store,
-    }),
-  );
+} else {
+  console.log('MONGO_URL env var is not defined!');
+}
+// Catch errors
+mongoose.connection.on('error', function (error) {
+  console.log(error);
+});
+store?.on('error', function (error) {
+  console.log(error);
+});
+// Setup Passport and Sessions
+if (!process.env.SESSION_SECRET) {
+  console.log('SESSION_SECRET env var is not defined!');
+}
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET ?? 'secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: SESSION_LENGTH },
+    store: store,
+  }),
+);
+
+if (process.env.GOOGLE_CLIENT && process.env.GOOGLE_SECRET) {
   app.use(passport.initialize());
   app.use(passport.session());
   require('./config/passport');
 } else {
-  console.log('MONGO_URL env var is not defined!');
+  console.log('GOOGLE_CLIENT and/or GOOGLE_SECRET env var(s) not defined! Google login will not be available.');
 }
 
 /**
@@ -112,10 +121,11 @@ app.use(function (req, res) {
   res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
 });
 
-let conn: null | Mongoose = null;
-const uri = process.env.MONGO_URL;
 export const connect = async () => {
-  if (conn == null) {
+  let conn: null | Mongoose = null;
+  const uri = process.env.MONGO_URL;
+
+  if (conn == null && uri) {
     conn = await mongoose.connect(uri!, {
       dbName: DB_NAME,
       serverSelectionTimeoutMS: 5000,
