@@ -79,6 +79,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   useEffect(() => {
     // upon opening this form
     if (props.show) {
+      setValidated(false);
       // if not logged in, close the form
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
@@ -86,24 +87,23 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
       } else {
         setSubmitted(false);
       }
-    }
-    //If editable is true
-    if (props.review) {
-      const [year, quarter] = props.review.quarter.split(' ');
-      setReviewId(props.review?._id);
-      setQuarterTaken(quarter);
-      setYearTaken(year);
-      setGradeReceived(props.review.gradeReceived);
-      setDifficulty(props.review.difficulty);
-      setQuality(props.review.rating);
-      setContent(props.review?.reviewContent);
-      setSelectedTags(props.review?.tags);
-      setAttendance(props.review?.attendance);
-      setTakeAgain(props.review?.takeAgain);
-      setTextbook(props.review?.textbook);
-      setUserName(props.review?.userDisplay);
-      setProfessor(props.review?.professorID);
-      setCourse(props.review?.courseID);
+      if (props.editable && props.review) {
+        const [year, quarter] = props.review.quarter.split(' ');
+        setReviewId(props.review?._id);
+        setQuarterTaken(quarter);
+        setYearTaken(year);
+        setGradeReceived(props.review.gradeReceived);
+        setDifficulty(props.review.difficulty);
+        setQuality(props.review.rating);
+        setContent(props.review?.reviewContent);
+        setSelectedTags(props.review?.tags);
+        setAttendance(props.review?.attendance);
+        setTakeAgain(props.review?.takeAgain);
+        setTextbook(props.review?.textbook);
+        setUserName(props.review?.userDisplay);
+        setProfessor(props.review?.professorID);
+        setCourse(props.review?.courseID);
+      }
     }
   }, [props.show]);
 
