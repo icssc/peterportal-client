@@ -23,11 +23,11 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   const postReport = async (report: ReportSubmission) => {
     await trpc.reports.add.mutate(report);
     setReportSubmitted(true);
+    setValidated(false);
   };
 
   const submitReport = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (reason.length > 500) return;
     if (reason.length === 0) return;
     setValidated(true);
 
@@ -51,6 +51,9 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <Form.Control
           as="textarea"
           placeholder="Enter a reason..."
+          minLength={1}
+          maxLength={500}
+          isValid={reason.length > 0}
           onChange={(e) => {
             setReason(e.target.value);
           }}

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const reportData = z.object({
   _id: z.string(),
   reviewID: z.string(),
-  reason: z.string(),
+  reason: z.string().min(1).max(500),
   timestamp: z.string(),
 });
 export type ReportData = z.infer<typeof reportData>;
