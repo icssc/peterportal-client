@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { getProfessorQuery } from '../helpers/gql';
 import { publicProcedure, router } from '../helpers/trpc';
+import { GradesRaw } from '@peterportal/types';
 
 const professorsRouter = router({
   /**
@@ -47,7 +48,7 @@ const professorsRouter = router({
       .then((response) => {
         return response.json();
       })
-      .then((data) => data.payload);
+      .then((data) => data.payload as GradesRaw);
   }),
 });
 

@@ -4,43 +4,23 @@
 
 import { z } from 'zod';
 import { publicProcedure, router } from '../helpers/trpc';
-
-const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
+import { TermResponse, WebsocAPIResponse, WeekData } from '@peterportal/types';
 
 const callPPAPIWebSoc = async (params: Record<string, string>) => {
   const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' + new URLSearchParams(params));
   return await fetch(url)
     .then((response) => response.json())
-    .then((json) => json.payload);
+    .then((json) => json.payload as WebsocAPIResponse);
 };
 
 const scheduleRouter = router({
-  /**
-   * Get terms from years
-   */
-  getTerms: publicProcedure.input(z.object({ years: z.string() })).query(async ({ input }) => {
-    let pastYears: number = parseInt(input.years);
-    if (!pastYears) {
-      pastYears = 1;
-    }
-    const d = new Date();
-    const year = d.getFullYear();
-    const terms = [];
-    for (let y = year - pastYears; y <= year; ++y) {
-      for (let i = 0; i < TERM_SEASONS.length; ++i) {
-        terms.push(`${y} ${TERM_SEASONS[i]}`);
-      }
-    }
-    return terms;
-  }),
-
   /**
    * Get the current week
    */
   currentWeek: publicProcedure.query(async () => {
     const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
     const json = await apiResp.json();
-    return json.payload;
+    return json.payload as WeekData;
   }),
 
   /**
@@ -49,7 +29,7 @@ const scheduleRouter = router({
   currentQuarter: publicProcedure.query(async () => {
     const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
     const json = await apiResp.json();
-    return json.payload[0].shortName;
+    return (json.payload as TermResponse)[0].shortName;
   }),
 
   /**

@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 
-import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
+import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
 import { Dropdown } from 'semantic-ui-react';

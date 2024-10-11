@@ -53,24 +53,6 @@ export interface ScoreData {
 export type SearchIndex = 'courses' | 'professors';
 export type SearchType = 'course' | 'professor';
 
-export interface WeekData {
-  /**
-   * The week number of the quarter.
-   * During quarter: 1-10
-   * Finals: 11
-   * Break: 0
-   */
-  week: number;
-  /**
-   * The current quarter
-   */
-  quarter: string;
-  /**
-   * The display friendly string. Special case for finals and break.
-   */
-  display: string;
-}
-
 /**
  * Peter's Roadmaps Type Definitions
  */

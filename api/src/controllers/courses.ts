@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { getCourseQuery } from '../helpers/gql';
 import { publicProcedure, router } from '../helpers/trpc';
+import { GradesRaw } from '@peterportal/types';
 
 const coursesRouter = router({
   /**
@@ -63,7 +64,7 @@ const coursesRouter = router({
         input.number,
     );
 
-    return r.then((response) => response.json()).then((data) => data.payload);
+    return r.then((response) => response.json()).then((data) => data.payload as GradesRaw);
   }),
 });
 

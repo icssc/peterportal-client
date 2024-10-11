@@ -275,6 +275,9 @@ importers:
 
   types:
     dependencies:
+      peterportal-api-next-types:
+        specifier: 1.0.0-rc.3
+        version: 1.0.0-rc.3
       zod:
         specifier: ^3.23.8
         version: 3.23.8

@@ -38,7 +38,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   const fetchGradeDistData = () => {
-    let request;
+    let request: Promise<GradesRaw> | undefined;
     // course context
     if (props.course) {
       const params = {
