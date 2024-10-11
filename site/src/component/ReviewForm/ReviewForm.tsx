@@ -68,7 +68,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [selectedTags, setSelectedTags] = useState<string[]>(reviewToEdit?.tags ?? []);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies] = useCookies(['user']);
   const userID: string = cookies.user?.id;
   const [userName, setUserName] = useState<string>(reviewToEdit?.userDisplay ?? cookies.user?.name);
@@ -132,11 +131,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       alert('Please complete the CAPTCHA');
       return;
     }
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const day = date.getDate().toString();
-    const timestamp = month + '/' + day + '/' + year;
+    const timestamp = new Date().toLocaleDateString('en-US');
     const review = {
       _id: reviewToEdit?._id,
       professorID: professor,
@@ -158,11 +153,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
       verified: false,
       captchaToken,
     };
-    if (content.length > 500) {
-      setOverCharLimit(true);
-    } else {
-      postReview(review);
-    }
+
+    postReview(review);
   };
 
   const selectTag = (tag: string) => {
@@ -440,19 +432,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   as="textarea"
                   placeholder="Here's your chance to be more specific..."
                   style={{ height: '15vh', width: '100%' }}
-                  onChange={(e) => {
-                    setContent(e.target.value);
-                    if (overCharLimit && e.target.value.length < 500) {
-                      setOverCharLimit(false);
-                    }
-                  }}
+                  onChange={(e) => setContent(e.target.value)}
                   value={content}
+                  maxLength={500}
                 />
                 <div className="char-limit">
-                  {overCharLimit ? <p style={{ color: 'red' }}>Your review exceeds the character limit</p> : null}
-                  <p style={content.length > 500 ? { color: 'red' } : {}} className="chars">
-                    {content.length}/500
-                  </p>
+                  <p className="chars">{content.length}/500</p>
                 </div>
                 <Form.Text>
                   <Icon name="warning sign" />
