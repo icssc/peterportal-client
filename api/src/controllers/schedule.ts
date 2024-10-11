@@ -2,8 +2,8 @@
  @module ScheduleRoute
 */
 
+import { z } from 'zod';
 import { publicProcedure, router } from '../helpers/trpc';
-import typia from 'typia';
 
 const TERM_SEASONS = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
@@ -18,7 +18,7 @@ const scheduleRouter = router({
   /**
    * Get terms from years
    */
-  getTerms: publicProcedure.input(typia.createAssert<{ years: string }>()).query(async ({ input }) => {
+  getTerms: publicProcedure.input(z.object({ years: z.string() })).query(async ({ input }) => {
     let pastYears: number = parseInt(input.years);
     if (!pastYears) {
       pastYears = 1;
@@ -56,7 +56,7 @@ const scheduleRouter = router({
    * Proxy for WebSOC, using PeterPortal API
    */
   getTermDeptNum: publicProcedure
-    .input(typia.createAssert<{ term: string; department: string; number: string }>())
+    .input(z.object({ term: z.string(), department: z.string(), number: z.string() }))
     .query(async ({ input }) => {
       const [year, quarter] = input.term.split(' ');
       const result = await callPPAPIWebSoc({
@@ -71,17 +71,15 @@ const scheduleRouter = router({
   /**
    * Proxy for WebSOC, using PeterPortal API
    */
-  getTermProf: publicProcedure
-    .input(typia.createAssert<{ term: string; professor: string }>())
-    .query(async ({ input }) => {
-      const [year, quarter] = input.term.split(' ');
-      const result = await callPPAPIWebSoc({
-        year,
-        quarter,
-        instructorName: input.professor,
-      });
-      return result;
-    }),
+  getTermProf: publicProcedure.input(z.object({ term: z.string(), professor: z.string() })).query(async ({ input }) => {
+    const [year, quarter] = input.term.split(' ');
+    const result = await callPPAPIWebSoc({
+      year,
+      quarter,
+      instructorName: input.professor,
+    });
+    return result;
+  }),
 });
 
 export default scheduleRouter;

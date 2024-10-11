@@ -6,8 +6,7 @@
     "start": "node dist/app.js",
     "dev": "tsc-watch --onSuccess \"pnpm start\"",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit",
-    "prepare": "ts-patch install && typia patch"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
   },
   "dependencies": {
     "@trpc/server": "^10.45.1",
@@ -22,7 +21,7 @@
     "morgan": "^1.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
-    "typia": "^5.5.10"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/connect-mongodb-session": "^2.4.7",
@@ -37,8 +36,6 @@
     "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "ts-node": "^10.9.2",
-    "ts-patch": "^3.1.2",
     "tsc-watch": "^6.2.0",
     "typescript": "^5.4.2"
   }

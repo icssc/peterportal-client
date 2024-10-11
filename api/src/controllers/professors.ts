@@ -2,15 +2,15 @@
  @module ProfessorsRoute
 */
 
+import { z } from 'zod';
 import { getProfessorQuery } from '../helpers/gql';
 import { publicProcedure, router } from '../helpers/trpc';
-import typia from 'typia';
 
 const professorsRouter = router({
   /**
    * PPAPI proxy for getting professor data
    */
-  get: publicProcedure.input(typia.createAssert<{ ucinetid: string }>()).query(async ({ input }) => {
+  get: publicProcedure.input(z.object({ ucinetid: z.string() })).query(async ({ input }) => {
     const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + input.ucinetid);
 
     return r.then((response) => response.json());
@@ -19,7 +19,7 @@ const professorsRouter = router({
   /**
    * PPAPI proxy for batch professor data
    */
-  batch: publicProcedure.input(typia.createAssert<{ professors: string[] }>()).mutation(async ({ input }) => {
+  batch: publicProcedure.input(z.object({ professors: z.array(z.string()) })).mutation(async ({ input }) => {
     if (input.professors.length == 0) {
       return {};
     } else {
@@ -40,7 +40,7 @@ const professorsRouter = router({
   /**
    * PPAPI proxy for grade distribution
    */
-  grades: publicProcedure.input(typia.createAssert<{ name: string }>()).query(async ({ input }) => {
+  grades: publicProcedure.input(z.object({ name: z.string() })).query(async ({ input }) => {
     const r = fetch(process.env.PUBLIC_API_URL + 'grades/raw?instructor=' + encodeURIComponent(input.name));
 
     return r

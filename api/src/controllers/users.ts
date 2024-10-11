@@ -2,14 +2,9 @@
  @module UsersRoute
 */
 
-import typia from 'typia';
-
 import Preference from '../models/preference';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
-
-interface UserPreferences {
-  theme?: 'light' | 'dark' | 'system';
-}
+import { userPreferences, UserPreferences } from '../types/schemas';
 
 const usersRouter = router({
   /**
@@ -32,7 +27,7 @@ const usersRouter = router({
   /**
    * Configure the user's theme preferences
    */
-  setPreferences: userProcedure.input(typia.createAssert<UserPreferences>()).mutation(async ({ input, ctx }) => {
+  setPreferences: userProcedure.input(userPreferences).mutation(async ({ input, ctx }) => {
     const userID = ctx.session.passport?.user.id;
 
     // make user's preference doc if it doesn't exist
@@ -40,14 +35,8 @@ const usersRouter = router({
       await Preference.create({ userID, theme: input.theme });
     }
 
-    // grab valid preferences from request body
-    const preferences: UserPreferences = {};
-    if (input.theme) {
-      preferences.theme = input.theme;
-    }
-
     // set the preferences
-    await Preference.updateOne({ userID }, preferences);
+    await Preference.updateOne({ userID }, input);
 
     // echo back body
     return input;
