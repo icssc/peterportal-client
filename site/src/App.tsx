@@ -86,8 +86,6 @@ export default function App() {
         }
       });
     }
-
-    // trpc.greeting.query().then((res) => console.log(res));
   }, [cookies.user, setThemeState]);
 
   return (
