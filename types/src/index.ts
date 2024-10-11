@@ -18,3 +18,5 @@ export const userPreferences = z.object({
   theme: theme,
 });
 export type UserPreferences = z.infer<typeof userPreferences>;
+
+export * from 'peterportal-api-next-types';
