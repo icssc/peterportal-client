@@ -1,5 +1,6 @@
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { TRPCError, initTRPC } from '@trpc/server';
+import '../types/session'; // make eslint recognize session module augmentation
 
 export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => ({
   req,

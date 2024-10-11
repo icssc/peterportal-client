@@ -1,10 +1,3 @@
-export interface GenericObject {
-  /**
-   * Can have any key string and any value type
-   */
-  [key: string]: unknown;
-}
-
 export interface VoteData {
   _id?: string;
   userID: string;
@@ -33,32 +26,4 @@ export interface ReviewData {
   tags: string[];
   verified?: boolean;
   captchaToken: string;
-}
-
-declare module 'express-session' {
-  export interface SessionData {
-    /**
-     * Store custom data in passport
-     */
-    passport: PassportData;
-    /**
-     * URL to return to when finish authentication
-     */
-    returnTo: string;
-  }
-
-  export interface PassportData {
-    /**
-     * True if is validated as an admin
-     */
-    admin: boolean;
-    user: User;
-  }
-
-  interface User {
-    id: string;
-    email: string;
-    name: string;
-    picture: string;
-  }
 }
