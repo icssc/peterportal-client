@@ -271,10 +271,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         <ReviewForm
           course={course}
           professor={professor}
-          review={review}
+          reviewToEdit={review}
           closeForm={closeReviewForm}
           show={showReviewForm}
-          editable={true}
+          editing
         />
       </div>
     </div>

@@ -21,11 +21,18 @@ import { quarterNames } from '../../helpers/planner';
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
   show: boolean;
-  editable?: boolean;
-  review?: ReviewData;
+  editing?: boolean;
+  reviewToEdit?: ReviewData;
 }
 
-const ReviewForm: FC<ReviewFormProps> = (props) => {
+const ReviewForm: FC<ReviewFormProps> = ({
+  closeForm,
+  show,
+  editing,
+  reviewToEdit,
+  professor: professorProp,
+  course: courseProp,
+}) => {
   const dispatch = useAppDispatch();
   const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'];
   const tags = [
@@ -46,72 +53,49 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     'Group projects',
     'Gives good feedback',
   ];
-  const [reviewId, setReviewId] = useState<string | undefined>(props.review?._id); //edit review
-  const [professor, setProfessor] = useState(props.professor?.ucinetid || '');
-  const [course, setCourse] = useState(props.course?.id || '');
-  const [yearTaken, setYearTaken] = useState('');
-  const [quarterTaken, setQuarterTaken] = useState('');
-  const [gradeReceived, setGradeReceived] = useState('');
-  const [userID, setUserID] = useState('');
-  const [userName, setUserName] = useState('Anonymous Peter');
-  const [content, setContent] = useState('');
-  const [quality, setQuality] = useState<number>(3);
-  const [difficulty, setDifficulty] = useState<number>(3);
-  const [takeAgain, setTakeAgain] = useState<boolean>(false);
-  const [textbook, setTextbook] = useState<boolean>(false);
-  const [attendance, setAttendance] = useState<boolean>(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorID ?? '');
+  const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseID ?? '');
+  const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
+  const [yearTaken, setYearTaken] = useState(yearTakenDefault);
+  const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
+  const [gradeReceived, setGradeReceived] = useState(reviewToEdit?.gradeReceived ?? '');
+  const [content, setContent] = useState(reviewToEdit?.reviewContent ?? '');
+  const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
+  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
+  const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
+  const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
+  const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(reviewToEdit?.tags ?? []);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [overCharLimit, setOverCharLimit] = useState(false);
   const [cookies] = useCookies(['user']);
+  const userID: string = cookies.user?.id;
+  const [userName, setUserName] = useState<string>(reviewToEdit?.userDisplay ?? cookies.user?.name);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
-    // get user info from cookie
-    if (cookies.user) {
-      setUserID(cookies.user.id);
-      setUserName(cookies.user.name);
-    }
-  }, [cookies]);
-
-  useEffect(() => {
-    // upon opening this form
-    if (props.show) {
-      setValidated(false);
-      // if not logged in, close the form
+    if (show) {
+      // form opened
+      // if not logged in, close the form, return
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
-        props.closeForm();
-      } else {
-        setSubmitted(false);
+        closeForm();
       }
-      if (props.editable && props.review) {
-        const [year, quarter] = props.review.quarter.split(' ');
-        setReviewId(props.review?._id);
-        setQuarterTaken(quarter);
-        setYearTaken(year);
-        setGradeReceived(props.review.gradeReceived);
-        setDifficulty(props.review.difficulty);
-        setQuality(props.review.rating);
-        setContent(props.review?.reviewContent);
-        setSelectedTags(props.review?.tags);
-        setAttendance(props.review?.attendance);
-        setTakeAgain(props.review?.takeAgain);
-        setTextbook(props.review?.textbook);
-        setUserName(props.review?.userDisplay);
-        setProfessor(props.review?.professorID);
-        setCourse(props.review?.courseID);
-      }
+
+      setValidated(false);
+      setSubmitted(false);
     }
-  }, [props.show]);
+    // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
 
   const postReview = async (review: ReviewData) => {
-    if (props.editable) {
+    if (editing) {
       const res = await axios.patch('/api/reviews/update', review);
-      if (res.data.hasOwnProperty.call(res.data, 'error')) {
-        alert('You must be logged in to edit the review!');
+      if (res.data.error !== undefined) {
+        alert(res.data.error);
       } else {
         setSubmitted(true);
         dispatch(editReview(res.data));
@@ -143,73 +127,41 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     if (!valid) {
       return;
     }
-    if (!props.editable && !captchaToken) {
+    // check if CAPTCHA is completed for new reviews (captcha omitted for editing)
+    if (!editing && !captchaToken) {
       alert('Please complete the CAPTCHA');
       return;
     }
-    if (!props.editable) {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = (1 + date.getMonth()).toString();
-      const day = date.getDate().toString();
-      const review = {
-        professorID: professor,
-        courseID: course,
-        userID: userID,
-        userDisplay: userName,
-        reviewContent: content,
-        rating: quality,
-        difficulty: difficulty,
-        timestamp: month + '/' + day + '/' + year,
-        gradeReceived: gradeReceived,
-        forCredit: true,
-        quarter: yearTaken + ' ' + quarterTaken,
-        score: 0,
-        takeAgain: takeAgain,
-        textbook: textbook,
-        attendance: attendance,
-        tags: selectedTags,
-        captchaToken: captchaToken,
-      };
-      if (content.length > 500) {
-        setOverCharLimit(true);
-      } else {
-        setOverCharLimit(false);
-        postReview(review);
-      }
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (1 + date.getMonth()).toString();
+    const day = date.getDate().toString();
+    const timestamp = month + '/' + day + '/' + year;
+    const review = {
+      _id: reviewToEdit?._id,
+      professorID: professor,
+      courseID: course,
+      userID,
+      userDisplay: userName,
+      reviewContent: content,
+      rating: quality,
+      difficulty,
+      timestamp,
+      gradeReceived,
+      forCredit: true,
+      quarter: yearTaken + ' ' + quarterTaken,
+      score: 0,
+      takeAgain,
+      textbook,
+      attendance,
+      tags: selectedTags,
+      verified: false,
+      captchaToken,
+    };
+    if (content.length > 500) {
+      setOverCharLimit(true);
     } else {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = (1 + date.getMonth()).toString();
-      const day = date.getDate().toString();
-      const review = {
-        _id: reviewId,
-        professorID: professor,
-        courseID: course,
-        userID: userID,
-        userDisplay: userName,
-        reviewContent: content,
-        rating: quality,
-        difficulty: difficulty,
-        timestamp: month + '/' + day + '/' + year,
-        gradeReceived: gradeReceived,
-        forCredit: true,
-        quarter: yearTaken + ' ' + quarterTaken,
-        score: 0,
-        takeAgain: takeAgain,
-        textbook: textbook,
-        attendance: attendance,
-        tags: selectedTags,
-        verified: false,
-        captchaToken: captchaToken,
-      };
-      if (content.length > 500) {
-        setOverCharLimit(true);
-      } else {
-        setOverCharLimit(false);
-        postReview(review);
-        setSubmitted(true);
-      }
+      postReview(review);
     }
   };
 
@@ -233,7 +185,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   };
 
   // select instructor if in course context
-  const instructorSelect = props.course && (
+  const instructorSelect = courseProp && (
     <Form.Group>
       <Form.Label>Taken With</Form.Label>
       <Form.Control
@@ -243,12 +195,13 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         defaultValue=""
         required
         onChange={(e) => setProfessor(e.target.value)}
+        value={professor}
       >
         <option disabled={true} value="">
           Instructor
         </option>
-        {Object.keys(props.course?.instructors).map((ucinetid) => {
-          const name = props.course?.instructors[ucinetid].shortenedName;
+        {Object.keys(courseProp?.instructors).map((ucinetid) => {
+          const name = courseProp?.instructors[ucinetid].shortenedName;
           return (
             <option key={ucinetid} value={ucinetid}>
               {name}
@@ -265,7 +218,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     </Form.Group>
   );
   // select course if in professor context
-  const courseSelect = props.professor && (
+  const courseSelect = professorProp && (
     <Form.Group controlId="course">
       <Form.Label>Course Taken</Form.Label>
       <Form.Control
@@ -275,13 +228,14 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
         defaultValue=""
         required
         onChange={(e) => setCourse(e.target.value)}
+        value={course}
       >
         <option disabled={true} value="">
           Course
         </option>
-        {Object.keys(props.professor?.courses).map((courseID) => {
+        {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
-            props.professor?.courses[courseID].department + ' ' + props.professor?.courses[courseID].courseNumber;
+            professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
           return (
             <option key={courseID} value={courseID}>
               {name}
@@ -293,18 +247,28 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
     </Form.Group>
   );
 
+  function editReviewHeading() {
+    if (!courseProp && !professorProp) {
+      return `Edit your review for ${reviewToEdit?.courseID} ${reviewToEdit?.professorID}`;
+    } else if (courseProp) {
+      return `Edit your review for ${courseProp?.department} ${courseProp?.courseNumber}`;
+    } else {
+      return `Edit your review for ${professorProp?.name}`;
+    }
+  }
+
   const reviewForm = (
     <Form noValidate validated={validated} onSubmit={submitForm}>
       <Row className="review-form-ratings">
         <Col>
           <Row>
             <Col>
-              {props.editable ? (
-                <h1>Edit your review for {props.review?.courseID + ' ' + props.review?.professorID}</h1>
+              {editing ? (
+                <h1>{editReviewHeading()}</h1>
               ) : (
                 <h1>
                   It's your turn to review{' '}
-                  {props.course ? props.course?.department + ' ' + props.course?.courseNumber : props.professor?.name}
+                  {courseProp ? courseProp?.department + ' ' + courseProp?.courseNumber : professorProp?.name}
                 </h1>
               )}
             </Col>
@@ -385,7 +349,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row className="mt-4">
             <Col>
               <Form.Group className="review-form-section">
-                <Form.Label>Rate the {props.course ? 'Course' : 'Professor'}</Form.Label>
+                <Form.Label>Rate the {courseProp ? 'Course' : 'Professor'}</Form.Label>
                 <RangeSlider
                   min={1}
                   max={5}
@@ -471,7 +435,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
           <Row>
             <Col>
               <Form.Group className="review-form-section">
-                <Form.Label>Tell us more about this {props.course ? 'course' : 'professor'}</Form.Label>
+                <Form.Label>Tell us more about this {courseProp ? 'course' : 'professor'}</Form.Label>
                 <Form.Control
                   as="textarea"
                   placeholder="Here's your chance to be more specific..."
@@ -482,9 +446,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                       setOverCharLimit(false);
                     }
                   }}
-                  value={props.editable ? content : props.review?.reviewContent}
+                  value={content}
                 />
-                {/* <textarea rows={5} /> */}
                 <div className="char-limit">
                   {overCharLimit ? <p style={{ color: 'red' }}>Your review exceeds the character limit</p> : null}
                   <p style={content.length > 500 ? { color: 'red' } : {}} className="chars">
@@ -508,7 +471,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                     <Form.Check
                       inline
                       type="switch"
-                      id="anonymouse"
+                      id="anonymous"
                       label="Post as Anonymous"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         // set name as anonymous
@@ -528,8 +491,8 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
             </Col>
           </Row>
           <Row>
-            <Col className={props.editable ? 'mb-3' : 'mb-3 review-form-captcha-submit'}>
-              {!props.editable && (
+            <Col className={editing ? 'mb-3' : 'mb-3 review-form-captcha-submit'}>
+              {!editing && (
                 <div className="g-recaptcha">
                   <ReCAPTCHA
                     className="d-inline"
@@ -540,7 +503,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
                 </div>
               )}
               <div className="review-form-submit-cancel-buttons">
-                <Button className="py-2 px-4" variant="outline-secondary" onClick={props.closeForm}>
+                <Button className="py-2 px-4" variant="outline-secondary" onClick={closeForm}>
                   Cancel
                 </Button>
                 <Button className="py-2 px-4" type="submit" variant="secondary">
@@ -555,7 +518,7 @@ const ReviewForm: FC<ReviewFormProps> = (props) => {
   );
 
   return (
-    <Modal show={props.show} onHide={props.closeForm} centered animation={false}>
+    <Modal show={show} onHide={closeForm} centered animation={false}>
       <div className="review-form">
         {submitted ? (
           <div className="submitted-form">
