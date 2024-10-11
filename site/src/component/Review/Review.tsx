@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
@@ -28,7 +28,7 @@ const Review: FC<ReviewProps> = (props) => {
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
 
-  const getReviews = async () => {
+  const getReviews = useCallback(async () => {
     interface paramsProps {
       courseID?: string;
       professorID?: string;
@@ -44,13 +44,13 @@ const Review: FC<ReviewProps> = (props) => {
         const data = res.data.filter((review) => review !== null);
         dispatch(setReviews(data));
       });
-  };
+  }, [dispatch, props.course, props.professor]);
 
   useEffect(() => {
     // prevent reviews from carrying over
     dispatch(setReviews([]));
     getReviews();
-  }, [props.course?.id, props.professor?.ucinetid]);
+  }, [dispatch, getReviews]);
 
   let sortedReviews: ReviewData[];
   // filter verified if option is set
