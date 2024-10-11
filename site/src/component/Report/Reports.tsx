@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import './Reports.scss';
 import trpc from '../../trpc';
@@ -14,7 +14,7 @@ const Reports: FC = () => {
     reports: ReportData[];
   }
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
 
     const reportsDisplay: ReviewDisplay[] = [];
@@ -39,12 +39,12 @@ const Reports: FC = () => {
 
     setData(reportsDisplay);
     setLoaded(true);
-  };
+  }, []);
 
   useEffect(() => {
     getData();
     document.title = 'View Reports | PeterPortal';
-  }, []);
+  }, [getData]);
 
   const acceptReports = async (reviewID: string) => {
     await axios.delete('/api/reviews', { data: { id: reviewID } });
