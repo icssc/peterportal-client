@@ -5,11 +5,12 @@ export const reportData = z.object({
   reason: z.string(),
   timestamp: z.string(),
 });
-
 export type ReportData = z.infer<typeof reportData>;
 
-export const userPreferences = z.object({
-  theme: z.enum(['light', 'dark', 'system']),
-});
+export const theme = z.enum(['light', 'dark', 'system']);
+export type Theme = z.infer<typeof theme>;
 
+export const userPreferences = z.object({
+  theme: theme,
+});
 export type UserPreferences = z.infer<typeof userPreferences>;

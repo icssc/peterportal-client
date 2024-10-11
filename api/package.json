@@ -1,10 +1,10 @@
 {
   "name": "peterportal-core-api",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "src/app.ts",
+  "type": "module",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "tsc-watch --onSuccess \"pnpm start\"",
+    "dev": "nodemon --exec tsx ./src/app.ts",
     "build": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit"
   },
@@ -19,11 +19,13 @@
     "express-session": "^1.18.0",
     "mongoose": "^8.3.3",
     "morgan": "^1.10.0",
+    "nodemon": "^3.1.7",
     "passport": "^0.7.0",
     "passport-google-oauth": "^2.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@peterportal/types": "workspace:*",
     "@types/connect-mongodb-session": "^2.4.7",
     "@types/cookie-parser": "^1.4.7",
     "@types/dotenv-flow": "^3.3.3",
@@ -36,7 +38,7 @@
     "@typescript-eslint/parser": "^7.8.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "tsc-watch": "^6.2.0",
+    "tsx": "^4.19.1",
     "typescript": "^5.4.2"
   }
 }

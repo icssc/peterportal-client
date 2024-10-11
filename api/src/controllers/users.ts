@@ -4,7 +4,7 @@
 
 import Preference from '../models/preference';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
-import { userPreferences, UserPreferences } from '../types/schemas';
+import { userPreferences, UserPreferences } from '@peterportal/types';
 
 const usersRouter = router({
   /**

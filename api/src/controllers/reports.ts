@@ -5,7 +5,7 @@
 import Report from '../models/report';
 import { adminProcedure, publicProcedure, router } from '../helpers/trpc';
 import { z } from 'zod';
-import { reportData } from '../types/schemas';
+import { reportData } from '@peterportal/types';
 
 const reportsRouter = router({
   /**

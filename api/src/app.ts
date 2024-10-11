@@ -27,6 +27,7 @@ import authRouter from './controllers/auth';
 import { SESSION_LENGTH } from './config/constants';
 import { createContext } from './helpers/trpc';
 import { appRouter } from './controllers';
+import passportInit from './config/passport';
 
 // instantiate app
 const app = express();
@@ -68,7 +69,7 @@ app.use(
 if (process.env.GOOGLE_CLIENT && process.env.GOOGLE_SECRET) {
   app.use(passport.initialize());
   app.use(passport.session());
-  require('./config/passport');
+  passportInit();
 } else {
   console.log('GOOGLE_CLIENT and/or GOOGLE_SECRET env var(s) not defined! Google login will not be available.');
 }
