@@ -77,7 +77,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   useEffect(() => {
     if (show) {
       // form opened
-      // if not logged in, close the form, return
+      // if not logged in, close the form
       if (cookies.user === undefined) {
         alert('You must be logged in to add a review!');
         closeForm();
