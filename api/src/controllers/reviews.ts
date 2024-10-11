@@ -8,6 +8,7 @@ import { verifyCaptcha } from '../helpers/recaptcha';
 import Review from '../models/review';
 import Vote from '../models/vote';
 import Report from '../models/report';
+import mongoose from 'mongoose';
 const router = express.Router();
 
 /**
@@ -86,7 +87,7 @@ interface ReviewFilter {
   courseID: string;
   professorID: string;
   userID: string;
-  _id?: string;
+  _id?: mongoose.Types.ObjectId;
   verified?: boolean;
 }
 /**
@@ -103,7 +104,7 @@ router.get('/', async function (req, res) {
     courseID,
     professorID,
     userID,
-    _id: reviewID,
+    _id: reviewID ? new mongoose.Types.ObjectId(reviewID) : undefined,
     verified: verified === undefined ? undefined : verified === 'true' ? true : false,
   };
 
