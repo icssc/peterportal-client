@@ -1,9 +1,7 @@
 import {
   SearchIndex,
   CourseGQLData,
-  CourseGQLResponse,
   ProfessorGQLData,
-  ProfessorGQLResponse,
   ProfessorLookup,
   CourseLookup,
   BatchCourseData,
@@ -12,6 +10,7 @@ import {
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
+import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -71,9 +70,9 @@ export async function searchAPIResults(
       // use specific key based on index
       let key = '';
       if (index == 'courses') {
-        key = (data[id] as CourseGQLResponse).id;
+        key = (data[id] as CourseAAPIResponse).id;
       } else {
-        key = (data[id] as ProfessorGQLResponse).ucinetid;
+        key = (data[id] as ProfessorAAPIResponse).ucinetid;
       }
       // perform transformation
       transformed[key] = transformGQLData(index, data[id]);
@@ -85,7 +84,7 @@ export async function searchAPIResults(
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
 
-function transformCourseGQL(data: CourseGQLResponse) {
+function transformCourseGQL(data: CourseAAPIResponse) {
   const instructorHistoryLookup: ProfessorLookup = {};
   const prerequisiteListLookup: CourseLookup = {};
   const prerequisiteForLookup: CourseLookup = {};
@@ -116,17 +115,17 @@ function transformCourseGQL(data: CourseGQLResponse) {
   return course;
 }
 
-// TODO: should move transformations to backend
+// TODO: should move transformations to backend? check performance
 // transforms PPAPI gql schema to our needs
-export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | ProfessorGQLResponse) {
+export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | ProfessorAAPIResponse) {
   if (index == 'courses') {
-    return transformCourseGQL(data as CourseGQLResponse);
+    return transformCourseGQL(data as CourseAAPIResponse);
   } else {
-    return transformProfessorGQL(data as ProfessorGQLResponse);
+    return transformProfessorGQL(data as ProfessorAAPIResponse);
   }
 }
 
-function transformProfessorGQL(data: ProfessorGQLResponse) {
+function transformProfessorGQL(data: ProfessorAAPIResponse) {
   const courseHistoryLookup: CourseLookup = {};
   // maps course's id to course basic details
   data.courses.forEach((course) => {

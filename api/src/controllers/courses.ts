@@ -5,13 +5,13 @@
 import { z } from 'zod';
 import { getCourseQuery } from '../helpers/gql';
 import { publicProcedure, router } from '../helpers/trpc';
-import { GradesRaw } from '@peterportal/types';
+import { CourseAAPIResponse, CourseBatchAAPIResponse, GradesRaw } from '@peterportal/types';
 
 const coursesRouter = router({
   /**
    * PPAPI proxy for getting course data
    */
-  get: publicProcedure.input(z.object({ courseID: z.number() })).query(async ({ input }) => {
+  get: publicProcedure.input(z.object({ courseID: z.string() })).query(async ({ input }) => {
     const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(input.courseID), {
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ const coursesRouter = router({
     });
     console.log(input.courseID);
 
-    return r.then((response) => response.json()).then((data) => data.payload);
+    return r.then((response) => response.json()).then((data) => data.payload as CourseAAPIResponse);
   }),
 
   /**
@@ -40,14 +40,16 @@ const coursesRouter = router({
         }),
       });
 
+      // change keys from _0,...,_x to course IDs
       return r
         .then((response) => response.json())
-        .then((data) =>
-          Object.fromEntries(
-            Object.values(data.data)
-              .filter((x) => x !== null)
-              .map((x) => [(x as { id: string }).id, x]),
-          ),
+        .then(
+          (data: CourseBatchAAPIResponse) =>
+            Object.fromEntries(
+              (Object.values(data.data) as CourseAAPIResponse[])
+                .filter((course) => course !== null)
+                .map((course) => [course.id, course]),
+            ) as CourseBatchAAPIResponse,
         );
     }
   }),

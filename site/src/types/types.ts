@@ -1,5 +1,4 @@
-export type BatchCourseData = { [key: string]: CourseGQLData };
-export type BatchProfessorData = { [key: string]: ProfessorGQLData };
+import { CourseAAPIResponse, CoursePreview, ProfessorAAPIResponse, ProfessorPreview } from '@peterportal/types';
 
 export interface ReviewData {
   _id?: string;
@@ -127,81 +126,28 @@ export interface MongoRoadmap {
   roadmap: SavedRoadmap;
 }
 
-/**
- * GraphQL Definitions
- */
-// Format we deal with
-export interface CourseGQLData {
-  id: string;
-  department: string;
-  courseNumber: string;
-  school: string;
-  title: string;
-  courseLevel: string;
-  minUnits: number;
-  maxUnits: number;
-  description: string;
-  departmentName: string;
-  instructors: ProfessorLookup;
-  prerequisiteTree: Record<string, unknown>;
-  prerequisites: CourseLookup;
-  prerequisiteText: string;
-  dependencies: CourseLookup;
-  repeatability: string;
-  concurrent: string;
-  sameAs: string;
-  restriction: string;
-  overlap: string;
-  corequisites: string;
-  geList: string[];
-  geText: string;
-  terms: string[];
-}
-
-export interface ProfessorGQLData {
-  name: string;
-  shortenedName: string;
-  ucinetid: string;
-  title: string;
-  department: string;
-  schools: string[];
-  relatedDepartments: string[];
-  courses: CourseLookup;
-  courseHistory: Record<string, string[]>;
-}
-
-// PPAPI format
-export type CourseGQLResponse = Omit<CourseGQLData, 'instructors' | 'prerequisites' | 'dependencies'> & {
-  instructors: SubProfessor[];
-  prerequisites: SubCourse[];
-  dependencies: SubCourse[];
-};
-
-export type ProfessorGQLResponse = Omit<ProfessorGQLData, 'courses'> & {
-  courses: SubCourse[];
-};
-
-// maps ucinetid to subprofessor
 export interface ProfessorLookup {
-  [key: string]: SubProfessor;
+  [ucinetid: string]: ProfessorPreview;
 }
 
-// maps course id to subcourse
 export interface CourseLookup {
-  [key: string]: SubCourse;
+  [courseid: string]: CoursePreview;
 }
 
-// subset of professor details needed for display purposes
-export interface SubProfessor {
-  name: string;
-  ucinetid: string;
-  shortenedName: string;
+export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
+  instructors: ProfessorLookup;
+  prerequisites: CourseLookup;
+  dependencies: CourseLookup;
+};
+
+export interface BatchCourseData {
+  [courseid: string]: CourseGQLData;
 }
 
-// subset of course details needed for display purposes
-export interface SubCourse {
-  id: string;
-  department: string;
-  courseNumber: string;
-  title: string;
+export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
+  courses: CourseLookup;
+};
+
+export interface BatchProfessorData {
+  [ucinetid: string]: ProfessorGQLData;
 }

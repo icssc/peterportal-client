@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { getProfessorQuery } from '../helpers/gql';
 import { publicProcedure, router } from '../helpers/trpc';
-import { GradesRaw } from '@peterportal/types';
+import { GradesRaw, ProfessorAAPIResponse, ProfessorBatchAAPIResponse } from '@peterportal/types';
 
 const professorsRouter = router({
   /**
@@ -14,7 +14,7 @@ const professorsRouter = router({
   get: publicProcedure.input(z.object({ ucinetid: z.string() })).query(async ({ input }) => {
     const r = fetch(process.env.PUBLIC_API_URL + 'instructors/' + input.ucinetid);
 
-    return r.then((response) => response.json());
+    return r.then((response) => response.json()).then((data) => data.payload as ProfessorAAPIResponse);
   }),
 
   /**
@@ -34,7 +34,7 @@ const professorsRouter = router({
         }),
       });
 
-      return r.then((response) => response.json()).then((data) => data.data);
+      return r.then((response) => response.json()).then((data) => data.data as ProfessorBatchAAPIResponse);
     }
   }),
 
