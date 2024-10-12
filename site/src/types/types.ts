@@ -25,13 +25,6 @@ export interface ReviewData {
 
 export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
 
-export interface PassportData {
-  email: string;
-  name: string;
-  picture: string;
-  username?: string;
-}
-
 export interface PrerequisiteJSON {
   [key: string]: PrerequisiteJSONNode[];
 }

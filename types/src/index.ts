@@ -80,4 +80,12 @@ export interface ProfessorAAPIResponse {
 
 export type ProfessorBatchAAPIResponse = Record<string, ProfessorAAPIResponse>;
 
+// TODO: should make use of this on frontend when accessing user cookie with useCookies
+export interface UserData {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+}
+
 export * from 'peterportal-api-next-types';

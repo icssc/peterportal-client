@@ -1,3 +1,4 @@
+import { UserData } from 'aws-cdk-lib/aws-ec2';
 import 'express-session';
 
 declare module 'express-session' {
@@ -17,14 +18,7 @@ declare module 'express-session' {
      * True if is validated as an admin
      */
     admin: boolean;
-    user: User;
-  }
-
-  interface User {
-    id: string;
-    email: string;
-    name: string;
-    picture: string;
+    user: UserData;
   }
 }
 
