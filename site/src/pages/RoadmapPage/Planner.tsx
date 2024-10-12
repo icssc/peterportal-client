@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import axios from 'axios';
 import './Planner.scss';
 import Header from './Header';
 import AddYearPopup from './AddYearPopup';
@@ -16,11 +15,12 @@ import {
   defaultPlan,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
-import { SavedRoadmap, MongoRoadmap } from '../../types/types';
+import { SavedRoadmap, MongoRoadmap } from '@peterportal/types';
 import { defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
+import trpc from '../../trpc';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -65,15 +65,15 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (cookies.user !== undefined) {
-      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
-      axios.post('/api/roadmap', mongoRoadmap).then((res) => {
-        // error saving to account, saved locally
-        if (res.data.error) {
-          alert('Roadmap saved locally! Login to save it to your account.');
-        } else {
+      const mongoRoadmap: MongoRoadmap = { userID: cookies.user.id, roadmap: roadmap };
+      trpc.roadmaps.save
+        .mutate(mongoRoadmap)
+        .then(() => {
           alert(`Roadmap saved under ${cookies.user.email}`);
-        }
-      });
+        })
+        .catch(() => {
+          alert('Roadmap saved locally! Login to save it to your account.');
+        });
     } else {
       alert('Roadmap saved locally! Login to save it to your account.');
     }

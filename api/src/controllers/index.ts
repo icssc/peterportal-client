@@ -2,12 +2,14 @@ import { router } from '../helpers/trpc';
 import coursesRouter from './courses';
 import professorsRouter from './professors';
 import reportsRouter from './reports';
+import roadmapsRouter from './roadmap';
 import scheduleRouter from './schedule';
 import usersRouter from './users';
 
 export const appRouter = router({
   courses: coursesRouter,
   professors: professorsRouter,
+  roadmaps: roadmapsRouter,
   reports: reportsRouter,
   schedule: scheduleRouter,
   users: usersRouter,

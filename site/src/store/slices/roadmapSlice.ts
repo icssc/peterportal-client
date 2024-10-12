@@ -8,10 +8,10 @@ import {
   PlannerQuarterData,
   PlannerYearData,
   QuarterIdentifier,
-  TransferData,
   YearIdentifier,
 } from '../../types/types';
 import type { RootState } from '../store';
+import { TransferData } from '@peterportal/types';
 
 // Define a type for the slice state
 interface RoadmapPlanState {

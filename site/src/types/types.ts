@@ -1,4 +1,10 @@
-import { CourseAAPIResponse, CoursePreview, ProfessorAAPIResponse, ProfessorPreview } from '@peterportal/types';
+import {
+  CourseAAPIResponse,
+  CoursePreview,
+  ProfessorAAPIResponse,
+  ProfessorPreview,
+  QuarterName,
+} from '@peterportal/types';
 
 export interface ReviewData {
   _id?: string;
@@ -61,28 +67,10 @@ export interface PlannerQuarterData {
   courses: CourseGQLData[];
 }
 
-export type SavedPlannerData = {
-  name: string;
-  content: SavedPlannerYearData[];
-};
-
-export interface SavedPlannerYearData {
-  startYear: number;
-  name: string;
-  quarters: SavedPlannerQuarterData[];
-}
-
-export interface SavedPlannerQuarterData {
-  name: string;
-  courses: string[];
-}
-
 // Specify the location of a year
 export interface YearIdentifier {
   yearIndex: number;
 }
-
-export type QuarterName = 'Fall' | 'Winter' | 'Spring' | 'Summer1' | 'Summer2' | 'Summer10wk';
 
 // Specify the location of a quarter
 export interface QuarterIdentifier extends YearIdentifier {
@@ -98,25 +86,6 @@ export interface CourseIdentifier extends QuarterIdentifier {
 export interface InvalidCourseData {
   location: CourseIdentifier;
   required: string[];
-}
-
-// Specify name of transfer course and how many units its worth
-export interface TransferData {
-  name: string;
-  units: number | undefined;
-}
-
-// Bundle planner and transfer data in one object
-export interface SavedRoadmap {
-  timestamp: number;
-  planners: SavedPlannerData[];
-  transfers: TransferData[];
-}
-
-// Structure stored in mongo for accounts
-export interface MongoRoadmap {
-  _id: string;
-  roadmap: SavedRoadmap;
 }
 
 export interface ProfessorLookup {

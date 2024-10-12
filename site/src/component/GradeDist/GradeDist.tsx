@@ -4,8 +4,8 @@ import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
 
-import { CourseGQLData, ProfessorGQLData, QuarterName } from '../../types/types';
-import { GradesRaw } from '@peterportal/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 
 interface GradeDistProps {

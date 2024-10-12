@@ -244,6 +244,7 @@ router.delete('/', async (req, res) => {
 
     if (req.session.passport?.admin || (await checkUser())) {
       await Review.deleteOne({ _id: req.body.id });
+      // delete all votes and reports associated with review
       await Vote.deleteMany({ reviewID: req.body.id });
       await Report.deleteMany({ reviewID: req.body.id });
       res.status(200).send();

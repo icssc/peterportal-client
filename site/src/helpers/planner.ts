@@ -1,21 +1,17 @@
-import { Prerequisite, PrerequisiteTree } from '@peterportal/types';
-import { searchAPIResults } from './util';
-import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
 import {
-  BatchCourseData,
-  InvalidCourseData,
-  MongoRoadmap,
-  PlannerData,
-  PlannerQuarterData,
-  PlannerYearData,
+  Prerequisite,
+  PrerequisiteTree,
   QuarterName,
   SavedPlannerData,
   SavedPlannerQuarterData,
   SavedPlannerYearData,
   SavedRoadmap,
   TransferData,
-} from '../types/types';
-import axios from 'axios';
+} from '@peterportal/types';
+import { searchAPIResults } from './util';
+import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
+import { BatchCourseData, InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import trpc from '../trpc';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -131,10 +127,10 @@ export const loadRoadmap = async (
   // if logged in
   if (cookies.user !== undefined) {
     // get data from account
-    const request = await axios.get<MongoRoadmap>('/api/roadmap/get', { params: { id: cookies.user.id } });
+    const request = await trpc.roadmaps.get.query({ userID: cookies.user.id });
     // if a roadmap is found
-    if (request.data.roadmap !== undefined) {
-      roadmap = request.data.roadmap;
+    if (request?.roadmap) {
+      roadmap = request.roadmap;
     }
   }
 
