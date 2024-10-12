@@ -1,4 +1,4 @@
-import { UserData } from 'aws-cdk-lib/aws-ec2';
+import { User } from '@peterportal/types';
 import 'express-session';
 
 declare module 'express-session' {
@@ -18,7 +18,7 @@ declare module 'express-session' {
      * True if is validated as an admin
      */
     admin: boolean;
-    user: UserData;
+    user: User;
   }
 }
 

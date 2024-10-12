@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
-import { User } from 'express-session';
+import { User } from '@peterportal/types';
 
 const router = express.Router();
 

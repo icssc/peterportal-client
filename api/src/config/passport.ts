@@ -2,7 +2,7 @@
  @module PassportConfig
 */
 
-import { User } from 'express-session';
+import { User } from '@peterportal/types';
 import passport from 'passport';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 
