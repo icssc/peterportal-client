@@ -208,12 +208,6 @@ router.post('/', async function (req, res) {
       // Set on server so the client can't automatically verify their own review.
       req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
-      // Verify the captcha
-      const verifyResponse = await verifyCaptcha(req.body);
-      if (!verifyResponse?.success)
-        return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
-      delete req.body.captchaToken; // so it doesn't get stored in DB
-
       //check if review already exists for same professor, course, and user
       const query: ReviewFilter = {
         courseID: req.body.courseID,
@@ -224,6 +218,13 @@ router.post('/', async function (req, res) {
       const reviews = await Review.find(query);
       if (reviews?.length > 0)
         return res.status(400).json({ error: 'Review already exists for this professor and course!' });
+
+      // Verify the captcha
+      const verifyResponse = await verifyCaptcha(req.body);
+      if (!verifyResponse?.success)
+        return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
+      delete req.body.captchaToken; // so it doesn't get stored in DB
+
       // add review to mongo
       req.body.userDisplay =
         req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
