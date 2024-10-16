@@ -146,10 +146,12 @@ export interface SavedRoadmap {
   transfers: TransferData[];
 }
 
+export type Coursebag = CourseGQLData[];
 // Structure stored in mongo for accounts
 export interface MongoRoadmap {
   _id: string;
   roadmap: SavedRoadmap;
+  coursebag: string[];
 }
 
 /**

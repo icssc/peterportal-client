@@ -14,6 +14,7 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
+  setCoursebag,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap, MongoRoadmap } from '../../types/types';
@@ -29,6 +30,7 @@ const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
+  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const [showSyncModal, setShowSyncModal] = useState(false);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
@@ -56,8 +58,8 @@ const Planner: FC = () => {
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
+    const coursebagStrings = coursebag.map((course) => course.id);
 
-    // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
     // mark changes as saved to bypass alert on page leave
@@ -65,7 +67,7 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (cookies.user !== undefined) {
-      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap };
+      const mongoRoadmap: MongoRoadmap = { _id: cookies.user.id, roadmap: roadmap, coursebag: coursebagStrings };
       axios.post('/api/roadmap', mongoRoadmap).then((res) => {
         // error saving to account, saved locally
         if (res.data.error) {
@@ -113,16 +115,15 @@ const Planner: FC = () => {
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(cookies, (planners, roadmap, isLocalNewer) => {
+      loadRoadmap(cookies, (planners, roadmap, coursebag, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
+        dispatch(setCoursebag(coursebag));
         if (isLocalNewer) {
           setShowSyncModal(true);
         }
       });
-    }
-    // validate planner every time something changes
-    else {
+    } else {
       validatePlanner(transfers, currentPlanData, (missing, invalid) => {
         // set missing courses
         setMissingPrerequisites(missing);
