@@ -11,6 +11,7 @@ import ThemeContext from '../../style/theme-context';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
+  unmatchedPrerequisites?: string[];
   onDelete?: () => void;
   onAddToBag?: () => void;
   isInBag?: boolean;
@@ -35,7 +36,6 @@ const Course: FC<CourseProps> = (props) => {
     isInBag,
     removeFromBag,
   } = props;
-
   const CoursePopover = (
     <Popover id={'course-popover-' + id}>
       <Popover.Content>
@@ -87,7 +87,7 @@ const Course: FC<CourseProps> = (props) => {
             <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
           </span>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle className="info-circle" />
+            <InfoCircle />
           </OverlayTrigger>
           {requiredCourses && (
             <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>

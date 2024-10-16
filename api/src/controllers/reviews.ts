@@ -10,6 +10,14 @@ import Vote from '../models/vote';
 import Report from '../models/report';
 const router = express.Router();
 
+async function userWroteReview(userID: string | undefined, reviewID: string) {
+  if (!userID) {
+    return false;
+  }
+
+  return await Review.exists({ _id: reviewID, userID: userID });
+}
+
 /**
  * Get review scores
  */
@@ -68,7 +76,7 @@ router.get('/featured', async function (req: Request<never, unknown, never, Feat
 
   // find first review with the highest score
   Review.find({ [field]: req.query.id })
-    .sort({ score: -1 })
+    .sort({ reviewContent: -1, score: -1, verified: -1 })
     .limit(1)
     .then((reviewsCollection) => {
       if (reviewsCollection) {
@@ -200,12 +208,6 @@ router.post('/', async function (req, res) {
       // Set on server so the client can't automatically verify their own review.
       req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
-      // Verify the captcha
-      const verifyResponse = await verifyCaptcha(req.body);
-      if (!verifyResponse?.success)
-        return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
-      delete req.body.captchaToken; // so it doesn't get stored in DB
-
       //check if review already exists for same professor, course, and user
       const query: ReviewFilter = {
         courseID: req.body.courseID,
@@ -216,14 +218,18 @@ router.post('/', async function (req, res) {
       const reviews = await Review.find(query);
       if (reviews?.length > 0)
         return res.status(400).json({ error: 'Review already exists for this professor and course!' });
+
+      // Verify the captcha
+      const verifyResponse = await verifyCaptcha(req.body);
+      if (!verifyResponse?.success)
+        return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
+      delete req.body.captchaToken; // so it doesn't get stored in DB
+
       // add review to mongo
       req.body.userDisplay =
         req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
       req.body.userID = req.session.passport.user.id;
-      await new Review(req.body).save();
-
-      // echo back body
-      res.json(req.body);
+      res.json(await new Review(req.body).save());
     } catch {
       res.json({ error: 'Cannot add review' });
     }
@@ -237,11 +243,7 @@ router.post('/', async function (req, res) {
  */
 router.delete('/', async (req, res) => {
   try {
-    const checkUser = async () => {
-      return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
-    };
-
-    if (req.session.passport?.admin || (await checkUser())) {
+    if (req.session.passport?.admin || (await userWroteReview(req.session.passport?.user.id, req.body.id))) {
       await Review.deleteOne({ _id: req.body.id });
       await Vote.deleteMany({ reviewID: req.body.id });
       await Report.deleteMany({ reviewID: req.body.id });
@@ -330,6 +332,24 @@ router.delete('/clear', async function (req, res) {
       });
   } else {
     res.json({ error: 'Can only clear on development environment' });
+  }
+});
+/**
+ * Updating the review
+ */
+router.patch('/update', async function (req, res) {
+  if (req.session.passport) {
+    if (!(await userWroteReview(req.session.passport.user.id, req.body._id))) {
+      return res.json({ error: 'You are not the author of this review.' });
+    }
+
+    const updatedReviewBody = req.body;
+
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+    await Review.updateOne({ _id }, updateWithoutId);
+    res.json(updatedReviewBody);
+  } else {
+    res.status(401).json({ error: 'Must be logged in to update a review.' });
   }
 });
 
