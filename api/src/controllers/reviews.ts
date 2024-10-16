@@ -10,6 +10,14 @@ import Vote from '../models/vote';
 import Report from '../models/report';
 const router = express.Router();
 
+async function userWroteReview(userID: string | undefined, reviewID: string) {
+  if (!userID) {
+    return false;
+  }
+
+  return await Review.exists({ _id: reviewID, userID: userID });
+}
+
 /**
  * Get review scores
  */
@@ -220,10 +228,7 @@ router.post('/', async function (req, res) {
       req.body.userDisplay =
         req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
       req.body.userID = req.session.passport.user.id;
-      await new Review(req.body).save();
-
-      // echo back body
-      res.json(req.body);
+      res.json(await new Review(req.body).save());
     } catch {
       res.json({ error: 'Cannot add review' });
     }
@@ -237,11 +242,7 @@ router.post('/', async function (req, res) {
  */
 router.delete('/', async (req, res) => {
   try {
-    const checkUser = async () => {
-      return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
-    };
-
-    if (req.session.passport?.admin || (await checkUser())) {
+    if (req.session.passport?.admin || (await userWroteReview(req.session.passport?.user.id, req.body.id))) {
       await Review.deleteOne({ _id: req.body.id });
       await Vote.deleteMany({ reviewID: req.body.id });
       await Report.deleteMany({ reviewID: req.body.id });
@@ -330,6 +331,24 @@ router.delete('/clear', async function (req, res) {
       });
   } else {
     res.json({ error: 'Can only clear on development environment' });
+  }
+});
+/**
+ * Updating the review
+ */
+router.patch('/update', async function (req, res) {
+  if (req.session.passport) {
+    if (!(await userWroteReview(req.session.passport.user.id, req.body._id))) {
+      return res.json({ error: 'You are not the author of this review.' });
+    }
+
+    const updatedReviewBody = req.body;
+
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+    await Review.updateOne({ _id }, updateWithoutId);
+    res.json(updatedReviewBody);
+  } else {
+    res.status(401).json({ error: 'Must be logged in to update a review.' });
   }
 });
 
