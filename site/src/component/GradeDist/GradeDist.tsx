@@ -138,7 +138,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     gradeDistData.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
-    professors.forEach((professor) => result.push({ value: professor, text: professor }));
+    Array.from(professors)
+      .sort((a, b) => a.localeCompare(b))
+      .forEach((professor) => result.push({ value: professor, text: professor }));
 
     setProfEntries(result);
     setCurrentProf(result[0].value);
@@ -154,7 +156,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     gradeDistData.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
 
-    courses.forEach((course) => result.push({ value: course, text: course }));
+    Array.from(courses)
+      .sort((a, b) => a.localeCompare(b))
+      .forEach((course) => result.push({ value: course, text: course }));
 
     setCourseEntries(result);
     setCurrentCourse(result[0].value);

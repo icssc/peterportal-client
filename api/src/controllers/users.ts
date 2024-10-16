@@ -24,9 +24,17 @@ router.get('/preferences', async (req, res) => {
   }
 
   const userID = req.session.passport.user.id;
-  const preference = await Preference.findOne({ userID: userID });
-
-  preference ? res.json(preference) : res.json({ error: 'No preferences found' });
+  Preference.findOne({ userID: userID })
+    .then((preference) => {
+      if (preference) {
+        res.json(preference);
+      } else {
+        res.json({ error: 'No preferences found' });
+      }
+    })
+    .catch(() => {
+      res.json({ error: 'No preferences found' });
+    });
 });
 
 interface UserPreferences {
@@ -39,24 +47,28 @@ router.post('/preferences', async (req, res) => {
     return;
   }
 
-  const userID = req.session.passport.user.id;
+  try {
+    const userID = req.session.passport.user.id;
 
-  // make user's preference doc if it doesn't exist
-  if (!(await Preference.exists({ userID }))) {
-    await Preference.create({ userID, theme: req.body.theme });
+    // make user's preference doc if it doesn't exist
+    if (!(await Preference.exists({ userID }))) {
+      await Preference.create({ userID, theme: req.body.theme });
+    }
+
+    // grab valid preferences from request body
+    const preferences: UserPreferences = {};
+    if (req.body.theme) {
+      preferences.theme = req.body.theme;
+    }
+
+    // set the preferences
+    await Preference.updateOne({ userID }, preferences);
+
+    // echo back body
+    res.json(req.body);
+  } catch {
+    res.json({ error: 'Cannot update preferences' });
   }
-
-  // grab valid preferences from request body
-  const preferences: UserPreferences = {};
-  if (req.body.theme) {
-    preferences.theme = req.body.theme;
-  }
-
-  // set the preferences
-  await Preference.updateOne({ userID }, preferences);
-
-  // echo back body
-  res.json(req.body);
 });
 
 /**

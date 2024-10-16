@@ -7,13 +7,17 @@ const router = express.Router();
  */
 router.get('/get', async function (req: Request<never, unknown, Record<string, unknown>, { id: string }>, res) {
   const userID = req.query.id;
-  Roadmap.findOne({ userID }).then((roadmap) => {
-    if (roadmap) {
-      res.json(roadmap);
-    } else {
-      res.json({ error: 'No roadmap found!' });
-    }
-  });
+  Roadmap.findOne({ userID })
+    .then((roadmap) => {
+      if (roadmap) {
+        res.json(roadmap);
+      } else {
+        res.json({ error: 'No roadmap found!' });
+      }
+    })
+    .catch(() => {
+      res.json({ error: 'Cannot get roadmap' });
+    });
 });
 
 /**
@@ -25,17 +29,21 @@ router.post('/', async function (req: Request<never, unknown, Record<string, unk
     return;
   }
   console.log(`Adding Roadmap: ${JSON.stringify(req.body)}`);
-  if (await Roadmap.exists({ userID: req.body._id })) {
-    await Roadmap.replaceOne(
-      { userID: req.body._id },
-      { roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag },
-    );
-  } else {
-    // add roadmap to mongo
-    await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag }).save();
-  }
 
-  res.json({});
+  try {
+    if (await Roadmap.exists({ userID: req.body._id })) {
+      await Roadmap.replaceOne(
+        { userID: req.body._id },
+        { roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag },
+      );
+    } else {
+      // add roadmap to mongo
+      await new Roadmap({ roadmap: req.body.roadmap, userID: req.body._id, coursebag: req.body.coursebag }).save();
+    }
+    res.json({});
+  } catch {
+    res.json({ error: 'Cannot save roadmap' });
+  }
 });
 
 export default router;
