@@ -228,10 +228,7 @@ router.post('/', async function (req, res) {
       req.body.userDisplay =
         req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
       req.body.userID = req.session.passport.user.id;
-      await new Review(req.body).save();
-
-      // echo back body
-      res.json(req.body);
+      res.json(await new Review(req.body).save());
     } catch {
       res.json({ error: 'Cannot add review' });
     }

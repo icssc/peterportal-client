@@ -27,11 +27,8 @@ export const reviewSlice = createSlice({
       state.reviews = action.payload;
     },
     editReview: (state, action: PayloadAction<ReviewData>) => {
-      for (let i = 0; i < state.reviews.length; i++) {
-        if (state.reviews[i]._id === action.payload._id) {
-          state.reviews[i] = action.payload;
-        }
-      }
+      const i = state.reviews.findIndex((review) => review._id === action.payload._id);
+      state.reviews[i] = action.payload;
     },
     setFormStatus: (state, action: PayloadAction<boolean>) => {
       state.formOpen = action.payload;
