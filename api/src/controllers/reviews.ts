@@ -346,12 +346,7 @@ router.patch('/update', async function (req, res) {
 
     const { _id, ...updateWithoutId } = updatedReviewBody;
     await Review.updateOne({ _id }, updateWithoutId);
-    const responseWithId = {
-      _id,
-      ...updateWithoutId,
-    };
-
-    res.json(responseWithId);
+    res.json(updatedReviewBody);
   } else {
     res.status(401).json({ error: 'Must be logged in to update a review.' });
   }
