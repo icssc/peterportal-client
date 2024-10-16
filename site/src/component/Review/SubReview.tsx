@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import axios from 'axios';
 import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
@@ -6,17 +6,19 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
-import { PersonFill } from 'react-bootstrap-icons';
+import { PencilFill, PersonFill, TrashFill } from 'react-bootstrap-icons';
 import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { Button, Modal } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
-  updateScore?: (newUserVote: number) => void;
 }
 
 const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
@@ -24,6 +26,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const reviewData = useAppSelector(selectReviews);
   const [cookies] = useCookies(['user']);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'secondary';
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
     const res = await axios.patch('/api/reviews/vote', voteReq);
@@ -46,6 +52,12 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         }),
       ),
     );
+  };
+
+  const deleteReview = async (reviewID: string) => {
+    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    dispatch(setReviews(reviewData.filter((review) => review._id !== reviewID)));
+    setShowDeleteModal(false);
   };
 
   const upvote = async () => {
@@ -103,6 +115,16 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     setReportFormOpen(true);
   };
 
+  const openReviewForm = () => {
+    setShowReviewForm(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeReviewForm = () => {
+    setShowReviewForm(false);
+    document.body.style.overflow = 'visible';
+  };
+
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
@@ -117,12 +139,38 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
-      <PersonFill size={25} fill="green"></PersonFill>
+      <Badge variant="success" style={{ padding: '1px' }}>
+        <PersonFill size={14}></PersonFill>
+      </Badge>
     </OverlayTrigger>
   );
 
   return (
     <div className="subreview">
+      {cookies.user?.id === review.userID && (
+        <div className="edit-buttons">
+          <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
+            <PencilFill width="16" height="16" />
+          </Button>
+          <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
+            <TrashFill width="16" height="16" />
+          </Button>
+          <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+            <Modal.Header closeButton>
+              <h2>Delete Review</h2>
+            </Modal.Header>
+            <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="danger" onClick={() => deleteReview(review._id!)}>
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      )}
       <div>
         <h3 className="subreview-identifier">
           {professor && (
@@ -137,7 +185,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           )}
           {!course && !professor && (
             <div>
-              {review.courseID} {review.professorID}
+              <Link to={{ pathname: `/course/${review.courseID}` }}>{review.courseID}</Link>{' '}
+              <Link to={{ pathname: `/professor/${review.professorID}` }}>{review.professorID}</Link>
             </div>
           )}
         </h3>
@@ -218,6 +267,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           reviewID={review._id}
           reviewContent={review.reviewContent}
           closeForm={() => setReportFormOpen(false)}
+        />
+        <ReviewForm
+          course={course}
+          professor={professor}
+          reviewToEdit={review}
+          closeForm={closeReviewForm}
+          show={showReviewForm}
+          editing
         />
       </div>
     </div>
