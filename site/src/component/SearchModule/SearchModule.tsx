@@ -3,13 +3,14 @@ import './SearchModule.scss';
 import wfs from 'websoc-fuzzy-search';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Search } from 'react-bootstrap-icons';
+import { Bag, Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
 import { searchAPIResults } from '../../helpers/util';
 import { SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
+import { setShowCourseBag } from '../../store/slices/roadmapSlice';
 
 const SEARCH_TIMEOUT_MS = 300;
 const FULL_RESULT_THRESHOLD = 3;
@@ -22,6 +23,7 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
+  const showCourseBag = useAppSelector((state) => state.roadmap.showCourseBag);
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
@@ -135,6 +137,16 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             placeholder={placeholder}
             onChange={(e) => searchNamesAfterTimeout(e.target.value)}
           />
+          {
+            // only show course bag icon on roadmap page
+            location.pathname === '/roadmap' && (
+              <InputGroup.Append>
+                <InputGroup.Text onClick={() => dispatch(setShowCourseBag(!showCourseBag))}>
+                  <Bag style={{ color: showCourseBag ? 'var(--primary)' : 'var(--text-color)', cursor: 'pointer' }} />
+                </InputGroup.Text>
+              </InputGroup.Append>
+            )
+          }
         </InputGroup>
       </Form.Group>
     </div>

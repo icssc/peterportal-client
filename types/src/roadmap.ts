@@ -55,5 +55,6 @@ export type SavedRoadmap = z.infer<typeof savedRoadmap>;
 export const mongoRoadmap = z.object({
   roadmap: savedRoadmap,
   userID: z.string(),
+  coursebag: z.array(z.string()),
 });
 export type MongoRoadmap = z.infer<typeof mongoRoadmap>;

@@ -10,7 +10,14 @@ import {
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
-import { BatchCourseData, InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  BatchCourseData,
+  Coursebag,
+  InvalidCourseData,
+  PlannerData,
+  PlannerQuarterData,
+  PlannerYearData,
+} from '../types/types';
 import trpc from '../trpc';
 
 export function defaultYear() {
@@ -120,9 +127,10 @@ interface RoadmapCookies {
 
 export const loadRoadmap = async (
   cookies: RoadmapCookies,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
+  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, coursebag: Coursebag, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
+  let coursebagStrings: string[] = [];
   const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
   // if logged in
   if (cookies.user !== undefined) {
@@ -131,6 +139,9 @@ export const loadRoadmap = async (
     // if a roadmap is found
     if (request?.roadmap) {
       roadmap = request.roadmap;
+    }
+    if (request?.coursebag !== undefined) {
+      coursebagStrings = request.coursebag;
     }
   }
 
@@ -150,10 +161,11 @@ export const loadRoadmap = async (
     'planners' in roadmap
       ? roadmap.planners
       : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
-
   // expand planner and set the state
   const planners = await expandAllPlanners(loadedData);
-  loadHandler(planners, roadmap, isLocalNewer);
+  const coursesObj: BatchCourseData = (await searchAPIResults('courses', coursebagStrings)) as BatchCourseData;
+  const coursebag = coursebagStrings.map((id) => coursesObj[id]);
+  loadHandler(planners, roadmap, coursebag, isLocalNewer);
 };
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;

@@ -7,12 +7,13 @@ import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types'
 import SearchPagination from '../SearchPagination/SearchPagination';
 import noResultsImg from '../../asset/no-results-crop.webp';
 import { useFirstRender } from '../../hooks/firstRenderer';
+import { validateCourse } from '../../helpers/planner';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
 // investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
 interface SearchHitContainerProps {
   index: SearchIndex;
-  CourseHitItem: FC<CourseGQLData & { index: number }>;
+  CourseHitItem: FC<CourseGQLData & { index: number; requiredCourses?: string[] }>;
   ProfessorHitItem?: FC<ProfessorGQLData & { index: number }>;
 }
 
@@ -22,8 +23,21 @@ const SearchResults = ({
   CourseHitItem,
   ProfessorHitItem,
 }: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
+  const roadmap = useAppSelector((state) => state.roadmap);
+  const allExistingCourses = roadmap?.plans[roadmap.currentPlanIndex].content.yearPlans.flatMap((yearPlan) =>
+    yearPlan.quarters.flatMap((quarter) =>
+      quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
+    ),
+  );
   if (index === 'courses') {
-    return (results as CourseGQLData[]).map((course, i) => <CourseHitItem key={course.id} index={i} {...course} />);
+    return (results as CourseGQLData[]).map((course, i) => {
+      const requiredCourses = Array.from(
+        validateCourse(new Set(allExistingCourses), course.prerequisiteTree, new Set(), course.corequisites),
+      );
+      return (
+        <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />
+      );
+    });
   } else {
     return (results as ProfessorGQLData[]).map((professor, i) => (
       <ProfessorHitItem key={professor.ucinetid} index={i} {...professor} />

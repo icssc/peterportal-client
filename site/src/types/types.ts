@@ -88,6 +88,8 @@ export interface InvalidCourseData {
   required: string[];
 }
 
+export type Coursebag = CourseGQLData[];
+
 export interface ProfessorLookup {
   [ucinetid: string]: ProfessorPreview;
 }
