@@ -59,18 +59,7 @@ const Planner: FC = () => {
       transfers: transfers,
     };
     const coursebagStrings = coursebag.map((course) => course.id);
-    // if logged in
-    if (cookies.user !== undefined) {
-      // save data to account
-      const mongoRoadmap: MongoRoadmap = {
-        _id: cookies.user.id,
-        roadmap: roadmap,
-        coursebag: coursebagStrings,
-      };
-      axios.post('/api/roadmap', mongoRoadmap);
-    }
 
-    // save to local storage as well
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
     // mark changes as saved to bypass alert on page leave

@@ -142,7 +142,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             location.pathname === '/roadmap' && (
               <InputGroup.Append>
                 <InputGroup.Text onClick={() => dispatch(setShowCourseBag(!showCourseBag))}>
-                  <Bag style={showCourseBag ? { color: 'var(--primary)' } : { color: 'var(--text-color)' }} />
+                  <Bag style={{ color: showCourseBag ? 'var(--primary)' : 'var(--text-color)', cursor: 'pointer' }} />
                 </InputGroup.Text>
               </InputGroup.Append>
             )
