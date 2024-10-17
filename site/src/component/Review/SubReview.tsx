@@ -1,5 +1,4 @@
 import { FC, useContext, useState } from 'react';
-import axios from 'axios';
 import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -7,13 +6,15 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { PencilFill, PersonFill, TrashFill } from 'react-bootstrap-icons';
-import { ReviewData, VoteRequest, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
+import trpc from '../../trpc';
+import { ReviewData, VoteRequest } from '@peterportal/types';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -32,8 +33,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const sendVote = async (voteReq: VoteRequest) => {
-    const res = await axios.patch('/api/reviews/vote', voteReq);
-    return res.data.deltaScore;
+    const { deltaScore } = await trpc.reviews.vote.mutate(voteReq);
+    return deltaScore;
   };
 
   const updateScore = (newUserVote: number) => {
@@ -55,7 +56,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   };
 
   const deleteReview = async (reviewID: string) => {
-    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    await trpc.reviews.delete.mutate({ id: reviewID });
     dispatch(setReviews(reviewData.filter((review) => review._id !== reviewID)));
     setShowDeleteModal(false);
   };

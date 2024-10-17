@@ -1,18 +1,18 @@
-import axios, { AxiosResponse } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from '../../types/types';
 import './Verify.scss';
+import trpc from '../../trpc';
+import { ReviewData } from '@peterportal/types';
 
 const Verify: FC = () => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
 
   const getUnverifiedReviews = async () => {
-    const response: AxiosResponse<ReviewData[]> = await axios.get('/api/reviews?verified=false');
-    setReviews(response.data);
+    const res = await trpc.reviews.get.query({ verified: false });
+    setReviews(res);
     setLoaded(true);
   };
 
@@ -22,12 +22,12 @@ const Verify: FC = () => {
   }, []);
 
   const verifyReview = async (reviewID: string) => {
-    await axios.patch('/api/reviews/verify', { id: reviewID });
+    await trpc.reviews.verify.mutate({ id: reviewID });
     getUnverifiedReviews();
   };
 
   const deleteReview = async (reviewID: string) => {
-    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    await trpc.reviews.delete.mutate({ id: reviewID });
     getUnverifiedReviews();
   };
 

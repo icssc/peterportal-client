@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import axios from 'axios';
 import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
-import { ReportData } from '../../types/types';
 import Modal from 'react-bootstrap/Modal';
+import trpc from '../../trpc';
+import { ReportSubmission } from '@peterportal/types';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -20,25 +20,20 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
   const [validated, setValidated] = useState<boolean>(false);
 
-  const postReport = async (report: ReportData) => {
-    await axios.post('/api/reports', report);
+  const postReport = async (report: ReportSubmission) => {
+    await trpc.reports.add.mutate(report);
     setReportSubmitted(true);
+    setValidated(false);
   };
 
   const submitReport = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (reason.length > 500) return;
     if (reason.length === 0) return;
     setValidated(true);
 
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (1 + date.getMonth()).toString();
-    const day = date.getDate().toString();
     const report = {
       reviewID: props.reviewID!,
       reason,
-      timestamp: month + '/' + day + '/' + year,
     };
     postReport(report);
   };
@@ -56,6 +51,9 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <Form.Control
           as="textarea"
           placeholder="Enter a reason..."
+          minLength={1}
+          maxLength={500}
+          isValid={reason.length > 0}
           onChange={(e) => {
             setReason(e.target.value);
           }}

@@ -1,8 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
-import { FC, useEffect, useState } from 'react';
-import { ReportData } from '../../types/types';
+import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import './Reports.scss';
+import trpc from '../../trpc';
+import { ReportData } from '@peterportal/types';
 
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
@@ -13,13 +13,12 @@ const Reports: FC = () => {
     reports: ReportData[];
   }
 
-  const getData = async () => {
-    const reports: AxiosResponse<ReportData[]> = await axios.get('/api/reports');
-    const reportsData: ReportData[] = reports.data;
+  const getData = useCallback(async () => {
+    const reports = await trpc.reports.get.query();
 
     const reportsDisplay: ReviewDisplay[] = [];
 
-    reportsData.forEach((report) => {
+    reports.forEach((report) => {
       let i;
       if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewID === reviewDisplay.reviewID)) < 0) {
         reportsDisplay.push({
@@ -39,21 +38,21 @@ const Reports: FC = () => {
 
     setData(reportsDisplay);
     setLoaded(true);
-  };
+  }, []);
 
   useEffect(() => {
     getData();
     document.title = 'View Reports | PeterPortal';
-  }, []);
+  }, [getData]);
 
   const acceptReports = async (reviewID: string) => {
-    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    await trpc.reviews.delete.mutate({ id: reviewID });
     // reports are automatically deleted when deleting a review
     setData(data.filter((review) => review.reviewID !== reviewID));
   };
 
   const denyReports = async (reviewID: string) => {
-    await axios.delete('/api/reports', { data: { reviewID: reviewID } });
+    await trpc.reports.delete.mutate({ reviewID: reviewID });
     setData(data.filter((review) => review.reviewID !== reviewID));
   };
 

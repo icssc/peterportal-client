@@ -1,12 +1,11 @@
-import axios, { AxiosResponse } from 'axios';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import { Divider } from 'semantic-ui-react';
-import { ReviewData } from '../../types/types';
 import './UserReviews.scss';
 import { useCookies } from 'react-cookie';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import trpc from '../../trpc';
 
 const UserReviews: FC = () => {
   const reviews = useAppSelector(selectReviews);
@@ -14,15 +13,15 @@ const UserReviews: FC = () => {
   const [cookies] = useCookies(['user']);
   const dispatch = useAppDispatch();
 
-  const getUserReviews = async () => {
-    const response: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?userID=${cookies.user.id}`);
-    dispatch(setReviews(response.data));
+  const getUserReviews = useCallback(async () => {
+    const response = await trpc.reviews.get.query({ userID: cookies.user.id });
+    dispatch(setReviews(response));
     setLoaded(true);
-  };
+  }, [cookies.user.id, dispatch]);
 
   useEffect(() => {
     getUserReviews();
-  }, []);
+  }, [getUserReviews]);
 
   if (!loaded) {
     return <p>Loading...</p>;

@@ -6,9 +6,10 @@ import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
-import { BatchCourseData, PlannerQuarterData, PlannerYearData, QuarterName } from '../../types/types';
+import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { normalizeQuarterName, quarterNames } from '../../helpers/planner';
 import { searchAPIResults } from '../../helpers/util';
+import { QuarterName } from '@peterportal/types';
 
 interface TransferUnitDetails {
   date: string;

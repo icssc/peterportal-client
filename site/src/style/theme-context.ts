@@ -1,6 +1,5 @@
 import React from 'react';
-
-export type Theme = 'dark' | 'light' | 'system';
+import { Theme } from '@peterportal/types';
 
 const ThemeContext = React.createContext<{
   darkMode: boolean;

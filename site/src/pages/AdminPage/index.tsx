@@ -1,10 +1,10 @@
-import axios, { AxiosResponse } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
 import Error from '../../component/Error/Error';
 import './AdminPage.scss';
 import { useLocation } from 'react-router-dom';
+import trpc from '../../trpc';
 
 const AdminPage: FC = () => {
   const location = useLocation();
@@ -17,8 +17,8 @@ const AdminPage: FC = () => {
 
   // user has to be authenticated as admin to view this page
   const checkAdmin = async () => {
-    const res: AxiosResponse<AdminResponse> = await axios.get('/api/users/isAdmin');
-    const isAdmin: boolean = res.data.admin;
+    const res: AdminResponse = await trpc.users.isAdmin.query();
+    const isAdmin: boolean = res.admin;
     setAuthorized(isAdmin);
     setLoaded(true);
   };

@@ -1,7 +1,7 @@
+import { ReviewSubmission } from '@peterportal/types';
 import axios from 'axios';
-import { ReviewData } from '../types/types';
 
-export async function verifyCaptcha(review: ReviewData) {
+export async function verifyCaptcha(review: ReviewSubmission) {
   const reqBody = {
     secret: process.env.GRECAPTCHA_SECRET ?? '',
     response: review.captchaToken ?? '',

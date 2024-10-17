@@ -1,23 +1,6 @@
+import { grades, tags } from '@peterportal/types';
 import mongoose from 'mongoose';
 
-const tags = [
-  'Clear grading criteria',
-  'Tough grader',
-  'Amazing lectures',
-  'Test heavy',
-  'Get ready to read',
-  'Extra credit',
-  'Participation matters',
-  'Graded by few things',
-  "Skip class? You won't pass",
-  'Accessible outside class',
-  'Beware of pop quizzes',
-  'Lots of homework',
-  'So many papers',
-  'Lecture heavy',
-  'Group projects',
-  'Gives good feedback',
-];
 const reviewSchema = new mongoose.Schema({
   professorID: {
     type: String,
@@ -74,7 +57,7 @@ const reviewSchema = new mongoose.Schema({
   gradeReceived: {
     type: String,
     required: true,
-    enum: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'],
+    enum: grades,
   },
   forCredit: {
     type: Boolean,
