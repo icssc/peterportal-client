@@ -18,7 +18,6 @@ const coursesRouter = router({
         Accept: 'application/json',
       },
     });
-    console.log(input.courseID);
 
     return r.then((response) => response.json()).then((data) => data.payload as CourseAAPIResponse);
   }),
