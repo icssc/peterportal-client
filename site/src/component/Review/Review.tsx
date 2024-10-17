@@ -1,13 +1,14 @@
 import { FC, useState, useEffect, useCallback } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, ReviewData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { Checkbox, Dropdown } from 'semantic-ui-react';
+import trpc from '../../trpc';
+import { ReviewData } from '@peterportal/types';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -36,14 +37,8 @@ const Review: FC<ReviewProps> = (props) => {
     const params: paramsProps = {};
     if (props.course) params.courseID = props.course.id;
     if (props.professor) params.professorID = props.professor.ucinetid;
-    axios
-      .get(`/api/reviews`, {
-        params: params,
-      })
-      .then(async (res: AxiosResponse<ReviewData[]>) => {
-        const data = res.data.filter((review) => review !== null);
-        dispatch(setReviews(data));
-      });
+    const reviews = await trpc.reviews.get.query(params);
+    dispatch(setReviews(reviews));
   }, [dispatch, props.course, props.professor]);
 
   useEffect(() => {

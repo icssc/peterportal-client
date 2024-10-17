@@ -20,7 +20,6 @@ dotenv.config();
 import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
 
 // Custom Routes
-import reviewsRouter from './controllers/reviews';
 import authRouter from './controllers/auth';
 
 import { SESSION_LENGTH } from './config/constants';
@@ -100,7 +99,6 @@ app.use(function (req, res, next) {
 
 // Enable custom routes
 const expressRouter = express.Router();
-expressRouter.use('/reviews', reviewsRouter);
 expressRouter.use('/users/auth', authRouter);
 expressRouter.use(
   '/trpc',

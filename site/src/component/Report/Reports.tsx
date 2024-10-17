@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import './Reports.scss';
@@ -47,7 +46,7 @@ const Reports: FC = () => {
   }, [getData]);
 
   const acceptReports = async (reviewID: string) => {
-    await axios.delete('/api/reviews', { data: { id: reviewID } });
+    await trpc.reviews.delete.mutate({ id: reviewID });
     // reports are automatically deleted when deleting a review
     setData(data.filter((review) => review.reviewID !== reviewID));
   };

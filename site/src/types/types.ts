@@ -6,42 +6,6 @@ import {
   QuarterName,
 } from '@peterportal/types';
 
-export interface ReviewData {
-  _id?: string;
-  professorID: string;
-  courseID: string;
-  userID: string;
-  userDisplay: string;
-  reviewContent: string;
-  rating: number;
-  difficulty: number;
-  timestamp: string;
-  gradeReceived: string;
-  forCredit: boolean;
-  quarter: string;
-  score: number;
-  takeAgain: boolean;
-  textbook: boolean;
-  attendance: boolean;
-  tags: string[];
-  verified?: boolean;
-  captchaToken?: string;
-  userVote?: number;
-}
-
-export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
-
-export interface PrerequisiteJSON {
-  [key: string]: PrerequisiteJSONNode[];
-}
-
-export type PrerequisiteJSONNode = PrerequisiteJSON | string;
-
-export interface VoteRequest {
-  id: string;
-  upvote: boolean;
-}
-
 export interface ScoreData {
   name: string;
   score: number;

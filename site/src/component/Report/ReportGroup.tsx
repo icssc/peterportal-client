@@ -1,10 +1,9 @@
 import { FC, useEffect, useState } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import Button from 'react-bootstrap/Button';
-import { ReviewData } from '../../types/types';
 import SubReport from './SubReport';
 import './ReportGroup.scss';
-import { ReportData } from '@peterportal/types';
+import { ReportData, ReviewData } from '@peterportal/types';
+import trpc from '../../trpc';
 
 interface ReportGroupProps {
   reviewID: string;
@@ -17,8 +16,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
   const getReviewData = async (reviewID: string) => {
-    const res: AxiosResponse<ReviewData[]> = await axios.get(`/api/reviews?reviewID=${reviewID}`);
-    const review: ReviewData = res.data[0];
+    const review = (await trpc.reviews.get.query({ reviewID: reviewID }))[0];
     setReview(review);
   };
 
