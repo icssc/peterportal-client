@@ -36,6 +36,9 @@ async function userWroteReview(userID: string | undefined, reviewID: string) {
 }
 
 const reviewsRouter = router({
+  /**
+   * Query reviews
+   */
   get: publicProcedure
     .input(
       z.object({
@@ -131,6 +134,9 @@ const reviewsRouter = router({
       }
     }),
 
+  /**
+   * Add a review
+   */
   add: userProcedure.input(reviewSubmission).mutation(async ({ input, ctx }) => {
     // check if user is trusted
     const verifiedCount = await Review.find({
@@ -167,6 +173,9 @@ const reviewsRouter = router({
     return (await new Review(review).save()) as unknown as ReviewData;
   }),
 
+  /**
+   * Delete a review (user can delete their own or admin can delete any through reports)
+   */
   delete: userProcedure.input(z.object({ id: z.string() })).mutation(async ({ input, ctx }) => {
     if (ctx.session.passport!.admin || (await userWroteReview(ctx.session.passport!.user.id, input.id))) {
       await Review.deleteOne({ _id: input.id });
@@ -179,6 +188,9 @@ const reviewsRouter = router({
     }
   }),
 
+  /**
+   * Vote on a review
+   */
   vote: userProcedure.input(z.object({ id: z.string(), upvote: z.boolean() })).mutation(async ({ input, ctx }) => {
     //get id and delta score from initial vote
     const id = input.id;
@@ -232,6 +244,9 @@ const reviewsRouter = router({
     return input;
   }),
 
+  /**
+   * Get featured review for a course or professor
+   */
   featured: publicProcedure.input(featuredQuery).query(async ({ input }) => {
     // search by professor or course field
     let field = '';
@@ -249,6 +264,9 @@ const reviewsRouter = router({
     return review;
   }),
 
+  /**
+   * Get avg ratings for a course's professors or a professor's courses
+   */
   scores: publicProcedure
     .input(z.object({ type: z.enum(['course', 'professor']), id: z.string() }))
     .query(async ({ input }) => {
