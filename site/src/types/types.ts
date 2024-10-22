@@ -21,7 +21,10 @@ export interface ReviewData {
   tags: string[];
   verified?: boolean;
   captchaToken?: string;
+  userVote?: number;
 }
+
+export type FeaturedReviewData = Omit<ReviewData, 'userVote'>;
 
 export interface ReportData {
   _id?: string;
@@ -46,14 +49,6 @@ export type PrerequisiteJSONNode = PrerequisiteJSON | string;
 export interface VoteRequest {
   id: string;
   upvote: boolean;
-}
-
-export interface VoteColorRequest {
-  id: string;
-}
-
-export interface VoteColorsRequest {
-  ids: string[];
 }
 
 export interface ScoreData {
@@ -151,14 +146,12 @@ export interface SavedRoadmap {
   transfers: TransferData[];
 }
 
+export type Coursebag = CourseGQLData[];
 // Structure stored in mongo for accounts
 export interface MongoRoadmap {
   _id: string;
   roadmap: SavedRoadmap;
-}
-
-export interface VoteColor {
-  colors: boolean[];
+  coursebag: string[];
 }
 
 /**
@@ -201,6 +194,7 @@ export interface ProfessorGQLData {
   schools: string[];
   relatedDepartments: string[];
   courses: CourseLookup;
+  courseHistory: Record<string, string[]>;
 }
 
 // PPAPI format

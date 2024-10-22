@@ -10,6 +10,14 @@ import Vote from '../models/vote';
 import Report from '../models/report';
 const router = express.Router();
 
+async function userWroteReview(userID: string | undefined, reviewID: string) {
+  if (!userID) {
+    return false;
+  }
+
+  return await Review.exists({ _id: reviewID, userID: userID });
+}
+
 /**
  * Get review scores
  */
@@ -32,18 +40,22 @@ router.get('/scores', async function (req: Request<never, unknown, never, Scores
 
   // execute aggregation on the reviews collection
 
-  const aggreg = await Review.aggregate([
+  Review.aggregate([
     { $match: { [matchField]: req.query.id } },
     { $group: { _id: groupField, score: { $avg: '$rating' } } },
-  ]);
-
-  // returns the results in an array
-  const array = aggreg as ReviewData[];
-  // rename _id to name
-  const results = array.map((v) => {
-    return { name: v._id, score: v.score };
-  });
-  res.json(results);
+  ])
+    .then((aggreg) => {
+      // returns the results in an array
+      const array = aggreg as ReviewData[];
+      // rename _id to name
+      const results = array.map((v) => {
+        return { name: v._id, score: v.score };
+      });
+      res.json(results);
+    })
+    .catch(() => {
+      res.json({ error: 'Cannot aggregate reviews' });
+    });
 });
 
 /**
@@ -63,14 +75,19 @@ router.get('/featured', async function (req: Request<never, unknown, never, Feat
   }
 
   // find first review with the highest score
-  const reviewsCollection = await Review.find({ [field]: req.query.id })
-    .sort({ score: -1 })
-    .limit(1);
-  if (reviewsCollection) {
-    res.json(reviewsCollection);
-  } else {
-    res.json([]);
-  }
+  Review.find({ [field]: req.query.id })
+    .sort({ reviewContent: -1, score: -1, verified: -1 })
+    .limit(1)
+    .then((reviewsCollection) => {
+      if (reviewsCollection) {
+        res.json(reviewsCollection);
+      } else {
+        res.json([]);
+      }
+    })
+    .catch(() => {
+      res.json({ error: 'Cannot find review' });
+    });
 });
 
 interface ReviewFilter {
@@ -105,7 +122,66 @@ router.get('/', async function (req, res) {
     }
   }
 
-  const reviews = await Review.find(query);
+  const pipeline = [
+    {
+      $match: query,
+    },
+    {
+      $addFields: {
+        _id: {
+          $toString: '$_id',
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'votes',
+        let: {
+          cmpUserID: req.session.passport?.user.id,
+          cmpReviewID: '$_id',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$$cmpUserID', '$userID'],
+                  },
+                  {
+                    $eq: ['$$cmpReviewID', '$reviewID'],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'userVote',
+      },
+    },
+    {
+      $addFields: {
+        userVote: {
+          $cond: {
+            if: {
+              $ne: ['$userVote', []],
+            },
+            then: {
+              $getField: {
+                field: 'score',
+                input: {
+                  $first: '$userVote',
+                },
+              },
+            },
+            else: 0,
+          },
+        },
+      },
+    },
+  ];
+
+  const reviews = await Review.aggregate(pipeline);
   if (reviews) {
     res.json(reviews);
   } else {
@@ -120,41 +196,43 @@ router.post('/', async function (req, res) {
   if (req.session.passport) {
     //^ this should be a middleware check smh
 
-    // check if user is trusted
-    const verifiedCount = await Review.find({
-      userID: req.session.passport.user.id,
-      verified: true,
-    })
-      .countDocuments()
-      .exec();
+    try {
+      // check if user is trusted
+      const verifiedCount = await Review.find({
+        userID: req.session.passport.user.id,
+        verified: true,
+      })
+        .countDocuments()
+        .exec();
 
-    // Set on server so the client can't automatically verify their own review.
-    req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
+      // Set on server so the client can't automatically verify their own review.
+      req.body.verified = verifiedCount >= 3; // auto-verify if use has posted 3+ reviews
 
-    // Verify the captcha
-    const verifyResponse = await verifyCaptcha(req.body);
-    if (!verifyResponse?.success)
-      return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
-    delete req.body.captchaToken; // so it doesn't get stored in DB
+      //check if review already exists for same professor, course, and user
+      const query: ReviewFilter = {
+        courseID: req.body.courseID,
+        professorID: req.body.professorID,
+        userID: req.session.passport.user.id,
+      };
 
-    //check if review already exists for same professor, course, and user
-    const query: ReviewFilter = {
-      courseID: req.body.courseID,
-      professorID: req.body.professorID,
-      userID: req.session.passport.user.id,
-    };
+      const reviews = await Review.find(query);
+      if (reviews?.length > 0)
+        return res.status(400).json({ error: 'Review already exists for this professor and course!' });
 
-    const reviews = await Review.find(query);
-    if (reviews?.length > 0)
-      return res.status(400).json({ error: 'Review already exists for this professor and course!' });
-    // add review to mongo
-    req.body.userDisplay =
-      req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
-    req.body.userID = req.session.passport.user.id;
-    await new Review(req.body).save();
+      // Verify the captcha
+      const verifyResponse = await verifyCaptcha(req.body);
+      if (!verifyResponse?.success)
+        return res.status(400).json({ error: 'ReCAPTCHA token is invalid', data: verifyResponse });
+      delete req.body.captchaToken; // so it doesn't get stored in DB
 
-    // echo back body
-    res.json(req.body);
+      // add review to mongo
+      req.body.userDisplay =
+        req.body.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : req.session.passport.user.name;
+      req.body.userID = req.session.passport.user.id;
+      res.json(await new Review(req.body).save());
+    } catch {
+      res.json({ error: 'Cannot add review' });
+    }
   } else {
     res.json({ error: 'Must be logged in to add a review!' });
   }
@@ -164,17 +242,17 @@ router.post('/', async function (req, res) {
  * Delete a review
  */
 router.delete('/', async (req, res) => {
-  const checkUser = async () => {
-    return await Review.findOne({ _id: req.body.id as string, userID: req.session.passport?.user.id }).exec();
-  };
-
-  if (req.session.passport?.admin || (await checkUser())) {
-    await Review.deleteOne({ _id: req.body.id });
-    await Vote.deleteMany({ reviewID: req.body.id });
-    await Report.deleteMany({ reviewID: req.body.id });
-    res.status(200).send();
-  } else {
-    res.json({ error: 'Must be an admin or review author to delete reviews!' });
+  try {
+    if (req.session.passport?.admin || (await userWroteReview(req.session.passport?.user.id, req.body.id))) {
+      await Review.deleteOne({ _id: req.body.id });
+      await Vote.deleteMany({ reviewID: req.body.id });
+      await Report.deleteMany({ reviewID: req.body.id });
+      res.status(200).send();
+    } else {
+      res.json({ error: 'Must be an admin or review author to delete reviews!' });
+    }
+  } catch {
+    res.json({ error: 'Cannot delete review' });
   }
 });
 
@@ -213,7 +291,6 @@ router.patch('/vote', async function (req, res) {
       res.json({ deltaScore: deltaScore });
     } else {
       //no old vote, just add in new vote data
-      console.log(`Voting Review ${id} with delta ${deltaScore}`);
       await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
       //sends in vote
       await new Vote({ userID: req.session.passport.user.id, reviewID: id, score: deltaScore }).save();
@@ -223,59 +300,19 @@ router.patch('/vote', async function (req, res) {
   //
 });
 
-/**
- * Get whether or not the color of a button should be colored
- */
-router.patch('/getVoteColor', async function (req, res) {
-  //make sure user is logged in
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const query = {
-      userID: req.session.passport.user.email,
-      reviewID: req.body['id'],
-    };
-    //get any existing vote in the db
-    const existingVote = (await Vote.find(query)) as VoteData[];
-    //result an array of either length 1 or empty
-    if (existingVote.length == 0) {
-      //if empty, both should be uncolored
-      res.json([false, false]);
-    } else {
-      //if not empty, there is a vote, so color it accordingly
-      if (existingVote[0].score == 1) {
-        res.json([true, false]);
-      } else {
-        res.json([false, true]);
-      }
-    }
-  }
-});
-
-/**
- * Get multiple review colors
- */
-router.patch('/getVoteColors', async function (req, res) {
-  if (req.session?.passport != null) {
-    //query of the user's email and the review id
-    const ids: string[] = req.body.ids;
-    const votes = await Vote.find({ userID: req.session.passport.user.id, reviewID: { $in: ids } });
-    const r: { [key: string]: number } = votes.reduce((acc: { [key: string]: number }, v) => {
-      acc[v.reviewID.toString()] = v.score;
-      return acc;
-    }, {});
-    res.json(r);
-  } else {
-    res.json({});
-  }
-});
 /*
  * Verify a review
  */
 router.patch('/verify', async function (req, res) {
   if (req.session.passport?.admin) {
     console.log(`Verifying review ${req.body.id}`);
-    const status = await Review.updateOne({ _id: req.body.id }, { verified: true });
-    res.json(status);
+    Review.updateOne({ _id: req.body.id }, { verified: true })
+      .then((status) => {
+        res.json(status);
+      })
+      .catch(() => {
+        res.json({ error: 'Cannot verify review' });
+      });
   } else {
     res.json({ error: 'Must be an admin to verify reviews!' });
   }
@@ -286,10 +323,33 @@ router.patch('/verify', async function (req, res) {
  */
 router.delete('/clear', async function (req, res) {
   if (process.env.NODE_ENV != 'production') {
-    const status = await Review.deleteMany({});
-    res.json(status);
+    Review.deleteMany({})
+      .then((status) => {
+        res.json(status);
+      })
+      .catch(() => {
+        res.json({ error: 'Cannot clear reviews' });
+      });
   } else {
     res.json({ error: 'Can only clear on development environment' });
+  }
+});
+/**
+ * Updating the review
+ */
+router.patch('/update', async function (req, res) {
+  if (req.session.passport) {
+    if (!(await userWroteReview(req.session.passport.user.id, req.body._id))) {
+      return res.json({ error: 'You are not the author of this review.' });
+    }
+
+    const updatedReviewBody = req.body;
+
+    const { _id, ...updateWithoutId } = updatedReviewBody;
+    await Review.updateOne({ _id }, updateWithoutId);
+    res.json(updatedReviewBody);
+  } else {
+    res.status(401).json({ error: 'Must be logged in to update a review.' });
   }
 });
 

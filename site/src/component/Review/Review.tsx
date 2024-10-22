@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
@@ -6,7 +6,7 @@ import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, ReviewData, VoteColorsRequest, VoteColor } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, ReviewData } from '../../types/types';
 import { Checkbox, Dropdown } from 'semantic-ui-react';
 
 export interface ReviewProps {
@@ -23,17 +23,12 @@ enum SortingOption {
 const Review: FC<ReviewProps> = (props) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [voteColors, setVoteColors] = useState([]);
   const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
+  const showForm = useAppSelector((state) => state.review.formOpen);
 
-  const getColors = async (vote: VoteColorsRequest) => {
-    const res = await axios.patch('/api/reviews/getVoteColors', vote);
-    return res.data;
-  };
-
-  const getReviews = async () => {
+  const getReviews = useCallback(async () => {
     interface paramsProps {
       courseID?: string;
       professorID?: string;
@@ -47,52 +42,15 @@ const Review: FC<ReviewProps> = (props) => {
       })
       .then(async (res: AxiosResponse<ReviewData[]>) => {
         const data = res.data.filter((review) => review !== null);
-        const reviewIDs = [];
-        for (let i = 0; i < data.length; i++) {
-          reviewIDs.push(data[i]._id);
-        }
-        const req = {
-          ids: reviewIDs as string[],
-        };
-        const colors = await getColors(req);
-        setVoteColors(colors);
         dispatch(setReviews(data));
       });
-  };
+  }, [dispatch, props.course, props.professor]);
 
-  const updateVoteColors = async () => {
-    const reviewIDs = [];
-    for (let i = 0; i < reviewData.length; i++) {
-      reviewIDs.push(reviewData[i]._id);
-    }
-    const req = {
-      ids: reviewIDs as string[],
-    };
-    const colors = await getColors(req);
-    setVoteColors(colors);
-  };
-
-  const getU = (id: string | undefined) => {
-    const temp = voteColors as object;
-    const v = temp[id as keyof typeof temp] as unknown as number;
-    if (v == 1) {
-      return {
-        colors: [true, false],
-      };
-    } else if (v == -1) {
-      return {
-        colors: [false, true],
-      };
-    }
-    return {
-      colors: [false, false],
-    };
-  };
   useEffect(() => {
     // prevent reviews from carrying over
     dispatch(setReviews([]));
     getReviews();
-  }, [props.course?.id, props.professor?.ucinetid]);
+  }, [dispatch, getReviews]);
 
   let sortedReviews: ReviewData[];
   // filter verified if option is set
@@ -232,20 +190,13 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           </div>
           {sortedReviews.map((review) => (
-            <SubReview
-              review={review}
-              key={review._id}
-              course={props.course}
-              professor={props.professor}
-              colors={getU(review._id) as VoteColor}
-              colorUpdater={updateVoteColors}
-            />
+            <SubReview review={review} key={review._id} course={props.course} professor={props.professor} />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>
             + Add Review
           </button>
         </div>
-        <ReviewForm closeForm={closeForm} {...props} />
+        <ReviewForm closeForm={closeForm} show={showForm} {...props} />
       </>
     );
   }

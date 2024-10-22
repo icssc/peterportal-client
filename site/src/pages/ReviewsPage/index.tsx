@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import UserReviews from '../../component/UserReviews/UserReviews';
+import UserReviews from './UserReviews';
 import Error from '../../component/Error/Error';
-import './ReviewsPage.scss';
 import { useLocation } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
