@@ -19,6 +19,4 @@ const reportSchema = new mongoose.Schema({
 
 const Report = mongoose.model('Report', reportSchema);
 
-export type ReportType = Omit<mongoose.InferSchemaType<typeof reportSchema>, 'timestamp'> & { timestamp?: Date };
-
 export default Report;
