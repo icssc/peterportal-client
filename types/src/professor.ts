@@ -1,3 +1,4 @@
+import { Quarter } from 'peterportal-api-next-types';
 import { CoursePreview } from './course';
 
 export interface ProfessorPreview {
@@ -5,6 +6,8 @@ export interface ProfessorPreview {
   ucinetid: string;
   shortenedName: string;
 }
+
+export type YearAndQuarter = `${number} ${Quarter}`;
 
 export interface ProfessorAAPIResponse {
   name: string;
@@ -18,7 +21,7 @@ export interface ProfessorAAPIResponse {
   /**
    * keys are course names (with spaces e.g. I&C SCI 46), values are an array of terms (e.g. ["2020 Fall", "2020 Summer10wk"])
    */
-  courseHistory: Record<string, string[]>;
+  courseHistory: Record<string, YearAndQuarter[]>;
 }
 
 export type ProfessorBatchAAPIResponse = Record<string, ProfessorAAPIResponse>;

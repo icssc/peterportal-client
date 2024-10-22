@@ -2,6 +2,7 @@ import { quarters } from 'peterportal-api-next-types';
 import { z } from 'zod';
 
 export const quarterName = z.enum(quarters);
+/** @todo duplicate of Quarter from peterportal-api-next-types. probably don't need but also don't know if new api has a types package */
 export type QuarterName = z.infer<typeof quarterName>;
 
 // these aren't used anymore but some old roadmaps still have them, included for valid schema
