@@ -259,9 +259,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <center style={{ height: 400 }}>
+        <div style={{ height: 400, textAlign: 'center' }}>
           <p>Loading Distribution..</p>
-        </center>
+        </div>
       </div>
     );
   } else {
@@ -269,9 +269,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <center style={{ height: 400 }}>
+        <div style={{ height: 400, textAlign: 'center' }}>
           <p>Error: could not retrieve grade distribution data.</p>
-        </center>
+        </div>
       </div>
     );
   }
