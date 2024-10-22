@@ -5,6 +5,7 @@ export const quarterName = z.enum(quarters);
 export type QuarterName = z.infer<typeof quarterName>;
 
 // these aren't used anymore but some old roadmaps still have them, included for valid schema
+/** @todo migrate legacy quarter names to new ones */
 export const legacyQuarterNames = z.enum([
   'fall',
   'winter',
