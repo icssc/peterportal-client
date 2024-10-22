@@ -53,11 +53,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       request = trpc.professors.grades.query(params);
     }
 
-    request?.then(setGradeDistData)
-      .catch((error) => {
-        setGradeDistData([]);
-        console.error(error.response);
-      });
+    request?.then(setGradeDistData).catch((error) => {
+      setGradeDistData([]);
+      console.error(error.response);
+    });
   };
 
   // reset any data from a previous course or professor, get new data for course or professor
