@@ -11,7 +11,6 @@ const router = express.Router();
  * @param res Express Response Object
  */
 function successLogin(req: Request, res: Response) {
-  console.log('Logged in', req.user);
   // set the user cookie
   res.cookie('user', req.user, {
     maxAge: SESSION_LENGTH,
@@ -45,7 +44,7 @@ router.get('/google/callback', function (req, res) {
   // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
   if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
     // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
-    res.redirect('https://' + host + '/api/users' + req.url);
+    res.redirect(`https://${host}/api/users${req.url}`);
     return;
   }
   passport.authenticate(

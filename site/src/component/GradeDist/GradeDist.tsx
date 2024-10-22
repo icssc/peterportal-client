@@ -53,10 +53,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       request = trpc.professors.grades.query(params);
     }
 
-    request
-      ?.then((res) => {
-        setGradeDistData(res);
-      })
+    request?.then(setGradeDistData)
       .catch((error) => {
         setGradeDistData([]);
         console.error(error.response);

@@ -8,7 +8,7 @@ export const userPreferences = z.object({
 });
 export type UserPreferences = z.infer<typeof userPreferences>;
 
-// TODO: should make use of this on frontend when accessing user cookie with useCookies
+/** @todo make use of this on frontend when accessing user cookie with useCookies */
 export interface User {
   id: string;
   email: string;

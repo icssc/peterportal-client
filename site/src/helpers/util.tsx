@@ -115,7 +115,7 @@ function transformCourseGQL(data: CourseAAPIResponse) {
   return course;
 }
 
-// TODO: should move transformations to backend? check performance
+/** @todo should move transformations to backend? check performance */
 // transforms PPAPI gql schema to our needs
 export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | ProfessorAAPIResponse) {
   if (index == 'courses') {
