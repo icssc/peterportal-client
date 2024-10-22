@@ -140,7 +140,7 @@ export const loadRoadmap = async (
     if (request?.roadmap) {
       roadmap = request.roadmap;
     }
-    if (request?.coursebag !== undefined) {
+    if (request?.coursebag) {
       coursebagStrings = request.coursebag;
     }
   }
