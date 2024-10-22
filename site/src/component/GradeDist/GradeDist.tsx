@@ -38,7 +38,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   const fetchGradeDistData = () => {
-    let request: Promise<GradesRaw> | undefined;
+    let request: Promise<GradesRaw>;
     // course context
     if (props.course) {
       const params = {
@@ -53,7 +53,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       request = trpc.professors.grades.query(params);
     }
 
-    request?.then(setGradeDistData).catch((error) => {
+    request!.then(setGradeDistData).catch((error) => {
       setGradeDistData([]);
       console.error(error.response);
     });
