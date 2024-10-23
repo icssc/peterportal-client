@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 
 const preferenceSchema = new mongoose.Schema({
   theme: {
-    type: theme.options,
+    type: String,
+    enum: theme.options,
     required: true,
   },
   userID: {
