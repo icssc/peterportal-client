@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -34,13 +34,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (selectedQuarter !== '') {
-      fetchScheduleDataFromAPI();
-    }
-  }, [selectedQuarter, props.courseID, props.professorID]);
-
-  const fetchScheduleDataFromAPI = async () => {
+  const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
 
     if (props.courseID) {
@@ -69,7 +63,13 @@ const Schedule: FC<ScheduleProps> = (props) => {
         setScheduleData({});
       }
     }
-  };
+  }, [props.courseID, props.professorID, selectedQuarter]);
+
+  useEffect(() => {
+    if (selectedQuarter !== '') {
+      fetchScheduleDataFromAPI();
+    }
+  }, [selectedQuarter, fetchScheduleDataFromAPI]);
 
   const renderButton = (section: Section) => {
     //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'
