@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import axios from 'axios';
 import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
@@ -14,9 +13,18 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import { ReviewData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { quarterNames } from '../../helpers/planner';
+import trpc from '../../trpc';
+import {
+  EditReviewSubmission,
+  grades,
+  ReviewData,
+  ReviewGrade,
+  ReviewSubmission,
+  ReviewTags,
+  tags,
+} from '@peterportal/types';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -34,38 +42,19 @@ const ReviewForm: FC<ReviewFormProps> = ({
   course: courseProp,
 }) => {
   const dispatch = useAppDispatch();
-  const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'];
-  const tags = [
-    'Clear grading criteria',
-    'Tough grader',
-    'Amazing lectures',
-    'Test heavy',
-    'Get ready to read',
-    'Extra credit',
-    'Participation matters',
-    'Graded by few things',
-    "Skip class? You won't pass",
-    'Accessible outside class',
-    'Beware of pop quizzes',
-    'Lots of homework',
-    'So many papers',
-    'Lecture heavy',
-    'Group projects',
-    'Gives good feedback',
-  ];
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorID ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseID ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
-  const [gradeReceived, setGradeReceived] = useState(reviewToEdit?.gradeReceived ?? '');
+  const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
   const [content, setContent] = useState(reviewToEdit?.reviewContent ?? '');
   const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
-  const [selectedTags, setSelectedTags] = useState<string[]>(reviewToEdit?.tags ?? []);
+  const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [cookies] = useCookies(['user']);
@@ -90,24 +79,22 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
-  const postReview = async (review: ReviewData) => {
+  const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
     if (editing) {
-      const res = await axios.patch('/api/reviews/update', review);
-      if (res.data.error !== undefined) {
-        alert(res.data.error);
-      } else {
+      try {
+        const res = await trpc.reviews.edit.mutate(review as EditReviewSubmission);
         setSubmitted(true);
-        dispatch(editReview(res.data));
+        dispatch(editReview(res));
+      } catch (e) {
+        alert((e as Error).message);
       }
     } else {
-      const res = await axios.post<ReviewData>('/api/reviews', review).catch((err) => err.response);
-      if (res.status === 400) {
-        alert(res.data.error ?? 'You have already submitted a review for this course/professor');
-      } else if (res.data.error !== undefined) {
-        alert('You must be logged in to add a review!');
-      } else {
+      try {
+        const res = await trpc.reviews.add.mutate(review);
         setSubmitted(true);
-        dispatch(addReview(res.data));
+        dispatch(addReview(res));
+      } catch (e) {
+        alert((e as Error).message);
       }
     }
   };
@@ -131,7 +118,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       alert('Please complete the CAPTCHA');
       return;
     }
-    const timestamp = new Date().toLocaleDateString('en-US');
     const review = {
       _id: reviewToEdit?._id,
       professorID: professor,
@@ -141,23 +127,20 @@ const ReviewForm: FC<ReviewFormProps> = ({
       reviewContent: content,
       rating: quality,
       difficulty,
-      timestamp,
-      gradeReceived,
+      gradeReceived: gradeReceived!,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
-      score: 0,
       takeAgain,
       textbook,
       attendance,
       tags: selectedTags,
-      verified: false,
       captchaToken,
     };
 
     postReview(review);
   };
 
-  const selectTag = (tag: string) => {
+  const selectTag = (tag: ReviewTags) => {
     // remove tag
     if (selectedTags.includes(tag)) {
       const newSelectedTags = [...selectedTags];
@@ -278,7 +261,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                     id="grade"
                     defaultValue=""
                     required
-                    onChange={(e) => setGradeReceived(e.target.value)}
+                    onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
                     value={gradeReceived}
                   >
                     <option disabled={true} value="">

@@ -110,7 +110,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     if (pendingRequest) {
       clearTimeout(pendingRequest);
     }
-    const timeout = setTimeout(() => {
+    const timeout = window.setTimeout(() => {
       searchNames(query, 0);
       setPendingRequest(null);
     }, SEARCH_TIMEOUT_MS);

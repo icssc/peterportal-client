@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { PlannerYearData, QuarterName } from '../../types/types';
+import { PlannerYearData } from '../../types/types';
 import { quarterDisplayNames, quarterNames, normalizeQuarterName } from '../../helpers/planner';
+import { QuarterName } from '@peterportal/types';
 
 interface YearPopupQuarter {
   id: QuarterName;

@@ -1,12 +1,12 @@
-import { FC, useState, useEffect } from 'react';
-import axios, { AxiosResponse } from 'axios';
+import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 
-import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from 'peterportal-api-next-types';
+import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
+import trpc from '../../trpc';
 import { Dropdown } from 'semantic-ui-react';
 
 interface ScheduleProps {
@@ -27,35 +27,29 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
   useEffect(() => {
     // get the current quarter used in websoc
-    axios.get<string>('/api/schedule/api/currentQuarter').then((res) => {
+    trpc.schedule.currentQuarter.query().then((data) => {
       // use it as the default in the dropdown
-      setCurrentQuarter(res.data);
-      setSelectedQuarter(res.data);
+      setCurrentQuarter(data);
+      setSelectedQuarter(data);
     });
   }, []);
 
-  useEffect(() => {
-    if (selectedQuarter !== '') {
-      fetchScheduleDataFromAPI(selectedQuarter);
-    }
-  }, [selectedQuarter, props.courseID, props.professorID]);
+  const fetchScheduleDataFromAPI = useCallback(async () => {
+    let apiResponse!: WebsocResponse;
 
-  const fetchScheduleDataFromAPI = async (selectedQuarter: string) => {
-    let url = '';
     if (props.courseID) {
       const courseIDSplit = props.courseID.split(' ');
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      url = `/api/schedule/api/${selectedQuarter}/${department}/${number}`;
+      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number });
     } else if (props.professorID) {
-      url = `/api/schedule/api/${selectedQuarter}/${props.professorID}`;
+      apiResponse = await trpc.schedule.getTermProf.query({ term: selectedQuarter, professor: props.professorID });
     }
 
-    const apiResponse: AxiosResponse<WebsocResponse> = await axios.get(url);
     try {
       const data: ScheduleData = {};
-      apiResponse.data.schools.forEach((school) => {
+      apiResponse.schools.forEach((school) => {
         school.departments.forEach((department) => {
           department.courses.forEach((course) => {
             data[department.deptCode + course.courseNumber] = course.sections;
@@ -69,7 +63,13 @@ const Schedule: FC<ScheduleProps> = (props) => {
         setScheduleData({});
       }
     }
-  };
+  }, [props.courseID, props.professorID, selectedQuarter]);
+
+  useEffect(() => {
+    if (selectedQuarter !== '') {
+      fetchScheduleDataFromAPI();
+    }
+  }, [selectedQuarter, fetchScheduleDataFromAPI]);
 
   const renderButton = (section: Section) => {
     //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'

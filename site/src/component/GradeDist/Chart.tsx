@@ -3,7 +3,7 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
 import { type Theme } from '@nivo/core';
-import { GradesRaw } from 'peterportal-api-next-types';
+import { GradesRaw } from '@peterportal/types';
 
 const colors = ['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#EBEBEB', '#EBEBEB'];
 
