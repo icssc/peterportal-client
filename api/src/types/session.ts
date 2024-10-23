@@ -18,5 +18,3 @@ declare module 'express-session' {
     user: User;
   }
 }
-
-export {};
