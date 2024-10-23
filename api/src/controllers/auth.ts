@@ -52,24 +52,19 @@ router.get('/google/callback', function (req, res) {
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
     function (err: Error, user: User | false | null) {
-      if (err) console.error(err);
-      else if (!user) console.error('Invalid login data');
-      else {
-        // manually login
-        req.login(user, function (err) {
-          if (err) console.error(err);
-          else {
-            // check if user is an admin
-            const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
-            if (allowedUsers.includes(user.email)) {
-              console.log('AUTHORIZED AS ADMIN');
-              req.session.passport!.admin = true;
-            }
-            req.session.returnTo = returnTo;
-            successLogin(req, res);
-          }
-        });
-      }
+      if (err) return console.error(err);
+      if (!user) return console.error('Invalid login data');
+      // manually login
+      req.login(user, function (err) {
+        if (err) return console.error(err);
+        // check if user is an admin
+        const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
+        if (allowedUsers.includes(user.email)) {
+          req.session.passport!.admin = true;
+        }
+        req.session.returnTo = returnTo;
+        successLogin(req, res);
+      });
     },
   )(req, res);
 });
@@ -78,9 +73,8 @@ router.get('/google/callback', function (req, res) {
  * Endpoint to logout
  */
 router.get('/logout', function (req, res) {
-  console.log('Logging out', req.user);
   req.session.destroy(function (err) {
-    if (err) console.log(err);
+    if (err) console.error(err);
     // clear the user cookie
     res.clearCookie('user');
     res.redirect('back');
