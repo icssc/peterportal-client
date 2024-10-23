@@ -1,10 +1,11 @@
 import { FC, useState, useEffect } from 'react';
 import SearchPopup from '../../component/SearchPopup/SearchPopup';
-import axios from 'axios';
 
 import { useAppSelector } from '../../store/hooks';
 import { selectProfessor } from '../../store/slices/popupSlice';
-import { ScoreData, FeaturedReviewData } from '../../types/types';
+import { ScoreData } from '../../types/types';
+import trpc from '../../trpc';
+import { FeaturedReviewData } from '@peterportal/types';
 
 const ProfessorPopup: FC = () => {
   const professor = useAppSelector(selectProfessor);
@@ -16,26 +17,26 @@ const ProfessorPopup: FC = () => {
       const reviewParams = {
         type: 'professor',
         id: professor.ucinetid,
-      };
-      axios.get<ScoreData[]>('/api/reviews/scores', { params: reviewParams }).then((res) => {
-        const scoredCourses = new Set(res.data.map((v) => v.name));
-        res.data.forEach((v) => (v.key = v.name));
+      } as const;
+      trpc.reviews.scores.query(reviewParams).then((res: ScoreData[]) => {
+        const scoredCourses = new Set(res.map((v) => v.name));
+        res.forEach((v) => (v.key = v.name));
         Object.keys(professor.courses).forEach((course) => {
           // remove spaces
           course = course.replace(/\s+/g, '');
           // add unknown score
           if (!scoredCourses.has(course)) {
-            res.data.push({ name: course, score: -1, key: course });
+            res.push({ name: course, score: -1, key: course });
           }
         });
         // sort by highest score
-        res.data.sort((a, b) => b.score - a.score);
-        setScores(res.data);
+        res.sort((a, b) => b.score - a.score);
+        setScores(res);
       });
-      axios.get<FeaturedReviewData[]>('/api/reviews/featured', { params: reviewParams }).then((res) => {
+      trpc.reviews.featured.query(reviewParams).then((res) => {
         // if has a featured review
-        if (res.data.length > 0) {
-          setFeatured(res.data[0]);
+        if (res) {
+          setFeatured(res);
         }
         // no reviews for this professor
         else {

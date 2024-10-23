@@ -1,10 +1,7 @@
-import axios from 'axios';
 import {
   SearchIndex,
   CourseGQLData,
-  CourseGQLResponse,
   ProfessorGQLData,
-  ProfessorGQLResponse,
   ProfessorLookup,
   CourseLookup,
   BatchCourseData,
@@ -12,6 +9,8 @@ import {
   SearchType,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
+import trpc from '../trpc';
+import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -60,19 +59,20 @@ export async function searchAPIResults(
   index: SearchIndex,
   names: string[],
 ): Promise<BatchCourseData | BatchProfessorData> {
-  const res = await axios.post<{ [key: string]: CourseGQLResponse | ProfessorGQLResponse }>(`/api/${index}/api/batch`, {
-    [index]: names,
-  });
-  const data = res.data;
+  const data =
+    index === 'courses'
+      ? await trpc.courses.batch.mutate({ courses: names })
+      : await trpc.professors.batch.mutate({ professors: names });
+
   const transformed: BatchCourseData | BatchProfessorData = {};
   for (const id in data) {
     if (data[id]) {
       // use specific key based on index
       let key = '';
       if (index == 'courses') {
-        key = (data[id] as CourseGQLResponse).id;
+        key = (data[id] as CourseAAPIResponse).id;
       } else {
-        key = (data[id] as ProfessorGQLResponse).ucinetid;
+        key = (data[id] as ProfessorAAPIResponse).ucinetid;
       }
       // perform transformation
       transformed[key] = transformGQLData(index, data[id]);
@@ -84,7 +84,7 @@ export async function searchAPIResults(
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
 
-function transformCourseGQL(data: CourseGQLResponse) {
+function transformCourseGQL(data: CourseAAPIResponse) {
   const instructorHistoryLookup: ProfessorLookup = {};
   const prerequisiteListLookup: CourseLookup = {};
   const prerequisiteForLookup: CourseLookup = {};
@@ -115,17 +115,17 @@ function transformCourseGQL(data: CourseGQLResponse) {
   return course;
 }
 
-// TODO: should move transformations to backend
+/** @todo should move transformations to backend? check performance */
 // transforms PPAPI gql schema to our needs
-export function transformGQLData(index: SearchIndex, data: CourseGQLResponse | ProfessorGQLResponse) {
+export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | ProfessorAAPIResponse) {
   if (index == 'courses') {
-    return transformCourseGQL(data as CourseGQLResponse);
+    return transformCourseGQL(data as CourseAAPIResponse);
   } else {
-    return transformProfessorGQL(data as ProfessorGQLResponse);
+    return transformProfessorGQL(data as ProfessorAAPIResponse);
   }
 }
 
-function transformProfessorGQL(data: ProfessorGQLResponse) {
+function transformProfessorGQL(data: ProfessorAAPIResponse) {
   const courseHistoryLookup: CourseLookup = {};
   // maps course's id to course basic details
   data.courses.forEach((course) => {

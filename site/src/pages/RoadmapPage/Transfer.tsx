@@ -9,9 +9,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CloseButton from 'react-bootstrap/CloseButton';
 
-import { TransferData } from '../../types/types';
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { TransferData } from '@peterportal/types';
 
 interface TransferEntryProps extends TransferData {
   index: number;

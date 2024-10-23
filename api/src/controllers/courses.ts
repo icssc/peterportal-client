@@ -2,69 +2,71 @@
  @module CoursesRoute
 */
 
-import express, { Request } from 'express';
+import { z } from 'zod';
 import { getCourseQuery } from '../helpers/gql';
-const router = express.Router();
+import { publicProcedure, router } from '../helpers/trpc';
+import { CourseAAPIResponse, CourseBatchAAPIResponse, GradesRaw } from '@peterportal/types';
 
-/**
- * PPAPI proxy for course data
- */
-router.get('/api', (req: Request<never, unknown, never, { courseID: string }, never>, res) => {
-  const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(req.query.courseID), {
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-  });
-  console.log(req.query.courseID);
-
-  r.then((response) => response.json()).then((data) => res.send(data.payload));
-});
-
-/**
- * PPAPI proxy for course data
- */
-router.post('/api/batch', (req: Request<never, unknown, { courses: string[] }, never>, res) => {
-  if (req.body.courses.length == 0) {
-    res.json({});
-  } else {
-    const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL, {
-      method: 'POST',
+const coursesRouter = router({
+  /**
+   * PPAPI proxy for getting course data
+   */
+  get: publicProcedure.input(z.object({ courseID: z.string() })).query(async ({ input }) => {
+    const r = fetch(process.env.PUBLIC_API_URL + 'courses/' + encodeURIComponent(input.courseID), {
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
-      body: JSON.stringify({
-        query: getCourseQuery(req.body.courses),
-      }),
     });
 
-    r.then((response) => response.json()).then((data) =>
-      res.json(
-        Object.fromEntries(
-          Object.values(data.data)
-            .filter((x) => x !== null)
-            .map((x) => [(x as { id: string }).id, x]),
-        ),
-      ),
+    return r.then((response) => response.json()).then((data) => data.payload as CourseAAPIResponse);
+  }),
+
+  /**
+   * PPAPI proxy for batch course data
+   */
+  batch: publicProcedure.input(z.object({ courses: z.string().array() })).mutation(async ({ input }) => {
+    if (input.courses.length == 0) {
+      return {};
+    } else {
+      const r = fetch(process.env.PUBLIC_API_GRAPHQL_URL!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: getCourseQuery(input.courses),
+        }),
+      });
+
+      // change keys from _0,...,_x to course IDs
+      return r
+        .then((response) => response.json())
+        .then(
+          (data: CourseBatchAAPIResponse) =>
+            Object.fromEntries(
+              (Object.values(data.data) as CourseAAPIResponse[])
+                .filter((course) => course !== null)
+                .map((course) => [course.id, course]),
+            ) as CourseBatchAAPIResponse,
+        );
+    }
+  }),
+
+  /**
+   * PPAPI proxy for grade distribution
+   */
+  grades: publicProcedure.input(z.object({ department: z.string(), number: z.string() })).query(async ({ input }) => {
+    const r = fetch(
+      process.env.PUBLIC_API_URL +
+        'grades/raw?department=' +
+        encodeURIComponent(input.department) +
+        '&courseNumber=' +
+        input.number,
     );
-  }
+
+    return r.then((response) => response.json()).then((data) => data.payload as GradesRaw);
+  }),
 });
 
-/**
- * PPAPI proxy for grade distribution
- */
-router.get('/api/grades', (req: Request<never, unknown, never, { department: string; number: string }>, res) => {
-  const r = fetch(
-    process.env.PUBLIC_API_URL +
-      'grades/raw?department=' +
-      encodeURIComponent(req.query.department) +
-      '&courseNumber=' +
-      req.query.number,
-  );
-
-  r.then((response) => response.json()).then((data) => {
-    res.send(data.payload);
-  });
-});
-
-export default router;
+export default coursesRouter;

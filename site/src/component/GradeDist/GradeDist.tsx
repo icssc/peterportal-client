@@ -3,10 +3,10 @@ import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
-import axios from 'axios';
 
-import { CourseGQLData, ProfessorGQLData, QuarterName } from '../../types/types';
-import { GradesRaw } from 'peterportal-api-next-types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { GradesRaw, QuarterName } from '@peterportal/types';
+import trpc from '../../trpc';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -38,29 +38,25 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   const fetchGradeDistData = () => {
-    let url = '';
-    let params = {};
+    let request: Promise<GradesRaw>;
     // course context
     if (props.course) {
-      url = `/api/courses/api/grades`;
-      params = {
+      const params = {
         department: props.course.department,
         number: props.course.courseNumber,
       };
+      request = trpc.courses.grades.query(params);
     } else if (props.professor) {
-      url = `/api/professors/api/grades/${props.professor.shortenedName}`;
+      const params = {
+        name: props.professor.shortenedName,
+      };
+      request = trpc.professors.grades.query(params);
     }
-    axios
-      .get<GradesRaw>(url, {
-        params: params,
-      })
-      .then((res) => {
-        setGradeDistData(res.data);
-      })
-      .catch((error) => {
-        setGradeDistData([]);
-        console.error(error.response);
-      });
+
+    request!.then(setGradeDistData).catch((error) => {
+      setGradeDistData([]);
+      console.error(error.response);
+    });
   };
 
   // reset any data from a previous course or professor, get new data for course or professor
