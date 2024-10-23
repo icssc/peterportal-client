@@ -14,10 +14,7 @@ declare module 'express-session' {
   }
 
   export interface PassportData {
-    /**
-     * True if is validated as an admin
-     */
-    admin: boolean;
+    isAdmin: boolean;
     user: User;
   }
 }

@@ -50,7 +50,7 @@ const usersRouter = router({
     if (!ctx.session?.passport) {
       return { admin: false };
     } else {
-      return { admin: ctx.session.passport.admin as boolean };
+      return { admin: ctx.session.passport.isAdmin as boolean };
     }
   }),
 });

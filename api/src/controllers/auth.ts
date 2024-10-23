@@ -60,7 +60,7 @@ router.get('/google/callback', function (req, res) {
         // check if user is an admin
         const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
         if (allowedUsers.includes(user.email)) {
-          req.session.passport!.admin = true;
+          req.session.passport!.isAdmin = true;
         }
         req.session.returnTo = returnTo;
         successLogin(req, res);

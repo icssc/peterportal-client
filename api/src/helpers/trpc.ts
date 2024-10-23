@@ -14,7 +14,7 @@ export const router = trpc.router;
 export const publicProcedure = trpc.procedure;
 
 export const adminProcedure = publicProcedure.use(async (opts) => {
-  if (!opts.ctx.session.passport?.admin) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not an admin' });
+  if (!opts.ctx.session.passport?.isAdmin) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not an admin' });
 
   return opts.next(opts);
 });
