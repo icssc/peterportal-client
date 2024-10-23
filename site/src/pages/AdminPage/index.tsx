@@ -1,8 +1,7 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
 import Error from '../../component/Error/Error';
-import './AdminPage.scss';
 import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';
 
@@ -16,16 +15,16 @@ const AdminPage: FC = () => {
   }
 
   // user has to be authenticated as admin to view this page
-  const checkAdmin = async () => {
+  const checkAdmin = useCallback(async () => {
     const res: AdminResponse = await trpc.users.isAdmin.query();
     const isAdmin: boolean = res.admin;
     setAuthorized(isAdmin);
     setLoaded(true);
-  };
+  }, []);
 
   useEffect(() => {
     checkAdmin();
-  }, []);
+  }, [checkAdmin]);
 
   if (!loaded) {
     return <p>Loading...</p>;
