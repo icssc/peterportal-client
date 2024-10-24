@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, check, integer, jsonb, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { boolean, check, index, integer, jsonb, pgTable, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: integer().primaryKey(),
@@ -10,6 +10,9 @@ export const users = pgTable('users', {
 
 export const reports = pgTable('reports', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  reviewId: integer()
+    .notNull()
+    .references(() => reviews.id),
   reason: varchar({ length: 500 }).notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 });
@@ -41,24 +44,36 @@ export const reviews = pgTable(
   (table) => ({
     ratingCheck: check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
     difficultyCheck: check('difficulty_check', sql`${table.difficulty} >= 1 AND ${table.difficulty} <= 5`),
+    primaryKey: primaryKey({ columns: [table.userId, table.professorId, table.courseId] }),
   }),
 );
 
-export const planners = pgTable('planners', {
-  userId: integer().references(() => users.id),
-  planner: jsonb(),
-});
+export const planners = pgTable(
+  'planners',
+  {
+    userId: integer().references(() => users.id),
+    planner: jsonb(),
+  },
+  (table) => ({
+    userIdIdx: index('user_id_idx').on(table.userId),
+  }),
+);
 
-export const transferredCourses = pgTable('transferredCourses', {
-  userId: integer().references(() => users.id),
-  courseName: varchar({ length: 32 }),
-  units: integer(),
-});
+export const transferredCourses = pgTable(
+  'transferredCourses',
+  {
+    userId: integer().references(() => users.id),
+    courseName: varchar({ length: 32 }),
+    units: integer(),
+  },
+  (table) => ({
+    userIdIdx: index('user_id_idx').on(table.userId),
+  }),
+);
 
 export const votes = pgTable(
   'votes',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     reviewId: integer()
       .notNull()
       .references(() => reviews.id),
@@ -69,5 +84,6 @@ export const votes = pgTable(
   },
   (table) => ({
     voteCheck: check('vote_check', sql`${table.vote} = 1 OR ${table.vote} == -1`),
+    primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
   }),
 );
