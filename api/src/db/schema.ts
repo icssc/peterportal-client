@@ -31,7 +31,7 @@ export const reviews = pgTable(
     rating: integer().notNull(),
     difficulty: integer().notNull(),
     createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
+    updatedAt: timestamp().defaultNow().notNull() /** @todo implement */,
     forCredit: boolean().notNull(),
     quarter: varchar({ length: 32 }).notNull(),
     score: integer().notNull() /** @todo: could do a count query on votes instead? */,
@@ -45,14 +45,18 @@ export const reviews = pgTable(
     ratingCheck: check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
     difficultyCheck: check('difficulty_check', sql`${table.difficulty} >= 1 AND ${table.difficulty} <= 5`),
     primaryKey: primaryKey({ columns: [table.userId, table.professorId, table.courseId] }),
+    professorIdIdx: index('professor_id_idx').on(table.professorId),
+    courseIdIdx: index('course_id_idx').on(table.courseId),
   }),
 );
 
 export const planners = pgTable(
   'planners',
   {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userId: integer().references(() => users.id),
-    planner: jsonb(),
+    name: varchar({ length: 35 }).notNull(),
+    years: jsonb().array().notNull(),
   },
   (table) => ({
     userIdIdx: index('user_id_idx').on(table.userId),
@@ -60,7 +64,7 @@ export const planners = pgTable(
 );
 
 export const transferredCourses = pgTable(
-  'transferredCourses',
+  'transferred_courses',
   {
     userId: integer().references(() => users.id),
     courseName: varchar({ length: 32 }),
@@ -83,7 +87,8 @@ export const votes = pgTable(
     vote: integer().notNull(),
   },
   (table) => ({
-    voteCheck: check('vote_check', sql`${table.vote} = 1 OR ${table.vote} == -1`),
+    voteCheck: check('vote_check', sql`${table.vote} = 1 OR ${table.vote} = -1`),
+    // reviewId first since we make 2 kinds of queries: on just reviewId and on reviewId, userId
     primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
   }),
 );
