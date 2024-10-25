@@ -92,3 +92,14 @@ export const votes = pgTable(
     primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
   }),
 );
+
+export const coursebag = pgTable(
+  'coursebag',
+  {
+    userId: integer().references(() => users.id),
+    courseId: varchar({ length: 16 }),
+  },
+  (table) => ({
+    primaryKey: primaryKey({ columns: [table.userId, table.courseId] }),
+  }),
+);
