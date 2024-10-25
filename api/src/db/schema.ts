@@ -93,8 +93,8 @@ export const votes = pgTable(
   }),
 );
 
-export const coursebag = pgTable(
-  'coursebag',
+export const savedCourses = pgTable(
+  'saved_courses',
   {
     userId: integer().references(() => users.id),
     courseId: varchar({ length: 16 }),
