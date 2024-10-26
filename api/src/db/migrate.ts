@@ -6,64 +6,121 @@ import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
 import Report from '../models/report';
 import Vote from '../models/vote';
-import { MongoRoadmap } from '@peterportal/types';
+import { MongoRoadmap, SavedPlannerData } from '@peterportal/types';
+import mongoose from 'mongoose';
 
-// get all possible users from sessions, then reviews, then roadmaps
-const sessions = await Session.find({});
-const sessionsUserRecords = sessions.map((session) => ({
-  id: Number(String(session.session!.passport!.user!.id)),
-  displayName: session.session!.passport!.user!.name,
-  email: session.session!.passport!.user!.email,
-  picture: session.session!.passport!.user!.picture!,
-}));
-await db.insert(users).values(sessionsUserRecords);
+const uri = process.env.MONGO_URL;
+const conn = await mongoose.connect(uri!, {
+  dbName: 'peterPortalDB',
+  serverSelectionTimeoutMS: 5000,
+});
 
-const reviewDocs = await Review.find({});
-for (const review of reviewDocs) {
-  await db
-    .insert(users)
-    .values({ id: Number(review.userID), displayName: review.userDisplay, email: '', picture: '' })
-    .onConflictDoNothing();
+// get all possible users from sessions, then reviews, then roadmaps, then votes
+const sessions = await Session.find();
+// need to filter out bad sessions (never signed in with google, just clicked log in)
+const sessionsUserRecords = sessions
+  .filter((session) => session.session?.passport?.user?.id != null)
+  .map((session) => ({
+    googleId: session.session!.passport!.user!.id!,
+    displayName: session.session!.passport!.user!.name,
+    email: session.session!.passport!.user!.email,
+    picture: session.session!.passport!.user!.picture!,
+  }));
+
+const userIdMapping: Record<string, number> = {};
+
+const newIdsFromSessions = await db
+  .insert(users)
+  .values(sessionsUserRecords)
+  .onConflictDoNothing()
+  .returning({ id: users.id, googleId: users.googleId });
+for (const newId of newIdsFromSessions) {
+  userIdMapping[newId.googleId] = newId.id;
 }
 
-const roadmaps = await Roadmap.find<MongoRoadmap>({});
-for (const roadmap of roadmaps) {
-  await db
+const reviewDocs = await Review.find();
+for (const review of reviewDocs) {
+  const newId = await db
     .insert(users)
-    .values({ id: Number(roadmap.userID), displayName: 'Anonymous Peter', email: '', picture: '' })
-    .onConflictDoNothing();
+    .values({ googleId: review.userID, displayName: review.userDisplay, email: '', picture: '' })
+    .onConflictDoNothing()
+    .returning({ id: users.id });
+  if (newId.length > 0) {
+    userIdMapping[review.userID] = newId[0].id;
+  }
+}
+
+const roadmaps = await Roadmap.find<MongoRoadmap>();
+for (const roadmap of roadmaps) {
+  const newId = await db
+    .insert(users)
+    .values({ googleId: roadmap.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
+    .onConflictDoNothing()
+    .returning({ id: users.id, googleId: users.googleId });
+  if (newId.length > 0) {
+    userIdMapping[roadmap.userID] = newId[0].id;
+  }
+}
+
+const voteDocs = await Vote.find();
+for (const vote of voteDocs) {
+  const newId = await db
+    .insert(users)
+    .values({ googleId: vote.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
+    .onConflictDoNothing()
+    .returning({ id: users.id, googleId: users.googleId });
+  if (newId.length > 0) {
+    userIdMapping[vote.userID] = newId[0].id;
+  }
 }
 
 // transfer preferences + add any new users
-const preferences = await Preference.find({});
+const preferences = await Preference.find();
 for (const preference of preferences) {
-  await db
+  const newId = await db
     .insert(users)
     .values({
-      id: Number(preference.userID),
+      googleId: preference.userID,
       displayName: 'Anonymous Peter',
       theme: preference.theme,
       email: '',
       picture: '',
     })
-    .onConflictDoUpdate({ target: users.id, set: { theme: preference.theme } });
+    .onConflictDoUpdate({ target: users.googleId, set: { theme: preference.theme } })
+    .returning({ id: users.id });
+  if (newId.length > 0) {
+    userIdMapping[preference.userID] = newId[0].id;
+  }
 }
 
+type LegacyRoadmap = MongoRoadmap & { roadmap: { planner: SavedPlannerData['content'] } };
+
 // transfer roadmaps + separate planners, transfered courses, coursebag
+/** @todo normalize quarter names */
 await db.insert(planners).values(
-  roadmaps.flatMap((roadmap) =>
-    roadmap.roadmap.planners.map((planner) => ({
-      userId: Number(roadmap.userID),
+  roadmaps.flatMap((roadmap) => {
+    if ((roadmap as LegacyRoadmap).roadmap.planner != null) {
+      // old roadmap format (before multi-planner)
+      const planner = (roadmap as LegacyRoadmap).roadmap.planner;
+      return {
+        userId: userIdMapping[roadmap.userID],
+        name: "Peter's Roadmap",
+        years: planner,
+      };
+    }
+
+    return roadmap.roadmap.planners.map((planner) => ({
+      userId: userIdMapping[roadmap.userID],
       name: planner.name,
       years: planner.content,
-    })),
-  ),
+    }));
+  }),
 );
 
 await db.insert(transferredCourses).values(
   roadmaps.flatMap((roadmap) =>
     roadmap.roadmap.transfers.map((transfer) => ({
-      userId: Number(roadmap.userID),
+      userId: userIdMapping[roadmap.userID],
       courseName: transfer.name,
       units: transfer.units,
     })),
@@ -74,7 +131,7 @@ await db
   .insert(savedCourses)
   .values(
     roadmaps.flatMap((roadmap) =>
-      roadmap.coursebag.map((course) => ({ userId: Number(roadmap.userID), courseId: course })),
+      roadmap.coursebag.map((course) => ({ userId: userIdMapping[roadmap.userID], courseId: course })),
     ),
   );
 
@@ -86,18 +143,19 @@ const newIds = await db
     reviewDocs.map((review) => ({
       professorId: review.professorID,
       courseId: review.courseID,
-      userId: Number(review.userID),
+      userId: userIdMapping[review.userID],
       anonymous: review.userDisplay === 'Anonymous Peter',
       content: review.reviewContent,
       rating: review.rating,
       difficulty: review.difficulty,
       createdAt: review.timestamp,
-      forCredit: review.forCredit as boolean,
+      updatedAt: null,
+      forCredit: review.forCredit ?? false,
       quarter: review.quarter,
       // score: review.score,
-      takeAgain: review.takeAgain as boolean,
-      textbook: review.textbook as boolean,
-      attendance: review.attendance as boolean,
+      takeAgain: review.takeAgain ?? false,
+      textbook: review.textbook ?? false,
+      attendance: review.attendance ?? false,
       tags: review.tags,
       verified: review.verified,
     })),
@@ -109,23 +167,27 @@ for (let i = 0; i < reviewDocs.length; i++) {
 }
 
 // transfer reports + votes, use new review id, discard old report id and let postgres generate new one
-const reportDocs = await Report.find({});
-await db.insert(reports).values(
-  reportDocs.map((report) => ({
-    reviewId: reviewIdMapping[String(report.reviewID)],
-    reason: report.reason,
-    createdAt: report.timestamp,
-  })),
-);
+const reportDocs = await Report.find();
+if (reportDocs.length > 0) {
+  await db.insert(reports).values(
+    reportDocs.map((report) => ({
+      reviewId: reviewIdMapping[String(report.reviewID)],
+      reason: report.reason,
+      createdAt: report.timestamp,
+    })),
+  );
+}
 
-const voteDocs = await Vote.find({});
+const filteredVoteDocs = voteDocs.filter((vote) => vote.reviewID in reviewIdMapping); // we have some bad data here (floating votes with no review)
 await db.insert(votes).values(
-  voteDocs.map((vote) => ({
-    reviewId: reviewIdMapping[String(vote.reviewID)],
-    userId: Number(vote.userID),
+  filteredVoteDocs.map((vote) => ({
+    reviewId: reviewIdMapping[vote.reviewID],
+    userId: userIdMapping[vote.userID],
     vote: vote.score,
     createdAt: vote.timestamp,
   })),
 );
 
 // transfer sessions? (note: user should be able to update later on future logins though)
+
+conn.disconnect();

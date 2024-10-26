@@ -37,8 +37,7 @@ const sessionSchema = new mongoose.Schema({
     passport: {
       user: {
         id: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+          type: String,
         },
         email: {
           type: String,
