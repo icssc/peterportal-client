@@ -1,11 +1,12 @@
 import Session from '../models/session';
 import { db } from '.';
-import { reports, reviews, users, votes } from './schema';
+import { planners, reports, reviews, savedCourses, transferredCourses, users, votes } from './schema';
 import Review from '../models/review';
 import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
 import Report from '../models/report';
 import Vote from '../models/vote';
+import { MongoRoadmap } from '@peterportal/types';
 
 // get all possible users from sessions, then reviews, then roadmaps
 const sessions = await Session.find({});
@@ -23,7 +24,7 @@ for (const review of reviewDocs) {
     .onConflictDoNothing();
 }
 
-const roadmaps = await Roadmap.find({});
+const roadmaps = await Roadmap.find<MongoRoadmap>({});
 for (const roadmap of roadmaps) {
   await db
     .insert(users)
@@ -41,6 +42,33 @@ for (const preference of preferences) {
 }
 
 // transfer roadmaps + separate planners, transfered courses, coursebag
+await db.insert(planners).values(
+  roadmaps.flatMap((roadmap) =>
+    roadmap.roadmap.planners.map((planner) => ({
+      userId: Number(roadmap.userID),
+      name: planner.name,
+      years: planner.content,
+    })),
+  ),
+);
+
+await db.insert(transferredCourses).values(
+  roadmaps.flatMap((roadmap) =>
+    roadmap.roadmap.transfers.map((transfer) => ({
+      userId: Number(roadmap.userID),
+      courseName: transfer.name,
+      units: transfer.units,
+    })),
+  ),
+);
+
+await db
+  .insert(savedCourses)
+  .values(
+    roadmaps.flatMap((roadmap) =>
+      roadmap.coursebag.map((course) => ({ userId: Number(roadmap.userID), courseId: course })),
+    ),
+  );
 
 // transfer reviews + assign new id and make mapping of old id to new id
 const reviewIdMapping: Record<string, number> = {};
