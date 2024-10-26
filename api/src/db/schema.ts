@@ -27,7 +27,7 @@ export const reviews = pgTable(
       .notNull()
       .references(() => users.id),
     anonymous: boolean().notNull(),
-    content: varchar({ length: 500 }).notNull(),
+    content: varchar({ length: 500 }),
     rating: integer().notNull(),
     difficulty: integer().notNull(),
     createdAt: timestamp().defaultNow().notNull(),
