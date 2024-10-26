@@ -1,9 +1,11 @@
 import Session from '../models/session';
 import { db } from '.';
-import { reviews, users } from './schema';
+import { reports, reviews, users, votes } from './schema';
 import Review from '../models/review';
 import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
+import Report from '../models/report';
+import Vote from '../models/vote';
 
 // get all possible users from sessions, then reviews, then roadmaps
 const sessions = await Session.find({});
@@ -42,10 +44,10 @@ for (const preference of preferences) {
 
 // transfer reviews + assign new id and make mapping of old id to new id
 const reviewIdMapping: Record<string, number> = {};
-for (const review of reviewDocs) {
-  const id = await db
-    .insert(reviews)
-    .values({
+const newIds = await db
+  .insert(reviews)
+  .values(
+    reviewDocs.map((review) => ({
       professorId: review.professorID,
       courseId: review.courseID,
       userId: Number(review.userID),
@@ -62,14 +64,32 @@ for (const review of reviewDocs) {
       attendance: review.attendance as boolean,
       tags: review.tags,
       verified: review.verified,
-    })
-    .returning({ newId: reviews.id });
-  reviewIdMapping[String(review.id)] = id[0].newId;
+    })),
+  )
+  .returning({ newId: reviews.id });
+
+for (let i = 0; i < reviewDocs.length; i++) {
+  reviewIdMapping[String(reviewDocs[i].id)] = newIds[i].newId;
 }
 
 // transfer reports + votes, use new review id, discard old report id and let postgres generate new one
-// const reports = await Report.find({});
+const reportDocs = await Report.find({});
+await db.insert(reports).values(
+  reportDocs.map((report) => ({
+    reviewId: reviewIdMapping[String(report.reviewID)],
+    reason: report.reason,
+    createdAt: report.timestamp,
+  })),
+);
 
-// const votes = await Vote.find({});
+const voteDocs = await Vote.find({});
+await db.insert(votes).values(
+  voteDocs.map((vote) => ({
+    reviewId: reviewIdMapping[String(vote.reviewID)],
+    userId: Number(vote.userID),
+    vote: vote.score,
+    createdAt: vote.timestamp,
+  })),
+);
 
-// transfer sessions (note: user should be able to update later on future logins though)
+// transfer sessions? (note: user should be able to update later on future logins though)
