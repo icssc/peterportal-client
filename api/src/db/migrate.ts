@@ -13,6 +13,8 @@ const sessions = await Session.find({});
 const sessionsUserRecords = sessions.map((session) => ({
   id: Number(String(session.session!.passport!.user!.id)),
   displayName: session.session!.passport!.user!.name,
+  email: session.session!.passport!.user!.email,
+  picture: session.session!.passport!.user!.picture!,
 }));
 await db.insert(users).values(sessionsUserRecords);
 
@@ -20,7 +22,7 @@ const reviewDocs = await Review.find({});
 for (const review of reviewDocs) {
   await db
     .insert(users)
-    .values({ id: Number(review.userID), displayName: review.userDisplay })
+    .values({ id: Number(review.userID), displayName: review.userDisplay, email: '', picture: '' })
     .onConflictDoNothing();
 }
 
@@ -28,7 +30,7 @@ const roadmaps = await Roadmap.find<MongoRoadmap>({});
 for (const roadmap of roadmaps) {
   await db
     .insert(users)
-    .values({ id: Number(roadmap.userID), displayName: 'Anonymous Peter' })
+    .values({ id: Number(roadmap.userID), displayName: 'Anonymous Peter', email: '', picture: '' })
     .onConflictDoNothing();
 }
 
@@ -37,7 +39,13 @@ const preferences = await Preference.find({});
 for (const preference of preferences) {
   await db
     .insert(users)
-    .values({ id: Number(preference.userID), displayName: 'Anonymous Peter', theme: preference.theme })
+    .values({
+      id: Number(preference.userID),
+      displayName: 'Anonymous Peter',
+      theme: preference.theme,
+      email: '',
+      picture: '',
+    })
     .onConflictDoUpdate({ target: users.id, set: { theme: preference.theme } });
 }
 

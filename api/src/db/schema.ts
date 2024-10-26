@@ -4,6 +4,8 @@ import { boolean, check, index, integer, jsonb, pgTable, primaryKey, timestamp, 
 export const users = pgTable('users', {
   id: integer().primaryKey(),
   displayName: varchar({ length: 255 }).notNull(),
+  email: varchar({ length: 255 }).notNull(),
+  picture: varchar({ length: 255 }).notNull(),
   theme: varchar({ length: 8 }),
   lastRoadmapEditAt: timestamp(),
 });
