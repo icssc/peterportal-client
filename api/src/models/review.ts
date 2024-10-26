@@ -67,6 +67,10 @@ const reviewSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  textbook: {
+    type: Boolean,
+    required: false,
+  },
   attendance: {
     type: Boolean,
     required: false,

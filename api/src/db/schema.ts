@@ -34,7 +34,7 @@ export const reviews = pgTable(
     updatedAt: timestamp().defaultNow() /** @todo implement */,
     forCredit: boolean().notNull(),
     quarter: varchar({ length: 32 }).notNull(),
-    score: integer().notNull() /** @todo: could do a count query on votes instead? */,
+    // score: integer().notNull() /** @todo: could do a count query on votes instead? */,
     takeAgain: boolean().notNull(),
     textbook: boolean().notNull(),
     attendance: boolean().notNull(),
