@@ -6,7 +6,7 @@ import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
 import Report from '../models/report';
 import Vote from '../models/vote';
-import { MongoRoadmap, SavedPlannerData } from '@peterportal/types';
+import { MongoRoadmap, SavedPlannerData, SavedPlannerYearData } from '@peterportal/types';
 import mongoose from 'mongoose';
 
 const uri = process.env.MONGO_URL;
@@ -95,8 +95,35 @@ for (const preference of preferences) {
 
 type LegacyRoadmap = MongoRoadmap & { roadmap: { planner: SavedPlannerData['content'] } };
 
+const quarterNameMapping: Record<string, string> = {
+  fall: 'Fall',
+  winter: 'Winter',
+  spring: 'Spring',
+  // Old Lowercase Display Names
+  'summer I': 'Summer1',
+  'summer II': 'Summer2',
+  'summer 10 Week': 'Summer10wk',
+  // Transcript Names
+  'First Summer': 'Summer1',
+  'Second Summer': 'Summer2',
+  'Special / 10-Week Summer': 'Summer10wk',
+};
+
+/**
+ * replace legacy quarter names with standard ones
+ * @param planner years
+ * @returns planner years
+ */
+function normalizeQuarterNames(planner: SavedPlannerYearData[]) {
+  return planner.map((year) => ({
+    startYear: year.startYear,
+    name: year.name,
+    quarters: year.quarters.map((quarter) => ({ name: quarterNameMapping[quarter.name], courses: quarter.courses })),
+  }));
+}
+
 // transfer roadmaps + separate planners, transfered courses, coursebag
-/** @todo normalize quarter names */
+// normalize quarter names as well
 await db.insert(planners).values(
   roadmaps.flatMap((roadmap) => {
     if ((roadmap as LegacyRoadmap).roadmap.planner != null) {
@@ -105,14 +132,14 @@ await db.insert(planners).values(
       return {
         userId: userIdMapping[roadmap.userID],
         name: "Peter's Roadmap",
-        years: planner,
+        years: normalizeQuarterNames(planner),
       };
     }
 
     return roadmap.roadmap.planners.map((planner) => ({
       userId: userIdMapping[roadmap.userID],
       name: planner.name,
-      years: planner.content,
+      years: normalizeQuarterNames(planner.content),
     }));
   }),
 );
