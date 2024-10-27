@@ -1,3 +1,4 @@
+import { SavedPlannerYearData } from '@peterportal/types';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -52,7 +53,7 @@ export const reviews = pgTable(
     rating: integer().notNull(),
     difficulty: integer().notNull(),
     createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow() /** @todo implement */,
+    updatedAt: timestamp().defaultNow(),
     forCredit: boolean().notNull(),
     quarter: text().notNull(),
     // score: integer().notNull() /** @todo: could do a count query on votes instead? */,
@@ -77,7 +78,7 @@ export const planners = pgTable(
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userId: integer().references(() => users.id),
     name: text().notNull(),
-    years: jsonb().array().notNull(),
+    years: jsonb().$type<SavedPlannerYearData>().array().notNull(),
   },
   (table) => ({
     userIdIdx: index('planners_user_id_idx').on(table.userId),
