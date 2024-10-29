@@ -34,7 +34,7 @@ export const reports = pgTable('reports', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   reviewId: integer()
     .notNull()
-    .references(() => reviews.id),
+    .references(() => reviews.id, { onDelete: 'cascade' }),
   reason: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 });
@@ -102,7 +102,7 @@ export const votes = pgTable(
   {
     reviewId: integer()
       .notNull()
-      .references(() => reviews.id),
+      .references(() => reviews.id, { onDelete: 'cascade' }),
     userId: integer()
       .notNull()
       .references(() => users.id),
