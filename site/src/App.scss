@@ -2,6 +2,10 @@ button {
   color: inherit;
 }
 
+body {
+  overflow: hidden;
+}
+
 .app-body {
   display: flex;
   height: calc(100% - 72px);
