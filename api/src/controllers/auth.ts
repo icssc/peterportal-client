@@ -43,8 +43,8 @@ router.get('/google/callback', function (req, res) {
   // staging instances
   // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
   if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
-    // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
-    res.redirect(`https://${host}/api/users${req.url}`);
+    // req.url doesn't include /api/users/auth part, only /google/callback? and whatever params after that
+    res.redirect(`https://${host}/api/users/auth${req.url}`);
     return;
   }
   passport.authenticate(
