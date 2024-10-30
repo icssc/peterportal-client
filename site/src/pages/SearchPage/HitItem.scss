@@ -8,6 +8,36 @@
   a {
     color: var(--text);
   }
+
+  .hit-name {
+    font-size: 22px;
+    margin-block: 0 4px;
+    font-weight: bold;
+    line-height: 1.25;
+  }
+  .hit-subtitle {
+    font-size: 18px;
+    margin-block: 0 2px;
+    font-weight: bold;
+  }
+}
+
+.course-hit {
+  .course-hit-id > div {
+    display: flex;
+    gap: 8px;
+  }
+
+  .description {
+    margin-block: 8px 16px;
+  }
+
+  .badge {
+    padding: 6px 10px;
+    margin-right: 10px;
+    font-size: 12px;
+    background-color: var(--zot-blue);
+  }
 }
 
 .professor-hit {
@@ -19,19 +49,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
-
-    div p {
-      font-weight: bold;
-    }
   }
 
   .hit-name {
-    font-size: 22px;
     margin-block: -2px 2px;
-  }
-  .hit-subtitle {
-    font-size: 18px;
-    margin-block: 0 2px;
   }
 
   .name-icon {
@@ -45,11 +66,8 @@
     align-items: center;
     font-size: 24px;
     font-weight: bold;
+    color: white;
   }
-}
-
-.course-hit-id {
-  display: flex;
 }
 
 .hit-lower {

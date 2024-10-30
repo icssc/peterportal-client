@@ -15,6 +15,13 @@ import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
   const tags: string[] = [];
+  // units
+  const { minUnits, maxUnits } = course;
+  tags.push(
+    `${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${
+      minUnits === maxUnits ? (maxUnits !== 1 ? 's' : '') : 's'
+    }`,
+  );
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {
@@ -24,13 +31,6 @@ export function getCourseTags(course: CourseGQLData) {
   course.geList.forEach((ge) => {
     tags.push(`${ge.substring(0, ge.indexOf(':'))}`);
   });
-  // units
-  const { minUnits, maxUnits } = course;
-  tags.push(
-    `${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${
-      minUnits === maxUnits ? (maxUnits !== 1 ? 's' : '') : 's'
-    }`,
-  );
   return tags;
 }
 

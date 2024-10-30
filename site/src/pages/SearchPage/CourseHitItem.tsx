@@ -54,23 +54,23 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   };
 
   return (
-    <div className="hit-item" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
+    <div className="hit-item course-hit" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div className="course-hit-id">
         <div>
-          <h3>
-            {props.department} {props.courseNumber} {props.title}
-          </h3>
+          <p className="hit-name">
+            {props.department} {props.courseNumber} • {props.title}
+          </p>
+          <CourseQuarterIndicator terms={props.terms} size="sm" />
         </div>
-        <CourseQuarterIndicator terms={props.terms} size="sm" />
+        <p className="hit-subtitle">{props.school}</p>
       </div>
 
-      <div style={{ zIndex: 1000 }}>
-        <h4 className="hit-subtitle">{props.school}</h4>
-        <p>{props.description}</p>
+      <div>
+        <p className="description">{props.description}</p>
         <div className="hit-lower">
           <div className="hit-badges">
             {pillData.map((pill, i) => (
-              <Badge key={`course-hit-item-pill-${i}`} pill className="p-2 mr-3" variant="info">
+              <Badge key={`course-hit-item-pill-${i}`} pill className="badge" variant="info">
                 {pill}
               </Badge>
             ))}
