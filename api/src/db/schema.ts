@@ -14,8 +14,8 @@ import {
   unique,
 } from 'drizzle-orm/pg-core';
 
-export const users = pgTable(
-  'users',
+export const user = pgTable(
+  'user',
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     googleId: text().notNull(),
@@ -30,24 +30,24 @@ export const users = pgTable(
   }),
 );
 
-export const reports = pgTable('reports', {
+export const report = pgTable('report', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   reviewId: integer()
     .notNull()
-    .references(() => reviews.id, { onDelete: 'cascade' }),
+    .references(() => review.id, { onDelete: 'cascade' }),
   reason: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 });
 
-export const reviews = pgTable(
-  'reviews',
+export const review = pgTable(
+  'review',
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     professorId: text().notNull(),
     courseId: text().notNull(),
     userId: integer()
       .notNull()
-      .references(() => users.id),
+      .references(() => user.id),
     anonymous: boolean().notNull(),
     content: text(),
     rating: integer().notNull(),
@@ -72,11 +72,11 @@ export const reviews = pgTable(
   }),
 );
 
-export const planners = pgTable(
-  'planners',
+export const planner = pgTable(
+  'planner',
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    userId: integer().references(() => users.id),
+    userId: integer().references(() => user.id),
     name: text().notNull(),
     years: jsonb().$type<SavedPlannerYearData>().array().notNull(),
   },
@@ -85,10 +85,10 @@ export const planners = pgTable(
   }),
 );
 
-export const transferredCourses = pgTable(
-  'transferred_courses',
+export const transferredCourse = pgTable(
+  'transferred_course',
   {
-    userId: integer().references(() => users.id),
+    userId: integer().references(() => user.id),
     courseName: text(),
     units: real(),
   },
@@ -97,15 +97,15 @@ export const transferredCourses = pgTable(
   }),
 );
 
-export const votes = pgTable(
-  'votes',
+export const vote = pgTable(
+  'vote',
   {
     reviewId: integer()
       .notNull()
-      .references(() => reviews.id, { onDelete: 'cascade' }),
+      .references(() => review.id, { onDelete: 'cascade' }),
     userId: integer()
       .notNull()
-      .references(() => users.id),
+      .references(() => user.id),
     vote: integer().notNull(),
   },
   (table) => ({
@@ -115,10 +115,10 @@ export const votes = pgTable(
   }),
 );
 
-export const savedCourses = pgTable(
-  'saved_courses',
+export const savedCourse = pgTable(
+  'saved_course',
   {
-    userId: integer().references(() => users.id),
+    userId: integer().references(() => user.id),
     courseId: text(),
   },
   (table) => ({

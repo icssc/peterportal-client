@@ -1,6 +1,6 @@
 import Session from '../models/session';
 import { db } from '.';
-import { planners, reports, reviews, savedCourses, transferredCourses, users, votes } from './schema';
+import { planner, report, review, savedCourse, transferredCourse, user, vote } from './schema';
 import Review from '../models/review';
 import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
@@ -30,10 +30,10 @@ const sessionsUserRecords = sessions
 const userIdMapping: Record<string, number> = {};
 
 const newIdsFromSessions = await db
-  .insert(users)
+  .insert(user)
   .values(sessionsUserRecords)
   .onConflictDoNothing()
-  .returning({ id: users.id, googleId: users.googleId });
+  .returning({ id: user.id, googleId: user.googleId });
 for (const newId of newIdsFromSessions) {
   userIdMapping[newId.googleId] = newId.id;
 }
@@ -41,10 +41,10 @@ for (const newId of newIdsFromSessions) {
 const reviewDocs = await Review.find();
 for (const review of reviewDocs) {
   const newId = await db
-    .insert(users)
+    .insert(user)
     .values({ googleId: review.userID, displayName: review.userDisplay, email: '', picture: '' })
     .onConflictDoNothing()
-    .returning({ id: users.id });
+    .returning({ id: user.id });
   if (newId.length > 0) {
     userIdMapping[review.userID] = newId[0].id;
   }
@@ -53,10 +53,10 @@ for (const review of reviewDocs) {
 const roadmaps = await Roadmap.find<MongoRoadmap>();
 for (const roadmap of roadmaps) {
   const newId = await db
-    .insert(users)
+    .insert(user)
     .values({ googleId: roadmap.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
     .onConflictDoNothing()
-    .returning({ id: users.id, googleId: users.googleId });
+    .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
     userIdMapping[roadmap.userID] = newId[0].id;
   }
@@ -65,10 +65,10 @@ for (const roadmap of roadmaps) {
 const voteDocs = await Vote.find();
 for (const vote of voteDocs) {
   const newId = await db
-    .insert(users)
+    .insert(user)
     .values({ googleId: vote.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
     .onConflictDoNothing()
-    .returning({ id: users.id, googleId: users.googleId });
+    .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
     userIdMapping[vote.userID] = newId[0].id;
   }
@@ -78,7 +78,7 @@ for (const vote of voteDocs) {
 const preferences = await Preference.find();
 for (const preference of preferences) {
   const newId = await db
-    .insert(users)
+    .insert(user)
     .values({
       googleId: preference.userID,
       displayName: 'Anonymous Peter',
@@ -86,8 +86,8 @@ for (const preference of preferences) {
       email: '',
       picture: '',
     })
-    .onConflictDoUpdate({ target: users.googleId, set: { theme: preference.theme } })
-    .returning({ id: users.id });
+    .onConflictDoUpdate({ target: user.googleId, set: { theme: preference.theme } })
+    .returning({ id: user.id });
   if (newId.length > 0) {
     userIdMapping[preference.userID] = newId[0].id;
   }
@@ -124,7 +124,7 @@ function normalizeQuarterNames(planner: SavedPlannerYearData[]) {
 
 // transfer roadmaps + separate planners, transfered courses, coursebag
 // normalize quarter names as well
-await db.insert(planners).values(
+await db.insert(planner).values(
   roadmaps.flatMap((roadmap) => {
     if ((roadmap as LegacyRoadmap).roadmap.planner != null) {
       // old roadmap format (before multi-planner)
@@ -144,7 +144,7 @@ await db.insert(planners).values(
   }),
 );
 
-await db.insert(transferredCourses).values(
+await db.insert(transferredCourse).values(
   roadmaps.flatMap((roadmap) =>
     roadmap.roadmap.transfers.map((transfer) => ({
       userId: userIdMapping[roadmap.userID],
@@ -155,7 +155,7 @@ await db.insert(transferredCourses).values(
 );
 
 await db
-  .insert(savedCourses)
+  .insert(savedCourse)
   .values(
     roadmaps.flatMap((roadmap) =>
       roadmap.coursebag.map((course) => ({ userId: userIdMapping[roadmap.userID], courseId: course })),
@@ -165,7 +165,7 @@ await db
 // transfer reviews + assign new id and make mapping of old id to new id
 const reviewIdMapping: Record<string, number> = {};
 const newIds = await db
-  .insert(reviews)
+  .insert(review)
   .values(
     reviewDocs.map((review) => ({
       professorId: review.professorID,
@@ -187,7 +187,7 @@ const newIds = await db
       verified: review.verified,
     })),
   )
-  .returning({ newId: reviews.id });
+  .returning({ newId: review.id });
 
 for (let i = 0; i < reviewDocs.length; i++) {
   reviewIdMapping[String(reviewDocs[i].id)] = newIds[i].newId;
@@ -196,7 +196,7 @@ for (let i = 0; i < reviewDocs.length; i++) {
 // transfer reports + votes, use new review id, discard old report id and let postgres generate new one
 const reportDocs = await Report.find();
 if (reportDocs.length > 0) {
-  await db.insert(reports).values(
+  await db.insert(report).values(
     reportDocs.map((report) => ({
       reviewId: reviewIdMapping[String(report.reviewID)],
       reason: report.reason,
@@ -206,7 +206,7 @@ if (reportDocs.length > 0) {
 }
 
 const filteredVoteDocs = voteDocs.filter((vote) => vote.reviewID in reviewIdMapping); // we have some bad data here (floating votes with no review)
-await db.insert(votes).values(
+await db.insert(vote).values(
   filteredVoteDocs.map((vote) => ({
     reviewId: reviewIdMapping[vote.reviewID],
     userId: userIdMapping[vote.userID],
