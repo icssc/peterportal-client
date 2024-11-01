@@ -1,6 +1,6 @@
 import Session from '../models/session';
 import { db } from '.';
-import { planner, report, review, savedCourse, transferredCourse, user, vote } from './schema';
+import { planner, report, review, savedCourse, session, transferredCourse, user, vote } from './schema';
 import Review from '../models/review';
 import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 
 const uri = process.env.MONGO_URL;
 const conn = await mongoose.connect(uri!, {
-  dbName: 'peterPortalDB',
+  dbName: 'peterPortalDevDB',
   serverSelectionTimeoutMS: 5000,
 });
 
@@ -224,6 +224,13 @@ await db.insert(vote).values(
   })),
 );
 
-// transfer sessions? (note: user should be able to update later on future logins though)
+// transfer sessions?
+await db.insert(session).values(
+  sessions.map((session) => ({
+    sid: session.id,
+    sess: session.session,
+    expire: session.expires,
+  })),
+);
 
 conn.disconnect();

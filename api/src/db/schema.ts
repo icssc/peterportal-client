@@ -128,3 +128,9 @@ export const savedCourse = pgTable(
     primaryKey: primaryKey({ columns: [table.userId, table.courseId] }),
   }),
 );
+
+export const session = pgTable('session', {
+  sid: text().primaryKey(),
+  sess: jsonb().notNull(),
+  expire: timestamp().notNull(),
+});

@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
 const sessionSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+  },
   expires: {
     type: Date,
     required: true,
