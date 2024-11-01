@@ -16,7 +16,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { db } from '../db';
 import { review, user, vote } from '../db/schema';
-import { and, count, desc, eq, sql, sum } from 'drizzle-orm';
+import { and, count, desc, eq, sql } from 'drizzle-orm';
 
 async function userWroteReview(userId: number | undefined, reviewId: number) {
   if (!userId) {
@@ -65,9 +65,9 @@ const reviewsRouter = router({
       const results = await db
         .select({
           review: review,
-          score: sql<number>`COALESCE(SUM(${vote.vote}), 0)`,
+          score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
           userDisplay: user.displayName,
-          userVote: sql<number>`COALESCE(${userVoteSubquery.userVote}, 0)`,
+          userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
         })
         .from(review)
         .where(and(...conditions))
@@ -184,7 +184,7 @@ const reviewsRouter = router({
    */
   featured: publicProcedure.input(featuredQuery).query(async ({ input }) => {
     const voteSubQuery = db
-      .select({ reviewId: vote.reviewId, score: sum(vote.vote) })
+      .select({ reviewId: vote.reviewId, score: sql`sum(${vote.vote})`.mapWith(Number).as('score') })
       .from(vote)
       .groupBy(vote.reviewId)
       .as('vote_query');
@@ -215,13 +215,14 @@ const reviewsRouter = router({
     .input(z.object({ type: z.enum(['course', 'professor']), id: z.string() }))
     .query(async ({ input }) => {
       const field = input.type === 'course' ? review.courseId : review.professorId;
+      const otherField = input.type === 'course' ? review.professorId : review.courseId;
 
       const results = await db
-        .select({ name: field, score: sql<number>`COALESCE(SUM(${vote.vote}), 0)` })
+        .select({ name: otherField, score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number) })
         .from(review)
         .where(eq(field, input.id))
         .leftJoin(vote, eq(vote.reviewId, review.id))
-        .groupBy(field);
+        .groupBy(otherField);
 
       return results;
     }),
