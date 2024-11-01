@@ -55,7 +55,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
         <Form.Control
           type="number"
           placeholder="Units"
-          value={units}
+          value={units ?? undefined}
           onChange={(e) => setUnits(parseInt(e.target.value))}
         />
       </Col>
