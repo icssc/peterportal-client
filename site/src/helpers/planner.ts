@@ -49,7 +49,11 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
 };
 
 export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
-  return plans.map((p) => ({ name: p.name, content: collapsePlanner(p.content.yearPlans) }));
+  return plans.map((p) => ({
+    ...(p.id ? { id: p.id } : {}),
+    name: p.name,
+    content: collapsePlanner(p.content.yearPlans),
+  }));
 };
 
 // query the lost information from collapsing
@@ -88,7 +92,7 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   return await Promise.all(
     plans.map(async (p) => {
       const content = await expandPlanner(p.content);
-      return { name: p.name, content: { yearPlans: content, invalidCourses: [] } };
+      return { ...(p.id ? { id: p.id } : {}), name: p.name, content: { yearPlans: content, invalidCourses: [] } };
     }),
   );
 };

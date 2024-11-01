@@ -30,6 +30,7 @@ export const initialPlanState: RoadmapPlanState = {
 /** added for multiple planner */
 // create roadmap plan object
 export interface RoadmapPlan {
+  id?: number;
   name: string;
   content: RoadmapPlanState;
 }

@@ -2,19 +2,19 @@ import { router, userProcedure } from '../helpers/trpc';
 import { SavedPlannerData, savedRoadmap, SavedRoadmap, TransferData } from '@peterportal/types';
 import { db } from '../db';
 import { planner, transferredCourse, user } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { and, asc, eq, inArray, not } from 'drizzle-orm';
 
 const roadmapsRouter = router({
   /**
    * Get a user's roadmap
    */
   get: userProcedure.query(async ({ ctx }) => {
-    const start = performance.now();
     const [planners, transfers, timestamp] = await Promise.all([
       db
         .select({ id: planner.id, name: planner.name, content: planner.years })
         .from(planner)
-        .where(eq(planner.userId, ctx.session.userId!)),
+        .where(eq(planner.userId, ctx.session.userId!))
+        .orderBy(asc(planner.id)),
       db
         .select({ name: transferredCourse.courseName, units: transferredCourse.units })
         .from(transferredCourse)
@@ -26,8 +26,6 @@ const roadmapsRouter = router({
       transfers: transfers as TransferData[],
       timestamp: timestamp[0].timestamp?.toISOString(),
     };
-    const end = performance.now();
-    console.log(`roadmap get took ${end - start}ms`);
     return roadmap;
   }),
   /**
@@ -47,9 +45,19 @@ const roadmapsRouter = router({
       .filter((planner) => planner.id === undefined)
       .map((planner) => ({ userId, name: planner.name, years: planner.content }));
 
+    // Delete any existing planners that are not in the planners array (user removed them)
+    await db
+      .delete(planner)
+      .where(
+        and(
+          eq(planner.userId, userId),
+          not(inArray(planner.id, planners.map((p) => p.id).filter((id) => id !== undefined) as number[])),
+        ),
+      );
+
     await Promise.all([
       ...plannerUpdates,
-      db.insert(planner).values(newPlannersToAdd),
+      ...(newPlannersToAdd.length > 0 ? [db.insert(planner).values(newPlannersToAdd)] : []),
       db
         .delete(transferredCourse)
         .where(eq(transferredCourse.userId, userId))
