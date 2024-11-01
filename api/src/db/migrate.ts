@@ -247,10 +247,11 @@ await db.insert(vote).values(
 );
 
 // transfer sessions?
+const sessionsToTransfer = sessions.filter((session) => session.session?.passport?.user?.id != null);
 await db.insert(session).values(
-  sessions.map((session) => ({
+  sessionsToTransfer.map((session) => ({
     sid: session.id,
-    sess: session.session,
+    sess: { ...session.session, userId: userIdMapping[session.session!.passport!.user!.id!] },
     expire: session.expires,
   })),
 );

@@ -59,7 +59,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [cookies] = useCookies(['user']);
-  const userId: string = cookies.user?.id;
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
@@ -123,7 +122,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       id: reviewToEdit?.id,
       professorId: professor,
       courseId: course,
-      userId,
       anonymous: anonymous,
       content: content,
       rating: quality,
