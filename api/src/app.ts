@@ -3,7 +3,7 @@
  * @module
  */
 
-import express from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
@@ -105,10 +105,11 @@ app.use('/api', expressRouter);
 /**
  * Error Handler
  */
-app.use(function (req, res) {
-  console.error(req);
-  res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
-});
+const errorHandler: ErrorRequestHandler = (err, req, res) => {
+  console.error(err);
+  res.status(500).json({ message: 'Internal Serverless Error', err });
+};
+app.use(errorHandler);
 
 export const connect = async () => {
   let conn: null | Mongoose = null;
