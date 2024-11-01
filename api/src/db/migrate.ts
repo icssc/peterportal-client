@@ -15,6 +15,19 @@ const conn = await mongoose.connect(uri!, {
   serverSelectionTimeoutMS: 5000,
 });
 
+// clear first
+await Promise.all([
+  db.delete(planner),
+  db.delete(vote),
+  db.delete(report),
+  db.delete(review),
+  db.delete(savedCourse),
+  db.delete(transferredCourse),
+  db.delete(session),
+  db.delete(review),
+  db.delete(user),
+]);
+
 // get all possible users from sessions, then reviews, then roadmaps, then votes
 const sessions = await Session.find();
 // need to filter out bad sessions (never signed in with google, just clicked log in)
@@ -54,8 +67,17 @@ const roadmaps = await Roadmap.find<Omit<MongoRoadmap, 'userId'> & { userID: str
 for (const roadmap of roadmaps) {
   const newId = await db
     .insert(user)
-    .values({ googleId: roadmap.userID, name: anonymousName, email: '', picture: '' })
-    .onConflictDoNothing()
+    .values({
+      googleId: roadmap.userID,
+      name: anonymousName,
+      email: '',
+      picture: '',
+      ...(roadmap.roadmap.timestamp ? { lastRoadmapEditAt: new Date(Number(roadmap.roadmap.timestamp)) } : {}),
+    })
+    .onConflictDoUpdate({
+      target: user.googleId,
+      set: { lastRoadmapEditAt: roadmap.roadmap.timestamp ? new Date(Number(roadmap.roadmap.timestamp)) : null },
+    })
     .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
     userIdMapping[roadmap.userID] = newId[0].id;
