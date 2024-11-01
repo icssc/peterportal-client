@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import './Planner.scss';
 import Header from './Header';
 import AddYearPopup from './AddYearPopup';
@@ -21,10 +20,11 @@ import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const isFirstRenderer = useFirstRender();
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
@@ -63,11 +63,11 @@ const Planner: FC = () => {
     dispatch(setUnsavedChanges(false));
 
     // if logged in, save data to account
-    if (cookies.user !== undefined) {
+    if (isLoggedIn) {
       trpc.roadmaps.save
         .mutate(roadmap)
         .then(() => {
-          alert(`Roadmap saved under ${cookies.user.email}`);
+          alert(`Roadmap saved to your account!`);
         })
         .catch(() => {
           alert('Roadmap saved locally! Login to save it to your account.');
@@ -111,7 +111,7 @@ const Planner: FC = () => {
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(cookies, (planners, roadmap, isLocalNewer) => {
+      loadRoadmap(isLoggedIn, (planners, roadmap, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
         if (isLocalNewer) {
@@ -132,7 +132,7 @@ const Planner: FC = () => {
       delete localRoadmap.timestamp;
       dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
-  }, [cookies, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
+  }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 

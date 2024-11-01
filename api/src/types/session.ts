@@ -12,10 +12,10 @@ declare module 'express-session' {
      */
     returnTo: string;
     userId: number;
+    isAdmin: boolean;
   }
 
   export interface PassportData {
-    isAdmin: boolean;
     user: PassportUser;
   }
 }

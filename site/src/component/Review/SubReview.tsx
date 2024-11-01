@@ -3,7 +3,6 @@ import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import { useCookies } from 'react-cookie';
 import { Link } from 'react-router-dom';
 import { PencilFill, PersonFill, TrashFill } from 'react-bootstrap-icons';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
@@ -15,6 +14,7 @@ import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -25,7 +25,7 @@ interface SubReviewProps {
 const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'secondary';
@@ -67,7 +67,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   };
 
   const vote = async (newVote: number) => {
-    if (cookies.user === undefined) {
+    if (!isLoggedIn) {
       alert('You must be logged in to vote.');
       return;
     }

@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import { useCookies } from 'react-cookie';
 import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Badge from 'react-bootstrap/Badge';
@@ -26,6 +25,7 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -58,7 +58,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
@@ -67,7 +67,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     if (show) {
       // form opened
       // if not logged in, close the form
-      if (cookies.user === undefined) {
+      if (!isLoggedIn) {
         alert('You must be logged in to add a review!');
         closeForm();
       }

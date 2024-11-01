@@ -1,37 +1,20 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import UserReviews from './UserReviews';
 import Error from '../../component/Error/Error';
-import { useLocation } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const ReviewsPage: FC = () => {
-  const location = useLocation();
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [cookies] = useCookies(['user']);
-  const [authorized, setAuthorized] = useState<boolean>(false);
-
-  // user has to be logged in to view this page
-  const checkLoggedIn = async () => {
-    const loggedIn = cookies.user !== undefined;
-    setAuthorized(loggedIn);
-    setLoaded(true);
-  };
+  const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
-    checkLoggedIn();
     document.title = 'Your Reviews | PeterPortal';
   }, []);
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  } else if (!authorized) {
+  if (!isLoggedIn) {
     return <Error message="Access Denied: Log in to view this page."></Error>;
-  } else {
-    if (location.pathname.includes('reviews')) {
-      return <UserReviews />;
-    }
   }
-  return <Error message="Invalid Reviews Page"></Error>;
+
+  return <UserReviews />;
 };
 
 export default ReviewsPage;

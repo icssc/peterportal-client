@@ -157,7 +157,7 @@ const reviewsRouter = router({
    * Delete a review (user can delete their own or admin can delete any through reports)
    */
   delete: userProcedure.input(z.object({ id: z.number() })).mutation(async ({ input, ctx }) => {
-    if (ctx.session.passport!.isAdmin || (await userWroteReview(ctx.session.userId, input.id))) {
+    if (ctx.session.isAdmin || (await userWroteReview(ctx.session.userId, input.id))) {
       await db.delete(review).where(eq(review.id, input.id));
       return true;
     } else {

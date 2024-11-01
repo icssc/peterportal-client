@@ -93,18 +93,13 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-interface RoadmapCookies {
-  user?: { id: string };
-}
-
 export const loadRoadmap = async (
-  cookies: RoadmapCookies,
+  isLoggedIn: boolean,
   loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
   const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
-  // if logged in
-  if (cookies.user !== undefined) {
+  if (isLoggedIn) {
     // get data from account
     const res = await trpc.roadmaps.get.query();
     // if a roadmap is found

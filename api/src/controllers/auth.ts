@@ -19,13 +19,13 @@ async function successLogin(req: Request, res: Response) {
     id: googleId,
     picture,
   } = req.user as { email: string; id: string; name: string; picture: string };
-  // set the user cookie
+  // upsert user data in db
   const userData = await db
     .insert(user)
     .values({ googleId, name, email, picture })
     .onConflictDoUpdate({ target: user.googleId, set: { name, email, picture } })
     .returning();
-  res.cookie('user', userData[0], {
+  res.cookie('user', true, {
     maxAge: SESSION_LENGTH,
   });
   req.session.userId = userData[0].id;
@@ -74,7 +74,7 @@ router.get('/google/callback', function (req, res) {
         // check if user is an admin
         const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
         if (allowedUsers.includes(user.email)) {
-          req.session.passport!.isAdmin = true;
+          req.session.isAdmin = true;
         }
         req.session.returnTo = returnTo;
         successLogin(req, res);

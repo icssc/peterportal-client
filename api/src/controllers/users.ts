@@ -18,7 +18,7 @@ const usersRouter = router({
     return {
       ...userData,
       lastRoadmapEditAt: userData.lastRoadmapEditAt?.toISOString(),
-      isAdmin: ctx.session.passport!.isAdmin,
+      isAdmin: ctx.session.isAdmin,
     } as UserData;
   }),
 
