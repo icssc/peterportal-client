@@ -4,22 +4,17 @@ import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult, DragStart } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  moveCourse,
-  deleteCourse,
-  setActiveCourse,
-  addCourseToBag,
-  removeCourseFromBag,
-} from '../../store/slices/roadmapSlice';
+import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
 import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
+import { addCourseToBag, removeCourseFromBag } from '../../store/slices/coursebagSlice';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
-  const courseBag = useAppSelector((state) => state.roadmap.coursebag);
+  const courseBag = useAppSelector((state) => state.coursebag.coursebag);
   const isMobile = useIsMobile();
   const roadmaps = useAppSelector((state) => state.roadmap.plans);
   const roadmap = roadmaps[useAppSelector((state) => state.roadmap.currentPlanIndex)].content.yearPlans;

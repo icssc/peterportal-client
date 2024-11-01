@@ -1,4 +1,4 @@
-import { User } from '@peterportal/types';
+import { PassportUser } from '@peterportal/types';
 import 'express-session';
 
 declare module 'express-session' {
@@ -16,6 +16,6 @@ declare module 'express-session' {
 
   export interface PassportData {
     isAdmin: boolean;
-    user: User;
+    user: PassportUser;
   }
 }

@@ -66,7 +66,7 @@ const reviewsRouter = router({
         .select({
           review: review,
           score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
-          userDisplay: user.displayName,
+          userDisplay: user.name,
           userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
         })
         .from(review)
@@ -74,7 +74,7 @@ const reviewsRouter = router({
         .leftJoin(vote, eq(vote.reviewId, review.id))
         .leftJoin(user, eq(user.id, review.userId))
         .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
-        .groupBy(review.id, user.displayName, userVoteSubquery.userVote);
+        .groupBy(review.id, user.name, userVoteSubquery.userVote);
 
       if (results) {
         return results.map(({ review, score, userDisplay, userVote }) => ({

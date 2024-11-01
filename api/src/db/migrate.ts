@@ -22,7 +22,7 @@ const sessionsUserRecords = sessions
   .filter((session) => session.session?.passport?.user?.id != null)
   .map((session) => ({
     googleId: session.session!.passport!.user!.id!,
-    displayName: session.session!.passport!.user!.name,
+    name: session.session!.passport!.user!.name,
     email: session.session!.passport!.user!.email,
     picture: session.session!.passport!.user!.picture!,
   }));
@@ -42,7 +42,7 @@ const reviewDocs = await Review.find();
 for (const review of reviewDocs) {
   const newId = await db
     .insert(user)
-    .values({ googleId: review.userID, displayName: review.userDisplay, email: '', picture: '' })
+    .values({ googleId: review.userID, name: review.userDisplay, email: '', picture: '' })
     .onConflictDoNothing()
     .returning({ id: user.id });
   if (newId.length > 0) {
@@ -54,7 +54,7 @@ const roadmaps = await Roadmap.find<Omit<MongoRoadmap, 'userId'> & { userID: str
 for (const roadmap of roadmaps) {
   const newId = await db
     .insert(user)
-    .values({ googleId: roadmap.userID, displayName: anonymousName, email: '', picture: '' })
+    .values({ googleId: roadmap.userID, name: anonymousName, email: '', picture: '' })
     .onConflictDoNothing()
     .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
@@ -66,7 +66,7 @@ const voteDocs = await Vote.find();
 for (const vote of voteDocs) {
   const newId = await db
     .insert(user)
-    .values({ googleId: vote.userID, displayName: anonymousName, email: '', picture: '' })
+    .values({ googleId: vote.userID, name: anonymousName, email: '', picture: '' })
     .onConflictDoNothing()
     .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
@@ -81,7 +81,7 @@ for (const preference of preferences) {
     .insert(user)
     .values({
       googleId: preference.userID,
-      displayName: anonymousName,
+      name: anonymousName,
       theme: preference.theme,
       email: '',
       picture: '',
@@ -110,6 +110,11 @@ const quarterNameMapping: Record<string, string> = {
   'First Summer': 'Summer1',
   'Second Summer': 'Summer2',
   'Special / 10-Week Summer': 'Summer10wk',
+  Fall: 'Fall',
+  Winter: 'Winter',
+  Spring: 'Spring',
+  Summer1: 'Summer1',
+  Summer10wk: 'Summer10wk',
 };
 
 /**

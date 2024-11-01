@@ -10,15 +10,10 @@ const AdminPage: FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [authorized, setAuthorized] = useState<boolean>(false);
 
-  interface AdminResponse {
-    admin: boolean;
-  }
-
   // user has to be authenticated as admin to view this page
   const checkAdmin = useCallback(async () => {
-    const res: AdminResponse = await trpc.users.isAdmin.query();
-    const isAdmin: boolean = res.admin;
-    setAuthorized(isAdmin);
+    const res = await trpc.users.get.query();
+    setAuthorized(res.isAdmin);
     setLoaded(true);
   }, []);
 

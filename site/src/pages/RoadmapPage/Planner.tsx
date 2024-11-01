@@ -13,10 +13,9 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
-  setCoursebag,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
-import { SavedRoadmap, MongoRoadmap } from '@peterportal/types';
+import { SavedRoadmap } from '@peterportal/types';
 import { defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
@@ -30,7 +29,6 @@ const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
-  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const [showSyncModal, setShowSyncModal] = useState(false);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
@@ -54,11 +52,10 @@ const Planner: FC = () => {
 
   const saveRoadmap = () => {
     const roadmap: SavedRoadmap = {
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
-    const coursebagStrings = coursebag.map((course) => course.id);
 
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
@@ -67,9 +64,8 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (cookies.user !== undefined) {
-      const mongoRoadmap: MongoRoadmap = { userId: cookies.user.id, roadmap: roadmap, coursebag: coursebagStrings };
       trpc.roadmaps.save
-        .mutate(mongoRoadmap)
+        .mutate(roadmap)
         .then(() => {
           alert(`Roadmap saved under ${cookies.user.email}`);
         })
@@ -115,10 +111,9 @@ const Planner: FC = () => {
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(cookies, (planners, roadmap, coursebag, isLocalNewer) => {
+      loadRoadmap(cookies, (planners, roadmap, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
-        dispatch(setCoursebag(coursebag));
         if (isLocalNewer) {
           setShowSyncModal(true);
         }

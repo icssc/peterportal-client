@@ -14,7 +14,7 @@ import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
-import { quarterNames } from '../../helpers/planner';
+import { quarters as quarterNames } from '@peterportal/types';
 import trpc from '../../trpc';
 import {
   anonymousName,

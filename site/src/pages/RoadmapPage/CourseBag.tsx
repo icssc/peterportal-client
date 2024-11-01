@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { removeCourseFromBag } from '../../store/slices/roadmapSlice';
+import { removeCourseFromBag } from '../../store/slices/coursebagSlice';
 import Course from './Course';
 import './Coursebag.scss';
 import { Draggable } from 'react-beautiful-dnd';
 const CourseBag = () => {
-  const { coursebag } = useAppSelector((state) => state.roadmap);
+  const { coursebag } = useAppSelector((state) => state.coursebag);
   const dispatch = useAppDispatch();
 
   return (

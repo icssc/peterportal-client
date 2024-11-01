@@ -19,7 +19,7 @@ export const user = pgTable(
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     googleId: text().notNull(),
-    displayName: text().notNull(),
+    name: text().notNull(),
     email: text().notNull(),
     picture: text().notNull(),
     theme: text(),
@@ -119,8 +119,10 @@ export const vote = pgTable(
 export const savedCourse = pgTable(
   'saved_course',
   {
-    userId: integer().references(() => user.id),
-    courseId: text(),
+    userId: integer()
+      .references(() => user.id)
+      .notNull(),
+    courseId: text().notNull(),
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.courseId] }),

@@ -20,17 +20,12 @@ const SideBar = () => {
 
   const isLoggedIn = cookies.user !== undefined;
 
-  interface AdminResponse {
-    admin: boolean;
-  }
-
   useEffect(() => {
     // if the user is logged in
     if (isLoggedIn) {
       // useEffect's function is not allowed to be async, create async checkAdmin function within
       const checkAdmin = async () => {
-        const res: AdminResponse = await trpc.users.isAdmin.query();
-        const isAdmin: boolean = res.admin;
+        const { isAdmin } = await trpc.users.get.query();
         setIsAdmin(isAdmin);
       };
       checkAdmin();

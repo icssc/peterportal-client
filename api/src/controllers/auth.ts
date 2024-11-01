@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
-import { User } from '@peterportal/types';
+import { PassportUser } from '@peterportal/types';
 import { db } from '../db';
 import { user } from '../db/schema';
 
@@ -22,8 +22,8 @@ async function successLogin(req: Request, res: Response) {
   // set the user cookie
   const userData = await db
     .insert(user)
-    .values({ googleId, displayName: name, email, picture })
-    .onConflictDoUpdate({ target: user.googleId, set: { displayName: name, email, picture } })
+    .values({ googleId, name, email, picture })
+    .onConflictDoUpdate({ target: user.googleId, set: { name, email, picture } })
     .returning();
   res.cookie('user', userData[0], {
     maxAge: SESSION_LENGTH,
@@ -65,7 +65,7 @@ router.get('/google/callback', function (req, res) {
     'google',
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
-    function (err: Error, user: User | false | null) {
+    function (err: Error, user: PassportUser | false | null) {
       if (err) return console.error(err);
       if (!user) return console.error('Invalid login data');
       // manually login
