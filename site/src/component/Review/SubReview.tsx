@@ -71,10 +71,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       alert('You must be logged in to vote.');
       return;
     }
+    updateScore(newVote);
     try {
       await trpc.reviews.vote.mutate({ id: review.id, vote: newVote });
-      updateScore(newVote);
     } catch (err) {
+      updateScore(review.userVote);
       console.error('Error sending downvote:', err);
     }
   };
