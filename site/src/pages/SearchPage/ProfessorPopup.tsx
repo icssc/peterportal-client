@@ -56,7 +56,7 @@ const ProfessorPopup: FC = () => {
       {
         title: `Featured Review`,
         content: featured
-          ? `For ${featured.courseID}: ${featured.reviewContent.length > 0 ? featured.reviewContent : 'Rating of ' + featured.rating + '/5'}`
+          ? `For ${featured.courseId}: ${(featured.content ?? '').length > 0 ? featured.content : 'Rating of ' + featured.rating + '/5'}`
           : 'No Reviews Yet!',
       },
     ];

@@ -6,7 +6,7 @@ import Roadmap from '../models/roadmap';
 import Preference from '../models/preference';
 import Report from '../models/report';
 import Vote from '../models/vote';
-import { MongoRoadmap, SavedPlannerData, SavedPlannerYearData } from '@peterportal/types';
+import { anonymousName, MongoRoadmap, SavedPlannerData, SavedPlannerYearData } from '@peterportal/types';
 import mongoose from 'mongoose';
 
 const uri = process.env.MONGO_URL;
@@ -50,11 +50,11 @@ for (const review of reviewDocs) {
   }
 }
 
-const roadmaps = await Roadmap.find<MongoRoadmap>();
+const roadmaps = await Roadmap.find<Omit<MongoRoadmap, 'userId'> & { userID: string }>();
 for (const roadmap of roadmaps) {
   const newId = await db
     .insert(user)
-    .values({ googleId: roadmap.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
+    .values({ googleId: roadmap.userID, displayName: anonymousName, email: '', picture: '' })
     .onConflictDoNothing()
     .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
@@ -66,7 +66,7 @@ const voteDocs = await Vote.find();
 for (const vote of voteDocs) {
   const newId = await db
     .insert(user)
-    .values({ googleId: vote.userID, displayName: 'Anonymous Peter', email: '', picture: '' })
+    .values({ googleId: vote.userID, displayName: anonymousName, email: '', picture: '' })
     .onConflictDoNothing()
     .returning({ id: user.id, googleId: user.googleId });
   if (newId.length > 0) {
@@ -81,7 +81,7 @@ for (const preference of preferences) {
     .insert(user)
     .values({
       googleId: preference.userID,
-      displayName: 'Anonymous Peter',
+      displayName: anonymousName,
       theme: preference.theme,
       email: '',
       picture: '',
@@ -93,7 +93,10 @@ for (const preference of preferences) {
   }
 }
 
-type LegacyRoadmap = MongoRoadmap & { roadmap: { planner: SavedPlannerData['content'] } };
+type LegacyRoadmap = Omit<MongoRoadmap, 'userId'> & {
+  userID: string;
+  roadmap: { planner: SavedPlannerData['content'] };
+};
 
 const quarterNameMapping: Record<string, string> = {
   fall: 'Fall',
@@ -171,10 +174,11 @@ const newIds = await db
       professorId: review.professorID,
       courseId: review.courseID,
       userId: userIdMapping[review.userID],
-      anonymous: review.userDisplay === 'Anonymous Peter',
+      anonymous: review.userDisplay === anonymousName,
       content: review.reviewContent,
       rating: review.rating,
       difficulty: review.difficulty,
+      gradeReceived: review.gradeReceived,
       createdAt: review.timestamp,
       updatedAt: null,
       forCredit: review.forCredit ?? false,

@@ -9,8 +9,8 @@ import { ReportSubmission } from '@peterportal/types';
 
 interface ReportFormProps {
   showForm: boolean;
-  reviewID: string | undefined;
-  reviewContent: string;
+  reviewId: number;
+  reviewContent: string | undefined;
   closeForm: () => void;
 }
 
@@ -32,7 +32,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     setValidated(true);
 
     const report = {
-      reviewID: props.reviewID!,
+      reviewId: props.reviewId,
       reason,
     };
     postReport(report);

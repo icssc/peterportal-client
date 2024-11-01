@@ -17,6 +17,7 @@ import ThemeContext from '../../style/theme-context';
 import { quarterNames } from '../../helpers/planner';
 import trpc from '../../trpc';
 import {
+  anonymousName,
   EditReviewSubmission,
   grades,
   ReviewData,
@@ -42,13 +43,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
   course: courseProp,
 }) => {
   const dispatch = useAppDispatch();
-  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorID ?? '');
-  const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseID ?? '');
+  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+  const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
-  const [content, setContent] = useState(reviewToEdit?.reviewContent ?? '');
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
@@ -58,8 +59,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [cookies] = useCookies(['user']);
-  const userID: string = cookies.user?.id;
-  const [userName, setUserName] = useState<string>(reviewToEdit?.userDisplay ?? cookies.user?.name);
+  const userId: string = cookies.user?.id;
+  const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
 
@@ -82,9 +83,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
     if (editing) {
       try {
-        const res = await trpc.reviews.edit.mutate(review as EditReviewSubmission);
+        await trpc.reviews.edit.mutate(review as EditReviewSubmission);
         setSubmitted(true);
-        dispatch(editReview(res));
+        dispatch(editReview(review as EditReviewSubmission));
       } catch (e) {
         alert((e as Error).message);
       }
@@ -119,12 +120,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
       return;
     }
     const review = {
-      _id: reviewToEdit?._id,
-      professorID: professor,
-      courseID: course,
-      userID,
-      userDisplay: userName,
-      reviewContent: content,
+      id: reviewToEdit?.id,
+      professorId: professor,
+      courseId: course,
+      userId,
+      anonymous: anonymous,
+      content: content,
       rating: quality,
       difficulty,
       gradeReceived: gradeReceived!,
@@ -224,7 +225,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   function editReviewHeading() {
     if (!courseProp && !professorProp) {
-      return `Edit your review for ${reviewToEdit?.courseID} ${reviewToEdit?.professorID}`;
+      return `Edit your review for ${reviewToEdit?.courseId} ${reviewToEdit?.professorId}`;
     } else if (courseProp) {
       return `Edit your review for ${courseProp?.department} ${courseProp?.courseNumber}`;
     } else {
@@ -442,16 +443,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
                       id="anonymous"
                       label="Post as Anonymous"
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        // set name as anonymous
-                        if (e.target.checked) {
-                          setUserName('Anonymous Peter');
-                        }
-                        // use real name
-                        else {
-                          setUserName(cookies.user.name);
-                        }
+                        setAnonymous(e.target.checked);
                       }}
-                      checked={userName === 'Anonymous Peter'}
+                      checked={anonymous}
                     />
                   </Col>
                 </Row>

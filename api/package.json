@@ -13,6 +13,7 @@
     "@vendia/serverless-express": "^4.12.6",
     "axios": "^1.6.8",
     "connect-mongodb-session": "^5.0.0",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv-flow": "^4.1.0",
     "drizzle-orm": "^0.35.3",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@peterportal/types": "workspace:*",
     "@types/connect-mongodb-session": "^2.4.7",
+    "@types/connect-pg-simple": "^7.0.3",
     "@types/cookie-parser": "^1.4.7",
     "@types/dotenv-flow": "^3.3.3",
     "@types/express": "^4.17.21",

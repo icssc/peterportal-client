@@ -67,7 +67,7 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (cookies.user !== undefined) {
-      const mongoRoadmap: MongoRoadmap = { userID: cookies.user.id, roadmap: roadmap, coursebag: coursebagStrings };
+      const mongoRoadmap: MongoRoadmap = { userId: cookies.user.id, roadmap: roadmap, coursebag: coursebagStrings };
       trpc.roadmaps.save
         .mutate(mongoRoadmap)
         .then(() => {

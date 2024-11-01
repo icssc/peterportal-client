@@ -15,7 +15,7 @@ const roadmapsRouter = router({
    * Save a user's roadmap
    */
   save: userProcedure.input(mongoRoadmap).mutation(async ({ input }) => {
-    const { userID, roadmap, coursebag } = input;
+    const { userId: userID, roadmap, coursebag } = input;
     if (await Roadmap.exists({ userID })) {
       return await Roadmap.replaceOne({ userID }, { roadmap, userID, coursebag });
     } else {

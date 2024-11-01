@@ -8,7 +8,7 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import session from 'express-session';
-import MongoDBStore from 'connect-mongodb-session';
+import connectPgSimple from 'connect-pg-simple';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 import * as trpcExpress from '@trpc/server/adapters/express';
@@ -17,7 +17,7 @@ import mongoose, { Mongoose } from 'mongoose';
 dotenv.config();
 
 // Configs
-import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
+import { DB_NAME } from './helpers/mongo';
 
 // Custom Routes
 import authRouter from './controllers/auth';
@@ -30,24 +30,13 @@ import passportInit from './config/passport';
 // instantiate app
 const app = express();
 
-// Setup mongo store for sessions
-const mongoStore = MongoDBStore(session);
+const PGStore = connectPgSimple(session);
 
-let store: undefined | MongoDBStore.MongoDBStore;
-if (process.env.MONGO_URL) {
-  store = new mongoStore({
-    uri: process.env.MONGO_URL,
-    databaseName: DB_NAME,
-    collection: COLLECTION_NAMES.SESSIONS,
-  });
-} else {
+if (!process.env.MONGO_URL) {
   console.log('MONGO_URL env var is not defined!');
 }
 // Catch errors
 mongoose.connection.on('error', function (error) {
-  console.log(error);
-});
-store?.on('error', function (error) {
   console.log(error);
 });
 // Setup Passport and Sessions
@@ -60,7 +49,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: SESSION_LENGTH },
-    store: store,
+    store: new PGStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true,
+    }),
   }),
 );
 

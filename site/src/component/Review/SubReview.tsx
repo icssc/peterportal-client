@@ -14,7 +14,7 @@ import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
-import { ReviewData, VoteRequest } from '@peterportal/types';
+import { ReviewData } from '@peterportal/types';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -32,16 +32,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
-  const sendVote = async (voteReq: VoteRequest) => {
-    const { deltaScore } = await trpc.reviews.vote.mutate(voteReq);
-    return deltaScore;
-  };
-
   const updateScore = (newUserVote: number) => {
     dispatch(
       setReviews(
         reviewData.map((otherReview) => {
-          if (otherReview._id === review._id) {
+          if (otherReview.id === review.id) {
             return {
               ...otherReview,
               score: otherReview.score + (newUserVote - otherReview.userVote!),
@@ -55,61 +50,33 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     );
   };
 
-  const deleteReview = async (reviewID: string) => {
-    await trpc.reviews.delete.mutate({ id: reviewID });
-    dispatch(setReviews(reviewData.filter((review) => review._id !== reviewID)));
+  const deleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
     setShowDeleteModal(false);
   };
 
   const upvote = async () => {
-    if (cookies.user === undefined) {
-      alert('You must be logged in to vote.');
-      return;
-    }
-
-    const voteReq = {
-      id: review._id!,
-      upvote: true,
-    };
-
-    let newVote;
-    if (review.userVote === 1) {
-      newVote = 0;
-    } else if (review.userVote === 0) {
-      newVote = 1;
-    } else {
-      newVote = 1;
-    }
-    updateScore(newVote);
-    await sendVote(voteReq).catch((err) => {
-      console.error('Error sending upvote:', err);
-      updateScore(review.userVote!);
-    });
+    const newVote = review.userVote === 1 ? 0 : 1;
+    await vote(newVote);
   };
 
   const downvote = async () => {
+    const newVote = review.userVote === -1 ? 0 : -1;
+    await vote(newVote);
+  };
+
+  const vote = async (newVote: number) => {
     if (cookies.user === undefined) {
       alert('You must be logged in to vote.');
       return;
     }
-    const voteReq = {
-      id: review._id!,
-      upvote: false,
-    };
-
-    let newVote;
-    if (review.userVote === 1) {
-      newVote = -1;
-    } else if (review.userVote === 0) {
-      newVote = -1;
-    } else {
-      newVote = 0;
-    }
-    updateScore(newVote);
-    await sendVote(voteReq).catch((err) => {
+    try {
+      await trpc.reviews.vote.mutate({ id: review.id, vote: newVote });
+      updateScore(newVote);
+    } catch (err) {
       console.error('Error sending downvote:', err);
-      updateScore(review.userVote!);
-    });
+    }
   };
 
   const openReportForm = () => {
@@ -148,7 +115,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   return (
     <div className="subreview">
-      {cookies.user?.id === review.userID && (
+      {cookies.user?.id === review.userId && (
         <div className="edit-buttons">
           <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
             <PencilFill width="16" height="16" />
@@ -165,7 +132,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
               <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
                 Cancel
               </Button>
-              <Button variant="danger" onClick={() => deleteReview(review._id!)}>
+              <Button variant="danger" onClick={() => deleteReview(review.id!)}>
                 Delete
               </Button>
             </Modal.Footer>
@@ -175,19 +142,19 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       <div>
         <h3 className="subreview-identifier">
           {professor && (
-            <Link to={{ pathname: `/course/${review.courseID}` }}>
-              {professor.courses[review.courseID]?.department + ' ' + professor.courses[review.courseID]?.courseNumber}
+            <Link to={{ pathname: `/course/${review.courseId}` }}>
+              {professor.courses[review.courseId]?.department + ' ' + professor.courses[review.courseId]?.courseNumber}
             </Link>
           )}
           {course && (
-            <Link to={{ pathname: `/professor/${review.professorID}` }}>
-              {course.instructors[review.professorID]?.name}
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>
+              {course.instructors[review.professorId]?.name}
             </Link>
           )}
           {!course && !professor && (
             <div>
-              <Link to={{ pathname: `/course/${review.courseID}` }}>{review.courseID}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorID}` }}>{review.professorID}</Link>
+              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
+              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
             </div>
           )}
         </h3>
@@ -230,17 +197,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
               <p className=" gapped">
                 <span className=" mr-1">Posted by {review.userDisplay}</span>
                 {review.verified && verifiedBadge}
-                {cookies.user?.id === review.userID && authorBadge}
+                {cookies.user?.id === review.userId && authorBadge}
               </p>
               <p>
-                {new Date(review.timestamp).toLocaleString('default', {
+                {new Date(review.createdAt).toLocaleString('default', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
                 })}
               </p>
             </div>
-            <p>{review.reviewContent}</p>
+            <p>{review.content}</p>
           </div>
         </div>
       </div>
@@ -251,7 +218,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           </Badge>
         ))}
       </div>
-      <div className="subreview-footer" id={review._id}>
+      <div className="subreview-footer" id={review.id.toString()}>
         <p>Helpful?</p>
         <button className={upvoteClassname} onClick={upvote}>
           &#9650;
@@ -265,8 +232,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         </button>
         <ReportForm
           showForm={reportFormOpen}
-          reviewID={review._id}
-          reviewContent={review.reviewContent}
+          reviewId={review.id}
+          reviewContent={review.content}
           closeForm={() => setReportFormOpen(false)}
         />
         <ReviewForm

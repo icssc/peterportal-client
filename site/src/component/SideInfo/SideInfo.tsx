@@ -93,9 +93,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       let key = '';
       // determine the key to group reviews by
       if (props.searchType == 'course') {
-        key = review.professorID;
+        key = review.professorId;
       } else if (props.searchType == 'professor') {
-        key = review.courseID;
+        key = review.courseId;
       }
 
       // add review entry

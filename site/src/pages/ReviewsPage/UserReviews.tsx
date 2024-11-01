@@ -14,7 +14,7 @@ const UserReviews: FC = () => {
   const dispatch = useAppDispatch();
 
   const getUserReviews = useCallback(async () => {
-    const response = await trpc.reviews.get.query({ userID: cookies.user.id });
+    const response = await trpc.reviews.get.query({ userId: cookies.user.id });
     dispatch(setReviews(response));
     setLoaded(true);
   }, [cookies.user.id, dispatch]);
@@ -33,7 +33,7 @@ const UserReviews: FC = () => {
         <h1>Your Reviews</h1>
         <p>Deleting a review will remove it permanently.</p>
         {reviews.map((review) => (
-          <div key={review._id!} className="user-reviews">
+          <div key={review.id!} className="user-reviews">
             <Divider />
             <SubReview review={review} />
           </div>

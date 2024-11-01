@@ -10,7 +10,7 @@ export type UserPreferences = z.infer<typeof userPreferences>;
 
 /** @todo make use of this on frontend when accessing user cookie with useCookies */
 export interface User {
-  id: string;
+  id: number;
   email: string;
   name: string;
   picture: string;

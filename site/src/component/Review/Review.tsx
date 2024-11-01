@@ -31,12 +31,12 @@ const Review: FC<ReviewProps> = (props) => {
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
-      courseID?: string;
-      professorID?: string;
+      courseId?: string;
+      professorId?: string;
     }
     const params: paramsProps = {};
-    if (props.course) params.courseID = props.course.id;
-    if (props.professor) params.professorID = props.professor.ucinetid;
+    if (props.course) params.courseId = props.course.id;
+    if (props.professor) params.professorId = props.professor.ucinetid;
     const reviews = await trpc.reviews.get.query(params);
     dispatch(setReviews(reviews));
   }, [dispatch, props.course, props.professor]);
@@ -59,25 +59,25 @@ const Review: FC<ReviewProps> = (props) => {
   if (filterOption.length > 0) {
     if (props.course) {
       // filter course reviews by specific professor
-      sortedReviews = sortedReviews.filter((review) => review.professorID === filterOption);
+      sortedReviews = sortedReviews.filter((review) => review.professorId === filterOption);
     } else if (props.professor) {
       // filter professor reviews by specific course
-      sortedReviews = sortedReviews.filter((review) => review.courseID === filterOption);
+      sortedReviews = sortedReviews.filter((review) => review.courseId === filterOption);
     }
   }
 
   switch (sortingOption) {
     case SortingOption.MOST_RECENT:
-      sortedReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      sortedReviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       break;
     case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
       sortedReviews.sort(
-        (a, b) => b.score - a.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, b) => b.score - a.score || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
       break;
     case SortingOption.CONTROVERSIAL:
       sortedReviews.sort(
-        (a, b) => a.score - b.score || new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, b) => a.score - b.score || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
       break;
   }
@@ -86,12 +86,12 @@ const Review: FC<ReviewProps> = (props) => {
   let reviewFreq = new Map<string, number>();
   if (props.course) {
     reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.professorID, (acc.get(review.professorID) || 0) + 1),
+      (acc, review) => acc.set(review.professorId, (acc.get(review.professorId) || 0) + 1),
       reviewFreq,
     );
   } else if (props.professor) {
     reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.courseID, (acc.get(review.courseID) || 0) + 1),
+      (acc, review) => acc.set(review.courseId, (acc.get(review.courseId) || 0) + 1),
       reviewFreq,
     );
   }
@@ -185,7 +185,7 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           </div>
           {sortedReviews.map((review) => (
-            <SubReview review={review} key={review._id} course={props.course} professor={props.professor} />
+            <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
           ))}
           <button type="button" className="add-review-btn" onClick={openReviewForm}>
             + Add Review

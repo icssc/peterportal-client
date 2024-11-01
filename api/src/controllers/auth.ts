@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
 import { User } from '@peterportal/types';
+import { db } from '../db';
+import { user } from '../db/schema';
 
 const router = express.Router();
 
@@ -10,11 +12,23 @@ const router = express.Router();
  * @param req Express Request Object
  * @param res Express Response Object
  */
-function successLogin(req: Request, res: Response) {
+async function successLogin(req: Request, res: Response) {
+  const {
+    email,
+    name,
+    id: googleId,
+    picture,
+  } = req.user as { email: string; id: string; name: string; picture: string };
   // set the user cookie
-  res.cookie('user', req.user, {
+  const userData = await db
+    .insert(user)
+    .values({ googleId, displayName: name, email, picture })
+    .onConflictDoUpdate({ target: user.googleId, set: { displayName: name, email, picture } })
+    .returning();
+  res.cookie('user', userData[0], {
     maxAge: SESSION_LENGTH,
   });
+  req.session.userId = userData[0].id;
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;

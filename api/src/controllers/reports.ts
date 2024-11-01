@@ -2,40 +2,44 @@
  @module ReportsRoute
 */
 
-import Report from '../models/report';
 import { adminProcedure, publicProcedure, router } from '../helpers/trpc';
 import { z } from 'zod';
 import { ReportData, reportSubmission } from '@peterportal/types';
+import { db } from '../db';
+import { report } from '../db/schema';
+import { eq } from 'drizzle-orm';
 
 const reportsRouter = router({
   /**
    * Get all reports
    */
   get: adminProcedure.query(async () => {
-    const reports = await Report.find<ReportData>();
-    return reports;
+    return (await db.select().from(report)).map((report) => ({
+      ...report,
+      createdAt: report.createdAt.toISOString(),
+    })) as ReportData[];
   }),
   /**
    * Add a report
    */
   add: publicProcedure.input(reportSubmission).mutation(async ({ input }) => {
-    const report = new Report(input);
-    await report.save();
-
+    await db.insert(report).values(input);
     return input;
   }),
   /**
    * Delete a report
    */
   delete: adminProcedure
-    .input(z.object({ id: z.string().optional(), reviewID: z.string().optional() }))
+    .input(z.object({ id: z.number().optional(), reviewId: z.number().optional() }))
     .mutation(async ({ input }) => {
       if (input.id) {
         // delete report by report id
-        return await Report.deleteOne({ _id: input.id });
-      } else if (input.reviewID) {
+        await db.delete(report).where(eq(report.id, input.id));
+        return true;
+      } else if (input.reviewId) {
         //  delete report(s) by review id
-        return await Report.deleteMany({ reviewID: input.reviewID });
+        await db.delete(report).where(eq(report.reviewId, input.reviewId));
+        return true;
       } else {
         // no id or reviewID specified
         return false;

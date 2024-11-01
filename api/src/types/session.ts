@@ -11,6 +11,7 @@ declare module 'express-session' {
      * URL to return to when finish authentication
      */
     returnTo: string;
+    userId: number;
   }
 
   export interface PassportData {

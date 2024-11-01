@@ -21,13 +21,13 @@ const Verify: FC = () => {
     document.title = 'Verify Reviews | PeterPortal';
   }, []);
 
-  const verifyReview = async (reviewID: string) => {
-    await trpc.reviews.verify.mutate({ id: reviewID });
+  const verifyReview = async (reviewId: number) => {
+    await trpc.reviews.verify.mutate({ id: reviewId });
     getUnverifiedReviews();
   };
 
-  const deleteReview = async (reviewID: string) => {
-    await trpc.reviews.delete.mutate({ id: reviewID });
+  const deleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
     getUnverifiedReviews();
   };
 
@@ -46,10 +46,10 @@ const Verify: FC = () => {
             <Divider />
             <SubReview review={review}></SubReview>
             <div className="verify-footer">
-              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review._id!)}>
+              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>
                 Delete
               </Button>
-              <Button variant="success" onClick={() => verifyReview(review._id!)}>
+              <Button variant="success" onClick={() => verifyReview(review.id)}>
                 Verify
               </Button>
             </div>
