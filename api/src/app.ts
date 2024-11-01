@@ -12,12 +12,8 @@ import connectPgSimple from 'connect-pg-simple';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import mongoose, { Mongoose } from 'mongoose';
 // load env
 dotenv.config();
-
-// Configs
-import { DB_NAME } from './helpers/mongo';
 
 // Custom Routes
 import authRouter from './controllers/auth';
@@ -32,13 +28,9 @@ const app = express();
 
 const PGStore = connectPgSimple(session);
 
-if (!process.env.MONGO_URL) {
-  console.log('MONGO_URL env var is not defined!');
+if (!process.env.DATABASE_URL) {
+  console.log('DATABASE_URL env var is not defined!');
 }
-// Catch errors
-mongoose.connection.on('error', function (error) {
-  console.log(error);
-});
 // Setup Passport and Sessions
 if (!process.env.SESSION_SECRET) {
   console.log('SESSION_SECRET env var is not defined!');
@@ -111,40 +103,14 @@ const errorHandler: ErrorRequestHandler = (err, req, res) => {
 };
 app.use(errorHandler);
 
-export const connect = async () => {
-  let conn: null | Mongoose = null;
-  const uri = process.env.MONGO_URL;
-
-  if (conn == null && uri) {
-    conn = await mongoose.connect(uri!, {
-      dbName: DB_NAME,
-      serverSelectionTimeoutMS: 5000,
-    });
-  }
-  return conn;
-};
-
-let serverlessExpressInstance: ReturnType<typeof serverlessExpress>;
-async function setup(event: unknown, context: unknown) {
-  await connect();
-  serverlessExpressInstance = serverlessExpress({ app });
-  return serverlessExpressInstance(event, context);
-}
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
 if (NODE_ENV === 'development') {
   const port = process.env.PORT ?? 8080;
-  connect().then(() => {
-    app.listen(port, () => {
-      console.log('Listening on port', port);
-    });
+  app.listen(port, () => {
+    console.log('Listening on port', port);
   });
 }
 
-export const handler = async (event: unknown, context: unknown) => {
-  if (serverlessExpressInstance) {
-    return serverlessExpressInstance(event, context);
-  }
-  return setup(event, context);
-};
 // export for serverless
+export const handler = serverlessExpress({ app });
