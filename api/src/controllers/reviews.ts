@@ -50,13 +50,6 @@ const reviewsRouter = router({
     .query(async ({ input, ctx }) => {
       const { courseId, professorId, userId, reviewId, verified } = input;
 
-      const conditions = [];
-      if (courseId) conditions.push(eq(review.courseId, courseId));
-      if (professorId) conditions.push(eq(review.professorId, professorId));
-      if (userId) conditions.push(eq(review.userId, userId));
-      if (reviewId) conditions.push(eq(review.id, reviewId));
-      if (verified) conditions.push(eq(review.verified, verified));
-
       const userVoteSubquery = db
         .select({ reviewId: vote.reviewId, userVote: vote.vote })
         .from(vote)
@@ -70,7 +63,17 @@ const reviewsRouter = router({
           userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
         })
         .from(review)
-        .where(and(...conditions))
+        .where(
+          and(
+            ...[
+              ...(courseId ? [eq(review.courseId, courseId)] : []),
+              ...(professorId ? [eq(review.professorId, professorId)] : []),
+              ...(userId ? [eq(review.userId, userId)] : []),
+              ...(reviewId ? [eq(review.id, reviewId)] : []),
+              ...(verified ? [eq(review.verified, verified)] : []),
+            ],
+          ),
+        )
         .leftJoin(vote, eq(vote.reviewId, review.id))
         .leftJoin(user, eq(user.id, review.userId))
         .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
@@ -100,7 +103,7 @@ const reviewsRouter = router({
       await db
         .select({ verifiedCount: count() })
         .from(review)
-        .where(and(eq(review.userId!, userId), eq(review.verified, true)))
+        .where(and(eq(review.userId, userId), eq(review.verified, true)))
     )[0];
     const reviewToAdd = {
       ...input,
@@ -122,7 +125,6 @@ const reviewsRouter = router({
     // Verify the captcha
     const verifyResponse = await verifyCaptcha(reviewToAdd);
     if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });
-    delete reviewToAdd.captchaToken; // so it doesn't get stored in DB
 
     const addedReview = (await db.insert(review).values(reviewToAdd).returning())[0];
     return {
