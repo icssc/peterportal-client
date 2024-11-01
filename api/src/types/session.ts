@@ -3,9 +3,6 @@ import 'express-session';
 
 declare module 'express-session' {
   export interface SessionData {
-    /**
-     * Store custom data in passport
-     */
     passport: PassportData;
     /**
      * URL to return to when finish authentication
