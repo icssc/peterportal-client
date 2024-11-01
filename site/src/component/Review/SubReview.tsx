@@ -115,7 +115,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   return (
     <div className="subreview">
-      {cookies.user?.id === review.userId && (
+      {review.authored && (
         <div className="edit-buttons">
           <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
             <PencilFill width="16" height="16" />
@@ -197,7 +197,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
               <p className=" gapped">
                 <span className=" mr-1">Posted by {review.userDisplay}</span>
                 {review.verified && verifiedBadge}
-                {cookies.user?.id === review.userId && authorBadge}
+                {review.authored && authorBadge}
               </p>
               <p>
                 {new Date(review.createdAt).toLocaleString('default', {

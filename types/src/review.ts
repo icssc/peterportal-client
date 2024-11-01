@@ -57,10 +57,11 @@ export const reviewData = reviewSubmission.omit({ captchaToken: true, anonymous:
   userVote: z.number(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
+  authored: z.boolean(),
 });
 export type ReviewData = z.infer<typeof reviewData>;
 
-export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote' | 'userDisplay'>;
+export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote' | 'userDisplay' | 'authored'>;
 
 export const featuredQuery = z.object({
   type: z.enum(['course', 'professor']),

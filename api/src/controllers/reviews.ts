@@ -33,7 +33,65 @@ async function userWroteReview(userId: number | undefined, reviewId: number) {
   );
 }
 
+async function getReviews(
+  where: {
+    courseId?: string;
+    professorId?: string;
+    userId?: number;
+    reviewId?: number;
+    verified?: boolean;
+  },
+  sessUserId?: number,
+) {
+  const { courseId, professorId, userId, reviewId, verified } = where;
+  const userVoteSubquery = db
+    .select({ reviewId: vote.reviewId, userVote: vote.vote })
+    .from(vote)
+    .where(eq(vote.userId, sessUserId!))
+    .as('user_vote_query');
+  const results = await db
+    .select({
+      review: review,
+      score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
+      userDisplay: user.name,
+      userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
+    })
+    .from(review)
+    .where(
+      and(
+        ...[
+          ...(courseId ? [eq(review.courseId, courseId)] : []),
+          ...(professorId ? [eq(review.professorId, professorId)] : []),
+          ...(userId ? [eq(review.userId, userId)] : []),
+          ...(reviewId ? [eq(review.id, reviewId)] : []),
+          ...(verified ? [eq(review.verified, verified)] : []),
+        ],
+      ),
+    )
+    .leftJoin(vote, eq(vote.reviewId, review.id))
+    .leftJoin(user, eq(user.id, review.userId))
+    .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
+    .groupBy(review.id, user.name, userVoteSubquery.userVote);
+
+  if (results) {
+    return results.map(({ review, score, userDisplay, userVote }) => ({
+      ...review,
+      createdAt: review.createdAt.toISOString(),
+      updatedAt: review.updatedAt?.toISOString(),
+      score,
+      userDisplay: review.anonymous ? anonymousName : userDisplay!,
+      userVote: userVote,
+      authored: sessUserId === review.userId,
+    })) as ReviewData[];
+  } else {
+    return [];
+  }
+}
+
 const reviewsRouter = router({
+  getUsersReviews: userProcedure.query(async ({ ctx }) => {
+    return await getReviews({ userId: ctx.session.userId }, ctx.session.userId);
+  }),
   /**
    * Query reviews
    */
@@ -43,54 +101,11 @@ const reviewsRouter = router({
         courseId: z.string().optional(),
         professorId: z.string().optional(),
         verified: z.boolean().optional(),
-        userId: z.number().optional(),
         reviewId: z.number().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { courseId, professorId, userId, reviewId, verified } = input;
-
-      const userVoteSubquery = db
-        .select({ reviewId: vote.reviewId, userVote: vote.vote })
-        .from(vote)
-        .where(eq(vote.userId, ctx.session.userId!))
-        .as('user_vote_query');
-      const results = await db
-        .select({
-          review: review,
-          score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
-          userDisplay: user.name,
-          userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
-        })
-        .from(review)
-        .where(
-          and(
-            ...[
-              ...(courseId ? [eq(review.courseId, courseId)] : []),
-              ...(professorId ? [eq(review.professorId, professorId)] : []),
-              ...(userId ? [eq(review.userId, userId)] : []),
-              ...(reviewId ? [eq(review.id, reviewId)] : []),
-              ...(verified ? [eq(review.verified, verified)] : []),
-            ],
-          ),
-        )
-        .leftJoin(vote, eq(vote.reviewId, review.id))
-        .leftJoin(user, eq(user.id, review.userId))
-        .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
-        .groupBy(review.id, user.name, userVoteSubquery.userVote);
-
-      if (results) {
-        return results.map(({ review, score, userDisplay, userVote }) => ({
-          ...review,
-          createdAt: review.createdAt.toISOString(),
-          updatedAt: review.updatedAt?.toISOString(),
-          score,
-          userDisplay: review.anonymous ? anonymousName : userDisplay!,
-          userVote: userVote,
-        })) as ReviewData[];
-      } else {
-        return [];
-      }
+      return await getReviews({ ...input }, ctx.session.userId);
     }),
 
   /**
@@ -134,6 +149,7 @@ const reviewsRouter = router({
       userDisplay: input.anonymous ? anonymousName : ctx.session.passport!.user.name,
       score: 0,
       userVote: 0,
+      authored: true,
     } as ReviewData;
   }),
 
