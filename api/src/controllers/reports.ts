@@ -27,24 +27,12 @@ const reportsRouter = router({
     return input;
   }),
   /**
-   * Delete a report
+   * Delete reports by review id
    */
-  delete: adminProcedure
-    .input(z.object({ id: z.number().optional(), reviewId: z.number().optional() }))
-    .mutation(async ({ input }) => {
-      if (input.id) {
-        // delete report by report id
-        await db.delete(report).where(eq(report.id, input.id));
-        return true;
-      } else if (input.reviewId) {
-        //  delete report(s) by review id
-        await db.delete(report).where(eq(report.reviewId, input.reviewId));
-        return true;
-      } else {
-        // no id or reviewID specified
-        return false;
-      }
-    }),
+  delete: adminProcedure.input(z.object({ reviewId: z.number() })).mutation(async ({ input }) => {
+    await db.delete(report).where(eq(report.reviewId, input.reviewId));
+    return true;
+  }),
 });
 
 export default reportsRouter;
