@@ -1,3 +1,5 @@
+@import '../../globals';
+
 [data-theme='dark'] {
   .search-popup {
     .dropdown,
@@ -33,13 +35,13 @@
 
 .search-popup {
   background-color: var(--overlay1);
-  padding: 3rem;
   margin-left: 3vw;
   height: 85vh;
   overflow-y: auto;
   border-radius: var(--border-radius);
   width: 576px;
   max-width: 40vw;
+  @include card-padding;
 }
 
 .search-popup-header {
