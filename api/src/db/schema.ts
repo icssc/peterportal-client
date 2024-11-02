@@ -30,14 +30,20 @@ export const user = pgTable(
   }),
 );
 
-export const report = pgTable('report', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  reviewId: integer()
-    .notNull()
-    .references(() => review.id, { onDelete: 'cascade' }),
-  reason: text().notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
-});
+export const report = pgTable(
+  'report',
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    reviewId: integer()
+      .notNull()
+      .references(() => review.id, { onDelete: 'cascade' }),
+    reason: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+  },
+  (table) => ({
+    reviewIdIdx: index('reports_review_id_idx').on(table.reviewId),
+  }),
+);
 
 export const review = pgTable(
   'review',
@@ -57,7 +63,6 @@ export const review = pgTable(
     updatedAt: timestamp().defaultNow(),
     forCredit: boolean().notNull(),
     quarter: text().notNull(),
-    // score: integer().notNull() /** @todo: could do a count query on votes instead? */,
     takeAgain: boolean().notNull(),
     textbook: boolean().notNull(),
     attendance: boolean().notNull(),
@@ -111,8 +116,8 @@ export const vote = pgTable(
   },
   (table) => ({
     voteCheck: check('votes_vote_check', sql`${table.vote} = 1 OR ${table.vote} = -1`),
-    // reviewId first since we make 2 kinds of queries: on just reviewId and on reviewId, userId
     primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
+    userIdIdx: index('votes_user_id_idx').on(table.userId),
   }),
 );
 
