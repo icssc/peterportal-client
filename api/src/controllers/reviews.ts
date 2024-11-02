@@ -64,7 +64,7 @@ async function getReviews(
           ...(professorId ? [eq(review.professorId, professorId)] : []),
           ...(userId ? [eq(review.userId, userId)] : []),
           ...(reviewId ? [eq(review.id, reviewId)] : []),
-          ...(verified ? [eq(review.verified, verified)] : []),
+          ...(verified !== undefined ? [eq(review.verified, verified)] : []),
         ],
       ),
     )
