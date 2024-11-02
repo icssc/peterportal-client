@@ -33,7 +33,7 @@ const Planner: FC = () => {
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
-    planners: collapseAllPlanners(allPlanData),
+    planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
     transfers: transfers,
   });
 
@@ -128,8 +128,9 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap);
+      const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap);
       delete localRoadmap.timestamp;
+      localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content })); // remove id attribute
       dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
   }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
