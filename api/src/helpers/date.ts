@@ -1,7 +1,8 @@
 export function datesToStrings<T>(object: Record<string, unknown>) {
   for (const key of Object.keys(object)) {
-    if (object[key] instanceof Date) {
-      object[key] = object[key].toISOString();
+    const value = object[key];
+    if (value instanceof Date) {
+      object[key] = value.toISOString();
     }
   }
 
