@@ -17,6 +17,7 @@ import { TRPCError } from '@trpc/server';
 import { db } from '../db';
 import { review, user, vote } from '../db/schema';
 import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { datesToStrings } from '../helpers/date';
 
 async function userWroteReview(userId: number | undefined, reviewId: number) {
   if (!userId) {
@@ -218,12 +219,10 @@ const reviewsRouter = router({
         .limit(1)
     )[0];
 
-    return {
+    return datesToStrings<FeaturedReviewData>({
       ...featuredReview.review,
-      createdAt: featuredReview.review.createdAt.toISOString(),
-      updatedAt: featuredReview.review.updatedAt?.toISOString(),
       score: featuredReview.vote_query?.score ?? 0,
-    } as FeaturedReviewData;
+    });
   }),
 
   /**

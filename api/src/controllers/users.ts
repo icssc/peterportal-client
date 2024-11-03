@@ -8,6 +8,7 @@ import { db } from '../db';
 import { user } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { datesToStrings } from '../helpers/date';
 
 const usersRouter = router({
   /**
@@ -15,11 +16,10 @@ const usersRouter = router({
    */
   get: userProcedure.query(async ({ ctx }) => {
     const userData = (await db.select().from(user).where(eq(user.id, ctx.session.userId!)))[0];
-    return {
+    return datesToStrings<UserData>({
       ...userData,
-      lastRoadmapEditAt: userData.lastRoadmapEditAt?.toISOString(),
       isAdmin: ctx.session.isAdmin,
-    } as UserData;
+    });
   }),
 
   /**
