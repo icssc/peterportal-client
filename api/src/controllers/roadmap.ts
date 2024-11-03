@@ -37,8 +37,11 @@ const roadmapsRouter = router({
 
     const plannerUpdates = planners
       .filter((planner) => planner.id !== undefined)
-      .map((planner_) =>
-        db.update(planner).set({ name: planner_.name, years: planner_.content }).where(eq(planner.id, planner_.id!)),
+      .map((plannerData) =>
+        db
+          .update(planner)
+          .set({ name: plannerData.name, years: plannerData.content })
+          .where(eq(planner.id, plannerData.id!)),
       );
 
     const newPlannersToAdd = planners
