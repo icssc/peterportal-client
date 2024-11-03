@@ -208,6 +208,8 @@ const reviewsRouter = router({
       .groupBy(vote.reviewId)
       .as('vote_query');
 
+    const featuredReviewCriteria = [desc(review.content), desc(voteSubQuery.score), desc(review.verified)];
+
     const field = input.type === 'course' ? review.courseId : review?.professorId;
     const featuredReview = (
       await db
@@ -215,7 +217,7 @@ const reviewsRouter = router({
         .from(review)
         .where(eq(field, input.id))
         .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
-        .orderBy(desc(review.content), desc(voteSubQuery.score), desc(review.verified)) // featured review criteria
+        .orderBy(...featuredReviewCriteria)
         .limit(1)
     )[0];
 
