@@ -63,21 +63,25 @@ const roadmapsRouter = router({
         }
       });
 
+    const replaceTransferredCourses = db
+      .delete(transferredCourse)
+      .where(eq(transferredCourse.userId, userId))
+      .then(() => {
+        return db
+          .insert(transferredCourse)
+          .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
+      });
+
+    const updateLastEditTimestamp = db
+      .update(user)
+      .set({ lastRoadmapEditAt: new Date(timestamp!) })
+      .where(eq(user.id, userId));
+
     await Promise.all([
       ...plannerUpdates,
       plannerInsertionsAndDeletions,
-      db
-        .delete(transferredCourse)
-        .where(eq(transferredCourse.userId, userId))
-        .then(() => {
-          return db
-            .insert(transferredCourse)
-            .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
-        }),
-      db
-        .update(user)
-        .set({ lastRoadmapEditAt: new Date(timestamp!) })
-        .where(eq(user.id, userId)),
+      replaceTransferredCourses,
+      updateLastEditTimestamp,
     ]);
   }),
 });
