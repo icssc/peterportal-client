@@ -123,7 +123,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   return (
     <div className="search-module">
-      <Form.Group className="mb-3">
+      <Form.Group>
         <InputGroup>
           <InputGroup.Prepend>
             <InputGroup.Text>
