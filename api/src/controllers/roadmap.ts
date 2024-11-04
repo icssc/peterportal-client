@@ -48,19 +48,24 @@ const roadmapsRouter = router({
       .filter((planner) => planner.id === undefined)
       .map((planner) => ({ userId, name: planner.name, years: planner.content }));
 
-    // Delete any existing planners that are not in the planners array (user removed them)
-    await db
+    // Delete any existing planners that are not in the planners array (user removed them), then insert any new planners (to avoid race when deleting new ones)
+    const plannerInsertionsAndDeletions = db
       .delete(planner)
       .where(
         and(
           eq(planner.userId, userId),
           not(inArray(planner.id, planners.map((p) => p.id).filter((id) => id !== undefined) as number[])),
         ),
-      );
+      )
+      .then(() => {
+        if (newPlannersToAdd.length > 0) {
+          return db.insert(planner).values(newPlannersToAdd);
+        }
+      });
 
     await Promise.all([
       ...plannerUpdates,
-      ...(newPlannersToAdd.length > 0 ? [db.insert(planner).values(newPlannersToAdd)] : []),
+      plannerInsertionsAndDeletions,
       db
         .delete(transferredCourse)
         .where(eq(transferredCourse.userId, userId))
