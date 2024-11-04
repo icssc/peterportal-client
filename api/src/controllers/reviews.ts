@@ -73,15 +73,15 @@ async function getReviews(
     .groupBy(review.id, user.name, userVoteSubquery.userVote);
 
   if (results) {
-    return results.map(({ review, score, userDisplay, userVote }) => ({
-      ...review,
-      createdAt: review.createdAt.toISOString(),
-      updatedAt: review.updatedAt?.toISOString(),
-      score,
-      userDisplay: review.anonymous ? anonymousName : userDisplay!,
-      userVote: userVote,
-      authored: sessUserId === review.userId,
-    })) as ReviewData[];
+    return results.map(({ review, score, userDisplay, userVote }) =>
+      datesToStrings({
+        ...review,
+        score,
+        userDisplay: review.anonymous ? anonymousName : userDisplay!,
+        userVote: userVote,
+        authored: sessUserId === review.userId,
+      }),
+    ) as ReviewData[];
   } else {
     return [];
   }
@@ -125,6 +125,7 @@ const reviewsRouter = router({
       verified: verifiedCount >= 3, // auto-verify if use has 3+ verified reviews
     };
 
+    /** @todo: do a check for existing review on the frontend, remove this for the sake of speed since constraints will already prevent duplicate reviews on insertion */
     //check if review already exists for same professor, course, and user (do this before verifying captcha)
     const existingReview = await db
       .select({ count: count() })
@@ -141,15 +142,13 @@ const reviewsRouter = router({
     if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });
 
     const addedReview = (await db.insert(review).values(reviewToAdd).returning())[0];
-    return {
+    return datesToStrings({
       ...addedReview,
-      createdAt: addedReview.createdAt.toISOString(),
-      updatedAt: addedReview.updatedAt?.toISOString(),
       userDisplay: input.anonymous ? anonymousName : ctx.session.passport!.user.name,
       score: 0,
       userVote: 0,
       authored: true,
-    } as ReviewData;
+    }) as ReviewData;
   }),
 
   /**
@@ -219,10 +218,7 @@ const reviewsRouter = router({
         .limit(1)
     )[0];
 
-    return datesToStrings<FeaturedReviewData>({
-      ...featuredReview.review,
-      score: featuredReview.vote_query?.score ?? 0,
-    });
+    return datesToStrings(featuredReview.review) as FeaturedReviewData;
   }),
 
   /**

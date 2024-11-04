@@ -16,10 +16,10 @@ const usersRouter = router({
    */
   get: userProcedure.query(async ({ ctx }) => {
     const userData = (await db.select().from(user).where(eq(user.id, ctx.session.userId!)))[0];
-    return datesToStrings<UserData>({
+    return datesToStrings({
       ...userData,
       isAdmin: ctx.session.isAdmin,
-    });
+    }) as UserData;
   }),
 
   /**
