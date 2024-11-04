@@ -60,11 +60,11 @@ async function getReviews(
     .from(review)
     .where(
       and(
-        ...(courseId ? [eq(review.courseId, courseId)] : []),
-        ...(professorId ? [eq(review.professorId, professorId)] : []),
-        ...(userId ? [eq(review.userId, userId)] : []),
-        ...(reviewId ? [eq(review.id, reviewId)] : []),
-        ...(verified !== undefined ? [eq(review.verified, verified)] : []),
+        courseId ? eq(review.courseId, courseId) : undefined,
+        professorId ? eq(review.professorId, professorId) : undefined,
+        userId ? eq(review.userId, userId) : undefined,
+        reviewId ? eq(review.id, reviewId) : undefined,
+        verified ? eq(review.verified, verified) : undefined,
       ),
     )
     .leftJoin(vote, eq(vote.reviewId, review.id))
