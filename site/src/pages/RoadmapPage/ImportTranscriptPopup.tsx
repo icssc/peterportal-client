@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters as quarterNames } from '@peterportal/types';
+import { quarterNames } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 
