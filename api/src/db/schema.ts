@@ -17,13 +17,13 @@ import {
 export const user = pgTable(
   'user',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    googleId: text().notNull(),
-    name: text().notNull(),
-    email: text().notNull(),
-    picture: text().notNull(),
-    theme: text(),
-    lastRoadmapEditAt: timestamp(),
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    googleId: text('google_id').notNull(),
+    name: text('name').notNull(),
+    email: text('email').notNull(),
+    picture: text('picture').notNull(),
+    theme: text('theme'),
+    lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
   },
   (table) => ({
     uniqueGoogleId: unique('unique_google_id').on(table.googleId),
@@ -33,12 +33,12 @@ export const user = pgTable(
 export const report = pgTable(
   'report',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    reviewId: integer()
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    reviewId: integer('review_id')
       .notNull()
       .references(() => review.id, { onDelete: 'cascade' }),
-    reason: text().notNull(),
-    createdAt: timestamp().defaultNow().notNull(),
+    reason: text('reason').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => ({
     reviewIdIdx: index('reports_review_id_idx').on(table.reviewId),
@@ -48,26 +48,26 @@ export const report = pgTable(
 export const review = pgTable(
   'review',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    professorId: text().notNull(),
-    courseId: text().notNull(),
-    userId: integer()
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    professorId: text('professor_id').notNull(),
+    courseId: text('course_id').notNull(),
+    userId: integer('user_id')
       .notNull()
       .references(() => user.id),
-    anonymous: boolean().notNull(),
-    content: text(),
-    rating: integer().notNull(),
-    difficulty: integer().notNull(),
-    gradeReceived: text().notNull(),
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow(),
-    forCredit: boolean().notNull(),
-    quarter: text().notNull(),
-    takeAgain: boolean().notNull(),
-    textbook: boolean().notNull(),
-    attendance: boolean().notNull(),
-    tags: text().array(),
-    verified: boolean().notNull().default(false),
+    anonymous: boolean('anonymous').notNull(),
+    content: text('content'),
+    rating: integer('rating').notNull(),
+    difficulty: integer('difficulty').notNull(),
+    gradeReceived: text('grade_received').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow(),
+    forCredit: boolean('for_credit').notNull(),
+    quarter: text('quarter').notNull(),
+    takeAgain: boolean('take_again').notNull(),
+    textbook: boolean('textbook').notNull(),
+    attendance: boolean('attendance').notNull(),
+    tags: text('tags').array(),
+    verified: boolean('verified').notNull().default(false),
   },
   (table) => ({
     ratingCheck: check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
@@ -81,10 +81,10 @@ export const review = pgTable(
 export const planner = pgTable(
   'planner',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    userId: integer().references(() => user.id),
-    name: text().notNull(),
-    years: jsonb().$type<SavedPlannerYearData>().array().notNull(),
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    userId: integer('user_id').references(() => user.id),
+    name: text('name').notNull(),
+    years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
   },
   (table) => ({
     userIdIdx: index('planners_user_id_idx').on(table.userId),
@@ -94,9 +94,9 @@ export const planner = pgTable(
 export const transferredCourse = pgTable(
   'transferred_course',
   {
-    userId: integer().references(() => user.id),
-    courseName: text(),
-    units: real(),
+    userId: integer('user_id').references(() => user.id),
+    courseName: text('course_name'),
+    units: real('units'),
   },
   (table) => ({
     userIdIdx: index('transferred_courses_user_id_idx').on(table.userId),
@@ -106,13 +106,13 @@ export const transferredCourse = pgTable(
 export const vote = pgTable(
   'vote',
   {
-    reviewId: integer()
+    reviewId: integer('review_id')
       .notNull()
       .references(() => review.id, { onDelete: 'cascade' }),
-    userId: integer()
+    userId: integer('user_id')
       .notNull()
       .references(() => user.id),
-    vote: integer().notNull(),
+    vote: integer('vote').notNull(),
   },
   (table) => ({
     voteCheck: check('votes_vote_check', or(eq(table.vote, 1), eq(table.vote, -1))!),
@@ -124,10 +124,10 @@ export const vote = pgTable(
 export const savedCourse = pgTable(
   'saved_course',
   {
-    userId: integer()
+    userId: integer('user_id')
       .references(() => user.id)
       .notNull(),
-    courseId: text().notNull(),
+    courseId: text('course_id').notNull(),
   },
   (table) => ({
     primaryKey: primaryKey({ columns: [table.userId, table.courseId] }),
@@ -135,7 +135,7 @@ export const savedCourse = pgTable(
 );
 
 export const session = pgTable('session', {
-  sid: text().primaryKey(),
-  sess: jsonb().notNull(),
-  expire: timestamp().notNull(),
+  sid: text('sid').primaryKey(),
+  sess: jsonb('sess').notNull(),
+  expire: timestamp('expire').notNull(),
 });
