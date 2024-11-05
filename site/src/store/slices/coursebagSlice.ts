@@ -1,11 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import type { Coursebag, CourseGQLData } from '../../types/types';
-import trpc from '../../trpc';
 
-const initialState: { coursebag: Coursebag } = {
-  coursebag: [],
-};
+const initialState: { coursebag?: Coursebag } = {};
 
 export const coursebagSlice = createSlice({
   name: 'coursebag',
@@ -14,21 +11,17 @@ export const coursebagSlice = createSlice({
     setCoursebag(state, action: PayloadAction<Coursebag>) {
       state.coursebag = action.payload;
     },
-    addCourseToBag: (state, action: PayloadAction<CourseGQLData>) => {
-      state.coursebag.push(action.payload);
-      localStorage.setItem('coursebag', JSON.stringify(state.coursebag.map((course) => course.id)));
-      trpc.savedCourses.add.mutate({ courseId: action.payload.id });
+    addCourseToBagState: (state, action: PayloadAction<CourseGQLData>) => {
+      state.coursebag?.push(action.payload);
     },
-    removeCourseFromBag: (state, action: PayloadAction<CourseGQLData>) => {
-      state.coursebag = state.coursebag.filter((course) => course.id !== action.payload.id);
-      localStorage.setItem('coursebag', JSON.stringify(state.coursebag.map((course) => course.id)));
-      trpc.savedCourses.remove.mutate({ courseId: action.payload.id });
+    removeCourseFromBagState: (state, action: PayloadAction<CourseGQLData>) => {
+      state.coursebag = state.coursebag?.filter((course) => course.id !== action.payload.id);
     },
   },
 });
 
-export const { setCoursebag, addCourseToBag, removeCourseFromBag } = coursebagSlice.actions;
+export const { setCoursebag, addCourseToBagState, removeCourseFromBagState } = coursebagSlice.actions;
 
-export const selectUser = (state: RootState) => state.coursebag.coursebag;
+export const selectCoursebag = (state: RootState) => state.coursebag.coursebag;
 
 export default coursebagSlice.reducer;

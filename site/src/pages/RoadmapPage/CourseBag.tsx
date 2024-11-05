@@ -1,11 +1,9 @@
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { removeCourseFromBag } from '../../store/slices/coursebagSlice';
+import { useCoursebag } from '../../hooks/coursebag';
 import Course from './Course';
 import './Coursebag.scss';
 import { Draggable } from 'react-beautiful-dnd';
 const CourseBag = () => {
-  const { coursebag } = useAppSelector((state) => state.coursebag);
-  const dispatch = useAppDispatch();
+  const { coursebag, removeCourseFromBag } = useCoursebag();
 
   return (
     <div className="coursebag-container">
@@ -29,7 +27,7 @@ const CourseBag = () => {
                   <Course
                     {...course}
                     onDelete={() => {
-                      dispatch(removeCourseFromBag(course));
+                      removeCourseFromBag(course);
                     }}
                   />
                 </div>
