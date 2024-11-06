@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import './Planner.scss';
 import Header from './Header';
 import AddYearPopup from './AddYearPopup';
@@ -13,29 +12,28 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
-  setCoursebag,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
-import { SavedRoadmap, MongoRoadmap } from '@peterportal/types';
+import { SavedRoadmap } from '@peterportal/types';
 import { defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const isFirstRenderer = useFirstRender();
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
-  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const [showSyncModal, setShowSyncModal] = useState(false);
 
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
-    planners: collapseAllPlanners(allPlanData),
+    planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
     transfers: transfers,
   });
 
@@ -54,11 +52,10 @@ const Planner: FC = () => {
 
   const saveRoadmap = () => {
     const roadmap: SavedRoadmap = {
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
       planners: collapseAllPlanners(allPlanData),
       transfers: transfers,
     };
-    const coursebagStrings = coursebag.map((course) => course.id);
 
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
@@ -66,12 +63,11 @@ const Planner: FC = () => {
     dispatch(setUnsavedChanges(false));
 
     // if logged in, save data to account
-    if (cookies.user !== undefined) {
-      const mongoRoadmap: MongoRoadmap = { userID: cookies.user.id, roadmap: roadmap, coursebag: coursebagStrings };
+    if (isLoggedIn) {
       trpc.roadmaps.save
-        .mutate(mongoRoadmap)
+        .mutate(roadmap)
         .then(() => {
-          alert(`Roadmap saved under ${cookies.user.email}`);
+          alert(`Roadmap saved to your account!`);
         })
         .catch(() => {
           alert('Roadmap saved locally! Login to save it to your account.');
@@ -115,10 +111,9 @@ const Planner: FC = () => {
 
     // if first render and current roadmap is empty, load from local storage
     if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(cookies, (planners, roadmap, coursebag, isLocalNewer) => {
+      loadRoadmap(isLoggedIn, (planners, roadmap, isLocalNewer) => {
         dispatch(setAllPlans(planners));
         dispatch(setTransfers(roadmap.transfers));
-        dispatch(setCoursebag(coursebag));
         if (isLocalNewer) {
           setShowSyncModal(true);
         }
@@ -133,11 +128,12 @@ const Planner: FC = () => {
 
       // check current roadmap against last-saved roadmap in local storage
       // if they are different, mark changes as unsaved to enable alert on page leave
-      const localRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap);
+      const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap);
       delete localRoadmap.timestamp;
+      localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content })); // remove id attribute
       dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
-  }, [cookies, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
+  }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 

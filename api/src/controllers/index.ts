@@ -4,6 +4,7 @@ import professorsRouter from './professors';
 import reportsRouter from './reports';
 import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
+import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
 import usersRouter from './users';
 
@@ -13,6 +14,7 @@ export const appRouter = router({
   roadmaps: roadmapsRouter,
   reports: reportsRouter,
   reviews: reviewsRouter,
+  savedCourses: savedCoursesRouter,
   schedule: scheduleRouter,
   users: usersRouter,
 });

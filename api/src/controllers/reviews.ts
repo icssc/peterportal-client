@@ -3,185 +3,160 @@
 */
 
 import { verifyCaptcha } from '../helpers/recaptcha';
-import Review from '../models/review';
-import Vote from '../models/vote';
-import Report from '../models/report';
-import mongoose from 'mongoose';
 import { adminProcedure, publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { z } from 'zod';
-import { editReviewSubmission, featuredQuery, ReviewData, reviewSubmission } from '@peterportal/types';
+import {
+  anonymousName,
+  editReviewSubmission,
+  featuredQuery,
+  FeaturedReviewData,
+  ReviewData,
+  reviewSubmission,
+} from '@peterportal/types';
 import { TRPCError } from '@trpc/server';
+import { db } from '../db';
+import { review, user, vote } from '../db/schema';
+import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { datesToStrings } from '../helpers/date';
 
-interface ReviewFilter {
-  courseID?: string;
-  professorID?: string;
-  userID?: string;
-  _id?: mongoose.Types.ObjectId;
-  verified?: boolean;
-}
-
-interface VoteData {
-  _id?: string;
-  userID: string;
-  reviewID: string;
-  score: number;
-}
-
-async function userWroteReview(userID: string | undefined, reviewID: string) {
-  if (!userID) {
+async function userWroteReview(userId: number | undefined, reviewId: number) {
+  if (!userId) {
     return false;
   }
 
-  return await Review.exists({ _id: reviewID, userID: userID });
+  return (
+    (
+      await db
+        .select({ count: count() })
+        .from(review)
+        .where(and(eq(review.id, reviewId), eq(review.userId, userId)))
+    )[0].count > 0
+  );
+}
+
+async function getReviews(
+  where: {
+    courseId?: string;
+    professorId?: string;
+    userId?: number;
+    reviewId?: number;
+    verified?: boolean;
+  },
+  sessUserId?: number,
+) {
+  const { courseId, professorId, userId, reviewId, verified } = where;
+  const userVoteSubquery = db
+    .select({ reviewId: vote.reviewId, userVote: vote.vote })
+    .from(vote)
+    .where(eq(vote.userId, sessUserId!))
+    .as('user_vote_query');
+  const results = await db
+    .select({
+      review: review,
+      score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
+      userDisplay: user.name,
+      userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
+    })
+    .from(review)
+    .where(
+      and(
+        courseId ? eq(review.courseId, courseId) : undefined,
+        professorId ? eq(review.professorId, professorId) : undefined,
+        userId ? eq(review.userId, userId) : undefined,
+        reviewId ? eq(review.id, reviewId) : undefined,
+        verified !== undefined ? eq(review.verified, verified) : undefined,
+      ),
+    )
+    .leftJoin(vote, eq(vote.reviewId, review.id))
+    .leftJoin(user, eq(user.id, review.userId))
+    .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
+    .groupBy(review.id, user.name, userVoteSubquery.userVote);
+
+  if (results) {
+    return results.map(({ review, score, userDisplay, userVote }) =>
+      datesToStrings({
+        ...review,
+        score,
+        userDisplay: review.anonymous ? anonymousName : userDisplay!,
+        userVote: userVote,
+        authored: sessUserId === review.userId,
+      }),
+    ) as ReviewData[];
+  } else {
+    return [];
+  }
 }
 
 const reviewsRouter = router({
+  getUsersReviews: userProcedure.query(async ({ ctx }) => {
+    return await getReviews({ userId: ctx.session.userId }, ctx.session.userId);
+  }),
   /**
    * Query reviews
    */
   get: publicProcedure
     .input(
       z.object({
-        courseID: z.string().optional(),
-        professorID: z.string().optional(),
+        courseId: z.string().optional(),
+        professorId: z.string().optional(),
         verified: z.boolean().optional(),
-        userID: z.string().optional(),
-        reviewID: z.string().optional(),
+        reviewId: z.number().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { courseID, professorID, userID, reviewID, verified } = input;
-
-      const query: ReviewFilter = {
-        courseID,
-        professorID,
-        userID,
-        _id: reviewID ? new mongoose.Types.ObjectId(reviewID) : undefined,
-        verified,
-      };
-
-      // remove null params
-      for (const param in query) {
-        if (query[param as keyof ReviewFilter] === null || query[param as keyof ReviewFilter] === undefined) {
-          delete query[param as keyof ReviewFilter];
-        }
-      }
-
-      const pipeline = [
-        {
-          $match: query,
-        },
-        {
-          $addFields: {
-            _id: {
-              $toString: '$_id',
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: 'votes',
-            let: {
-              cmpUserID: ctx.session.passport?.user.id,
-              cmpReviewID: '$_id',
-            },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      {
-                        $eq: ['$$cmpUserID', '$userID'],
-                      },
-                      {
-                        $eq: ['$$cmpReviewID', '$reviewID'],
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-            as: 'userVote',
-          },
-        },
-        {
-          $addFields: {
-            userVote: {
-              $cond: {
-                if: {
-                  $ne: ['$userVote', []],
-                },
-                then: {
-                  $getField: {
-                    field: 'score',
-                    input: {
-                      $first: '$userVote',
-                    },
-                  },
-                },
-                else: 0,
-              },
-            },
-          },
-        },
-      ];
-
-      const reviews = await Review.aggregate<ReviewData>(pipeline);
-      if (reviews) {
-        return reviews;
-      } else {
-        return [];
-      }
+      return await getReviews({ ...input }, ctx.session.userId);
     }),
 
   /**
    * Add a review
    */
   add: userProcedure.input(reviewSubmission).mutation(async ({ input, ctx }) => {
+    const userId = ctx.session.userId!;
     // check if user is trusted
-    const verifiedCount = await Review.find({
-      userID: ctx.session.passport!.user.id,
-      verified: true,
-    })
-      .countDocuments()
-      .exec();
-
-    const review = {
+    const { verifiedCount } = (
+      await db
+        .select({ verifiedCount: count() })
+        .from(review)
+        .where(and(eq(review.userId, userId), eq(review.verified, true)))
+    )[0];
+    const reviewToAdd = {
       ...input,
-      userDisplay: input.userDisplay === 'Anonymous Peter' ? 'Anonymous Peter' : ctx.session.passport!.user.name,
-      userID: ctx.session.passport!.user.id,
+      userId: userId,
       verified: verifiedCount >= 3, // auto-verify if use has 3+ verified reviews
     };
 
-    //check if review already exists for same professor, course, and user
-    const query: ReviewFilter = {
-      courseID: input.courseID,
-      professorID: input.professorID,
-      userID: ctx.session.passport?.user.id,
-    };
-
-    const reviews = await Review.find(query);
-    if (reviews?.length > 0)
+    /** @todo: do a check for existing review on the frontend, remove this for the sake of speed since constraints will already prevent duplicate reviews on insertion */
+    //check if review already exists for same professor, course, and user (do this before verifying captcha)
+    const existingReview = await db
+      .select({ count: count() })
+      .from(review)
+      .where(
+        and(eq(review.userId, userId), eq(review.courseId, input.courseId), eq(review.professorId, input.professorId)),
+      );
+    if (existingReview[0].count > 0) {
       throw new TRPCError({ code: 'BAD_REQUEST', message: 'You have already reviewed this professor and course!' });
+    }
 
     // Verify the captcha
-    const verifyResponse = await verifyCaptcha(review);
+    const verifyResponse = await verifyCaptcha(reviewToAdd);
     if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });
-    delete review.captchaToken; // so it doesn't get stored in DB
 
-    // add review to mongo
-    return (await new Review(review).save()) as unknown as ReviewData;
+    const addedReview = (await db.insert(review).values(reviewToAdd).returning())[0];
+    return datesToStrings({
+      ...addedReview,
+      userDisplay: input.anonymous ? anonymousName : ctx.session.passport!.user.name,
+      score: 0,
+      userVote: 0,
+      authored: true,
+    }) as ReviewData;
   }),
 
   /**
    * Delete a review (user can delete their own or admin can delete any through reports)
    */
-  delete: userProcedure.input(z.object({ id: z.string() })).mutation(async ({ input, ctx }) => {
-    if (ctx.session.passport!.isAdmin || (await userWroteReview(ctx.session.passport!.user.id, input.id))) {
-      await Review.deleteOne({ _id: input.id });
-      // delete all votes and reports associated with review
-      await Vote.deleteMany({ reviewID: input.id });
-      await Report.deleteMany({ reviewID: input.id });
+  delete: userProcedure.input(z.object({ id: z.number() })).mutation(async ({ input, ctx }) => {
+    if (ctx.session.isAdmin || (await userWroteReview(ctx.session.userId, input.id))) {
+      await db.delete(review).where(eq(review.id, input.id));
       return true;
     } else {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Must be an admin or review author to delete reviews!' });
@@ -191,77 +166,59 @@ const reviewsRouter = router({
   /**
    * Vote on a review
    */
-  vote: userProcedure.input(z.object({ id: z.string(), upvote: z.boolean() })).mutation(async ({ input, ctx }) => {
-    //get id and delta score from initial vote
-    const id = input.id;
-    let deltaScore = input.upvote ? 1 : -1;
-    //query to search for a vote matching the same review and user
-    const currentVotes = {
-      userID: ctx.session.passport!.user.id,
-      reviewID: id,
-    };
-    //either length 1 or 0 array(ideally) 0 if no existing vote, 1 if existing vote
-    const existingVote = (await Vote.find(currentVotes)) as VoteData[];
-    //check if there is an existing vote and it has the same vote as the previous vote
-    if (existingVote.length != 0 && deltaScore == existingVote[0].score) {
-      //remove the vote
+  vote: userProcedure
+    .input(z.object({ id: z.number(), vote: z.number().int().min(-1).max(1) }))
+    .mutation(async ({ input, ctx }) => {
+      if (input.vote === 0) {
+        await db.delete(vote).where(and(eq(vote.userId, ctx.session.userId!), eq(vote.reviewId, input.id)));
+        return true;
+      }
 
-      //delete the existing vote from the votes collection
-      await Vote.deleteMany(currentVotes);
-      //update the votes document with a lowered score
-      await Review.updateOne({ _id: id }, { $inc: { score: -1 * deltaScore } });
+      await db
+        .insert(vote)
+        .values({ userId: ctx.session.userId!, reviewId: input.id, vote: input.vote })
+        .onConflictDoUpdate({ target: [vote.userId, vote.reviewId], set: { vote: input.vote } });
+    }),
 
-      return { deltaScore: -1 * deltaScore };
-    } else if (existingVote.length != 0 && deltaScore != existingVote[0].score) {
-      //there is an existing vote but the vote was different
-      deltaScore *= 2;
-      //*2 to reverse the old vote and implement the new one
-      await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
-      //override old vote with new data
-      await Vote.updateOne({ _id: existingVote[0]._id }, { $set: { score: deltaScore / 2 } });
-
-      return { deltaScore: deltaScore };
-    } else {
-      //no old vote, just add in new vote data
-      await Review.updateOne({ _id: id }, { $inc: { score: deltaScore } });
-      //sends in vote
-      await new Vote({ userID: ctx.session.passport!.user.id, reviewID: id, score: deltaScore }).save();
-      return { deltaScore: deltaScore };
-    }
-  }),
-
-  verify: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ input }) => {
-    return await Review.updateOne({ _id: input.id }, { verified: true });
+  verify: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+    await db.update(review).set({ verified: true }).where(eq(review.id, input.id));
+    return true;
   }),
 
   edit: userProcedure.input(editReviewSubmission).mutation(async ({ input, ctx }) => {
-    if (!(await userWroteReview(ctx.session.passport!.user.id, input._id))) {
+    if (!(await userWroteReview(ctx.session.userId, input.id))) {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'You are not the author of this review.' });
     }
 
-    const { _id, ...updateWithoutId } = input;
-    await Review.updateOne({ _id }, updateWithoutId);
-    return input;
+    const { id, ...updateWithoutId } = input;
+    await db.update(review).set(updateWithoutId).where(eq(review.id, id));
+    return true;
   }),
 
   /**
    * Get featured review for a course or professor
    */
   featured: publicProcedure.input(featuredQuery).query(async ({ input }) => {
-    // search by professor or course field
-    let field = '';
-    if (input.type == 'course') {
-      field = 'courseID';
-    } else if (input.type == 'professor') {
-      field = 'professorID';
-    }
+    const voteSubQuery = db
+      .select({ reviewId: vote.reviewId, score: sql`sum(${vote.vote})`.mapWith(Number).as('score') })
+      .from(vote)
+      .groupBy(vote.reviewId)
+      .as('vote_query');
 
-    // find first review with the highest score
-    const review = await Review.findOne<ReviewData>({ [field]: input.id })
-      .sort({ reviewContent: -1, score: -1, verified: -1 })
-      .limit(1);
+    const featuredReviewCriteria = [desc(review.content), desc(voteSubQuery.score), desc(review.verified)];
 
-    return review;
+    const field = input.type === 'course' ? review.courseId : review?.professorId;
+    const featuredReview = (
+      await db
+        .select()
+        .from(review)
+        .where(eq(field, input.id))
+        .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
+        .orderBy(...featuredReviewCriteria)
+        .limit(1)
+    )[0];
+
+    return datesToStrings(featuredReview.review) as FeaturedReviewData;
   }),
 
   /**
@@ -270,29 +227,15 @@ const reviewsRouter = router({
   scores: publicProcedure
     .input(z.object({ type: z.enum(['course', 'professor']), id: z.string() }))
     .query(async ({ input }) => {
-      // match filters all reviews with given field
-      // group aggregates by field
-      let matchField = '';
-      let groupField = '';
-      if (input.type == 'professor') {
-        matchField = 'professorID';
-        groupField = '$courseID';
-      } else if (input.type == 'course') {
-        matchField = 'courseID';
-        groupField = '$professorID';
-      }
+      const field = input.type === 'course' ? review.courseId : review.professorId;
+      const otherField = input.type === 'course' ? review.professorId : review.courseId;
 
-      // execute aggregation on the reviews collection
-
-      const array = await Review.aggregate([
-        { $match: { [matchField]: input.id } },
-        { $group: { _id: groupField, score: { $avg: '$rating' } } },
-      ]);
-
-      // rename id to name
-      const results = array.map((v) => {
-        return { name: v._id as string, score: v.score as number };
-      });
+      const results = await db
+        .select({ name: otherField, score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number) })
+        .from(review)
+        .where(eq(field, input.id))
+        .leftJoin(vote, eq(vote.reviewId, review.id))
+        .groupBy(otherField);
 
       return results;
     }),

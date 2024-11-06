@@ -3,8 +3,8 @@ import { Divider } from 'semantic-ui-react';
 import './SubReport.scss';
 
 interface SubReportProps {
-  reportID: string;
-  reviewID: string;
+  reportId: number;
+  reviewId: number;
   reason: string;
   timestamp: string;
   isLast: boolean;

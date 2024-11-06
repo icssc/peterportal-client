@@ -4,22 +4,17 @@ import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { DragDropContext, DropResult, DragStart } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  moveCourse,
-  deleteCourse,
-  setActiveCourse,
-  addCourseToBag,
-  removeCourseFromBag,
-} from '../../store/slices/roadmapSlice';
+import { moveCourse, deleteCourse, setActiveCourse } from '../../store/slices/roadmapSlice';
 import AddCoursePopup from './AddCoursePopup';
 import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
+import { useCoursebag } from '../../hooks/coursebag';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const searchResults = useAppSelector((state) => state.search.courses.results) as CourseGQLData[];
-  const courseBag = useAppSelector((state) => state.roadmap.coursebag);
+  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
   const isMobile = useIsMobile();
   const roadmaps = useAppSelector((state) => state.roadmap.plans);
   const roadmap = roadmaps[useAppSelector((state) => state.roadmap.currentPlanIndex)].content.yearPlans;
@@ -49,7 +44,7 @@ const RoadmapPage: FC = () => {
         if (result.destination.droppableId === 'coursebag' && result.source.droppableId != 'coursebag') {
           const [yearIndex, quarterIndex]: string[] = result.source.droppableId.split('-');
           const course = roadmap[parseInt(yearIndex)].quarters[parseInt(quarterIndex)].courses[result.source.index];
-          dispatch(addCourseToBag(course));
+          addCourseToBag(course);
           dispatch(
             deleteCourse({
               yearIndex: parseInt(yearIndex),
@@ -62,9 +57,9 @@ const RoadmapPage: FC = () => {
         }
 
         if (result.source.droppableId === 'coursebag' && result.destination.droppableId != 'coursebag') {
-          const course = courseBag[result.source.index];
+          const course = coursebag[result.source.index];
 
-          dispatch(removeCourseFromBag(course));
+          removeCourseFromBag(course);
         }
 
         const movePayload = {
@@ -98,7 +93,7 @@ const RoadmapPage: FC = () => {
         dispatch(moveCourse(movePayload));
       }
     },
-    [courseBag, dispatch, roadmap],
+    [coursebag, dispatch, roadmap],
   );
 
   const onDragStart = useCallback(
@@ -108,11 +103,11 @@ const RoadmapPage: FC = () => {
         dispatch(setActiveCourse(activeCourse));
       }
       if (start.source.droppableId === 'coursebag') {
-        const activeCourse = courseBag[start.source.index];
+        const activeCourse = coursebag[start.source.index];
         dispatch(setActiveCourse(activeCourse));
       }
     },
-    [dispatch, searchResults, courseBag],
+    [dispatch, searchResults, coursebag],
   );
 
   // do not conditionally renderer because it would remount planner which would discard unsaved changes

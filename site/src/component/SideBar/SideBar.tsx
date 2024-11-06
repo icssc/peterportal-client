@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { XCircle } from 'react-bootstrap-icons';
-import { useCookies } from 'react-cookie';
 import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import { Icon } from 'semantic-ui-react';
@@ -11,31 +10,24 @@ import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
 import trpc from '../../trpc';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  const isLoggedIn = cookies.user !== undefined;
-
-  interface AdminResponse {
-    admin: boolean;
-  }
-
   useEffect(() => {
-    // if the user is logged in
     if (isLoggedIn) {
       // useEffect's function is not allowed to be async, create async checkAdmin function within
       const checkAdmin = async () => {
-        const res: AdminResponse = await trpc.users.isAdmin.query();
-        const isAdmin: boolean = res.admin;
+        const { isAdmin } = await trpc.users.get.query();
         setIsAdmin(isAdmin);
       };
       checkAdmin();
     }
-  }, [cookies.user, isLoggedIn]);
+  }, [isLoggedIn]);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 

@@ -10,14 +10,7 @@ import {
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
-import {
-  BatchCourseData,
-  Coursebag,
-  InvalidCourseData,
-  PlannerData,
-  PlannerQuarterData,
-  PlannerYearData,
-} from '../types/types';
+import { BatchCourseData, InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import trpc from '../trpc';
 
 export function defaultYear() {
@@ -31,7 +24,6 @@ export function defaultYear() {
   } as PlannerYearData | SavedPlannerYearData;
 }
 
-export const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer2', 'Summer10wk'];
 export const quarterDisplayNames: Record<QuarterName, string> = {
   Fall: 'Fall',
   Winter: 'Winter',
@@ -40,25 +32,6 @@ export const quarterDisplayNames: Record<QuarterName, string> = {
   Summer2: 'Summer II',
   Summer10wk: 'Summer 10 Week',
 };
-
-export function normalizeQuarterName(name: string): QuarterName {
-  if (quarterNames.includes(name as QuarterName)) return name as QuarterName;
-  const lookup: { [k: string]: QuarterName } = {
-    fall: 'Fall',
-    winter: 'Winter',
-    spring: 'Spring',
-    // Old Lowercase Display Names
-    'summer I': 'Summer1',
-    'summer II': 'Summer2',
-    'summer 10 Week': 'Summer10wk',
-    // Transcript Names
-    'First Summer': 'Summer1',
-    'Second Summer': 'Summer2',
-    'Special / 10-Week Summer': 'Summer10wk',
-  };
-  if (!lookup[name]) throw TypeError('Invalid Quarter Name: ' + name);
-  return lookup[name];
-}
 
 // remove all unecessary data to store into the database
 export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
@@ -76,7 +49,11 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
 };
 
 export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
-  return plans.map((p) => ({ name: p.name, content: collapsePlanner(p.content.yearPlans) }));
+  return plans.map((p) => ({
+    ...(p.id ? { id: p.id } : {}),
+    name: p.name,
+    content: collapsePlanner(p.content.yearPlans),
+  }));
 };
 
 // query the lost information from collapsing
@@ -101,8 +78,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
       savedYear.quarters.forEach((savedQuarter) => {
-        const transformedName = normalizeQuarterName(savedQuarter.name);
-        const quarter: PlannerQuarterData = { name: transformedName, courses: [] };
+        const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
         quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
         year.quarters.push(quarter);
       });
@@ -116,32 +92,23 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   return await Promise.all(
     plans.map(async (p) => {
       const content = await expandPlanner(p.content);
-      return { name: p.name, content: { yearPlans: content, invalidCourses: [] } };
+      return { ...(p.id ? { id: p.id } : {}), name: p.name, content: { yearPlans: content, invalidCourses: [] } };
     }),
   );
 };
 
-interface RoadmapCookies {
-  user?: { id: string };
-}
-
 export const loadRoadmap = async (
-  cookies: RoadmapCookies,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, coursebag: Coursebag, isLocalNewer: boolean) => void,
+  isLoggedIn: boolean,
+  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
 ) => {
   let roadmap: SavedRoadmap = null!;
-  let coursebagStrings: string[] = [];
   const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
-  // if logged in
-  if (cookies.user !== undefined) {
+  if (isLoggedIn) {
     // get data from account
-    const request = await trpc.roadmaps.get.query({ userID: cookies.user.id });
+    const res = await trpc.roadmaps.get.query();
     // if a roadmap is found
-    if (request?.roadmap) {
-      roadmap = request.roadmap;
-    }
-    if (request?.coursebag) {
-      coursebagStrings = request.coursebag;
+    if (res) {
+      roadmap = res;
     }
   }
 
@@ -149,7 +116,7 @@ export const loadRoadmap = async (
 
   if (!roadmap && localRoadmap) {
     roadmap = localRoadmap;
-  } else if (roadmap && localRoadmap && (localRoadmap.timestamp ?? 0) > (roadmap.timestamp ?? 0)) {
+  } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
     isLocalNewer = true;
   } else if (!roadmap && !localRoadmap) {
     // no saved planner
@@ -163,9 +130,7 @@ export const loadRoadmap = async (
       : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
   // expand planner and set the state
   const planners = await expandAllPlanners(loadedData);
-  const coursesObj: BatchCourseData = (await searchAPIResults('courses', coursebagStrings)) as BatchCourseData;
-  const coursebag = coursebagStrings.map((id) => coursesObj[id]);
-  loadHandler(planners, roadmap, coursebag, isLocalNewer);
+  loadHandler(planners, roadmap, isLocalNewer);
 };
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;

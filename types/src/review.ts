@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const anonymousName = 'Anonymous Peter';
+
 export const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'] as const;
 export const gradesEnum = z.enum(grades);
 export type ReviewGrade = z.infer<typeof gradesEnum>;
@@ -26,10 +28,10 @@ export const tagsEnum = z.enum(tags);
 export type ReviewTags = z.infer<typeof tagsEnum>;
 
 export const reviewSubmission = z.object({
-  professorID: z.string(),
-  courseID: z.string(),
-  userDisplay: z.string(),
-  reviewContent: z.string().max(500),
+  professorId: z.string(),
+  courseId: z.string(),
+  anonymous: z.boolean(),
+  content: z.string().max(500).optional(),
   rating: z.number().min(1).max(5),
   difficulty: z.number().min(1).max(5),
   gradeReceived: gradesEnum,
@@ -43,26 +45,23 @@ export const reviewSubmission = z.object({
 });
 export type ReviewSubmission = z.infer<typeof reviewSubmission>;
 
-export const editReviewSubmission = reviewSubmission.extend({ _id: z.string() });
+export const editReviewSubmission = reviewSubmission.extend({ id: z.number() });
 export type EditReviewSubmission = z.infer<typeof editReviewSubmission>;
 
-export const reviewData = reviewSubmission.omit({ captchaToken: true }).extend({
-  _id: z.string(),
-  userID: z.string(),
+export const reviewData = reviewSubmission.omit({ captchaToken: true, anonymous: true }).extend({
+  id: z.number(),
+  userId: z.number(),
+  userDisplay: z.string(),
   verified: z.boolean(),
   score: z.number(),
   userVote: z.number(),
-  timestamp: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string().optional(),
+  authored: z.boolean(),
 });
 export type ReviewData = z.infer<typeof reviewData>;
 
-export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote'>;
-
-export const voteRequest = z.object({
-  id: z.string(),
-  upvote: z.boolean(),
-});
-export type VoteRequest = z.infer<typeof voteRequest>;
+export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote' | 'userDisplay' | 'authored'>;
 
 export const featuredQuery = z.object({
   type: z.enum(['course', 'professor']),

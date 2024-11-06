@@ -6,7 +6,7 @@ import { ReportData, ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 
 interface ReportGroupProps {
-  reviewID: string;
+  reviewId: number;
   reports: ReportData[];
   onAccept: () => void;
   onDeny: () => void;
@@ -15,14 +15,14 @@ interface ReportGroupProps {
 const ReportGroup: FC<ReportGroupProps> = (props) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
-  const getReviewData = async (reviewID: string) => {
-    const review = (await trpc.reviews.get.query({ reviewID: reviewID }))[0];
+  const getReviewData = async (reviewId: number) => {
+    const review = (await trpc.reviews.get.query({ reviewId }))[0];
     setReview(review);
   };
 
   useEffect(() => {
-    getReviewData(props.reviewID);
-  }, [props.reviewID]);
+    getReviewData(props.reviewId);
+  }, [props.reviewId]);
 
   if (!review) {
     return <></>;
@@ -30,27 +30,27 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return (
       <div className="report-group">
         <div className="report-group-identifier">
-          <div className="report-group-professor-name">{review.professorID}</div>
-          <div className="report-group-course-id">{review.courseID}</div>
+          <div className="report-group-professor-name">{review.professorId}</div>
+          <div className="report-group-course-id">{review.courseId}</div>
           <div className="report-group-user-display">
             Posted by {review.userDisplay} on{' '}
-            {new Date(review.timestamp).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date(review.createdAt).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
         <div className="report-group-content">
           <p className="report-group-label">Review Content:</p>
-          <p>{review.reviewContent}</p>
+          <p>{review.content}</p>
         </div>
         <p className="report-group-label">Reports on this review:</p>
         <div className="report-group-subreports-container">
           {props.reports.map((report, i) => {
             return (
               <SubReport
-                key={report._id}
-                reportID={report._id!}
-                reviewID={report.reviewID}
+                key={report.id}
+                reportId={report.id}
+                reviewId={report.reviewId}
                 reason={report.reason}
-                timestamp={report.timestamp}
+                timestamp={report.createdAt}
                 isLast={i == props.reports.length - 1}
               />
             );

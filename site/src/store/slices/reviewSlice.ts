@@ -27,7 +27,7 @@ export const reviewSlice = createSlice({
       state.reviews = action.payload;
     },
     editReview: (state, action: PayloadAction<EditReviewSubmission>) => {
-      const i = state.reviews.findIndex((review) => review._id === action.payload._id);
+      const i = state.reviews.findIndex((review) => review.id === action.payload.id);
       state.reviews[i] = { ...state.reviews[i], ...action.payload }; // overwrite with edited properties
     },
     setFormStatus: (state, action: PayloadAction<boolean>) => {

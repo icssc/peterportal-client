@@ -2,7 +2,7 @@
  @module PassportConfig
 */
 
-import { User } from '@peterportal/types';
+import { PassportUser } from '@peterportal/types';
 import passport from 'passport';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 
@@ -11,7 +11,7 @@ export default function passportInit() {
     done(null, user);
   });
 
-  passport.deserializeUser(function (user: false | User | null | undefined, done) {
+  passport.deserializeUser(function (user: false | PassportUser | null | undefined, done) {
     done(null, user);
   });
 

@@ -2,56 +2,32 @@
  @module UsersRoute
 */
 
-import Preference from '../models/preference';
-import { publicProcedure, router, userProcedure } from '../helpers/trpc';
-import { userPreferences, UserPreferences } from '@peterportal/types';
+import { router, userProcedure } from '../helpers/trpc';
+import { theme, UserData } from '@peterportal/types';
+import { db } from '../db';
+import { user } from '../db/schema';
+import { eq } from 'drizzle-orm';
+import { z } from 'zod';
+import { datesToStrings } from '../helpers/date';
 
 const usersRouter = router({
   /**
-   * Get the user's session data
+   * Get the user's data
    */
-  get: publicProcedure.query(async ({ ctx }) => {
-    return ctx.session;
-  }),
-
-  /**
-   * Get the user's theme preferences
-   */
-  getPreferences: userProcedure.query(async ({ ctx }): Promise<UserPreferences> => {
-    const userID = ctx.session.passport?.user.id;
-    const preference = await Preference.findOne({ userID: userID });
-
-    return (preference ? preference : {}) as UserPreferences;
+  get: userProcedure.query(async ({ ctx }) => {
+    const userData = (await db.select().from(user).where(eq(user.id, ctx.session.userId!)))[0];
+    return datesToStrings({
+      ...userData,
+      isAdmin: ctx.session.isAdmin,
+    }) as UserData;
   }),
 
   /**
    * Configure the user's theme preferences
    */
-  setPreferences: userProcedure.input(userPreferences).mutation(async ({ input, ctx }) => {
-    const userID = ctx.session.passport?.user.id;
-
-    // make user's preference doc if it doesn't exist
-    if (!(await Preference.exists({ userID }))) {
-      await Preference.create({ userID, theme: input.theme });
-    }
-
-    // set the preferences
-    await Preference.updateOne({ userID }, input);
-
-    // echo back body
+  setTheme: userProcedure.input(z.object({ theme })).mutation(async ({ input, ctx }) => {
+    await db.update(user).set({ theme: input.theme }).where(eq(user.id, ctx.session.userId!));
     return input;
-  }),
-
-  /**
-   * Get whether or not a user is an admin
-   */
-  isAdmin: publicProcedure.query(async ({ ctx }) => {
-    // not logged in
-    if (!ctx.session?.passport) {
-      return { admin: false };
-    } else {
-      return { admin: ctx.session.passport.isAdmin as boolean };
-    }
   }),
 });
 
