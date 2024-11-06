@@ -14,7 +14,7 @@ import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { Button } from 'semantic-ui-react';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
-import toaster from '../../hooks/toastifyHook';
+import spawnToast from '../../helpers/toastify';
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
   index: number;
@@ -54,7 +54,6 @@ const RoadmapMultiplan: FC = () => {
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
-  const toastify = toaster();
   const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
 
   // name: name of the plan, content: stores the content of plan
@@ -74,8 +73,8 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
-    if (!newPlanName) return toastify('Name cannot be empty');
-    if (isDuplicateName()) return toastify('A plan with that name already exists');
+    if (!newPlanName) return spawnToast('Name cannot be empty', true);
+    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
     setIsOpen(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
@@ -84,8 +83,8 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    if (!newPlanName) return toastify('Name cannot be empty');
-    if (isDuplicateName()) return toastify('A plan with that name already exists');
+    if (!newPlanName) return spawnToast('Name cannot be empty', true);
+    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
     dispatch(setPlanName({ index: editIdx, name: newPlanName }));
     setEditIdx(-1);
   };

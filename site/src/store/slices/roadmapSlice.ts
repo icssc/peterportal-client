@@ -13,7 +13,7 @@ import {
 } from '../../types/types';
 import type { RootState } from '../store';
 import { TransferData } from '@peterportal/types';
-import toaster from '../../hooks/toastifyHook';
+import spawnToast from '../../helpers/toastify';
 // Define a type for the slice state
 interface RoadmapPlanState {
   // Store planner data
@@ -169,9 +169,8 @@ export const roadmapSlice = createSlice({
       const newQuarter = action.payload.quarterData;
 
       // if year doesn't exist
-      const toastify = toaster();
       if (!currentYears.includes(startYear)) {
-        toastify(`${startYear}-${startYear + 1} has not yet been added!`);
+        spawnToast(`${startYear}-${startYear + 1} has not yet been added!`, true);
         return;
       }
 
@@ -182,7 +181,7 @@ export const roadmapSlice = createSlice({
 
       // if duplicate quarter
       if (currentQuarters.includes(newQuarter.name)) {
-        toastify(`${quarterDisplayNames[newQuarter.name]} has already been added to Year ${yearIndex}!`);
+        spawnToast(`${quarterDisplayNames[newQuarter.name]} has already been added to Year ${yearIndex}!`, true);
         return;
       }
 
@@ -219,16 +218,18 @@ export const roadmapSlice = createSlice({
       const newYear = action.payload.yearData.startYear;
       const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
       const newName = action.payload.yearData.name;
-      const toastify = toaster();
       // if duplicate year
       if (currentYears.includes(newYear)) {
-        toastify(`${newYear}-${newYear + 1} has already been added as Year ${currentYears.indexOf(newYear) + 1}!`);
+        spawnToast(
+          `${newYear}-${newYear + 1} has already been added as Year ${currentYears.indexOf(newYear) + 1}!`,
+          true,
+        );
         return;
       }
       // if duplicate name
       if (currentNames.includes(newName)) {
         const year = state.plans[state.currentPlanIndex].content.yearPlans[currentNames.indexOf(newName)].startYear;
-        toastify(`${newName} already exists from ${year} - ${year + 1}!`);
+        spawnToast(`${newName} already exists from ${year} - ${year + 1}!`, true);
         return;
       }
 
@@ -247,10 +248,9 @@ export const roadmapSlice = createSlice({
       const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
       const newYear = action.payload.startYear;
       const yearIndex = action.payload.index;
-      const toastify = toaster();
       // if duplicate year
       if (currentYears.includes(newYear)) {
-        toastify(`${newYear}-${newYear + 1} already exists as Year ${currentYears.indexOf(newYear) + 1}!`);
+        spawnToast(`${newYear}-${newYear + 1} already exists as Year ${currentYears.indexOf(newYear) + 1}!`, true);
         return;
       }
 
@@ -274,11 +274,10 @@ export const roadmapSlice = createSlice({
       const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
       const newName = action.payload.name;
       const yearIndex = action.payload.index;
-      const toastify = toaster();
       // if duplicate name
       if (currentNames.includes(newName)) {
         const year = state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].startYear;
-        toastify(`${newName} already exists from ${year} - ${year + 1}!`);
+        spawnToast(`${newName} already exists from ${year} - ${year + 1}!`, true);
         return;
       }
 

@@ -22,7 +22,7 @@ import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
-import toaster from '../../hooks/toastifyHook';
+import spawnToast from '../../helpers/toastify';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +33,6 @@ const Planner: FC = () => {
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const coursebag = useAppSelector((state) => state.roadmap.coursebag);
   const [showSyncModal, setShowSyncModal] = useState(false);
-  const toastify = toaster();
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData),
@@ -72,13 +71,13 @@ const Planner: FC = () => {
       trpc.roadmaps.save
         .mutate(mongoRoadmap)
         .then(() => {
-          toastify(`Roadmap saved under ${cookies.user.email}`);
+          spawnToast(`Roadmap saved under ${cookies.user.email}`);
         })
         .catch(() => {
-          toastify('Roadmap saved locally! Login to save it to your account.');
+          spawnToast('Roadmap saved locally! Login to save it to your account.');
         });
     } else {
-      toastify('Roadmap saved locally! Login to save it to your account.');
+      spawnToast('Roadmap saved locally! Login to save it to your account.', true);
     }
   };
 

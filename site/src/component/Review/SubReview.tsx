@@ -15,7 +15,7 @@ import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData, VoteRequest } from '@peterportal/types';
-import useToastify from '../../hooks/toastifyHook';
+import spawnToast from '../../helpers/toastify';
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
@@ -31,7 +31,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const buttonVariant = darkMode ? 'dark' : 'secondary';
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const toastify = useToastify();
   const sendVote = async (voteReq: VoteRequest) => {
     const { deltaScore } = await trpc.reviews.vote.mutate(voteReq);
     return deltaScore;
@@ -63,7 +62,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   const upvote = async () => {
     if (cookies.user === undefined) {
-      toastify('You must be logged in to vote.');
+      spawnToast('You must be logged in to vote.', true);
       return;
     }
 

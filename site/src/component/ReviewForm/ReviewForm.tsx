@@ -25,7 +25,7 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import toaster from '../../hooks/toastifyHook';
+import spawnToast from '../../helpers/toastify';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -63,13 +63,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [userName, setUserName] = useState<string>(reviewToEdit?.userDisplay ?? cookies.user?.name);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
-  const toastify = toaster();
   useEffect(() => {
     if (show) {
       // form opened
       // if not logged in, close the form
       if (cookies.user === undefined) {
-        toastify('You must be logged in to add a review!');
+        spawnToast('You must be logged in to add a review!', true);
         closeForm();
       }
 
@@ -87,7 +86,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         setSubmitted(true);
         dispatch(editReview(res));
       } catch (e) {
-        toastify((e as Error).message);
+        spawnToast((e as Error).message, true);
       }
     } else {
       try {
@@ -95,7 +94,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         setSubmitted(true);
         dispatch(addReview(res));
       } catch (e) {
-        toastify((e as Error).message);
+        spawnToast((e as Error).message, true);
       }
     }
   };
@@ -116,7 +115,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
     // check if CAPTCHA is completed for new reviews (captcha omitted for editing)
     if (!editing && !captchaToken) {
-      toastify('Please complete the CAPTCHA');
+      spawnToast('Please complete the CAPTCHA', true);
       return;
     }
     const review = {
@@ -155,7 +154,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         newSelectedTags.push(tag);
         setSelectedTags(newSelectedTags);
       } else {
-        toastify('Cannot select more than 3 tags');
+        spawnToast('Cannot select more than 3 tags', true);
       }
     }
   };
