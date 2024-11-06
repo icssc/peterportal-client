@@ -64,7 +64,7 @@ async function getReviews(
         professorId ? eq(review.professorId, professorId) : undefined,
         userId ? eq(review.userId, userId) : undefined,
         reviewId ? eq(review.id, reviewId) : undefined,
-        verified ? eq(review.verified, verified) : undefined,
+        verified !== undefined ? eq(review.verified, verified) : undefined,
       ),
     )
     .leftJoin(vote, eq(vote.reviewId, review.id))
