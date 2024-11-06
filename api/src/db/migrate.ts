@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 
 const uri = process.env.MONGO_URL;
 const conn = await mongoose.connect(uri!, {
-  dbName: 'peterPortalDevDB',
+  dbName: 'peterPortalDB',
   serverSelectionTimeoutMS: 5000,
 });
 
