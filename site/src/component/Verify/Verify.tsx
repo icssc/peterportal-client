@@ -23,12 +23,12 @@ const Verify: FC = () => {
 
   const verifyReview = async (reviewId: number) => {
     await trpc.reviews.verify.mutate({ id: reviewId });
-    getUnverifiedReviews();
+    setReviews(reviews.filter((review) => review.id !== reviewId));
   };
 
   const deleteReview = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
-    getUnverifiedReviews();
+    setReviews(reviews.filter((review) => review.id !== reviewId));
   };
 
   if (!loaded) {
