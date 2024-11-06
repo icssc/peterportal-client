@@ -1,5 +1,5 @@
 import { SavedPlannerYearData } from '@peterportal/types';
-import { eq, or, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
@@ -115,7 +115,7 @@ export const vote = pgTable(
     vote: integer('vote').notNull(),
   },
   (table) => ({
-    voteCheck: check('votes_vote_check', or(eq(table.vote, 1), eq(table.vote, -1))!),
+    voteCheck: check('votes_vote_check', sql`${table.vote} = 1 OR ${table.vote} = -1`),
     primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
     userIdIdx: index('votes_user_id_idx').on(table.userId),
   }),
