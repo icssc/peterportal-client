@@ -1,3 +1,5 @@
+@import '../../globals';
+
 .professor-page {
   display: flex;
 }
@@ -10,8 +12,8 @@
   max-width: 45vw;
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
-  padding: 3rem;
   margin-bottom: 3vh;
+  @include card-padding;
 }
 
 .twemoji {

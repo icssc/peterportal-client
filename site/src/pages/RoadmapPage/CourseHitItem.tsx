@@ -1,16 +1,12 @@
 import { FC } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  addCourseToBag,
-  removeCourseFromBag,
-  setActiveCourse,
-  setShowAddCourse,
-} from '../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import Course from './Course';
 
 import { useIsMobile } from '../../helpers/util';
 import { CourseGQLData } from '../../types/types';
+import { useCoursebag } from '../../hooks/coursebag';
 
 interface CourseHitItemProps extends CourseGQLData {
   index: number;
@@ -19,7 +15,7 @@ interface CourseHitItemProps extends CourseGQLData {
 const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
+  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
   const isInBag = coursebag.some((course) => course.id === props.id);
   // do not make course draggable on mobile
   const onMobileMouseDown = () => {
@@ -36,10 +32,10 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     if (!props) return;
     if (props.id === undefined) return;
     if (coursebag.some((course) => course.id === props.id)) return;
-    dispatch(addCourseToBag(props));
+    addCourseToBag(props);
   };
   const removeFromBag = () => {
-    dispatch(removeCourseFromBag(props));
+    removeCourseFromBag(props);
   };
 
   if (isMobile) {

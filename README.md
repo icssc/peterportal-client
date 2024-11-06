@@ -28,8 +28,10 @@ Features include:
 - [PeterPortal API](https://github.com/icssc/peterportal-api-next)
 - Express
 - React
+- tRPC
 - SST and AWS CDK
-- MongoDB
+- PostgreSQL
+- Drizzle ORM
 - GraphQL
 - TypeScript
 - Vite
@@ -77,7 +79,7 @@ git clone https://github.com/<your username>/peterportal-client
 
 5. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
 
-6. (Optional) Set up your own MongoDB and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
+6. (Optional) Set up your own PostgreSQL database and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 
 ## Open Source Contribution Guide
 

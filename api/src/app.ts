@@ -3,21 +3,17 @@
  * @module
  */
 
-import express from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import session from 'express-session';
-import MongoDBStore from 'connect-mongodb-session';
+import connectPgSimple from 'connect-pg-simple';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import mongoose, { Mongoose } from 'mongoose';
 // load env
 dotenv.config();
-
-// Configs
-import { DB_NAME, COLLECTION_NAMES } from './helpers/mongo';
 
 // Custom Routes
 import authRouter from './controllers/auth';
@@ -30,26 +26,11 @@ import passportInit from './config/passport';
 // instantiate app
 const app = express();
 
-// Setup mongo store for sessions
-const mongoStore = MongoDBStore(session);
+const PGStore = connectPgSimple(session);
 
-let store: undefined | MongoDBStore.MongoDBStore;
-if (process.env.MONGO_URL) {
-  store = new mongoStore({
-    uri: process.env.MONGO_URL,
-    databaseName: DB_NAME,
-    collection: COLLECTION_NAMES.SESSIONS,
-  });
-} else {
-  console.log('MONGO_URL env var is not defined!');
+if (!process.env.DATABASE_URL) {
+  console.log('DATABASE_URL env var is not defined!');
 }
-// Catch errors
-mongoose.connection.on('error', function (error) {
-  console.log(error);
-});
-store?.on('error', function (error) {
-  console.log(error);
-});
 // Setup Passport and Sessions
 if (!process.env.SESSION_SECRET) {
   console.log('SESSION_SECRET env var is not defined!');
@@ -60,7 +41,10 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: SESSION_LENGTH },
-    store: store,
+    store: new PGStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true,
+    }),
   }),
 );
 
@@ -113,45 +97,20 @@ app.use('/api', expressRouter);
 /**
  * Error Handler
  */
-app.use(function (req, res) {
-  console.error(req);
-  res.status(500).json({ error: `Internal Serverless Error - '${req}'` });
-});
-
-export const connect = async () => {
-  let conn: null | Mongoose = null;
-  const uri = process.env.MONGO_URL;
-
-  if (conn == null && uri) {
-    conn = await mongoose.connect(uri!, {
-      dbName: DB_NAME,
-      serverSelectionTimeoutMS: 5000,
-    });
-  }
-  return conn;
+const errorHandler: ErrorRequestHandler = (err, req, res) => {
+  console.error(err);
+  res.status(500).json({ message: 'Internal Serverless Error', err });
 };
+app.use(errorHandler);
 
-let serverlessExpressInstance: ReturnType<typeof serverlessExpress>;
-async function setup(event: unknown, context: unknown) {
-  await connect();
-  serverlessExpressInstance = serverlessExpress({ app });
-  return serverlessExpressInstance(event, context);
-}
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
 if (NODE_ENV === 'development') {
   const port = process.env.PORT ?? 8080;
-  connect().then(() => {
-    app.listen(port, () => {
-      console.log('Listening on port', port);
-    });
+  app.listen(port, () => {
+    console.log('Listening on port', port);
   });
 }
 
-export const handler = async (event: unknown, context: unknown) => {
-  if (serverlessExpressInstance) {
-    return serverlessExpressInstance(event, context);
-  }
-  return setup(event, context);
-};
 // export for serverless
+export const handler = serverlessExpress({ app });

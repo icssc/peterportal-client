@@ -1,4 +1,3 @@
-import { useCookies } from 'react-cookie';
 import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
@@ -6,23 +5,36 @@ import { Icon } from 'semantic-ui-react';
 import './Profile.scss';
 import { NavLink } from 'react-router-dom';
 import { ArrowLeftCircleFill } from 'react-bootstrap-icons';
+import trpc from '../../trpc';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 type ProfileMenuTab = 'default' | 'theme';
 
 const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const [cookies] = useCookies(['user']);
   const [show, setShow] = useState(false);
   const [tab, setTab] = useState<ProfileMenuTab>('default');
 
-  const { name, email, picture }: { name: string; email: string; picture: string } = cookies?.user ?? {};
-  const isLoggedIn: boolean = cookies.user;
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [picture, setPicture] = useState('');
+  const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
     if (!show) {
       setTimeout(() => setTab('default'), 150); // popover transition time is 150ms
     }
   }, [show]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      trpc.users.get.query().then((user) => {
+        setName(user.name);
+        setEmail(user.email);
+        setPicture(user.picture);
+      });
+    }
+  });
 
   const DefaultTab = (
     <>

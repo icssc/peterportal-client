@@ -1,7 +1,9 @@
+@import '../../globals';
+
 #peterportal-logo {
   width: auto;
   height: 32px;
-  @media (min-width: 800px) {
+  @media (min-width: $mobile-cutoff) {
     height: 36px;
   }
 }
@@ -76,7 +78,7 @@
       width: fit-content;
     }
 
-    @media only screen and (max-width: 800px) {
+    @media only screen and (max-width: $mobile-cutoff) {
       .beta {
         display: none;
       }

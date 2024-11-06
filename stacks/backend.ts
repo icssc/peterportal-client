@@ -8,7 +8,7 @@ export function BackendStack({ stack }: StackContext) {
     runtime: 'nodejs18.x',
     logRetention: stack.stage === 'prod' ? 'two_years' : 'one_week',
     environment: {
-      MONGO_URL: process.env.MONGO_URL!,
+      DATABASE_URL: process.env.DATABASE_URL!,
       SESSION_SECRET: process.env.SESSION_SECRET!,
       PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
       PUBLIC_API_GRAPHQL_URL: process.env.PUBLIC_API_GRAPHQL_URL!,

@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { normalizeQuarterName, quarterNames } from '../../helpers/planner';
+import { quarterNames } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 
@@ -87,8 +87,7 @@ function toPlannerQuarter(
 ): { startYear: number; quarterData: PlannerQuarterData } {
   const year = parseInt(quarter.name.split(' ')[0]);
   // Removes the year number and "Session/Quarter" at the end
-  const tName = quarter.name.split(' ').slice(1, -1).join(' ') as QuarterName;
-  const name = normalizeQuarterName(tName);
+  const name = quarter.name.split(' ').slice(1, -1).join(' ') as QuarterName;
 
   return {
     startYear: name === 'Fall' ? year : year - 1,

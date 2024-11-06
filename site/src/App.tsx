@@ -18,10 +18,13 @@ import ReviewsPage from './pages/ReviewsPage';
 import SideBar from './component/SideBar/SideBar';
 
 import ThemeContext from './style/theme-context';
-import { useCookies } from 'react-cookie';
 
 import trpc from './trpc';
 import { Theme } from '@peterportal/types';
+import { useAppDispatch } from './store/hooks';
+import { searchAPIResults } from './helpers/util';
+import { setCoursebag } from './store/slices/coursebagSlice';
+import { useIsLoggedIn } from './hooks/isLoggedIn';
 
 function isSystemDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -35,8 +38,9 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(
     usingSystemTheme ? isSystemDark() : localStorage.getItem('theme') === 'dark',
   );
-  const [cookies] = useCookies(['user']);
+  const isLoggedIn = useIsLoggedIn();
   const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
+  const dispatch = useAppDispatch();
 
   /**
    * we run this check at render-time and compare with previous state because a useEffect
@@ -70,23 +74,33 @@ export default function App() {
    */
   const setTheme = (theme: Theme) => {
     setThemeState(theme);
-    if (cookies.user) {
-      trpc.users.setPreferences.mutate({ theme });
+    if (isLoggedIn) {
+      trpc.users.setTheme.mutate({ theme });
     } else {
       localStorage.setItem('theme', theme);
     }
   };
 
+  const loadCoursebag = useCallback(async () => {
+    const courseIds = isLoggedIn
+      ? await trpc.savedCourses.get.query()
+      : JSON.parse(localStorage.getItem('coursebag') ?? '[]');
+    const coursebag = await searchAPIResults('courses', courseIds);
+    dispatch(setCoursebag(Object.values(coursebag)));
+  }, [dispatch, isLoggedIn]);
+
   useEffect(() => {
-    // if logged in, load user prefs (theme) from mongo
-    if (cookies.user) {
-      trpc.users.getPreferences.query().then((res) => {
+    // if logged in, load user theme from db
+    if (isLoggedIn) {
+      trpc.users.get.query().then((res) => {
         if (res.theme) {
           setThemeState(res.theme);
         }
       });
     }
-  }, [cookies.user, setThemeState]);
+
+    loadCoursebag();
+  }, [isLoggedIn, setThemeState, dispatch, loadCoursebag]);
 
   return (
     <Router>

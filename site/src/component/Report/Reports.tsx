@@ -9,7 +9,7 @@ const Reports: FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   interface ReviewDisplay {
-    reviewID: string;
+    reviewId: number;
     reports: ReportData[];
   }
 
@@ -20,9 +20,9 @@ const Reports: FC = () => {
 
     reports.forEach((report) => {
       let i;
-      if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewID === reviewDisplay.reviewID)) < 0) {
+      if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId)) < 0) {
         reportsDisplay.push({
-          reviewID: report.reviewID,
+          reviewId: report.reviewId,
           reports: [report],
         });
       } else {
@@ -45,15 +45,15 @@ const Reports: FC = () => {
     document.title = 'View Reports | PeterPortal';
   }, [getData]);
 
-  const acceptReports = async (reviewID: string) => {
-    await trpc.reviews.delete.mutate({ id: reviewID });
+  const acceptReports = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
     // reports are automatically deleted when deleting a review
-    setData(data.filter((review) => review.reviewID !== reviewID));
+    setData(data.filter((review) => review.reviewId !== reviewId));
   };
 
-  const denyReports = async (reviewID: string) => {
-    await trpc.reports.delete.mutate({ reviewID: reviewID });
-    setData(data.filter((review) => review.reviewID !== reviewID));
+  const denyReports = async (reviewId: number) => {
+    await trpc.reports.delete.mutate({ reviewId });
+    setData(data.filter((review) => review.reviewId !== reviewId));
   };
 
   if (!loaded) {
@@ -69,11 +69,11 @@ const Reports: FC = () => {
         {data.map((review) => {
           return (
             <ReportGroup
-              key={review.reviewID}
-              reviewID={review.reviewID}
+              key={review.reviewId}
+              reviewId={review.reviewId}
               reports={review.reports}
-              onAccept={() => acceptReports(review.reviewID)}
-              onDeny={() => denyReports(review.reviewID)}
+              onAccept={() => acceptReports(review.reviewId)}
+              onDeny={() => denyReports(review.reviewId)}
             />
           );
         })}

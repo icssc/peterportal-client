@@ -9,7 +9,7 @@ import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
 import { BagFill, BagPlus } from 'react-bootstrap-icons';
-import { addCourseToBag, removeCourseFromBag } from '../../store/slices/roadmapSlice';
+import { useCoursebag } from '../../hooks/coursebag';
 interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
@@ -17,7 +17,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
-  const coursebag = useAppSelector((state) => state.roadmap.coursebag);
+  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
   const isInBag = coursebag.some((course) => course.id === props.id);
 
   // data to be displayed in pills
@@ -45,12 +45,12 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     if (!props) return;
     if (props.id === undefined) return;
     if (coursebag.some((course) => course.id === props.id)) return;
-    dispatch(addCourseToBag(props));
+    addCourseToBag(props);
   };
 
   const removeFromBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation();
-    dispatch(removeCourseFromBag(props));
+    removeCourseFromBag(props);
   };
 
   return (

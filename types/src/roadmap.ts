@@ -5,22 +5,8 @@ export const quarterName = z.enum(quarters);
 /** @todo duplicate of Quarter from peterportal-api-next-types. probably don't need but also don't know if new api has a types package */
 export type QuarterName = z.infer<typeof quarterName>;
 
-// these aren't used anymore but some old roadmaps still have them, included for valid schema
-/** @todo migrate legacy quarter names to new ones */
-export const legacyQuarterNames = z.enum([
-  'fall',
-  'winter',
-  'spring',
-  'summer I',
-  'summer II',
-  'summer 10 Week',
-  'First Summer',
-  'Second Summer',
-  'Special / 10-Week Summer',
-]);
-
 export const savedPlannerQuarterData = z.object({
-  name: quarterName.or(legacyQuarterNames),
+  name: quarterName,
   courses: z.array(z.string()),
 });
 export type SavedPlannerQuarterData = z.infer<typeof savedPlannerQuarterData>;
@@ -33,6 +19,7 @@ export const savedPlannerYearData = z.object({
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 
 export const savedPlannerData = z.object({
+  id: z.number().optional(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
 });
@@ -41,13 +28,13 @@ export type SavedPlannerData = z.infer<typeof savedPlannerData>;
 // Specify name of transfer course and how many units its worth
 export const transferData = z.object({
   name: z.string(),
-  units: z.number().optional(),
+  units: z.number().nullish(),
 });
 export type TransferData = z.infer<typeof transferData>;
 
 // Bundle planner and transfer data in one object
 export const savedRoadmap = z.object({
-  timestamp: z.number(),
+  timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
   transfers: z.array(transferData),
 });
@@ -56,7 +43,7 @@ export type SavedRoadmap = z.infer<typeof savedRoadmap>;
 // Structure stored in mongo for accounts
 export const mongoRoadmap = z.object({
   roadmap: savedRoadmap,
-  userID: z.string(),
+  userId: z.number(),
   coursebag: z.array(z.string()),
 });
 export type MongoRoadmap = z.infer<typeof mongoRoadmap>;

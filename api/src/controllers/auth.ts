@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
 import { SESSION_LENGTH } from '../config/constants';
-import { User } from '@peterportal/types';
+import { PassportUser } from '@peterportal/types';
+import { db } from '../db';
+import { user } from '../db/schema';
 
 const router = express.Router();
 
@@ -10,11 +12,23 @@ const router = express.Router();
  * @param req Express Request Object
  * @param res Express Response Object
  */
-function successLogin(req: Request, res: Response) {
-  // set the user cookie
-  res.cookie('user', req.user, {
+async function successLogin(req: Request, res: Response) {
+  const {
+    email,
+    name,
+    id: googleId,
+    picture,
+  } = req.user as { email: string; id: string; name: string; picture: string };
+  // upsert user data in db
+  const userData = await db
+    .insert(user)
+    .values({ googleId, name, email, picture })
+    .onConflictDoUpdate({ target: user.googleId, set: { name, email, picture } })
+    .returning();
+  res.cookie('user', true, {
     maxAge: SESSION_LENGTH,
   });
+  req.session.userId = userData[0].id;
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
@@ -43,15 +57,15 @@ router.get('/google/callback', function (req, res) {
   // staging instances
   // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
   if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
-    // req.url doesn't include /api/users part, only /auth/google/callback? and whatever params after that
-    res.redirect(`https://${host}/api/users${req.url}`);
+    // req.url doesn't include /api/users/auth part, only /google/callback? and whatever params after that
+    res.redirect(`https://${host}/api/users/auth${req.url}`);
     return;
   }
   passport.authenticate(
     'google',
     { failureRedirect: '/', session: true },
     // provides user information to determine whether or not to authenticate
-    function (err: Error, user: User | false | null) {
+    function (err: Error, user: PassportUser | false | null) {
       if (err) return console.error(err);
       if (!user) return console.error('Invalid login data');
       // manually login
@@ -60,7 +74,7 @@ router.get('/google/callback', function (req, res) {
         // check if user is an admin
         const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
         if (allowedUsers.includes(user.email)) {
-          req.session.passport!.isAdmin = true;
+          req.session.isAdmin = true;
         }
         req.session.returnTo = returnTo;
         successLogin(req, res);

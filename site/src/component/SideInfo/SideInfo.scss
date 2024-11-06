@@ -1,13 +1,15 @@
+@import '../../globals';
+
 .side-info {
   width: 40vw;
   height: fit-content;
   max-height: 85vh;
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
-  padding: 3rem;
   position: sticky;
   top: 0;
   overflow-y: auto;
+  @include card-padding;
 }
 
 .side-info-data {
