@@ -15,6 +15,7 @@ import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import spawnToast from '../../helpers/toastify';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -68,7 +69,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   const vote = async (newVote: number) => {
     if (!isLoggedIn) {
-      alert('You must be logged in to vote.');
+      spawnToast('You must be logged in to vote.', true);
       return;
     }
     updateScore(newVote);

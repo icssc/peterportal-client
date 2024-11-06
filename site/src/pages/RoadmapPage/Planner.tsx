@@ -20,6 +20,7 @@ import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
+import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
@@ -30,7 +31,6 @@ const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const [showSyncModal, setShowSyncModal] = useState(false);
-
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
@@ -67,13 +67,13 @@ const Planner: FC = () => {
       trpc.roadmaps.save
         .mutate(roadmap)
         .then(() => {
-          alert(`Roadmap saved to your account!`);
+          spawnToast(`Roadmap saved to your account!`);
         })
         .catch(() => {
-          alert('Roadmap saved locally! Login to save it to your account.');
+          spawnToast('Roadmap saved locally! Login to save it to your account.');
         });
     } else {
-      alert('Roadmap saved locally! Login to save it to your account.');
+      spawnToast('Roadmap saved locally! Login to save it to your account.');
     }
   };
 
