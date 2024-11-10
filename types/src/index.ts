@@ -4,6 +4,7 @@ export * from './professor';
 export * from './roadmap';
 export * from './report';
 export * from './review';
+export * from './search';
 export * from './term';
 export * from './user';
 export * from './websoc';
