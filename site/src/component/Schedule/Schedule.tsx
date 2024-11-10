@@ -4,20 +4,24 @@ import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 
-import { WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
+import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
 import { Dropdown } from 'semantic-ui-react';
 
 interface ScheduleProps {
   courseID?: string;
-  professorID?: string;
+  professorIDs?: string[];
   termsOffered?: string[];
 }
 
 interface ScheduleData {
   [key: string]: Section[];
 }
+
+const mergeWebsocAPIResponses = (responses: WebsocAPIResponse[]) => ({
+  schools: responses.flatMap((response) => response.schools),
+});
 
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
@@ -43,8 +47,10 @@ const Schedule: FC<ScheduleProps> = (props) => {
       const number = courseIDSplit[courseIDSplit.length - 1];
 
       apiResponse = await trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number });
-    } else if (props.professorID) {
-      apiResponse = await trpc.schedule.getTermProf.query({ term: selectedQuarter, professor: props.professorID });
+    } else if (props.professorIDs) {
+      apiResponse = await Promise.all(
+        props.professorIDs.map((professor) => trpc.schedule.getTermProf.query({ term: selectedQuarter, professor })),
+      ).then(mergeWebsocAPIResponses);
     }
 
     try {
@@ -63,7 +69,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
         setScheduleData({});
       }
     }
-  }, [props.courseID, props.professorID, selectedQuarter]);
+  }, [props.courseID, props.professorIDs, selectedQuarter]);
 
   useEffect(() => {
     if (selectedQuarter !== '') {
@@ -125,7 +131,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
     //This function returns the data for a dynamic table after accessing the API
     return (
       <tr key={index}>
-        {props.professorID && <td className="data-col">{courseID}</td>}
+        {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
         <td className="data-col">{section.sectionCode}</td>
         <td className="data-col">
           {section.sectionType} {section.sectionNum}
@@ -199,7 +205,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
         <Table responsive borderless className="schedule-table">
           <thead>
             <tr>
-              {props.professorID && <th> Course </th>}
+              {props.professorIDs?.length && <th> Course </th>}
               <th> Code </th>
               <th> Section </th>
               <th> Units </th>

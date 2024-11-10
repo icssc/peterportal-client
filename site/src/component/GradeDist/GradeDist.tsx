@@ -38,25 +38,25 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
 
   const fetchGradeDistData = () => {
-    let request: Promise<GradesRaw>;
+    let requests: Promise<GradesRaw>[];
     // course context
     if (props.course) {
       const params = {
         department: props.course.department,
         number: props.course.courseNumber,
       };
-      request = trpc.courses.grades.query(params);
+      requests = [trpc.courses.grades.query(params)];
     } else if (props.professor) {
-      const params = {
-        name: props.professor.shortenedNames[0],
-      };
-      request = trpc.professors.grades.query(params);
+      requests = props.professor.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
     }
 
-    request!.then(setGradeDistData).catch((error) => {
-      setGradeDistData([]);
-      console.error(error.response);
-    });
+    Promise.all(requests!)
+      .then((res) => res.flat())
+      .then(setGradeDistData)
+      .catch((error) => {
+        setGradeDistData([]);
+        console.error(error.response);
+      });
   };
 
   // reset any data from a previous course or professor, get new data for course or professor

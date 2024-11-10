@@ -30,7 +30,7 @@ const professorsRouter = router({
       return {};
     } else {
       const r = fetch(
-        `${process.env.PUBLIC_API_URL}instructors/batch?ids=${input.professors.map(encodeURIComponent).join(',')}`,
+        `${process.env.PUBLIC_API_URL}instructors/batch?ucinetids=${input.professors.map(encodeURIComponent).join(',')}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -174,7 +174,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             {sortedReviews.map((key, index) => (
               <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
                 {props.searchType == 'course' &&
-                  (props.course?.instructors[key] ? props.course?.instructors[key].shortenedNames[0] : key)}
+                  (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                 {props.searchType == 'professor' &&
                   (props.professor?.courses[key]
                     ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
@@ -242,7 +242,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             displayName={
               props.searchType == 'course'
                 ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)
-                    ?.shortenedNames[0] ?? ''
+                    ?.name ?? ''
                 : props.professor?.courses[highestReview]
                   ? props.professor?.courses[highestReview].department +
                     ' ' +
@@ -260,7 +260,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             displayName={
               props.searchType == 'course'
                 ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
-                    ?.shortenedNames[0] ?? ''
+                    ?.name ?? ''
                 : props.professor?.courses[lowestReview]
                   ? props.professor?.courses[lowestReview].department +
                     ' ' +

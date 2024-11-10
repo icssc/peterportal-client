@@ -175,7 +175,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           Instructor
         </option>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
-          const name = courseProp?.instructors[ucinetid].shortenedNames[0];
+          const name = courseProp?.instructors[ucinetid].name;
           return (
             <option key={ucinetid} value={ucinetid}>
               {name}

@@ -63,7 +63,7 @@ const ProfessorPage: FC = () => {
               </div>
               <Divider />
               <Schedule
-                professorID={professorGQLData.shortenedNames[0]}
+                professorIDs={professorGQLData.shortenedNames}
                 termsOffered={unionTerms(professorGQLData.courses)}
               />
             </div>
