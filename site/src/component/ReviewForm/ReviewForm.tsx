@@ -13,7 +13,7 @@ import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
-import { quarterNames } from '@peterportal/types';
+import { quarters } from '@peterportal/types';
 import trpc from '../../trpc';
 import {
   anonymousName,
@@ -175,7 +175,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           Instructor
         </option>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
-          const name = courseProp?.instructors[ucinetid].shortenedName;
+          const name = courseProp?.instructors[ucinetid].shortenedNames[0];
           return (
             <option key={ucinetid} value={ucinetid}>
               {name}
@@ -291,7 +291,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                       <option disabled={true} value="">
                         Quarter
                       </option>
-                      {quarterNames.map((quarter) => (
+                      {quarters.map((quarter) => (
                         <option key={quarter}>{quarter}</option>
                       ))}
                     </Form.Control>

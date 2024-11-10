@@ -12,7 +12,7 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { ProfessorGQLData } from '../../types/types';
+import { CourseWithTermsLookup, ProfessorGQLData } from '../../types/types';
 import { searchAPIResult } from '../../helpers/util';
 
 const ProfessorPage: FC = () => {
@@ -35,7 +35,7 @@ const ProfessorPage: FC = () => {
     }
   }, [dispatch, id]);
 
-  const unionTerms = (courseHistory: Record<string, string[]>) => {
+  const unionTerms = (courseHistory: CourseWithTermsLookup) => {
     // quarters mapped to the order of when they occur in the calendar year
     const quartersOrdered: Record<string, string> = {
       Winter: 'a',
@@ -50,7 +50,7 @@ const ProfessorPage: FC = () => {
     const allTerms = Object.values(courseHistory);
 
     // flatten and take union of array
-    const union = [...new Set(allTerms.flat())];
+    const union = [...new Set(allTerms.flatMap((term) => term.terms))];
 
     // sort so that the most recent term appears first in the dropdown
     union.sort((a, b) => {
@@ -80,9 +80,8 @@ const ProfessorPage: FC = () => {
               searchType="professor"
               name={professorGQLData.name}
               title={professorGQLData.title}
-              school={professorGQLData.schools[0]}
               description={professorGQLData.department}
-              tags={[professorGQLData.ucinetid, professorGQLData.shortenedName]}
+              tags={[professorGQLData.ucinetid, ...professorGQLData.shortenedNames]}
               professor={professorGQLData}
             />
           </div>
@@ -93,8 +92,8 @@ const ProfessorPage: FC = () => {
               </div>
               <Divider />
               <Schedule
-                professorID={professorGQLData.shortenedName}
-                termsOffered={unionTerms(professorGQLData.courseHistory)}
+                professorID={professorGQLData.shortenedNames[0]}
+                termsOffered={unionTerms(professorGQLData.courses)}
               />
             </div>
 

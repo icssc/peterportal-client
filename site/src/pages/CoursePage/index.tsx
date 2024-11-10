@@ -52,7 +52,6 @@ const CoursePage: FC = () => {
             searchType="course"
             name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
             title={courseGQLData.title}
-            school={courseGQLData.school}
             description={courseGQLData.description}
             tags={getCourseTags(courseGQLData)}
             course={courseGQLData}

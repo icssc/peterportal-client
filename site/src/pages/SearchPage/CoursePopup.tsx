@@ -19,13 +19,17 @@ const CoursePopup: FC = () => {
         // add known scores
         res.forEach((entry) => {
           if (course.instructors[entry.name]) {
-            scores.push({ name: course.instructors[entry.name].shortenedName, score: entry.score, key: entry.name });
+            scores.push({
+              name: course.instructors[entry.name].shortenedNames[0],
+              score: entry.score,
+              key: entry.name,
+            });
           }
         });
         // add unknown score
         Object.keys(course.instructors).forEach((ucinetid) => {
           if (!scoredProfessors.has(ucinetid)) {
-            scores.push({ name: course.instructors[ucinetid].shortenedName, score: -1, key: ucinetid });
+            scores.push({ name: course.instructors[ucinetid].shortenedNames[0], score: -1, key: ucinetid });
           }
         });
         // sort by highest score

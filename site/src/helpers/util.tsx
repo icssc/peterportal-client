@@ -7,6 +7,7 @@ import {
   BatchCourseData,
   BatchProfessorData,
   SearchType,
+  CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
@@ -126,17 +127,12 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
 }
 
 function transformProfessorGQL(data: ProfessorAAPIResponse) {
-  const courseHistoryLookup: CourseLookup = {};
-  // maps course's id to course basic details
-  data.courses.forEach((course) => {
-    if (course) {
-      courseHistoryLookup[course.id] = course;
-    }
-  });
+  const courseHistoryLookup: CourseWithTermsLookup = Object.fromEntries(
+    data.courses.map((course) => [course.id, course]),
+  );
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
   professor.courses = courseHistoryLookup;
-
   return professor;
 }
 

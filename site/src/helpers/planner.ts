@@ -185,7 +185,7 @@ export const validateCourse = (
 ): Set<string> => {
   // base case just a course
   if ('prereqType' in prerequisite) {
-    const id = prerequisite?.courseId ?? prerequisite?.examName ?? '';
+    const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
     // already taken prerequisite or is currently taking the corequisite
     if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
       return new Set();

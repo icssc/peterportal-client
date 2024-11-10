@@ -48,7 +48,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       request = trpc.courses.grades.query(params);
     } else if (props.professor) {
       const params = {
-        name: props.professor.shortenedName,
+        name: props.professor.shortenedNames[0],
       };
       request = trpc.professors.grades.query(params);
     }

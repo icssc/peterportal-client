@@ -1,6 +1,7 @@
 import {
   CourseAAPIResponse,
   CoursePreview,
+  CoursePreviewWithTerms,
   ProfessorAAPIResponse,
   ProfessorPreview,
   QuarterName,
@@ -62,6 +63,8 @@ export interface CourseLookup {
   [courseid: string]: CoursePreview;
 }
 
+export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
+
 export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
@@ -73,7 +76,7 @@ export interface BatchCourseData {
 }
 
 export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
-  courses: CourseLookup;
+  courses: CourseWithTermsLookup;
 };
 
 export interface BatchProfessorData {

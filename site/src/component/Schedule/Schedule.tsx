@@ -143,7 +143,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
             )
             .join('\n')}
         </td>
-        <td className="data-col">{section.meetings.map((meeting) => meeting.bldg).join('\n')}</td>
+        <td className="data-col">
+          {section.meetings.map((meeting) => (meeting.timeIsTBA ? ['TBA'] : meeting.bldg)).join('\n')}
+        </td>
 
         <td className="enrollment-col">
           <span className="enrollment-info-text">

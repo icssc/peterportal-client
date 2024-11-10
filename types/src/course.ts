@@ -1,4 +1,5 @@
 import { paths } from './generated/anteater-api-types';
+import { ProfessorAAPIResponse } from './professor';
 
 type _CourseAAPIResponse =
   paths['/v2/rest/courses/{id}']['get']['responses'][200]['content']['application/json']['data'];
@@ -35,5 +36,7 @@ export interface CourseAAPIResponse extends _CourseAAPIResponse {
 }
 
 export type CoursePreview = CourseAAPIResponse['prerequisites'][number];
+
+export type CoursePreviewWithTerms = ProfessorAAPIResponse['courses'][number];
 
 export type CourseBatchAAPIResponse = Record<string, CourseAAPIResponse>;
