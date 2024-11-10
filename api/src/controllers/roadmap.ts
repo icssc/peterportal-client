@@ -70,9 +70,11 @@ const roadmapsRouter = router({
       .delete(transferredCourse)
       .where(eq(transferredCourse.userId, userId))
       .then(() => {
-        return db
-          .insert(transferredCourse)
-          .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
+        if (transferredCourse) {
+          return db
+            .insert(transferredCourse)
+            .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
+        }
       });
 
     const updateLastEditTimestamp = db
