@@ -61,7 +61,6 @@ jobs:
         env:
           CI: false
           PUBLIC_API_URL: ${{secrets.PUBLIC_API_URL}}
-          PUBLIC_API_GRAPHQL_URL: ${{secrets.PUBLIC_API_GRAPHQL_URL}}
           DATABASE_URL: ${{ github.event_name == 'pull_request' && secrets.DEV_DATABASE_URL || secrets.PROD_DATABASE_URL }}
           SESSION_SECRET: ${{secrets.SESSION_SECRET}}
           GOOGLE_CLIENT: ${{secrets.GOOGLE_CLIENT}}

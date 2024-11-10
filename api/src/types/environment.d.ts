@@ -7,7 +7,6 @@ declare global {
       NODE_ENV?: 'development' | 'production' | 'staging';
       PORT?: string;
       PUBLIC_API_URL: string;
-      PUBLIC_API_GRAPHQL_URL: string;
       MONGO_URL: string;
       SESSION_SECRET: string;
       GOOGLE_CLIENT: string;
