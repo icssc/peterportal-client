@@ -5,10 +5,12 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { Bag, Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { SearchIndex } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowCourseBag } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
+import { setQuery, setResults } from '../../store/slices/searchSlice';
+import { transformGQLData } from '../../helpers/util';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -24,15 +26,19 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   const fuzzySearch = useCallback(
     async (query: string) => {
-      const res = await trpc.search.get.query({
-        input: {
-          query,
-          limit: `${NUM_RESULTS_PER_PAGE}`,
-          offset: `${NUM_RESULTS_PER_PAGE * search.pageNumber}`,
-          resultType: index === 'courses' ? 'course' : 'instructor',
-        },
+      const { count, results } = await trpc.search.get.query({
+        query,
+        take: NUM_RESULTS_PER_PAGE,
+        skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
+        resultType: index === 'courses' ? 'course' : 'instructor',
       });
-      dispatch(setResults({ results: res.map((x) => transformGQLData(index, x)) }));
+      dispatch(
+        setResults({
+          index,
+          results: results.map((x) => transformGQLData(index, x.result)) as CourseGQLData[] | ProfessorGQLData[],
+          count,
+        }),
+      );
     },
     [dispatch, index, search.pageNumber],
   );
