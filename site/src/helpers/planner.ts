@@ -135,7 +135,7 @@ export const loadRoadmap = async (
   let isLocalNewer = false;
 
   if (!roadmap && localRoadmap) {
-    roadmap = localRoadmap;
+    roadmap = convertLegacyLocalRoadmap(localRoadmap);
   } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
     isLocalNewer = true;
   } else if (!roadmap && !localRoadmap) {
@@ -143,15 +143,42 @@ export const loadRoadmap = async (
     return;
   }
 
-  // Support conversions from the old format
-  const loadedData =
-    'planners' in roadmap
-      ? roadmap.planners
-      : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
   // expand planner and set the state
-  const planners = await expandAllPlanners(loadedData);
+  const planners = await expandAllPlanners(roadmap.planners);
   loadHandler(planners, roadmap, isLocalNewer);
 };
+
+interface LegacyRoadmap {
+  planner: SavedPlannerYearData[];
+  transfers: TransferData[];
+  timestamp?: string;
+}
+
+export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+  if ('planners' in roadmap) {
+    // if already in multiplanner format, everything is good
+    return roadmap;
+  } else {
+    // if not, convert to multiplanner format, also normalize quarter names
+    return {
+      planners: [
+        {
+          name: defaultPlan.name,
+          content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
+        },
+      ],
+      transfers: roadmap.transfers,
+      timestamp: roadmap.timestamp,
+    };
+  }
+}
+
+function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
+  return yearPlans.map((year) => ({
+    ...year,
+    quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
+  }));
+}
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 

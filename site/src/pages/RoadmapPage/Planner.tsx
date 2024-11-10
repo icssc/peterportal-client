@@ -15,7 +15,7 @@ import {
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
-import { defaultYear, expandAllPlanners } from '../../helpers/planner';
+import { convertLegacyLocalRoadmap, defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
@@ -41,7 +41,7 @@ const Planner: FC = () => {
     let roadmap: SavedRoadmap = null!;
     const roadmapItem = localStorage.getItem('roadmap');
     if (roadmapItem) {
-      roadmap = JSON.parse(roadmapItem);
+      roadmap = convertLegacyLocalRoadmap(JSON.parse(roadmapItem));
     }
 
     const planner = await expandAllPlanners(roadmap.planners);
