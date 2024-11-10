@@ -1,11 +1,10 @@
-import { quarters } from 'peterportal-api-next-types';
-
 export * from './course';
+export * from './grades';
 export * from './professor';
 export * from './roadmap';
 export * from './report';
 export * from './review';
+export * from './term';
 export * from './user';
-
-export * from 'peterportal-api-next-types';
-export const quarterNames = quarters;
+export * from './websoc';
+export * from './week';
