@@ -25,7 +25,7 @@ Features include:
 
 ## 🔨 Built with
 
-- [PeterPortal API](https://github.com/icssc/peterportal-api-next)
+- [Anteater API](https://github.com/icssc/anteater-api)
 - Express
 - React
 - tRPC
@@ -109,7 +109,7 @@ Optionally, you can run the site/api separately by changing into their respectiv
 
 ## Where does the data come from?
 
-We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [PeterPortal API](https://github.com/icssc/peterportal-api-next)).
+We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [Anteater API](https://github.com/icssc/anteater-api)).
 
 ## Bug Report
 
