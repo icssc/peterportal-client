@@ -7,6 +7,7 @@ interface SearchData {
   pageNumber: number;
   results: CourseGQLData[] | ProfessorGQLData[];
   count: number;
+  searchInProgress: boolean;
 }
 
 // Define a type for the slice state
@@ -23,6 +24,7 @@ const initialState: SearchState = {
     pageNumber: 0,
     results: [],
     count: 0,
+    searchInProgress: false,
   },
   professors: {
     query: '',
@@ -30,6 +32,7 @@ const initialState: SearchState = {
     pageNumber: 0,
     results: [],
     count: 0,
+    searchInProgress: false,
   },
 };
 
@@ -41,6 +44,7 @@ export const searchSlice = createSlice({
     // Use the PayloadAction type to declare the contents of `action.payload`
     setQuery: (state, action: PayloadAction<{ index: SearchIndex; query: SearchData['query'] }>) => {
       state[action.payload.index].query = action.payload.query;
+      state[action.payload.index].searchInProgress = true;
     },
     setPageNumber: (state, action: PayloadAction<{ index: SearchIndex; pageNumber: SearchData['pageNumber'] }>) => {
       state[action.payload.index].pageNumber = action.payload.pageNumber;
@@ -49,6 +53,7 @@ export const searchSlice = createSlice({
       state,
       action: PayloadAction<{ index: SearchIndex; results: SearchData['results']; count: SearchData['count'] }>,
     ) => {
+      state[action.payload.index].searchInProgress = false;
       state[action.payload.index].results = action.payload.results;
       state[action.payload.index].count = action.payload.count;
       if (state[action.payload.index].lastQuery !== state[action.payload.index].query) {
