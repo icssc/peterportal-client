@@ -2,6 +2,7 @@ import {
   Prerequisite,
   PrerequisiteTree,
   QuarterName,
+  quarters,
   SavedPlannerData,
   SavedPlannerQuarterData,
   SavedPlannerYearData,
@@ -32,6 +33,25 @@ export const quarterDisplayNames: Record<QuarterName, string> = {
   Summer2: 'Summer II',
   Summer10wk: 'Summer 10 Week',
 };
+
+export function normalizeQuarterName(name: string): QuarterName {
+  if (quarters.includes(name as QuarterName)) return name as QuarterName;
+  const lookup: { [k: string]: QuarterName } = {
+    fall: 'Fall',
+    winter: 'Winter',
+    spring: 'Spring',
+    // Old Lowercase Display Names
+    'summer I': 'Summer1',
+    'summer II': 'Summer2',
+    'summer 10 Week': 'Summer10wk',
+    // Transcript Names
+    'First Summer': 'Summer1',
+    'Second Summer': 'Summer2',
+    'Special / 10-Week Summer': 'Summer10wk',
+  };
+  if (!lookup[name]) throw TypeError('Invalid Quarter Name: ' + name);
+  return lookup[name];
+}
 
 // remove all unecessary data to store into the database
 export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
