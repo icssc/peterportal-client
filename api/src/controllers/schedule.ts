@@ -7,10 +7,9 @@ import { publicProcedure, router } from '../helpers/trpc';
 import { TermResponse, WebsocAPIResponse, WeekData } from '@peterportal/types';
 
 const callPPAPIWebSoc = async (params: Record<string, string>) => {
-  const url: URL = new URL(process.env.PUBLIC_API_URL + 'websoc?' + new URLSearchParams(params));
-  return await fetch(url)
+  return await fetch(`${process.env.PUBLIC_API_URL}websoc?${new URLSearchParams(params)}`)
     .then((response) => response.json())
-    .then((json) => json.payload as WebsocAPIResponse);
+    .then((json) => json.data as WebsocAPIResponse);
 };
 
 const scheduleRouter = router({
@@ -20,7 +19,7 @@ const scheduleRouter = router({
   currentWeek: publicProcedure.query(async () => {
     const apiResp = await fetch(`${process.env.PUBLIC_API_URL}week`);
     const json = await apiResp.json();
-    return json.payload as WeekData;
+    return json.data as WeekData;
   }),
 
   /**
@@ -29,7 +28,7 @@ const scheduleRouter = router({
   currentQuarter: publicProcedure.query(async () => {
     const apiResp = await fetch(`${process.env.PUBLIC_API_URL}websoc/terms`);
     const json = await apiResp.json();
-    return (json.payload as TermResponse)[0].shortName;
+    return (json.data as TermResponse)[0].shortName;
   }),
 
   /**

@@ -14,7 +14,7 @@ import Error from '../../component/Error/Error';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags, searchAPIResult } from '../../helpers/util';
+import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
 import './CoursePage.scss';
 
 const CoursePage: FC = () => {
@@ -76,7 +76,7 @@ const CoursePage: FC = () => {
               <Schedule
                 key={courseGQLData.id}
                 courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-                termsOffered={courseGQLData.terms}
+                termsOffered={sortTerms(courseGQLData.terms)}
               />
             </div>
 

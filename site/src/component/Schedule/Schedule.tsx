@@ -182,18 +182,14 @@ const Schedule: FC<ScheduleProps> = (props) => {
             placeholder={currentQuarter}
             scrolling
             selection
-            options={
-              // in dropdown options, prepend current quarter to the list of past terms
-              [
-                { text: currentQuarter, value: currentQuarter },
-                ...props.termsOffered.map((term) => {
-                  return {
-                    text: term,
-                    value: term,
-                  };
-                }),
-              ]
-            }
+            options={[
+              ...props.termsOffered.map((term) => {
+                return {
+                  text: term,
+                  value: term,
+                };
+              }),
+            ]}
             value={selectedQuarter}
             onChange={(_, s) => setSelectedQuarter(s.value as string)}
           />

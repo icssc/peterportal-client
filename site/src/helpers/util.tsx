@@ -5,6 +5,7 @@ import {
   BatchCourseData,
   BatchProfessorData,
   SearchType,
+  CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
@@ -117,3 +118,31 @@ export function useIsMobile() {
   const isMobile = useMediaQuery({ maxWidth: 799.9 });
   return isMobile;
 }
+
+const quartersOrdered: Record<string, string> = {
+  Winter: 'a',
+  Spring: 'b',
+  Summer1: 'c',
+  Summer2: 'd',
+  Summer10wk: 'e',
+  Fall: 'f',
+};
+
+export const sortTerms = (terms: string[]) =>
+  [...new Set(terms)].sort((a, b) => {
+    const [yearA, qtrA]: string[] = a.split(' ');
+    const [yearB, qtrB]: string[] = b.split(' ');
+    // first compare years (descending)
+    // if years are equal, compare terms (most recent first)
+    return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
+  });
+
+export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
+  // get array of arrays of term names
+  const allTerms = Object.values(courseHistory);
+
+  // flatten and take union of array
+  const union = allTerms.flatMap((term) => term.terms);
+
+  return sortTerms(union);
+};

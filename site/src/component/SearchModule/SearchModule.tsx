@@ -45,7 +45,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   // Refresh search results when names and page number changes (controlled by searchResults dependency array)
   useEffect(() => {
-    fuzzySearch(search.query);
+    fuzzySearch(search.query).then();
   }, [search.query, fuzzySearch]);
 
   const searchAfterTimeout = (query: string) => {
