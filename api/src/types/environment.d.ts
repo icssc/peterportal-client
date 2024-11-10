@@ -14,6 +14,7 @@ declare global {
       GRECAPTCHA_SECRET: string;
       PRODUCTION_DOMAIN: string;
       ADMIN_EMAILS: string;
+      ANTEATER_API_KEY?: string;
     }
   }
 }

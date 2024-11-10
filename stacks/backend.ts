@@ -10,7 +10,8 @@ export function BackendStack({ stack }: StackContext) {
     environment: {
       DATABASE_URL: process.env.DATABASE_URL!,
       SESSION_SECRET: process.env.SESSION_SECRET!,
-      PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
+      // PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
+      PUBLIC_API_URL: 'https://anteaterapi.com/v2/rest/',
       GOOGLE_CLIENT: process.env.GOOGLE_CLIENT!,
       GOOGLE_SECRET: process.env.GOOGLE_SECRET!,
       GRECAPTCHA_SECRET: process.env.GRECAPTCHA_SECRET!,

@@ -1,5 +1,5 @@
 /**
- @module CoursesRoute
+ @module SearchRoute
 */
 
 import { z } from 'zod';
