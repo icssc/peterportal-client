@@ -17,6 +17,7 @@ export function BackendStack({ stack }: StackContext) {
       PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN!,
       ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
       NODE_ENV: process.env.NODE_ENV ?? 'staging',
+      ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
     },
   });
 
