@@ -208,17 +208,15 @@ const reviewsRouter = router({
     const featuredReviewCriteria = [desc(review.content), desc(voteSubQuery.score), desc(review.verified)];
 
     const field = input.type === 'course' ? review.courseId : review?.professorId;
-    const featuredReview = (
-      await db
-        .select()
-        .from(review)
-        .where(eq(field, input.id))
-        .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
-        .orderBy(...featuredReviewCriteria)
-        .limit(1)
-    )[0];
+    const featuredReview = await db
+      .select()
+      .from(review)
+      .where(eq(field, input.id))
+      .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
+      .orderBy(...featuredReviewCriteria)
+      .limit(1);
 
-    return datesToStrings(featuredReview.review) as FeaturedReviewData;
+    return featuredReview.length > 0 ? (datesToStrings(featuredReview[0].review) as FeaturedReviewData) : undefined;
   }),
 
   /**
