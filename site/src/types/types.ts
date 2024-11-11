@@ -8,8 +8,9 @@ import {
 
 export interface ScoreData {
   name: string;
-  score: number;
-  key?: string;
+  avgRating: number;
+  /** course id or ucinetid */
+  id: string;
 }
 
 export type SearchIndex = 'courses' | 'professors';

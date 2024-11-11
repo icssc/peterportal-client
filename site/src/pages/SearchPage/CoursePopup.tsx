@@ -12,24 +12,28 @@ const CoursePopup: FC = () => {
 
   useEffect(() => {
     if (course) {
-      trpc.reviews.scores.query({ type: 'course', id: course.id }).then((res) => {
+      trpc.reviews.avgRating.query({ type: 'course', id: course.id }).then((res) => {
         const scores: ScoreData[] = [];
         // set of ucinetid professors with scores
         const scoredProfessors = new Set(res.map((v) => v.name));
         // add known scores
         res.forEach((entry) => {
           if (course.instructors[entry.name]) {
-            scores.push({ name: course.instructors[entry.name].shortenedName, score: entry.score, key: entry.name });
+            scores.push({
+              name: course.instructors[entry.name].shortenedName,
+              avgRating: entry.avgRating,
+              id: entry.name,
+            });
           }
         });
         // add unknown score
         Object.keys(course.instructors).forEach((ucinetid) => {
           if (!scoredProfessors.has(ucinetid)) {
-            scores.push({ name: course.instructors[ucinetid].shortenedName, score: -1, key: ucinetid });
+            scores.push({ name: course.instructors[ucinetid].shortenedName, avgRating: -1, id: ucinetid });
           }
         });
         // sort by highest score
-        scores.sort((a, b) => b.score - a.score);
+        scores.sort((a, b) => b.avgRating - a.avgRating);
         setScores(scores);
       });
     }

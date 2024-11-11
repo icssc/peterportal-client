@@ -16,7 +16,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { db } from '../db';
 import { review, user, vote } from '../db/schema';
-import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { and, avg, count, desc, eq, sql } from 'drizzle-orm';
 import { datesToStrings } from '../helpers/date';
 
 async function userWroteReview(userId: number | undefined, reviewId: number) {
@@ -224,17 +224,16 @@ const reviewsRouter = router({
   /**
    * Get avg ratings for a course's professors or a professor's courses
    */
-  scores: publicProcedure
+  avgRating: publicProcedure
     .input(z.object({ type: z.enum(['course', 'professor']), id: z.string() }))
     .query(async ({ input }) => {
       const field = input.type === 'course' ? review.courseId : review.professorId;
       const otherField = input.type === 'course' ? review.professorId : review.courseId;
 
       const results = await db
-        .select({ name: otherField, score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number) })
+        .select({ name: otherField, avgRating: avg(review.rating).mapWith(Number) })
         .from(review)
         .where(eq(field, input.id))
-        .leftJoin(vote, eq(vote.reviewId, review.id))
         .groupBy(otherField);
 
       return results;
