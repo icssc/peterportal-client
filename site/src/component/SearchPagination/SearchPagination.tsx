@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { Pagination } from 'react-bootstrap';
-import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setPageNumber } from '../../store/slices/searchSlice';
 import { SearchIndex } from '../../types/types';
+import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
 interface SearchPaginationProps {
   index: SearchIndex;
@@ -18,7 +18,7 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     dispatch(setPageNumber({ index, pageNumber }));
   };
 
-  const numPages = Math.ceil(searchData.names.length / NUM_RESULTS_PER_PAGE);
+  const numPages = Math.ceil(searchData.count / NUM_RESULTS_PER_PAGE);
   const activePage = searchData.pageNumber;
 
   // only show 5 page numbers at a time

@@ -1,6 +1,7 @@
 import {
   CourseAAPIResponse,
   CoursePreview,
+  CoursePreviewWithTerms,
   ProfessorAAPIResponse,
   ProfessorPreview,
   QuarterName,
@@ -8,8 +9,9 @@ import {
 
 export interface ScoreData {
   name: string;
-  score: number;
-  key?: string;
+  avgRating: number;
+  /** course id or ucinetid */
+  id: string;
 }
 
 export type SearchIndex = 'courses' | 'professors';
@@ -62,6 +64,8 @@ export interface CourseLookup {
   [courseid: string]: CoursePreview;
 }
 
+export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
+
 export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
@@ -73,7 +77,7 @@ export interface BatchCourseData {
 }
 
 export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
-  courses: CourseLookup;
+  courses: CourseWithTermsLookup;
 };
 
 export interface BatchProfessorData {

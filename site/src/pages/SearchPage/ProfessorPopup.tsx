@@ -9,7 +9,7 @@ import { FeaturedReviewData } from '@peterportal/types';
 
 const ProfessorPopup: FC = () => {
   const professor = useAppSelector(selectProfessor);
-  const [featured, setFeatured] = useState<FeaturedReviewData>(null!);
+  const [featured, setFeatured] = useState<FeaturedReviewData | undefined>();
   const [scores, setScores] = useState<ScoreData[]>([]);
 
   useEffect(() => {
@@ -18,31 +18,22 @@ const ProfessorPopup: FC = () => {
         type: 'professor',
         id: professor.ucinetid,
       } as const;
-      trpc.reviews.scores.query(reviewParams).then((res: ScoreData[]) => {
+      trpc.reviews.avgRating.query(reviewParams).then((res) => {
+        const scores = res.map((course) => ({ name: course.name, avgRating: course.avgRating, id: course.name }));
         const scoredCourses = new Set(res.map((v) => v.name));
-        res.forEach((v) => (v.key = v.name));
         Object.keys(professor.courses).forEach((course) => {
           // remove spaces
           course = course.replace(/\s+/g, '');
           // add unknown score
           if (!scoredCourses.has(course)) {
-            res.push({ name: course, score: -1, key: course });
+            scores.push({ name: course, avgRating: -1, id: course });
           }
         });
         // sort by highest score
-        res.sort((a, b) => b.score - a.score);
-        setScores(res);
+        res.sort((a, b) => b.avgRating - a.avgRating);
+        setScores(scores);
       });
-      trpc.reviews.featured.query(reviewParams).then((res) => {
-        // if has a featured review
-        if (res) {
-          setFeatured(res);
-        }
-        // no reviews for this professor
-        else {
-          setFeatured(null!);
-        }
-      });
+      trpc.reviews.featured.query(reviewParams).then(setFeatured);
     }
   }, [professor]);
 
