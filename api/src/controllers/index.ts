@@ -7,6 +7,7 @@ import roadmapsRouter from './roadmap';
 import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
 import usersRouter from './users';
+import searchRouter from './search';
 
 export const appRouter = router({
   courses: coursesRouter,
@@ -15,6 +16,7 @@ export const appRouter = router({
   reports: reportsRouter,
   reviews: reviewsRouter,
   savedCourses: savedCoursesRouter,
+  search: searchRouter,
   schedule: scheduleRouter,
   users: usersRouter,
 });

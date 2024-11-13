@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarterNames } from '@peterportal/types';
+import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 
@@ -95,8 +95,8 @@ function toPlannerQuarter(
   };
 }
 
-function groupIntoYears(quarters: { startYear: number; quarterData: PlannerQuarterData }[]) {
-  const years = quarters.reduce(
+function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterData }[]) {
+  const years = qtrs.reduce(
     (years, q) => {
       const yearIdx = Object.keys(years).length + 1;
 
@@ -112,7 +112,7 @@ function groupIntoYears(quarters: { startYear: number; quarterData: PlannerQuart
     baseQtrs.forEach(
       (name) => !year.quarters.find((q) => q.name === name) && year.quarters.push({ name, courses: [] }),
     );
-    year.quarters.sort((a, b) => quarterNames.indexOf(a.name) - quarterNames.indexOf(b.name));
+    year.quarters.sort((a, b) => quarters.indexOf(a.name) - quarters.indexOf(b.name));
   });
   return years;
 }

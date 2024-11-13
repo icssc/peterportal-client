@@ -2,11 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
 
 interface SearchData {
-  names: string[];
+  query: string;
+  lastQuery: string;
   pageNumber: number;
   results: CourseGQLData[] | ProfessorGQLData[];
-  hasFullResults: boolean;
-  lastQuery: string;
+  count: number;
+  searchInProgress: boolean;
 }
 
 // Define a type for the slice state
@@ -18,18 +19,20 @@ interface SearchState {
 // Define the initial state using that type
 const initialState: SearchState = {
   courses: {
-    names: [],
+    query: '',
+    lastQuery: '',
     pageNumber: 0,
     results: [],
-    hasFullResults: false,
-    lastQuery: '',
+    count: 0,
+    searchInProgress: false,
   },
   professors: {
-    names: [],
+    query: '',
+    lastQuery: '',
     pageNumber: 0,
     results: [],
-    hasFullResults: false,
-    lastQuery: '',
+    count: 0,
+    searchInProgress: false,
   },
 };
 
@@ -39,27 +42,28 @@ export const searchSlice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    setNames: (state, action: PayloadAction<{ index: SearchIndex; names: SearchData['names'] }>) => {
-      state[action.payload.index].names = action.payload.names;
+    setQuery: (state, action: PayloadAction<{ index: SearchIndex; query: SearchData['query'] }>) => {
+      state[action.payload.index].query = action.payload.query;
+      state[action.payload.index].searchInProgress = true;
     },
     setPageNumber: (state, action: PayloadAction<{ index: SearchIndex; pageNumber: SearchData['pageNumber'] }>) => {
       state[action.payload.index].pageNumber = action.payload.pageNumber;
     },
-    setResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchData['results'] }>) => {
-      state[action.payload.index].results = action.payload.results;
-    },
-    setHasFullResults: (
+    setResults: (
       state,
-      action: PayloadAction<{ index: SearchIndex; hasFullResults: SearchData['hasFullResults'] }>,
+      action: PayloadAction<{ index: SearchIndex; results: SearchData['results']; count: SearchData['count'] }>,
     ) => {
-      state[action.payload.index].hasFullResults = action.payload.hasFullResults;
-    },
-    setLastQuery: (state, action: PayloadAction<{ index: SearchIndex; lastQuery: string }>) => {
-      state[action.payload.index].lastQuery = action.payload.lastQuery;
+      state[action.payload.index].searchInProgress = false;
+      state[action.payload.index].results = action.payload.results;
+      state[action.payload.index].count = action.payload.count;
+      if (state[action.payload.index].lastQuery !== state[action.payload.index].query) {
+        state[action.payload.index].pageNumber = 0;
+        state[action.payload.index].lastQuery = state[action.payload.index].query;
+      }
     },
   },
 });
 
-export const { setNames, setPageNumber, setResults, setHasFullResults, setLastQuery } = searchSlice.actions;
+export const { setQuery, setPageNumber, setResults } = searchSlice.actions;
 
 export default searchSlice.reducer;
