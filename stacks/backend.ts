@@ -11,13 +11,13 @@ export function BackendStack({ stack }: StackContext) {
       DATABASE_URL: process.env.DATABASE_URL!,
       SESSION_SECRET: process.env.SESSION_SECRET!,
       PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
-      PUBLIC_API_GRAPHQL_URL: process.env.PUBLIC_API_GRAPHQL_URL!,
       GOOGLE_CLIENT: process.env.GOOGLE_CLIENT!,
       GOOGLE_SECRET: process.env.GOOGLE_SECRET!,
       GRECAPTCHA_SECRET: process.env.GRECAPTCHA_SECRET!,
       PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN!,
       ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
       NODE_ENV: process.env.NODE_ENV ?? 'staging',
+      ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
     },
   });
 

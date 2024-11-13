@@ -21,6 +21,9 @@ const roadmapsRouter = router({
         .where(eq(transferredCourse.userId, ctx.session.userId!)),
       db.select({ timestamp: user.lastRoadmapEditAt }).from(user).where(eq(user.id, ctx.session.userId!)),
     ]);
+    if (planners.length === 0) {
+      return undefined;
+    }
     const roadmap: SavedRoadmap = {
       planners: planners as SavedPlannerData[],
       transfers: transfers as TransferData[],
@@ -67,9 +70,11 @@ const roadmapsRouter = router({
       .delete(transferredCourse)
       .where(eq(transferredCourse.userId, userId))
       .then(() => {
-        return db
-          .insert(transferredCourse)
-          .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
+        if (transfers.length > 0) {
+          return db
+            .insert(transferredCourse)
+            .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
+        }
       });
 
     const updateLastEditTimestamp = db
