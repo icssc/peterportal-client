@@ -13,11 +13,7 @@ const professorsRouter = router({
    */
   get: publicProcedure.input(z.object({ ucinetid: z.string() })).query(async ({ input }) => {
     const r = fetch(`${process.env.PUBLIC_API_URL}instructors/${input.ucinetid}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        ...(process.env.ANTEATER_API_KEY && { Authorization: `Bearer ${process.env.ANTEATER_API_KEY}` }),
-      },
+      headers: ANTEATER_API_REQUEST_HEADERS,
     });
 
     return r.then((response) => response.json()).then((data) => data.data as ProfessorAAPIResponse);
