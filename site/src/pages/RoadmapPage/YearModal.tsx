@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../types/types';
 import { quarterDisplayNames } from '../../helpers/planner';
-import { quarterNames, QuarterName } from '@peterportal/types';
+import { quarters, QuarterName } from '@peterportal/types';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -20,7 +20,7 @@ interface YearModalProps {
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
-  const base: YearPopupQuarter[] = quarterNames.map((n) => ({ id: n }));
+  const base: YearPopupQuarter[] = quarters.map((n) => ({ id: n }));
   quarterIds.forEach((id) => {
     const quarter = base.find((q) => q.id === id)!;
     quarter.checked = true;

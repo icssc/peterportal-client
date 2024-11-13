@@ -1,38 +1,15 @@
-import { Prerequisite, PrerequisiteTree } from 'peterportal-api-next-types';
-import { ProfessorPreview } from './professor';
+import { components, paths } from './generated/anteater-api-types';
+import { ProfessorAAPIResponse } from './professor';
 
-export interface CoursePreview {
-  id: string;
-  department: string;
-  courseNumber: string;
-  title: string;
-}
+export type CourseAAPIResponse =
+  paths['/v2/rest/courses/{id}']['get']['responses'][200]['content']['application/json']['data'];
 
-export interface CourseAAPIResponse {
-  id: string;
-  department: string;
-  courseNumber: string;
-  school: string;
-  title: string;
-  courseLevel: string;
-  minUnits: number;
-  maxUnits: number;
-  description: string;
-  departmentName: string;
-  instructors: ProfessorPreview[];
-  prerequisiteTree: Record<string, Prerequisite | PrerequisiteTree>;
-  prerequisites: CoursePreview[];
-  prerequisiteText: string;
-  dependencies: CoursePreview[];
-  repeatability: string;
-  concurrent: string;
-  sameAs: string;
-  restriction: string;
-  overlap: string;
-  corequisites: string;
-  geList: string[];
-  geText: string;
-  terms: string[];
-}
+export type Prerequisite = components['schemas']['prereq'];
+
+export type PrerequisiteTree = components['schemas']['prereqTree'];
+
+export type CoursePreview = CourseAAPIResponse['prerequisites'][number];
+
+export type CoursePreviewWithTerms = ProfessorAAPIResponse['courses'][number];
 
 export type CourseBatchAAPIResponse = Record<string, CourseAAPIResponse>;

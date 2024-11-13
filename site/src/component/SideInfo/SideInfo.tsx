@@ -56,7 +56,6 @@ interface SideInfoProps {
   searchType: SearchType;
   name: string;
   title: string;
-  school: string;
   description: string;
   tags: string[];
   course?: CourseGQLData;
@@ -148,7 +147,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           <span>
             <h1>{props.name}</h1>
             <h2>{props.title}</h2>
-            <h3>{props.school}</h3>
           </span>
           {props.terms && <CourseQuarterIndicator terms={props.terms} size="lg" />}
         </div>
@@ -176,7 +174,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             {sortedReviews.map((key, index) => (
               <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
                 {props.searchType == 'course' &&
-                  (props.course?.instructors[key] ? props.course?.instructors[key].shortenedName : key)}
+                  (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                 {props.searchType == 'professor' &&
                   (props.professor?.courses[key]
                     ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
@@ -244,7 +242,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             displayName={
               props.searchType == 'course'
                 ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)
-                    ?.shortenedName ?? ''
+                    ?.name ?? ''
                 : props.professor?.courses[highestReview]
                   ? props.professor?.courses[highestReview].department +
                     ' ' +
@@ -262,7 +260,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             displayName={
               props.searchType == 'course'
                 ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
-                    ?.shortenedName ?? ''
+                    ?.name ?? ''
                 : props.professor?.courses[lowestReview]
                   ? props.professor?.courses[lowestReview].department +
                     ' ' +
