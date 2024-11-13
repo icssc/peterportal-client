@@ -32,7 +32,6 @@ Features include:
 - SST and AWS CDK
 - PostgreSQL
 - Drizzle ORM
-- GraphQL
 - TypeScript
 - Vite
 
