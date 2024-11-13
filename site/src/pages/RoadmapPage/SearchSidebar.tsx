@@ -53,7 +53,7 @@ const SearchSidebar = () => {
 
   return (
     <>
-      {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} ref={overlayRef} />}
+      {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
       <div className={`search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <div className="search-sidebar-search-module">
           <SearchModule index="courses" />
