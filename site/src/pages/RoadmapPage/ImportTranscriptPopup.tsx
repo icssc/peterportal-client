@@ -10,6 +10,7 @@ import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../type
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
+import { normalizeQuarterName } from '../../helpers/planner';
 
 interface TransferUnitDetails {
   date: string;
@@ -87,7 +88,8 @@ function toPlannerQuarter(
 ): { startYear: number; quarterData: PlannerQuarterData } {
   const year = parseInt(quarter.name.split(' ')[0]);
   // Removes the year number and "Session/Quarter" at the end
-  const name = quarter.name.split(' ').slice(1, -1).join(' ') as QuarterName;
+  const tName = quarter.name.split(' ').slice(1, -1).join(' ');
+  const name = normalizeQuarterName(tName);
 
   return {
     startYear: name === 'Fall' ? year : year - 1,
