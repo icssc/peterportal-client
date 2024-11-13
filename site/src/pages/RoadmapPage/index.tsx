@@ -9,6 +9,7 @@ import AddCoursePopup from './AddCoursePopup';
 import { CourseGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
 import { useCoursebag } from '../../hooks/coursebag';
+import { CSSTransition } from 'react-transition-group';
 
 const RoadmapPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -110,36 +111,17 @@ const RoadmapPage: FC = () => {
     [dispatch, searchResults, coursebag],
   );
 
-  // do not conditionally renderer because it would remount planner which would discard unsaved changes
-  const mobileVersion = (
-    <>
-      <div className={`main-wrapper mobile ${showSearch ? 'hide' : ''}`}>
-        <Planner />
-      </div>
-      <div className={`sidebar-wrapper mobile ${!showSearch ? 'hide' : ''}`}>
-        <SearchSidebar />
-      </div>
-    </>
-  );
-
-  const desktopVersion = (
-    <>
-      <div className="main-wrapper">
-        <Planner />
-      </div>
-      <div className="sidebar-wrapper">
-        <SearchSidebar />
-      </div>
-    </>
-  );
-
   return (
     <>
       <div className="roadmap-page">
         <AddCoursePopup />
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          {isMobile && mobileVersion}
-          {!isMobile && desktopVersion}
+          <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+            <Planner />
+          </div>
+          <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit>
+            <SearchSidebar />
+          </CSSTransition>
         </DragDropContext>
       </div>
     </>

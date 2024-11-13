@@ -111,24 +111,6 @@
     display: none;
   }
 }
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: #6664;
-  z-index: 399;
-  opacity: 0;
-  transition: opacity 0.5s;
-  cursor: default;
-
-  &.enter-active,
-  &.enter-done {
-    opacity: 1;
-  }
-  &.exit {
-    pointer-events: none;
-    opacity: 0;
-  }
-}
 
 [data-theme='dark'] {
   .sidebar:not(.mini) {

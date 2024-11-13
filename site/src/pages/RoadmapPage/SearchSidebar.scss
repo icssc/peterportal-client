@@ -1,22 +1,50 @@
+@import '../../globals';
+
 .search-sidebar {
   position: sticky;
   right: 0;
   top: 0;
   overflow: auto;
   height: 100%;
+  background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
-  background-color: var(--overlay1);
-
-  .close-icon {
-    width: 5vh;
-    height: 5vh;
-    float: right;
-  }
 
   .search-body {
-    flex-grow: 1;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+  }
+
+  &.mobile {
+    position: fixed;
+    top: unset;
+    left: 0;
+    bottom: 0;
+    z-index: 450;
+    max-height: calc(100% - 120px);
+    padding-bottom: 40px;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+    &.enter,
+    &.enter-done {
+      transform: translateY(0);
+    }
+  }
+
+  button.fixed {
+    position: fixed;
+    bottom: 0;
+    height: 40px;
+    background-color: var(--zot-blue);
+    width: 100%;
+    border: none;
+    appearance: none;
+    color: white;
+    font: inherit;
+    font-weight: 600;
+    @include clickable(0.9, 0.7);
   }
 }
 
@@ -36,5 +64,8 @@
 }
 
 .search-sidebar-search-module {
-  margin: 2rem 2rem 0 2rem;
+  margin: 16px 20px 0;
+  .form-group {
+    margin-bottom: 0;
+  }
 }

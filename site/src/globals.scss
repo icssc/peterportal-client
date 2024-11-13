@@ -6,3 +6,14 @@ $mobile-cutoff: 800px;
     padding: 16px 20px;
   }
 }
+
+@mixin clickable($hoverVal: 0.8, $activeVal: 0.5) {
+  transition: opacity 0.2s;
+  cursor: pointer;
+  &:hover {
+    opacity: $hoverVal;
+  }
+  &:active {
+    opacity: $activeVal;
+  }
+}
