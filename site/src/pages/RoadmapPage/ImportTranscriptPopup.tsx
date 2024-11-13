@@ -78,7 +78,7 @@ async function htmlFromFile(file: Blob): Promise<HTMLElement> {
 
 async function transcriptCourseDetails(quarters: TranscriptQuarter[]): Promise<BatchCourseData> {
   const courseIDs = quarters.flatMap((q) => q.courses).map(toCourseID);
-  const results = (await searchAPIResults('courses', courseIDs)) as BatchCourseData;
+  const results = await searchAPIResults('courses', courseIDs);
   return results;
 }
 

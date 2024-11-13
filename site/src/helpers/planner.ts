@@ -90,7 +90,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
   let courseLookup: BatchCourseData = {};
   // only send request if there are courses
   if (courses.length > 0) {
-    courseLookup = (await searchAPIResults('courses', courses)) as BatchCourseData;
+    courseLookup = await searchAPIResults('courses', courses);
   }
 
   return new Promise((resolve) => {

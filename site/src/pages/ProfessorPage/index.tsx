@@ -12,7 +12,6 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { ProfessorGQLData } from '../../types/types';
 import { searchAPIResult, unionTerms } from '../../helpers/util';
 
 const ProfessorPage: FC = () => {
@@ -25,9 +24,9 @@ const ProfessorPage: FC = () => {
     if (id !== undefined) {
       searchAPIResult('professor', id).then((professor) => {
         if (professor) {
-          dispatch(setProfessor(professor as ProfessorGQLData));
+          dispatch(setProfessor(professor));
           setError('');
-          document.title = `${(professor as ProfessorGQLData).name} | PeterPortal`;
+          document.title = `${professor.name} | PeterPortal`;
         } else {
           setError(`Professor ${id} does not exist!`);
         }

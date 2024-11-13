@@ -34,30 +34,23 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to search 1 result from course/professor page
-export function searchAPIResult(type: SearchType, name: string) {
-  return new Promise<CourseGQLData | ProfessorGQLData | undefined>((res) => {
-    let index: SearchIndex;
-    if (type === 'course') {
-      index = 'courses';
-    } else {
-      index = 'professors';
-    }
-    searchAPIResults(index, [name]).then((results) => {
-      if (Object.keys(results).length > 0) {
-        const key = Object.keys(results)[0];
-        res(results[key]);
-      } else {
-        res(undefined);
-      }
-    });
-  });
+export async function searchAPIResult<T extends SearchType>(
+  type: T,
+  name: string,
+): Promise<(T extends 'course' ? CourseGQLData : ProfessorGQLData) | undefined> {
+  const results = await searchAPIResults(`${type}s`, [name]);
+  if (Object.keys(results).length > 0) {
+    return Object.values(results)[0];
+  } else {
+    return undefined;
+  }
 }
 
 // helper function to query from API and transform to data used in redux
-export async function searchAPIResults(
-  index: SearchIndex,
+export async function searchAPIResults<T extends SearchIndex>(
+  index: T,
   names: string[],
-): Promise<BatchCourseData | BatchProfessorData> {
+): Promise<T extends 'courses' ? BatchCourseData : BatchProfessorData> {
   const data =
     index === 'courses'
       ? await trpc.courses.batch.mutate({ courses: names })
@@ -77,7 +70,7 @@ export async function searchAPIResults(
       transformed[key] = transformGQLData(index, data[id]);
     }
   }
-  return transformed;
+  return transformed as T extends 'courses' ? BatchCourseData : BatchProfessorData;
 }
 
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
