@@ -2,11 +2,10 @@ import {
   SearchIndex,
   CourseGQLData,
   ProfessorGQLData,
-  ProfessorLookup,
-  CourseLookup,
   BatchCourseData,
   BatchProfessorData,
   SearchType,
+  CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
@@ -85,33 +84,11 @@ export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minut
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
 
 function transformCourseGQL(data: CourseAAPIResponse) {
-  const instructorHistoryLookup: ProfessorLookup = {};
-  const prerequisiteListLookup: CourseLookup = {};
-  const prerequisiteForLookup: CourseLookup = {};
-  // maps professor's ucinetid to professor basic details
-  data.instructors.forEach((professor) => {
-    if (professor) {
-      instructorHistoryLookup[professor.ucinetid] = professor;
-    }
-  });
-  // maps course's id to course basic details
-  data.prerequisites.forEach((course) => {
-    if (course) {
-      prerequisiteListLookup[course.id] = course;
-    }
-  });
-  // maps course's id to course basic details
-  data.dependencies.forEach((course) => {
-    if (course) {
-      prerequisiteForLookup[course.id] = course;
-    }
-  });
   // create copy to override fields with lookups
   const course = { ...data } as unknown as CourseGQLData;
-  course.instructors = instructorHistoryLookup;
-  course.prerequisites = prerequisiteListLookup;
-  course.dependencies = prerequisiteForLookup;
-
+  course.instructors = Object.fromEntries(data.instructors.map((instructor) => [instructor.ucinetid, instructor]));
+  course.prerequisites = Object.fromEntries(data.prerequisites.map((prerequisite) => [prerequisite.id, prerequisite]));
+  course.dependencies = Object.fromEntries(data.dependencies.map((dependency) => [dependency.id, dependency]));
   return course;
 }
 
@@ -126,17 +103,9 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
 }
 
 function transformProfessorGQL(data: ProfessorAAPIResponse) {
-  const courseHistoryLookup: CourseLookup = {};
-  // maps course's id to course basic details
-  data.courses.forEach((course) => {
-    if (course) {
-      courseHistoryLookup[course.id] = course;
-    }
-  });
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
-  professor.courses = courseHistoryLookup;
-
+  professor.courses = Object.fromEntries(data.courses.map((course) => [course.id, course]));
   return professor;
 }
 
@@ -149,3 +118,31 @@ export function useIsMobile() {
   const isMobile = useMediaQuery({ maxWidth: 799.9 });
   return isMobile;
 }
+
+const quartersOrdered: Record<string, string> = {
+  Winter: 'a',
+  Spring: 'b',
+  Summer1: 'c',
+  Summer2: 'd',
+  Summer10wk: 'e',
+  Fall: 'f',
+};
+
+export const sortTerms = (terms: string[]) =>
+  [...new Set(terms)].sort((a, b) => {
+    const [yearA, qtrA]: string[] = a.split(' ');
+    const [yearB, qtrB]: string[] = b.split(' ');
+    // first compare years (descending)
+    // if years are equal, compare terms (most recent first)
+    return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
+  });
+
+export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
+  // get array of arrays of term names
+  const allTerms = Object.values(courseHistory);
+
+  // flatten and take union of array
+  const union = allTerms.flatMap((term) => term.terms);
+
+  return sortTerms(union);
+};

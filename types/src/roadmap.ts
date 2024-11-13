@@ -1,8 +1,8 @@
-import { quarters } from 'peterportal-api-next-types';
 import { z } from 'zod';
 
+export const quarters = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'] as const;
+
 export const quarterName = z.enum(quarters);
-/** @todo duplicate of Quarter from peterportal-api-next-types. probably don't need but also don't know if new api has a types package */
 export type QuarterName = z.infer<typeof quarterName>;
 
 export const savedPlannerQuarterData = z.object({
