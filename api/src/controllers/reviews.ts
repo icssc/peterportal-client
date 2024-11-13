@@ -125,18 +125,6 @@ const reviewsRouter = router({
       verified: verifiedCount >= 3, // auto-verify if use has 3+ verified reviews
     };
 
-    /** @todo: do a check for existing review on the frontend, remove this for the sake of speed since constraints will already prevent duplicate reviews on insertion */
-    //check if review already exists for same professor, course, and user (do this before verifying captcha)
-    const existingReview = await db
-      .select({ count: count() })
-      .from(review)
-      .where(
-        and(eq(review.userId, userId), eq(review.courseId, input.courseId), eq(review.professorId, input.professorId)),
-      );
-    if (existingReview[0].count > 0) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: 'You have already reviewed this professor and course!' });
-    }
-
     // Verify the captcha
     const verifyResponse = await verifyCaptcha(reviewToAdd);
     if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });

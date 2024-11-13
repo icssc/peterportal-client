@@ -10,7 +10,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
 import { quarters } from '@peterportal/types';
@@ -63,6 +63,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const { darkMode } = useContext(ThemeContext);
+  const reviews = useAppSelector((state) => state.review.reviews);
   useEffect(() => {
     if (show) {
       // form opened
@@ -158,6 +159,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
   };
 
+  const alreadyReviewedCourseProf = (courseId: string, professorId: string) => {
+    return reviews.some(
+      (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
+    );
+  };
+
   // select instructor if in course context
   const instructorSelect = courseProp && (
     <Form.Group>
@@ -176,8 +183,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </option>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
+          const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
           return (
-            <option key={ucinetid} value={ucinetid}>
+            <option
+              key={ucinetid}
+              value={ucinetid}
+              title={alreadyReviewed ? 'You have already reviewed this professor' : undefined}
+              disabled={alreadyReviewed}
+            >
               {name}
             </option>
           );
@@ -210,8 +223,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
             professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
+          const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
           return (
-            <option key={courseID} value={courseID}>
+            <option
+              key={courseID}
+              value={courseID}
+              title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
+              disabled={alreadyReviewed}
+            >
               {name}
             </option>
           );
