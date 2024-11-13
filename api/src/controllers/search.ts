@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../helpers/trpc';
 import { SearchAAPIResponse } from '@peterportal/types';
+import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 
 const searchRouter = router({
   /**
@@ -27,11 +28,7 @@ const searchRouter = router({
     )
     .query(async ({ input }) => {
       const r = fetch(`${process.env.PUBLIC_API_URL}search?${new URLSearchParams(input).toString()}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          ...(process.env.ANTEATER_API_KEY && { Authorization: `Bearer ${process.env.ANTEATER_API_KEY}` }),
-        },
+        headers: ANTEATER_API_REQUEST_HEADERS,
       });
 
       return r.then((response) => response.json()).then((data) => data.data as SearchAAPIResponse);

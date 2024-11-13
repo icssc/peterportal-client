@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../helpers/trpc';
 import { GradesRaw, ProfessorAAPIResponse, ProfessorBatchAAPIResponse } from '@peterportal/types';
+import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 
 const professorsRouter = router({
   /**
@@ -31,13 +32,7 @@ const professorsRouter = router({
     } else {
       const r = fetch(
         `${process.env.PUBLIC_API_URL}instructors/batch?ucinetids=${input.professors.map(encodeURIComponent).join(',')}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            ...(process.env.ANTEATER_API_KEY && { Authorization: `Bearer ${process.env.ANTEATER_API_KEY}` }),
-          },
-        },
+        { headers: ANTEATER_API_REQUEST_HEADERS },
       );
 
       return r
@@ -53,7 +48,9 @@ const professorsRouter = router({
    * Anteater API proxy for grade distribution
    */
   grades: publicProcedure.input(z.object({ name: z.string() })).query(async ({ input }) => {
-    const r = fetch(`${process.env.PUBLIC_API_URL}grades/raw?instructor=${encodeURIComponent(input.name)}`);
+    const r = fetch(`${process.env.PUBLIC_API_URL}grades/raw?instructor=${encodeURIComponent(input.name)}`, {
+      headers: ANTEATER_API_REQUEST_HEADERS,
+    });
 
     return r.then((response) => response.json()).then((data) => data.data as GradesRaw);
   }),
