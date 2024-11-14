@@ -90,8 +90,8 @@ const RoadmapMultiplan: FC = () => {
   };
 
   useEffect(() => {
-    document.title = `${allPlans.plans[currentPlanIndex].name} | PeterPortal`;
-  }, [currentPlanIndex]);
+    document.title = `${name} | PeterPortal`;
+  }, [name]);
 
   return (
     <div className="multi-plan-selector">
