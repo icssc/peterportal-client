@@ -82,7 +82,9 @@ export const planner = pgTable(
   'planner',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    userId: integer('user_id').references(() => user.id),
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
     name: text('name').notNull(),
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
   },
