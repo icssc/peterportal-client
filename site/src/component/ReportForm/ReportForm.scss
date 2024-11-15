@@ -57,20 +57,6 @@
   margin-top: 0px;
 }
 
-.submitted-report-form {
-  text-align: center;
-  width: 100%;
-  i {
-    color: var(--peterportal-secondary-green);
-  }
-  h1 {
-    margin: 15px 0;
-  }
-  p {
-    font-size: 1.25rem;
-  }
-}
-
 @media only screen and (max-width: 400px) {
   .report-form {
     button {
