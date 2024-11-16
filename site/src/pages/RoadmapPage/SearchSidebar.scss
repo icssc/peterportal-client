@@ -5,10 +5,14 @@
   right: 0;
   top: 0;
   overflow: auto;
+  width: 368px;
   height: 100%;
   background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-radius: 8px;
 
   .search-body {
     display: flex;
@@ -21,6 +25,7 @@
     position: fixed;
     top: unset;
     left: 0;
+    width: 100%;
     bottom: 0;
     z-index: 450;
     max-height: calc(100% - 120px);
@@ -64,7 +69,6 @@
 }
 
 .search-sidebar-search-module {
-  margin: 16px 20px 0;
   .form-group {
     margin-bottom: 0;
   }

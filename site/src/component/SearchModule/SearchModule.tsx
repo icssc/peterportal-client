@@ -3,7 +3,7 @@ import './SearchModule.scss';
 import wfs from 'websoc-fuzzy-search';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Bag, Search } from 'react-bootstrap-icons';
+import { Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setHasFullResults, setLastQuery, setNames, setPageNumber, setResults } from '../../store/slices/searchSlice';
@@ -23,7 +23,7 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
-  const showCourseBag = useAppSelector((state) => state.roadmap.showCourseBag);
+  const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const [prevIndex, setPrevIndex] = useState<SearchIndex | null>(null);
 
@@ -93,31 +93,40 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   // clear results and reset page number when component unmounts
   // results will persist otherwise, e.g. current page of results from catalogue carries over to roadmap search container
   useEffect(() => {
+    if (!searchQuery) dispatch(setShowCourseBag(true));
+
     return () => {
       dispatch(setPageNumber({ index: 'courses', pageNumber: 0 }));
       dispatch(setPageNumber({ index: 'professors', pageNumber: 0 }));
       dispatch(setResults({ index: 'courses', results: [] }));
       dispatch(setResults({ index: 'professors', results: [] }));
     };
-  }, [dispatch]);
+  }, [dispatch, searchQuery]);
 
   // Refresh search results when names and page number changes (controlled by searchResults dependency array)
   useEffect(() => {
     searchResults();
   }, [index, searchResults]);
 
-  const searchNamesAfterTimeout = (query: string) => {
-    if (pendingRequest) {
-      clearTimeout(pendingRequest);
+  const searchImmediately = (query: string) => {
+    if (pendingRequest) clearTimeout(pendingRequest);
+    if (location.pathname === '/roadmap') {
+      dispatch(setShowCourseBag(!query));
     }
-    const timeout = window.setTimeout(() => {
+    if (query) {
       searchNames(query, 0);
       setPendingRequest(null);
-    }, SEARCH_TIMEOUT_MS);
+    }
+  };
+
+  const searchNamesAfterTimeout = (query: string) => {
+    setSearchQuery(query);
+    if (pendingRequest) clearTimeout(pendingRequest);
+    const timeout = window.setTimeout(() => searchImmediately(query), SEARCH_TIMEOUT_MS);
     setPendingRequest(timeout);
   };
 
-  const coursePlaceholder = 'Search a course number or department';
+  const coursePlaceholder = 'Search for a course...';
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
@@ -125,28 +134,18 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     <div className="search-module">
       <Form.Group>
         <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text>
-              <Search />
-            </InputGroup.Text>
-          </InputGroup.Prepend>
           <Form.Control
             className="search-bar"
             aria-label="search"
-            type="text"
+            type="search"
             placeholder={placeholder}
             onChange={(e) => searchNamesAfterTimeout(e.target.value)}
           />
-          {
-            // only show course bag icon on roadmap page
-            location.pathname === '/roadmap' && (
-              <InputGroup.Append>
-                <InputGroup.Text onClick={() => dispatch(setShowCourseBag(!showCourseBag))}>
-                  <Bag style={{ color: showCourseBag ? 'var(--primary)' : 'var(--text-color)', cursor: 'pointer' }} />
-                </InputGroup.Text>
-              </InputGroup.Append>
-            )
-          }
+          <InputGroup.Append>
+            <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
+              <Search />
+            </button>
+          </InputGroup.Append>
         </InputGroup>
       </Form.Group>
     </div>
