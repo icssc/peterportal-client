@@ -1,17 +1,19 @@
 import './SearchSidebar.scss';
 
-import SearchHitContainer from '../../component/SearchHitContainer/SearchHitContainer';
 import SearchModule from '../../component/SearchModule/SearchModule';
-import CourseHitItem from './CourseHitItem';
 
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setShowSearch } from '../../store/slices/roadmapSlice';
-import { StrictModeDroppable } from './StrictModeDroppable';
-import CourseBag from './CourseBag';
+import { setActiveCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { useEffect, useRef } from 'react';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
+
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
+import { useCoursebag } from '../../hooks/coursebag';
+import { CourseGQLData } from '../../types/types';
+import Course from './Course';
+import { courseSearchSortable } from '../../helpers/sortable';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -43,6 +45,10 @@ const SearchSidebar = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
+  const { coursebag } = useCoursebag();
+  const results = useAppSelector((state) => state.search.courses.results);
+  const shownCourses = JSON.parse(JSON.stringify(showCourseBag ? coursebag : results)) as CourseGQLData[];
+
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
 
   useEffect(() => {
@@ -50,6 +56,11 @@ const SearchSidebar = () => {
     sidebarRef.current?.classList.toggle('enter-done', showSearch);
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
+
+  const setDraggedItem = (event: SortableEvent) => {
+    const course = shownCourses[event.oldIndex!];
+    dispatch(setActiveCourse(course));
+  };
 
   return (
     <>
@@ -59,33 +70,11 @@ const SearchSidebar = () => {
           <SearchModule index="courses" />
         </div>
         <div className="search-body">
-          {!showCourseBag ? (
-            <StrictModeDroppable droppableId="search" type="COURSE">
-              {(provided) => {
-                return (
-                  <div ref={provided.innerRef} style={{ height: '100%' }} {...provided.droppableProps}>
-                    <div className="search-sidebar-content">
-                      <SearchHitContainer index="courses" CourseHitItem={CourseHitItem} />
-                    </div>
-                    {provided.placeholder}
-                  </div>
-                );
-              }}
-            </StrictModeDroppable>
-          ) : (
-            <StrictModeDroppable droppableId="coursebag" type="COURSE">
-              {(provided) => {
-                return (
-                  <div ref={provided.innerRef} style={{ height: '100%' }} {...provided.droppableProps}>
-                    <div className="search-sidebar-content">
-                      <CourseBag />
-                    </div>
-                    {provided.placeholder}
-                  </div>
-                );
-              }}
-            </StrictModeDroppable>
-          )}
+          <ReactSortable {...courseSearchSortable} list={shownCourses} onStart={setDraggedItem}>
+            {shownCourses.map((course, i) => (
+              <Course {...course} key={i} />
+            ))}
+          </ReactSortable>
         </div>
         <CloseRoadmapSearchButton />
       </div>
