@@ -19,6 +19,8 @@
     flex-direction: column;
     height: 100%;
     overflow: auto;
+    gap: 8px;
+    margin-top: 8px;
   }
 
   &.mobile {
@@ -50,6 +52,10 @@
     font: inherit;
     font-weight: 600;
     @include clickable(0.9, 0.7);
+  }
+
+  .coursebag-title {
+    margin: 12px 6px 0;
   }
 }
 

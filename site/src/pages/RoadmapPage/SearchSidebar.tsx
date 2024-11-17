@@ -14,6 +14,7 @@ import { useCoursebag } from '../../hooks/coursebag';
 import { CourseGQLData } from '../../types/types';
 import Course from './Course';
 import { courseSearchSortable } from '../../helpers/sortable';
+import { Spinner } from 'react-bootstrap';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -46,7 +47,7 @@ const SearchSidebar = () => {
   const dispatch = useAppDispatch();
 
   const { coursebag } = useCoursebag();
-  const results = useAppSelector((state) => state.search.courses.results);
+  const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
   const shownCourses = JSON.parse(JSON.stringify(showCourseBag ? coursebag : results)) as CourseGQLData[];
 
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
@@ -62,6 +63,12 @@ const SearchSidebar = () => {
     dispatch(setActiveCourse(course));
   };
 
+  const coursebagTitle = coursebag.length ? (
+    <h3 className="coursebag-title">Saved Courses</h3>
+  ) : (
+    <p className="coursebag-title">No courses saved. Try searching for something!</p>
+  );
+
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
@@ -69,13 +76,16 @@ const SearchSidebar = () => {
         <div className="search-sidebar-search-module">
           <SearchModule index="courses" />
         </div>
-        <div className="search-body">
-          <ReactSortable {...courseSearchSortable} list={shownCourses} onStart={setDraggedItem}>
-            {shownCourses.map((course, i) => (
-              <Course {...course} key={i} />
-            ))}
-          </ReactSortable>
-        </div>
+        {showCourseBag && coursebagTitle}
+        <ReactSortable {...courseSearchSortable} list={shownCourses} onStart={setDraggedItem} className="search-body">
+          {searchInProgress ? (
+            <div className="no-results">
+              <Spinner animation="border" role="status" />
+            </div>
+          ) : (
+            shownCourses.map((course, i) => <Course {...course} key={i} />)
+          )}
+        </ReactSortable>
         <CloseRoadmapSearchButton />
       </div>
     </>

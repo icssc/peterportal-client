@@ -53,7 +53,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     if (location.pathname === '/roadmap') {
       dispatch(setShowCourseBag(!query));
     }
-    if (query) {
+    if (query && query !== search.query) {
       dispatch(setQuery({ index, query }));
       setPendingRequest(null);
     }
