@@ -114,7 +114,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       dispatch(setShowCourseBag(!query));
     }
     if (query) {
-      searchNames(query, 0);
+      searchNames(query.toLowerCase(), 0);
       setPendingRequest(null);
     }
   };
