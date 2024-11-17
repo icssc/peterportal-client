@@ -16,7 +16,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { db } from '../db';
 import { review, user, vote } from '../db/schema';
-import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { and, avg, count, desc, eq, sql } from 'drizzle-orm';
 import { datesToStrings } from '../helpers/date';
 
 async function userWroteReview(userId: number | undefined, reviewId: number) {
@@ -125,18 +125,6 @@ const reviewsRouter = router({
       verified: verifiedCount >= 3, // auto-verify if use has 3+ verified reviews
     };
 
-    /** @todo: do a check for existing review on the frontend, remove this for the sake of speed since constraints will already prevent duplicate reviews on insertion */
-    //check if review already exists for same professor, course, and user (do this before verifying captcha)
-    const existingReview = await db
-      .select({ count: count() })
-      .from(review)
-      .where(
-        and(eq(review.userId, userId), eq(review.courseId, input.courseId), eq(review.professorId, input.professorId)),
-      );
-    if (existingReview[0].count > 0) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: 'You have already reviewed this professor and course!' });
-    }
-
     // Verify the captcha
     const verifyResponse = await verifyCaptcha(reviewToAdd);
     if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });
@@ -208,33 +196,30 @@ const reviewsRouter = router({
     const featuredReviewCriteria = [desc(review.content), desc(voteSubQuery.score), desc(review.verified)];
 
     const field = input.type === 'course' ? review.courseId : review?.professorId;
-    const featuredReview = (
-      await db
-        .select()
-        .from(review)
-        .where(eq(field, input.id))
-        .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
-        .orderBy(...featuredReviewCriteria)
-        .limit(1)
-    )[0];
+    const featuredReview = await db
+      .select()
+      .from(review)
+      .where(eq(field, input.id))
+      .leftJoin(voteSubQuery, eq(voteSubQuery.reviewId, review.id))
+      .orderBy(...featuredReviewCriteria)
+      .limit(1);
 
-    return datesToStrings(featuredReview.review) as FeaturedReviewData;
+    return featuredReview.length > 0 ? (datesToStrings(featuredReview[0].review) as FeaturedReviewData) : undefined;
   }),
 
   /**
    * Get avg ratings for a course's professors or a professor's courses
    */
-  scores: publicProcedure
+  avgRating: publicProcedure
     .input(z.object({ type: z.enum(['course', 'professor']), id: z.string() }))
     .query(async ({ input }) => {
       const field = input.type === 'course' ? review.courseId : review.professorId;
       const otherField = input.type === 'course' ? review.professorId : review.courseId;
 
       const results = await db
-        .select({ name: otherField, score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number) })
+        .select({ name: otherField, avgRating: avg(review.rating).mapWith(Number) })
         .from(review)
         .where(eq(field, input.id))
-        .leftJoin(vote, eq(vote.reviewId, review.id))
         .groupBy(otherField);
 
       return results;

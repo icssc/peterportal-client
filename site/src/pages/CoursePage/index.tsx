@@ -13,8 +13,7 @@ import Error from '../../component/Error/Error';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { CourseGQLData } from '../../types/types';
-import { getCourseTags, searchAPIResult } from '../../helpers/util';
+import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
 import './CoursePage.scss';
 
 const CoursePage: FC = () => {
@@ -27,9 +26,9 @@ const CoursePage: FC = () => {
     if (id !== undefined) {
       searchAPIResult('course', id).then((course) => {
         if (course) {
-          dispatch(setCourse(course as CourseGQLData));
+          dispatch(setCourse(course));
           setError('');
-          document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | PeterPortal`;
+          document.title = `${course.department + ' ' + course.courseNumber} | PeterPortal`;
         } else {
           setError(`Course ${id} does not exist!`);
         }
@@ -52,7 +51,6 @@ const CoursePage: FC = () => {
             searchType="course"
             name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
             title={courseGQLData.title}
-            school={courseGQLData.school}
             description={courseGQLData.description}
             tags={getCourseTags(courseGQLData)}
             course={courseGQLData}
@@ -77,7 +75,7 @@ const CoursePage: FC = () => {
               <Schedule
                 key={courseGQLData.id}
                 courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-                termsOffered={courseGQLData.terms}
+                termsOffered={sortTerms(courseGQLData.terms)}
               />
             </div>
 

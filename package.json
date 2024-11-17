@@ -1,11 +1,14 @@
 {
-  "name": "peterportal-root",
+  "name": "peterportal",
   "version": "0.1.0",
   "scripts": {
-    "dev": "concurrently -n backend,frontend -c blue,green \"cd api && pnpm dev\" \"cd site && pnpm dev\"",
+    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm --filter=api dev\" \"pnpm --filter=site dev\"",
     "prepare": "husky install",
     "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
-    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && cd site && pnpm lint && cd ../api && pnpm lint"
+    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && pnpm --filter=site lint && pnpm --filter=api lint",
+    "db:generate": "pnpm --filter=api db:generate",
+    "db:migrate": "pnpm --filter=api db:migrate",
+    "db:studio": "pnpm --filter=api db:studio"
   },
   "dependencies": {
     "aws-cdk-lib": "2.132.1",
@@ -17,6 +20,7 @@
     "pnpm": "^9"
   },
   "devDependencies": {
+    "@types/node": "20.12.8",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
     "concurrently": "^9.0.1",

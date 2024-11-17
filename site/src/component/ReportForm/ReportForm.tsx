@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
+import ThankYouMessage from '../ThankYouMessage/ThankYouMessage';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -73,15 +73,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   return (
     <Modal show={props.showForm} centered animation={false} onHide={props.closeForm}>
       <div className="report-form">
-        {reportSubmitted ? (
-          <div className="submitted-report-form">
-            <Icon name="check circle" size="huge" />
-            <h1>Thank You</h1>
-            <p>Your report has been submitted successfully.</p>
-          </div>
-        ) : (
-          reportForm
-        )}
+        {reportSubmitted ? <ThankYouMessage message="Your report has been submitted successfully." /> : reportForm}
       </div>
     </Modal>
   );

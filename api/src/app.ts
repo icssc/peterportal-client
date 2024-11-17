@@ -56,6 +56,10 @@ if (process.env.GOOGLE_CLIENT && process.env.GOOGLE_SECRET) {
   console.log('GOOGLE_CLIENT and/or GOOGLE_SECRET env var(s) not defined! Google login will not be available.');
 }
 
+if (!process.env.ANTEATER_API_KEY) {
+  console.log('ANTEATER_API_KEY env var is not defined. You will not be able to test search functionality.');
+}
+
 /**
  * Configure Express.js Middleware
  */

@@ -2,6 +2,7 @@ import {
   Prerequisite,
   PrerequisiteTree,
   QuarterName,
+  quarters,
   SavedPlannerData,
   SavedPlannerQuarterData,
   SavedPlannerYearData,
@@ -32,6 +33,25 @@ export const quarterDisplayNames: Record<QuarterName, string> = {
   Summer2: 'Summer II',
   Summer10wk: 'Summer 10 Week',
 };
+
+export function normalizeQuarterName(name: string): QuarterName {
+  if (quarters.includes(name as QuarterName)) return name as QuarterName;
+  const lookup: { [k: string]: QuarterName } = {
+    fall: 'Fall',
+    winter: 'Winter',
+    spring: 'Spring',
+    // Old Lowercase Display Names
+    'summer I': 'Summer1',
+    'summer II': 'Summer2',
+    'summer 10 Week': 'Summer10wk',
+    // Transcript Names
+    'First Summer': 'Summer1',
+    'Second Summer': 'Summer2',
+    'Special / 10-Week Summer': 'Summer10wk',
+  };
+  if (!lookup[name]) throw TypeError('Invalid Quarter Name: ' + name);
+  return lookup[name];
+}
 
 // remove all unecessary data to store into the database
 export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
@@ -70,7 +90,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
   let courseLookup: BatchCourseData = {};
   // only send request if there are courses
   if (courses.length > 0) {
-    courseLookup = (await searchAPIResults('courses', courses)) as BatchCourseData;
+    courseLookup = await searchAPIResults('courses', courses);
   }
 
   return new Promise((resolve) => {
@@ -115,7 +135,7 @@ export const loadRoadmap = async (
   let isLocalNewer = false;
 
   if (!roadmap && localRoadmap) {
-    roadmap = localRoadmap;
+    roadmap = convertLegacyLocalRoadmap(localRoadmap);
   } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
     isLocalNewer = true;
   } else if (!roadmap && !localRoadmap) {
@@ -123,15 +143,42 @@ export const loadRoadmap = async (
     return;
   }
 
-  // Support conversions from the old format
-  const loadedData =
-    'planners' in roadmap
-      ? roadmap.planners
-      : [{ name: defaultPlan.name, content: (roadmap as { planner: SavedPlannerYearData[] }).planner }];
   // expand planner and set the state
-  const planners = await expandAllPlanners(loadedData);
+  const planners = await expandAllPlanners(roadmap.planners);
   loadHandler(planners, roadmap, isLocalNewer);
 };
+
+interface LegacyRoadmap {
+  planner: SavedPlannerYearData[];
+  transfers: TransferData[];
+  timestamp?: string;
+}
+
+export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+  if ('planners' in roadmap) {
+    // if already in multiplanner format, everything is good
+    return roadmap;
+  } else {
+    // if not, convert to multiplanner format, also normalize quarter names
+    return {
+      planners: [
+        {
+          name: defaultPlan.name,
+          content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
+        },
+      ],
+      transfers: roadmap.transfers,
+      timestamp: roadmap.timestamp,
+    };
+  }
+}
+
+function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
+  return yearPlans.map((year) => ({
+    ...year,
+    quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
+  }));
+}
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
@@ -185,7 +232,7 @@ export const validateCourse = (
 ): Set<string> => {
   // base case just a course
   if ('prereqType' in prerequisite) {
-    const id = prerequisite?.courseId ?? prerequisite?.examName ?? '';
+    const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
     // already taken prerequisite or is currently taking the corequisite
     if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
       return new Set();
