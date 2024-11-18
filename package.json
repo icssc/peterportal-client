@@ -2,24 +2,24 @@
   "name": "peterportal",
   "version": "0.1.0",
   "scripts": {
-    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm --filter=api dev\" \"pnpm --filter=site dev\"",
-    "prepare": "husky install",
-    "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
-    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && pnpm --filter=site lint && pnpm --filter=api lint",
     "db:generate": "pnpm --filter=api db:generate",
     "db:migrate": "pnpm --filter=api db:migrate",
-    "db:studio": "pnpm --filter=api db:studio"
+    "db:studio": "pnpm --filter=api db:studio",
+    "dev": "concurrently -n backend,frontend -c blue,green \"pnpm --filter=api dev\" \"pnpm --filter=site dev\"",
+    "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
+    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && pnpm --filter=site lint && pnpm --filter=api lint",
+    "prepare": "husky install"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.132.1",
     "dotenv-flow": "^4.0.1",
-    "sst": "2.41.5"
+    "sst": "3.3.22"
   },
   "engines": {
     "node": "^18 || ^20",
     "pnpm": "^9"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.145",
     "@types/node": "20.12.8",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@typescript-eslint/parser": "^7.8.0",
