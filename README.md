@@ -29,7 +29,7 @@ Features include:
 - Express
 - React
 - tRPC
-- SST and AWS CDK
+- SST
 - PostgreSQL
 - Drizzle ORM
 - TypeScript
