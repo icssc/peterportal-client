@@ -16,7 +16,7 @@
     "sst": "2.41.5"
   },
   "engines": {
-    "node": "^18 || ^20",
+    "node": "^18 || ^20 || ^22",
     "pnpm": "^9"
   },
   "devDependencies": {
