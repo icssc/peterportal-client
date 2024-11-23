@@ -15,6 +15,7 @@ import { CourseGQLData } from '../../types/types';
 import Course from './Course';
 import { courseSearchSortable } from '../../helpers/sortable';
 import { Spinner } from 'react-bootstrap';
+import { SortableContext } from '@dnd-kit/sortable';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -77,15 +78,17 @@ const SearchSidebar = () => {
           <SearchModule index="courses" />
         </div>
         {showCourseBag && coursebagTitle}
-        <ReactSortable {...courseSearchSortable} list={shownCourses} onStart={setDraggedItem} className="search-body">
+        {/* <SortableContext items={shownCourses.map((course, i) => course.id + i)}> */}
+        <div className="search-body">
           {searchInProgress ? (
             <div className="no-results">
               <Spinner animation="border" role="status" />
             </div>
           ) : (
-            shownCourses.map((course, i) => <Course {...course} key={i} />)
+            shownCourses.map((course, i) => <Course {...course} key={course.id + i} sortableId={course.id + i} />)
           )}
-        </ReactSortable>
+        </div>
+        {/* </SortableContext> */}
         <CloseRoadmapSearchButton />
       </div>
     </>

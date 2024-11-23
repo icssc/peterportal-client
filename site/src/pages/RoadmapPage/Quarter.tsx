@@ -1,4 +1,4 @@
-import { FC, useContext, useRef, useState } from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
@@ -17,8 +17,8 @@ import { PlannerQuarterData } from '../../types/types';
 import './Quarter.scss';
 
 import Course from './Course';
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { quarterSortable } from '../../helpers/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { setContainerItems } from '../../store/slices/dndSlice';
 
 interface QuarterProps {
   year: number;
@@ -39,6 +39,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
+  const containerId = `${yearIndex}-${quarterIndex}`;
+  const containerItems = useAppSelector((state) => state.dnd.containerItems[containerId]);
+  useEffect(() => {
+    dispatch(setContainerItems({ id: containerId, items: data.courses.map((course, index) => course.id + index) }));
+  }, [containerId, dispatch, data]);
 
   const handleQuarterMenuClick = () => {
     setShowQuarterMenu(!showQuarterMenu);
@@ -136,30 +141,40 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           )}
         </OverlayTrigger>
       </div>
-      <ReactSortable
-        list={coursesCopy}
-        className="quarter-course-list"
-        onStart={setDraggedItem}
-        onAdd={addCourse}
-        onRemove={removeCourse}
-        onSort={sortCourse}
-        {...quarterSortable}
+      <SortableContext
+        id={`${yearIndex}-${quarterIndex}`}
+        items={containerItems ?? []}
+        // items={data.courses.map((course, index) => course.id + index)}
+        strategy={verticalListSortingStrategy}
+        // onStart={setDraggedItem}
+        // onAdd={addCourse}
+        // onRemove={removeCourse}
+        // onSort={sortCourse}
+        // {...quarterSortable}
       >
-        {data.courses.map((course, index) => {
-          let requiredCourses: string[] = null!;
-          // if this is an invalid course, set the required courses
-          invalidCourses.forEach((ic) => {
-            const loc = ic.location;
-            if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
-              requiredCourses = ic.required;
-            }
-          });
+        <div className="quarter-course-list">
+          {data.courses.map((course, index) => {
+            let requiredCourses: string[] = null!;
+            // if this is an invalid course, set the required courses
+            invalidCourses.forEach((ic) => {
+              const loc = ic.location;
+              if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
+                requiredCourses = ic.required;
+              }
+            });
 
-          return (
-            <Course key={index} {...course} requiredCourses={requiredCourses} onDelete={() => removeCourseAt(index)} />
-          );
-        })}
-      </ReactSortable>
+            return (
+              <Course
+                key={course.id + index}
+                sortableId={containerId + '|' + course.id + index}
+                {...course}
+                requiredCourses={requiredCourses}
+                onDelete={() => removeCourseAt(index)}
+              />
+            );
+          })}
+        </div>
+      </SortableContext>
 
       {isMobile && (
         <>

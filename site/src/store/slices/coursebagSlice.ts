@@ -5,7 +5,7 @@ import type { Coursebag, CourseGQLData } from '../../types/types';
 const initialState: { coursebag?: Coursebag } = {};
 
 export const coursebagSlice = createSlice({
-  name: 'coursebag',
+  name: 'dnd',
   initialState,
   reducers: {
     setCoursebag(state, action: PayloadAction<Coursebag>) {

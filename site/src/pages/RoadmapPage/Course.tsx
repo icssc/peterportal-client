@@ -8,6 +8,9 @@ import Popover from 'react-bootstrap/Popover';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { DragOverlay } from '@dnd-kit/core';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -16,9 +19,58 @@ interface CourseProps extends CourseGQLData {
   onAddToBag?: () => void;
   isInBag?: boolean;
   removeFromBag?: () => void;
+  sortableId: string;
 }
 
 const Course: FC<CourseProps> = (props) => {
+  const {
+    id,
+    department,
+    courseNumber,
+    title,
+    minUnits,
+    maxUnits,
+    description,
+    prerequisiteText,
+    corequisites,
+    requiredCourses,
+    terms,
+    onDelete,
+    onAddToBag,
+    isInBag,
+    removeFromBag,
+    sortableId,
+  } = props;
+  const { attributes, listeners, transition, transform, isDragging, setNodeRef } = useSortable({ id: sortableId });
+
+  const style = {
+    transform: transform ? CSS.Transform.toString(transform) : undefined,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <>
+      <div
+        style={style}
+        {...attributes}
+        {...listeners}
+        ref={setNodeRef}
+        className={`course ${requiredCourses ? 'invalid' : ''}`}
+      >
+        <CourseCard {...props} />
+      </div>
+      {isDragging && (
+        <DragOverlay>
+          <div className="course">
+            <CourseCard {...props} />
+          </div>
+        </DragOverlay>
+      )}
+    </>
+  );
+};
+
+const CourseCard = (props: CourseProps) => {
   const {
     id,
     department,
@@ -75,9 +127,8 @@ const Course: FC<CourseProps> = (props) => {
   );
 
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
-
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
+    <>
       <div className="course-card-top">
         <div className="course-and-info">
           <span>
@@ -125,7 +176,7 @@ const Course: FC<CourseProps> = (props) => {
         {/* <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div> * /}
       </div> */}
       </div>
-    </div>
+    </>
   );
 };
 
