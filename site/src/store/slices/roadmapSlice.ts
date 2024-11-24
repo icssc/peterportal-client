@@ -155,6 +155,13 @@ export const roadmapSlice = createSlice({
       const courseList = state.plans[state.currentPlanIndex].content.yearPlans[toYear].quarters[toQuarter].courses;
       courseList.splice(toCourse, 0, removed!);
     },
+    setCourses: (
+      state,
+      action: PayloadAction<{ yearIndex: number; quarterIndex: number; courses: CourseGQLData[] }>,
+    ) => {
+      const { courses, yearIndex, quarterIndex } = action.payload;
+      state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].quarters[quarterIndex].courses = courses;
+    },
     deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
       state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex].quarters[
         action.payload.quarterIndex
@@ -361,6 +368,7 @@ export const roadmapSlice = createSlice({
 
 export const {
   moveCourse,
+  setCourses,
   deleteCourse,
   addQuarter,
   deleteQuarter,

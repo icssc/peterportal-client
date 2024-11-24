@@ -1,24 +1,16 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react';
+import { FC, useContext, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  clearQuarter,
-  deleteCourse,
-  deleteQuarter,
-  moveCourse,
-  setActiveCourse,
-  setShowSearch,
-} from '../../store/slices/roadmapSlice';
+import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
 import ThemeContext from '../../style/theme-context';
 import { PlannerQuarterData } from '../../types/types';
 import './Quarter.scss';
 
 import Course from './Course';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { setContainerItems } from '../../store/slices/dndSlice';
 
 interface QuarterProps {
   year: number;
@@ -40,10 +32,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
   const containerId = `${yearIndex}-${quarterIndex}`;
-  const containerItems = useAppSelector((state) => state.dnd.containerItems[containerId]);
-  useEffect(() => {
-    dispatch(setContainerItems({ id: containerId, items: data.courses.map((course, index) => course.id + index) }));
-  }, [containerId, dispatch, data]);
 
   const handleQuarterMenuClick = () => {
     setShowQuarterMenu(!showQuarterMenu);
@@ -61,25 +49,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const unitCount = calculateQuarterStats()[0];
 
-  const coursesCopy = JSON.parse(JSON.stringify(data.courses));
   const removeCourseAt = (index: number) => {
     dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
-  };
-  const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
-  const addCourse = (event: SortableEvent) => {
-    const movePayload = {
-      from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
-      to: { yearIndex, quarterIndex, courseIndex: event.newIndex! },
-    };
-    dispatch(moveCourse(movePayload));
-  };
-  const sortCourse = (event: SortableEvent) => {
-    if (event.from !== event.to) return;
-    const movePayload = {
-      from: { yearIndex, quarterIndex, courseIndex: event.oldDraggableIndex! },
-      to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
-    };
-    dispatch(moveCourse(movePayload));
   };
 
   const popover = (
@@ -111,11 +82,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     </Popover>
   );
 
-  const setDraggedItem = (event: SortableEvent) => {
-    const course = data.courses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
-  };
-
   return (
     <div className="quarter" ref={quarterContainerRef}>
       <div className="quarter-header">
@@ -142,8 +108,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         </OverlayTrigger>
       </div>
       <SortableContext
-        id={`${yearIndex}-${quarterIndex}`}
-        items={containerItems ?? []}
+        id={`${containerId}`}
+        items={data.courses.map((_, index) => `${containerId}-${index}`)}
         // items={data.courses.map((course, index) => course.id + index)}
         strategy={verticalListSortingStrategy}
         // onStart={setDraggedItem}
@@ -166,7 +132,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             return (
               <Course
                 key={course.id + index}
-                sortableId={containerId + '|' + course.id + index}
+                sortableId={`${containerId}-${index}`}
                 {...course}
                 requiredCourses={requiredCourses}
                 onDelete={() => removeCourseAt(index)}

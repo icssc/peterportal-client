@@ -4,18 +4,15 @@ import SearchModule from '../../component/SearchModule/SearchModule';
 
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setActiveCourse, setShowSearch } from '../../store/slices/roadmapSlice';
+import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { useEffect, useRef } from 'react';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useCoursebag } from '../../hooks/coursebag';
 import { CourseGQLData } from '../../types/types';
 import Course from './Course';
-import { courseSearchSortable } from '../../helpers/sortable';
 import { Spinner } from 'react-bootstrap';
-import { SortableContext } from '@dnd-kit/sortable';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -59,10 +56,10 @@ const SearchSidebar = () => {
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
-  const setDraggedItem = (event: SortableEvent) => {
-    const course = shownCourses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
-  };
+  // const setDraggedItem = (event: SortableEvent) => {
+  //   const course = shownCourses[event.oldIndex!];
+  //   dispatch(setActiveCourse(course));
+  // };
 
   const coursebagTitle = coursebag.length ? (
     <h3 className="coursebag-title">Saved Courses</h3>

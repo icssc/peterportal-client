@@ -23,28 +23,12 @@ interface CourseProps extends CourseGQLData {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const {
-    id,
-    department,
-    courseNumber,
-    title,
-    minUnits,
-    maxUnits,
-    description,
-    prerequisiteText,
-    corequisites,
-    requiredCourses,
-    terms,
-    onDelete,
-    onAddToBag,
-    isInBag,
-    removeFromBag,
-    sortableId,
-  } = props;
+  const { requiredCourses, sortableId } = props;
   const { attributes, listeners, transition, transform, isDragging, setNodeRef } = useSortable({ id: sortableId });
 
   const style = {
     transform: transform ? CSS.Transform.toString(transform) : undefined,
+    transition,
     opacity: isDragging ? 0.5 : 1,
   };
 

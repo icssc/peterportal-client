@@ -12,7 +12,7 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
-  moveCourse,
+  setCourses,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
@@ -24,8 +24,7 @@ import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { closestCorners, DndContext } from '@dnd-kit/core';
-import { SortableContext } from '@dnd-kit/sortable';
-import { moveToContainer, setContainerItems, setFromContainer } from '../../store/slices/dndSlice';
+import { arrayMove } from '@dnd-kit/sortable';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -40,8 +39,7 @@ const Planner: FC = () => {
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
     transfers: transfers,
   });
-  const dnd = useAppSelector((state) => state.dnd);
-  const { fromContainer, containerItems } = dnd;
+  // const dnd = useAppSelector((state) => state.dnd);
 
   const handleLoadLocal = async () => {
     let roadmap: SavedRoadmap = null!;
@@ -145,15 +143,29 @@ const Planner: FC = () => {
 
   return (
     <DndContext
-      onDragStart={(e) => {
-        console.log(e)
-        dispatch(setFromContainer({ itemId: e.active.id.toString() }));
-      }}
+      collisionDetection={closestCorners}
       onDragEnd={(e) => {
         // no destination
         if (!e.over) {
           return;
         }
+
+        const overId = e.over.id.toString();
+        const activeId = e.active.id.toString();
+
+        const [yearIndex, quarterIndex, overCourseIndex] = overId
+          .toString()
+          .split('-')
+          .map((x) => Number(x));
+        const [, , activeCourseIndex] = activeId
+          .toString()
+          .split('-')
+          .map((x) => Number(x));
+        const courses = currentPlanData[Number(yearIndex)].quarters[Number(quarterIndex)].courses;
+
+        dispatch(
+          setCourses({ yearIndex, quarterIndex, courses: arrayMove(courses, activeCourseIndex, overCourseIndex) }),
+        );
 
         //move from planner to coursebag
         // if (result.destination.droppableId === 'coursebag' && result.source.droppableId != 'coursebag') {
@@ -177,103 +189,73 @@ const Planner: FC = () => {
         //   removeCourseFromBag(course);
         // }
 
-        const movePayload = {
-          from: {
-            yearIndex: -1,
-            quarterIndex: -1,
-            courseIndex: -1,
-          },
-          to: {
-            yearIndex: -1,
-            quarterIndex: -1,
-            courseIndex: -1,
-          },
-        };
-
-        // roadmap to roadmap has source
-        if (e.over.id != 'search' && e.over.id != 'coursebag') {
-          const [yearIndex, quarterIndex] = fromContainer!.split('-');
-          movePayload.from.yearIndex = parseInt(yearIndex);
-          movePayload.from.quarterIndex = parseInt(quarterIndex);
-          // movePayload.from.courseIndex = result.source.index;
-        }
-        // search to roadmap has no source (use activeCourse in global state)
-
-        // both have destination
-        const [yearIndex, quarterIndex] = e.over.id.toString().split('-');
-        movePayload.to.yearIndex = parseInt(yearIndex);
-        movePayload.to.quarterIndex = parseInt(quarterIndex);
-        movePayload.to.courseIndex = containerItems[e.over.id.toString()].indexOf(e.active.id.toString());
-
-        dispatch(moveCourse(movePayload));
+        // if source == search and destination != search
       }}
       onDragOver={(e) => {
         console.log('over', e.over);
-        if (!e.over) {
-          return;
-        }
-        const overId = e.over.id.toString().split('|')[0];
-        if (e.over && fromContainer && overId !== fromContainer) {
-          dispatch(
-            moveToContainer({
-              oldContainerId: fromContainer.toString(),
-              newContainerId: overId,
-              itemId: e.active.id.toString(),
-            }),
-          );
-        }
+        // if (!e.over) {
+        //   return;
+        // }
+        // const overId = e.over.id.toString().split('|')[0];
+        // if (e.over && fromContainer && overId !== fromContainer) {
+        //   dispatch(
+        //     moveToContainer({
+        //       oldContainerId: fromContainer.toString(),
+        //       newContainerId: overId,
+        //       itemId: e.active.id.toString(),
+        //     }),
+        //   );
+        // }
       }}
     >
-      <SortableContext items={[]}>
-        <div className="planner">
-          <Modal
-            show={showSyncModal}
-            onHide={() => {
-              setShowSyncModal(false);
-            }}
-            className="ppc-modal"
-            centered
-          >
-            <Modal.Header closeButton>
-              <h2>Roadmap Out of Sync</h2>
-            </Modal.Header>
-            <Modal.Body>
-              <p>
-                This device's saved roadmap has newer changes than the one saved to your account. Where would you like
-                to load your roadmap from?
-              </p>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" onClick={handleLoadLocal}>
-                This Device
-              </Button>
-              <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-                My Account
-              </Button>
-            </Modal.Footer>
-          </Modal>
-          <Header
-            courseCount={courseCount}
-            unitCount={unitCount}
-            saveRoadmap={saveRoadmap}
-            missingPrerequisites={missingPrerequisites}
-          />
-          <section className="years">
-            {currentPlanData.map((year, yearIndex) => {
-              return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-            })}
-          </section>
-          <AddYearPopup
-            placeholderName={'Year ' + (currentPlanData.length + 1)}
-            placeholderYear={
-              currentPlanData.length === 0
-                ? new Date().getFullYear()
-                : currentPlanData[currentPlanData.length - 1].startYear + 1
-            }
-          />
-          <ImportTranscriptPopup />
-        </div>
-      </SortableContext>
+      <div className="planner">
+        <Modal
+          show={showSyncModal}
+          onHide={() => {
+            setShowSyncModal(false);
+          }}
+          className="ppc-modal"
+          centered
+        >
+          <Modal.Header closeButton>
+            <h2>Roadmap Out of Sync</h2>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
+              load your roadmap from?
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleLoadLocal}>
+              This Device
+            </Button>
+            <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+              My Account
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Header
+          courseCount={courseCount}
+          unitCount={unitCount}
+          saveRoadmap={saveRoadmap}
+          missingPrerequisites={missingPrerequisites}
+        />
+        <section className="years">
+          {currentPlanData.map((year, yearIndex) => {
+            return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+          })}
+        </section>
+        <AddYearPopup
+          placeholderName={'Year ' + (currentPlanData.length + 1)}
+          placeholderYear={
+            currentPlanData.length === 0
+              ? new Date().getFullYear()
+              : currentPlanData[currentPlanData.length - 1].startYear + 1
+          }
+        />
+        <ImportTranscriptPopup />
+      </div>
     </DndContext>
   );
 };
