@@ -3,7 +3,7 @@ import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
 import { useAppSelector } from '../../store/hooks';
-import AddCoursePopup from './AddCoursePopup';
+// import AddCoursePopup from './AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
 import { CSSTransition } from 'react-transition-group';
 
@@ -14,7 +14,7 @@ const RoadmapPage: FC = () => {
   return (
     <>
       <div className="roadmap-page">
-        <AddCoursePopup />
+        {/* <AddCoursePopup /> */}
         <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
           <Planner />
         </div>

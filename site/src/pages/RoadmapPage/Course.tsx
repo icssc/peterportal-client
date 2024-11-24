@@ -10,7 +10,6 @@ import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { DragOverlay } from '@dnd-kit/core';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -30,6 +29,7 @@ const Course: FC<CourseProps> = (props) => {
     transform: transform ? CSS.Transform.toString(transform) : undefined,
     transition,
     opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
   };
 
   return (
@@ -43,18 +43,11 @@ const Course: FC<CourseProps> = (props) => {
       >
         <CourseCard {...props} />
       </div>
-      {isDragging && (
-        <DragOverlay>
-          <div className="course">
-            <CourseCard {...props} />
-          </div>
-        </DragOverlay>
-      )}
     </>
   );
 };
 
-const CourseCard = (props: CourseProps) => {
+export const CourseCard = (props: Omit<CourseProps, 'sortableId'>) => {
   const {
     id,
     department,

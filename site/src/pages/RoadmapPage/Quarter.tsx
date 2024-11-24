@@ -22,9 +22,12 @@ interface QuarterProps {
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = quarterDisplayNames[data.name];
-  const invalidCourses = useAppSelector(
-    (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
-  );
+  const [invalidCourses, activeCourse, overContainer] = useAppSelector((state) => [
+    state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
+    state.roadmap.activeCourse,
+    state.roadmap.overContainer,
+  ]);
+  // const activeCourse = useAppSelector((state) =>)
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
@@ -82,6 +85,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     </Popover>
   );
 
+  const courseAddedToOtherContainer = (index: number) => {
+    const sortableId = `${containerId}-${index}`;
+    return overContainer !== undefined && overContainer !== containerId && sortableId === activeCourse?.id;
+  };
+
   return (
     <div className="quarter" ref={quarterContainerRef}>
       <div className="quarter-header">
@@ -109,7 +117,12 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       </div>
       <SortableContext
         id={`${containerId}`}
-        items={data.courses.map((_, index) => `${containerId}-${index}`)}
+        items={[
+          ...data.courses
+            .map((_, index) => `${containerId}-${index}`)
+            .filter((_, index) => !courseAddedToOtherContainer(index)),
+          ...(overContainer === containerId ? [activeCourse!.id] : []),
+        ]}
         // items={data.courses.map((course, index) => course.id + index)}
         strategy={verticalListSortingStrategy}
         // onStart={setDraggedItem}
@@ -120,6 +133,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       >
         <div className="quarter-course-list">
           {data.courses.map((course, index) => {
+            const sortableId = `${containerId}-${index}`;
+            if (courseAddedToOtherContainer(index)) {
+              return undefined;
+            }
             let requiredCourses: string[] = null!;
             // if this is an invalid course, set the required courses
             invalidCourses.forEach((ic) => {
@@ -132,13 +149,16 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             return (
               <Course
                 key={course.id + index}
-                sortableId={`${containerId}-${index}`}
+                sortableId={sortableId}
                 {...course}
                 requiredCourses={requiredCourses}
                 onDelete={() => removeCourseAt(index)}
               />
             );
           })}
+          {overContainer === containerId && activeCourse && (
+            <Course sortableId={activeCourse.id} {...activeCourse.course} />
+          )}
         </div>
       </SortableContext>
 

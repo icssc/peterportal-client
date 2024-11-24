@@ -13,6 +13,8 @@ import {
   setAllPlans,
   defaultPlan,
   setCourses,
+  setOverContainer,
+  setActiveCourse,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
@@ -23,8 +25,9 @@ import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { closestCorners, DndContext } from '@dnd-kit/core';
+import { closestCorners, DndContext, DragOverlay } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { CourseCard } from './Course';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -33,13 +36,13 @@ const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
     transfers: transfers,
   });
-  // const dnd = useAppSelector((state) => state.dnd);
 
   const handleLoadLocal = async () => {
     let roadmap: SavedRoadmap = null!;
@@ -144,7 +147,25 @@ const Planner: FC = () => {
   return (
     <DndContext
       collisionDetection={closestCorners}
+      onDragStart={(e) => {
+        document.body.style.cursor = 'grabbing';
+        const activeId = e.active.id.toString();
+        const [yearIndex, quarterIndex, activeCourseIndex] = activeId
+          .toString()
+          .split('-')
+          .map((x) => Number(x));
+
+        dispatch(
+          setActiveCourse({
+            id: activeId,
+            course: currentPlanData[Number(yearIndex)].quarters[Number(quarterIndex)].courses[activeCourseIndex],
+          }),
+        );
+      }}
       onDragEnd={(e) => {
+        document.body.style.cursor = '';
+        dispatch(setActiveCourse(undefined));
+        dispatch(setOverContainer(undefined));
         // no destination
         if (!e.over) {
           return;
@@ -192,20 +213,26 @@ const Planner: FC = () => {
         // if source == search and destination != search
       }}
       onDragOver={(e) => {
+        if (!e.over) {
+          return;
+        }
         console.log('over', e.over);
-        // if (!e.over) {
-        //   return;
-        // }
-        // const overId = e.over.id.toString().split('|')[0];
-        // if (e.over && fromContainer && overId !== fromContainer) {
-        //   dispatch(
-        //     moveToContainer({
-        //       oldContainerId: fromContainer.toString(),
-        //       newContainerId: overId,
-        //       itemId: e.active.id.toString(),
-        //     }),
-        //   );
-        // }
+        const [activeYearIndex, activeQuarterIndex] = e.active.id
+          .toString()
+          .split('-')
+          .map((x) => Number(x));
+        const [yearIndex, quarterIndex] = e.over.id
+          .toString()
+          .split('-')
+          .map((x) => Number(x));
+        if (e.active.id.toString() === e.over.id.toString()) {
+          return;
+        }
+        if (activeYearIndex === yearIndex && activeQuarterIndex === quarterIndex) {
+          dispatch(setOverContainer(undefined));
+          return;
+        }
+        dispatch(setOverContainer(`${yearIndex}-${quarterIndex}`));
       }}
     >
       <div className="planner">
@@ -255,6 +282,13 @@ const Planner: FC = () => {
           }
         />
         <ImportTranscriptPopup />
+        {activeCourse && (
+          <DragOverlay>
+            <div className="course">
+              <CourseCard {...activeCourse.course} />
+            </div>
+          </DragOverlay>
+        )}
       </div>
     </DndContext>
   );

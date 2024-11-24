@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
+import { addCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 
 interface AddCoursePopupProps {}
@@ -17,7 +17,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const [year, setYear] = useState(currentYearAndQuarter?.year ?? -1);
   const [quarter, setQuarter] = useState(currentYearAndQuarter?.quarter ?? -1);
   const [validated, setValidated] = useState(false);
-  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse?.course);
 
   useEffect(() => {
     setYear(currentYearAndQuarter?.year ?? -1);
@@ -46,17 +46,10 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
 
     // add course to roadmap
     dispatch(
-      moveCourse({
-        from: {
-          yearIndex: -1,
-          quarterIndex: -1,
-          courseIndex: -1,
-        },
-        to: {
-          yearIndex: year,
-          quarterIndex: quarter,
-          courseIndex: 0,
-        },
+      addCourse({
+        yearIndex: year,
+        quarterIndex: quarter,
+        course: activeCourse!,
       }),
     );
 
