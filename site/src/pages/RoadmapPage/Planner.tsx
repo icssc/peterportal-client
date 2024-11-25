@@ -15,6 +15,7 @@ import {
   setCourses,
   setOverContainer,
   setActiveCourse,
+  deleteCourse,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
@@ -37,6 +38,7 @@ const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const transfers = useAppSelector((state) => state.roadmap.transfers);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const overContainer = useAppSelector((state) => state.roadmap.overContainer);
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
@@ -178,15 +180,42 @@ const Planner: FC = () => {
           .toString()
           .split('-')
           .map((x) => Number(x));
-        const [, , activeCourseIndex] = activeId
+        const [activeYearIndex, activeQuarterIndex, activeCourseIndex] = activeId
           .toString()
           .split('-')
           .map((x) => Number(x));
         const courses = currentPlanData[Number(yearIndex)].quarters[Number(quarterIndex)].courses;
 
-        dispatch(
-          setCourses({ yearIndex, quarterIndex, courses: arrayMove(courses, activeCourseIndex, overCourseIndex) }),
-        );
+        // moved to new container
+        if (overContainer !== undefined) {
+          // have to use this rather than indices from overId, since overId could be the active object itself which has the old year/quarter
+          const [yearIndex, quarterIndex] = overContainer!.split('-').map((x) => Number(x));
+          dispatch(
+            deleteCourse({
+              yearIndex: activeYearIndex,
+              quarterIndex: activeQuarterIndex,
+              courseIndex: activeCourseIndex,
+            }),
+          );
+          const addedCourse = activeCourse!.course;
+          // if hovering over itself, place at the end
+          if (overId === activeId) {
+            dispatch(setCourses({ yearIndex, quarterIndex, courses: [...courses, activeCourse!.course] }));
+          } else {
+            // otherwise, place in spot of the one its over
+            dispatch(
+              setCourses({
+                yearIndex,
+                quarterIndex,
+                courses: [...courses.slice(0, overCourseIndex), addedCourse, ...courses.slice(overCourseIndex)],
+              }),
+            );
+          }
+        } else {
+          dispatch(
+            setCourses({ yearIndex, quarterIndex, courses: arrayMove(courses, activeCourseIndex, overCourseIndex) }),
+          );
+        }
 
         //move from planner to coursebag
         // if (result.destination.droppableId === 'coursebag' && result.source.droppableId != 'coursebag') {

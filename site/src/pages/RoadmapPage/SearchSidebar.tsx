@@ -13,6 +13,7 @@ import { useCoursebag } from '../../hooks/coursebag';
 import { CourseGQLData } from '../../types/types';
 import Course from './Course';
 import { Spinner } from 'react-bootstrap';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -56,11 +57,6 @@ const SearchSidebar = () => {
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
-  // const setDraggedItem = (event: SortableEvent) => {
-  //   const course = shownCourses[event.oldIndex!];
-  //   dispatch(setActiveCourse(course));
-  // };
-
   const coursebagTitle = coursebag.length ? (
     <h3 className="coursebag-title">Saved Courses</h3>
   ) : (
@@ -75,17 +71,17 @@ const SearchSidebar = () => {
           <SearchModule index="courses" />
         </div>
         {showCourseBag && coursebagTitle}
-        {/* <SortableContext items={shownCourses.map((course, i) => course.id + i)}> */}
-        <div className="search-body">
-          {searchInProgress ? (
-            <div className="no-results">
-              <Spinner animation="border" role="status" />
-            </div>
-          ) : (
-            shownCourses.map((course, i) => <Course {...course} key={course.id + i} sortableId={course.id + i} />)
-          )}
-        </div>
-        {/* </SortableContext> */}
+        <SortableContext items={shownCourses.map((course, i) => course.id + i)} strategy={verticalListSortingStrategy}>
+          <div className="search-body">
+            {searchInProgress ? (
+              <div className="no-results">
+                <Spinner animation="border" role="status" />
+              </div>
+            ) : (
+              shownCourses.map((course, i) => <Course {...course} key={course.id + i} sortableId={course.id + i} />)
+            )}
+          </div>
+        </SortableContext>
         <CloseRoadmapSearchButton />
       </div>
     </>
