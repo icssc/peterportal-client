@@ -184,12 +184,12 @@ const Planner: FC = () => {
           .toString()
           .split('-')
           .map((x) => Number(x));
-        const courses = currentPlanData[Number(yearIndex)].quarters[Number(quarterIndex)].courses;
 
         // moved to new container
         if (overContainer !== undefined) {
           // have to use this rather than indices from overId, since overId could be the active object itself which has the old year/quarter
           const [yearIndex, quarterIndex] = overContainer!.split('-').map((x) => Number(x));
+          const courses = currentPlanData[yearIndex].quarters[quarterIndex].courses;
           dispatch(
             deleteCourse({
               yearIndex: activeYearIndex,
@@ -212,6 +212,7 @@ const Planner: FC = () => {
             );
           }
         } else {
+          const courses = currentPlanData[yearIndex].quarters[quarterIndex].courses;
           dispatch(
             setCourses({ yearIndex, quarterIndex, courses: arrayMove(courses, activeCourseIndex, overCourseIndex) }),
           );
