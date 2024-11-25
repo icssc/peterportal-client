@@ -39,7 +39,7 @@ Features include:
 
 ### Prerequisites
 
-1. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+1. Check your Node version with `node -v`. Make sure you have version 18, 20, or 22 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
 
 2. We use pnpm as our package manager. If you don't have pnpm, install it with `npm i -g pnpm`
 
