@@ -45,13 +45,13 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
 
   return (
     <Row className="g-2 mb-1" xs={3}>
-      <Col xs="auto" md="auto" className="d-flex flex-row justify-content-center p-0">
+      <Col xs="1" md="1" className="d-flex flex-row justify-content-center p-0">
         <CloseButton onClick={() => dispatch(deleteTransfer(props.index))} />
       </Col>
-      <Col xs md className="pr-0">
+      <Col xs="8" md="7" className="pr-0">
         <Form.Control type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
       </Col>
-      <Col xs md className="pr-0">
+      <Col xs="3" md="4" className="pr-0">
         <Form.Control
           type="number"
           placeholder="Units"
