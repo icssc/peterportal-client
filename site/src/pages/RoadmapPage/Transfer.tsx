@@ -80,11 +80,11 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   };
 
   return (
-    <Modal className="ppc-modal" show={show} onHide={handleClose} centered>
+    <Modal className="transfer-modal ppc-modal" show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <h2>Transfer Credits</h2>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="transfer-body">
         <p>
           Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the
           roadmap.

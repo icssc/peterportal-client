@@ -6,7 +6,8 @@
     border-top-color: var(--overlay3);
   }
 }
-.transfer {
+
+.transfer-body {
   max-height: 75vh;
   overflow-y: auto;
 }
@@ -16,11 +17,21 @@
   overflow-x: scroll;
 }
 
-.transfer .list-group .list-group-item {
+.transfer-body .list-group .list-group-item {
   min-width: max-content;
   background-color: var(--overlay3);
 }
 
 .entry {
   margin-top: 1%;
+}
+
+.transfer-modal {
+  .modal-dialog {
+    max-width: 500px;
+    max-height: 80%;
+  }
+  p {
+    font-size: 16px;
+  }
 }
