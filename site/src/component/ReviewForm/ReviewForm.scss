@@ -106,19 +106,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.submitted-form {
-  text-align: center;
-  width: 100%;
-  i {
-    color: var(--peterportal-secondary-green);
-  }
-  h1 {
-    margin: 15px 0;
-  }
-  p {
-    font-size: 1.25rem;
-  }
-}
+
 .review-form-close {
   position: absolute;
   right: 2vh;

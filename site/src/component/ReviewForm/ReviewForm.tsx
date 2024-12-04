@@ -15,6 +15,7 @@ import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
 import { quarters } from '@peterportal/types';
 import trpc from '../../trpc';
+import ThankYouMessage from '../ThankYouMessage/ThankYouMessage';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -499,15 +500,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   return (
     <Modal show={show} onHide={closeForm} centered animation={false}>
       <div className="review-form">
-        {submitted ? (
-          <div className="submitted-form">
-            <Icon name="check circle" size="huge" />
-            <h1>Thank You</h1>
-            <p>Your form has been submitted successfully.</p>
-          </div>
-        ) : (
-          reviewForm
-        )}
+        {submitted ? <ThankYouMessage message="Your form has been submitted successfully." /> : reviewForm}
       </div>
     </Modal>
   );
