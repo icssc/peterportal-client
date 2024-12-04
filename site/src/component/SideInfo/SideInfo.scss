@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 .side-info {
   width: 40vw;
@@ -9,7 +9,7 @@
   position: sticky;
   top: 0;
   overflow-y: auto;
-  @include card-padding;
+  @include globals.card-padding;
 }
 
 .side-info-data {

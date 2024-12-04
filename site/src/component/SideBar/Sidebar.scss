@@ -1,4 +1,5 @@
-@import '../../globals';
+@use 'sass:color';
+@use '../../globals';
 
 .sidebar {
   position: fixed;
@@ -180,7 +181,7 @@
     }
   }
 
-  @media only screen and (max-width: $mobile-cutoff) {
+  @media only screen and (max-width: globals.$mobile-cutoff) {
     display: none;
   }
 }

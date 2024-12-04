@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 [data-theme='dark'] {
   .year-settings-btn:hover,
@@ -142,7 +142,7 @@
   }
 }
 
-@media only screen and (max-width: $mobile-cutoff) {
+@media only screen and (max-width: globals.$mobile-cutoff) {
   .year-accordion-content {
     flex-direction: column;
   }
