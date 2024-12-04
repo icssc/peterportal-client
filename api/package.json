@@ -14,7 +14,7 @@
   "dependencies": {
     "@trpc/server": "^10.45.2",
     "@vendia/serverless-express": "^4.12.6",
-    "axios": "^1.7.7",
+    "axios": "^1.7.8",
     "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv-flow": "^4.1.0",
@@ -30,10 +30,10 @@
   "devDependencies": {
     "@peterportal/types": "workspace:*",
     "@types/connect-pg-simple": "^7.0.3",
-    "@types/cookie-parser": "^1.4.7",
+    "@types/cookie-parser": "^1.4.8",
     "@types/dotenv-flow": "^3.3.3",
     "@types/express": "^5.0.0",
-    "@types/express-session": "^1.18.0",
+    "@types/express-session": "^1.18.1",
     "@types/morgan": "^1.9.9",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth": "^1.0.45",
