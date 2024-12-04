@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "dotenv-flow": "^4.0.1",
-    "sst": "3.3.22"
+    "sst": "3.3.47"
   },
   "engines": {
     "node": "^18 || ^20 || ^22",

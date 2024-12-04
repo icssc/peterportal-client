@@ -12,8 +12,8 @@ importers:
         specifier: ^4.0.1
         version: 4.1.0
       sst:
-        specifier: 3.3.22
-        version: 3.3.22
+        specifier: ^3.3.47
+        version: 3.3.47
     devDependencies:
       '@types/aws-lambda':
         specifier: 8.10.145
@@ -256,7 +256,7 @@ importers:
         version: 7.18.0(eslint@8.57.1)(typescript@5.5.4)
       '@vitejs/plugin-react':
         specifier: ^4.3.4
-        version: 4.3.4(vite@6.0.2(@types/node@22.9.0)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1))
+        version: 4.3.4(vite@6.0.2(@types/node@22.10.1)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1))
       eslint:
         specifier: ^8.57.1
         version: 8.57.1
@@ -283,7 +283,7 @@ importers:
         version: 5.5.4
       vite:
         specifier: ^6.0.2
-        version: 6.0.2(@types/node@22.9.0)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1)
+        version: 6.0.2(@types/node@22.10.1)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1)
 
   types:
     dependencies:
@@ -3153,8 +3153,8 @@ packages:
     resolution: {integrity: sha512-FW5iMbeQ6rBGm/oKgzq2aW4KvAGpxPzYES8N4g4xNXUKpL1mclMvOe+76AcLDTvD+Ze+sOpVhgdAQEKF4L9iGQ==}
     engines: {node: '>= 0.4'}
 
-  jose@4.15.5:
-    resolution: {integrity: sha512-jc7BFxgKPKi94uOvEmzlSWFFe2+vASyXaKUpdQKatWAESU2MWjDfFf0fdfc83CDKcA5QecabZeNLyfhe3yKNkg==}
+  jose@4.15.9:
+    resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
 
   jose@5.2.3:
     resolution: {integrity: sha512-KUXdbctm1uHVL8BYhnyHkgp3zDX5KW8ZhAKVFEfUbU2P8Alpzjb+48hHvjOdQIyPshoblhzsuqOwEEAbtHVirA==}
@@ -4104,33 +4104,33 @@ packages:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
 
-  sst-darwin-arm64@3.3.22:
-    resolution: {integrity: sha512-Ma08E1jeuHu8lRbx+1De8DQWF1Uq6ckyfgb3ccFZ2mFiJr/DMuv56fBmCXNymLmOsFvJcm1ImwKU0lNIJv6m4Q==}
+  sst-darwin-arm64@3.3.47:
+    resolution: {integrity: sha512-81enlQkm7ZzvYQVS410HqwAyQEt3LmODRVrf0Y4vKjr5x1SvPNrHlSGbQ+lVyJgifn+PMoEQHGS4kOuyVgnTqA==}
     cpu: [arm64]
     os: [darwin]
 
-  sst-darwin-x64@3.3.22:
-    resolution: {integrity: sha512-e9X3rO7ZDS3tjQLzoNfttAlg9sUWlZQhJtGhTCrdcEsVMohMqr41oFnFo+UmEZIaGRTbiOQgNnjb6ogGuaDQhg==}
+  sst-darwin-x64@3.3.47:
+    resolution: {integrity: sha512-9qppOAEPpzB1mxcttjQmDnX2W7vNCa4PsauzGIm2UXStsswHNd/DhDcqUiwkGyloI7yy7bEdgImrAXiNW8W5Eg==}
     cpu: [x64]
     os: [darwin]
 
-  sst-linux-arm64@3.3.22:
-    resolution: {integrity: sha512-LyAqEg1BNVGiH96VrY7vLrYaOUjm5lxW7Rg6jni1ZVo+dyT9I2ZKhiUpOzQIwMYqHFooWPn5U0WWQrWjdxR5Iw==}
+  sst-linux-arm64@3.3.47:
+    resolution: {integrity: sha512-ITLhEfizeDbipcwN0YjNT8246/WIcEilaUoTV3GLK8MkJQEZ1nNRkCFpQNzusoXUvQoRoheWU3WrqMOODz54dw==}
     cpu: [arm64]
     os: [linux]
 
-  sst-linux-x64@3.3.22:
-    resolution: {integrity: sha512-ad3wvd8Vsqopzfz7aWhgqYB16DwpHkHPhzTexBnWvNQhn78+2NydtglDK9B6/Lxl0YsPkHsl7Ct33SXU5Ib0IQ==}
+  sst-linux-x64@3.3.47:
+    resolution: {integrity: sha512-WJMuwDpju1zdZZqmbPIt+YszmO6VqCojn+3fiaUPSUg8Pm+DEUKAEggjlrBgdUkOOqNBYkIXq7N0YM8cs7tw6Q==}
     cpu: [x64]
     os: [linux]
 
-  sst-linux-x86@3.3.22:
-    resolution: {integrity: sha512-6cAzTRddB7iifL5Mjj+pmpiID49qyc5CmmWhPHJzfpjaB6zJ3IWkpFBgilh67dGzn1zbEu9K9I87xkXoqGv0fQ==}
+  sst-linux-x86@3.3.47:
+    resolution: {integrity: sha512-Zdpd7fjA3vs6rB7s5qSNWGdvDV96gpBq91YO1i1UrtJHUAZ1KehOqLm3M1YGkTYxaTR7k53J2rUAuZQoTdGQBQ==}
     cpu: [x86]
     os: [linux]
 
-  sst@3.3.22:
-    resolution: {integrity: sha512-Wl1lf8woQ2vwBNHXm7c6ga+DmNdCMcLxdxbI8NSuibIY1yKvX4NWwZ2VOLsF3SDI8eT7lYazW7Y2Q5VnMAuvew==}
+  sst@3.3.47:
+    resolution: {integrity: sha512-7P2LbYv9WxW1y9l9cVKI547oUihKjvIwJ7Vy0xnmmSSnOp1AuD2BJQqzpldH5UgB2fWZND0MsXkMR15dut4zyw==}
     hasBin: true
     peerDependencies:
       hono: 4.x
@@ -6358,7 +6358,7 @@ snapshots:
 
   '@types/ws@8.5.13':
     dependencies:
-      '@types/node': 22.10.1
+      '@types/node': 20.12.8
     optional: true
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.5.4))(eslint@8.57.1)(typescript@5.5.4)':
@@ -6534,14 +6534,14 @@ snapshots:
     dependencies:
       '@codegenie/serverless-express': 4.16.0
 
-  '@vitejs/plugin-react@4.3.4(vite@6.0.2(@types/node@22.9.0)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1))':
+  '@vitejs/plugin-react@4.3.4(vite@6.0.2(@types/node@22.10.1)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.2(@types/node@22.9.0)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1)
+      vite: 6.0.2(@types/node@22.10.1)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -8012,7 +8012,7 @@ snapshots:
       reflect.getprototypeof: 1.0.6
       set-function-name: 2.0.2
 
-  jose@4.15.5: {}
+  jose@4.15.9: {}
 
   jose@5.2.3: {}
 
@@ -8373,7 +8373,7 @@ snapshots:
 
   openid-client@5.6.4:
     dependencies:
-      jose: 4.15.5
+      jose: 4.15.9
       lru-cache: 6.0.0
       object-hash: 2.2.0
       oidc-token-hash: 5.0.3
@@ -9055,32 +9055,32 @@ snapshots:
 
   split2@4.2.0: {}
 
-  sst-darwin-arm64@3.3.22:
+  sst-darwin-arm64@3.3.47:
     optional: true
 
-  sst-darwin-x64@3.3.22:
+  sst-darwin-x64@3.3.47:
     optional: true
 
-  sst-linux-arm64@3.3.22:
+  sst-linux-arm64@3.3.47:
     optional: true
 
-  sst-linux-x64@3.3.22:
+  sst-linux-x64@3.3.47:
     optional: true
 
-  sst-linux-x86@3.3.22:
+  sst-linux-x86@3.3.47:
     optional: true
 
-  sst@3.3.22:
+  sst@3.3.47:
     dependencies:
       aws4fetch: 1.0.20
       jose: 5.2.3
       openid-client: 5.6.4
     optionalDependencies:
-      sst-darwin-arm64: 3.3.22
-      sst-darwin-x64: 3.3.22
-      sst-linux-arm64: 3.3.22
-      sst-linux-x64: 3.3.22
-      sst-linux-x86: 3.3.22
+      sst-darwin-arm64: 3.3.47
+      sst-darwin-x64: 3.3.47
+      sst-linux-arm64: 3.3.47
+      sst-linux-x64: 3.3.47
+      sst-linux-x86: 3.3.47
 
   statuses@2.0.1: {}
 
@@ -9355,13 +9355,13 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite@6.0.2(@types/node@22.9.0)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1):
+  vite@6.0.2(@types/node@22.10.1)(sass@1.82.0)(tsx@4.19.2)(yaml@2.5.1):
     dependencies:
       esbuild: 0.24.0
       postcss: 8.4.49
       rollup: 4.27.3
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.10.1
       fsevents: 2.3.3
       sass: 1.82.0
       tsx: 4.19.2
