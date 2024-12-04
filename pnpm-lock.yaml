@@ -12,7 +12,7 @@ importers:
         specifier: ^4.0.1
         version: 4.1.0
       sst:
-        specifier: ^3.3.47
+        specifier: 3.3.47
         version: 3.3.47
     devDependencies:
       '@types/aws-lambda':
