@@ -134,7 +134,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       setHighestReview(sortedKeys[sortedKeys.length - 1]);
       setLowestReview(sortedKeys[0]);
     }
-  }, [reviews]);
+  }, [reviews, allToken, props.searchType]);
 
   // sort by number of reviews for the dropdown
   const sortedReviews = Object.keys(averageReviews);
