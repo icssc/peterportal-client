@@ -46,11 +46,11 @@ function createLambdaFunction() {
 
 /**
  * forwards host since lambda function url overwrites host (x-forwarded-host is recovered in api/app.ts)
- * encodes querystryings since cloudfront can't support it otherwise
+ * encodes querystryings since cloudfront can't support "/" in querystring otherwise
  * @returns cloudfront function
  */
 const createCloudFrontInjectionFunction = () =>
-  new aws.cloudfront.Function('CloudFrontFunction', {
+  new aws.cloudfront.Function(`peterportal-client-${$app.stage}-CloudFrontFunction`, {
     runtime: 'cloudfront-js-2.0',
     // this code is copy/pasted from an SST sveltekit component, forwards host and encodes query string
     code: `
