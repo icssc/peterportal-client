@@ -50,7 +50,7 @@ function createLambdaFunction() {
  * @returns cloudfront function
  */
 const createCloudFrontInjectionFunction = () =>
-  new aws.cloudfront.Function(`peterportal-client-${$app.stage}-CloudFrontFunction`, {
+  new aws.cloudfront.Function(`${$app.name}-${$app.stage}-CloudFrontFunction`, {
     runtime: 'cloudfront-js-2.0',
     // this code is copy/pasted from an SST sveltekit component, forwards host and encodes query string
     code: `
