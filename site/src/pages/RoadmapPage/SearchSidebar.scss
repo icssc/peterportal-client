@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 .search-sidebar {
   position: sticky;
@@ -51,7 +51,7 @@
     color: white;
     font: inherit;
     font-weight: 600;
-    @include clickable(0.9, 0.7);
+    @include globals.clickable(0.9, 0.7);
   }
 
   .coursebag-title {
