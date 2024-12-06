@@ -9,6 +9,13 @@ export default defineConfig({
       '/api': 'http://localhost:8080/',
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

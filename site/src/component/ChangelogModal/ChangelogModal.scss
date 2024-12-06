@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 .changelog-modal {
   .modal-content {
@@ -35,7 +35,7 @@
     font-size: 32px;
   }
 
-  @media only screen and (max-width: $mobile-cutoff) {
+  @media only screen and (max-width: globals.$mobile-cutoff) {
     .modal-img {
       max-width: 90vw;
       max-height: 50vh;
