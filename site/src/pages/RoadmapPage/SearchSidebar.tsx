@@ -77,13 +77,20 @@ const SearchSidebar = () => {
           <SearchModule index="courses" />
         </div>
         {showCourseBag && coursebagTitle}
-        <ReactSortable {...courseSearchSortable} list={shownCourses} onStart={setDraggedItem} className="search-body">
+
+        <ReactSortable
+          {...courseSearchSortable}
+          list={shownCourses}
+          onStart={setDraggedItem}
+          disabled={isMobile}
+          className={'search-body' + (isMobile ? ' disabled' : '')}
+        >
           {searchInProgress ? (
             <div className="no-results">
               <Spinner animation="border" role="status" />
             </div>
           ) : (
-            shownCourses.map((course, i) => <Course {...course} key={i} />)
+            shownCourses.map((course, i) => <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} />)
           )}
         </ReactSortable>
         <CloseRoadmapSearchButton />

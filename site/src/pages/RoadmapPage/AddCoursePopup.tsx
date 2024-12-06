@@ -73,7 +73,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         Where do you want to add {activeCourse ? activeCourse.department + ' ' + activeCourse.courseNumber : 'a course'}
         ?
       </p>
-      <Form.Group controlId="year">
+      <Form.Group>
         <Form.Label>School Year</Form.Label>
         <Form.Control
           as="select"
@@ -105,7 +105,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
       </Form.Group>
       {year != -1 && (
-        <Form.Group controlId="quarter">
+        <Form.Group>
           <Form.Label>Quarter</Form.Label>
           <Form.Control
             as="select"

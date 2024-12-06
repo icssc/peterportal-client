@@ -38,6 +38,8 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     removeCourseFromBag(props);
   };
 
+  return <>you are not supposed to see this</>;
+
   if (isMobile) {
     return (
       <div tabIndex={0} role="button" onMouseDown={onMobileMouseDown} onKeyDown={onMobileKeyDown}>

@@ -8,6 +8,9 @@ import Popover from 'react-bootstrap/Popover';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { useIsMobile } from '../../helpers/util';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -16,6 +19,7 @@ interface CourseProps extends CourseGQLData {
   onAddToBag?: () => void;
   isInBag?: boolean;
   removeFromBag?: () => void;
+  addMode?: 'tap' | 'drag';
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -63,6 +67,9 @@ const Course: FC<CourseProps> = (props) => {
     </Popover>
   );
 
+  const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
+
   const WarningPopover = (
     <Popover id={'warning-popover-' + id}>
       <Popover.Content>
@@ -76,8 +83,16 @@ const Course: FC<CourseProps> = (props) => {
 
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
 
+  const insertCourseOnClick = () => {
+    dispatch(setActiveCourse(props));
+    dispatch(setShowAddCourse(true));
+  };
+
+  const mobileProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
+  const tappableCourseProps = isMobile ? mobileProps : {};
+
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
+    <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
           <span>
