@@ -10,7 +10,6 @@ import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
-import { useIsMobile } from '../../helpers/util';
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -67,7 +66,6 @@ const Course: FC<CourseProps> = (props) => {
     </Popover>
   );
 
-  const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
   const WarningPopover = (
@@ -88,8 +86,8 @@ const Course: FC<CourseProps> = (props) => {
     dispatch(setShowAddCourse(true));
   };
 
-  const mobileProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
-  const tappableCourseProps = isMobile ? mobileProps : {};
+  const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
+  const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>

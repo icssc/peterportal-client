@@ -5,7 +5,6 @@ import SearchModule from '../../component/SearchModule/SearchModule';
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setActiveCourse, setShowSearch } from '../../store/slices/roadmapSlice';
-import { quarterDisplayNames } from '../../helpers/planner';
 import { useEffect, useRef } from 'react';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 
@@ -15,17 +14,12 @@ import { CourseGQLData } from '../../types/types';
 import Course from './Course';
 import { courseSearchSortable } from '../../helpers/sortable';
 import { Spinner } from 'react-bootstrap';
+import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
-  const planner = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans);
-  const { year, quarter } = useAppSelector((state) => state.roadmap.currentYearAndQuarter) || {};
   const dispatch = useAppDispatch();
-
-  if (year == null || quarter == null) return <></>;
-
-  const quarterName = quarterDisplayNames[planner[year].quarters[quarter].name];
-  const yearName = planner[year].startYear + Number(quarterName === quarterDisplayNames.Fall);
+  const { year, quarter } = useNamedAcademicTerm();
 
   if (!isMobile) return <></>;
 
@@ -33,7 +27,7 @@ const CloseRoadmapSearchButton = () => {
 
   return (
     <button className="fixed" onClick={closeSearch}>
-      Cancel Selecting for {quarterName} {yearName}
+      Cancel Selecting for {quarter} {year}
     </button>
   );
 };
