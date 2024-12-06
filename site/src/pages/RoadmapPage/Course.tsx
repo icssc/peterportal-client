@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
@@ -10,6 +10,15 @@ import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
+
+export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
+  <>
+    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
+    <br />
+    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
+    clear the prerequisite(s).
+  </>
+);
 
 interface CourseProps extends CourseGQLData {
   requiredCourses?: string[];
@@ -68,13 +77,10 @@ const Course: FC<CourseProps> = (props) => {
 
   const dispatch = useAppDispatch();
 
-  const WarningPopover = (
+  const warningPopover = (
     <Popover id={'warning-popover-' + id}>
       <Popover.Content>
-        Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-        <br />
-        Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-        clear the prerequisite(s).
+        <UnmetPrerequisiteText requiredCourses={requiredCourses} />
       </Popover.Content>
     </Popover>
   );
@@ -93,21 +99,22 @@ const Course: FC<CourseProps> = (props) => {
     <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <span>
-            <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
-              {department + ' ' + courseNumber}
-            </a>
-            <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
+          <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
+            {department + ' ' + courseNumber}
+          </a>
+          <span className="units">
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
           </span>
           <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
             <InfoCircle />
           </OverlayTrigger>
           {requiredCourses && (
-            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
+            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={warningPopover} delay={100}>
               <ExclamationTriangle />
             </OverlayTrigger>
           )}
         </div>
+        <div className="spacer"></div>
         {onDelete ? (
           <ThemeContext.Consumer>
             {({ darkMode }) => (

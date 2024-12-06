@@ -4,10 +4,10 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 import { useCoursebag } from '../../hooks/coursebag';
-import { Bookmark, BookmarkFill } from 'react-bootstrap-icons';
+import { Bookmark, BookmarkFill, X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
-import { CSSTransition } from 'react-transition-group';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
+import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 
 interface AddCoursePopupProps {}
 
@@ -15,6 +15,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const term = useNamedAcademicTerm();
 
   const dispatch = useAppDispatch();
@@ -22,9 +23,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const quarter = currentYearAndQuarter?.quarter ?? -1;
   const year = currentYearAndQuarter?.year ?? -1;
 
-  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-
   const closePopup = () => dispatch(setShowAddCourse(false));
+  const contentClassName = 'ppc-modal add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
+  const overlay = <UIOverlay onClick={closePopup} zIndex={499} />;
 
   const addToRoadmap = () => {
     dispatch(
@@ -40,7 +41,13 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
     closePopup();
   };
 
-  if (!activeCourse) return <></>;
+  if (!activeCourse)
+    return (
+      <>
+        <div className={contentClassName}></div>
+        {overlay}
+      </>
+    );
 
   const inCourseBag = coursebag.some((course) => course.id === activeCourse.id);
 
@@ -56,27 +63,35 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
 
   return (
     <>
-      <CSSTransition in={showAddCourse} timeout={500} unmountOnExit>
-        {/* enter-active conditional class is required for CSSTransition to apply classes properly */}
-        <div className={'ppc-modal add-course-modal ' + (showAddCourse ? 'enter-active' : '')}>
-          <Modal.Header>
-            <h2>
-              {department} {courseNumber}
-            </h2>
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`})
-            <button onClick={toggleSaved}>{inCourseBag ? <BookmarkFill /> : <Bookmark />}</button>
-          </Modal.Header>
-          <Modal.Body>
-            <p>
-              <b>{title}:</b> {description}
-            </p>
-          </Modal.Body>
-          <button className="fixed" onClick={addToRoadmap}>
-            Add to {term.quarter} {term.year}
+      <div className={contentClassName}>
+        <Modal.Header>
+          <h2>
+            {department} {courseNumber}
+          </h2>
+          <span className="unit-count">
+            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'})
+          </span>
+          <button onClick={toggleSaved}>{inCourseBag ? <BookmarkFill /> : <Bookmark />}</button>
+          <div className="spacer"></div>
+          <button onClick={closePopup}>
+            <X width={32} height={32} />
           </button>
-        </div>
-      </CSSTransition>
-      <UIOverlay onClick={closePopup} zIndex={499} />
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <b>{title}:</b> {description}
+          </p>
+          <p className="quarter-offerings-section">
+            <b>Previous Offerings:</b>
+            <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
+          </p>
+          {/** @todo Add UnmetPrerequisiteText for prerequisites that don't exist in the planner */}
+        </Modal.Body>
+        <button className="fixed" onClick={addToRoadmap}>
+          Add to {term.quarter} {term.year}
+        </button>
+      </div>
+      {overlay}
     </>
   );
 };

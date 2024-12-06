@@ -156,7 +156,14 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           });
 
           return (
-            <Course key={index} {...course} requiredCourses={requiredCourses} onDelete={() => removeCourseAt(index)} />
+            // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
+            <Course
+              key={index}
+              {...course}
+              requiredCourses={requiredCourses}
+              onDelete={() => removeCourseAt(index)}
+              addMode="drag"
+            />
           );
         })}
       </ReactSortable>

@@ -33,3 +33,21 @@
     margin: 0;
   }
 }
+
+.search-body,
+.quarter {
+  &:not(.disabled) .course {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+  &.disabled .course {
+    cursor: pointer;
+  }
+  .course-and-info svg {
+    cursor: help;
+  }
+}

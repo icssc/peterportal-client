@@ -25,6 +25,45 @@
       border-radius: 8px 8px 0 0;
     }
   }
+
+  .modal-header {
+    gap: 8px;
+    .spacer {
+      margin-left: auto;
+    }
+  }
+
+  h2,
+  .unit-count {
+    font-size: 20px;
+  }
+
+  button:not(.fixed),
+  button.close {
+    background: none;
+    font: inherit;
+    border: none;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0;
+
+    @include globals.clickable(0.8, 0.5);
+  }
+
+  button.close {
+    width: 32px;
+  }
+
+  .quarter-offerings-section {
+    display: flex;
+    gap: 6px;
+    color: var(--text-secondary);
+    .quarter-indicator-container {
+      margin-left: 0;
+    }
+  }
 }
 
 .add-course-form {
