@@ -10,7 +10,7 @@ on:
       - reopened
       - synchronize
 
-# test
+# test2
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
