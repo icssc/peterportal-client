@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 #content-container {
   display: flex;
@@ -27,13 +27,13 @@
       margin-bottom: 0; // so scroll bar doesn't extend past the last hit item
     }
 
-    @media (max-width: $mobile-cutoff) {
+    @media (max-width: globals.$mobile-cutoff) {
       margin-top: 4px;
     }
   }
 }
 
-@media only screen and (max-width: $mobile-cutoff) {
+@media only screen and (max-width: globals.$mobile-cutoff) {
   #content-container {
     #search-list {
       width: 100%;

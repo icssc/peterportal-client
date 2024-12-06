@@ -1,4 +1,4 @@
-@import './globals';
+@use 'globals';
 
 button {
   color: inherit;
@@ -21,7 +21,7 @@ button {
   background-color: var(--background);
   box-sizing: border-box;
 
-  @media (max-width: $mobile-cutoff) {
+  @media (max-width: globals.$mobile-cutoff) {
     padding: 20px 24px;
   }
 }

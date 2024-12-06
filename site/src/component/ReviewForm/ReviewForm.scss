@@ -1,4 +1,4 @@
-@import '../../globals';
+@use '../../globals';
 
 [data-theme='dark'] {
   .review-form {
@@ -120,7 +120,7 @@
   gap: 14px;
 }
 
-@media only screen and (max-width: $mobile-cutoff) {
+@media only screen and (max-width: globals.$mobile-cutoff) {
   .review-form {
     height: 80vh;
     overflow-y: auto;
