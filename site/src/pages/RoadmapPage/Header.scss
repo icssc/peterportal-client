@@ -28,6 +28,13 @@
         white-space: nowrap;
       }
     }
+    .btn-group {
+      flex-wrap: wrap;
+      justify-content: end;
+    }
+    .btn-group button {
+      flex-grow: 0;
+    }
   }
 }
 
