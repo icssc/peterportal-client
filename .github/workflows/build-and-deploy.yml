@@ -10,7 +10,7 @@ on:
       - reopened
       - synchronize
 
-# test3
+# do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
