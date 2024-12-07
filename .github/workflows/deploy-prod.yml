@@ -29,8 +29,18 @@ jobs:
           HUSKY: 0
 
       - name: Build and deploy
-        uses: ./.github/actions/build-and-deploy
-        with:
-          NODE_ENV: production
-          stage: prod
+        run: pnpm sst deploy --stage prod
+        env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          NODE_ENV: production
+
+          PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GRECAPTCHA_SECRET: ${{ secrets.GRECAPTCHA_SECRET }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
