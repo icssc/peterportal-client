@@ -2,6 +2,8 @@ import React from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
+import { Colors } from './Colors.tsx';
+import { TooltipStyle } from './TooltipStyle.tsx';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
@@ -27,7 +29,7 @@ export default class Pie extends React.Component<PieProps> {
   averageGrade = '';
   averagePNP = '';
 
-  getClassData = () => {
+  getClassData = (): Slice[] => {
     let gradeACount = 0,
       gradeBCount = 0,
       gradeCCount = 0,
@@ -102,7 +104,7 @@ export default class Pie extends React.Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: '#60A3D1',
+        color: '#54B058',
       },
       {
         id: 'B',
@@ -150,6 +152,16 @@ export default class Pie extends React.Component<PieProps> {
     this.averageGrade = gradeScale[i];
   }
 
+  styleTooltip = (props: PieTooltipProps<Slice>) => {
+    return (
+      <div style={TooltipStyle.tooltip?.container}>
+        <strong>
+          {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
+        </strong>
+      </div>
+    );
+  };
+
   render() {
     return (
       <div style={{ width: '100%', position: 'relative' }}>
@@ -165,24 +177,11 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#4AB486', '#E36436']}
+          colors={Colors}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-          tooltip={(props: PieTooltipProps<Slice>) => (
-            <div
-              style={{
-                color: '#FFFFFF',
-                background: 'rgba(0,0,0,.87)',
-                paddingLeft: '0.5em',
-                paddingRight: '0.5em',
-              }}
-            >
-              <strong>
-                {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
-              </strong>
-            </div>
-          )}
+          tooltip={this.styleTooltip}
         />
         <div
           style={{
