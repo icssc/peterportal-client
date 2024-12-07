@@ -13,6 +13,7 @@
   "dependencies": {
     "aws-cdk-lib": "2.132.1",
     "dotenv-flow": "^4.0.1",
+    "pnpm": "^9.14.2",
     "sst": "2.41.5"
   },
   "engines": {
