@@ -19,7 +19,7 @@ jobs:
     if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository
     environment:
       name: staging-${{ github.event.pull_request.number }}
-      url: https://staging-${{ github.event.pull_request.number }}peterportal.org
+      url: https://staging-${{ github.event.pull_request.number }}.peterportal.org
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
