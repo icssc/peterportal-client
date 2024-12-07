@@ -195,21 +195,29 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </div>
           </div>
           <div>
-            <div className="subreview-author">
-              <p className=" gapped">
-                <span className=" mr-1">Posted by {review.userDisplay}</span>
+            <div className="subreview-author" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <p style={{ textAlign: 'left' }}>
+                <span className="mr-1">Posted by {review.userDisplay}</span>
                 {review.verified && verifiedBadge}
                 {review.authored && authorBadge}
+                <p>{review.content}</p>
               </p>
-              <p>
+              <p style={{ textAlign: 'right' }}>
+                Created{' '}
                 {new Date(review.createdAt).toLocaleString('default', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+                <br />
+                Updated{' '}
+                {new Date(review.updatedAt).toLocaleString('default', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
                 })}
               </p>
             </div>
-            <p>{review.content}</p>
           </div>
         </div>
       </div>
