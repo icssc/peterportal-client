@@ -1,0 +1,33 @@
+name: Deploy production
+
+on:
+  push:
+    branches:
+      - main
+
+# do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build_and_deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://peterportal.org
+    steps:
+      - name: Checkout and setup pnpm
+        uses: ./.github/actions/checkout-and-setup-pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        env:
+          HUSKY: 0
+
+      - name: Build and deploy
+        uses: ./.github/actions/build-and-deploy
+        with:
+          NODE_ENV: production
+          stage: prod
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}

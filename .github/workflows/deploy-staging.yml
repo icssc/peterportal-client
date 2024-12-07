@@ -1,0 +1,37 @@
+name: Deploy staging
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+# do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
+concurrency:
+  group: staging-${{ github.event.pull_request.number }}
+
+jobs:
+  build_and_deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    # don't run if labeled "no deploy" && don't run on PRs from forks
+    if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository
+    environment:
+      name: staging-${{ github.event.pull_request.number }}
+      url: https://staging-${{ github.event.pull_request.number }}peterportal.org
+    steps:
+      - name: Checkout and setup pnpm
+        uses: ./.github/actions/checkout-and-setup-pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        env:
+          HUSKY: 0
+
+      - name: Build and deploy
+        uses: ./.github/actions/build-and-deploy
+        with:
+          NODE_ENV: staging
+          stage: staging-${{ github.event.pull_request.number }}
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
