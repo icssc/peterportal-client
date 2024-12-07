@@ -72,7 +72,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
           }
           content={
             props.prerequisiteNames[
-              prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : prereq.examName ?? ''
+              prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : (prereq.examName ?? '')
             ]?.title ?? ''
           }
           node={'prerequisite-node'}

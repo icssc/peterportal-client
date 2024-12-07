@@ -4,8 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+# use pr number for group instead of github.ref because ref will be main branch when the PR closes which is not a unique group for the PR
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -46,8 +47,7 @@ jobs:
           HUSKY: 0
 
       - name: Remove staging stack
-        # need to clean up frontend stack first then backend stack or else backend stack doesn't get removed
-        run: pnpm sst remove --stage staging-${{ github.event.pull_request.number }} frontend && pnpm sst remove --stage staging-${{ github.event.pull_request.number }} backend
+        run: pnpm sst remove --stage staging-${{ github.event.pull_request.number }}
         env:
           CI: false
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
