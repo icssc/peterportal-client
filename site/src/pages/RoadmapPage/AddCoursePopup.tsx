@@ -73,7 +73,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           </span>
           <button onClick={toggleSaved}>{inCourseBag ? <BookmarkFill /> : <Bookmark />}</button>
           <div className="spacer"></div>
-          <button onClick={closePopup}>
+          <button onClick={closePopup} className="close-button">
             <X width={32} height={32} />
           </button>
         </Modal.Header>
