@@ -34,4 +34,4 @@ jobs:
         with:
           NODE_ENV: staging
           stage: staging-${{ github.event.pull_request.number }}
-          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}

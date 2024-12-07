@@ -15,8 +15,10 @@ runs:
     - name: Build and deploy
       run: pnpm sst deploy --stage ${{ inputs.stage }}
       env:
-        PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
         DATABASE_URL: ${{ inputs.DATABASE_URL }}
+        NODE_ENV: ${{ inputs.NODE_ENV }}
+
+        PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
         SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
         GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
@@ -25,5 +27,4 @@ runs:
         PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        NODE_ENV: ${{ inputs.NODE_ENV }}
         ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
