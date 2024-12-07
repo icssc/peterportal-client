@@ -1,4 +1,4 @@
-name: Checkout and Install pnpm
+name: Setup pnpm
 runs:
   using: composite
   steps:
