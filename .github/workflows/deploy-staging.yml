@@ -21,8 +21,11 @@ jobs:
       name: staging-${{ github.event.pull_request.number }}
       url: https://staging-${{ github.event.pull_request.number }}peterportal.org
     steps:
-      - name: Checkout and setup pnpm
-        uses: ./.github/actions/checkout-and-setup-pnpm
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
 
       - name: Install dependencies
         run: pnpm install

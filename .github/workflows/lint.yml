@@ -16,8 +16,11 @@ jobs:
     name: Lint and check formatting
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout and setup pnpm
-        uses: ./.github/actions/checkout-and-setup-pnpm
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
 
       - name: Install Dependencies
         run: pnpm install
