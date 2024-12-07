@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CloseButton from 'react-bootstrap/CloseButton';
+import { PlusLg } from 'react-bootstrap-icons';
 
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -107,12 +108,13 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
           </Form>
         </Container>
       </Modal.Body>
-      <Modal.Footer className="transfer-footer d-flex flex-row justify-content-between">
-        <Button variant="primary" onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}>
-          Add Entry
-        </Button>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
+      <Modal.Footer className="transfer-footer d-flex flex-row justify-content-between pt-0">
+        <Button
+          className="add-entry"
+          variant="none"
+          onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}
+        >
+          <PlusLg /> Add Entry
         </Button>
       </Modal.Footer>
     </Modal>

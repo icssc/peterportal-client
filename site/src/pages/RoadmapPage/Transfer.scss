@@ -26,6 +26,27 @@
   margin-top: 1%;
 }
 
+.add-entry {
+  background-color: transparent;
+  color: var(--peterportal-primary-color-1);
+  font-size: 17px;
+  font-weight: 500;
+  width: fit-content;
+  margin-inline: auto;
+}
+
+.add-entry:hover {
+  background-color: transparent;
+  color: var(--peterportal-primary-color-1);
+}
+
+[data-theme='dark'] {
+  .add-entry,
+  .add-entry:hover {
+    color: var(--peterportal-primary-color-2);
+  }
+}
+
 .transfer-modal {
   .modal-dialog {
     max-width: 500px;
