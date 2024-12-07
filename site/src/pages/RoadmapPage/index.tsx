@@ -93,7 +93,7 @@ const RoadmapPage: FC = () => {
         dispatch(moveCourse(movePayload));
       }
     },
-    [coursebag, dispatch, roadmap],
+    [coursebag, dispatch, roadmap, addCourseToBag, removeCourseFromBag],
   );
 
   const onDragStart = useCallback(

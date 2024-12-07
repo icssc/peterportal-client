@@ -15,6 +15,7 @@ node_modules/
 # sst files
 .sst
 cdk.context.json
+sst-env.d.ts
 
 # IDE settings
 .idea
