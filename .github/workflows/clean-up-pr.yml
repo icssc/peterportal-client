@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [closed]
 
+# use pr number for group instead of github.ref because ref will be main branch when the PR closes which is not a unique group for the PR
 concurrency:
   group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
