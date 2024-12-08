@@ -1,0 +1,41 @@
+name: Remove staging
+
+on:
+  pull_request:
+    types:
+      - closed
+
+# use pr number for group instead of github.ref because ref will be main branch when the PR closes which is not a unique group for the PR
+# group should match with deploy-staging workflow so those don't run concurrently (if someone closes/reopens a PR)
+concurrency:
+  group: staging-${{ github.event.pull_request.number }}
+
+jobs:
+  clean-up-pr:
+    runs-on: ubuntu-latest
+    # don't run on PRs from forks
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+
+      - name: Install Dependencies
+        run: pnpm install
+        env:
+          HUSKY: 0
+
+      - name: Remove staging
+        run: pnpm sst remove --stage staging-${{ github.event.pull_request.number }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deactivate deployment
+        uses: strumwolf/delete-deployment-environment@v3.0.0
+        with:
+          environment: staging-${{ github.event.pull_request.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          onlyDeactivateDeployments: true
