@@ -30,9 +30,12 @@
   background-color: transparent;
   color: var(--peterportal-primary-color-1);
   font-size: 17px;
-  font-weight: 500;
+  font-weight: bold;
   width: fit-content;
   margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .add-entry:hover {
