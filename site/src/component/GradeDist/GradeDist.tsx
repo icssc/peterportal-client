@@ -104,7 +104,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {
-    if (gradeDistData && gradeDistData.length !== 0) {
+    if (gradeDistData?.length) {
       if (props.course) {
         createProfEntries();
       } else if (props.professor) {
@@ -156,7 +156,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   // update list of quarters when new professor/course is chosen
   useEffect(() => {
-    if ((currentProf || currentCourse) && gradeDistData && gradeDistData.length !== 0) {
+    if ((currentProf || currentCourse) && gradeDistData?.length) {
       createQuarterEntries();
     }
   }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
@@ -230,7 +230,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </Grid.Row>
   );
 
-  if (gradeDistData && gradeDistData.length !== 0) {
+  if (gradeDistData?.length) {
     const graphProps = {
       gradeData: gradeDistData,
       quarter: currentQuarter,
