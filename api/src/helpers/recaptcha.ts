@@ -7,7 +7,13 @@ export async function verifyCaptcha(review: ReviewSubmission) {
   };
   const query = new URLSearchParams(reqBody);
   const response = await fetch('https://www.google.com/recaptcha/api/siteverify?' + query, { method: 'POST' })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        throw new Error(res.statusText);
+      }
+    })
     .catch((e) => {
       console.error('Error validating captcha response', e);
       return { success: false };
