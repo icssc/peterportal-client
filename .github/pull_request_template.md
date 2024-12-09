@@ -6,7 +6,7 @@
 
 ## Screenshots
 
-<!-- Include screenshot(s) for frontend work -->
+<!-- Include before/after screenshot(s) for frontend work -->
 
 ## Test Plan
 
