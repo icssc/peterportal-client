@@ -29,10 +29,16 @@ const SearchResults = ({
       quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
     ),
   );
+  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
       const requiredCourses = Array.from(
-        validateCourse(new Set(allExistingCourses), course.prerequisiteTree, new Set(), course.corequisites),
+        validateCourse(
+          new Set([...allExistingCourses, ...transfers]),
+          course.prerequisiteTree,
+          new Set(),
+          course.corequisites,
+        ),
       );
       return (
         <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />
