@@ -7,8 +7,12 @@ const CourseBag = () => {
 
   return (
     <div className="coursebag-container">
-      <h3 className="coursebag-title">Course Bag</h3>
-      <div style={{ height: '100%' }}>
+      {coursebag.length ? (
+        <h3 className="coursebag-title">Saved Courses</h3>
+      ) : (
+        <p>No courses saved. Try searching for something!</p>
+      )}
+      <div>
         {coursebag.map((course, index) => {
           return (
             <Draggable draggableId={`coursebag-${course.id}-${index}`} key={`coursebag-${index}`} index={index}>
@@ -18,8 +22,6 @@ const CourseBag = () => {
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
                   style={{
-                    // use inline style here so dnd can calculate size
-                    margin: ' 0rem 2rem 1rem 2rem',
                     cursor: 'grab',
                     ...provided.draggableProps.style,
                   }}

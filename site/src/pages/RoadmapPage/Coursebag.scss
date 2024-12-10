@@ -2,11 +2,14 @@
   padding-top: 2vh;
   overflow-y: auto;
   height: 100%;
+
+  > div > * {
+    margin-block: 20px;
+  }
 }
 .coursebag-title {
   font-size: 2rem;
   font-weight: 500;
-  padding: 0 1.8rem;
 }
 .no-results {
   display: flex;
