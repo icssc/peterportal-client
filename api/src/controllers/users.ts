@@ -8,7 +8,6 @@ import { db } from '../db';
 import { user } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
-import { datesToStrings } from '../helpers/date';
 
 const usersRouter = router({
   /**
@@ -21,10 +20,10 @@ const usersRouter = router({
         .from(user)
         .where(eq(user.id, ctx.session.userId!))
     )[0];
-    return datesToStrings({
+    return {
       ...userData,
       isAdmin: ctx.session.isAdmin,
-    }) as UserData;
+    } as UserData;
   }),
 
   /**
