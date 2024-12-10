@@ -89,6 +89,25 @@ const RoadmapMultiplan: FC = () => {
     setEditIdx(-1);
   };
 
+  const duplicateCurrentPlan = () => {
+    const currentPlan = allPlans.plans[currentPlanIndex];
+    let newName = `${currentPlan.name} (Copy)`;
+    let counter = 1;
+    while (allPlans.plans.find((p) => p.name === newName)) {
+      counter++;
+      newName = `${currentPlan.name} (Copy ${counter})`;
+    }
+    dispatch(
+      addRoadmapPlan({
+        name: newName,
+        content: JSON.parse(JSON.stringify(currentPlan.content)),
+      }),
+    );
+    const newIndex = allPlans.plans.length;
+    setCurrentPlanIndex(newIndex);
+    dispatch(setPlanIndex(newIndex));
+  };
+
   useEffect(() => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
@@ -125,6 +144,12 @@ const RoadmapMultiplan: FC = () => {
             />
           ))}
           <div className="select-item add-item">
+            <Dropdown.Item onClick={duplicateCurrentPlan}>
+              <Button>
+                <Icon.Files width="16" height="16" />
+                Duplicate Roadmap
+              </Button>
+            </Dropdown.Item>
             <Dropdown.Item onClick={() => setIsOpen(true)}>
               <Button>
                 <Icon.PlusLg width="16" height="16" />
