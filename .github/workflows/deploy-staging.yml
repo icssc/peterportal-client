@@ -1,0 +1,50 @@
+name: Deploy staging
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+# do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
+concurrency:
+  group: staging-${{ github.event.pull_request.number }}
+
+jobs:
+  build_and_deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    # don't run if labeled "no deploy" && don't run on PRs from forks
+    if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository
+    environment:
+      name: staging-${{ github.event.pull_request.number }}
+      url: https://staging-${{ github.event.pull_request.number }}.peterportal.org
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: ./.github/actions/setup-pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+        env:
+          HUSKY: 0
+
+      - name: Build and deploy
+        run: pnpm sst deploy --stage staging-${{ github.event.pull_request.number }}
+        env:
+          DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
+          NODE_ENV: staging
+
+          PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          GOOGLE_CLIENT: ${{ secrets.GOOGLE_CLIENT }}
+          GOOGLE_SECRET: ${{ secrets.GOOGLE_SECRET }}
+          GRECAPTCHA_SECRET: ${{ secrets.GRECAPTCHA_SECRET }}
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
