@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { XCircle } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
@@ -9,25 +8,12 @@ import './Sidebar.scss';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
-import trpc from '../../trpc';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { selectIsAdmin } from '../../store/slices/userSlice';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
-  const isLoggedIn = useIsLoggedIn();
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      // useEffect's function is not allowed to be async, create async checkAdmin function within
-      const checkAdmin = async () => {
-        const { isAdmin } = await trpc.users.get.query();
-        setIsAdmin(isAdmin);
-      };
-      checkAdmin();
-    }
-  }, [isLoggedIn]);
+  const isAdmin = useAppSelector(selectIsAdmin);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 

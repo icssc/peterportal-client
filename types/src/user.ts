@@ -14,8 +14,6 @@ export interface PassportUser {
 }
 
 export interface UserData extends Omit<PassportUser, 'id'> {
-  id: number;
   theme: Theme;
   isAdmin: boolean;
-  lastRoadmapEditAt?: string;
 }

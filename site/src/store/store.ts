@@ -5,6 +5,7 @@ import uiReducer from './slices/uiSlice';
 import popupReducer from './slices/popupSlice';
 import roadmapReducer from './slices/roadmapSlice';
 import searchReducer from './slices/searchSlice';
+import userReducer from './slices/userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     popup: popupReducer,
     roadmap: roadmapReducer,
     search: searchReducer,
+    user: userReducer,
   },
 });
 

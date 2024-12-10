@@ -25,6 +25,7 @@ import { useAppDispatch } from './store/hooks';
 import { searchAPIResults } from './helpers/util';
 import { setCoursebag } from './store/slices/coursebagSlice';
 import { useIsLoggedIn } from './hooks/isLoggedIn';
+import { setUser } from './store/slices/userSlice';
 
 function isSystemDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -93,6 +94,7 @@ export default function App() {
     // if logged in, load user theme from db
     if (isLoggedIn) {
       trpc.users.get.query().then((res) => {
+        dispatch(setUser(res));
         if (res.theme) {
           setThemeState(res.theme);
         }

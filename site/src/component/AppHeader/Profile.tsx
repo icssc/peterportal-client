@@ -5,8 +5,9 @@ import { Icon } from 'semantic-ui-react';
 import './Profile.scss';
 import { NavLink } from 'react-router-dom';
 import { ArrowLeftCircleFill } from 'react-bootstrap-icons';
-import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { useAppSelector } from '../../store/hooks';
+import { selectUser } from '../../store/slices/userSlice';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -14,10 +15,8 @@ const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
   const [show, setShow] = useState(false);
   const [tab, setTab] = useState<ProfileMenuTab>('default');
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [picture, setPicture] = useState('');
+  const user = useAppSelector(selectUser);
+  const { name, email, picture } = user ?? {};
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
@@ -25,16 +24,6 @@ const Profile = () => {
       setTimeout(() => setTab('default'), 150); // popover transition time is 150ms
     }
   }, [show]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      trpc.users.get.query().then((user) => {
-        setName(user.name);
-        setEmail(user.email);
-        setPicture(user.picture);
-      });
-    }
-  });
 
   const DefaultTab = (
     <>

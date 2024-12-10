@@ -15,7 +15,12 @@ const usersRouter = router({
    * Get the user's data
    */
   get: userProcedure.query(async ({ ctx }) => {
-    const userData = (await db.select().from(user).where(eq(user.id, ctx.session.userId!)))[0];
+    const userData = (
+      await db
+        .select({ name: user.name, email: user.email, picture: user.picture, theme: user.theme })
+        .from(user)
+        .where(eq(user.id, ctx.session.userId!))
+    )[0];
     return datesToStrings({
       ...userData,
       isAdmin: ctx.session.isAdmin,
