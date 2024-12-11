@@ -41,8 +41,8 @@ const Verify: FC = () => {
         <h1>Unverified Reviews</h1>
         <p>Verifying a review will display the review on top of unverified reviews.</p>
         <p>Deleting a review will remove it permanently.</p>
-        {reviews.map((review, i) => (
-          <div key={`verify-${i}`} className="verify">
+        {reviews.map((review) => (
+          <div key={review.id} className="verify">
             <Divider />
             <SubReview review={review}></SubReview>
             <div className="verify-footer">

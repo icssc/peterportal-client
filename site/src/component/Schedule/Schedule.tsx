@@ -127,10 +127,10 @@ const Schedule: FC<ScheduleProps> = (props) => {
     }
   };
 
-  const renderData = (courseID: string, section: Section, index: number) => {
+  const renderData = (courseID: string, section: Section) => {
     //This function returns the data for a dynamic table after accessing the API
     return (
-      <tr key={index}>
+      <tr key={section.sectionCode}>
         {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
         <td className="data-col">{section.sectionCode}</td>
         <td className="data-col">
@@ -176,8 +176,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
   } else {
     const sectionElements: JSX.Element[] = [];
     Object.keys(scheduleData).forEach((courseID) => {
-      scheduleData[courseID].forEach((section, i) => {
-        sectionElements.push(renderData(courseID, section, i));
+      scheduleData[courseID].forEach((section) => {
+        sectionElements.push(renderData(courseID, section));
       });
     });
 

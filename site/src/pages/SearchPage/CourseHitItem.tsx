@@ -69,8 +69,8 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
         <p className="description">{props.description}</p>
         <div className="hit-lower">
           <div className="hit-badges">
-            {pillData.map((pill, i) => (
-              <Badge key={`course-hit-item-pill-${i}`} pill className="badge" variant="info">
+            {pillData.map((pill) => (
+              <Badge key={pill} pill className="badge" variant="info">
                 {pill}
               </Badge>
             ))}

@@ -171,8 +171,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
               setSelectedReview(e as string);
             }}
           >
-            {sortedReviews.map((key, index) => (
-              <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+            {sortedReviews.map((key) => (
+              <Dropdown.Item eventKey={key} key={key}>
                 {props.searchType == 'course' &&
                   (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                 {props.searchType == 'professor' &&

@@ -86,8 +86,8 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
         </div>
         <div>
           <div className="search-popup-infos">
-            {props.infos.map((info, i) => (
-              <div className="search-popup-info search-popup-block" key={`search-popup-info-${i}`}>
+            {props.infos.map((info) => (
+              <div className="search-popup-info search-popup-block" key={info.title}>
                 <h3>{info.title}</h3>
                 <p>{info.content || `No ${info.title}`}</p>
               </div>
@@ -105,8 +105,8 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
           <div>
             {props.scores.length > 0 ? (
               <Carousel responsive={responsive} renderButtonGroupOutside>
-                {props.scores.map((score, i) => (
-                  <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
+                {props.scores.map((score) => (
+                  <div key={score.id} className="search-popup-carousel search-popup-block">
                     <div>
                       <span className="search-popup-carousel-score">
                         {score.avgRating == -1
