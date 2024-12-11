@@ -1,34 +1,36 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import { Divider } from 'semantic-ui-react';
 import './Verify.scss';
 import trpc from '../../trpc';
-import { ReviewData } from '@peterportal/types';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Verify: FC = () => {
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const reviews = useAppSelector(selectReviews);
   const [loaded, setLoaded] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
-  const getUnverifiedReviews = async () => {
+  const getUnverifiedReviews = useCallback(async () => {
     const res = await trpc.reviews.get.query({ verified: false });
-    setReviews(res);
+    dispatch(setReviews(res));
     setLoaded(true);
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     getUnverifiedReviews();
     document.title = 'Verify Reviews | PeterPortal';
-  }, []);
+  }, [getUnverifiedReviews]);
 
   const verifyReview = async (reviewId: number) => {
     await trpc.reviews.verify.mutate({ id: reviewId });
-    setReviews(reviews.filter((review) => review.id !== reviewId));
+    dispatch(setReviews(reviews.filter((review) => review.id !== reviewId)));
   };
 
   const deleteReview = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
-    setReviews(reviews.filter((review) => review.id !== reviewId));
+    dispatch(setReviews(reviews.filter((review) => review.id !== reviewId)));
   };
 
   if (!loaded) {
