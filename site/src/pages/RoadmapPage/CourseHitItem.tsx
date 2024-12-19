@@ -38,16 +38,11 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
     removeCourseFromBag(props);
   };
 
+  return <>you are not supposed to see this</>;
+
   if (isMobile) {
     return (
-      <div
-        tabIndex={0}
-        role="button"
-        onMouseDown={onMobileMouseDown}
-        onKeyDown={onMobileKeyDown}
-        // use inline style here so dnd can calculate size
-        style={{ margin: ' 0rem 2rem 1rem 2rem' }}
-      >
+      <div tabIndex={0} role="button" onMouseDown={onMobileMouseDown} onKeyDown={onMobileKeyDown}>
         <Course {...props} />
       </div>
     );
@@ -67,8 +62,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
               {...provided.draggableProps}
               {...provided.dragHandleProps}
               style={{
-                // use inline style here so dnd can calculate size
-                margin: ' 0rem 2rem 1rem 2rem',
                 cursor: 'grab',
                 ...provided.draggableProps.style,
               }}
