@@ -4,8 +4,8 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 import ThemeContext from '../../style/theme-context';
 import { type Theme } from '@nivo/core';
 import { GradesRaw } from '@peterportal/types';
-
-const colors = ['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#EBEBEB', '#EBEBEB'];
+import { Colors } from './Colors.tsx';
+import { TooltipStyle } from './TooltipStyle.tsx';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -111,20 +111,6 @@ export default class Chart extends React.Component<ChartProps> {
     ];
   };
 
-  tooltipStyle: Theme = {
-    tooltip: {
-      container: {
-        background: 'rgba(0,0,0,.87)',
-        color: '#ffffff',
-        fontSize: '1.2rem',
-        outline: 'none',
-        margin: 0,
-        padding: '0.25em 0.5em',
-        borderRadius: '2px',
-      },
-    },
-  };
-
   /*
    * Indicate how the tooltip should look like when users hover over the bar
    * Code is slightly modified from: https://codesandbox.io/s/nivo-scatterplot-
@@ -134,7 +120,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
     return (
-      <div style={this.tooltipStyle.tooltip?.container}>
+      <div style={TooltipStyle.tooltip?.container}>
         <strong>
           {props.label}: {props.data[props.label]}
         </strong>
@@ -184,7 +170,7 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={colors}
+              colors={Colors}
               theme={this.getTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
