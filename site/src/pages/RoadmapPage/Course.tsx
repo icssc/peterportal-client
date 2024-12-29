@@ -66,7 +66,8 @@ const Course: FC<CourseProps> = (props) => {
               </span>
               <br />
               <i>
-                Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add this prerequisite.
+                Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add{' '}
+                {requiredCourses?.length > 1 ? 'these prerequisites' : 'this prerequisite'}.
               </i>
             </div>
           )}
@@ -88,10 +89,7 @@ const Course: FC<CourseProps> = (props) => {
             <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
           </span>
           <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={CoursePopover} delay={100}>
-            <span className="course-overlay-trigger-box">
-              <InfoCircle />
-              {requiredCourses && <ExclamationTriangle />}
-            </span>
+            {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
           </OverlayTrigger>
         </div>
         {onDelete ? (
