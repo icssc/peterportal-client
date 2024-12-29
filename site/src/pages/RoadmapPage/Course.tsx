@@ -58,18 +58,19 @@ const Course: FC<CourseProps> = (props) => {
               <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
             </div>
           )}
+          {requiredCourses && (
+            <div className="popover-detail">
+              <span className="popover-detail-warning">
+                <ExclamationTriangle className="popover-detail-warning-icon" />
+                Prerequisite{requiredCourses?.length > 1 ? 's' : ''} Not Met: {requiredCourses?.join(', ')}
+              </span>
+              <br />
+              <i>
+                Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add this prerequisite.
+              </i>
+            </div>
+          )}
         </div>
-      </Popover.Content>
-    </Popover>
-  );
-
-  const WarningPopover = (
-    <Popover id={'warning-popover-' + id}>
-      <Popover.Content>
-        Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-        <br />
-        Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-        clear the prerequisite(s).
       </Popover.Content>
     </Popover>
   );
@@ -86,14 +87,12 @@ const Course: FC<CourseProps> = (props) => {
             </a>
             <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
           </span>
-          <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle />
+          <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={CoursePopover} delay={100}>
+            <span className="course-overlay-trigger-box">
+              <InfoCircle />
+              {requiredCourses && <ExclamationTriangle />}
+            </span>
           </OverlayTrigger>
-          {requiredCourses && (
-            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
-              <ExclamationTriangle />
-            </OverlayTrigger>
-          )}
         </div>
         {onDelete ? (
           <ThemeContext.Consumer>

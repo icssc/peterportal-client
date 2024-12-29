@@ -43,6 +43,12 @@
   align-items: center;
 }
 
+.course-overlay-trigger-box {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .course-delete-btn {
   padding: 0px;
   background-color: transparent;
@@ -85,6 +91,18 @@
   }
   .popover-detail-prefix {
     font-weight: bold;
+  }
+
+  .popover-detail-warning {
+    font-size: 14px;
+    color: red;
+    gap: 5px;
+    margin-bottom: 0px;
+    .popover-detail-warning-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+      font-size: 16px;
+    }
   }
 }
 
