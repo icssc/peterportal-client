@@ -118,7 +118,9 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                       <span className="search-popup-carousel-max-score">/ 5.0</span>
                     </div>
                     <Link to={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.id}`}>
-                      {score.name}
+                      <span className="search-popup-professor-name" title={score.name}>
+                        {score.name}
+                      </span>
                     </Link>
                   </div>
                 ))}
