@@ -111,12 +111,20 @@
   }
 }
 .search-popup-professor-name {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.search-popup-professor-name > span {
   display: inline-block;
-  max-width: 60%;
-  white-space: nowrap;
+  margin-right: 0.3em;
+}
+
+.search-popup-professor-name > span.ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: middle;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 @media only screen and (max-width: 1300px) {
