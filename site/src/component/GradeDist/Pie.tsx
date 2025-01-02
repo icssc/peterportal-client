@@ -2,6 +2,8 @@ import React from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
+import { colors } from './colors.ts';
+import { tooltipStyle } from './tooltipStyle.ts';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
@@ -27,7 +29,7 @@ export default class Pie extends React.Component<PieProps> {
   averageGrade = '';
   averagePNP = '';
 
-  getClassData = () => {
+  getClassData = (): Slice[] => {
     let gradeACount = 0,
       gradeBCount = 0,
       gradeCCount = 0,
@@ -85,13 +87,13 @@ export default class Pie extends React.Component<PieProps> {
           id: 'P',
           label: 'P',
           value: gradePCount,
-          color: '#4AB486',
+          color: colors[5],
         },
         {
           id: 'NP',
           label: 'NP',
           value: gradeNPCount,
-          color: '#E36436',
+          color: colors[6],
         },
       ];
       return data;
@@ -102,43 +104,43 @@ export default class Pie extends React.Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: '#60A3D1',
+        color: colors[0],
       },
       {
         id: 'B',
         label: 'B',
         value: gradeBCount,
-        color: '#81C284',
+        color: colors[1],
       },
       {
         id: 'C',
         label: 'C',
         value: gradeCCount,
-        color: '#F5D77F',
+        color: colors[2],
       },
       {
         id: 'D',
         label: 'D',
         value: gradeDCount,
-        color: '#ECAD6D',
+        color: colors[3],
       },
       {
         id: 'F',
         label: 'F',
         value: gradeFCount,
-        color: '#E8966D',
+        color: colors[4],
       },
       {
         id: 'P',
         label: 'P',
         value: gradePCount,
-        color: '#4AB486',
+        color: colors[5],
       },
       {
         id: 'NP',
         label: 'NP',
         value: gradeNPCount,
-        color: '#E36436',
+        color: colors[6],
       },
     ];
     return data;
@@ -149,6 +151,16 @@ export default class Pie extends React.Component<PieProps> {
     for (i = 0; Number(gpa) < gpaScale[i]; i++);
     this.averageGrade = gradeScale[i];
   }
+
+  styleTooltip = (props: PieTooltipProps<Slice>) => {
+    return (
+      <div style={tooltipStyle.tooltip?.container}>
+        <strong>
+          {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
+        </strong>
+      </div>
+    );
+  };
 
   render() {
     return (
@@ -165,24 +177,11 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#4AB486', '#E36436']}
+          colors={colors}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-          tooltip={(props: PieTooltipProps<Slice>) => (
-            <div
-              style={{
-                color: '#FFFFFF',
-                background: 'rgba(0,0,0,.87)',
-                paddingLeft: '0.5em',
-                paddingRight: '0.5em',
-              }}
-            >
-              <strong>
-                {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
-              </strong>
-            </div>
-          )}
+          tooltip={this.styleTooltip}
         />
         <div
           style={{
