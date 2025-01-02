@@ -29,7 +29,7 @@ Features include:
 - Express
 - React
 - tRPC
-- SST and AWS CDK
+- SST
 - PostgreSQL
 - Drizzle ORM
 - TypeScript
@@ -39,7 +39,7 @@ Features include:
 
 ### Prerequisites
 
-1. Check your Node version with `node -v`. Make sure you have version 18 or 20 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
+1. Check your Node version with `node -v`. Make sure you have version 18, 20, or 22 LTS. If you don't, we recommend [nvm](https://github.com/nvm-sh/nvm) to manage node versions (or [nvm-windows](https://github.com/coreybutler/nvm-windows)).
 
 2. We use pnpm as our package manager. If you don't have pnpm, install it with `npm i -g pnpm`
 
@@ -76,7 +76,7 @@ git clone https://github.com/<your username>/peterportal-client
 
 4. Run `pnpm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-5. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
+5. Make a copy of the `.env.example` file in the api directory and name it `.env`. This includes the minimum environment variables needed for running the backend.
 
 6. (Optional) Set up your own PostgreSQL database and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 

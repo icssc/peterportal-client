@@ -25,9 +25,7 @@ export const user = pgTable(
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
   },
-  (table) => ({
-    uniqueGoogleId: unique('unique_google_id').on(table.googleId),
-  }),
+  (table) => [unique('unique_google_id').on(table.googleId)],
 );
 
 export const report = pgTable(
@@ -40,9 +38,7 @@ export const report = pgTable(
     reason: text('reason').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
-  (table) => ({
-    reviewIdIdx: index('reports_review_id_idx').on(table.reviewId),
-  }),
+  (table) => [index('reports_review_id_idx').on(table.reviewId)],
 );
 
 export const review = pgTable(
@@ -60,7 +56,7 @@ export const review = pgTable(
     difficulty: integer('difficulty').notNull(),
     gradeReceived: text('grade_received').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow(),
+    updatedAt: timestamp('updated_at'),
     forCredit: boolean('for_credit').notNull(),
     quarter: text('quarter').notNull(),
     takeAgain: boolean('take_again').notNull(),
@@ -69,13 +65,13 @@ export const review = pgTable(
     tags: text('tags').array(),
     verified: boolean('verified').notNull().default(false),
   },
-  (table) => ({
-    ratingCheck: check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
-    difficultyCheck: check('difficulty_check', sql`${table.difficulty} >= 1 AND ${table.difficulty} <= 5`),
-    unique: unique('unique_review').on(table.userId, table.professorId, table.courseId),
-    professorIdIdx: index('reviews_professor_id_idx').on(table.professorId),
-    courseIdIdx: index('reviews_course_id_idx').on(table.courseId),
-  }),
+  (table) => [
+    check('rating_check', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
+    check('difficulty_check', sql`${table.difficulty} >= 1 AND ${table.difficulty} <= 5`),
+    unique('unique_review').on(table.userId, table.professorId, table.courseId),
+    index('reviews_professor_id_idx').on(table.professorId),
+    index('reviews_course_id_idx').on(table.courseId),
+  ],
 );
 
 export const planner = pgTable(
@@ -88,9 +84,7 @@ export const planner = pgTable(
     name: text('name').notNull(),
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
   },
-  (table) => ({
-    userIdIdx: index('planners_user_id_idx').on(table.userId),
-  }),
+  (table) => [index('planners_user_id_idx').on(table.userId)],
 );
 
 export const transferredCourse = pgTable(
@@ -100,9 +94,7 @@ export const transferredCourse = pgTable(
     courseName: text('course_name'),
     units: real('units'),
   },
-  (table) => ({
-    userIdIdx: index('transferred_courses_user_id_idx').on(table.userId),
-  }),
+  (table) => [index('transferred_courses_user_id_idx').on(table.userId)],
 );
 
 export const vote = pgTable(
@@ -116,11 +108,11 @@ export const vote = pgTable(
       .references(() => user.id),
     vote: integer('vote').notNull(),
   },
-  (table) => ({
-    voteCheck: check('votes_vote_check', sql`${table.vote} = 1 OR ${table.vote} = -1`),
-    primaryKey: primaryKey({ columns: [table.reviewId, table.userId] }),
-    userIdIdx: index('votes_user_id_idx').on(table.userId),
-  }),
+  (table) => [
+    check('votes_vote_check', sql`${table.vote} = 1 OR ${table.vote} = -1`),
+    primaryKey({ columns: [table.reviewId, table.userId] }),
+    index('votes_user_id_idx').on(table.userId),
+  ],
 );
 
 export const savedCourse = pgTable(
@@ -131,9 +123,7 @@ export const savedCourse = pgTable(
       .notNull(),
     courseId: text('course_id').notNull(),
   },
-  (table) => ({
-    primaryKey: primaryKey({ columns: [table.userId, table.courseId] }),
-  }),
+  (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
 );
 
 export const session = pgTable('session', {

@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
@@ -21,23 +21,24 @@ interface Entry {
 
 type ChartTypes = 'bar' | 'pie';
 
+const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
+
 const GradeDist: FC<GradeDistProps> = (props) => {
-  const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
   /*
    * Initialize a GradeDist block on the webpage.
    * @param props attributes received from the parent element
    */
 
-  const [gradeDistData, setGradeDistData] = useState<GradesRaw>(null!);
+  const [gradeDistData, setGradeDistData] = useState<GradesRaw>();
   const [chartType, setChartType] = useState<ChartTypes>('bar');
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
-  const [profEntries, setProfEntries] = useState<Entry[]>(null!);
+  const [profEntries, setProfEntries] = useState<Entry[]>();
   const [currentCourse, setCurrentCourse] = useState('');
-  const [courseEntries, setCourseEntries] = useState<Entry[]>(null!);
-  const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
+  const [courseEntries, setCourseEntries] = useState<Entry[]>();
+  const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
 
-  const fetchGradeDistData = () => {
+  const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
     // course context
     if (props.course) {
@@ -57,41 +58,70 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         setGradeDistData([]);
         console.error(error.response);
       });
-  };
+  }, [props.course, props.professor]);
 
   // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
     setGradeDistData(null!);
     fetchGradeDistData();
-  }, [props.course?.id, props.professor?.ucinetid]);
+  }, [fetchGradeDistData]);
+
+  /*
+   * Create an array of objects to feed into the professor dropdown menu.
+   * @return an array of JSON objects recording professor's names
+   */
+  const createProfEntries = useCallback(() => {
+    const professors: Set<string> = new Set();
+    const result: Entry[] = [];
+
+    gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
+
+    Array.from(professors)
+      .sort((a, b) => a.localeCompare(b))
+      .forEach((professor) => result.push({ value: professor, text: professor }));
+
+    setProfEntries(result);
+    setCurrentProf(result[0].value);
+  }, [gradeDistData]);
+
+  /*
+   * Create an array of objects to feed into the course dropdown menu.
+   * @return an array of JSON objects recording course's names
+   */
+  const createCourseEntries = useCallback(() => {
+    const courses: Set<string> = new Set();
+    const result: Entry[] = [];
+
+    gradeDistData!.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
+
+    Array.from(courses)
+      .sort((a, b) => a.localeCompare(b))
+      .forEach((course) => result.push({ value: course, text: course }));
+
+    setCourseEntries(result);
+    setCurrentCourse(result[0].value);
+  }, [gradeDistData]);
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {
-    if (gradeDistData && gradeDistData.length !== 0) {
+    if (gradeDistData?.length) {
       if (props.course) {
         createProfEntries();
       } else if (props.professor) {
         createCourseEntries();
       }
     }
-  }, [gradeDistData]);
-
-  // update list of quarters when new professor/course is chosen
-  useEffect(() => {
-    if ((currentProf || currentCourse) && gradeDistData.length !== 0) {
-      createQuarterEntries();
-    }
-  }, [currentProf, currentCourse]);
+  }, [gradeDistData, createCourseEntries, createProfEntries, props.course, props.professor]);
 
   /*
    * Create an array of objects to feed into the quarter dropdown menu.
    * @return an array of JSON objects recording each quarter
    */
-  const createQuarterEntries = () => {
+  const createQuarterEntries = useCallback(() => {
     const quarters: Set<string> = new Set();
     const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
 
-    gradeDistData
+    gradeDistData!
       .filter((entry) => {
         if (props.course && entry.instructors.includes(currentProf)) {
           return true;
@@ -122,43 +152,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       }),
     );
     setCurrentQuarter(result[0].value);
-  };
+  }, [currentCourse, currentProf, gradeDistData, props.course, props.professor]);
 
-  /*
-   * Create an array of objects to feed into the professor dropdown menu.
-   * @return an array of JSON objects recording professor's names
-   */
-  const createProfEntries = () => {
-    const professors: Set<string> = new Set();
-    const result: Entry[] = [];
-
-    gradeDistData.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
-
-    Array.from(professors)
-      .sort((a, b) => a.localeCompare(b))
-      .forEach((professor) => result.push({ value: professor, text: professor }));
-
-    setProfEntries(result);
-    setCurrentProf(result[0].value);
-  };
-
-  /*
-   * Create an array of objects to feed into the course dropdown menu.
-   * @return an array of JSON objects recording course's names
-   */
-  const createCourseEntries = () => {
-    const courses: Set<string> = new Set();
-    const result: Entry[] = [];
-
-    gradeDistData.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
-
-    Array.from(courses)
-      .sort((a, b) => a.localeCompare(b))
-      .forEach((course) => result.push({ value: course, text: course }));
-
-    setCourseEntries(result);
-    setCurrentCourse(result[0].value);
-  };
+  // update list of quarters when new professor/course is chosen
+  useEffect(() => {
+    if ((currentProf || currentCourse) && gradeDistData?.length) {
+      createQuarterEntries();
+    }
+  }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
 
   /*
    * Record what is in the quarter dropdown menu at the moment.
@@ -229,7 +230,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </Grid.Row>
   );
 
-  if (gradeDistData !== null && gradeDistData.length !== 0) {
+  if (gradeDistData?.length) {
     const graphProps = {
       gradeData: gradeDistData,
       quarter: currentQuarter,
