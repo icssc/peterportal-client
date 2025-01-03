@@ -165,11 +165,11 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         <div className="subreview-ratings">
           <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
             <div className="rating-label">Quality</div>
-            <div>{review.rating}</div>
+            <div className="rating-value">{review.rating}</div>
           </div>
           <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}>
             <div className="rating-label">Difficulty</div>
-            <div>{review.difficulty}</div>
+            <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
         <div className="subreview-info">

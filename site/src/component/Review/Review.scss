@@ -26,23 +26,47 @@
   justify-self: flex-end;
   margin-right: 3vw;
 }
+.rating {
+  // TODO:
+  margin: 1vh 0;
+  border-radius: var(--border-radius);
+  width: 5vw;
+  height: 5vw;
+  min-width: 7rem;
+  min-height: 7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: white;
+}
 .rating-label {
   line-height: 1rem;
   font-size: 1rem;
   font-weight: bold;
 }
-.rating {
-  margin: 1vh 0;
-  border-radius: var(--border-radius);
-  width: 5vw;
-  height: 5vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.rating-value {
   line-height: 3rem;
   font-size: 3rem;
-  color: white;
+}
+// screen width is between 1300px and 600px, inclusive
+@media only screen and (max-width: 1300px) and (min-width: 600px) {
+  .rating {
+    width: 8vw; // The rating box width & height shrink...
+    height: 8vw;
+    min-width: 5rem; // ...but only by so much.
+    min-height: 5rem;
+    gap: max(0.5vw, 0.4rem); // The same idea goes for gap...
+  }
+  .rating-label {
+    line-height: max(1.2vw, 0.8rem); // ...and rating label height/size.
+    font-size: max(1.2vw, 0.8rem);
+  }
+  .rating-value {
+    line-height: 4vw; // The rating value looks fine w/out a min value.
+    font-size: 4vw;
+  }
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -136,7 +160,6 @@
   display: flex;
   flex-direction: column;
 }
-
 .add-report-button {
   background-color: transparent;
   border-color: transparent;
@@ -146,7 +169,6 @@
   transition: 0.2s;
   padding: 3px;
 }
-
 .add-report-button:hover {
   background-color: lightgray;
 }
@@ -155,7 +177,40 @@
   align-items: center;
   gap: 0.25rem;
 }
-@media only screen and (max-width: 600px) {
+.edit-buttons {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  gap: 10px;
+}
+.sorting-menu {
+  margin-left: 0;
+  margin-right: 0;
+
+  > * {
+    margin-bottom: 15px;
+  }
+
+  .dropdown {
+    margin-right: 1vh;
+  }
+
+  #checkbox {
+    display: flex;
+    align-items: center;
+
+    .checkbox {
+      background: none;
+    }
+
+    label {
+      margin-bottom: 0.25rem;
+      color: var(--text);
+    }
+  }
+}
+// screen width is less than or equal to 599px
+@media only screen and (max-width: 599px) {
   .subreview-content {
     flex-direction: column;
   }
@@ -183,45 +238,4 @@
   .subreview-author {
     flex-direction: column;
   }
-}
-
-@media only screen and (max-width: 1300px) and (min-width: 600px) {
-  .rating {
-    width: 8vh;
-    height: 8vh;
-  }
-}
-
-.sorting-menu {
-  margin-left: 0;
-  margin-right: 0;
-
-  > * {
-    margin-bottom: 15px;
-  }
-
-  .dropdown {
-    margin-right: 1vh;
-  }
-
-  #checkbox {
-    display: flex;
-    align-items: center;
-
-    .checkbox {
-      background: none;
-    }
-
-    label {
-      margin-bottom: 0.25rem;
-      color: var(--text);
-    }
-  }
-}
-
-.edit-buttons {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  gap: 10px;
 }
