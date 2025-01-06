@@ -2,7 +2,7 @@
 
 .add-course-modal {
   @include globals.bottom-overlay(500);
-  background-color: var(--background);
+  background-color: var(--overlay1);
 
   &:is(.enter, .enter-done) + .ui-overlay {
     opacity: 1;
