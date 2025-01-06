@@ -111,6 +111,10 @@ body:has(> #profile-popover) {
     transition: background-color 0s;
   }
 }
+body:has(> .course.sortable-fallback) * {
+  // when a course is dragged, show grabbing cursor no matter what
+  cursor: grabbing !important;
+}
 
 .quarter-menu-btn {
   display: block;
