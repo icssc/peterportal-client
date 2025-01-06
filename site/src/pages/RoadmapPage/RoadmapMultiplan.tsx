@@ -20,6 +20,7 @@ interface RoadmapSelectableItemProps {
   index: number;
   clickHandler: () => void;
   editHandler: () => void;
+  duplicateHandler: () => void;
   deleteHandler: () => void;
 }
 
@@ -28,6 +29,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   index,
   clickHandler,
   editHandler,
+  duplicateHandler,
   deleteHandler,
 }) => {
   return (
@@ -37,6 +39,9 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
       </Dropdown.Item>
       <Button onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
+      </Button>
+      <Button onClick={duplicateHandler}>
+        <Icon.Files width="16" height="16" />
       </Button>
       <Button onClick={deleteHandler}>
         <Icon.TrashFill width="16" height="16" />
@@ -89,18 +94,12 @@ const RoadmapMultiplan: FC = () => {
     setEditIdx(-1);
   };
 
-  const duplicateCurrentPlan = () => {
-    const currentPlan = allPlans.plans[currentPlanIndex];
-    let newName = `${currentPlan.name} (Copy)`;
-    let counter = 1;
-    while (allPlans.plans.find((p) => p.name === newName)) {
-      counter++;
-      newName = `${currentPlan.name} (Copy ${counter})`;
-    }
+  const duplicatePlan = (plan: RoadmapPlan) => {
+    const newName = `${plan.name} (Copy)`;
     dispatch(
       addRoadmapPlan({
         name: newName,
-        content: JSON.parse(JSON.stringify(currentPlan.content)),
+        content: JSON.parse(JSON.stringify(plan.content)),
       }),
     );
     const newIndex = allPlans.plans.length;
@@ -140,16 +139,11 @@ const RoadmapMultiplan: FC = () => {
                 setCurrentPlanIndex(index);
               }}
               editHandler={() => setEditIdx(index)}
+              duplicateHandler={() => duplicatePlan(plan)}
               deleteHandler={() => setDelIdx(index)}
             />
           ))}
           <div className="select-item add-item">
-            <Dropdown.Item onClick={duplicateCurrentPlan}>
-              <Button>
-                <Icon.Files width="16" height="16" />
-                Duplicate Roadmap
-              </Button>
-            </Dropdown.Item>
             <Dropdown.Item onClick={() => setIsOpen(true)}>
               <Button>
                 <Icon.PlusLg width="16" height="16" />
