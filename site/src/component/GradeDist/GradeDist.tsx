@@ -29,14 +29,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    * @param props attributes received from the parent element
    */
 
-  const [gradeDistData, setGradeDistData] = useState<GradesRaw>(null!);
+  const [gradeDistData, setGradeDistData] = useState<GradesRaw>();
   const [chartType, setChartType] = useState<ChartTypes>('bar');
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
-  const [profEntries, setProfEntries] = useState<Entry[]>(null!);
+  const [profEntries, setProfEntries] = useState<Entry[]>();
   const [currentCourse, setCurrentCourse] = useState('');
-  const [courseEntries, setCourseEntries] = useState<Entry[]>(null!);
-  const [quarterEntries, setQuarterEntries] = useState<Entry[]>(null!);
+  const [courseEntries, setCourseEntries] = useState<Entry[]>();
+  const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -74,7 +74,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const professors: Set<string> = new Set();
     const result: Entry[] = [];
 
-    gradeDistData.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
+    gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
     Array.from(professors)
       .sort((a, b) => a.localeCompare(b))
@@ -92,7 +92,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const courses: Set<string> = new Set();
     const result: Entry[] = [];
 
-    gradeDistData.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
+    gradeDistData!.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
 
     Array.from(courses)
       .sort((a, b) => a.localeCompare(b))
@@ -104,7 +104,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {
-    if (gradeDistData && gradeDistData.length !== 0) {
+    if (gradeDistData?.length) {
       if (props.course) {
         createProfEntries();
       } else if (props.professor) {
@@ -121,7 +121,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const quarters: Set<string> = new Set();
     const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
 
-    gradeDistData
+    gradeDistData!
       .filter((entry) => {
         if (props.course && entry.instructors.includes(currentProf)) {
           return true;
@@ -156,7 +156,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   // update list of quarters when new professor/course is chosen
   useEffect(() => {
-    if ((currentProf || currentCourse) && gradeDistData.length !== 0) {
+    if ((currentProf || currentCourse) && gradeDistData?.length) {
       createQuarterEntries();
     }
   }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
@@ -230,7 +230,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </Grid.Row>
   );
 
-  if (gradeDistData !== null && gradeDistData.length !== 0) {
+  if (gradeDistData?.length) {
     const graphProps = {
       gradeData: gradeDistData,
       quarter: currentQuarter,

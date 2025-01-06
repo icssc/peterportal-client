@@ -76,7 +76,7 @@ git clone https://github.com/<your username>/peterportal-client
 
 4. Run `pnpm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-5. Rename the `.env.example` file in the api directory to `.env`. This includes the minimum environment variables needed for running the backend.
+5. Make a copy of the `.env.example` file in the api directory and name it `.env`. This includes the minimum environment variables needed for running the backend.
 
 6. (Optional) Set up your own PostgreSQL database and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 
