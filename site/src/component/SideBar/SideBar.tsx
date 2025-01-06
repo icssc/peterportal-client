@@ -112,7 +112,6 @@ const SideBar = () => {
     <>
       <div className="sidebar mini">{links}</div>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        {/* Clicking this is only an alternative action to something that is already accessible */}
         <UIOverlay zIndex={399} onClick={closeSidebar}></UIOverlay>
       </CSSTransition>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>

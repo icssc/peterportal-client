@@ -2,7 +2,7 @@ import './SearchSidebar.scss';
 
 import SearchModule from '../../component/SearchModule/SearchModule';
 
-import { useIsMobile } from '../../helpers/util';
+import { deepCopy, useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setActiveCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import { useEffect, useRef } from 'react';
@@ -42,7 +42,9 @@ const SearchSidebar = () => {
 
   const { coursebag } = useCoursebag();
   const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
-  const shownCourses = JSON.parse(JSON.stringify(showCourseBag ? coursebag : results)) as CourseGQLData[];
+
+  // Deep copy because Sortable requires data to be extensible (non read-only)
+  const shownCourses = deepCopy(showCourseBag ? coursebag : results) as CourseGQLData[];
 
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
 

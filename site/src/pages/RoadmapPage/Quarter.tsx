@@ -2,7 +2,7 @@ import { FC, useContext, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
-import { useIsMobile } from '../../helpers/util';
+import { deepCopy, useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   clearQuarter,
@@ -56,7 +56,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const unitCount = calculateQuarterStats()[0];
 
-  const coursesCopy = JSON.parse(JSON.stringify(data.courses));
+  const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
+
   const removeCourseAt = (index: number) => {
     dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
   };

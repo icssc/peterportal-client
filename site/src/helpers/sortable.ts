@@ -5,6 +5,7 @@ const baseSortable: SortableOptions = {
   animation: 150,
   forceFallback: true,
   fallbackOnBody: true,
+  filter: '.btn',
 };
 
 export const quarterSortable: SortableOptions & Partial<ReactSortableProps<CourseGQLData>> = {
