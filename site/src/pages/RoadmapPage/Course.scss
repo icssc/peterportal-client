@@ -60,43 +60,60 @@
 }
 
 .course-popover {
-  padding: 5%;
-
   .popover-name {
     font-weight: bold;
     color: var(--text-dark);
     font-size: 16px;
   }
 
-  .popover-units {
-    color: #c4c4c4;
+  .popover-subtitle {
+    font-weight: bold;
+  }
 
-    .popover-units-value {
-      font-weight: bold;
-    }
+  .popover-units {
+    font-weight: normal;
   }
 
   .popover-description {
+    font-size: 14px;
     padding-top: 5%;
   }
 
   .popover-detail {
     padding-top: 5%;
   }
+
   .popover-detail-prefix {
     font-weight: bold;
   }
 
   .popover-detail-warning {
     font-size: 14px;
-    color: red;
+    color: #ce0000;
     gap: 5px;
-    margin-bottom: 0px;
+    margin-bottom: 6px;
+
     .popover-detail-warning-icon {
       margin-bottom: 4px;
       margin-right: 4px;
       font-size: 16px;
     }
+  }
+
+  .popover-detail-italics {
+    font-weight: 400;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--petr-gray);
+  }
+}
+
+[data-theme='dark'] {
+  .popover-detail-warning {
+    color: red;
+  }
+  .popover-detail-italics {
+    color: var(--petr-gray);
   }
 }
 
