@@ -95,7 +95,12 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const duplicatePlan = (plan: RoadmapPlan) => {
-    const newName = `${plan.name} (Copy)`;
+    let newName = `${plan.name} (Copy)`;
+    let counter = 1;
+    while (allPlans.plans.find((p) => p.name === newName)) {
+      counter++;
+      newName = `${plan.name} (Copy ${counter})`;
+    }
     dispatch(
       addRoadmapPlan({
         name: newName,
