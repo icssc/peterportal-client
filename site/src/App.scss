@@ -53,6 +53,14 @@ button {
     border-radius: 8px;
     padding: 0px;
   }
+
+  .arrow::after,
+  .arrow::before {
+    border-width: 0.8rem 0.8rem 0.8rem;
+    left: -14px;
+    top: -4px; /*calc(-4px - 25px);*/
+    pointer-events: none;
+  }
 }
 
 .ppc-modal {
