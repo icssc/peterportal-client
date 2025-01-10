@@ -117,8 +117,17 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                       </span>
                       <span className="search-popup-carousel-max-score">/ 5.0</span>
                     </div>
-                    <Link to={`/${props.searchType == 'course' ? 'professor' : 'course'}/${score.id}`}>
-                      {score.name}
+                    <Link to={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
+                      <span className="search-popup-professor-name" title={score.name}>
+                        {score.name.split(' ').map((part, idx) => {
+                          const isTooLong = part.length > 13;
+                          return (
+                            <span key={idx} className={isTooLong ? 'ellipsis' : ''}>
+                              {part}
+                            </span>
+                          );
+                        })}
+                      </span>
                     </Link>
                   </div>
                 ))}
