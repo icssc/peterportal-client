@@ -45,22 +45,39 @@ button {
 
 .ppc-popover {
   border-radius: 8px;
-  padding: 16px;
+  padding: 0px;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
   max-width: 375px;
   margin-left: 16px;
 
   .popover-body {
     border-radius: 8px;
-    padding: 0px;
+    padding: 16px;
   }
 
-  .arrow::after,
+  .arrow {
+    z-index: -1;
+  }
+
+  .arrow::after {
+    border-width: 20px 20px 20px;
+    top: -12px;
+    left: -32px;
+    pointer-events: none;
+  }
+
   .arrow::before {
     border-width: 20px 20px 20px;
-    left: -32px;
-    top: -12px;
     pointer-events: none;
+    position: relative;
+    top: -12px;
+    left: calc(100% + 2px);
+    border: 14px solid var(--overlay1);
+    width: 28px;
+    height: 28px;
+    transform-origin: 0 0;
+    transform: rotate(45deg);
+    box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.35);
   }
 }
 
