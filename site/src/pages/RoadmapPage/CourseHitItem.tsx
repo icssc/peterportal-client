@@ -73,7 +73,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props: CourseHitItemProps) => {
                 ...provided.draggableProps.style,
               }}
             >
-              <Course {...props} onAddToBag={onAddToBag} isInBag={isInBag} removeFromBag={removeFromBag} />
+              <Course
+                {...props}
+                onAddToBag={onAddToBag}
+                isInBag={isInBag}
+                removeFromBag={removeFromBag}
+                openPopoverLeft={true}
+              />
             </div>
           );
         }}

@@ -16,6 +16,7 @@ interface CourseProps extends CourseGQLData {
   onAddToBag?: () => void;
   isInBag?: boolean;
   removeFromBag?: () => void;
+  openPopoverLeft?: boolean;
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -35,9 +36,10 @@ const Course: FC<CourseProps> = (props) => {
     onAddToBag,
     isInBag,
     removeFromBag,
+    openPopoverLeft,
   } = props;
   const CoursePopover = (
-    <Popover className="ppc-popover" id={'course-popover-' + id}>
+    <Popover className={'ppc-popover' + (openPopoverLeft ? ' open-left' : '')} id={'course-popover-' + id}>
       <Popover.Content className="course-popover">
         <div className="popover-name">
           {department + ' ' + courseNumber + ' '}
@@ -86,7 +88,12 @@ const Course: FC<CourseProps> = (props) => {
             </a>
             <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
           </span>
-          <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={CoursePopover} delay={100}>
+          <OverlayTrigger
+            trigger={['hover', 'focus']}
+            placement={openPopoverLeft ? 'left' : 'right'}
+            overlay={CoursePopover}
+            delay={100}
+          >
             {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
           </OverlayTrigger>
         </div>

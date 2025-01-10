@@ -29,6 +29,7 @@ const CourseBag = () => {
                     onDelete={() => {
                       removeCourseFromBag(course);
                     }}
+                    openPopoverLeft={true}
                   />
                 </div>
               )}

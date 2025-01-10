@@ -48,6 +48,7 @@ button {
   padding: 16px;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
   max-width: 375px;
+  offset: 0px;
 
   .popover-body {
     border-radius: 8px;
@@ -56,10 +57,17 @@ button {
 
   .arrow::after,
   .arrow::before {
-    border-width: 0.8rem 0.8rem 0.8rem;
-    left: -14px;
-    top: -4px; /*calc(-4px - 25px);*/
+    border-width: 20px 20px 20px;
+    left: -32px;
+    top: -12px;
     pointer-events: none;
+  }
+}
+
+.ppc-popover.open-left {
+  .arrow::after,
+  .arrow::before {
+    left: -1px;
   }
 }
 
