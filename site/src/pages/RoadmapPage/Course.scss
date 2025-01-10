@@ -64,6 +64,8 @@
     font-weight: bold;
     color: var(--text-dark);
     font-size: 16px;
+    height: 21px;
+    margin-top: -2px;
   }
 
   .popover-subtitle {
@@ -76,11 +78,11 @@
 
   .popover-description {
     font-size: 14px;
-    padding-top: 5%;
+    padding-top: 12px;
   }
 
   .popover-detail {
-    padding-top: 5%;
+    padding-top: 12px;
   }
 
   .popover-detail-prefix {
@@ -91,7 +93,6 @@
     font-size: 14px;
     color: #ce0000;
     gap: 5px;
-    margin-bottom: 6px;
 
     .popover-detail-warning-icon {
       margin-bottom: 4px;
@@ -101,6 +102,7 @@
   }
 
   .popover-detail-italics {
+    padding-top: 6px;
     font-weight: 400;
     font-size: 12px;
     font-style: italic;

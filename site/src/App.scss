@@ -48,7 +48,7 @@ button {
   padding: 16px;
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
   max-width: 375px;
-  offset: 0px;
+  margin-left: 16px;
 
   .popover-body {
     border-radius: 8px;
@@ -65,6 +65,8 @@ button {
 }
 
 .ppc-popover.open-left {
+  margin-right: 16px;
+
   .arrow::after,
   .arrow::before {
     left: -1px;
