@@ -91,6 +91,15 @@ button {
   }
 }
 
+.ppc-popover.open-bottom {
+  margin-top: 40px;
+  .arrow::after,
+  .arrow::before {
+    top: -12px;
+    left: 7px;
+  }
+}
+
 .ppc-modal {
   font-size: 18px;
 

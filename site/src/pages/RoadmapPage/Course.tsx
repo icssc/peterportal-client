@@ -6,6 +6,7 @@ import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarter
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import { useIsMobile } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -41,6 +42,7 @@ const Course: FC<CourseProps> = (props) => {
   } = props;
 
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
+  const isMobile = useIsMobile();
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
@@ -54,9 +56,9 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           <OverlayTrigger
             trigger={['hover', 'focus']}
-            placement={openPopoverLeft ? 'left-start' : 'right-start'}
+            placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
             overlay=<Popover
-              className={'ppc-popover' + (openPopoverLeft ? ' open-left' : '')}
+              className={'ppc-popover' + (isMobile ? ' open-bottom' : openPopoverLeft ? ' open-left' : '')}
               id={'course-popover-' + id}
             >
               <CoursePopover
