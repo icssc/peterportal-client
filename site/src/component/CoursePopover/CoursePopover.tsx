@@ -3,11 +3,16 @@ import './CoursePopover.scss';
 import { ExclamationTriangle } from 'react-bootstrap-icons';
 import Popover from 'react-bootstrap/Popover';
 
-import { CourseGQLData } from '../../types/types';
-
-interface CoursePopoverProps extends CourseGQLData {
+interface CoursePopoverProps {
+  department: string;
+  courseNumber: string;
+  title: string;
+  minUnits: number;
+  maxUnits: number;
+  description: string;
+  prerequisiteText: string;
+  corequisites: string;
   requiredCourses?: string[];
-  openPopoverLeft?: boolean;
 }
 
 const CoursePopover: FC<CoursePopoverProps> = (props) => {
