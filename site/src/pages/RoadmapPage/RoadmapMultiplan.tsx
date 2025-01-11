@@ -20,6 +20,7 @@ interface RoadmapSelectableItemProps {
   index: number;
   clickHandler: () => void;
   editHandler: () => void;
+  duplicateHandler: () => void;
   deleteHandler: () => void;
 }
 
@@ -28,6 +29,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   index,
   clickHandler,
   editHandler,
+  duplicateHandler,
   deleteHandler,
 }) => {
   return (
@@ -37,6 +39,9 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
       </Dropdown.Item>
       <Button onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
+      </Button>
+      <Button onClick={duplicateHandler}>
+        <Icon.Files width="16" height="16" />
       </Button>
       <Button onClick={deleteHandler}>
         <Icon.TrashFill width="16" height="16" />
@@ -89,6 +94,24 @@ const RoadmapMultiplan: FC = () => {
     setEditIdx(-1);
   };
 
+  const duplicatePlan = (plan: RoadmapPlan) => {
+    let newName = `${plan.name} (Copy)`;
+    let counter = 1;
+    while (allPlans.plans.find((p) => p.name === newName)) {
+      counter++;
+      newName = `${plan.name} (Copy ${counter})`;
+    }
+    dispatch(
+      addRoadmapPlan({
+        name: newName,
+        content: JSON.parse(JSON.stringify(plan.content)),
+      }),
+    );
+    const newIndex = allPlans.plans.length;
+    setCurrentPlanIndex(newIndex);
+    dispatch(setPlanIndex(newIndex));
+  };
+
   useEffect(() => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
@@ -121,6 +144,7 @@ const RoadmapMultiplan: FC = () => {
                 setCurrentPlanIndex(index);
               }}
               editHandler={() => setEditIdx(index)}
+              duplicateHandler={() => duplicatePlan(plan)}
               deleteHandler={() => setDelIdx(index)}
             />
           ))}
