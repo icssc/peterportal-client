@@ -1,0 +1,59 @@
+.course-popover {
+  .popover-name {
+    font-weight: bold;
+    color: var(--text-dark);
+    font-size: 16px;
+    height: 21px;
+    margin-top: -2px;
+  }
+
+  .popover-subtitle {
+    font-weight: bold;
+  }
+
+  .popover-units {
+    font-weight: normal;
+  }
+
+  .popover-description {
+    font-size: 14px;
+    padding-top: 12px;
+  }
+
+  .popover-detail {
+    padding-top: 12px;
+  }
+
+  .popover-detail-prefix {
+    font-weight: bold;
+  }
+
+  .popover-detail-warning {
+    font-size: 14px;
+    color: #ce0000;
+    gap: 5px;
+
+    .popover-detail-warning-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+      font-size: 16px;
+    }
+  }
+
+  .popover-detail-italics {
+    padding-top: 6px;
+    font-weight: 400;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--petr-gray);
+  }
+}
+
+[data-theme='dark'] {
+  .popover-detail-warning {
+    color: red;
+  }
+  .popover-detail-italics {
+    color: var(--petr-gray);
+  }
+}

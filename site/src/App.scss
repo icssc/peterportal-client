@@ -49,6 +49,7 @@ button {
   box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
   max-width: 375px;
   margin-left: 16px;
+  top: -26px !important;
 
   .popover-body {
     border-radius: 8px;
@@ -61,7 +62,7 @@ button {
 
   .arrow::after {
     border-width: 20px 20px 20px;
-    top: -12px;
+    top: 10px;
     left: -32px;
     pointer-events: none;
   }
@@ -70,7 +71,7 @@ button {
     border-width: 20px 20px 20px;
     pointer-events: none;
     position: relative;
-    top: -12px;
+    top: 10px;
     left: calc(100% + 2px);
     border: 14px solid var(--overlay1);
     width: 28px;

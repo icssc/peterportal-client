@@ -3,6 +3,7 @@ import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
@@ -38,43 +39,6 @@ const Course: FC<CourseProps> = (props) => {
     removeFromBag,
     openPopoverLeft,
   } = props;
-  const CoursePopover = (
-    <Popover className={'ppc-popover' + (openPopoverLeft ? ' open-left' : '')} id={'course-popover-' + id}>
-      <Popover.Content className="course-popover">
-        <div className="popover-name">
-          {department + ' ' + courseNumber + ' '}
-          <span className="popover-units">({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units)</span>
-        </div>
-        <div className="popover-description">
-          <span className="popover-subtitle">{title + ':'}</span>
-          <br />
-          {description}
-        </div>
-        {prerequisiteText && (
-          <div className="popover-detail">
-            <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
-          </div>
-        )}
-        {corequisites && (
-          <div className="popover-detail">
-            <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
-          </div>
-        )}
-        {requiredCourses && (
-          <div className="popover-detail">
-            <div className="popover-detail-warning">
-              <ExclamationTriangle className="popover-detail-warning-icon" />
-              Prerequisite{requiredCourses?.length > 1 ? 's' : ''} Not Met: {requiredCourses?.join(', ')}
-            </div>
-            <div className="popover-detail-italics">
-              Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add{' '}
-              {requiredCourses?.length > 1 ? 'these prerequisites' : 'this prerequisite'}.
-            </div>
-          </div>
-        )}
-      </Popover.Content>
-    </Popover>
-  );
 
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
 
@@ -90,8 +54,23 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           <OverlayTrigger
             trigger={['hover', 'focus']}
-            placement={openPopoverLeft ? 'left' : 'right'}
-            overlay={CoursePopover}
+            placement={openPopoverLeft ? 'left-start' : 'right-start'}
+            overlay=<Popover
+              className={'ppc-popover' + (openPopoverLeft ? ' open-left' : '')}
+              id={'course-popover-' + id}
+            >
+              <CoursePopover
+                department={department}
+                courseNumber={courseNumber}
+                title={title}
+                minUnits={minUnits}
+                maxUnits={maxUnits}
+                description={description}
+                prerequisiteText={prerequisiteText}
+                corequisites={corequisites}
+                requiredCourses={requiredCourses}
+              />
+            </Popover>
             delay={100}
           >
             {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
