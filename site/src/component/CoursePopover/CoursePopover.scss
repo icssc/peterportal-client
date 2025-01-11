@@ -1,4 +1,6 @@
 .course-popover {
+  line-height: normal;
+
   .popover-name {
     font-weight: bold;
     color: var(--text-dark);
@@ -18,6 +20,7 @@
   .popover-description {
     font-size: 14px;
     padding-top: 12px;
+    line-height: 17px;
   }
 
   .popover-detail {
