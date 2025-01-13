@@ -4,7 +4,7 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 import ThemeContext from '../../style/theme-context';
 import { type Theme } from '@nivo/core';
 import { GradesRaw } from '@peterportal/types';
-import { colors } from './colors.ts';
+import { GradeColors } from './gradeColors.ts';
 import { tooltipStyle } from './tooltipStyle.ts';
 
 interface ChartProps {
@@ -70,42 +70,43 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'A',
         label: 'A',
         A: gradeACount,
+        color: GradeColors.A,
       },
       {
         id: 'B',
         label: 'B',
         B: gradeBCount,
-        color: colors[1],
+        color: GradeColors.B,
       },
       {
         id: 'C',
         label: 'C',
         C: gradeCCount,
-        color: colors[2],
+        color: GradeColors.C,
       },
       {
         id: 'D',
         label: 'D',
         D: gradeDCount,
-        color: colors[3],
+        color: GradeColors.D,
       },
       {
         id: 'F',
         label: 'F',
         F: gradeFCount,
-        color: colors[4],
+        color: GradeColors.F,
       },
       {
         id: 'P',
         label: 'P',
         P: gradePCount,
-        color: colors[5],
+        color: GradeColors.P,
       },
       {
         id: 'NP',
         label: 'NP',
         NP: gradeNPCount,
-        color: colors[6],
+        color: GradeColors.NP,
       },
     ];
   };
@@ -169,7 +170,7 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={colors}
+              colors={Object.values(GradeColors)}
               theme={this.getTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}

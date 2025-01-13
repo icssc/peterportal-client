@@ -2,7 +2,7 @@ import React from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
-import { colors } from './colors.ts';
+import { GradeColors } from './gradeColors.ts';
 import { tooltipStyle } from './tooltipStyle.ts';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
@@ -87,13 +87,13 @@ export default class Pie extends React.Component<PieProps> {
           id: 'P',
           label: 'P',
           value: gradePCount,
-          color: colors[5],
+          color: GradeColors.P,
         },
         {
           id: 'NP',
           label: 'NP',
           value: gradeNPCount,
-          color: colors[6],
+          color: GradeColors.NP,
         },
       ];
       return data;
@@ -104,43 +104,43 @@ export default class Pie extends React.Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: colors[0],
+        color: GradeColors.A,
       },
       {
         id: 'B',
         label: 'B',
         value: gradeBCount,
-        color: colors[1],
+        color: GradeColors.B,
       },
       {
         id: 'C',
         label: 'C',
         value: gradeCCount,
-        color: colors[2],
+        color: GradeColors.C,
       },
       {
         id: 'D',
         label: 'D',
         value: gradeDCount,
-        color: colors[3],
+        color: GradeColors.D,
       },
       {
         id: 'F',
         label: 'F',
         value: gradeFCount,
-        color: colors[4],
+        color: GradeColors.F,
       },
       {
         id: 'P',
         label: 'P',
         value: gradePCount,
-        color: colors[5],
+        color: GradeColors.P,
       },
       {
         id: 'NP',
         label: 'NP',
         value: gradeNPCount,
-        color: colors[6],
+        color: GradeColors.NP,
       },
     ];
     return data;
@@ -177,7 +177,7 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={colors}
+          colors={Object.values(GradeColors)}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
