@@ -46,10 +46,14 @@ button {
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;
-  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.35);
+  box-shadow: none;
   max-width: 375px;
-  margin-left: 16px;
-  top: -26px !important;
+  top: -16px !important;
+
+  $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
+  filter: $filter;
+  -webkit-filter: $filter;
+  border: none;
 
   .popover-body {
     border-radius: 8px;
@@ -58,27 +62,22 @@ button {
 
   .arrow {
     z-index: -1;
+    &::after {
+      display: none;
+    }
   }
-
-  .arrow::after {
-    border-width: 20px 20px 20px;
-    top: 10px;
-    left: -32px;
-    pointer-events: none;
-  }
-
   .arrow::before {
-    border-width: 20px 20px 20px;
     pointer-events: none;
     position: relative;
-    top: 10px;
-    left: calc(100% + 2px);
-    border: 14px solid var(--overlay1);
-    width: 28px;
-    height: 28px;
-    transform-origin: 0 0;
-    transform: rotate(45deg);
-    box-shadow: 0px 0px 16px 0px rgba(0, 0, 0, 0.35);
+    border: 8px solid transparent;
+    border-width: 12px 16px;
+    border-left-color: var(--overlay1);
+  }
+  &[data-popper-placement='left-start'] {
+    .arrow::before {
+      top: 8px;
+      left: -2px;
+    }
   }
 }
 
