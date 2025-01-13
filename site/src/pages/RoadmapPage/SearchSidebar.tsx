@@ -15,6 +15,7 @@ import Course from './Course';
 import { courseSearchSortable } from '../../helpers/sortable';
 import { Spinner } from 'react-bootstrap';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
+import noResultsImg from '../../asset/no-results-crop.webp';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -29,6 +30,25 @@ const CloseRoadmapSearchButton = () => {
     <button className="fixed" onClick={closeSearch}>
       Cancel Selecting for {quarter} {year}
     </button>
+  );
+};
+
+interface SearchPlaceholderProps {
+  searchInProgress: boolean;
+  showCourseBag: boolean;
+}
+const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholderProps) => {
+  if (searchInProgress) return <Spinner animation="border" role="status" />;
+
+  const placeholderText = showCourseBag
+    ? 'No courses saved. Try searching for something!'
+    : "Sorry, we couldn't find any results for that search!";
+
+  return (
+    <>
+      <img src={noResultsImg} alt="No results found" />
+      {placeholderText}
+    </>
   );
 };
 
@@ -59,12 +79,6 @@ const SearchSidebar = () => {
     dispatch(setActiveCourse(course));
   };
 
-  const coursebagTitle = coursebag.length ? (
-    <h3 className="coursebag-title">Saved Courses</h3>
-  ) : (
-    <p className="coursebag-title">No courses saved. Try searching for something!</p>
-  );
-
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
@@ -72,23 +86,25 @@ const SearchSidebar = () => {
         <div className="search-sidebar-search-module">
           <SearchModule index="courses" />
         </div>
-        {showCourseBag && coursebagTitle}
+        {showCourseBag && <h3 className="coursebag-title">Saved Courses</h3>}
 
-        <ReactSortable
-          {...courseSearchSortable}
-          list={shownCourses}
-          onStart={setDraggedItem}
-          disabled={isMobile}
-          className={'search-body' + (isMobile ? ' disabled' : '')}
-        >
-          {searchInProgress ? (
-            <div className="no-results">
-              <Spinner animation="border" role="status" />
-            </div>
-          ) : (
-            shownCourses.map((course, i) => <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} />)
-          )}
-        </ReactSortable>
+        {!searchInProgress && shownCourses.length ? (
+          <ReactSortable
+            {...courseSearchSortable}
+            list={shownCourses}
+            onStart={setDraggedItem}
+            disabled={isMobile}
+            className={'search-body' + (isMobile ? ' disabled' : '')}
+          >
+            {shownCourses.map((course, i) => (
+              <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} />
+            ))}
+          </ReactSortable>
+        ) : (
+          <div className="no-results">
+            <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
+          </div>
+        )}
         <CloseRoadmapSearchButton />
       </div>
     </>
