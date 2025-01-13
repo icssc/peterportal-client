@@ -57,19 +57,21 @@ const Course: FC<CourseProps> = (props) => {
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
-            overlay=<Popover className="ppc-popover" id={'course-popover-' + id}>
-              <CoursePopover
-                department={department}
-                courseNumber={courseNumber}
-                title={title}
-                minUnits={minUnits}
-                maxUnits={maxUnits}
-                description={description}
-                prerequisiteText={prerequisiteText}
-                corequisites={corequisites}
-                requiredCourses={requiredCourses}
-              />
-            </Popover>
+            overlay={
+              <Popover className="ppc-popover" id={'course-popover-' + id}>
+                <CoursePopover
+                  department={department}
+                  courseNumber={courseNumber}
+                  title={title}
+                  minUnits={minUnits}
+                  maxUnits={maxUnits}
+                  description={description}
+                  prerequisiteText={prerequisiteText}
+                  corequisites={corequisites}
+                  requiredCourses={requiredCourses}
+                />
+              </Popover>
+            }
             delay={100}
           >
             {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
