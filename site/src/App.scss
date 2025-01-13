@@ -82,8 +82,8 @@ button {
   }
 }
 
-.ppc-popover.open-left {
-  margin-right: 16px;
+.bs-popover-left {
+  margin-right: 20px;
 
   .arrow::after,
   .arrow::before {
@@ -91,8 +91,8 @@ button {
   }
 }
 
-.ppc-popover.open-bottom {
-  margin-top: 40px;
+.bs-popover-bottom {
+  margin-top: 48px;
   .arrow::after,
   .arrow::before {
     top: -12px;
