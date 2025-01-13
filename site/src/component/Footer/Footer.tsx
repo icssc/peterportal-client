@@ -12,7 +12,11 @@ const Footer: FC = () => {
           <a href="https://docs.icssc.club/docs/developer/anteaterapi" target="_blank" rel="noreferrer">
             API
           </a>
-          <a href="https://forms.gle/JjwBmELq26daroTh9" target="_blank" rel="noreferrer">
+          <a
+            href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
+            target="_blank"
+            rel="noreferrer"
+          >
             Feedback
           </a>
         </div>
