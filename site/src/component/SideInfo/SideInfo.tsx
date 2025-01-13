@@ -241,8 +241,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             reviewKey={highestReview}
             displayName={
               props.searchType == 'course'
-                ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)
-                    ?.name ?? ''
+                ? (Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)
+                    ?.name ?? '')
                 : props.professor?.courses[highestReview]
                   ? props.professor?.courses[highestReview].department +
                     ' ' +
@@ -259,8 +259,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             reviewKey={lowestReview}
             displayName={
               props.searchType == 'course'
-                ? Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
-                    ?.name ?? ''
+                ? (Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
+                    ?.name ?? '')
                 : props.professor?.courses[lowestReview]
                   ? props.professor?.courses[lowestReview].department +
                     ' ' +
