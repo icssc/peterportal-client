@@ -3,8 +3,10 @@ import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import { useIsMobile } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -16,6 +18,7 @@ interface CourseProps extends CourseGQLData {
   onAddToBag?: () => void;
   isInBag?: boolean;
   removeFromBag?: () => void;
+  openPopoverLeft?: boolean;
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -35,46 +38,11 @@ const Course: FC<CourseProps> = (props) => {
     onAddToBag,
     isInBag,
     removeFromBag,
+    openPopoverLeft,
   } = props;
-  const CoursePopover = (
-    <Popover id={'course-popover-' + id}>
-      <Popover.Content>
-        <div className="course-popover">
-          <div className="popover-name">
-            {department + ' ' + courseNumber} {title}
-          </div>
-          <div className="popover-units">
-            <span className="popover-units-value">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`}</span>{' '}
-            units
-          </div>
-          <div className="popover-description">{description}</div>
-          {prerequisiteText && (
-            <div className="popover-detail">
-              <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
-            </div>
-          )}
-          {corequisites && (
-            <div className="popover-detail">
-              <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
-            </div>
-          )}
-        </div>
-      </Popover.Content>
-    </Popover>
-  );
-
-  const WarningPopover = (
-    <Popover id={'warning-popover-' + id}>
-      <Popover.Content>
-        Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-        <br />
-        Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-        clear the prerequisite(s).
-      </Popover.Content>
-    </Popover>
-  );
 
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
+  const isMobile = useIsMobile();
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
@@ -86,14 +54,28 @@ const Course: FC<CourseProps> = (props) => {
             </a>
             <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
           </span>
-          <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle />
+          <OverlayTrigger
+            trigger={['hover', 'focus']}
+            placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
+            overlay={
+              <Popover className="ppc-popover" id={'course-popover-' + id}>
+                <CoursePopover
+                  department={department}
+                  courseNumber={courseNumber}
+                  title={title}
+                  minUnits={minUnits}
+                  maxUnits={maxUnits}
+                  description={description}
+                  prerequisiteText={prerequisiteText}
+                  corequisites={corequisites}
+                  requiredCourses={requiredCourses}
+                />
+              </Popover>
+            }
+            delay={100}
+          >
+            {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
           </OverlayTrigger>
-          {requiredCourses && (
-            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
-              <ExclamationTriangle />
-            </OverlayTrigger>
-          )}
         </div>
         {onDelete ? (
           <ThemeContext.Consumer>
