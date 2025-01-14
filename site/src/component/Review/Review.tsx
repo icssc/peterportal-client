@@ -7,6 +7,7 @@ import { selectReviews, setReviews, setFormStatus } from '../../store/slices/rev
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { Checkbox, Dropdown } from 'semantic-ui-react';
+import { Button } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 
@@ -111,7 +112,7 @@ const Review: FC<ReviewProps> = (props) => {
     return (
       <>
         <div className="reviews">
-          <div className="sorting-menu row">
+          <div className="sort-filter-menu">
             <Dropdown
               placeholder="Sorting Option"
               scrolling
@@ -187,9 +188,9 @@ const Review: FC<ReviewProps> = (props) => {
           {sortedReviews.map((review) => (
             <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
           ))}
-          <button type="button" className="add-review-btn" onClick={openReviewForm}>
+          <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
             + Add Review
-          </button>
+          </Button>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />
       </>
