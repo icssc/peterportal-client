@@ -19,20 +19,18 @@
 // content of review
 .subreview-content {
   display: flex;
+  gap: 2rem;
 }
 // rating boxes (quality and difficulty)
 .subreview-ratings {
   text-align: center;
   justify-self: flex-end;
-  margin-right: 3vw;
 }
 .rating {
   margin: 1vh 0;
   border-radius: var(--border-radius);
-  width: 5vw;
-  height: 5vw;
-  min-width: 7rem;
-  min-height: 7rem;
+  width: 7rem;
+  height: 7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,24 +46,6 @@
 .rating-value {
   line-height: 3rem;
   font-size: 3rem;
-}
-// screen width is between 1300px and 600px, inclusive
-@media only screen and (max-width: 1300px) and (min-width: 600px) {
-  .rating {
-    width: 8vw; // The rating box width & height shrink...
-    height: 8vw;
-    min-width: 5rem; // ...but only by so much.
-    min-height: 5rem;
-    gap: max(0.5vw, 0.4rem); // The same idea goes for gap...
-  }
-  .rating-label {
-    line-height: max(1.2vw, 0.8rem); // ...and rating label height/size.
-    font-size: max(1.2vw, 0.8rem);
-  }
-  .rating-value {
-    line-height: 4vw; // The rating value looks fine w/out a min value.
-    font-size: 4vw;
-  }
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -212,16 +192,17 @@
 @media only screen and (max-width: 599px) {
   .subreview-content {
     flex-direction: column;
+    gap: 0;
   }
 
   .subreview-ratings {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 2rem;
   }
 
   .rating {
-    width: 45%;
-    height: 20vw;
+    width: 15rem;
   }
 
   .subreview-details {
