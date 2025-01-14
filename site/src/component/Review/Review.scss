@@ -19,29 +19,33 @@
 // content of review
 .subreview-content {
   display: flex;
+  gap: 2rem;
 }
 // rating boxes (quality and difficulty)
 .subreview-ratings {
   text-align: center;
   justify-self: flex-end;
-  margin-right: 3vw;
-}
-.rating-label {
-  line-height: 1rem;
-  font-size: 1rem;
 }
 .rating {
   margin: 1vh 0;
   border-radius: var(--border-radius);
-  width: 5vw;
-  height: 5vw;
+  width: 7rem;
+  height: 7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  color: white;
+}
+.rating-label {
+  line-height: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.rating-value {
   line-height: 3rem;
   font-size: 3rem;
-  color: white;
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -135,7 +139,6 @@
   display: flex;
   flex-direction: column;
 }
-
 .add-report-button {
   background-color: transparent;
   border-color: transparent;
@@ -145,7 +148,6 @@
   transition: 0.2s;
   padding: 3px;
 }
-
 .add-report-button:hover {
   background-color: lightgray;
 }
@@ -154,43 +156,12 @@
   align-items: center;
   gap: 0.25rem;
 }
-@media only screen and (max-width: 600px) {
-  .subreview-content {
-    flex-direction: column;
-  }
-
-  .subreview-ratings {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .rating {
-    width: 45%;
-    height: 20vw;
-  }
-
-  .subreview-details {
-    flex-direction: column;
-  }
-
-  .subreview-detail {
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 1vh;
-  }
-
-  .subreview-author {
-    flex-direction: column;
-  }
+.edit-buttons {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  gap: 10px;
 }
-
-@media only screen and (max-width: 1300px) and (min-width: 600px) {
-  .rating {
-    width: 8vh;
-    height: 8vh;
-  }
-}
-
 .sorting-menu {
   margin-left: 0;
   margin-right: 0;
@@ -217,10 +188,34 @@
     }
   }
 }
+// screen width is less than or equal to 599px
+@media only screen and (max-width: 599px) {
+  .subreview-content {
+    flex-direction: column;
+    gap: 0;
+  }
 
-.edit-buttons {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  gap: 10px;
+  .subreview-ratings {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .rating {
+    width: 15rem;
+  }
+
+  .subreview-details {
+    flex-direction: column;
+  }
+
+  .subreview-detail {
+    height: fit-content;
+    width: 100%;
+    margin-bottom: 1vh;
+  }
+
+  .subreview-author {
+    flex-direction: column;
+  }
 }
