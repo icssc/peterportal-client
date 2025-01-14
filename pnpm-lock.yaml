@@ -11,9 +11,6 @@ importers:
       dotenv-flow:
         specifier: ^4.0.1
         version: 4.1.0
-      pnpm:
-        specifier: ^9.14.2
-        version: 9.14.2
       sst:
         specifier: 3.3.47
         version: 3.3.47
@@ -3632,11 +3629,6 @@ packages:
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
-
-  pnpm@9.14.2:
-    resolution: {integrity: sha512-biuvd9Brk2IpQVLIUcTyeO3jerHro6Vf2jF6SheyCfTbuXP7JQp3q8Rjo0H8sfF/F8+iQJHE6zGc2g2bhCeDhw==}
-    engines: {node: '>=18.12'}
-    hasBin: true
 
   popper.js@1.16.1:
     resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
@@ -8509,8 +8501,6 @@ snapshots:
   pidtree@0.6.0: {}
 
   pluralize@8.0.0: {}
-
-  pnpm@9.14.2: {}
 
   popper.js@1.16.1: {}
 
