@@ -201,12 +201,24 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
                 {review.verified && verifiedBadge}
                 {review.authored && authorBadge}
               </p>
-              <p>
+              <p style={{ textAlign: 'right' }}>
+                Created{' '}
                 {new Date(review.createdAt).toLocaleString('default', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
                 })}
+                {review.updatedAt && (
+                  <>
+                    <br />
+                    Updated{' '}
+                    {new Date(review.updatedAt).toLocaleString('default', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </>
+                )}
               </p>
             </div>
             <p>{review.content}</p>

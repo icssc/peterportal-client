@@ -179,7 +179,13 @@ const reviewsRouter = router({
     }
 
     const { id, ...updateWithoutId } = input;
-    await db.update(review).set(updateWithoutId).where(eq(review.id, id));
+    await db
+      .update(review)
+      .set({
+        ...updateWithoutId,
+        updatedAt: new Date(),
+      })
+      .where(eq(review.id, id));
     return true;
   }),
 
