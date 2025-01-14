@@ -156,7 +156,7 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               axisLeft={{
-                tickValues: Array.from({ length: greatestCount / tickSize }, (_, i) => i * tickSize + tickSize), // integers from 1 to max
+                tickValues: Array.from({ length: greatestCount / tickSize }, (_, i) => i * tickSize + tickSize),
               }}
               enableLabel={false}
               colors={colors}
