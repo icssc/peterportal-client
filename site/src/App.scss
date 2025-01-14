@@ -156,3 +156,23 @@ button {
     }
   }
 }
+
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #6664;
+  opacity: 0;
+  transition: opacity 0.5s;
+  cursor: default;
+  pointer-events: none;
+
+  &.enter-active,
+  &.enter-done {
+    opacity: 1;
+    pointer-events: all;
+  }
+  &.exit {
+    pointer-events: none;
+    opacity: 0;
+  }
+}
