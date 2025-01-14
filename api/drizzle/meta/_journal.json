@@ -8,6 +8,13 @@
       "when": 1731572839686,
       "tag": "0000_third_nekra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1733697058204,
+      "tag": "0001_heavy_xavin",
+      "breakpoints": true
     }
   ]
 }
