@@ -12,31 +12,28 @@
 
 // sort and filter reviews
 .sort-filter-menu {
-  margin-left: 0;
-  margin-right: 0;
   display: flex;
   flex-direction: row;
-  justify-content: left;
-  gap: 0.5rem;
+  gap: 1rem;
   border: 1px solid red;
-
-  #checkbox {
-    display: flex;
-    align-items: center;
-    border: 1px solid red;
-
-    .checkbox {
-      background: none;
-      border: 1px solid red;
-    }
-
-    label {
-      color: var(--text);
-    }
-  }
+}
+.sort-dropdown,
+.filter-dropdown {
+  min-width: 10rem;
+  border: 1px solid red;
+}
+.verified-only-checkbox {
+  background: none;
+  color: var(--text);
+  border: 1px solid red;
 }
 
-// subreview
+// subreviews
+.subreviews {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .subreview {
   display: flex;
   flex-direction: column;
@@ -48,7 +45,7 @@
   overflow-wrap: break-word;
 }
 
-// name of the class/professor
+// subreview header (class/professor name & edit buttons)
 .subreview-identifier {
   font-weight: bold;
   font-size: xx-large;
@@ -57,14 +54,12 @@
     color: var(--text);
   }
   word-break: break-word;
-  border: 1px solid red;
 }
 .edit-buttons {
   display: flex;
   flex-direction: row;
   float: right;
-  gap: 1rem;
-  border: 1px solid red;
+  gap: 0.75rem;
 }
 
 // content of review
@@ -121,6 +116,9 @@
 // subreview info
 .subreview-info {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .subreview-details {
   display: flex;
@@ -160,10 +158,12 @@
   justify-content: left;
   flex-wrap: wrap;
   gap: 0.5rem;
-  color: var(--peterportal-primary-color-1);
-  border: 1px solid red;
 }
-
+.subreview-tag {
+  padding: 1rem;
+  background-color: var(--peterportal-primary-color-1);
+  color: white;
+}
 // footer
 .subreview-footer {
   display: flex;
@@ -204,16 +204,19 @@
 .add-report-button {
   background-color: transparent;
   border-color: transparent;
+  color: var(--text);
 }
 .add-report-button:hover {
   background-color: var(--overlay3);
   border-color: var(--overlay3);
+  border-radius: var(--border-radius);
+  color: var(--text);
 }
 
 // screen width is less than or equal to 599px
 @media only screen and (max-width: 599px) {
-  .edit-buttons {
-    gap: 0.5rem;
+  .sort-filter-menu {
+    flex-direction: column;
   }
   .subreview-content {
     flex-direction: column;

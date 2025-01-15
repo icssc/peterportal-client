@@ -117,7 +117,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   return (
     <div className="subreview">
-      <div>
+      <div className="subreview-header">
         {review.authored && (
           <div className="edit-buttons">
             <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
@@ -142,7 +142,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </Modal>
           </div>
         )}
-
         <h3 className="subreview-identifier">
           {professor && (
             <Link to={{ pathname: `/course/${review.courseId}` }}>
@@ -206,19 +205,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
               </p>
             </div>
           </div>
-          <div>
-            <div className="subreview-author">
-              <p className="subreview-author-name">Posted by {review.userDisplay}</p>
-              {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
-              {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
-            </div>
-            <p>{review.content}</p>
+          <div className="subreview-author">
+            <p className="subreview-author-name">Posted by {review.userDisplay}</p>
+            {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
+            {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
           </div>
+          <p>{review.content}</p>
         </div>
       </div>
       <div className="subreview-tags">
         {review.tags?.map((tag) => (
-          <Badge pill className="p-3" variant="info" key={tag}>
+          <Badge pill className="subreview-tag" key={tag}>
             {tag}
           </Badge>
         ))}
@@ -236,11 +233,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </button>
           </div>
         </div>
-
         <Button variant="primary" className="add-report-button" onClick={openReportForm}>
           Report
         </Button>
-
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}

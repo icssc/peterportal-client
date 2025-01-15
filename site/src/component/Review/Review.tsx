@@ -113,81 +113,92 @@ const Review: FC<ReviewProps> = (props) => {
       <>
         <div className="reviews">
           <div className="sort-filter-menu">
-            <Dropdown
-              placeholder="Sorting Option"
-              scrolling
-              selection
-              options={[
-                { text: 'Most Recent', value: SortingOption.MOST_RECENT },
-                { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
-                { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
-              ]}
-              value={sortingOption}
-              onChange={(_, s) => setSortingOption(s.value as SortingOption)}
-            />
-            {props.course && (
+            <div className="sort-dropdown">
               <Dropdown
-                placeholder="Professor"
-                scrolling
+                placeholder="Sorting Option"
+                fluid
                 selection
-                options={
-                  // include option for filter to be empty
-                  [{ text: 'All Professors', value: '' }].concat(
-                    // map course's instructors to dropdown options
-                    Object.keys(props.course?.instructors)
-                      .map((profID) => {
-                        const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
-                        return {
-                          text: name,
-                          value: profID,
-                        };
-                      })
-                      .sort((a, b) => a.text.localeCompare(b.text)),
-                  )
-                }
-                value={filterOption}
-                onChange={(_, s) => setFilterOption(s.value as string)}
-              />
-            )}
-            {props.professor && (
-              <Dropdown
-                placeholder="Course"
-                scrolling
-                selection
-                options={
-                  // include option for filter to be empty
-                  [{ text: 'All Courses', value: '' }].concat(
-                    // map professor's courses to dropdown options
-                    Object.keys(props.professor?.courses)
-                      .map((courseID) => {
-                        const name =
-                          props.professor?.courses[courseID].department +
-                          ' ' +
-                          props.professor?.courses[courseID].courseNumber +
-                          ` (${reviewFreq.get(courseID) || 0})`;
-                        return {
-                          text: name,
-                          value: courseID,
-                        };
-                      })
-                      .sort((a, b) => a.text.localeCompare(b.text)),
-                  )
-                }
-                value={filterOption}
-                onChange={(_, s) => setFilterOption(s.value as string)}
-              />
-            )}
-            <div id="checkbox">
-              <Checkbox
-                label="Show verified reviews only"
-                checked={showOnlyVerifiedReviews}
-                onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+                options={[
+                  { text: 'Most Recent', value: SortingOption.MOST_RECENT },
+                  { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+                  { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
+                ]}
+                value={sortingOption}
+                onChange={(_, s) => setSortingOption(s.value as SortingOption)}
               />
             </div>
+            {props.course && (
+              <div className="filter-dropdown">
+                <Dropdown
+                  placeholder="Professor"
+                  fluid
+                  multiple
+                  search
+                  selection
+                  options={
+                    // include option for filter to be empty
+                    [{ text: 'All Professors', value: '' }].concat(
+                      // map course's instructors to dropdown options
+                      Object.keys(props.course?.instructors)
+                        .map((profID) => {
+                          const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
+                          return {
+                            text: name,
+                            value: profID,
+                          };
+                        })
+                        .sort((a, b) => a.text.localeCompare(b.text)),
+                    )
+                  }
+                  value={filterOption}
+                  onChange={(_, s) => setFilterOption(s.value as string)}
+                />
+              </div>
+            )}
+            {props.professor && (
+              <div className="filter-dropdown">
+                <Dropdown
+                  placeholder="Course"
+                  fluid
+                  multiple
+                  search
+                  selection
+                  options={
+                    // include option for filter to be empty
+                    [{ text: 'All Courses', value: '' }].concat(
+                      // map professor's courses to dropdown options
+                      Object.keys(props.professor?.courses)
+                        .map((courseID) => {
+                          const name =
+                            props.professor?.courses[courseID].department +
+                            ' ' +
+                            props.professor?.courses[courseID].courseNumber +
+                            ` (${reviewFreq.get(courseID) || 0})`;
+                          return {
+                            text: name,
+                            value: courseID,
+                          };
+                        })
+                        .sort((a, b) => a.text.localeCompare(b.text)),
+                    )
+                  }
+                  value={filterOption}
+                  onChange={(_, s) => setFilterOption(s.value as string)}
+                />
+              </div>
+            )}
+            <Checkbox
+              className="verified-only-checkbox"
+              label="Show verified reviews only"
+              checked={showOnlyVerifiedReviews}
+              onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+            />
           </div>
-          {sortedReviews.map((review) => (
-            <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
-          ))}
+          <div className="subreviews">
+            {sortedReviews.map((review) => (
+              <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
+            ))}
+          </div>
           <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
             + Add Review
           </Button>
