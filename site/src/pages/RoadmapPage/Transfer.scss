@@ -6,7 +6,8 @@
     border-top-color: var(--overlay3);
   }
 }
-.transfer {
+
+.transfer-body {
   max-height: 75vh;
   overflow-y: auto;
 }
@@ -16,11 +17,45 @@
   overflow-x: scroll;
 }
 
-.transfer .list-group .list-group-item {
+.transfer-body .list-group .list-group-item {
   min-width: max-content;
   background-color: var(--overlay3);
 }
 
 .entry {
   margin-top: 1%;
+}
+
+.add-entry {
+  background-color: transparent;
+  color: var(--peterportal-primary-color-1);
+  font-size: 16px;
+  font-weight: bold;
+  width: fit-content;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.add-entry:hover {
+  background-color: transparent;
+  color: var(--peterportal-primary-color-1);
+}
+
+[data-theme='dark'] {
+  .add-entry,
+  .add-entry:hover {
+    color: var(--peterportal-primary-color-2);
+  }
+}
+
+.transfer-modal {
+  .modal-dialog {
+    max-width: 500px;
+    max-height: 80%;
+  }
+  p {
+    font-size: 16px;
+  }
 }

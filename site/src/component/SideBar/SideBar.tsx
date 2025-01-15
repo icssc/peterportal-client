@@ -11,6 +11,7 @@ import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
 import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import UIOverlay from '../UIOverlay/UIOverlay';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -111,9 +112,7 @@ const SideBar = () => {
     <>
       <div className="sidebar mini">{links}</div>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        {/* Clicking this is only an alternative action to something that is already accessible */}
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events */}
-        <div className="sidebar-overlay" onClick={closeSidebar}></div>
+        <UIOverlay zIndex={399} onClick={closeSidebar}></UIOverlay>
       </CSSTransition>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
         <div className="sidebar">

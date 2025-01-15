@@ -3,7 +3,9 @@
 #content-container {
   display: flex;
   flex-grow: 1;
+  max-width: 100%;
   height: 100%;
+  margin-inline: auto;
 
   #search-list {
     width: 50vw;

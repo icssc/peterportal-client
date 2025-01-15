@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import CloseButton from 'react-bootstrap/CloseButton';
+import { PlusLg } from 'react-bootstrap-icons';
 
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -45,13 +46,13 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
 
   return (
     <Row className="g-2 mb-1" xs={3}>
-      <Col xs="auto" md="auto" className="d-flex flex-row justify-content-center">
+      <Col xs="1" md="1" className="d-flex flex-row justify-content-center p-0">
         <CloseButton onClick={() => dispatch(deleteTransfer(props.index))} />
       </Col>
-      <Col xs md>
+      <Col xs="8" md="7" className="pr-0">
         <Form.Control type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
       </Col>
-      <Col xs md>
+      <Col xs="3" md="4" className="pr-0">
         <Form.Control
           type="number"
           placeholder="Units"
@@ -80,11 +81,11 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header className="transfer-header" closeButton>
-        <Modal.Title>Transfer Credits</Modal.Title>
+    <Modal className="transfer-modal ppc-modal" show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <h2>Transfer Credits</h2>
       </Modal.Header>
-      <Modal.Body className="transfer">
+      <Modal.Body className="transfer-body">
         <p>
           Record your AP Credits or Community College Credits here. Doing so will clear the prerequisites on the
           roadmap.
@@ -100,19 +101,20 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
           </>
         )}
         <Container className="entry">
-          <Form>
+          <Form className="ppc-modal-form">
             {transfers.map((transfer, i) => (
               <TransferEntry key={`transfer-${i}`} index={i} {...transfer}></TransferEntry>
             ))}
           </Form>
         </Container>
       </Modal.Body>
-      <Modal.Footer className="transfer-footer d-flex flex-row justify-content-between">
-        <Button variant="primary" onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}>
-          Add Entry
-        </Button>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
+      <Modal.Footer className="transfer-footer d-flex flex-row justify-content-between pt-0">
+        <Button
+          className="add-entry"
+          variant="none"
+          onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}
+        >
+          <PlusLg /> Add Entry
         </Button>
       </Modal.Footer>
     </Modal>
