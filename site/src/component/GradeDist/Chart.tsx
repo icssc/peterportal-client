@@ -4,8 +4,8 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 import ThemeContext from '../../style/theme-context';
 import { type Theme } from '@nivo/core';
 import { GradesRaw } from '@peterportal/types';
-
-const colors = ['#60A3D1', '#81C284', '#F5D77F', '#ECAD6D', '#E8966D', '#EBEBEB', '#EBEBEB'];
+import { GradeColors } from './gradeColors.ts';
+import { tooltipStyle } from './tooltipStyle.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -70,59 +70,45 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'A',
         label: 'A',
         A: gradeACount,
-        color: '#2484C6',
+        color: GradeColors.A,
       },
       {
         id: 'B',
         label: 'B',
         B: gradeBCount,
-        color: '#54B058',
+        color: GradeColors.B,
       },
       {
         id: 'C',
         label: 'C',
         C: gradeCCount,
-        color: '#F9CE50',
+        color: GradeColors.C,
       },
       {
         id: 'D',
         label: 'D',
         D: gradeDCount,
-        color: '#ED9237',
+        color: GradeColors.D,
       },
       {
         id: 'F',
         label: 'F',
         F: gradeFCount,
-        color: '#E67237',
+        color: GradeColors.F,
       },
       {
         id: 'P',
         label: 'P',
         P: gradePCount,
-        color: '#4AB486',
+        color: GradeColors.P,
       },
       {
         id: 'NP',
         label: 'NP',
         NP: gradeNPCount,
-        color: '#E36436',
+        color: GradeColors.NP,
       },
     ];
-  };
-
-  tooltipStyle: Theme = {
-    tooltip: {
-      container: {
-        background: 'rgba(0,0,0,.87)',
-        color: '#ffffff',
-        fontSize: '1.2rem',
-        outline: 'none',
-        margin: 0,
-        padding: '0.25em 0.5em',
-        borderRadius: '2px',
-      },
-    },
   };
 
   /*
@@ -134,7 +120,7 @@ export default class Chart extends React.Component<ChartProps> {
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
     return (
-      <div style={this.tooltipStyle.tooltip?.container}>
+      <div style={tooltipStyle.tooltip?.container}>
         <strong>
           {props.label}: {props.data[props.label]}
         </strong>
@@ -184,7 +170,7 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={colors}
+              colors={Object.values(GradeColors)}
               theme={this.getTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}

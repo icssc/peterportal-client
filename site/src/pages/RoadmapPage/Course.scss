@@ -6,6 +6,7 @@
   font-size: 16px;
   padding: 12px;
   position: relative;
+  margin: 4px;
 
   .course-and-info {
     color: var(--zot-blue);
@@ -39,8 +40,14 @@
 
 .course-and-info {
   display: flex;
-  gap: 5px;
+  gap: 6px;
+  margin-right: 4px;
   align-items: center;
+  width: 100%;
+  > .name {
+    display: block;
+    margin-right: auto;
+  }
 }
 
 .course-delete-btn {

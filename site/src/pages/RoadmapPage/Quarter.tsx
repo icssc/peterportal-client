@@ -1,17 +1,24 @@
 import { FC, useContext, useRef, useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
-import { useIsMobile } from '../../helpers/util';
+import { deepCopy, useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { clearQuarter, deleteCourse, deleteQuarter, setShowSearch } from '../../store/slices/roadmapSlice';
+import {
+  clearQuarter,
+  deleteCourse,
+  deleteQuarter,
+  moveCourse,
+  setActiveCourse,
+  setShowSearch,
+} from '../../store/slices/roadmapSlice';
 import ThemeContext from '../../style/theme-context';
 import { PlannerQuarterData } from '../../types/types';
 import './Quarter.scss';
-import { StrictModeDroppable } from './StrictModeDroppable';
 
 import Course from './Course';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
+import { quarterSortable } from '../../helpers/sortable';
 
 interface QuarterProps {
   year: number;
@@ -49,52 +56,26 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const unitCount = calculateQuarterStats()[0];
 
-  const renderCourses = () => {
-    return data.courses.map((course, index) => {
-      return (
-        <Draggable
-          key={`quarter-course-${index}`}
-          draggableId={`${yearIndex}-${quarterIndex}-${course.id}-${index}`}
-          index={index}
-        >
-          {(provided) => {
-            let requiredCourses: string[] = null!;
-            // if this is an invalid course, set the required courses
-            invalidCourses.forEach((ic) => {
-              const loc = ic.location;
-              if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
-                requiredCourses = ic.required;
-              }
-            });
+  const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
-            const onDelete = () => {
-              dispatch(
-                deleteCourse({
-                  yearIndex,
-                  quarterIndex,
-                  courseIndex: index,
-                }),
-              );
-            };
-
-            return (
-              <div
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                className="quarter-course"
-                style={{
-                  cursor: 'grab',
-                  ...provided.draggableProps.style,
-                }}
-              >
-                <Course key={course.id} {...course} requiredCourses={requiredCourses} onDelete={onDelete} />
-              </div>
-            );
-          }}
-        </Draggable>
-      );
-    });
+  const removeCourseAt = (index: number) => {
+    dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
+  };
+  const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
+  const addCourse = (event: SortableEvent) => {
+    const movePayload = {
+      from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
+      to: { yearIndex, quarterIndex, courseIndex: event.newIndex! },
+    };
+    dispatch(moveCourse(movePayload));
+  };
+  const sortCourse = (event: SortableEvent) => {
+    if (event.from !== event.to) return;
+    const movePayload = {
+      from: { yearIndex, quarterIndex, courseIndex: event.oldDraggableIndex! },
+      to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
+    };
+    dispatch(moveCourse(movePayload));
   };
 
   const popover = (
@@ -126,6 +107,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     </Popover>
   );
 
+  const setDraggedItem = (event: SortableEvent) => {
+    const course = data.courses[event.oldIndex!];
+    dispatch(setActiveCourse(course));
+  };
+
   return (
     <div className="quarter" ref={quarterContainerRef}>
       <div className="quarter-header">
@@ -151,16 +137,37 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           )}
         </OverlayTrigger>
       </div>
-      <StrictModeDroppable droppableId={yearIndex + '-' + quarterIndex} type="COURSE">
-        {(provided) => {
+      <ReactSortable
+        list={coursesCopy}
+        className="quarter-course-list"
+        onStart={setDraggedItem}
+        onAdd={addCourse}
+        onRemove={removeCourse}
+        onSort={sortCourse}
+        {...quarterSortable}
+      >
+        {data.courses.map((course, index) => {
+          let requiredCourses: string[] = null!;
+          // if this is an invalid course, set the required courses
+          invalidCourses.forEach((ic) => {
+            const loc = ic.location;
+            if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
+              requiredCourses = ic.required;
+            }
+          });
+
           return (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="quarter-course-list">
-              {renderCourses()}
-              {provided.placeholder}
-            </div>
+            // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
+            <Course
+              key={index}
+              {...course}
+              requiredCourses={requiredCourses}
+              onDelete={() => removeCourseAt(index)}
+              addMode="drag"
+            />
           );
-        }}
-      </StrictModeDroppable>
+        })}
+      </ReactSortable>
 
       {isMobile && (
         <>
