@@ -2,30 +2,37 @@ import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { FileEarmarkArrowDown } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-//import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
-//import { useAppDispatch } from '../../store/hooks';
+import { setAllPlans } from '../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
-//import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-//import { quarters } from '@peterportal/types';
-//import { searchAPIResults } from '../../helpers/util';
-//import { QuarterName } from '@peterportal/types';
-//import { normalizeQuarterName } from '../../helpers/planner';
+import trpc from '../../trpc.ts';
+import { expandAllPlanners } from '../../helpers/planner';
 
 const ImportZot4PlanPopup: FC = () => {
+  const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const importHandler = async () => {
+  const obtainImportedRoadmap = async (query: string) => {
+    // Get the result
+    const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+      scheduleName: query,
+    });
+    // Expand the result
+    const expandedPlanners = await expandAllPlanners(result.planners);
+    // TODO: handling invalid course names, reporting errors
+    // (in case there was an issue with the formatting in the route)
+    dispatch(setAllPlans(expandedPlanners));
+  };
+
+  const handleImport = async () => {
     setBusy(true);
     try {
       // Use the backend route to try to obtain the formatted schedule
-      //const { transfers, years } = await processTranscript(file);
-      // Dispatch
-      //dispatch(setTransfers(transfers));
-      //dispatch(setYearPlans(Object.values(years)));
-      // Hide modal?
+      await obtainImportedRoadmap(scheduleName);
+      // Success; hide the modal
       setShowModal(false);
     } finally {
       setBusy(false);
@@ -47,7 +54,7 @@ const ImportZot4PlanPopup: FC = () => {
                   Zot4Plan
                 </a>
                 , you can add all your classes from that schedule to your PeterPortal roadmap. Your schedule in Zot4Plan
-                will not be erased.
+                will not be modified.
               </p>
               <p>Please enter the exact name that you use to save and load your Zot4Plan schedule.</p>
             </Form.Group>
@@ -65,7 +72,7 @@ const ImportZot4PlanPopup: FC = () => {
               </span>
             </Form.Group>
           </Form>
-          <Button variant="primary" disabled={busy} onClick={importHandler}>
+          <Button variant="primary" disabled={busy} onClick={handleImport}>
             {busy ? 'Importing...' : 'Import'}
           </Button>
         </Modal.Body>
