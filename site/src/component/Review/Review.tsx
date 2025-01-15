@@ -187,12 +187,13 @@ const Review: FC<ReviewProps> = (props) => {
                 />
               </div>
             )}
-            <Checkbox
-              className="verified-only-checkbox"
-              label="Show verified reviews only"
-              checked={showOnlyVerifiedReviews}
-              onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
-            />
+            <div className="verified-only-checkbox">
+              <Checkbox
+                label="Show verified reviews only"
+                checked={showOnlyVerifiedReviews}
+                onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+              />
+            </div>
           </div>
           <div className="subreviews">
             {sortedReviews.map((review) => (
