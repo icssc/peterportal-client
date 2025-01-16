@@ -130,6 +130,9 @@ export default class Chart extends React.Component<ChartProps> {
     // Math.max() ensures that we're not finding the log of a non-positive number
     const marginX = 30 + 5 * Math.floor(Math.log10(Math.max(100, greatestCount) / 100));
 
+    //tickSize calculates the proper scale of the graph based on its upper bound as calculated in GreatestCount
+    const tickSize = Math.floor(greatestCount / 6);
+
     return (
       <>
         <ThemeContext.Consumer>
@@ -153,7 +156,7 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               axisLeft={{
-                tickValues: Array.from({ length: greatestCount }, (_, i) => i + 1), // integers from 1 to max
+                tickValues: Array.from({ length: greatestCount / tickSize }, (_, i) => i * tickSize + tickSize),
               }}
               enableLabel={false}
               colors={colors}
