@@ -2,11 +2,13 @@ import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { FileEarmarkArrowDown } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setAllPlans } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { addRoadmapPlan, setPlanIndex, selectAllPlans } from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
 import { expandAllPlanners } from '../../helpers/planner';
+import spawnToast from '../../helpers/toastify';
+import helpImage from '../../asset/zot4plan-import-help.png';
 
 const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
@@ -14,17 +16,29 @@ const ImportZot4PlanPopup: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
   const [busy, setBusy] = useState(false);
+  const allPlanData = useAppSelector(selectAllPlans);
 
   const obtainImportedRoadmap = async (query: string) => {
     // Get the result
     const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
       scheduleName: query,
     });
+    // Verify that the result has one planner (if not, the import failed)
+    if (result.planners.length == 0) {
+      // Notify the user
+      // TODO: improve the toast notification?
+      spawnToast('The schedule named "' + query + '" could not be successfully imported', true);
+      return;
+    }
     // Expand the result
     const expandedPlanners = await expandAllPlanners(result.planners);
-    // TODO: handling invalid course names, reporting errors
-    // (in case there was an issue with the formatting in the route)
-    dispatch(setAllPlans(expandedPlanners));
+    // Add the expanded result as a new planner to the roadmap
+    // TODO: handling invalid course names, reporting errors (in case there was a formatting issue)
+    const currentPlanDataLength = allPlanData.length;
+    dispatch(addRoadmapPlan(expandedPlanners[0]));
+    dispatch(setPlanIndex(currentPlanDataLength));
+    // TODO: ensure the page scrolls up to the top
+    // TODO: fix bug in dropdown
   };
 
   const handleImport = async () => {
@@ -53,10 +67,15 @@ const ImportZot4PlanPopup: FC = () => {
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
                   Zot4Plan
                 </a>
-                , you can add all your classes from that schedule to your PeterPortal roadmap. Your schedule in Zot4Plan
-                will not be modified.
+                , you can add all your classes from that schedule to a new roadmap in PeterPortal. Your schedule in
+                Zot4Plan and your current roadmaps will not be modified.
               </p>
-              <p>Please enter the exact name that you use to save and load your Zot4Plan schedule.</p>
+              <p>Please enter the exact name that you use to save and load your Zot4Plan schedule, as shown here:</p>
+              <img
+                className="w-100"
+                src={helpImage}
+                alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"
+              />
             </Form.Group>
             <Form.Group controlId="ScheduleName">
               <Form.Label className="ppc-modal-form-label">Schedule Name</Form.Label>
@@ -72,7 +91,7 @@ const ImportZot4PlanPopup: FC = () => {
               </span>
             </Form.Group>
           </Form>
-          <Button variant="primary" disabled={busy} onClick={handleImport}>
+          <Button variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
             {busy ? 'Importing...' : 'Import'}
           </Button>
         </Modal.Body>
