@@ -194,11 +194,13 @@ const Review: FC<ReviewProps> = (props) => {
               </Form>
             </div>
           </div>
-          <div className="subreviews">
-            {sortedReviews.map((review) => (
-              <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
-            ))}
-          </div>
+          {sortedReviews.length !== 0 && (
+            <div className="subreviews">
+              {sortedReviews.map((review) => (
+                <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
+              ))}
+            </div>
+          )}
           <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
             + Add Review
           </Button>
