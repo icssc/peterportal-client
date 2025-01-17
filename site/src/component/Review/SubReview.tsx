@@ -222,12 +222,12 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
       </div>
       <div className="subreview-footer" id={review.id.toString()}>
         <div className="subreview-voting">
-          <p>Helpful?</p>
+          <p className="subreview-voting-question">Helpful?</p>
           <div className="subreview-voting-buttons">
             <button className={upvoteClassname} onClick={upvote}>
               &#9650;
             </button>
-            <p>{review.score}</p>
+            <p className="subreview-voting-count">{review.score}</p>
             <button className={downvoteClassname} onClick={downvote}>
               &#9660;
             </button>

@@ -6,8 +6,8 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Checkbox, Dropdown } from 'semantic-ui-react';
-import { Button } from 'react-bootstrap';
+import { Dropdown } from 'semantic-ui-react';
+import { Button, Form } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 
@@ -130,10 +130,8 @@ const Review: FC<ReviewProps> = (props) => {
             {props.course && (
               <div className="filter-dropdown">
                 <Dropdown
-                  placeholder="Professor"
+                  placeholder="All Professors"
                   fluid
-                  multiple
-                  search
                   selection
                   options={
                     // include option for filter to be empty
@@ -158,10 +156,8 @@ const Review: FC<ReviewProps> = (props) => {
             {props.professor && (
               <div className="filter-dropdown">
                 <Dropdown
-                  placeholder="Course"
+                  placeholder="All Courses"
                   fluid
-                  multiple
-                  search
                   selection
                   options={
                     // include option for filter to be empty
@@ -188,11 +184,14 @@ const Review: FC<ReviewProps> = (props) => {
               </div>
             )}
             <div className="verified-only-checkbox">
-              <Checkbox
-                label="Show verified reviews only"
-                checked={showOnlyVerifiedReviews}
-                onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
-              />
+              <Form>
+                <Form.Check
+                  type="checkbox"
+                  label="Show verified reviews only"
+                  checked={showOnlyVerifiedReviews}
+                  onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+                />
+              </Form>
             </div>
           </div>
           <div className="subreviews">
