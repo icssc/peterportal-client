@@ -96,7 +96,7 @@ const Course: FC<CourseProps> = (props) => {
             }
             delay={100}
           >
-            {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
+            <div style={{ display: 'flex' }}>{requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}</div>
           </OverlayTrigger>
         </div>
         <div className="spacer"></div>
