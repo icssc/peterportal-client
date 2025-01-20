@@ -1,8 +1,8 @@
 import { useState, useEffect, FC } from 'react';
-import { Icon, Popup, Grid, Label } from 'semantic-ui-react';
+import { Popup, Grid, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-import { List } from 'react-bootstrap-icons';
+import { ChatLeftDotsFill, Github, List } from 'react-bootstrap-icons';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './AppHeader.scss';
@@ -80,8 +80,7 @@ const AppHeader: FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Icon name="github" />
-                      Report an issue
+                      <Github /> Report an issue
                     </a>
                     <a
                       className="ui button"
@@ -89,8 +88,7 @@ const AppHeader: FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Icon name="clipboard list" />
-                      Feedback
+                      <ChatLeftDotsFill /> Feedback
                     </a>
                   </div>
                 </Grid.Column>

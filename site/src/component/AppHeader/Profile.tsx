@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { Icon } from 'semantic-ui-react';
 import './Profile.scss';
 import { NavLink } from 'react-router-dom';
-import { ArrowLeftCircleFill } from 'react-bootstrap-icons';
+import { ArrowLeftCircleFill, BoxArrowInRight, BoxArrowRight, Laptop, Moon, Sticky, Sun } from 'react-bootstrap-icons';
 import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
@@ -54,7 +53,7 @@ const Profile = () => {
               onClick={() => setShow(false)}
             >
               <div>
-                <Icon name="sticky note outline" size="large" />
+                <Sticky />
               </div>
               Your Reviews
             </NavLink>
@@ -62,7 +61,8 @@ const Profile = () => {
           <li>
             <button className="theme-button profile-popover__link" onClick={() => setTab('theme')}>
               <div>
-                <Icon name={usingSystemTheme ? 'laptop' : darkMode ? 'moon outline' : 'sun outline'} size="large" />
+                {/* <Icon name={usingSystemTheme ? 'laptop' : darkMode ? 'moon outline' : 'sun outline'} size="large" /> */}
+                {usingSystemTheme ? <Laptop /> : darkMode ? <Moon /> : <Sun />}
               </div>
               Theme
             </button>
@@ -70,7 +70,7 @@ const Profile = () => {
           <li>
             <a href={'/api/users/auth/logout'} className="profile-popover__link">
               <div>
-                <Icon name="sign out" size="large" />
+                <BoxArrowRight />
               </div>
               Log Out
             </a>
@@ -95,7 +95,8 @@ const Profile = () => {
               onClick={() => setTheme('light')}
             >
               <div>
-                <Icon name="sun outline" size="large" />
+                {/* <Icon name="sun outline" size="large" /> */}
+                <Sun />
               </div>
               Light
             </button>
@@ -106,7 +107,8 @@ const Profile = () => {
               onClick={() => setTheme('dark')}
             >
               <div>
-                <Icon name="moon outline" size="large" />
+                {/* <Icon name="moon outline" size="large" /> */}
+                <Moon />
               </div>
               Dark
             </button>
@@ -117,7 +119,8 @@ const Profile = () => {
               onClick={() => setTheme('system')}
             >
               <div>
-                <Icon name="laptop" size="large" />
+                {/* <Icon name="laptop" size="large" /> */}
+                <Laptop />
               </div>
               System
             </button>
@@ -167,7 +170,7 @@ const Profile = () => {
         <a href={`/api/users/auth/google`}>
           <Button variant={darkMode ? 'dark' : 'light'}>
             <span>
-              <Icon name="sign in" className="login-icon" />
+              <BoxArrowInRight />{' '}
             </span>
             Log In
           </Button>

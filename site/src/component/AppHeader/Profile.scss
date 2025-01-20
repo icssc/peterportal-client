@@ -99,7 +99,13 @@
   }
 
   li div {
-    display: inline;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  li svg.bi {
+    width: 18px;
+    height: 18px;
   }
 
   a {
