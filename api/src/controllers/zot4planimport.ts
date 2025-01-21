@@ -60,6 +60,7 @@ const zot4PlanImportRouter = router({
           // Failed
           return { planners: [], transfers: [] } as SavedRoadmap;
         }
+
         // Convert it to the PeterPortal roadmap format
         const converted: SavedRoadmap = {
           planners: [
@@ -72,10 +73,10 @@ const zot4PlanImportRouter = router({
         };
         // Determine the start year based on the current year and the student's year
         let startYear = new Date().getFullYear();
-        if (input.studentYear == '1') startYear -= 1;
-        if (input.studentYear == '2') startYear -= 2;
-        if (input.studentYear == '3') startYear -= 3;
-        if (input.studentYear == '4') startYear -= 4;
+        if (input.studentYear === '1') startYear -= 1;
+        if (input.studentYear === '2') startYear -= 2;
+        if (input.studentYear === '3') startYear -= 3;
+        if (input.studentYear === '4') startYear -= 4;
         // Add courses
         for (let i = 0; i < originalScheduleRaw.years.length; i++) {
           // Convert year
@@ -92,6 +93,10 @@ const zot4PlanImportRouter = router({
               const transformedCourseName = originalCourseName.replace(/\s/g, '');
               courses.push(transformedCourseName);
             }
+            if (j >= 3 && courses.length == 0) {
+              // Do not include the summer quarter if it has no courses (it is irrelevant)
+              continue;
+            }
             quartersList.push({
               name: ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer2', 'Summer10wk'][Math.min(j, 5)] as QuarterName,
               courses: courses,
@@ -103,6 +108,24 @@ const zot4PlanImportRouter = router({
             quarters: quartersList,
           });
         }
+        // Trim trailing empty years other than the first year
+        // (do not trim empty years in the middle because that makes it hard to add years there)
+        while (converted.planners[0].content.length > 1) {
+          let yearHasCourses = false;
+          for (const quarter of converted.planners[0].content[converted.planners[0].content.length - 1].quarters) {
+            if (quarter.courses.length != 0) {
+              yearHasCourses = true;
+            }
+          }
+          if (!yearHasCourses) {
+            // The year does not have courses, so trim it
+            converted.planners[0].content.pop();
+          } else {
+            // The year does have courses, so we are done
+            break;
+          }
+        }
+
         return converted as SavedRoadmap;
       } catch (err) {
         // Failed
