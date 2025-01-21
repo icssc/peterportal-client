@@ -15,19 +15,21 @@ const ImportZot4PlanPopup: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
+  const [studentYear, setStudentYear] = useState('1');
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
 
-  const obtainImportedRoadmap = async (query: string) => {
+  const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
-      scheduleName: query,
+      scheduleName: schedName,
+      studentYear: currYear,
     });
     // Verify that the result has one planner (if not, the import failed)
     if (result.planners.length == 0) {
       // Notify the user
       // TODO: improve the toast notification?
-      spawnToast('The schedule named "' + query + '" could not be successfully imported', true);
+      spawnToast('The schedule named "' + schedName + '" could not be successfully imported', true);
       return;
     }
     // Expand the result
@@ -37,15 +39,13 @@ const ImportZot4PlanPopup: FC = () => {
     const currentPlanDataLength = allPlanData.length;
     dispatch(addRoadmapPlan(expandedPlanners[0]));
     dispatch(setPlanIndex(currentPlanDataLength));
-    // TODO: ensure the page scrolls up to the top
-    // TODO: fix bug in dropdown
   };
 
   const handleImport = async () => {
     setBusy(true);
     try {
       // Use the backend route to try to obtain the formatted schedule
-      await obtainImportedRoadmap(scheduleName);
+      await obtainImportedRoadmap(scheduleName, studentYear);
       // Success; hide the modal
       setShowModal(false);
     } finally {
@@ -89,6 +89,17 @@ const ImportZot4PlanPopup: FC = () => {
                   ? 'Warning: no Zot4Plan schedule name contains less than 8 characters'
                   : ''}
               </span>
+            </Form.Group>
+            <Form.Group controlId="CurrentYear">
+              <Form.Label className="ppc-modal-form-label">Current Year</Form.Label>
+              <Form.Control as="select" onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
+                <option value="1" selected>
+                  I'm a first year
+                </option>
+                <option value="2">I'm a second year</option>
+                <option value="3">I'm a third year</option>
+                <option value="4">I'm a fourth year</option>
+              </Form.Control>
             </Form.Group>
           </Form>
           <Button variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
