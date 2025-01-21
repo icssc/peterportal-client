@@ -188,6 +188,7 @@ const Review: FC<ReviewProps> = (props) => {
                 <Form.Check
                   type="checkbox"
                   label="Show verified reviews only"
+                  id="Show verified reviews only"
                   checked={showOnlyVerifiedReviews}
                   onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
                 />
