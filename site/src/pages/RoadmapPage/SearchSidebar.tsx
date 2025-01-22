@@ -97,7 +97,7 @@ const SearchSidebar = () => {
             className={'search-body' + (isMobile ? ' disabled' : '')}
           >
             {shownCourses.map((course, i) => (
-              <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} />
+              <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} openPopoverLeft={true} />
             ))}
           </ReactSortable>
         ) : (

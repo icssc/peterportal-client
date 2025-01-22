@@ -66,35 +66,6 @@
   color: red;
 }
 
-.course-popover {
-  padding: 5%;
-
-  .popover-name {
-    font-weight: bold;
-    color: var(--text-dark);
-    font-size: 16px;
-  }
-
-  .popover-units {
-    color: #c4c4c4;
-
-    .popover-units-value {
-      font-weight: bold;
-    }
-  }
-
-  .popover-description {
-    padding-top: 5%;
-  }
-
-  .popover-detail {
-    padding-top: 5%;
-  }
-  .popover-detail-prefix {
-    font-weight: bold;
-  }
-}
-
 .course-footer {
   height: auto;
   display: flex;
