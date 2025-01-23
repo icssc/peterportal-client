@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { FileEarmarkArrowDown } from 'react-bootstrap-icons';
+import { FileEarmarkArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { addRoadmapPlan, setPlanIndex, selectAllPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -84,11 +84,12 @@ const ImportZot4PlanPopup: FC = () => {
                 placeholder="Exact Zot4Plan schedule name"
                 onChange={(e) => setScheduleName(e.target.value)}
               />
-              <span className="import-schedule-warn-text">
-                {scheduleName.length > 0 && scheduleName.length < 8
-                  ? 'Warning: no Zot4Plan schedule name contains less than 8 characters'
-                  : ''}
-              </span>
+              {scheduleName.length > 0 && scheduleName.length < 8 && (
+                <span className="import-schedule-warning">
+                  <ExclamationTriangle className="import-schedule-warning-icon" />
+                  No Zot4Plan schedule name contains less than 8 characters
+                </span>
+              )}
             </Form.Group>
             <Form.Group controlId="CurrentYear">
               <Form.Label className="ppc-modal-form-label">Current Year</Form.Label>

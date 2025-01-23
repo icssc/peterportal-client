@@ -7,7 +7,20 @@
   margin-right: 4px;
 }
 
-.import-schedule-warn-text {
+.import-schedule-warning {
   font-size: 14px;
-  color: red;
+  color: #ce0000;
+  gap: 5px;
+
+  .import-schedule-warning-icon {
+    margin-bottom: 4px;
+    margin-right: 4px;
+    font-size: 16px;
+  }
+}
+
+[data-theme='dark'] {
+  .import-schedule-warning {
+    color: red;
+  }
 }
