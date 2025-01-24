@@ -28,14 +28,48 @@ const ImportZot4PlanPopup: FC = () => {
     // Verify that the result has one planner (if not, the import failed)
     if (result.planners.length == 0) {
       // Notify the user
-      // TODO: improve the toast notification?
-      spawnToast('The schedule named "' + schedName + '" could not be successfully imported', true);
+      spawnToast('The schedule "' + schedName + '" could not be successfully retrieved', true);
       return;
     }
     // Expand the result
     const expandedPlanners = await expandAllPlanners(result.planners);
+    // Check for validity: length and invalid course names
+    if (expandedPlanners.length < 1) {
+      spawnToast('The schedule "' + schedName + '" could not be successfully imported', true);
+      return;
+    }
+    let problemCount = 0;
+    for (const yearPlan of expandedPlanners[0].content.yearPlans) {
+      for (const quarter of yearPlan.quarters) {
+        let i = 0;
+        while (i < quarter.courses.length) {
+          if (quarter.courses[i] === undefined) {
+            // An unknown course name was encountered when expanding the planner;
+            // It will crash PeterPortal if loaded, so remove it
+            quarter.courses.splice(i, 1);
+            problemCount++;
+          } else {
+            i++;
+          }
+        }
+      }
+    }
+    if (problemCount > 0) {
+      spawnToast(
+        'The schedule "' + schedName + '" contained ' + problemCount + ' unknown course(s), which were removed',
+        true,
+      );
+    }
+    // Check for validity: the name should be unique among current planners
+    const takenNames = new Set<string>();
+    for (const planner of allPlanData) {
+      takenNames.add(planner.name);
+    }
+    while (takenNames.has(expandedPlanners[0].name)) {
+      // Users can change their planner name easily, so use a simple naming scheme
+      expandedPlanners[0].name += '+';
+    }
     // Add the expanded result as a new planner to the roadmap
-    // TODO: handling invalid course names, reporting errors (in case there was a formatting issue)
     const currentPlanDataLength = allPlanData.length;
     dispatch(addRoadmapPlan(expandedPlanners[0]));
     dispatch(setPlanIndex(currentPlanDataLength));
