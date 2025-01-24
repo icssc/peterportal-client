@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
 import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
@@ -41,9 +41,9 @@ const Course: FC<CourseProps> = (props) => {
     title,
     minUnits,
     maxUnits,
-    description,
-    prerequisiteText,
-    corequisites,
+    // description,
+    // prerequisiteText,
+    // corequisites,
     requiredCourses,
     terms,
     onDelete,
@@ -55,6 +55,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const dispatch = useAppDispatch();
 
+  const [showInfoPopover, setShowInfoPopover] = useState(false);
   const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
   const isMobile = useIsMobile();
 
@@ -63,40 +64,57 @@ const Course: FC<CourseProps> = (props) => {
     dispatch(setShowAddCourse(true));
   };
 
+  const showPopover = () => setShowInfoPopover(true);
+  const hidePopover = () => setShowInfoPopover(false);
+
+  const createPopoverListeners = (requiresDeletePresent: boolean) => ({
+    onMouseEnter: () => !!onDelete === requiresDeletePresent && showPopover(),
+    onMouseLeave: (event: React.MouseEvent) => {
+      if (!!onDelete !== requiresDeletePresent) return;
+      const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
+      if (!inTooltip) setShowInfoPopover(false);
+    },
+  });
+
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
+
+  const popover = (
+    <Popover className="ppc-popover" id={'course-popover-' + id} onMouseLeave={hidePopover}>
+      <CoursePopover course={props} />
+    </Popover>
+  );
 
   return (
     <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
-            {department + ' ' + courseNumber}
-          </a>
+          <OverlayTrigger
+            show={!onDelete && showInfoPopover}
+            placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
+            overlay={popover}
+          >
+            <a
+              className="name"
+              href={courseRoute}
+              target="_blank"
+              rel="noopener noreferrer"
+              {...createPopoverListeners(false)}
+            >
+              {department + ' ' + courseNumber}
+            </a>
+          </OverlayTrigger>
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
           </span>
           <OverlayTrigger
-            trigger={['hover', 'focus']}
+            show={onDelete && showInfoPopover}
             placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
-            overlay={
-              <Popover className="ppc-popover" id={'course-popover-' + id}>
-                <CoursePopover
-                  department={department}
-                  courseNumber={courseNumber}
-                  title={title}
-                  minUnits={minUnits}
-                  maxUnits={maxUnits}
-                  description={description}
-                  prerequisiteText={prerequisiteText}
-                  corequisites={corequisites}
-                  requiredCourses={requiredCourses}
-                />
-              </Popover>
-            }
-            delay={100}
+            overlay={popover}
           >
-            <div style={{ display: 'flex' }}>{requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}</div>
+            <div className="info-wrapper" {...createPopoverListeners(true)}>
+              {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
+            </div>
           </OverlayTrigger>
         </div>
         <div className="spacer"></div>
