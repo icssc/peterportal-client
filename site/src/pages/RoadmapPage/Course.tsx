@@ -56,8 +56,12 @@ const Course: FC<CourseProps> = (props) => {
     onMouseEnter: () => !!onDelete === requiresDeletePresent && showPopover(),
     onMouseLeave: (event: React.MouseEvent) => {
       if (!!onDelete !== requiresDeletePresent) return;
-      const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
-      if (!inTooltip) setShowInfoPopover(false);
+      try {
+        const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
+        if (!inTooltip) setShowInfoPopover(false);
+      } catch {
+        setShowInfoPopover(false);
+      }
     },
   });
 
@@ -66,7 +70,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const popover = (
     <Popover className="ppc-popover" id={'course-popover-' + id} onMouseLeave={hidePopover}>
-      <CoursePopover course={props.data} interactive={true} />
+      <CoursePopover course={props.data} interactive={true} requiredCourses={requiredCourses} />
     </Popover>
   );
 
@@ -87,6 +91,11 @@ const Course: FC<CourseProps> = (props) => {
               {...createPopoverListeners(false)}
             >
               {department + ' ' + courseNumber}
+              {!onDelete && requiredCourses && (
+                <span className="warning-container">
+                  <ExclamationTriangle />
+                </span>
+              )}
             </a>
           </OverlayTrigger>
           <span className="units">

@@ -17,6 +17,9 @@
 
   .name {
     font-weight: bold;
+    .warning-container {
+      display: none;
+    }
   }
 
   .title {
@@ -93,9 +96,11 @@
 }
 
 .search-sidebar {
+  $header-font-size: 14px;
+
   .course {
     display: flex;
-    border-radius: 6px;
+    border-radius: 8px;
     flex-direction: column;
     justify-content: center;
     gap: 0;
@@ -105,15 +110,24 @@
     box-shadow: 0 0 2px 0 var(--zot-blue);
 
     .name {
-      font-size: 12px;
+      font-size: $header-font-size;
       margin: 0;
 
       color: var(--zot-blue);
     }
+    .warning-container {
+      position: relative;
+      display: inline;
+      top: -2px;
+      left: 4px;
+      svg {
+        color: #ce0000;
+      }
+    }
     .title {
       font-size: 12px;
       font-style: italic;
-      margin-top: 0px;
+      margin-top: 0;
     }
     .info-wrapper {
       display: none;
@@ -121,7 +135,7 @@
     .units {
       order: 2;
       margin-left: 5px;
-      font-size: 12px;
+      font-size: $header-font-size;
       &::before {
         content: '• ';
       }

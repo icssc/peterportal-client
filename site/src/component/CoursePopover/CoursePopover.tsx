@@ -5,17 +5,14 @@ import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
 import { CourseBookmarkButton, CourseDescription } from '../CourseInfo/CourseInfo';
 
-interface CourseFragment extends CourseGQLData {
-  requiredCourses?: string[];
-}
-
 interface CoursePopoverProps {
-  course: CourseFragment;
+  course: CourseGQLData;
+  requiredCourses?: string[];
   interactive?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true }) => {
-  const { department, courseNumber, minUnits, maxUnits, prerequisiteText, corequisites, requiredCourses } = course;
+const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
+  const { department, courseNumber, minUnits, maxUnits, prerequisiteText, corequisites } = course;
 
   return (
     <Popover.Content className="course-popover">

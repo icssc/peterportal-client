@@ -16,6 +16,7 @@ import { courseSearchSortable } from '../../helpers/sortable';
 import { Spinner } from 'react-bootstrap';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import noResultsImg from '../../asset/no-results-crop.webp';
+import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -79,6 +80,11 @@ const SearchSidebar = () => {
     dispatch(setActiveCourse(course));
   };
 
+  const roadmap = useAppSelector((state) => state.roadmap);
+  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
+  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
+  const clearedCourses = new Set([...allExistingCourses, ...transfers]);
+
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
@@ -96,9 +102,21 @@ const SearchSidebar = () => {
             disabled={isMobile}
             className={'search-body' + (isMobile ? ' disabled' : '')}
           >
-            {shownCourses.map((course, i) => (
-              <Course data={course} key={i} addMode={isMobile ? 'tap' : 'drag'} openPopoverLeft={true} />
-            ))}
+            {shownCourses.map((course, i) => {
+              const missingPrerequisites = Array.from(
+                validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
+              );
+              const requiredCourses = missingPrerequisites.length ? missingPrerequisites : undefined;
+              return (
+                <Course
+                  data={course}
+                  key={i}
+                  addMode={isMobile ? 'tap' : 'drag'}
+                  openPopoverLeft={true}
+                  requiredCourses={requiredCourses}
+                />
+              );
+            })}
           </ReactSortable>
         ) : (
           <div className="no-results">
