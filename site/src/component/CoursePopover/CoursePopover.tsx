@@ -2,43 +2,32 @@ import { FC } from 'react';
 import './CoursePopover.scss';
 import { ExclamationTriangle } from 'react-bootstrap-icons';
 import Popover from 'react-bootstrap/Popover';
+import { CourseGQLData } from '../../types/types';
+import { CourseBookmarkButton, CourseDescription } from '../CourseInfo/CourseInfo';
 
-interface CoursePopoverProps {
-  department: string;
-  courseNumber: string;
-  title: string;
-  minUnits: number;
-  maxUnits: number;
-  description: string;
-  prerequisiteText: string;
-  corequisites: string;
+interface CourseFragment extends CourseGQLData {
   requiredCourses?: string[];
 }
 
-const CoursePopover: FC<CoursePopoverProps> = (props) => {
-  const {
-    department,
-    courseNumber,
-    title,
-    minUnits,
-    maxUnits,
-    description,
-    prerequisiteText,
-    corequisites,
-    requiredCourses,
-  } = props;
+interface CoursePopoverProps {
+  course: CourseFragment;
+  interactive?: boolean;
+}
+
+const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true }) => {
+  const { department, courseNumber, minUnits, maxUnits, prerequisiteText, corequisites, requiredCourses } = course;
 
   return (
     <Popover.Content className="course-popover">
       <div className="popover-name">
         {department + ' ' + courseNumber + ' '}
         <span className="popover-units">({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units)</span>
+
+        <div className="spacer"></div>
+        {interactive && <CourseBookmarkButton course={course} />}
       </div>
-      <div className="popover-description">
-        <span className="popover-subtitle">{title + ':'}</span>
-        <br />
-        {description}
-      </div>
+      <br />
+      <CourseDescription course={course} />
       {prerequisiteText && (
         <div className="popover-detail">
           <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}

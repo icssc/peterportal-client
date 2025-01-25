@@ -86,7 +86,7 @@ const SearchSidebar = () => {
         <div className="search-sidebar-search-module">
           <SearchModule index="courses" />
         </div>
-        {showCourseBag && <h3 className="coursebag-title">Saved Courses</h3>}
+        <h3 className="coursebag-title">{showCourseBag ? 'Saved Courses' : 'Search Results'}</h3>
 
         {!searchInProgress && shownCourses.length ? (
           <ReactSortable
@@ -97,7 +97,7 @@ const SearchSidebar = () => {
             className={'search-body' + (isMobile ? ' disabled' : '')}
           >
             {shownCourses.map((course, i) => (
-              <Course {...course} key={i} addMode={isMobile ? 'tap' : 'drag'} openPopoverLeft={true} />
+              <Course data={course} key={i} addMode={isMobile ? 'tap' : 'drag'} openPopoverLeft={true} />
             ))}
           </ReactSortable>
         ) : (

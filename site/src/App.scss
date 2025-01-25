@@ -67,7 +67,6 @@ button {
     }
   }
   .arrow::before {
-    pointer-events: none;
     position: absolute;
     border: 8px solid transparent;
     border-width: 12px 16px;
@@ -108,12 +107,11 @@ button {
   }
 }
 
-.bs-popover-bottom {
+.ppc-popover.bs-popover-bottom {
   margin-top: 48px;
   .arrow::after,
   .arrow::before {
-    top: -12px;
-    left: 7px;
+    left: 2px;
   }
 }
 
@@ -249,4 +247,13 @@ button {
     pointer-events: none;
     opacity: 0;
   }
+}
+
+button.unstyled {
+  background: none;
+  font: inherit;
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 0;
 }

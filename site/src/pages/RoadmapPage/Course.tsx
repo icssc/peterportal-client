@@ -22,7 +22,7 @@ export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = (
   </>
 );
 
-interface CourseProps extends CourseGQLData {
+interface CourseProps {
   requiredCourses?: string[];
   unmatchedPrerequisites?: string[];
   onDelete?: () => void;
@@ -31,36 +31,21 @@ interface CourseProps extends CourseGQLData {
   removeFromBag?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
+  data: CourseGQLData;
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const {
-    id,
-    department,
-    courseNumber,
-    title,
-    minUnits,
-    maxUnits,
-    // description,
-    // prerequisiteText,
-    // corequisites,
-    requiredCourses,
-    terms,
-    onDelete,
-    onAddToBag,
-    isInBag,
-    removeFromBag,
-    openPopoverLeft,
-  } = props;
+  const { id, department, courseNumber, title, minUnits, maxUnits, terms } = props.data;
+  const { requiredCourses, onDelete, onAddToBag, isInBag, removeFromBag, openPopoverLeft } = props;
 
   const dispatch = useAppDispatch();
 
   const [showInfoPopover, setShowInfoPopover] = useState(false);
-  const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
+  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   const isMobile = useIsMobile();
 
   const insertCourseOnClick = () => {
-    dispatch(setActiveCourse(props));
+    dispatch(setActiveCourse(props.data));
     dispatch(setShowAddCourse(true));
   };
 
@@ -81,7 +66,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const popover = (
     <Popover className="ppc-popover" id={'course-popover-' + id} onMouseLeave={hidePopover}>
-      <CoursePopover course={props} />
+      <CoursePopover course={props.data} interactive={true} />
     </Popover>
   );
 
@@ -90,7 +75,7 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <OverlayTrigger
-            show={!onDelete && showInfoPopover}
+            show={!onDelete && showInfoPopover && !isMobile}
             placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
             overlay={popover}
           >
