@@ -3,7 +3,7 @@ import './CoursePopover.scss';
 import { ExclamationTriangle } from 'react-bootstrap-icons';
 import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
-import { CourseBookmarkButton, CourseDescription } from '../CourseInfo/CourseInfo';
+import { CorequisiteText, CourseBookmarkButton, CourseDescription, PrerequisiteText } from '../CourseInfo/CourseInfo';
 
 interface CoursePopoverProps {
   course: CourseGQLData;
@@ -12,7 +12,7 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
-  const { department, courseNumber, minUnits, maxUnits, prerequisiteText, corequisites } = course;
+  const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
     <Popover.Content className="course-popover">
@@ -25,16 +25,8 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
       </div>
       <br />
       <CourseDescription course={course} />
-      {prerequisiteText && (
-        <div className="popover-detail">
-          <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
-        </div>
-      )}
-      {corequisites && (
-        <div className="popover-detail">
-          <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
-        </div>
-      )}
+      <PrerequisiteText course={course} />
+      <CorequisiteText course={course} />
       {requiredCourses && (
         <div className="popover-detail">
           <div className="popover-detail-warning">

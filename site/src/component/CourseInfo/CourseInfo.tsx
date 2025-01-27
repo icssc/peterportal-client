@@ -25,3 +25,22 @@ export const CourseDescription: FC<CourseProp> = ({ course }) => {
     </p>
   );
 };
+
+export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
+  if (!course.prerequisiteText) return <></>;
+
+  return (
+    <p>
+      <b>Prerequisites:</b> {course.prerequisiteText}
+    </p>
+  );
+};
+export const CorequisiteText: FC<CourseProp> = ({ course }) => {
+  if (!course.corequisites) return <></>;
+
+  return (
+    <p>
+      <b>Corequisites:</b> {course.corequisites}
+    </p>
+  );
+};

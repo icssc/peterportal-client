@@ -80,6 +80,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             placeholder={placeholder}
             onChange={(e) => searchAfterTimeout(e.target.value)}
             defaultValue={search.query}
+            autoCorrect="off"
           />
           <InputGroup.Append>
             <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
