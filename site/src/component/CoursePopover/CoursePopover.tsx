@@ -1,9 +1,14 @@
 import { FC } from 'react';
 import './CoursePopover.scss';
-import { ExclamationTriangle } from 'react-bootstrap-icons';
 import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
-import { CorequisiteText, CourseBookmarkButton, CourseDescription, PrerequisiteText } from '../CourseInfo/CourseInfo';
+import {
+  CorequisiteText,
+  CourseBookmarkButton,
+  CourseDescription,
+  IncompletePrerequisiteText,
+  PrerequisiteText,
+} from '../CourseInfo/CourseInfo';
 
 interface CoursePopoverProps {
   course: CourseGQLData;
@@ -27,18 +32,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
       <CourseDescription course={course} />
       <PrerequisiteText course={course} />
       <CorequisiteText course={course} />
-      {requiredCourses && (
-        <div className="popover-detail">
-          <div className="popover-detail-warning">
-            <ExclamationTriangle className="popover-detail-warning-icon" />
-            Prerequisite{requiredCourses?.length > 1 ? 's' : ''} Not Met: {requiredCourses?.join(', ')}
-          </div>
-          <div className="popover-detail-italics">
-            Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add{' '}
-            {requiredCourses?.length > 1 ? 'these prerequisites' : 'this prerequisite'}.
-          </div>
-        </div>
-      )}
+      <IncompletePrerequisiteText requiredCourses={requiredCourses} />
     </Popover.Content>
   );
 };
