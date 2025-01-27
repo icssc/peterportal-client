@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
+import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -52,18 +52,20 @@ const Course: FC<CourseProps> = (props) => {
   const showPopover = () => setShowInfoPopover(true);
   const hidePopover = () => setShowInfoPopover(false);
 
-  const createPopoverListeners = (requiresDeletePresent: boolean) => ({
-    onMouseEnter: () => !!onDelete === requiresDeletePresent && showPopover(),
+  const popoverListeners = {
+    onMouseEnter: () => {
+      if (document.querySelector('.course.sortable-fallback')) return;
+      showPopover();
+    },
     onMouseLeave: (event: React.MouseEvent) => {
-      if (!!onDelete !== requiresDeletePresent) return;
       try {
         const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
-        if (!inTooltip) setShowInfoPopover(false);
+        if (!inTooltip) hidePopover();
       } catch {
-        setShowInfoPopover(false);
+        hidePopover();
       }
     },
-  });
+  };
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
@@ -79,19 +81,13 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <OverlayTrigger
-            show={!onDelete && showInfoPopover && !isMobile}
+            show={showInfoPopover}
             placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
             overlay={popover}
           >
-            <a
-              className="name"
-              href={courseRoute}
-              target="_blank"
-              rel="noopener noreferrer"
-              {...createPopoverListeners(false)}
-            >
+            <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" {...popoverListeners}>
               {department + ' ' + courseNumber}
-              {!onDelete && requiredCourses && (
+              {requiredCourses && (
                 <span className="warning-container">
                   <ExclamationTriangle />
                 </span>
@@ -101,15 +97,6 @@ const Course: FC<CourseProps> = (props) => {
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
           </span>
-          <OverlayTrigger
-            show={onDelete && showInfoPopover}
-            placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
-            overlay={popover}
-          >
-            <div className="info-wrapper" {...createPopoverListeners(true)}>
-              {requiredCourses ? <ExclamationTriangle /> : <InfoCircle />}
-            </div>
-          </OverlayTrigger>
         </div>
         <div className="spacer"></div>
         {onDelete ? (

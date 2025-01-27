@@ -18,7 +18,9 @@
   .name {
     font-weight: bold;
     .warning-container {
-      display: none;
+      position: relative;
+      top: -2px;
+      left: 4px;
     }
   }
 
@@ -115,14 +117,8 @@
 
       color: var(--zot-blue);
     }
-    .warning-container {
-      position: relative;
-      display: inline;
-      top: -2px;
-      left: 4px;
-      svg {
-        color: #ce0000;
-      }
+    .warning-container svg {
+      color: #ce0000;
     }
     .title {
       font-size: 12px;

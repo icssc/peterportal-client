@@ -107,6 +107,11 @@ button {
   }
 }
 
+.ppc-popover.bs-popover-right {
+  margin-left: 20px;
+  margin-top: 4px !important;
+}
+
 .ppc-popover.bs-popover-bottom {
   margin-top: 48px;
   .arrow::after,
