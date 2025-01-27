@@ -43,6 +43,80 @@ button {
   }
 }
 
+.ppc-popover {
+  border-radius: 8px;
+  padding: 0px;
+  box-shadow: none;
+  max-width: 375px;
+  top: -16px !important;
+
+  $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
+  filter: $filter;
+  -webkit-filter: $filter;
+  border: none;
+
+  .popover-body {
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .arrow {
+    z-index: -1;
+    &::after {
+      display: none;
+    }
+  }
+  .arrow::before {
+    pointer-events: none;
+    position: absolute;
+    border: 8px solid transparent;
+    border-width: 12px 16px;
+    top: 8px;
+    left: unset;
+  }
+  &[data-popper-placement='bottom'] {
+    top: -24px !important;
+    .arrow::before {
+      left: 0;
+      bottom: 0;
+      top: 8px;
+      border-bottom-color: var(--overlay1);
+      transform: translate(-25%, -100%);
+      border-width: 16px 12px;
+    }
+  }
+  &[data-popper-placement='left-start'] {
+    .arrow::before {
+      left: -2px;
+      border-left-color: var(--overlay1);
+    }
+  }
+  &[data-popper-placement='right-start'] {
+    .arrow::before {
+      right: -2px;
+      border-right-color: var(--overlay1);
+    }
+  }
+}
+
+.bs-popover-left {
+  margin-right: 20px;
+
+  .arrow::after,
+  .arrow::before {
+    left: -1px;
+  }
+}
+
+.bs-popover-bottom {
+  margin-top: 48px;
+  .arrow::after,
+  .arrow::before {
+    top: -12px;
+    left: 7px;
+  }
+}
+
 .ppc-modal {
   font-size: 18px;
 
@@ -154,5 +228,25 @@ button {
     &[type='checkbox'] {
       --bs-form-check-bg-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
     }
+  }
+}
+
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #6664;
+  opacity: 0;
+  transition: opacity 0.5s;
+  cursor: default;
+  pointer-events: none;
+
+  &.enter-active,
+  &.enter-done {
+    opacity: 1;
+    pointer-events: all;
+  }
+  &.exit {
+    pointer-events: none;
+    opacity: 0;
   }
 }

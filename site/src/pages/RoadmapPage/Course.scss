@@ -6,6 +6,7 @@
   font-size: 16px;
   padding: 12px;
   position: relative;
+  margin: 4px;
 
   .course-and-info {
     color: var(--zot-blue);
@@ -39,8 +40,14 @@
 
 .course-and-info {
   display: flex;
-  gap: 5px;
+  gap: 6px;
+  margin-right: 4px;
   align-items: center;
+  width: 100%;
+  > .name {
+    display: block;
+    margin-right: auto;
+  }
 }
 
 .course-delete-btn {
@@ -57,35 +64,6 @@
 
 .course-delete-icon {
   color: red;
-}
-
-.course-popover {
-  padding: 5%;
-
-  .popover-name {
-    font-weight: bold;
-    color: var(--text-dark);
-    font-size: 16px;
-  }
-
-  .popover-units {
-    color: #c4c4c4;
-
-    .popover-units-value {
-      font-weight: bold;
-    }
-  }
-
-  .popover-description {
-    padding-top: 5%;
-  }
-
-  .popover-detail {
-    padding-top: 5%;
-  }
-  .popover-detail-prefix {
-    font-weight: bold;
-  }
 }
 
 .course-footer {
