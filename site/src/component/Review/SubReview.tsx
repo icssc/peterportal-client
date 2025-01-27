@@ -98,8 +98,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
-  const upvoteClassname = review.userVote === 1 ? 'upvote coloredUpvote' : 'upvote';
-  const downvoteClassname = review.userVote === -1 ? 'downvote coloredDownvote' : 'downvote';
+  const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
+  const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
@@ -117,31 +117,31 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
 
   return (
     <div className="subreview">
-      {review.authored && (
-        <div className="edit-buttons">
-          <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
-            <PencilFill width="16" height="16" />
-          </Button>
-          <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
-            <TrashFill width="16" height="16" />
-          </Button>
-          <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-            <Modal.Header closeButton>
-              <h2>Delete Review</h2>
-            </Modal.Header>
-            <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                Cancel
-              </Button>
-              <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-                Delete
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      )}
-      <div>
+      <div className="subreview-header">
+        {review.authored && (
+          <div className="edit-buttons">
+            <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
+              <PencilFill width="16" height="16" />
+            </Button>
+            <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
+              <TrashFill width="16" height="16" />
+            </Button>
+            <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+              <Modal.Header closeButton>
+                <h2>Delete Review</h2>
+              </Modal.Header>
+              <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={() => deleteReview(review.id!)}>
+                  Delete
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        )}
         <h3 className="subreview-identifier">
           {professor && (
             <Link to={{ pathname: `/course/${review.courseId}` }}>
@@ -161,15 +161,16 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           )}
         </h3>
       </div>
+
       <div className="subreview-content">
         <div className="subreview-ratings">
           <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
-            <div className="rating-label">QUALITY</div>
-            <div>{review.rating}</div>
+            <div className="rating-label">Quality</div>
+            <div className="rating-value">{review.rating}</div>
           </div>
           <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}>
-            <div className="rating-label">DIFFICULTY</div>
-            <div>{review.difficulty}</div>
+            <div className="rating-label">Difficulty</div>
+            <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
         <div className="subreview-info">
@@ -187,51 +188,54 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </div>
             <div className="subreview-detail">
               <p>
-                Quarter Taken: <b>{review.quarter}</b>
+                Posted:{' '}
+                <b>
+                  {new Date(review.createdAt).toLocaleString('default', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </b>
               </p>
               <p>
-                Grade Received: <b>{review.gradeReceived}</b>
+                Quarter: <b>{review.quarter}</b>
+              </p>
+              <p>
+                Grade: <b>{review.gradeReceived}</b>
               </p>
             </div>
           </div>
-          <div>
-            <div className="subreview-author">
-              <p className=" gapped">
-                <span className=" mr-1">Posted by {review.userDisplay}</span>
-                {review.verified && verifiedBadge}
-                {review.authored && authorBadge}
-              </p>
-              <p>
-                {new Date(review.createdAt).toLocaleString('default', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            </div>
-            <p>{review.content}</p>
+          <div className="subreview-author">
+            <p className="subreview-author-name">Posted by {review.userDisplay}</p>
+            {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
+            {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
           </div>
+          <p>{review.content}</p>
         </div>
       </div>
-      <div>
+      <div className="subreview-tags">
         {review.tags?.map((tag) => (
-          <Badge pill className="p-3 mr-2 mt-2" variant="info" key={tag}>
+          <Badge pill className="subreview-tag" key={tag}>
             {tag}
           </Badge>
         ))}
       </div>
       <div className="subreview-footer" id={review.id.toString()}>
-        <p>Helpful?</p>
-        <button className={upvoteClassname} onClick={upvote}>
-          &#9650;
-        </button>
-        <p>{review.score}</p>
-        <button className={downvoteClassname} onClick={downvote}>
-          &#9660;
-        </button>
-        <button type="button" className="add-report-button" onClick={openReportForm}>
+        <div className="subreview-voting">
+          <p className="subreview-voting-question">Helpful?</p>
+          <div className="subreview-voting-buttons">
+            <button className={upvoteClassname} onClick={upvote}>
+              &#9650;
+            </button>
+            <p className="subreview-voting-count">{review.score}</p>
+            <button className={downvoteClassname} onClick={downvote}>
+              &#9660;
+            </button>
+          </div>
+        </div>
+        <Button variant="primary" className="add-report-button" onClick={openReportForm}>
           Report
-        </button>
+        </Button>
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}
