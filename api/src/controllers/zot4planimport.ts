@@ -7,8 +7,10 @@ import { publicProcedure, router } from '../helpers/trpc';
 import { TRPCError } from '@trpc/server';
 import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
 
+type Zot4PlanYears = string[][][];
+
 type Zot4PlanSchedule = {
-  years: string[][][];
+  years: Zot4PlanYears;
   selectedPrograms: {
     value: number;
     label: string;
@@ -94,10 +96,10 @@ const getStartYear = (studentYear: string): number => {
 };
 
 /**
- * Convert a Zot4Plan schedule into a saved roadmap planner
+ * Convert the years of a Zot4Plan schedule into the saved roadmap planner format
  */
-const convertIntoRoadmapPlanner = (
-  originalSchedule: Zot4PlanSchedule,
+const convertIntoSavedPlanner = (
+  originalScheduleYears: Zot4PlanYears,
   scheduleName: string,
   startYear: number,
 ): SavedPlannerData => {
@@ -107,16 +109,13 @@ const convertIntoRoadmapPlanner = (
   };
 
   // Add courses
-  for (let i = 0; i < originalSchedule.years.length; i++) {
-    // Convert year
-    const year = originalSchedule.years[i];
+  for (let i = 0; i < originalScheduleYears.length; i++) {
+    const year = originalScheduleYears[i];
     const quartersList: SavedPlannerQuarterData[] = [];
     for (let j = 0; j < year.length; j++) {
-      // Convert quarter
       const quarter = year[j];
       const courses: string[] = [];
       for (let k = 0; k < quarter.length; k++) {
-        // Convert course
         courses.push(convertIntoCourseID(quarter[k]));
       }
       if (j >= 3 && courses.length == 0) {
@@ -140,6 +139,23 @@ const convertIntoRoadmapPlanner = (
   return converted;
 };
 
+/**
+ * Convert a Zot4Plan schedule into the saved roadmap format
+ */
+const convertIntoSavedRoadmap = (
+  originalSchedule: Zot4PlanSchedule,
+  scheduleName: string,
+  startYear: number,
+): SavedRoadmap => {
+  // Convert the individual components
+  const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear);
+  const res: SavedRoadmap = {
+    planners: [convertedPlanner],
+    transfers: [],
+  };
+  return res;
+};
+
 const zot4PlanImportRouter = router({
   /**
    * Get a roadmap formatted for PeterPortal based on a Zot4Plan schedule by name
@@ -148,20 +164,8 @@ const zot4PlanImportRouter = router({
   getScheduleFormatted: publicProcedure
     .input(z.object({ scheduleName: z.string(), studentYear: z.string() }))
     .query(async ({ input }) => {
-      // Get the raw schedule data
       const originalScheduleRaw = await getFromZot4Plan(input.scheduleName);
-
-      // Convert it to the PeterPortal roadmap format
-      const convertedPlanner = convertIntoRoadmapPlanner(
-        originalScheduleRaw,
-        input.scheduleName,
-        getStartYear(input.studentYear),
-      );
-      const res: SavedRoadmap = {
-        planners: [convertedPlanner],
-        transfers: [],
-      };
-
+      const res = convertIntoSavedRoadmap(originalScheduleRaw, input.scheduleName, getStartYear(input.studentYear));
       return res;
     }),
 });
