@@ -33,7 +33,7 @@
 
   .popover-detail-warning {
     font-size: 14px;
-    color: #ce0000;
+    color: var(--warning-red);
     gap: 5px;
 
     .popover-detail-warning-icon {
@@ -48,15 +48,6 @@
     font-weight: 400;
     font-size: 12px;
     font-style: italic;
-    color: var(--petr-gray);
-  }
-}
-
-[data-theme='dark'] {
-  .popover-detail-warning {
-    color: red;
-  }
-  .popover-detail-italics {
     color: var(--petr-gray);
   }
 }
