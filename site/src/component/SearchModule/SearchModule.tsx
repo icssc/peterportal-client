@@ -63,9 +63,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   // Cleanup abort controller on unmount
   useEffect(() => {
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      abortControllerRef.current?.abort();
     };
   }, []);
 
