@@ -21,48 +21,48 @@ const ImportZot4PlanPopup: FC = () => {
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
-    const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
-      scheduleName: schedName,
-      studentYear: currYear,
-    });
-    // Verify that the result has one planner (if not, the import failed)
-    if (result.planners.length == 0) {
+    try {
+      const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+        scheduleName: schedName,
+        studentYear: currYear,
+      });
+      // Expand the result
+      const expandedPlanners = await expandAllPlanners(result.planners);
+      // Check for validity: length and invalid course names
+      if (expandedPlanners.length < 1) {
+        spawnToast('The schedule "' + schedName + '" could not be imported', true);
+        return;
+      }
+      // Unknown (undefined) course names will crash PeterPortal if loaded, so remove them
+      let problemCount = 0;
+      for (const yearPlan of expandedPlanners[0].content.yearPlans) {
+        for (const quarter of yearPlan.quarters) {
+          const newCourses = quarter.courses.filter((course) => course != undefined);
+          problemCount += quarter.courses.length - newCourses.length;
+          quarter.courses = newCourses;
+        }
+      }
+      if (problemCount > 0) {
+        spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
+      }
+      // Check for validity: the name should be unique among current planners
+      const takenNames = new Set<string>();
+      for (const planner of allPlanData) {
+        takenNames.add(planner.name);
+      }
+      while (takenNames.has(expandedPlanners[0].name)) {
+        // Users can change their planner name easily, so use a simple naming scheme
+        expandedPlanners[0].name += '+';
+      }
+      // Add the expanded result as a new planner to the roadmap
+      const currentPlanDataLength = allPlanData.length;
+      dispatch(addRoadmapPlan(expandedPlanners[0]));
+      dispatch(setPlanIndex(currentPlanDataLength));
+    } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
       return;
     }
-    // Expand the result
-    const expandedPlanners = await expandAllPlanners(result.planners);
-    // Check for validity: length and invalid course names
-    if (expandedPlanners.length < 1) {
-      spawnToast('The schedule "' + schedName + '" could not be imported', true);
-      return;
-    }
-    // Unknown (undefined) course names will crash PeterPortal if loaded, so remove them
-    let problemCount = 0;
-    for (const yearPlan of expandedPlanners[0].content.yearPlans) {
-      for (const quarter of yearPlan.quarters) {
-        const newCourses = quarter.courses.filter((course) => course != undefined);
-        problemCount += quarter.courses.length - newCourses.length;
-        quarter.courses = newCourses;
-      }
-    }
-    if (problemCount > 0) {
-      spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
-    }
-    // Check for validity: the name should be unique among current planners
-    const takenNames = new Set<string>();
-    for (const planner of allPlanData) {
-      takenNames.add(planner.name);
-    }
-    while (takenNames.has(expandedPlanners[0].name)) {
-      // Users can change their planner name easily, so use a simple naming scheme
-      expandedPlanners[0].name += '+';
-    }
-    // Add the expanded result as a new planner to the roadmap
-    const currentPlanDataLength = allPlanData.length;
-    dispatch(addRoadmapPlan(expandedPlanners[0]));
-    dispatch(setPlanIndex(currentPlanDataLength));
   };
 
   const handleImport = async () => {
