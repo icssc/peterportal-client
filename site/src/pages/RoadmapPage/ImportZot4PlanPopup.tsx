@@ -1,6 +1,6 @@
 import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { FileEarmarkArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
+import { CloudArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { addRoadmapPlan, setPlanIndex, selectAllPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -28,14 +28,14 @@ const ImportZot4PlanPopup: FC = () => {
     // Verify that the result has one planner (if not, the import failed)
     if (result.planners.length == 0) {
       // Notify the user
-      spawnToast('The schedule "' + schedName + '" could not be successfully retrieved', true);
+      spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
       return;
     }
     // Expand the result
     const expandedPlanners = await expandAllPlanners(result.planners);
     // Check for validity: length and invalid course names
     if (expandedPlanners.length < 1) {
-      spawnToast('The schedule "' + schedName + '" could not be successfully imported', true);
+      spawnToast('The schedule "' + schedName + '" could not be imported', true);
       return;
     }
     let problemCount = 0;
@@ -55,10 +55,7 @@ const ImportZot4PlanPopup: FC = () => {
       }
     }
     if (problemCount > 0) {
-      spawnToast(
-        'The schedule "' + schedName + '" contained ' + problemCount + ' unknown course(s), which were removed',
-        true,
-      );
+      spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
     }
     // Check for validity: the name should be unique among current planners
     const takenNames = new Set<string>();
@@ -126,14 +123,14 @@ const ImportZot4PlanPopup: FC = () => {
               )}
             </Form.Group>
             <Form.Group controlId="CurrentYear">
-              <Form.Label className="ppc-modal-form-label">Current Year</Form.Label>
+              <Form.Label className="ppc-modal-form-label">I am currently a...</Form.Label>
               <Form.Control as="select" onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
                 <option value="1" selected>
-                  I'm a first year
+                  1st year
                 </option>
-                <option value="2">I'm a second year</option>
-                <option value="3">I'm a third year</option>
-                <option value="4">I'm a fourth year</option>
+                <option value="2">2nd year</option>
+                <option value="3">3rd year</option>
+                <option value="4">4th year</option>
               </Form.Control>
             </Form.Group>
           </Form>
@@ -147,7 +144,7 @@ const ImportZot4PlanPopup: FC = () => {
         className="ppc-btn import-schedule-btn"
         onClick={() => setShowModal(true)}
       >
-        <FileEarmarkArrowDown className="import-schedule-icon" />
+        <CloudArrowDown className="import-schedule-icon" />
         <div>Import Zot4Plan Schedule</div>
       </Button>
     </>
