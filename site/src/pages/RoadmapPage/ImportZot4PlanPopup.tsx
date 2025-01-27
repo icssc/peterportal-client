@@ -38,20 +38,13 @@ const ImportZot4PlanPopup: FC = () => {
       spawnToast('The schedule "' + schedName + '" could not be imported', true);
       return;
     }
+    // Unknown (undefined) course names will crash PeterPortal if loaded, so remove them
     let problemCount = 0;
     for (const yearPlan of expandedPlanners[0].content.yearPlans) {
       for (const quarter of yearPlan.quarters) {
-        let i = 0;
-        while (i < quarter.courses.length) {
-          if (quarter.courses[i] === undefined) {
-            // An unknown course name was encountered when expanding the planner;
-            // It will crash PeterPortal if loaded, so remove it
-            quarter.courses.splice(i, 1);
-            problemCount++;
-          } else {
-            i++;
-          }
-        }
+        const newCourses = quarter.courses.filter((course) => course != undefined);
+        problemCount += quarter.courses.length - newCourses.length;
+        quarter.courses = newCourses;
       }
     }
     if (problemCount > 0) {
