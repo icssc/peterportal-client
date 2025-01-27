@@ -70,12 +70,10 @@ const zot4PlanImportRouter = router({
         ],
         transfers: [],
       };
-      // Determine the start year based on the current year and the student's year
+      // Determine the start year of the first quarter
       let startYear = new Date().getFullYear();
-      if (input.studentYear === '1') startYear -= 1;
-      if (input.studentYear === '2') startYear -= 2;
-      if (input.studentYear === '3') startYear -= 3;
-      if (input.studentYear === '4') startYear -= 4;
+      startYear -= parseInt(input.studentYear);
+      if (new Date().getMonth() >= 7) startYear += 1; // First-years in Fall start this year
       // Add courses
       for (let i = 0; i < originalScheduleRaw.years.length; i++) {
         // Convert year
