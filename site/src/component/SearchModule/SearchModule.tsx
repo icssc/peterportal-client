@@ -27,9 +27,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   const fuzzySearch = useCallback(
     async (query: string) => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      abortControllerRef.current?.abort();
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
       try {
