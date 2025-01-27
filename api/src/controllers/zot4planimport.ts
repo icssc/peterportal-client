@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../helpers/trpc';
 import { TRPCError } from '@trpc/server';
-import { SavedRoadmap, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
+import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
 
 type Zot4PlanSchedule = {
   years: string[][][];
@@ -27,7 +27,8 @@ type Zot4PlanSchedule = {
 };
 
 /**
- * Get a JSON schedule from Zot4Plan by name; return an empty {} if it does not exist
+ * Get a JSON schedule from Zot4Plan by name
+ * Throw an error if it does not exist
  */
 const getFromZot4Plan = async (scheduleName: string) => {
   let res = {};
@@ -49,6 +50,96 @@ const getFromZot4Plan = async (scheduleName: string) => {
   return res as Zot4PlanSchedule;
 };
 
+/**
+ * Convert a Zot4Plan course name into a PeterPortal course ID
+ */
+const convertIntoCourseID = (zot4PlanCourse: string): string => {
+  // PeterPortal course IDs are the same as Zot4Plan course IDs except all spaces are removed
+  return zot4PlanCourse.replace(/\s/g, '');
+};
+
+/**
+ * Trim the empty years off the end of a saved roadmap planner
+ * (Other than the first year)
+ */
+const trimEmptyYears = (planner: SavedPlannerData) => {
+  // Empty years in the middle aren't trimmed because that makes it hard to add years there
+  while (planner.content.length > 1) {
+    let yearHasCourses = false;
+    for (const quarter of planner.content[planner.content.length - 1].quarters) {
+      if (quarter.courses.length != 0) {
+        yearHasCourses = true;
+      }
+    }
+    if (!yearHasCourses) {
+      // The year does not have courses, so trim it
+      planner.content.pop();
+    } else {
+      // The year does have courses, so we are done
+      break;
+    }
+  }
+};
+
+/**
+ * Determine a student's start year based on their current year in school
+ * (ex. a first-year's current year is "1")
+ */
+const getStartYear = (studentYear: string): number => {
+  let startYear = new Date().getFullYear();
+  startYear -= parseInt(studentYear);
+  // First-years in Fall start this year, not the previous year
+  if (new Date().getMonth() >= 7) startYear += 1;
+  return startYear;
+};
+
+/**
+ * Convert a Zot4Plan schedule into a saved roadmap planner
+ */
+const convertIntoRoadmapPlanner = (
+  originalSchedule: Zot4PlanSchedule,
+  scheduleName: string,
+  startYear: number,
+): SavedPlannerData => {
+  const converted: SavedPlannerData = {
+    name: scheduleName,
+    content: [],
+  };
+
+  // Add courses
+  for (let i = 0; i < originalSchedule.years.length; i++) {
+    // Convert year
+    const year = originalSchedule.years[i];
+    const quartersList: SavedPlannerQuarterData[] = [];
+    for (let j = 0; j < year.length; j++) {
+      // Convert quarter
+      const quarter = year[j];
+      const courses: string[] = [];
+      for (let k = 0; k < quarter.length; k++) {
+        // Convert course
+        courses.push(convertIntoCourseID(quarter[k]));
+      }
+      if (j >= 3 && courses.length == 0) {
+        // Do not include the summer quarter if it has no courses (it is irrelevant)
+        continue;
+      }
+      quartersList.push({
+        name: ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer2', 'Summer10wk'][Math.min(j, 5)] as QuarterName,
+        courses: courses,
+      });
+    }
+    converted.content.push({
+      startYear: startYear + i,
+      name: 'Year ' + (i + 1),
+      quarters: quartersList,
+    });
+  }
+  // Trim trailing years
+  trimEmptyYears(converted);
+
+  return converted;
+};
+
 const zot4PlanImportRouter = router({
   /**
    * Get a roadmap formatted for PeterPortal based on a Zot4Plan schedule by name
@@ -61,69 +152,17 @@ const zot4PlanImportRouter = router({
       const originalScheduleRaw = await getFromZot4Plan(input.scheduleName);
 
       // Convert it to the PeterPortal roadmap format
-      const converted: SavedRoadmap = {
-        planners: [
-          {
-            name: input.scheduleName,
-            content: [],
-          },
-        ],
+      const convertedPlanner = convertIntoRoadmapPlanner(
+        originalScheduleRaw,
+        input.scheduleName,
+        getStartYear(input.studentYear),
+      );
+      const res: SavedRoadmap = {
+        planners: [convertedPlanner],
         transfers: [],
       };
-      // Determine the start year of the first quarter
-      let startYear = new Date().getFullYear();
-      startYear -= parseInt(input.studentYear);
-      if (new Date().getMonth() >= 7) startYear += 1; // First-years in Fall start this year
-      // Add courses
-      for (let i = 0; i < originalScheduleRaw.years.length; i++) {
-        // Convert year
-        const year = originalScheduleRaw.years[i];
-        const quartersList: SavedPlannerQuarterData[] = [];
-        for (let j = 0; j < year.length; j++) {
-          // Convert quarter
-          const quarter = year[j];
-          const courses: string[] = [];
-          for (let k = 0; k < quarter.length; k++) {
-            // Convert course
-            // (PeterPortal course IDs are the same as Zot4Plan course IDs except all spaces are removed)
-            const originalCourseName = quarter[k];
-            const transformedCourseName = originalCourseName.replace(/\s/g, '');
-            courses.push(transformedCourseName);
-          }
-          if (j >= 3 && courses.length == 0) {
-            // Do not include the summer quarter if it has no courses (it is irrelevant)
-            continue;
-          }
-          quartersList.push({
-            name: ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer2', 'Summer10wk'][Math.min(j, 5)] as QuarterName,
-            courses: courses,
-          });
-        }
-        converted.planners[0].content.push({
-          startYear: startYear + i,
-          name: 'Year ' + (i + 1),
-          quarters: quartersList,
-        });
-      }
-      // Trim trailing empty years other than the first year
-      // (do not trim empty years in the middle because that makes it hard to add years there)
-      while (converted.planners[0].content.length > 1) {
-        let yearHasCourses = false;
-        for (const quarter of converted.planners[0].content[converted.planners[0].content.length - 1].quarters) {
-          if (quarter.courses.length != 0) {
-            yearHasCourses = true;
-          }
-        }
-        if (!yearHasCourses) {
-          // The year does not have courses, so trim it
-          converted.planners[0].content.pop();
-        } else {
-          // The year does have courses, so we are done
-          break;
-        }
-      }
 
-      return converted as SavedRoadmap;
+      return res;
     }),
 });
 
