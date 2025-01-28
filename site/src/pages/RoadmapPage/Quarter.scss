@@ -82,17 +82,24 @@
       }
     }
 
-    > .quarter-course .course {
+    .course {
       box-shadow: none;
       border: 1px solid #268cd366;
       border-radius: 0;
       &.invalid .course-and-info {
         color: orange;
       }
+      .quarter-indicator-container {
+        display: none;
+      }
+      &.sortable-ghost {
+        opacity: 0.35;
+      }
     }
   }
 
   .course {
+    margin-block: 0;
     margin-inline: -1px;
   }
 }
@@ -103,6 +110,10 @@ body:has(> #profile-popover) {
   .quarter-add-course {
     transition: background-color 0s;
   }
+}
+body:has(> .course.sortable-fallback) * {
+  // when a course is dragged, show grabbing cursor no matter what
+  cursor: grabbing !important;
 }
 
 .quarter-menu-btn {

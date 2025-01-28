@@ -1,100 +1,129 @@
-import { FC } from 'react';
+import React, { FC, useState } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { InfoCircle, ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
+import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import { useIsMobile } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
+import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-interface CourseProps extends CourseGQLData {
+export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
+  <>
+    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
+    <br />
+    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
+    clear the prerequisite(s).
+  </>
+);
+
+interface CourseNameAndInfoProps {
+  data: CourseGQLData;
+  openPopoverLeft?: boolean;
+  requiredCourses?: string[];
+}
+const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopoverLeft, requiredCourses }) => {
+  const { id, department, courseNumber } = data;
+
+  const [showInfoPopover, setShowInfoPopover] = useState(false);
+  const [allowTouchClick, setAllowTouchClick] = useState(false);
+  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
+  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const isMobile = useIsMobile();
+
+  const showPopover = () => setShowInfoPopover(true);
+  const hidePopover = () => {
+    setShowInfoPopover(false);
+    setAllowTouchClick(false);
+  };
+
+  const handleHoverTitle = () => {
+    if (document.querySelector('.course.sortable-fallback')) return;
+    if (isMobile && showSearch) return;
+    showPopover();
+    setTimeout(() => setAllowTouchClick(true), 100);
+  };
+  const handleUnhoverTitle = (event: React.MouseEvent) => {
+    try {
+      const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
+      if (!inTooltip) hidePopover();
+    } catch {
+      hidePopover();
+    }
+  };
+
+  const handleLinkClick = (event: React.MouseEvent) => {
+    const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
+    if (isTouchEvent && !allowTouchClick) event.preventDefault();
+  };
+
+  const popover = (
+    <Popover className="ppc-popover" id={'course-popover-' + id} onMouseLeave={hidePopover}>
+      <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger
+      show={showInfoPopover}
+      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
+      overlay={popover}
+    >
+      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle}>
+        <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
+          {department + ' ' + courseNumber}
+        </a>
+        {requiredCourses && (
+          <span className="warning-container">
+            <ExclamationTriangle />
+          </span>
+        )}
+      </span>
+    </OverlayTrigger>
+  );
+};
+
+interface CourseProps {
   requiredCourses?: string[];
   unmatchedPrerequisites?: string[];
   onDelete?: () => void;
   onAddToBag?: () => void;
   isInBag?: boolean;
   removeFromBag?: () => void;
+  openPopoverLeft?: boolean;
+  addMode?: 'tap' | 'drag';
+  data: CourseGQLData;
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const {
-    id,
-    department,
-    courseNumber,
-    title,
-    minUnits,
-    maxUnits,
-    description,
-    prerequisiteText,
-    corequisites,
-    requiredCourses,
-    terms,
-    onDelete,
-    onAddToBag,
-    isInBag,
-    removeFromBag,
-  } = props;
-  const CoursePopover = (
-    <Popover id={'course-popover-' + id}>
-      <Popover.Content>
-        <div className="course-popover">
-          <div className="popover-name">
-            {department + ' ' + courseNumber} {title}
-          </div>
-          <div className="popover-units">
-            <span className="popover-units-value">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`}</span>{' '}
-            units
-          </div>
-          <div className="popover-description">{description}</div>
-          {prerequisiteText && (
-            <div className="popover-detail">
-              <span className="popover-detail-prefix">Prerequisites:</span> {prerequisiteText}
-            </div>
-          )}
-          {corequisites && (
-            <div className="popover-detail">
-              <span className="popover-detail-prefix">Corequisites:</span> {corequisites}
-            </div>
-          )}
-        </div>
-      </Popover.Content>
-    </Popover>
-  );
+  const { title, minUnits, maxUnits, terms } = props.data;
+  const { requiredCourses, onDelete, onAddToBag, isInBag, removeFromBag, openPopoverLeft } = props;
 
-  const WarningPopover = (
-    <Popover id={'warning-popover-' + id}>
-      <Popover.Content>
-        Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-        <br />
-        Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-        clear the prerequisite(s).
-      </Popover.Content>
-    </Popover>
-  );
+  const dispatch = useAppDispatch();
 
-  const courseRoute = '/course/' + props.department.replace(/\s+/g, '') + props.courseNumber.replace(/\s+/g, '');
+  const insertCourseOnClick = () => {
+    dispatch(setActiveCourse(props.data));
+    dispatch(setShowAddCourse(true));
+  };
+
+  const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
+  const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`}>
+    <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <span>
-            <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer">
-              {department + ' ' + courseNumber}
-            </a>
-            <span className="units">, {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</span>
+          <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          <span className="units">
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
           </span>
-          <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={CoursePopover} delay={100}>
-            <InfoCircle />
-          </OverlayTrigger>
-          {requiredCourses && (
-            <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
-              <ExclamationTriangle />
-            </OverlayTrigger>
-          )}
         </div>
+        <div className="spacer"></div>
         {onDelete ? (
           <ThemeContext.Consumer>
             {({ darkMode }) => (

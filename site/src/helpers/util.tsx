@@ -139,3 +139,11 @@ export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
 
   return sortTerms(union);
 };
+
+export function deepCopy<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+export function pluralize(count: number, pluralText: string = 's', singularText: string = '') {
+  return count === 1 ? singularText : pluralText;
+}

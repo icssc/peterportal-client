@@ -20,7 +20,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          dnd: ['react-beautiful-dnd'],
           nivo: ['@nivo/core', '@nivo/bar', '@nivo/pie'],
           miscComponentLibraries: ['semantic-ui-react', 'react-bootstrap', 'react-bootstrap-icons'],
         },

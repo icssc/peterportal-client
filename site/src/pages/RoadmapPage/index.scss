@@ -4,6 +4,7 @@
   overflow: hidden;
   display: flex;
   width: 100%;
+  gap: 36px;
 
   .hide {
     display: none;
@@ -30,5 +31,20 @@
   .sidebar-wrapper.mobile {
     width: 100%;
     margin: 0;
+  }
+}
+
+.search-body,
+.quarter {
+  &:not(.disabled) .course {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+  &.disabled .course {
+    cursor: pointer;
   }
 }

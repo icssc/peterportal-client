@@ -6,9 +6,11 @@
   --overlay3: #fff;
   --overlay4: var(--peterportal-gray-blue);
   --text: #212529; // default bootstrap color
+  --text-secondary: #606166;
   --text-dark: #000;
   --text-light: #495057;
   --hover: #cacbcd; // semantic-ui default
+  --warning-red: #ce0000;
 }
 
 // dark theme vars
@@ -22,9 +24,11 @@
   // jumps to 10% brighter
   --overlay4: #4c4c4c;
   --text: #fff;
+  --text-secondary: #99999f;
   --text-dark: #fff;
   --text-light: #fff;
   --hover: #cacbcd;
+  --warning-red: red;
   --peterportal-primary-color-1: #268cd3;
   --zot-blue: var(--peterportal-primary-color-1);
 
@@ -112,6 +116,9 @@
   }
 }
 
+.popover {
+  background-color: var(--overlay1);
+}
 .popover-body {
   background-color: var(--overlay1);
   color: var(--text);
