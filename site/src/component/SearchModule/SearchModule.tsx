@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, useCallback } from 'react';
+import { useState, useEffect, FC, useCallback, useRef } from 'react';
 import './SearchModule.scss';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -23,25 +23,47 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const search = useAppSelector((state) => state.search[index]);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fuzzySearch = useCallback(
     async (query: string) => {
-      const { count, results } = await trpc.search.get.query({
-        query,
-        take: NUM_RESULTS_PER_PAGE,
-        skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
-        resultType: index === 'courses' ? 'course' : 'instructor',
-      });
-      dispatch(
-        setResults({
-          index,
-          results: results.map((x) => transformGQLData(index, x.result)) as CourseGQLData[] | ProfessorGQLData[],
-          count,
-        }),
-      );
+      abortControllerRef.current?.abort();
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+      try {
+        const { count, results } = await trpc.search.get.query(
+          {
+            query,
+            take: NUM_RESULTS_PER_PAGE,
+            skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
+            resultType: index === 'courses' ? 'course' : 'instructor',
+          },
+          { signal: abortController.signal },
+        );
+        if (!abortController.signal.aborted) {
+          dispatch(
+            setResults({
+              index,
+              results: results.map((x) => transformGQLData(index, x.result)) as CourseGQLData[] | ProfessorGQLData[],
+              count,
+            }),
+          );
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Search error:', error);
+        }
+      }
     },
     [dispatch, index, search.pageNumber],
   );
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   // Refresh search results when names and page number changes (controlled by searchResults dependency array)
   useEffect(() => {

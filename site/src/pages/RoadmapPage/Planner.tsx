@@ -17,6 +17,7 @@ import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
 import { convertLegacyLocalRoadmap, defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
+import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
@@ -187,6 +188,7 @@ const Planner: FC = () => {
         }
       />
       <ImportTranscriptPopup />
+      <ImportZot4PlanPopup />
     </div>
   );
 };
