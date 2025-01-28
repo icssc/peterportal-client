@@ -3,17 +3,16 @@ import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
-import { useCoursebag } from '../../hooks/coursebag';
-import { Bookmark, BookmarkFill, X } from 'react-bootstrap-icons';
+import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import { CourseBookmarkButton, CourseDescription } from '../../component/CourseInfo/CourseInfo';
 
 interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
-  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const term = useNamedAcademicTerm();
@@ -49,17 +48,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
       </>
     );
 
-  const inCourseBag = coursebag.some((course) => course.id === activeCourse.id);
-
-  const toggleSaved = () => {
-    if (inCourseBag) {
-      removeCourseFromBag(activeCourse);
-    } else {
-      addCourseToBag(activeCourse);
-    }
-  };
-
-  const { minUnits, maxUnits, department, courseNumber, title, description } = activeCourse;
+  const { minUnits, maxUnits, department, courseNumber } = activeCourse;
 
   return (
     <>
@@ -71,16 +60,14 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           <span className="unit-count">
             ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'})
           </span>
-          <button onClick={toggleSaved}>{inCourseBag ? <BookmarkFill /> : <Bookmark />}</button>
+          <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
-          <button onClick={closePopup} className="close-button">
+          <button onClick={closePopup} className="close-button unstyled">
             <X width={32} height={32} />
           </button>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            <b>{title}:</b> {description}
-          </p>
+          <CourseDescription course={activeCourse} />
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
             <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />

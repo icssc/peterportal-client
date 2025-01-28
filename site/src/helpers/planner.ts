@@ -239,6 +239,14 @@ export const validatePlanner = (transfers: TransferData[], currentPlanData: Plan
   handler(missing, invalidCourses);
 };
 
+export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
+  return plan.yearPlans.flatMap((yearPlan) =>
+    yearPlan.quarters.flatMap((quarter) =>
+      quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
+    ),
+  );
+};
+
 // returns set of courses that need to be taken to fulfill requirements
 export const validateCourse = (
   taken: Set<string>,
