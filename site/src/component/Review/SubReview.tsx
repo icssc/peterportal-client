@@ -218,7 +218,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
                     })}
                   </>
                 )}
-              <p>
                 Grade: <b>{review.gradeReceived}</b>
               </p>
             </div>
