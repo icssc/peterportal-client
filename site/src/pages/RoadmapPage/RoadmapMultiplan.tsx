@@ -65,6 +65,15 @@ const RoadmapMultiplan: FC = () => {
   // const { name, content } = allPlans.plans[currentPlanIndex];
   const { name } = allPlans.plans[currentPlanIndex];
 
+  useEffect(() => {
+    const lastActiveIndex = localStorage.getItem('lastActiveRoadmapIndex');
+    if (lastActiveIndex !== null && allPlans.plans[parseInt(lastActiveIndex)]) {
+      console.log('lastActiveIndex', lastActiveIndex);
+      dispatch(setPlanIndex(parseInt(lastActiveIndex)));
+    }
+  }, []);
+  useEffect(() => {}, [allPlans.currentPlanIndex]);
+
   const addNewPlan = (name: string) => {
     dispatch(addRoadmapPlan({ name: name, content: initialPlanState }));
   };
