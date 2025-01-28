@@ -6,36 +6,14 @@
 
 ## Screenshots
 
-<!-- Include screenshot for front-end work -->
-<!--
-|screenshot|
-|--|
-|image|
--->
+<!-- Include before/after screenshot(s) for frontend work -->
 
-<!-- Include BEFORE/AFTER. Delete if N/A. (For visual front-end bug fixes) -->
-<!--
-|before|after|
-|--|--|
-|before image|after image|
--->
+## Test Plan
 
-## Steps to verify/test this change:
-
-- [ ] Verify changes work as expected on staging instance
-<!-- Add more steps here… -->
-
-## Final Checks:
-
-- [ ] Verify successful deployment
-
-(optional)
-
-- [ ] Write tests
-- [ ] Write documentation
+<!-- Include steps to verify/test this change -->
 
 ## Issues
 
-<!-- Link the issue you're closing -->
+<!-- Link the issue(s) you're closing -->
 
 Closes #

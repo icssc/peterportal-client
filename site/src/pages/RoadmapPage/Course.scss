@@ -6,6 +6,7 @@
   font-size: 16px;
   padding: 12px;
   position: relative;
+  margin: 4px;
 
   .course-and-info {
     color: var(--zot-blue);
@@ -18,12 +19,22 @@
     font-weight: bold;
   }
 
+  .warning-container {
+    position: relative;
+    top: -2px;
+    left: 4px;
+  }
+
   .title {
     margin-top: 4px;
   }
 
   .units {
     margin-left: auto;
+  }
+
+  .info-wrapper {
+    display: flex;
   }
 }
 
@@ -39,8 +50,13 @@
 
 .course-and-info {
   display: flex;
-  gap: 5px;
+  gap: 6px;
+  margin-right: 4px;
   align-items: center;
+  width: 100%;
+  > .name {
+    display: block;
+  }
 }
 
 .course-delete-btn {
@@ -59,35 +75,6 @@
   color: red;
 }
 
-.course-popover {
-  padding: 5%;
-
-  .popover-name {
-    font-weight: bold;
-    color: var(--text-dark);
-    font-size: 16px;
-  }
-
-  .popover-units {
-    color: #c4c4c4;
-
-    .popover-units-value {
-      font-weight: bold;
-    }
-  }
-
-  .popover-description {
-    padding-top: 5%;
-  }
-
-  .popover-detail {
-    padding-top: 5%;
-  }
-  .popover-detail-prefix {
-    font-weight: bold;
-  }
-}
-
 .course-footer {
   height: auto;
   display: flex;
@@ -96,4 +83,77 @@
   font-size: 14px;
   margin-top: auto;
   width: 100%;
+}
+
+.course.sortable-fallback {
+  height: fit-content !important;
+  animation: course-fade-in 0.2s forwards;
+}
+@keyframes course-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.search-sidebar {
+  $header-font-size: 14px;
+
+  .course {
+    display: flex;
+    border-radius: 8px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    width: calc(100% - 4px);
+    margin: 2px;
+    padding: 6px 12px;
+    box-shadow: 0 0 2px 0 var(--zot-blue);
+
+    .name {
+      font-size: $header-font-size;
+      margin: 0;
+
+      color: var(--zot-blue);
+    }
+    .warning-container svg {
+      color: #ce0000;
+    }
+    .title {
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 0;
+    }
+    .info-wrapper {
+      display: none;
+    }
+    .units {
+      order: 2;
+      margin-left: 5px;
+      font-size: $header-font-size;
+      &::before {
+        content: '• ';
+      }
+    }
+
+    .course-card-top {
+      display: flex;
+    }
+  }
+  .course :is(.course-footer) {
+    display: none;
+  }
+  .course :is(.course-and-info) {
+    display: contents;
+  }
+  div.search-body {
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: fit-content;
+    justify-items: stretch;
+    gap: 8px;
+    height: fit-content;
+  }
 }

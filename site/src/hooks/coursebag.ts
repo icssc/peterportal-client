@@ -32,5 +32,17 @@ export function useCoursebag() {
     [dispatch, isLoggedIn],
   );
 
-  return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag };
+  const toggleBookmark = useCallback(
+    (course: CourseGQLData) => {
+      const isBookmarked = coursebag!.some((c) => c.id === course.id);
+      if (isBookmarked) {
+        removeCourseFromBag(course);
+      } else {
+        addCourseToBag(course);
+      }
+    },
+    [addCourseToBag, coursebag, removeCourseFromBag],
+  );
+
+  return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, toggleBookmark };
 }

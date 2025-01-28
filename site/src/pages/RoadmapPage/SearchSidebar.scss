@@ -1,22 +1,39 @@
+@use '../../globals';
+
 .search-sidebar {
   position: sticky;
   right: 0;
   top: 0;
   overflow: auto;
+  width: 368px;
   height: 100%;
+  background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
-  background-color: var(--overlay1);
-
-  .close-icon {
-    width: 5vh;
-    height: 5vh;
-    float: right;
-  }
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-radius: 8px;
 
   .search-body {
-    flex-grow: 1;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &.mobile {
+    @include globals.bottom-overlay(450);
+    border-radius: 8px 8px 0 0;
+  }
+
+  button.fixed {
+    @include globals.bottom-button();
+  }
+
+  .coursebag-title {
+    margin: 12px 6px 0;
   }
 }
 
@@ -36,5 +53,36 @@
 }
 
 .search-sidebar-search-module {
-  margin: 2rem 2rem 0 2rem;
+  .form-group {
+    margin-bottom: 0;
+  }
+}
+
+.coursebag-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+h3.coursebag-title {
+  font-size: 1.5rem;
+}
+
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  font-size: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+
+  img {
+    width: 400px;
+    max-width: 100%;
+  }
+}
+
+.search-pagination {
+  display: flex;
+  justify-content: center;
 }

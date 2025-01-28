@@ -14,12 +14,14 @@ import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { Button } from 'semantic-ui-react';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
   index: number;
   clickHandler: () => void;
   editHandler: () => void;
+  duplicateHandler: () => void;
   deleteHandler: () => void;
 }
 
@@ -28,6 +30,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   index,
   clickHandler,
   editHandler,
+  duplicateHandler,
   deleteHandler,
 }) => {
   return (
@@ -37,6 +40,9 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
       </Dropdown.Item>
       <Button onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
+      </Button>
+      <Button onClick={duplicateHandler}>
+        <Icon.Files width="16" height="16" />
       </Button>
       <Button onClick={deleteHandler}>
         <Icon.TrashFill width="16" height="16" />
@@ -48,7 +54,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
 const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
-  const [currentPlanIndex, setCurrentPlanIndex] = useState(allPlans.currentPlanIndex);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const [isOpen, setIsOpen] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
@@ -66,7 +72,6 @@ const RoadmapMultiplan: FC = () => {
 
   const deleteCurrentPlan = () => {
     const newIndex = delIdx === currentPlanIndex ? 0 : currentPlanIndex - Number(delIdx < currentPlanIndex);
-    setCurrentPlanIndex(newIndex);
     dispatch(setPlanIndex(newIndex));
     dispatch(deleteRoadmapPlan({ planIndex: delIdx }));
     setDelIdx(-1);
@@ -78,7 +83,6 @@ const RoadmapMultiplan: FC = () => {
     setIsOpen(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
-    setCurrentPlanIndex(newIndex);
     dispatch(setPlanIndex(newIndex));
   };
 
@@ -87,6 +91,18 @@ const RoadmapMultiplan: FC = () => {
     if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
     dispatch(setPlanName({ index: editIdx, name: newPlanName }));
     setEditIdx(-1);
+  };
+
+  const duplicatePlan = (plan: RoadmapPlan) => {
+    const newName = makeUniquePlanName(plan.name, allPlans.plans);
+    dispatch(
+      addRoadmapPlan({
+        name: newName,
+        content: JSON.parse(JSON.stringify(plan.content)),
+      }),
+    );
+    const newIndex = allPlans.plans.length;
+    dispatch(setPlanIndex(newIndex));
   };
 
   useEffect(() => {
@@ -118,9 +134,9 @@ const RoadmapMultiplan: FC = () => {
               index={index}
               clickHandler={() => {
                 dispatch(setPlanIndex(index));
-                setCurrentPlanIndex(index);
               }}
               editHandler={() => setEditIdx(index)}
+              duplicateHandler={() => duplicatePlan(plan)}
               deleteHandler={() => setDelIdx(index)}
             />
           ))}

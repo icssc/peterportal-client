@@ -81,7 +81,7 @@ const initialSliceState: RoadmapSliceState = {
   showAddCourse: false,
   showTransfer: false,
   transfers: [],
-  showCourseBag: false,
+  showCourseBag: true,
 };
 /** added for multiple planner */
 

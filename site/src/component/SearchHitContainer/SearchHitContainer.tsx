@@ -6,7 +6,7 @@ import { useAppSelector } from '../../store/hooks';
 import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
 import noResultsImg from '../../asset/no-results-crop.webp';
-import { validateCourse } from '../../helpers/planner';
+import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
 import { Spinner } from 'react-bootstrap';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
@@ -24,15 +24,18 @@ const SearchResults = ({
   ProfessorHitItem,
 }: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
   const roadmap = useAppSelector((state) => state.roadmap);
-  const allExistingCourses = roadmap?.plans[roadmap.currentPlanIndex].content.yearPlans.flatMap((yearPlan) =>
-    yearPlan.quarters.flatMap((quarter) =>
-      quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
-    ),
-  );
+  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
+  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
+
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
       const requiredCourses = Array.from(
-        validateCourse(new Set(allExistingCourses), course.prerequisiteTree, new Set(), course.corequisites),
+        validateCourse(
+          new Set([...allExistingCourses, ...transfers]),
+          course.prerequisiteTree,
+          new Set(),
+          course.corequisites,
+        ),
       );
       return (
         <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />

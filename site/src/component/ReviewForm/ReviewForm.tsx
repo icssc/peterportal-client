@@ -198,11 +198,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Form.Control>
-      <Form.Text muted>
-        <a href="https://forms.gle/qAhCng7Ygua7SZ358" target="_blank" rel="noopener noreferrer">
-          Can't find your professor?
-        </a>
-      </Form.Text>
       <Form.Control.Feedback type="invalid">Missing instructor</Form.Control.Feedback>
     </Form.Group>
   );
