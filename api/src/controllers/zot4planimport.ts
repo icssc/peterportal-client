@@ -91,6 +91,7 @@ const getStartYear = (studentYear: string): number => {
   let startYear = new Date().getFullYear();
   startYear -= parseInt(studentYear);
   // First-years in Fall start this year, not the previous year
+  // Month index 7 is August, when Fall quarter is approaching
   if (new Date().getMonth() >= 7) startYear += 1;
   return startYear;
 };
