@@ -10,7 +10,10 @@ import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 
-const ImportZot4PlanPopup: FC = () => {
+interface ImportZot4PlanPopupProps {
+  saveRoadmap: () => void;
+}
+const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
@@ -63,7 +66,7 @@ const ImportZot4PlanPopup: FC = () => {
     try {
       // Use the backend route to try to obtain the formatted schedule
       await obtainImportedRoadmap(scheduleName, studentYear);
-      // Success; hide the modal
+      saveRoadmap();
       setShowModal(false);
     } finally {
       setBusy(false);
@@ -127,7 +130,7 @@ const ImportZot4PlanPopup: FC = () => {
             </Form.Group>
           </Form>
           <Button variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
-            {busy ? 'Importing...' : 'Import'}
+            {busy ? 'Importing...' : 'Import and Save'}
           </Button>
         </Modal.Body>
       </Modal>

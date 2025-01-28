@@ -188,7 +188,7 @@ const Planner: FC = () => {
         }
       />
       <ImportTranscriptPopup />
-      <ImportZot4PlanPopup />
+      <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
     </div>
   );
 };
