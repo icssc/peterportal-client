@@ -1,4 +1,8 @@
+@use '../../globals.scss';
+
 .search-module {
+  margin-inline: 36px 20px;
+
   button {
     font: inherit;
     padding: 0;
@@ -7,6 +11,13 @@
     width: 40px;
     text-align: center;
     justify-content: center;
+  }
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  @media only screen and (max-width: globals.$mobile-cutoff) {
+    margin-right: 36px;
   }
 }
 

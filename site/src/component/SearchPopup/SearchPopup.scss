@@ -33,6 +33,10 @@
   font-size: 1.5em;
 }
 
+.search-popup-container {
+  height: 100%;
+}
+
 .search-popup {
   background-color: var(--overlay1);
   margin-left: 3vw;
@@ -40,7 +44,11 @@
   overflow-y: auto;
   border-radius: var(--border-radius);
   width: 576px;
+  height: calc(100% - 72px);
+  margin: 36px;
+  margin-left: 16px;
   max-width: 40vw;
+  overflow: auto;
   @include globals.card-padding;
 }
 

@@ -4,7 +4,6 @@
   overflow: hidden;
   display: flex;
   width: 100%;
-  gap: 36px;
 
   .hide {
     display: none;
@@ -14,6 +13,7 @@
     width: 80%;
     height: 100%;
     overflow-y: auto;
+    padding-right: 20px;
   }
 
   .main-wrapper.mobile {
