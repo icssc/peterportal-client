@@ -6,7 +6,7 @@ import { addRoadmapPlan, setPlanIndex, selectAllPlans } from '../../store/slices
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
-import { expandAllPlanners } from '../../helpers/planner';
+import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 
@@ -45,15 +45,8 @@ const ImportZot4PlanPopup: FC = () => {
       if (problemCount > 0) {
         spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
       }
-      // Check for validity: the name should be unique among current planners
-      const takenNames = new Set<string>();
-      for (const planner of allPlanData) {
-        takenNames.add(planner.name);
-      }
-      while (takenNames.has(expandedPlanners[0].name)) {
-        // Users can change their planner name easily, so use a simple naming scheme
-        expandedPlanners[0].name += '+';
-      }
+      // Update the name to be unique among current planners
+      expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
       // Add the expanded result as a new planner to the roadmap
       const currentPlanDataLength = allPlanData.length;
       dispatch(addRoadmapPlan(expandedPlanners[0]));

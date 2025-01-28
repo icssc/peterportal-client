@@ -14,6 +14,7 @@ import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { Button } from 'semantic-ui-react';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -93,12 +94,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const duplicatePlan = (plan: RoadmapPlan) => {
-    let newName = `${plan.name} (Copy)`;
-    let counter = 1;
-    while (allPlans.plans.find((p) => p.name === newName)) {
-      counter++;
-      newName = `${plan.name} (Copy ${counter})`;
-    }
+    const newName = makeUniquePlanName(plan.name, allPlans.plans);
     dispatch(
       addRoadmapPlan({
         name: newName,

@@ -53,6 +53,22 @@ export function normalizeQuarterName(name: string): QuarterName {
   return lookup[name];
 }
 
+export const makeUniquePlanName = (plannerName: string, allPlans: RoadmapPlan[]): string => {
+  let newName = plannerName;
+  while (allPlans.find((p) => p.name === newName)) {
+    // The regex matches an integer number at the end
+    const counter = newName.match(/\d+$/);
+    if (counter != null) {
+      const numberValue = newName.substring(counter.index!);
+      newName = newName.substring(0, counter.index) + (parseInt(numberValue) + 1);
+    } else {
+      // No number exists at the end, so default with 2
+      newName += ' 2';
+    }
+  }
+  return newName;
+};
+
 // remove all unecessary data to store into the database
 export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
   const savedPlanner: SavedPlannerYearData[] = [];
