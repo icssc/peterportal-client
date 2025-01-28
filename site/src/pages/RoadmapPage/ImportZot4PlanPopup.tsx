@@ -100,6 +100,12 @@ const ImportZot4PlanPopup: FC = () => {
                 type="text"
                 placeholder="Exact Zot4Plan schedule name"
                 onChange={(e) => setScheduleName(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  // prevent submitting form (reloads the page)
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
               />
               {scheduleName.length > 0 && scheduleName.length < 8 && (
                 <span className="import-schedule-warning">
