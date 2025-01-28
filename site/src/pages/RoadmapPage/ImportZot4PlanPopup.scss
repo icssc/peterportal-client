@@ -1,0 +1,20 @@
+.import-schedule-btn.btn-light {
+  background-color: #e3e5eb;
+}
+
+.import-schedule-icon {
+  scale: 1.2;
+  margin-right: 4px;
+}
+
+.import-schedule-warning {
+  font-size: 14px;
+  color: var(--warning-red);
+  gap: 5px;
+
+  .import-schedule-warning-icon {
+    margin-bottom: 4px;
+    margin-right: 4px;
+    font-size: 16px;
+  }
+}
