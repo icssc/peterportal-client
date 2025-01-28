@@ -3,7 +3,9 @@
 */
 
 import { z } from 'zod';
+import { db } from '../db';
 import { publicProcedure, router } from '../helpers/trpc';
+import { zot4PlanImports } from '../db/schema';
 import { TRPCError } from '@trpc/server';
 import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
 
@@ -164,9 +166,10 @@ const zot4PlanImportRouter = router({
    */
   getScheduleFormatted: publicProcedure
     .input(z.object({ scheduleName: z.string(), studentYear: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const originalScheduleRaw = await getFromZot4Plan(input.scheduleName);
       const res = convertIntoSavedRoadmap(originalScheduleRaw, input.scheduleName, getStartYear(input.studentYear));
+      await db.insert(zot4PlanImports).values({ scheduleId: input.scheduleName, userId: ctx.session.userId });
       return res;
     }),
 });
