@@ -15,6 +15,27 @@
       "when": 1733697058204,
       "tag": "0001_heavy_xavin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738088242593,
+      "tag": "0002_lethal_nighthawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1738088629832,
+      "tag": "0003_hot_micromax",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1738089114801,
+      "tag": "0004_sad_zzzax",
+      "breakpoints": true
     }
   ]
 }
