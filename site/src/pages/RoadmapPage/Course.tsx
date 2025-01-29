@@ -145,14 +145,6 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-footer">
         {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
         {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
-        {/* <div className="course-footer">
-        {requiredCourses && (
-          <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
-            <ExclamationTriangle />
-          </OverlayTrigger>
-        )}
-        {/* <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div> * /}
-      </div> */}
       </div>
     </div>
   );

@@ -1,23 +1,16 @@
 import './SearchSidebar.scss';
 
-import SearchModule from '../../component/SearchModule/SearchModule';
-
-import { deepCopy, useIsMobile } from '../../helpers/util';
+import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setActiveCourse, setShowSearch } from '../../store/slices/roadmapSlice';
+import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { useEffect, useRef } from 'react';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { useCoursebag } from '../../hooks/coursebag';
-import { CourseGQLData } from '../../types/types';
-import Course from './Course';
-import { courseSearchSortable } from '../../helpers/sortable';
-import { Spinner } from 'react-bootstrap';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import noResultsImg from '../../asset/no-results-crop.webp';
-import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
+
 import RequirementsListSelector from './sidebar/RequirementsListSelector';
+import AllCourseSearch from './sidebar/AllCourseSearch';
+import MajorRequiredCourseList from './sidebar/MajorRequiredCourseList';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -35,38 +28,13 @@ const CloseRoadmapSearchButton = () => {
   );
 };
 
-interface SearchPlaceholderProps {
-  searchInProgress: boolean;
-  showCourseBag: boolean;
-}
-const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <Spinner animation="border" role="status" />;
-
-  const placeholderText = showCourseBag
-    ? 'No courses saved. Try searching for something!'
-    : "Sorry, we couldn't find any results for that search!";
-
-  return (
-    <>
-      <img src={noResultsImg} alt="No results found" />
-      {placeholderText}
-    </>
-  );
-};
-
 const SearchSidebar = () => {
   const isMobile = useIsMobile();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
-  const { showCourseBag } = useAppSelector((state) => state.roadmap);
+  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
   const overlayRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
-
-  const { coursebag } = useCoursebag();
-  const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
-
-  // Deep copy because Sortable requires data to be extensible (non read-only)
-  const shownCourses = deepCopy(showCourseBag ? coursebag : results) as CourseGQLData[];
 
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
 
@@ -76,56 +44,15 @@ const SearchSidebar = () => {
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
-  const setDraggedItem = (event: SortableEvent) => {
-    const course = shownCourses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
-  };
-
-  const roadmap = useAppSelector((state) => state.roadmap);
-  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
-  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
-  const clearedCourses = new Set([...allExistingCourses, ...transfers]);
-
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
       <div className={`search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
 
-        <div className="search-sidebar-search-module">
-          <SearchModule index="courses" />
-        </div>
-        <h3 className="coursebag-title">{showCourseBag ? 'Saved Courses' : 'Search Results'}</h3>
+        {selectedCourseList === 'Major' && <MajorRequiredCourseList />}
+        {selectedCourseList === 'All Courses' && <AllCourseSearch />}
 
-        {!searchInProgress && shownCourses.length ? (
-          <ReactSortable
-            {...courseSearchSortable}
-            list={shownCourses}
-            onStart={setDraggedItem}
-            disabled={isMobile}
-            className={'search-body' + (isMobile ? ' disabled' : '')}
-          >
-            {shownCourses.map((course, i) => {
-              const missingPrerequisites = Array.from(
-                validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
-              );
-              const requiredCourses = missingPrerequisites.length ? missingPrerequisites : undefined;
-              return (
-                <Course
-                  data={course}
-                  key={i}
-                  addMode={isMobile ? 'tap' : 'drag'}
-                  openPopoverLeft={true}
-                  requiredCourses={requiredCourses}
-                />
-              );
-            })}
-          </ReactSortable>
-        ) : (
-          <div className="no-results">
-            <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
-          </div>
-        )}
         <CloseRoadmapSearchButton />
       </div>
     </>

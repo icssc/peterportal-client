@@ -1,0 +1,49 @@
+@use '../../../globals.scss';
+@use 'sass:color';
+
+.required-courses {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group-requirement {
+  border: 2px solid rgba(globals.$primary-blue-1, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+
+  .group-header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: globals.$primary-blue-1;
+    margin-bottom: 12px;
+  }
+
+  .group-header svg.bi {
+    flex-shrink: 0;
+  }
+
+  > p {
+    margin-block: 12px 4px;
+  }
+}
+
+.group-courses {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+
+  .course-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: globals.$primary-blue-1;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+}
