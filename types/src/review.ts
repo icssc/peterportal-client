@@ -41,6 +41,7 @@ export const reviewSubmission = z.object({
   textbook: z.boolean(),
   attendance: z.boolean(),
   tags: z.array(tagsEnum),
+  updatedAt: z.string().optional(),
   captchaToken: z.string().optional(),
 });
 export type ReviewSubmission = z.infer<typeof reviewSubmission>;
