@@ -126,6 +126,18 @@ export const savedCourse = pgTable(
   (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
 );
 
+export const zot4PlanImports = pgTable(
+  'zot4plan_imports',
+  {
+    scheduleId: text('schedule_id').notNull(),
+    userId: integer('user_id').references(() => user.id),
+    timestamp: timestamp('timestamp')
+      .notNull()
+      .default(sql`now()`),
+  },
+  (table) => [primaryKey({ columns: [table.scheduleId, table.timestamp] })],
+);
+
 export const session = pgTable('session', {
   sid: text('sid').primaryKey(),
   sess: jsonb('sess').notNull(),
