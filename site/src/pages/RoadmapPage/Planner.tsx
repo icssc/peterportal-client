@@ -179,16 +179,18 @@ const Planner: FC = () => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
       </section>
-      <AddYearPopup
-        placeholderName={'Year ' + (currentPlanData.length + 1)}
-        placeholderYear={
-          currentPlanData.length === 0
-            ? new Date().getFullYear()
-            : currentPlanData[currentPlanData.length - 1].startYear + 1
-        }
-      />
-      <ImportTranscriptPopup />
-      <ImportZot4PlanPopup />
+      <div className="action-row">
+        <AddYearPopup
+          placeholderName={'Year ' + (currentPlanData.length + 1)}
+          placeholderYear={
+            currentPlanData.length === 0
+              ? new Date().getFullYear()
+              : currentPlanData[currentPlanData.length - 1].startYear + 1
+          }
+        />
+        <ImportTranscriptPopup />
+        <ImportZot4PlanPopup />
+      </div>
     </div>
   );
 };

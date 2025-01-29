@@ -77,7 +77,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
           <Spinner animation="border" role="status" />
         </div>
       )}
-      {results.length > 0 && (
+      {!searchInProgress && results.length > 0 && (
         <SearchResults
           index={index}
           results={results}
@@ -85,9 +85,11 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
           ProfessorHitItem={ProfessorHitItem!}
         />
       )}
-      <div className="search-pagination">
-        <SearchPagination index={index} />
-      </div>
+      {!searchInProgress && (
+        <div className="search-pagination">
+          <SearchPagination index={index} />
+        </div>
+      )}
     </div>
   );
 };

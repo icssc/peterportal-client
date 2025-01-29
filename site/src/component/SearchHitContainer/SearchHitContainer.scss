@@ -1,9 +1,14 @@
+@use '../../globals.scss';
+
 .search-hit-container {
-  padding-top: 2vh;
   overflow-y: auto;
+  padding: 20px 20px 36px 36px;
 
   > *:not(:last-child) {
     margin-bottom: 20px;
+  }
+  @media only screen and (max-width: globals.$mobile-cutoff) {
+    padding-right: 36px;
   }
 }
 

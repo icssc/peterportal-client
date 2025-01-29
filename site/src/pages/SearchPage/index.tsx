@@ -20,12 +20,12 @@ const SearchPage: FC = () => {
 
   return (
     <>
-      <div id="content-container">
-        <div id="search-list">
+      <div className="search-wrapper">
+        <div className="search-list">
           <SearchModule index={index} />
           <SearchHitContainer index={index} CourseHitItem={CourseHitItem} ProfessorHitItem={ProfessorHitItem} />
         </div>
-        <div id="search-popup">
+        <div className="search-popup-container">
           {index == 'courses' && <CoursePopup />}
           {index == 'professors' && <ProfessorPopup />}
         </div>
