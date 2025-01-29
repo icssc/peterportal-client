@@ -1,0 +1,30 @@
+.requirements-list-selector {
+  background-color: #8886;
+  display: flex;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+
+  button.ppc-btn {
+    width: 100%;
+    margin: 0;
+    outline: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    justify-content: center;
+    font-weight: bold;
+
+    &:not([disabled]):not(.disabled):is(:focus, :active) {
+      box-shadow: none;
+    }
+    &:not(.btn-primary) {
+      color: var(--peterportal-primary-color-1);
+    }
+  }
+  button.ppc-btn.btn-primary:active {
+    background-color: var(--peterportal-primary-color-1);
+  }
+}

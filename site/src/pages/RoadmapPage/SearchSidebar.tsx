@@ -17,6 +17,7 @@ import { Spinner } from 'react-bootstrap';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import noResultsImg from '../../asset/no-results-crop.webp';
 import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
+import RequirementsListSelector from './sidebar/RequirementsListSelector';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -89,6 +90,8 @@ const SearchSidebar = () => {
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
       <div className={`search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
+        <RequirementsListSelector />
+
         <div className="search-sidebar-search-module">
           <SearchModule index="courses" />
         </div>
