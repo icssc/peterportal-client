@@ -197,6 +197,20 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
                   })}
                 </b>
               </p>
+              {review.updatedAt && (
+                <p>
+                  <>
+                    Updated:{' '}
+                    <b>
+                      {new Date(review.updatedAt).toLocaleString('default', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </b>
+                  </>
+                </p>
+              )}
               <p>
                 Quarter: <b>{review.quarter}</b>
               </p>
