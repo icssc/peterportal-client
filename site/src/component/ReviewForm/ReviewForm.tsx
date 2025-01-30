@@ -135,6 +135,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       textbook,
       attendance,
       tags: selectedTags,
+      updatedAt: editing ? new Date().toISOString() : undefined,
       captchaToken,
     };
 
