@@ -6,7 +6,7 @@ import {
   ProgramRequirement,
   TypedProgramRequirement,
 } from '../../../helpers/courseRequirements';
-import { CaretRightFill } from 'react-bootstrap-icons';
+import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
 import trpc from '../../../trpc';
@@ -93,34 +93,37 @@ const CourseList: FC<{ courses: string[] }> = ({ courses }) => {
       ))}
     </ReactSortable>
   );
-  // return <div className="group-courses">
-  //   {courses.map((c) => (
-  //     <CourseTile courseID={c} key={c} />
-  //   ))}
-  // </div>
 };
 
-const GroupHeader: FC<{ title: string }> = ({ title }) => {
+interface GroupHeaderProps {
+  title: string;
+  open: boolean;
+  setOpen: React.Dispatch<boolean>;
+}
+const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
+  const className = `group-header ${open ? 'open' : ''}`;
   return (
-    <div className="group-header">
-      <CaretRightFill />
+    <button className={className} onClick={() => setOpen(!open)}>
+      {open ? <CaretDownFill /> : <CaretRightFill />}
       <b>{title}</b>
-    </div>
+    </button>
   );
 };
 
 const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course'> }> = ({ data }) => {
+  const [open, setOpen] = useState(false);
+
   const requiredAmount = data.courseCount === data.courses.length ? 'all' : data.courseCount;
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   return (
     <div className="group-requirement">
-      <GroupHeader title={data.label} />
-      {showLabel && (
+      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      {open && showLabel && (
         <p>
           <b>Complete {requiredAmount} of the following:</b>
         </p>
       )}
-      <CourseList courses={data.courses} />
+      {open && <CourseList courses={data.courses} />}
     </div>
   );
 };
@@ -134,20 +137,24 @@ const GroupedCourseRequirement: FC<{ data: TypedProgramRequirement<'Course'> }> 
 };
 
 const GroupRequirement: FC<{ data: TypedProgramRequirement<'Group'> }> = ({ data }) => {
+  const [open, setOpen] = useState(false);
   return (
     <div className="group-requirement">
-      <GroupHeader title={data.label} />
-      <p>
-        Complete <b>{data.requirementCount}</b> of the following series:
-      </p>
-      {data.requirements.map((r, i) => (
-        <React.Fragment key={i}>
-          <p>
-            <b>{r.label}</b>
-          </p>
-          <ProgramRequirementDisplay requirement={r} nested />
-        </React.Fragment>
-      ))}
+      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      {open && (
+        <p>
+          Complete <b>{data.requirementCount}</b> of the following series:
+        </p>
+      )}
+      {open &&
+        data.requirements.map((r, i) => (
+          <React.Fragment key={i}>
+            <p>
+              <b>{r.label}</b>
+            </p>
+            <ProgramRequirementDisplay requirement={r} nested />
+          </React.Fragment>
+        ))}
     </div>
   );
 };

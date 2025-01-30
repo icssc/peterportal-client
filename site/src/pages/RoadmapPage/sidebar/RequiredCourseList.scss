@@ -17,7 +17,16 @@
     gap: 8px;
     align-items: center;
     color: globals.$primary-blue-1;
-    margin-bottom: 12px;
+    text-align: left;
+    padding: 0;
+    background: none;
+    border: none;
+    outline: none;
+    width: 100%;
+
+    &.open {
+      margin-bottom: 12px;
+    }
   }
 
   .group-header svg.bi {
