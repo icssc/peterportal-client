@@ -37,27 +37,42 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 
   const [showInfoPopover, setShowInfoPopover] = useState(false);
   const [allowTouchClick, setAllowTouchClick] = useState(false);
+  const [showPopoverTimeout, setShowPopoverTimeout] = useState(0);
   const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
   let courseID = department + ' ' + courseNumber;
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
+  const POPOVER_DELAY = 80;
+  const TOUCH_DELAY = 120;
+
   const showPopover = () => {
     setShowInfoPopover(true);
     popupListener?.(true);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(0);
+    setTimeout(() => setAllowTouchClick(true), TOUCH_DELAY);
   };
   const hidePopover = () => {
     setShowInfoPopover(false);
     setAllowTouchClick(false);
     popupListener?.(false);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(0);
+  };
+
+  const handleMouseMove = () => {
+    if (!showPopoverTimeout) return;
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
   };
 
   const handleHoverTitle = () => {
     if (document.querySelector('.course.sortable-fallback')) return;
     if (isMobile && showSearch) return;
-    showPopover();
-    setTimeout(() => setAllowTouchClick(true), 100);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
   };
   const handleUnhoverTitle = (event: React.MouseEvent) => {
     try {
@@ -85,7 +100,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       overlay={popover}
     >
-      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle}>
+      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle} onMouseMove={handleMouseMove}>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </a>
