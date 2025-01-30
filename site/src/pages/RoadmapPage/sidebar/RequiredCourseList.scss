@@ -1,7 +1,7 @@
 @use '../../../globals.scss';
 @use 'sass:color';
 
-.required-courses {
+.program-requirements {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -27,6 +27,9 @@
   > p {
     margin-block: 12px 4px;
   }
+  > .group-header + p {
+    margin-bottom: 12px;
+  }
 }
 
 .group-courses {
@@ -34,16 +37,43 @@
   grid-auto-flow: row;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: 8px;
+}
 
-  .course-tile {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5px 10px;
-    background-color: globals.$primary-blue-1;
+.program-course-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: globals.$primary-blue-1;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  border-radius: 4px;
+  cursor: grab;
+
+  a {
+    color: inherit;
+  }
+}
+
+.program-course-tile.mobile {
+  position: relative;
+  cursor: pointer;
+  a {
+    pointer-events: none;
+  }
+
+  div.spinner-border {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    scale: 0.67;
     color: white;
-    font-weight: bold;
-    font-size: 13px;
-    border-radius: 4px;
+  }
+
+  &.loading {
+    color: #fff6;
+    background-color: rgba(globals.$primary-blue-1, 0.8);
   }
 }

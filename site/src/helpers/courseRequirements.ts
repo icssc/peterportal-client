@@ -3,6 +3,8 @@ import { components } from '@peterportal/types/src/generated/anteater-api-types'
 export type ProgramRequirement = components['schemas']['programRequirement'];
 export type TypedProgramRequirement<T extends string> = ProgramRequirement & { requirementType: T };
 
+export const COMPLETE_ALL_TEXT = 'Complete all of the following';
+
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
  * @param requirements The raw course requirements, as returned from the API
@@ -34,7 +36,7 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
     builtGroup ??= {
       requirementType: 'Group',
       requirementCount: 0,
-      label: 'Complete all of the following',
+      label: COMPLETE_ALL_TEXT,
       requirements: [],
     };
     builtGroup.requirements.push(r);

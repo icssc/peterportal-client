@@ -23,23 +23,34 @@ export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = (
 );
 
 interface CourseNameAndInfoProps {
-  data: CourseGQLData;
+  data: CourseGQLData | string;
+  popupListener?: (open: boolean) => void;
   openPopoverLeft?: boolean;
   requiredCourses?: string[];
+  /** Whether to always collapse whitespace in the course name */
+  alwaysCollapse?: boolean;
 }
-const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopoverLeft, requiredCourses }) => {
-  const { id, department, courseNumber } = data;
+export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
+  const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
+  const { id, department, courseNumber } =
+    typeof data === 'string' ? { id: data, department: data, courseNumber: '' } : data;
 
   const [showInfoPopover, setShowInfoPopover] = useState(false);
   const [allowTouchClick, setAllowTouchClick] = useState(false);
   const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
+  let courseID = department + ' ' + courseNumber;
+  if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
-  const showPopover = () => setShowInfoPopover(true);
+  const showPopover = () => {
+    setShowInfoPopover(true);
+    popupListener?.(true);
+  };
   const hidePopover = () => {
     setShowInfoPopover(false);
     setAllowTouchClick(false);
+    popupListener?.(false);
   };
 
   const handleHoverTitle = () => {
@@ -76,7 +87,7 @@ const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopover
     >
       <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle}>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
-          {department + ' ' + courseNumber}
+          {courseID}
         </a>
         {requiredCourses && (
           <span className="warning-container">

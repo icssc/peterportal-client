@@ -28,7 +28,7 @@ $primary-blue-1: #2484c6;
   bottom: 0;
   z-index: $zIndex;
   max-height: calc(100% - 120px);
-  padding-bottom: 40px;
+  padding-bottom: 56px;
   transform: translateY(100%);
   transition: transform 0.3s;
   &.enter,
