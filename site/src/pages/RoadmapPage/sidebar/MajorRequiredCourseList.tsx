@@ -52,6 +52,7 @@ const MajorRequiredCourseList: FC = () => {
     if (selectedMajor.specializations.length && !selectedSpec) return;
 
     setResultsLoading(true);
+    setRequirements([]);
     trpc.programs.getRequiredCourses.query({ type: 'major', programId: selectedMajor.id }).then(async (majorReqs) => {
       if (!selectedSpec) {
         setRequirements(majorReqs);
@@ -92,7 +93,12 @@ const MajorRequiredCourseList: FC = () => {
         options={majorSelectOptions}
         isDisabled={majors.length === 0}
         isLoading={majors.length === 0}
-        onChange={(data) => setSelectedMajor(data!.value)}
+        onChange={(data) => {
+          if (data!.value.id === selectedMajor?.id) return;
+          setRequirements([]);
+          setSelectedMajor(data!.value);
+          setSelectedSpec(null);
+        }}
         classNames={selectBoxClassNames}
         placeholder="Select a major..."
       />
@@ -102,7 +108,11 @@ const MajorRequiredCourseList: FC = () => {
           key={selectedMajor.id} // force re-render on changing major
           isDisabled={specsLoading}
           isLoading={specsLoading}
-          onChange={(data) => setSelectedSpec(data!.value)}
+          onChange={(data) => {
+            if (data!.value.id === selectedSpec?.id) return;
+            setResultsLoading(true);
+            setSelectedSpec(data!.value);
+          }}
           classNames={selectBoxClassNames}
           placeholder="Select a specialization..."
         />
