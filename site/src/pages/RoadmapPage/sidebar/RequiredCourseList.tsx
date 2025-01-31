@@ -106,17 +106,22 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
-const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course'> }> = ({ data }) => {
+const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course' | 'Unit'> }> = ({ data }) => {
   const [open, setOpen] = useState(false);
 
-  const requiredAmount = data.courseCount === data.courses.length ? 'all' : data.courseCount;
+  let label: string | number;
+  if ('courseCount' in data) {
+    label = data.courseCount === data.courses.length ? 'all' : data.courseCount;
+  } else {
+    label = data.unitCount + ' units';
+  }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   return (
     <div className="group-requirement">
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
       {open && showLabel && (
         <p>
-          <b>Complete {requiredAmount} of the following:</b>
+          <b>Complete {label} of the following:</b>
         </p>
       )}
       {open && <CourseList courses={data.courses} />}
@@ -124,7 +129,7 @@ const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course'> }> = ({ da
   );
 };
 
-const GroupedCourseRequirement: FC<{ data: TypedProgramRequirement<'Course'> }> = ({ data }) => {
+const GroupedCourseRequirement: FC<{ data: TypedProgramRequirement<'Course' | 'Unit'> }> = ({ data }) => {
   return (
     <div className="course-requirement">
       <CourseList courses={data.courses} />
@@ -161,14 +166,13 @@ interface ProgramRequirementDisplayProps {
 }
 const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ requirement, nested }) => {
   switch (requirement.requirementType) {
+    case 'Unit':
     case 'Course': {
       const DisplayComponent = nested ? GroupedCourseRequirement : CourseRequirement;
       return <DisplayComponent data={requirement} />;
     }
     case 'Group':
       return <GroupRequirement data={requirement} />;
-    case 'Unit':
-      return <></>;
   }
 };
 
