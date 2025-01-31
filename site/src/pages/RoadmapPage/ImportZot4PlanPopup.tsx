@@ -2,7 +2,7 @@ import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { CloudArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { addRoadmapPlan, setPlanIndex, selectAllPlans } from '../../store/slices/roadmapSlice';
+import { setPlanIndex, selectAllPlans, RoadmapPlan, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
@@ -10,7 +10,10 @@ import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 
-const ImportZot4PlanPopup: FC = () => {
+interface ImportZot4PlanPopupProps {
+  saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
+}
+const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
@@ -45,16 +48,14 @@ const ImportZot4PlanPopup: FC = () => {
       if (problemCount > 0) {
         spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
       }
-      // Update the name to be unique among current planners
       expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
-      // Add the expanded result as a new planner to the roadmap
-      const currentPlanDataLength = allPlanData.length;
+      const updatedPlans = [...allPlanData, expandedPlanners[0]];
       dispatch(addRoadmapPlan(expandedPlanners[0]));
-      dispatch(setPlanIndex(currentPlanDataLength));
+      dispatch(setPlanIndex(updatedPlans.length - 1));
+      await saveRoadmap(updatedPlans);
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
-      return;
     }
   };
 
@@ -63,7 +64,6 @@ const ImportZot4PlanPopup: FC = () => {
     try {
       // Use the backend route to try to obtain the formatted schedule
       await obtainImportedRoadmap(scheduleName, studentYear);
-      // Success; hide the modal
       setShowModal(false);
     } finally {
       setBusy(false);
@@ -127,7 +127,7 @@ const ImportZot4PlanPopup: FC = () => {
             </Form.Group>
           </Form>
           <Button variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
-            {busy ? 'Importing...' : 'Import'}
+            {busy ? 'Importing...' : 'Import and Save'}
           </Button>
         </Modal.Body>
       </Modal>
