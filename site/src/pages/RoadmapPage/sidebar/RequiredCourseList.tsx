@@ -1,11 +1,6 @@
 import './RequiredCourseList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import {
-  collapseSingletonRequirements,
-  COMPLETE_ALL_TEXT,
-  ProgramRequirement,
-  TypedProgramRequirement,
-} from '../../../helpers/courseRequirements';
+import { collapseSingletonRequirements, COMPLETE_ALL_TEXT } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
@@ -16,6 +11,7 @@ import { useIsMobile } from '../../../helpers/util';
 import { setActiveCourse, setShowAddCourse } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
+import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
 
 interface CourseTileProps {
   courseID: string;

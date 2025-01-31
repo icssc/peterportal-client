@@ -1,7 +1,10 @@
-import { components } from '@peterportal/types/src/generated/anteater-api-types';
-
-export type ProgramRequirement = components['schemas']['programRequirement'];
-export type TypedProgramRequirement<T extends string> = ProgramRequirement & { requirementType: T };
+import {
+  MajorProgram,
+  MajorSpecialization,
+  MinorProgram,
+  ProgramRequirement,
+  TypedProgramRequirement,
+} from '@peterportal/types';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 
@@ -14,19 +17,23 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
 
   const computedRequirements: ProgramRequirement[] = [];
 
+  const addBuiltGroup = () => {
+    if (builtGroup?.requirements?.length === 1) {
+      computedRequirements.push(builtGroup.requirements[0]);
+    } else if (builtGroup) {
+      const courseReqs: TypedProgramRequirement<'Course'> = {
+        requirementType: 'Course',
+        label: builtGroup.label,
+        courseCount: builtGroup.requirementCount,
+        courses: (builtGroup.requirements as TypedProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
+      };
+      computedRequirements.push(courseReqs);
+    }
+  };
+
   for (const r of requirements) {
     if (r.requirementType !== 'Course' || r.courses.length !== 1) {
-      if (builtGroup?.requirements?.length === 1) {
-        computedRequirements.push(builtGroup.requirements[0]);
-      } else if (builtGroup) {
-        const courseReqs: TypedProgramRequirement<'Course'> = {
-          requirementType: 'Course',
-          label: builtGroup.label,
-          courseCount: builtGroup.requirementCount,
-          courses: (builtGroup.requirements as TypedProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
-        };
-        computedRequirements.push(courseReqs);
-      }
+      addBuiltGroup();
       builtGroup = null;
 
       computedRequirements.push(r);
@@ -43,5 +50,10 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
     builtGroup.requirementCount++;
   }
 
+  addBuiltGroup();
   return computedRequirements;
+}
+
+export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorSpecialization) {
+  return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }

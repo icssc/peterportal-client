@@ -86,3 +86,18 @@
     background-color: rgba(globals.$primary-blue-1, 0.8);
   }
 }
+
+.search-sidebar .ppc-combobox {
+  margin-bottom: 12px;
+
+  .ppc-combobox-menu {
+    margin-top: 0;
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+.search-sidebar .requirements-loading {
+  display: flex;
+  justify-content: center;
+  margin: 8px auto;
+}
