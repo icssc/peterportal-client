@@ -2,37 +2,50 @@ import { FC, useEffect, useState } from 'react';
 import ProgramRequirementsList from './RequiredCourseList';
 import Select from 'react-select';
 import trpc from '../../../trpc';
-import { MajorProgram, MajorSpecialization, ProgramRequirement } from '@peterportal/types';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
+import {
+  setMajor,
+  setMajorList,
+  setRequirements,
+  setSpecialization,
+  setSpecializationList,
+} from '../../../store/slices/courseRequirementsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 const MajorRequiredCourseList: FC = () => {
-  const [majors, setMajors] = useState<MajorProgram[]>([]);
-  const [selectedMajor, setSelectedMajor] = useState<MajorProgram | null>(null);
-  const [specializations, setSpecializations] = useState<MajorSpecialization[]>([]);
-  const [selectedSpec, setSelectedSpec] = useState<MajorSpecialization | null>(null);
+  const majors = useAppSelector((state) => state.courseRequirements.majorList);
+  const specializations = useAppSelector((state) => state.courseRequirements.specializationList);
+  const selectedMajor = useAppSelector((state) => state.courseRequirements.major);
+  const selectedSpec = useAppSelector((state) => state.courseRequirements.specialization);
+  /** Must ONLY contain requirements for the selected major/spec. This is used to check whether a major is
+   * already loaded, so it must be set to empty if we change the major or spec */
+  const requirements = useAppSelector((state) => state.courseRequirements.currentRequirements);
 
-  const [requirements, setRequirements] = useState<ProgramRequirement[]>([]);
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   // Initial Load, fetch majors
   useEffect(() => {
+    if (majors.length) return;
     trpc.programs.getMajors.query().then((majors) => {
       majors.forEach((m) => {
         m.name = normalizeMajorName(m);
       });
       majors.sort((a, b) => a.name.localeCompare(b.name));
-      setMajors(majors);
+      dispatch(setMajorList(majors));
     });
-  }, []);
+  }, [dispatch, majors.length]);
 
   // Major with specs selected, fetch specializations
   useEffect(() => {
     if (!selectedMajor?.id) return;
+    if (requirements.length) return;
 
-    setSpecializations([]);
-    setSelectedSpec(null);
+    dispatch(setSpecializationList([]));
+    dispatch(setSpecialization(null));
     if (!selectedMajor.specializations.length) return;
 
     setSpecsLoading(true);
@@ -41,21 +54,21 @@ const MajorRequiredCourseList: FC = () => {
         s.name = normalizeMajorName(s);
       });
       specs.sort((a, b) => a.name.localeCompare(b.name));
-      setSpecializations(specs);
+      dispatch(setSpecializationList(specs));
       setSpecsLoading(false);
     });
-  }, [selectedMajor]);
+  }, [dispatch, selectedMajor, requirements.length]);
 
   // Spec or Major without specs selected, fetch requirements
   useEffect(() => {
     if (!selectedMajor?.id) return;
     if (selectedMajor.specializations.length && !selectedSpec) return;
+    if (requirements.length) return;
 
     setResultsLoading(true);
-    setRequirements([]);
     trpc.programs.getRequiredCourses.query({ type: 'major', programId: selectedMajor.id }).then(async (majorReqs) => {
       if (!selectedSpec) {
-        setRequirements(majorReqs);
+        dispatch(setRequirements(majorReqs));
         setResultsLoading(false);
         return;
       }
@@ -63,10 +76,10 @@ const MajorRequiredCourseList: FC = () => {
         type: 'specialization',
         programId: selectedSpec.id,
       });
-      setRequirements(majorReqs.concat(specReqs));
+      dispatch(setRequirements(majorReqs.concat(specReqs)));
       setResultsLoading(false);
     });
-  }, [selectedMajor, selectedSpec]);
+  }, [dispatch, selectedMajor, selectedSpec, requirements.length]);
 
   const majorSelectOptions = majors.map((m) => ({
     value: m,
@@ -91,13 +104,14 @@ const MajorRequiredCourseList: FC = () => {
     <>
       <Select
         options={majorSelectOptions}
+        defaultValue={majorSelectOptions.find((o) => o.value === selectedMajor)}
         isDisabled={majors.length === 0}
         isLoading={majors.length === 0}
         onChange={(data) => {
           if (data!.value.id === selectedMajor?.id) return;
-          setRequirements([]);
-          setSelectedMajor(data!.value);
-          setSelectedSpec(null);
+          dispatch(setRequirements([])); // set to empty immediately because otherwise it's out of date
+          dispatch(setMajor(data!.value));
+          dispatch(setSpecialization(null));
         }}
         classNames={selectBoxClassNames}
         placeholder="Select a major..."
@@ -105,13 +119,15 @@ const MajorRequiredCourseList: FC = () => {
       {selectedMajor && !!selectedMajor.specializations.length && (
         <Select
           options={specSelectOptions}
+          defaultValue={specSelectOptions.find((o) => o.value === selectedSpec)}
           key={selectedMajor.id} // force re-render on changing major
           isDisabled={specsLoading}
           isLoading={specsLoading}
           onChange={(data) => {
             if (data!.value.id === selectedSpec?.id) return;
             setResultsLoading(true);
-            setSelectedSpec(data!.value);
+            dispatch(setRequirements([])); // set to empty immediately because otherwise it's out of date
+            dispatch(setSpecialization(data!.value));
           }}
           classNames={selectBoxClassNames}
           placeholder="Select a specialization..."
