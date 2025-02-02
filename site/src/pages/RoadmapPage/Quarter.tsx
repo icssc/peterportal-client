@@ -160,7 +160,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
             <Course
               key={index}
-              {...course}
+              data={course}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"

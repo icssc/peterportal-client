@@ -10,6 +10,7 @@
   --text-dark: #000;
   --text-light: #495057;
   --hover: #cacbcd; // semantic-ui default
+  --warning-red: #ce0000;
 }
 
 // dark theme vars
@@ -27,6 +28,7 @@
   --text-dark: #fff;
   --text-light: #fff;
   --hover: #cacbcd;
+  --warning-red: red;
   --peterportal-primary-color-1: #268cd3;
   --zot-blue: var(--peterportal-primary-color-1);
 
@@ -114,6 +116,9 @@
   }
 }
 
+.popover {
+  background-color: var(--overlay1);
+}
 .popover-body {
   background-color: var(--overlay1);
   color: var(--text);

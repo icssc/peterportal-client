@@ -8,6 +8,7 @@ import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
 import usersRouter from './users';
 import searchRouter from './search';
+import zot4PlanImportRouter from './zot4planimport';
 
 export const appRouter = router({
   courses: coursesRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   search: searchRouter,
   schedule: scheduleRouter,
   users: usersRouter,
+  zot4PlanImportRouter: zot4PlanImportRouter,
 });
 
 // Export only the type of a router!

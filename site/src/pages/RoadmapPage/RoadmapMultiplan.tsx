@@ -14,6 +14,7 @@ import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { Button } from 'semantic-ui-react';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -53,7 +54,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
 const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
-  const [currentPlanIndex, setCurrentPlanIndex] = useState(allPlans.currentPlanIndex);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const [isOpen, setIsOpen] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
@@ -71,7 +72,6 @@ const RoadmapMultiplan: FC = () => {
 
   const deleteCurrentPlan = () => {
     const newIndex = delIdx === currentPlanIndex ? 0 : currentPlanIndex - Number(delIdx < currentPlanIndex);
-    setCurrentPlanIndex(newIndex);
     dispatch(setPlanIndex(newIndex));
     dispatch(deleteRoadmapPlan({ planIndex: delIdx }));
     setDelIdx(-1);
@@ -83,7 +83,6 @@ const RoadmapMultiplan: FC = () => {
     setIsOpen(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
-    setCurrentPlanIndex(newIndex);
     dispatch(setPlanIndex(newIndex));
   };
 
@@ -95,12 +94,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const duplicatePlan = (plan: RoadmapPlan) => {
-    let newName = `${plan.name} (Copy)`;
-    let counter = 1;
-    while (allPlans.plans.find((p) => p.name === newName)) {
-      counter++;
-      newName = `${plan.name} (Copy ${counter})`;
-    }
+    const newName = makeUniquePlanName(plan.name, allPlans.plans);
     dispatch(
       addRoadmapPlan({
         name: newName,
@@ -108,7 +102,6 @@ const RoadmapMultiplan: FC = () => {
       }),
     );
     const newIndex = allPlans.plans.length;
-    setCurrentPlanIndex(newIndex);
     dispatch(setPlanIndex(newIndex));
   };
 
@@ -141,7 +134,6 @@ const RoadmapMultiplan: FC = () => {
               index={index}
               clickHandler={() => {
                 dispatch(setPlanIndex(index));
-                setCurrentPlanIndex(index);
               }}
               editHandler={() => setEditIdx(index)}
               duplicateHandler={() => duplicatePlan(plan)}

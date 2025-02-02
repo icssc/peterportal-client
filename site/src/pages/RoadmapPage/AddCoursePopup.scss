@@ -40,14 +40,8 @@
 
   button:not(.fixed),
   button.close {
-    background: none;
-    font: inherit;
-    border: none;
     width: 20px;
     height: 20px;
-    display: flex;
-    align-items: center;
-    padding: 0;
 
     @include globals.clickable(0.8, 0.5);
   }

@@ -1,47 +1,111 @@
+.reviews {
+  display: flex;
+  flex-direction: column;
+}
+.add-review-button {
+  padding: 10px 25px;
+  font-weight: bold;
+  margin: 1rem auto 0 auto;
+  font-size: 1.25rem;
+  background-color: var(--peterportal-primary-color-1);
+  border-radius: var(--border-radius);
+}
+
+// sort and filter reviews
+.sort-filter-menu {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.sort-dropdown,
+.filter-dropdown {
+  max-width: 15rem;
+  width: 100%;
+}
+.verified-only-checkbox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  white-space: nowrap;
+}
+.reviews .form-check-input {
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  &:hover {
+    border-color: rgba(34, 36, 38, 0.35);
+  }
+}
+[data-theme='dark'] .reviews .form-check-input {
+  border: 1px solid var(--overlay3);
+}
+
+// subreviews
+.subreviews {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 .subreview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   background-color: var(--overlay2);
   border-radius: var(--border-radius);
   padding: 2rem;
-  margin-bottom: 3vh;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-// name of the class/professor
+
+// subreview header (class/professor name & edit buttons)
 .subreview-identifier {
-  margin: 0;
   font-weight: bold;
   font-size: xx-large;
+  margin: 0;
   a {
     color: var(--text);
   }
   word-break: break-word;
 }
+.edit-buttons {
+  display: flex;
+  flex-direction: row;
+  float: right;
+  gap: 0.75rem;
+}
+
 // content of review
 .subreview-content {
   display: flex;
+  gap: 1rem;
 }
 // rating boxes (quality and difficulty)
 .subreview-ratings {
   text-align: center;
-  justify-self: flex-end;
-  margin-right: 3vw;
-}
-.rating-label {
-  line-height: 1rem;
-  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  gap: 1rem;
 }
 .rating {
-  margin: 1vh 0;
   border-radius: var(--border-radius);
-  width: 5vw;
-  height: 5vw;
+  width: 7rem;
+  height: 7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  color: white;
+}
+.rating-label {
+  line-height: 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.rating-value {
   line-height: 3rem;
   font-size: 3rem;
-  color: white;
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -60,167 +124,135 @@
 .r5 {
   background-color: var(--peterportal-primary-color-1);
 }
+
+// subreview info
 .subreview-info {
   width: 100%;
-  flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .subreview-details {
-  margin: 1vh 0;
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
 }
 .subreview-detail {
   border-radius: var(--border-radius);
   background-color: var(--overlay3);
-  width: 45%;
+  width: 100%;
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
+  justify-content: stretch;
   p {
     margin: 0;
   }
 }
 .subreview-author {
+  margin: 0;
   display: flex;
-  justify-content: space-between;
-  color: var(--peterportal-mid-gray);
-
-  p {
-    margin-bottom: 1vh;
-  }
-}
-// inline elements in column
-.subreview-footer {
-  display: flex;
-  margin-top: 1vh;
   flex-direction: row;
-  grid-gap: 5px;
-  a {
-    margin-left: auto;
-  }
-}
-// helpful score buttons
-.upvote,
-.downvote {
-  outline: none;
-  border: none;
-  padding: 0;
-  height: fit-content;
-  background-color: transparent;
-  transition: 0.25s;
+  justify-content: left;
+  align-items: center;
   color: var(--peterportal-mid-gray);
 }
-.coloredUpvote {
-  color: var(--peterportal-secondary-red);
+.subreview-author-name {
+  margin: 0;
 }
-.coloredDownvote {
-  color: var(--peterportal-primary-color-1);
+.subreview-author-verified,
+.subreview-author-author {
+  margin: 0;
+  display: flex;
+  margin-left: 0.5rem;
 }
-.add-review-btn {
-  border: none;
-  outline: none;
+
+// tags
+.subreview-tags {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.subreview-tag {
+  padding: 1rem;
   background-color: var(--peterportal-primary-color-1);
   color: white;
-  border-radius: 25px;
-  padding: 10px 25px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 0 auto;
-  font-size: 1.25rem;
 }
-.reviews {
+// footer
+.subreview-footer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
 }
-
+// vote on a review
+.subreview-voting {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+.subreview-voting-question,
+.subreview-voting-count {
+  margin: 0;
+}
+.subreview-voting-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  background-color: transparent;
+}
+.upvote,
+.downvote {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  height: fit-content;
+  background-color: transparent;
+  color: var(--peterportal-mid-gray);
+  transition: 0.25s;
+}
+.colored-upvote {
+  color: var(--peterportal-primary-color-1);
+}
+.colored-downvote {
+  color: var(--peterportal-secondary-red);
+}
+// report a review
 .add-report-button {
   background-color: transparent;
   border-color: transparent;
-  border-radius: 0px;
-  margin-left: auto;
-  color: grey;
-  transition: 0.2s;
-  padding: 3px;
+  color: var(--text);
+}
+.add-report-button:hover {
+  background-color: var(--overlay3);
+  border-color: var(--overlay3);
+  border-radius: var(--border-radius);
+  color: var(--text);
 }
 
-.add-report-button:hover {
-  background-color: lightgray;
-}
-.gapped {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-@media only screen and (max-width: 600px) {
+// screen width is less than or equal to 599px
+@media only screen and (max-width: 599px) {
+  .sort-filter-menu {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .sort-dropdown,
+  .filter-dropdown {
+    max-width: none;
+  }
   .subreview-content {
     flex-direction: column;
   }
-
   .subreview-ratings {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: row;
   }
-
   .rating {
-    width: 45%;
-    height: 20vw;
+    width: 15rem;
   }
-
   .subreview-details {
     flex-direction: column;
   }
-
-  .subreview-detail {
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 1vh;
-  }
-
-  .subreview-author {
-    flex-direction: column;
-  }
-}
-
-@media only screen and (max-width: 1300px) and (min-width: 600px) {
-  .rating {
-    width: 8vh;
-    height: 8vh;
-  }
-}
-
-.sorting-menu {
-  margin-left: 0;
-  margin-right: 0;
-
-  > * {
-    margin-bottom: 15px;
-  }
-
-  .dropdown {
-    margin-right: 1vh;
-  }
-
-  #checkbox {
-    display: flex;
-    align-items: center;
-
-    .checkbox {
-      background: none;
-    }
-
-    label {
-      margin-bottom: 0.25rem;
-      color: var(--text);
-    }
-  }
-}
-
-.edit-buttons {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  gap: 10px;
 }
