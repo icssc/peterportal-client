@@ -5,8 +5,41 @@ import {
   ProgramRequirement,
   TypedProgramRequirement,
 } from '@peterportal/types';
+import { CourseGQLData } from '../types/types';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
+export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
+  id: 'Loading...',
+  department: 'Loading...',
+  courseNumber: '',
+  courseNumeric: 0,
+  school: '',
+  title: 'Loading...',
+  courseLevel: 'Lower Division (1-99)',
+  minUnits: 0,
+  maxUnits: 0,
+  description: '',
+  departmentName: '',
+  prerequisiteTree: {
+    AND: undefined,
+    OR: undefined,
+    NOT: undefined,
+  },
+  prerequisiteText: '',
+  repeatability: '',
+  gradingOption: '',
+  concurrent: '',
+  sameAs: '',
+  restriction: '',
+  overlap: '',
+  corequisites: '',
+  geList: [],
+  geText: '',
+  terms: [],
+  instructors: {},
+  prerequisites: {},
+  dependencies: {},
+};
 
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
@@ -87,6 +120,7 @@ function checkUnitCompletion(
   requirement: TypedProgramRequirement<'Unit'>,
 ): CompletionStatus {
   const required = requirement.unitCount;
+  completed; // TEMP
   return { required, completed: 0, done: false }; // TEMP
 }
 

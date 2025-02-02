@@ -1,6 +1,11 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { checkCompletion, collapseSingletonRequirements, COMPLETE_ALL_TEXT } from '../../../helpers/courseRequirements';
+import {
+  checkCompletion,
+  collapseSingletonRequirements,
+  COMPLETE_ALL_TEXT,
+  LOADING_COURSE_PLACEHOLDER,
+} from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
@@ -8,7 +13,7 @@ import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useIsMobile } from '../../../helpers/util';
-import { setActiveCourse, setShowAddCourse } from '../../../store/slices/roadmapSlice';
+import { setActiveCourse, setActiveCourseLoading, setShowAddCourse } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
@@ -39,8 +44,11 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   useEffect(() => {
     if (!dragTimestamp) return;
     setLoading(true);
+    dispatch(setActiveCourse(LOADING_COURSE_PLACEHOLDER));
+    dispatch(setActiveCourseLoading(true));
     loadFullData().then((res) => {
       dispatch(setActiveCourse(res));
+      dispatch(setActiveCourseLoading(false));
       setLoading(false);
     });
   }, [dispatch, dragTimestamp, loadFullData]);

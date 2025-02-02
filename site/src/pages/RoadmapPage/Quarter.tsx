@@ -1,4 +1,4 @@
-import { FC, useContext, useRef, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
@@ -9,6 +9,7 @@ import {
   deleteCourse,
   deleteQuarter,
   moveCourse,
+  MoveCoursePayload,
   setActiveCourse,
   setShowSearch,
 } from '../../store/slices/roadmapSlice';
@@ -36,6 +37,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
+  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
+  const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
@@ -58,16 +61,20 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
 
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
-  const removeCourseAt = (index: number) => {
-    dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
-  };
+  const removeCourseAt = useCallback(
+    (index: number) => {
+      dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
+    },
+    [dispatch, quarterIndex, yearIndex],
+  );
   const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
-  const addCourse = (event: SortableEvent) => {
+  const addCourse = async (event: SortableEvent) => {
     const movePayload = {
       from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
       to: { yearIndex, quarterIndex, courseIndex: event.newIndex! },
     };
-    dispatch(moveCourse(movePayload));
+    if (activeCourseLoading) setMoveCourseTrigger(movePayload);
+    else dispatch(moveCourse(movePayload));
   };
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
@@ -77,6 +84,18 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     };
     dispatch(moveCourse(movePayload));
   };
+
+  useEffect(() => {
+    if (!moveCourseTrigger) return; // nothing to add
+    if (activeCourseLoading) {
+      dispatch(moveCourse(moveCourseTrigger));
+      return; // course to add hasn't loaded yet
+    }
+
+    removeCourseAt(moveCourseTrigger.to.courseIndex);
+    setMoveCourseTrigger(null);
+    dispatch(moveCourse(moveCourseTrigger));
+  }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
 
   const popover = (
     <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`} className="quarter-menu-popover">
