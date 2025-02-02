@@ -6,6 +6,7 @@ import {
   TypedProgramRequirement,
 } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
+import { Theme } from 'react-select';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -41,6 +42,27 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   dependencies: {},
 };
 
+export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
+  if (!darkMode) return theme;
+
+  const themeCopy = { ...theme, colors: { ...theme.colors } };
+  const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+  Object.entries(theme.colors).forEach(([key]) => {
+    if (key.startsWith('neutral')) {
+      const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
+      const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
+      themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
+    }
+  });
+
+  themeCopy.colors.danger = theme.colors.dangerLight;
+  themeCopy.colors.dangerLight = theme.colors.danger;
+
+  themeCopy.colors.primary = theme.colors.primary75;
+  themeCopy.colors.primary25 = '#343a40'; // same as bootstrap dark
+
+  return themeCopy;
+};
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
  * @param requirements The raw course requirements, as returned from the API

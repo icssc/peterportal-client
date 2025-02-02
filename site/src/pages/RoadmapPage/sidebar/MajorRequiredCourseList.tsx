@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import Select from 'react-select';
 import trpc from '../../../trpc';
-import { normalizeMajorName } from '../../../helpers/courseRequirements';
+import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
 import {
   setMajor,
@@ -12,6 +12,7 @@ import {
   setSpecializationList,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import ThemeContext from '../../../style/theme-context';
 
 const MajorRequiredCourseList: FC = () => {
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
@@ -21,6 +22,7 @@ const MajorRequiredCourseList: FC = () => {
   /** Must ONLY contain requirements for the selected major/spec. This is used to check whether a major is
    * already loaded, so it must be set to empty if we change the major or spec */
   const requirements = useAppSelector((state) => state.courseRequirements.currentRequirements);
+  const isDark = useContext(ThemeContext).darkMode;
 
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -88,12 +90,6 @@ const MajorRequiredCourseList: FC = () => {
 
   const specSelectOptions = specializations.map((s) => ({ value: s, label: s.name }));
 
-  const selectBoxClassNames = {
-    container: () => 'ppc-combobox',
-    menu: () => 'ppc-combobox-menu',
-    control: () => 'ppc-combobox-control',
-  };
-
   const loadingIcon = (
     <div className="requirements-loading">
       <Spinner animation="border" />
@@ -113,8 +109,10 @@ const MajorRequiredCourseList: FC = () => {
           dispatch(setMajor(data!.value));
           dispatch(setSpecialization(null));
         }}
-        classNames={selectBoxClassNames}
+        className="ppc-combobox"
+        classNamePrefix="ppc-combobox"
         placeholder="Select a major..."
+        theme={(t) => comboboxTheme(t, isDark)}
       />
       {selectedMajor && !!selectedMajor.specializations.length && (
         <Select
@@ -129,8 +127,10 @@ const MajorRequiredCourseList: FC = () => {
             dispatch(setRequirements([])); // set to empty immediately because otherwise it's out of date
             dispatch(setSpecialization(data!.value));
           }}
-          classNames={selectBoxClassNames}
+          className="ppc-combobox"
+          classNamePrefix="ppc-combobox"
           placeholder="Select a specialization..."
+          theme={(t) => comboboxTheme(t, isDark)}
         />
       )}
       {selectedMajor && (!selectedMajor.specializations.length || selectedSpec) && (

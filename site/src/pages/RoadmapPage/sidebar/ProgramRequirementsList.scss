@@ -88,6 +88,12 @@
   }
 }
 
+body[data-theme='dark'] {
+  .program-course-tile.completed {
+    background-color: #343a40;
+  }
+}
+
 .program-course-tile.mobile {
   position: relative;
   cursor: pointer;
@@ -113,9 +119,10 @@
 .search-sidebar .ppc-combobox {
   margin-bottom: 12px;
 
-  .ppc-combobox-menu {
+  .ppc-combobox__menu {
     margin-top: 0;
     border-radius: 0 0 8px 8px;
+    overflow: hidden;
   }
 }
 
