@@ -15,14 +15,15 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 
 const MajorRequiredCourseList: FC = () => {
+  const isDark = useContext(ThemeContext).darkMode;
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const specializations = useAppSelector((state) => state.courseRequirements.specializationList);
   const selectedMajor = useAppSelector((state) => state.courseRequirements.major);
   const selectedSpec = useAppSelector((state) => state.courseRequirements.specialization);
+
   /** Must ONLY contain requirements for the selected major/spec. This is used to check whether a major is
    * already loaded, so it must be set to empty if we change the major or spec */
   const requirements = useAppSelector((state) => state.courseRequirements.currentRequirements);
-  const isDark = useContext(ThemeContext).darkMode;
 
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -44,10 +45,10 @@ const MajorRequiredCourseList: FC = () => {
   // Major with specs selected, fetch specializations
   useEffect(() => {
     if (!selectedMajor?.id) return;
+    if (selectedSpec) return;
     if (requirements.length) return;
 
     dispatch(setSpecializationList([]));
-    dispatch(setSpecialization(null));
     if (!selectedMajor.specializations.length) return;
 
     setSpecsLoading(true);
@@ -59,7 +60,7 @@ const MajorRequiredCourseList: FC = () => {
       dispatch(setSpecializationList(specs));
       setSpecsLoading(false);
     });
-  }, [dispatch, selectedMajor, requirements.length]);
+  }, [dispatch, selectedMajor, selectedSpec, requirements.length]);
 
   // Spec or Major without specs selected, fetch requirements
   useEffect(() => {

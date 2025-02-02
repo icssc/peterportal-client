@@ -168,8 +168,8 @@ interface GroupRequirementProps {
   takenCourseIDs: CompletedCourseSet;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
-  const [open, setOpen] = useState(false);
   const complete = checkCompletion(takenCourseIDs, data).done;
+  const [open, setOpen] = useState(!complete);
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
