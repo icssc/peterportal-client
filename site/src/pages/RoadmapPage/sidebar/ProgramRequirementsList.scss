@@ -1,6 +1,8 @@
 @use '../../../globals.scss';
 @use 'sass:color';
 
+$complete-color: green;
+
 .program-requirements {
   display: flex;
   flex-direction: column;
@@ -34,23 +36,27 @@
     flex-shrink: 0;
   }
 
-  > p {
+  > .course-requirement > p {
     margin-block: 12px 4px;
   }
-  > .group-header + p {
+  > .group-header > p {
     margin-bottom: 12px;
   }
 
   &.completed {
-    border-color: rgba(green, 0.5);
+    border-color: rgba($complete-color, 0.5);
 
     .group-header {
-      color: green;
+      color: $complete-color;
     }
     .group-header {
       text-decoration: line-through;
       text-decoration-thickness: 2px;
     }
+  }
+
+  .course-requirement.completed {
+    color: $complete-color;
   }
 }
 

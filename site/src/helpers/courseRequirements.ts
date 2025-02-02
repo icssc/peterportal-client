@@ -113,7 +113,10 @@ export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorS
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
 
-export type CompletedCourseSet = Set<string>;
+export type CompletedCourseSet = {
+  [k: string]: number; // course id => units
+};
+
 export interface CompletionStatus {
   required: number;
   completed: number;
@@ -124,10 +127,11 @@ function checkCourseListCompletion(
   completed: CompletedCourseSet,
   requirement: TypedProgramRequirement<'Course'>,
 ): CompletionStatus {
-  const completedCount = requirement.courses.filter((c) => completed.has(c)).length;
+  const completedCount = requirement.courses.filter((c) => c in completed).length;
   const required = requirement.courseCount;
-  return { required, completed: completedCount, done: completedCount === required };
+  return { required, completed: completedCount, done: completedCount >= required };
 }
+
 function checkGroupCompletion(
   completed: CompletedCourseSet,
   requirement: TypedProgramRequirement<'Group'>,
@@ -135,15 +139,17 @@ function checkGroupCompletion(
   const checkIsDone = (req: ProgramRequirement) => checkCompletion(completed, req).done;
   const completedGroups = requirement.requirements.filter(checkIsDone).length;
   const required = requirement.requirementCount;
-  return { required, completed: completedGroups, done: completedGroups === required };
+  return { required, completed: completedGroups, done: completedGroups >= required };
 }
+
 function checkUnitCompletion(
   completed: CompletedCourseSet,
   requirement: TypedProgramRequirement<'Unit'>,
 ): CompletionStatus {
   const required = requirement.unitCount;
-  completed; // TEMP
-  return { required, completed: 0, done: false }; // TEMP
+  const completedCourses = requirement.courses.filter((c) => c in completed);
+  const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
+  return { required, completed: completedUnits, done: completedUnits >= required };
 }
 
 export function checkCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
