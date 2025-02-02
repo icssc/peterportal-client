@@ -1,6 +1,6 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { collapseSingletonRequirements, COMPLETE_ALL_TEXT } from '../../../helpers/courseRequirements';
+import { checkCompletion, collapseSingletonRequirements, COMPLETE_ALL_TEXT } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
@@ -9,7 +9,7 @@ import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useIsMobile } from '../../../helpers/util';
 import { setActiveCourse, setShowAddCourse } from '../../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
 
@@ -17,9 +17,10 @@ interface CourseTileProps {
   courseID: string;
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
+  taken?: boolean;
 }
 
-const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0 }) => {
+const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken }) => {
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -56,7 +57,8 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0 }) => {
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = isMobile ? tapProps : {};
-  const className = `program-course-tile ${isMobile ? 'mobile' : 'none'} ${loading ? 'loading' : ''}`;
+  const className =
+    `program-course-tile ${isMobile ? 'mobile' : ''} ` + `${loading ? 'loading' : ''} ${taken ? 'completed' : ''}`;
 
   return (
     <div className={className} {...tappableCourseProps}>
@@ -66,7 +68,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0 }) => {
   );
 };
 
-const CourseList: FC<{ courses: string[] }> = ({ courses }) => {
+const CourseList: FC<{ courses: string[]; takenCourseIDs: Set<string> }> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
 
@@ -85,7 +87,7 @@ const CourseList: FC<{ courses: string[] }> = ({ courses }) => {
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >
       {courses.map((c, i) => (
-        <CourseTile courseID={c} key={c} dragTimestamp={timestamps[i]} />
+        <CourseTile courseID={c} key={c} dragTimestamp={timestamps[i]} taken={takenCourseIDs.has(c)} />
       ))}
     </ReactSortable>
   );
@@ -106,7 +108,12 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
-const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course' | 'Unit'> }> = ({ data }) => {
+interface IndividualRequirementProps {
+  data: TypedProgramRequirement<'Course' | 'Unit'>;
+  takenCourseIDs: Set<string>;
+}
+
+const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
   const [open, setOpen] = useState(false);
 
   let label: string | number;
@@ -116,31 +123,44 @@ const CourseRequirement: FC<{ data: TypedProgramRequirement<'Course' | 'Unit'> }
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
+  const complete = checkCompletion(takenCourseIDs, data).done;
+  const className = `group-requirement ${complete ? 'completed' : ''}`;
+
   return (
-    <div className="group-requirement">
+    <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
       {open && showLabel && (
         <p>
           <b>Complete {label} of the following:</b>
         </p>
       )}
-      {open && <CourseList courses={data.courses} />}
+      {open && <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />}
     </div>
   );
 };
 
-const GroupedCourseRequirement: FC<{ data: TypedProgramRequirement<'Course' | 'Unit'> }> = ({ data }) => {
+const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
+  const complete = checkCompletion(takenCourseIDs, data).done;
+  const className = `course-requirement ${complete ? 'completed' : ''}`;
+
   return (
-    <div className="course-requirement">
-      <CourseList courses={data.courses} />
+    <div className={className}>
+      <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
     </div>
   );
 };
 
-const GroupRequirement: FC<{ data: TypedProgramRequirement<'Group'> }> = ({ data }) => {
+interface GroupRequirementProps {
+  data: TypedProgramRequirement<'Group'>;
+  takenCourseIDs: Set<string>;
+}
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
   const [open, setOpen] = useState(false);
+  const complete = checkCompletion(takenCourseIDs, data).done;
+  const className = `group-requirement ${complete ? 'completed' : ''}`;
+
   return (
-    <div className="group-requirement">
+    <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
       {open && (
         <p>
@@ -153,7 +173,7 @@ const GroupRequirement: FC<{ data: TypedProgramRequirement<'Group'> }> = ({ data
             <p>
               <b>{r.label}</b>
             </p>
-            <ProgramRequirementDisplay requirement={r} nested />
+            <ProgramRequirementDisplay requirement={r} nested takenCourseIDs={takenCourseIDs} />
           </React.Fragment>
         ))}
     </div>
@@ -163,16 +183,17 @@ const GroupRequirement: FC<{ data: TypedProgramRequirement<'Group'> }> = ({ data
 interface ProgramRequirementDisplayProps {
   requirement: ProgramRequirement;
   nested?: boolean;
+  takenCourseIDs: Set<string>;
 }
-const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ requirement, nested }) => {
+const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ requirement, nested, takenCourseIDs }) => {
   switch (requirement.requirementType) {
     case 'Unit':
     case 'Course': {
       const DisplayComponent = nested ? GroupedCourseRequirement : CourseRequirement;
-      return <DisplayComponent data={requirement} />;
+      return <DisplayComponent data={requirement} takenCourseIDs={takenCourseIDs} />;
     }
     case 'Group':
-      return <GroupRequirement data={requirement} />;
+      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} />;
   }
 };
 
@@ -182,12 +203,23 @@ interface RequireCourseListProps {
 
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) => {
   const collapsedRequirements = collapseSingletonRequirements(requirements);
+  const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
+  const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
+  const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const yearPlans = roadmapPlans[roadmapPlanIndex].content.yearPlans;
+
+  const roadmapCourseIDList = yearPlans
+    .flatMap((year) => year.quarters)
+    .flatMap((quarter) => quarter.courses)
+    .flatMap((course) => course.id)
+    .concat(roadmapTransfers.map((t) => t.name.replace(/\s/g, '')));
+  const takenCourseSet = new Set(roadmapCourseIDList);
 
   return (
     <div className="program-requirements">
       {/* key is ok because we don't reorder these */}
       {collapsedRequirements.map((r, i) => (
-        <ProgramRequirementDisplay requirement={r} key={i} />
+        <ProgramRequirementDisplay requirement={r} key={i} takenCourseIDs={takenCourseSet} />
       ))}
     </div>
   );

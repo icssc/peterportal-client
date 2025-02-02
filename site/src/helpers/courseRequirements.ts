@@ -57,3 +57,46 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
 export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorSpecialization) {
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
+
+export type CompletedCourseSet = Set<string>;
+export interface CompletionStatus {
+  required: number;
+  completed: number;
+  done: boolean;
+}
+
+function checkCourseListCompletion(
+  completed: CompletedCourseSet,
+  requirement: TypedProgramRequirement<'Course'>,
+): CompletionStatus {
+  const completedCount = requirement.courses.filter((c) => completed.has(c)).length;
+  const required = requirement.courseCount;
+  return { required, completed: completedCount, done: completedCount === required };
+}
+function checkGroupCompletion(
+  completed: CompletedCourseSet,
+  requirement: TypedProgramRequirement<'Group'>,
+): CompletionStatus {
+  const checkIsDone = (req: ProgramRequirement) => checkCompletion(completed, req).done;
+  const completedGroups = requirement.requirements.filter(checkIsDone).length;
+  const required = requirement.requirementCount;
+  return { required, completed: completedGroups, done: completedGroups === required };
+}
+function checkUnitCompletion(
+  completed: CompletedCourseSet,
+  requirement: TypedProgramRequirement<'Unit'>,
+): CompletionStatus {
+  const required = requirement.unitCount;
+  return { required, completed: 0, done: false }; // TEMP
+}
+
+export function checkCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
+  switch (requirement.requirementType) {
+    case 'Group':
+      return checkGroupCompletion(completed, requirement);
+    case 'Course':
+      return checkCourseListCompletion(completed, requirement);
+    case 'Unit':
+      return checkUnitCompletion(completed, requirement);
+  }
+}
