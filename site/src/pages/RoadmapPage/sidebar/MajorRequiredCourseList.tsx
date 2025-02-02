@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import ProgramRequirementsList from './RequiredCourseList';
+import ProgramRequirementsList from './ProgramRequirementsList';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';

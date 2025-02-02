@@ -1,4 +1,4 @@
-import './RequiredCourseList.scss';
+import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { collapseSingletonRequirements, COMPLETE_ALL_TEXT } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
