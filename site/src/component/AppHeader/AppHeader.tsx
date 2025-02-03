@@ -1,5 +1,5 @@
 import { useState, useEffect, FC } from 'react';
-import { Popup, Grid, Label } from 'semantic-ui-react';
+import { Grid, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import { ChatLeftDotsFill, Github, List } from 'react-bootstrap-icons';
@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -28,6 +29,45 @@ const AppHeader: FC = () => {
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   };
+
+  const popover = (
+    <Popover className="beta-popup ppc-popover">
+      <Popover.Content>
+        <Grid centered columns={1}>
+          <Grid.Column textAlign="left">
+            <h4>Beta Disclaimer</h4>
+            <p>
+              Please note that this is a beta version of PeterPortal, which is still undergoing development. Some
+              content on this web application may not be accurate. Users are encouraged to double check details.
+            </p>
+            <p>
+              Should you encounter any bugs, glitches, lack of functionality or other problems on the application,
+              please let us know immediately so we can rectify these accordingly. Your help in this regard is greatly
+              appreciated.
+            </p>
+            <div className="feedback">
+              <a
+                className="ui button"
+                href="https://github.com/icssc-projects/peterportal-client/issues/new"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github /> Report an issue
+              </a>
+              <a
+                className="ui button"
+                href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ChatLeftDotsFill /> Feedback
+              </a>
+            </div>
+          </Grid.Column>
+        </Grid>
+      </Popover.Content>
+    </Popover>
+  );
 
   return (
     <header className="navbar">
@@ -49,51 +89,11 @@ const AppHeader: FC = () => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
-            <Popup
-              className="beta-popup"
-              style={{ padding: '36px', width: '400px' }}
-              position="bottom right"
-              trigger={
-                <Label as="a" color="yellow" image>
-                  beta<Label.Detail>v1.1</Label.Detail>
-                </Label>
-              }
-              flowing
-              hoverable
-            >
-              <Grid centered columns={1}>
-                <Grid.Column textAlign="left">
-                  <h4>Beta Disclaimer</h4>
-                  <p>
-                    Please note that this is a beta version of PeterPortal, which is still undergoing development. Some
-                    content on this web application may not be accurate. Users are encouraged to double check details.
-                    <br />
-                    <br />
-                    Should you encounter any bugs, glitches, lack of functionality or other problems on the application,
-                    please let us know immediately so we can rectify these accordingly. Your help in this regard is
-                    greatly appreciated.
-                  </p>
-                  <div className="feedback">
-                    <a
-                      className="ui button"
-                      href="https://github.com/icssc-projects/peterportal-client/issues/new"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Github /> Report an issue
-                    </a>
-                    <a
-                      className="ui button"
-                      href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ChatLeftDotsFill /> Feedback
-                    </a>
-                  </div>
-                </Grid.Column>
-              </Grid>
-            </Popup>
+            <OverlayTrigger overlay={popover} placement="bottom">
+              <Label as="a" color="yellow" image>
+                beta<Label.Detail>v1.1</Label.Detail>
+              </Label>
+            </OverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {week}

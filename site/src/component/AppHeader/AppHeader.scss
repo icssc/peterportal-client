@@ -107,3 +107,13 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.beta-popup {
+  font-size: 16px;
+  padding: 8px 12px;
+  line-height: 1.1;
+  h4 {
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+}

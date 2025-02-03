@@ -1,10 +1,11 @@
 import { FC } from 'react';
 import './PrereqTree.scss';
-import { Grid, Popup } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 interface NodeProps {
   node: string;
@@ -20,30 +21,28 @@ const phraseMapping = {
   OR: 'one of',
   NOT: 'none of',
 };
-
 const Node: FC<NodeProps> = (props) => {
+  const popover = (
+    <Popover className="tree-node-popover">
+      <Popover.Content>{props.content ? props.content : props.label}</Popover.Content>
+    </Popover>
+  );
   return (
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
-      <Popup
-        trigger={
-          !props.label.startsWith('AP ') ? (
-            <Link
-              to={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
-              role="button"
-              style={{ padding: '0.5rem' }}
-              className={`node ui button`}
-            >
-              {props.label}
-            </Link>
-          ) : (
-            <button style={{ padding: '0.5rem' }} className={`node ui button`}>{`${props.label}`}</button>
-          )
-        }
-        content={props.content.length ? props.content : props.label}
-        basic
-        position="top center"
-        wide="very"
-      />
+      <OverlayTrigger overlay={popover}>
+        {!props.label.startsWith('AP ') ? (
+          <Link
+            to={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
+            role="button"
+            style={{ padding: '0.5rem' }}
+            className={`node ui button`}
+          >
+            {props.label}
+          </Link>
+        ) : (
+          <button style={{ padding: '0.5rem' }} className={`node ui button`}>{`${props.label}`}</button>
+        )}
+      </OverlayTrigger>
     </div>
   );
 };
