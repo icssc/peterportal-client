@@ -122,7 +122,8 @@ interface IndividualRequirementProps {
 }
 
 const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
-  const [open, setOpen] = useState(false);
+  const complete = checkCompletion(takenCourseIDs, data).done;
+  const [open, setOpen] = useState(!complete);
 
   let label: string | number;
   if ('courseCount' in data) {
@@ -131,7 +132,6 @@ const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseID
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
-  const complete = checkCompletion(takenCourseIDs, data).done;
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -166,10 +166,11 @@ const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenC
 interface GroupRequirementProps {
   data: TypedProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
+  nested?: boolean;
 }
-const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, nested }) => {
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(!complete);
+  const [open, setOpen] = useState(!nested && !complete);
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -201,7 +202,7 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ require
       return <DisplayComponent data={requirement} takenCourseIDs={takenCourseIDs} />;
     }
     case 'Group':
-      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} />;
+      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} nested={nested} />;
   }
 };
 

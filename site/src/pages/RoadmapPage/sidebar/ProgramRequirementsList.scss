@@ -58,6 +58,10 @@ $complete-color: green;
   .course-requirement.completed {
     color: $complete-color;
   }
+
+  > .group-requirement:not(:last-child) {
+    margin-bottom: 16px;
+  }
 }
 
 .group-courses {
