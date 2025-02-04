@@ -1,0 +1,18 @@
+.course-info-warning {
+  .warning-primary {
+    color: var(--warning-red);
+
+    .warning-primary-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+
+  .warning-hint-italics {
+    padding-top: 6px;
+    font-weight: 400;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--petr-gray);
+  }
+}

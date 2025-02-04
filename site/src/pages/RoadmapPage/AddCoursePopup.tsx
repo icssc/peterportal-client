@@ -7,7 +7,11 @@ import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import { CourseBookmarkButton, CourseDescription } from '../../component/CourseInfo/CourseInfo';
+import {
+  CourseBookmarkButton,
+  CourseDescription,
+  IncompletePrerequisiteText,
+} from '../../component/CourseInfo/CourseInfo';
 
 interface AddCoursePopupProps {}
 
@@ -15,6 +19,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
   const term = useNamedAcademicTerm();
 
   const dispatch = useAppDispatch();
@@ -68,6 +73,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
+          <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
             <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />

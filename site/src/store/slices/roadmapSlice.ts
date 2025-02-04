@@ -65,6 +65,8 @@ interface RoadmapSliceState {
   showAddCourse: boolean;
   // Store the course data of the active dragging item
   activeCourse?: CourseGQLData;
+  // Store the missing prerequisites of the active dragging item (for mobile)
+  activeMissingPrerequisites?: string[];
   // Whether or not to show the transfer modal
   showTransfer: boolean;
   // Store transfer course data
@@ -289,6 +291,9 @@ export const roadmapSlice = createSlice({
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
       state.activeCourse = action.payload;
     },
+    setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
+      state.activeMissingPrerequisites = action.payload;
+    },
     setYearPlans: (state, action: PayloadAction<PlannerData>) => {
       state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
     },
@@ -372,6 +377,7 @@ export const {
   deleteYear,
   clearPlanner,
   setActiveCourse,
+  setActiveMissingPrerequisites,
   setYearPlans,
   setAllPlans,
   setInvalidCourses,
