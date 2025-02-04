@@ -1,3 +1,5 @@
+@use '../../globals.scss';
+
 [data-theme='dark'] {
   .transfer-header {
     border-bottom-color: var(--overlay3);
@@ -57,5 +59,20 @@
   }
   p {
     font-size: 16px;
+  }
+}
+
+.entry-delete-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-right: 0;
+
+  @include globals.clickable(0.8, 0.5);
+  color: black;
+  transition: color 0.2s;
+  &:hover {
+    color: red;
   }
 }

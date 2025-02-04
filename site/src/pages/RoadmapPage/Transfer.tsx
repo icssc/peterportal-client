@@ -56,7 +56,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
           onChange={(e) => setUnits(parseInt(e.target.value))}
         />
       </Col>
-      <Col xs="1" md="1" className="d-flex flex-row align-items-center justify-content-center pr-0">
+      <Col xs="1" md="1" className="entry-delete-icon">
         <Trash onClick={() => dispatch(deleteTransfer(props.index))} />
       </Col>
     </Row>
