@@ -7,8 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import CloseButton from 'react-bootstrap/CloseButton';
-import { PlusLg } from 'react-bootstrap-icons';
+import { PlusLg, Trash } from 'react-bootstrap-icons';
 
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -46,10 +45,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
 
   return (
     <Row className="g-2 mb-1" xs={3}>
-      <Col xs="1" md="1" className="d-flex flex-row justify-content-center p-0">
-        <CloseButton onClick={() => dispatch(deleteTransfer(props.index))} />
-      </Col>
-      <Col xs="8" md="7" className="pr-0">
+      <Col xs="8" md="7" className="p-0">
         <Form.Control type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
       </Col>
       <Col xs="3" md="4" className="pr-0">
@@ -59,6 +55,9 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
           value={units ?? undefined}
           onChange={(e) => setUnits(parseInt(e.target.value))}
         />
+      </Col>
+      <Col xs="1" md="1" className="d-flex flex-row align-items-center justify-content-center pr-0">
+        <Trash onClick={() => dispatch(deleteTransfer(props.index))} />
       </Col>
     </Row>
   );
