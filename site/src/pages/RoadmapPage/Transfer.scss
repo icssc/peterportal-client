@@ -76,3 +76,12 @@
     color: red;
   }
 }
+
+[data-theme='dark'] {
+  .entry-delete-icon {
+    color: white;
+    &:hover {
+      color: red;
+    }
+  }
+}
