@@ -11,6 +11,7 @@ import {
   CourseBookmarkButton,
   CourseDescription,
   IncompletePrerequisiteText,
+  PrerequisiteText,
 } from '../../component/CourseInfo/CourseInfo';
 
 interface AddCoursePopupProps {}
@@ -73,6 +74,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
+          <PrerequisiteText course={activeCourse} />
           <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
