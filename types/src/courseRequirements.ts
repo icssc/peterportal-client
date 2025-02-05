@@ -7,3 +7,8 @@ export type MajorSpecialization =
 
 export type ProgramRequirement = components['schemas']['programRequirement'];
 export type TypedProgramRequirement<T extends string> = ProgramRequirement & { requirementType: T };
+
+export interface MajorSpecializationPair {
+  majorId: string;
+  specializationId?: string;
+}
