@@ -81,7 +81,7 @@ function transformCourseGQL(data: CourseAAPIResponse) {
   const course = { ...data } as unknown as CourseGQLData;
   course.instructors = Object.fromEntries(data.instructors.map((instructor) => [instructor.ucinetid, instructor]));
   course.prerequisites = Object.fromEntries(data.prerequisites.map((prerequisite) => [prerequisite.id, prerequisite]));
-  course.dependencies = Object.fromEntries(data.dependencies.map((dependency) => [dependency.id, dependency]));
+  course.dependents = Object.fromEntries(data.dependencies.map((dependency) => [dependency.id, dependency])); // TODO: Change "dependencies" to "dependents" once it is changed in AAPI.
   return course;
 }
 
