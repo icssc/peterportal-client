@@ -74,13 +74,15 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
-          <PrerequisiteText course={activeCourse} />
-          <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
+          {activeMissingPrerequisites ? (
+            <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
+          ) : (
+            <PrerequisiteText course={activeCourse} />
+          )}
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
             <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
           </p>
-          {/** @todo Add UnmetPrerequisiteText for prerequisites that don't exist in the planner */}
         </Modal.Body>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
