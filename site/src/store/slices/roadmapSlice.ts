@@ -65,7 +65,7 @@ interface RoadmapSliceState {
   showAddCourse: boolean;
   // Store the course data of the active dragging item
   activeCourse?: CourseGQLData;
-  // Store the missing prerequisites of the active dragging item (for mobile)
+  /** Store missing prerequisites for courses when adding on mobile */
   activeMissingPrerequisites?: string[];
   // Whether or not to show the transfer modal
   showTransfer: boolean;
