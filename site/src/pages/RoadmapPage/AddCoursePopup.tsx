@@ -7,7 +7,7 @@ import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import { CourseBookmarkButton, CourseDescription } from '../../component/CourseInfo/CourseInfo';
+import { CourseBookmarkButton, CourseDescription, PrerequisiteText } from '../../component/CourseInfo/CourseInfo';
 
 interface AddCoursePopupProps {}
 
@@ -68,6 +68,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
+          <PrerequisiteText course={activeCourse} />
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
             <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
