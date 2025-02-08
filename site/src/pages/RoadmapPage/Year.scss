@@ -41,7 +41,8 @@
   margin-right: 10px;
 }
 
-.year-accordion-content {
+.year-accordion-content,
+.year-accordion-content-3-quarter {
   border-radius: var(--border-radius);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -50,7 +51,7 @@
 }
 
 @media only screen and (min-width: 1648px) {
-  .year-accordion-content {
+  .year-accordion-content-3-quarter {
     grid-template-columns: repeat(auto-fill, minmax(333px, 1fr));
   }
 }

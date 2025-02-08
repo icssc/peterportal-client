@@ -90,6 +90,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     </Popover>
   );
 
+  const yearAccordionContentClassName =
+    data.quarters.length === 3 ? 'year-accordion-content-3-quarter' : 'year-accordion-content';
+
   return (
     <div className="year" ref={yearContainerRef}>
       <div className="yearTitleBar">
@@ -169,7 +172,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       {showContent && (
         <>
           <hr />
-          <div className="year-accordion-content">
+          <div className={yearAccordionContentClassName}>
             {data.quarters.map((quarter, quarterIndex) => {
               return (
                 <Quarter
