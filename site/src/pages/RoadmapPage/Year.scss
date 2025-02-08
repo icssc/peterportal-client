@@ -49,15 +49,9 @@
   margin-block: 16px 4px;
 }
 
-@media only screen and (min-width: 1658px) {
+@media only screen and (min-width: 1648px) {
   .year-accordion-content {
     grid-template-columns: repeat(auto-fill, minmax(333px, 1fr));
-  }
-}
-
-@media only screen and (max-width: globals.$mobile-cutoff) {
-  .year-accordion-content {
-    flex-direction: column;
   }
 }
 
@@ -151,5 +145,11 @@
 
   .edit-btn {
     margin-right: 10px;
+  }
+}
+
+@media only screen and (max-width: globals.$mobile-cutoff) {
+  .year-accordion-content-width {
+    flex-direction: column;
   }
 }
