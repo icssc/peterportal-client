@@ -12,6 +12,7 @@ const courseRequirementsSlice = createSlice({
     major: null as MajorProgram | null,
     specialization: null as MajorSpecialization | null,
     currentRequirements: [] as ProgramRequirement[],
+    geRequirements: [] as ProgramRequirement[],
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -32,10 +33,20 @@ const courseRequirementsSlice = createSlice({
     setRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.currentRequirements = action.payload;
     },
+    setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
+      state.geRequirements = action.payload;
+    },
   },
 });
 
-export const { setSelectedTab, setMajorList, setSpecializationList, setMajor, setSpecialization, setRequirements } =
-  courseRequirementsSlice.actions;
+export const {
+  setSelectedTab,
+  setMajorList,
+  setSpecializationList,
+  setMajor,
+  setSpecialization,
+  setRequirements,
+  setGERequirements,
+} = courseRequirementsSlice.actions;
 
 export default courseRequirementsSlice.reducer;
