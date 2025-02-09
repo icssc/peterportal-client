@@ -41,8 +41,7 @@
   margin-right: 10px;
 }
 
-.year-accordion-content,
-.year-accordion-content-3-quarter {
+.year-accordion-content {
   border-radius: var(--border-radius);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -51,7 +50,7 @@
 }
 
 @media only screen and (min-width: 1648px) {
-  .year-accordion-content-3-quarter {
+  .year-accordion-content-length-3 {
     grid-template-columns: repeat(auto-fill, minmax(333px, 1fr));
   }
 }
@@ -150,7 +149,7 @@
 }
 
 @media only screen and (max-width: globals.$mobile-cutoff) {
-  .year-accordion-content-width {
+  .year-accordion-content {
     flex-direction: column;
   }
 }
