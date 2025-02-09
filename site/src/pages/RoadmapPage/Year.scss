@@ -55,6 +55,24 @@
   }
 }
 
+@media only screen and (min-width: 1918px) {
+  .year-accordion-content-length-4 {
+    grid-template-columns: repeat(auto-fill, minmax(317px, 1fr));
+  }
+}
+
+@media only screen and (min-width: 1980px) {
+  .year-accordion-content-length-3 {
+    grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  }
+}
+
+@media only screen and (min-width: 2194px) {
+  .year-accordion-content-length-5 {
+    grid-template-columns: repeat(auto-fill, minmax(304px, 1fr));
+  }
+}
+
 .year-accordion-title {
   display: flex;
   justify-content: space-between;
