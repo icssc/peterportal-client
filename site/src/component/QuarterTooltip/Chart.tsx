@@ -131,7 +131,7 @@ export default class Chart extends React.Component<ChartProps> {
     const marginX = 30 + 5 * Math.floor(Math.log10(Math.max(100, greatestCount) / 100));
 
     //tickSize calculates the proper scale of the graph based on its upper bound as calculated in GreatestCount
-    const tickSize = Math.floor(greatestCount / 6);
+    const tickSize = Math.floor(greatestCount / 6) > 1 ? Math.floor(greatestCount / 6) : 1;
 
     return (
       <>
