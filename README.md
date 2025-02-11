@@ -1,4 +1,4 @@
-![petr](https://github.com/icssc-projects/peterportal-public-api/blob/master/public/images/peterportal-banner-logo.png?raw=true)
+![petr](site/src/asset/peterportal-banner-logo.svg)
 
 ## About
 
