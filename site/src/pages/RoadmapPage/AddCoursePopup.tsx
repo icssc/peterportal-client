@@ -7,7 +7,12 @@ import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import { CourseBookmarkButton, CourseDescription, PrerequisiteText } from '../../component/CourseInfo/CourseInfo';
+import {
+  CourseBookmarkButton,
+  CourseDescription,
+  IncompletePrerequisiteText,
+  PrerequisiteText,
+} from '../../component/CourseInfo/CourseInfo';
 
 interface AddCoursePopupProps {}
 
@@ -15,6 +20,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
   const term = useNamedAcademicTerm();
 
   const dispatch = useAppDispatch();
@@ -68,12 +74,15 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
-          <PrerequisiteText course={activeCourse} />
+          {activeMissingPrerequisites ? (
+            <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
+          ) : (
+            <PrerequisiteText course={activeCourse} />
+          )}
           <p className="quarter-offerings-section">
             <b>Previous Offerings:</b>
             <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
           </p>
-          {/** @todo Add UnmetPrerequisiteText for prerequisites that don't exist in the planner */}
         </Modal.Body>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
