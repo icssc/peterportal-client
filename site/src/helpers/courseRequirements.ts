@@ -160,5 +160,7 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
       return checkCourseListCompletion(completed, requirement);
     case 'Unit':
       return checkUnitCompletion(completed, requirement);
+    case 'Marker':
+      return { completed: 0, done: false, required: 0 };
   }
 }
