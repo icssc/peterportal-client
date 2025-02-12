@@ -44,33 +44,32 @@
 .year-accordion-content {
   border-radius: var(--border-radius);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
   margin-block: 16px 4px;
 }
 
-@media only screen and (min-width: 1648px) {
-  .year-accordion-content-length-3 {
-    grid-template-columns: repeat(auto-fill, minmax(333px, 1fr));
-  }
+.years[data-max-year-len='1'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
-@media only screen and (min-width: 1918px) {
-  .year-accordion-content-length-4 {
-    grid-template-columns: repeat(auto-fill, minmax(317px, 1fr));
-  }
+.years[data-max-year-len='2'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
-@media only screen and (min-width: 1980px) {
-  .year-accordion-content-length-3 {
-    grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
-  }
+.years[data-max-year-len='3'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
-@media only screen and (min-width: 2194px) {
-  .year-accordion-content-length-5 {
-    grid-template-columns: repeat(auto-fill, minmax(304px, 1fr));
-  }
+.years[data-max-year-len='4'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.years[data-max-year-len='5'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.years[data-max-year-len='6'] .year-accordion-content {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 .year-accordion-title {

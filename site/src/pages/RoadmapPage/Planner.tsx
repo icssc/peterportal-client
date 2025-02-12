@@ -24,6 +24,7 @@ import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { PlannerData, PlannerYearData } from '../../types/types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -140,6 +141,12 @@ const Planner: FC = () => {
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
+  const getMaxYearLen = (years: PlannerData) => {
+    return years.reduce((maxYearLen: number, year: PlannerYearData) => {
+      return year.quarters.length > maxYearLen ? year.quarters.length : maxYearLen;
+    }, 0);
+  };
+
   return (
     <div className="planner">
       <Modal
@@ -174,7 +181,7 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years">
+      <section className="years" data-max-year-len={getMaxYearLen(currentPlanData)}>
         {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}

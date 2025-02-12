@@ -169,7 +169,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       {showContent && (
         <>
           <hr />
-          <div className={`year-accordion-content year-accordion-content-length-${data.quarters.length}`}>
+          <div className="year-accordion-content">
             {data.quarters.map((quarter, quarterIndex) => {
               return (
                 <Quarter
