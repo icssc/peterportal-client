@@ -12,11 +12,13 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
+  RoadmapPlan,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
 import { convertLegacyLocalRoadmap, defaultYear, expandAllPlanners } from '../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
+import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
 import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
@@ -50,13 +52,12 @@ const Planner: FC = () => {
     setShowSyncModal(false);
   };
 
-  const saveRoadmap = () => {
+  const saveRoadmap = async (planner?: RoadmapPlan[]) => {
     const roadmap: SavedRoadmap = {
       timestamp: new Date().toISOString(),
-      planners: collapseAllPlanners(allPlanData),
+      planners: collapseAllPlanners(planner?.length ? planner : allPlanData),
       transfers: transfers,
     };
-
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
     // mark changes as saved to bypass alert on page leave
@@ -64,7 +65,7 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (isLoggedIn) {
-      trpc.roadmaps.save
+      await trpc.roadmaps.save
         .mutate(roadmap)
         .then(() => {
           spawnToast(`Roadmap saved to your account!`);
@@ -187,6 +188,7 @@ const Planner: FC = () => {
         }
       />
       <ImportTranscriptPopup />
+      <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
     </div>
   );
 };

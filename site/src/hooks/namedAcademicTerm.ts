@@ -8,6 +8,6 @@ export const useNamedAcademicTerm = () => {
   if (year == null || quarter == null) return { year: null, quarter: null };
 
   const quarterName = quarterDisplayNames[planner[year].quarters[quarter].name];
-  const yearName = planner[year].startYear + Number(quarterName === quarterDisplayNames.Fall);
+  const yearName = planner[year].startYear + Number(quarterName !== quarterDisplayNames.Fall);
   return { year: yearName, quarter: quarterName };
 };

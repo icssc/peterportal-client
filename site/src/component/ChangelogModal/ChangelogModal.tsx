@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/multiplanner.png';
+import changelogImage from '../../asset/hover-course.png';
 
-const DESCRIPTION = 'You are now able to add, edit, and delete multiple 4-year plans within your roadmap!';
-const LAST_UPDATED = '05/06/2024';
+const DESCRIPTION = 'Along with visual updates, course info is now found when you hover over the course title';
+const LAST_UPDATED = '01/27/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
