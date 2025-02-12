@@ -5,6 +5,7 @@ import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons'
 import Quarter from './Quarter';
 import { useAppDispatch } from '../../store/hooks';
 import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } from '../../store/slices/roadmapSlice';
+import { pluralize } from '../../helpers/util';
 
 import { PlannerYearData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -112,8 +113,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               </span>
             </span>
             <span id="year-stats">
-              <span id="course-count">{courseCount}</span> {courseCount === 1 ? 'course' : 'courses'},{' '}
-              <span id="unit-count">{unitCount}</span> {unitCount === 1 ? 'unit' : 'units'}
+              <span id="course-count">{courseCount}</span> {pluralize(courseCount, 'courses', 'course')},{' '}
+              <span id="unit-count">{unitCount}</span> {pluralize(unitCount, 'units', 'unit')}
             </span>
           </span>
         </Button>
