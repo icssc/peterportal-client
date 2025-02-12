@@ -3,6 +3,7 @@ import { CourseGQLData } from '../../types/types';
 import { useCoursebag } from '../../hooks/coursebag';
 import { Bookmark, BookmarkFill, ExclamationTriangle } from 'react-bootstrap-icons';
 import { pluralize } from '../../helpers/util';
+import './CourseInfo.scss';
 
 interface CourseProp {
   course: CourseGQLData;
@@ -51,12 +52,12 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
   if (!requiredCourses?.length) return;
 
   return (
-    <div>
-      <div className="popover-detail-warning">
-        <ExclamationTriangle className="popover-detail-warning-icon" />
+    <div className="course-info-warning">
+      <div className="warning-primary">
+        <ExclamationTriangle className="warning-primary-icon" />
         Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
       </div>
-      <div className="popover-detail-italics">
+      <div className="warning-hint-italics">
         Already completed? Click "Transfer Credits" at the top of the roadmap viewer to add{' '}
         {pluralize(requiredCourses.length, 'these prerequisites', 'this prerequisite')}.
       </div>
