@@ -161,11 +161,6 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
     case 'Unit':
       return checkUnitCompletion(completed, requirement);
     case 'Marker':
-      // Marker is a requirement that cannot be quantified with courses, so we will assume it is not done
-      return {
-        required: 0,
-        completed: 0,
-        done: false,
-      } as CompletionStatus;
+      return { completed: 0, done: false, required: 0 };
   }
 }

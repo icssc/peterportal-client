@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import changelogImage from '../../asset/hover-course.png';
 
 const DESCRIPTION = 'Along with visual updates, course info is now found when you hover over the course title';
-const LAST_UPDATED = '01/27/2024';
+const LAST_UPDATED = '01/27/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
