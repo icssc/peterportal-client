@@ -21,7 +21,7 @@ const GERequiredCourseList: FC = () => {
     if (requirements.length) return;
 
     setResultsLoading(true);
-    getCoursesForGE().then(async (geReqs) => {
+    getCoursesForGE().then((geReqs) => {
       dispatch(setGERequirements(geReqs));
       setResultsLoading(false);
     });
