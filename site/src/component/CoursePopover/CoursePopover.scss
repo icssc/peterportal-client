@@ -38,23 +38,19 @@
     font-weight: bold;
   }
 
-  .popover-detail-warning {
-    font-size: 14px;
-    color: var(--warning-red);
-    gap: 5px;
+  .course-info-warning {
+    .warning-primary {
+      font-size: 14px;
+      gap: 5px;
 
-    .popover-detail-warning-icon {
-      margin-bottom: 4px;
-      margin-right: 4px;
-      font-size: 16px;
+      .warning-primary-icon {
+        font-size: 16px;
+      }
     }
-  }
 
-  .popover-detail-italics {
-    padding-top: 6px;
-    font-weight: 400;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--petr-gray);
+    .warning-hint-italics {
+      font-size: 12px;
+      margin-bottom: 0px;
+    }
   }
 }
