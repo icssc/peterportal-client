@@ -2,6 +2,7 @@ import { FC } from 'react';
 import './CoursePopover.scss';
 import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
+import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
@@ -23,7 +24,9 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
     <Popover.Content className="course-popover">
       <div className="popover-name">
         {department + ' ' + courseNumber + ' '}
-        <span className="popover-units">({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units)</span>
+        <span className="popover-units">
+          ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
+        </span>
 
         <div className="spacer"></div>
         {interactive && <CourseBookmarkButton course={course} />}
