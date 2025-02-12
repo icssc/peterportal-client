@@ -28,6 +28,7 @@ const RequirementsListSelector: FC = () => {
   return (
     <div className="requirements-list-selector">
       <ListSelector text="Major" />
+      <ListSelector text="Minor" />
       <ListSelector text="All Courses" />
     </div>
   );
