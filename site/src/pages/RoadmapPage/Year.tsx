@@ -113,8 +113,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
               </span>
             </span>
             <span id="year-stats">
-              <span id="course-count">{courseCount}</span> {pluralize(courseCount, 'courses', 'course')},{' '}
-              <span id="unit-count">{unitCount}</span> {pluralize(unitCount, 'units', 'unit')}
+              <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+              <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
             </span>
           </span>
         </Button>

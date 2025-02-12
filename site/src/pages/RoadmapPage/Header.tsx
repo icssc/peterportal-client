@@ -66,8 +66,8 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> {pluralize(courseCount, 'courses', 'course')},{' '}
-          <span id="unit-count">{unitCount}</span> {pluralize(unitCount, 'units', 'unit')}
+          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
       <div className="planner-right">

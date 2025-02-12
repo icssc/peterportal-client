@@ -16,7 +16,7 @@ export function getCourseTags(course: CourseGQLData) {
   const tags: string[] = [];
   // units
   const { minUnits, maxUnits } = course;
-  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} ${pluralize(maxUnits, 'units', 'unit')}`);
+  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`);
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {

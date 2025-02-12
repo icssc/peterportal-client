@@ -120,7 +120,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="course-and-info">
           <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')}
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
         </div>
         <div className="spacer"></div>

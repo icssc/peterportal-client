@@ -119,7 +119,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           {quarterTitle} {year}
         </h2>
         <div className="quarter-units">
-          {unitCount} {pluralize(unitCount, 'units', 'unit')}
+          {unitCount} unit{pluralize(unitCount)}
         </div>
         <OverlayTrigger
           trigger="click"
