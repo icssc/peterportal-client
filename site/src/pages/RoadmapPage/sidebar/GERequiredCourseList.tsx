@@ -10,8 +10,6 @@ function getCoursesForGE() {
 }
 
 const GERequiredCourseList: FC = () => {
-  /** Must ONLY contain GE requirements. This is used to check that the GE is already
-   * loaded; it will be set once when we first load requirements, then will not change */
   const requirements = useAppSelector((state) => state.courseRequirements.geRequirements);
 
   const [resultsLoading, setResultsLoading] = useState(false);
