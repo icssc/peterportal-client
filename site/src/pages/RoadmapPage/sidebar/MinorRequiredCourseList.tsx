@@ -4,12 +4,7 @@ import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
-import {
-  setRequirements,
-  setSpecialization,
-  setMinor,
-  setMinorList,
-} from '../../../store/slices/courseRequirementsSlice';
+import { setRequirements, setMinor, setMinorList } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 import { MinorProgram } from '@peterportal/types';
@@ -77,10 +72,16 @@ const MinorRequiredCourseList: FC = () => {
     trpc.programs.getMinors.query();
     setMinorsLoading(false);
 
-    const foundMinor = minors.find((m) => m.id === minors[0]?.id) ?? null;
+    const foundMinor = minors.find((m) => m.id === selectedMinor?.id) ?? null;
     dispatch(setMinor(foundMinor));
-    dispatch(setRequirements([]));
-  }, [dispatch, activePlanID, minors, isLoggedIn]);
+    setResultsLoading(true);
+    if (!foundMinor) return;
+    getCoursesForMinor(foundMinor.id).then(async (minorReqs) => {
+      dispatch(setRequirements(minorReqs));
+      setResultsLoading(false);
+      return;
+    });
+  }, [dispatch, activePlanID, minors, isLoggedIn, selectedMinor?.id]);
 
   const minorSelectOptions = minors.map((m) => ({
     value: m,
@@ -105,7 +106,6 @@ const MinorRequiredCourseList: FC = () => {
           if (data!.value.id === selectedMinor?.id) return;
           dispatch(setRequirements([])); // set to empty immediately because otherwise it's out of date
           dispatch(setMinor(data!.value));
-          dispatch(setSpecialization(null));
         }}
         className="ppc-combobox"
         classNamePrefix="ppc-combobox"
