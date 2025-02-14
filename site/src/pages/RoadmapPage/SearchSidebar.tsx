@@ -12,6 +12,7 @@ import RequirementsListSelector from './sidebar/RequirementsListSelector';
 import AllCourseSearch from './sidebar/AllCourseSearch';
 import MajorRequiredCourseList from './sidebar/MajorRequiredCourseList';
 import MinorRequiredCourseList from './sidebar/MinorRequiredCourseList';
+import GERequiredCourseList from './sidebar/GERequiredCourseList';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -53,7 +54,8 @@ const SearchSidebar = () => {
 
         {selectedCourseList === 'Major' && <MajorRequiredCourseList />}
         {selectedCourseList === 'Minor' && <MinorRequiredCourseList />}
-        {selectedCourseList === 'All Courses' && <AllCourseSearch />}
+        {selectedCourseList === 'GE' && <GERequiredCourseList />}
+        {selectedCourseList === 'Search' && <AllCourseSearch />}
 
         <CloseRoadmapSearchButton />
       </div>
