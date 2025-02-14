@@ -66,10 +66,10 @@ export interface CourseLookup {
 
 export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
 
-export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
+export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependents'> & {
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
-  dependencies: CourseLookup;
+  dependents: CourseLookup;
 };
 
 export interface BatchCourseData {
