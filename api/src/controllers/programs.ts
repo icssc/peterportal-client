@@ -12,6 +12,7 @@ import { and, eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
 const programTypeNames = ['major', 'minor', 'specialization'] as const;
+const ugradRequirementTypeNames = ['UC', 'GE'] as const;
 
 const getAPIProgramData = async <T extends ProgramType>(programType: string): Promise<T[]> => {
   const response = await fetch(`${process.env.PUBLIC_API_URL}programs/${programType}`, {
@@ -50,6 +51,15 @@ const programsRouter = router({
     .input(z.object({ type: z.enum(programTypeNames), programId: z.string() }))
     .query(async ({ input }) => {
       const url = `${process.env.PUBLIC_API_URL}programs/${input.type}?programId=${input.programId}`;
+      const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
+        .then((res) => res.json())
+        .then((res) => res.data.requirements as ProgramRequirement[]);
+      return response;
+    }),
+  getRequiredCoursesUgrad: publicProcedure
+    .input(z.object({ id: z.enum(ugradRequirementTypeNames) }))
+    .query(async ({ input }) => {
+      const url = `${process.env.PUBLIC_API_URL}programs/ugradRequirements?id=${input.id}`;
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
         .then((res) => res.data.requirements as ProgramRequirement[]);

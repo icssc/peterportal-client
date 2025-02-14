@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MajorProgram, MajorSpecialization, ProgramRequirement, MinorProgram } from '@peterportal/types';
 
-export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'All Courses';
+export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'Search';
 
 export interface MajorWithSpecialization {
   major: MajorProgram;
@@ -18,6 +18,7 @@ const courseRequirementsSlice = createSlice({
     specialization: null as MajorSpecialization | null,
     minor: null as MinorProgram | null,
     minorList: [] as MinorProgram[],
+    geRequirements: [] as ProgramRequirement[],
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -53,11 +54,14 @@ const courseRequirementsSlice = createSlice({
         major.requirements = action.payload.requirements;
       }
     },
+    setMinorList: (state, action: PayloadAction<MinorProgram[]>) => {
+      state.minorList = action.payload;
+    },
     setMinor: (state, action: PayloadAction<MinorProgram | null>) => {
       state.minor = action.payload;
     },
-    setMinorList: (state, action: PayloadAction<MinorProgram[]>) => {
-      state.minorList = action.payload;
+    setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
+      state.geRequirements = action.payload;
     },
   },
 });
@@ -69,8 +73,9 @@ export const {
   removeMajor,
   setSpecialization,
   setRequirements,
-  setMinor,
   setMinorList,
+  setMinor,
+  setGERequirements,
 } = courseRequirementsSlice.actions;
 
 export default courseRequirementsSlice.reducer;
