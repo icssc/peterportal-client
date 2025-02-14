@@ -11,6 +11,7 @@ import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import RequirementsListSelector from './sidebar/RequirementsListSelector';
 import AllCourseSearch from './sidebar/AllCourseSearch';
 import MajorRequiredCourseList from './sidebar/MajorRequiredCourseList';
+import MinorRequiredCourseList from './sidebar/MinorRequiredCourseList';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -51,6 +52,7 @@ const SearchSidebar = () => {
         <RequirementsListSelector />
 
         {selectedCourseList === 'Major' && <MajorRequiredCourseList />}
+        {selectedCourseList === 'Minor' && <MinorRequiredCourseList />}
         {selectedCourseList === 'All Courses' && <AllCourseSearch />}
 
         <CloseRoadmapSearchButton />
