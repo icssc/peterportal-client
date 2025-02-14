@@ -10,7 +10,7 @@ import { useIsMobile } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
-import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
@@ -116,7 +116,6 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 
 interface CourseProps {
   requiredCourses?: string[];
-  unmatchedPrerequisites?: string[];
   onDelete?: () => void;
   onAddToBag?: () => void;
   isInBag?: boolean;
@@ -134,6 +133,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const insertCourseOnClick = () => {
     dispatch(setActiveCourse(props.data));
+    dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };
 

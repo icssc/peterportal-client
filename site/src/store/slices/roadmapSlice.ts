@@ -67,6 +67,8 @@ interface RoadmapSliceState {
   activeCourse?: CourseGQLData;
   /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
   activeCourseLoading: boolean;
+  /** Store missing prerequisites for courses when adding on mobile */
+  activeMissingPrerequisites?: string[];
   // Whether or not to show the transfer modal
   showTransfer: boolean;
   // Store transfer course data
@@ -295,6 +297,9 @@ export const roadmapSlice = createSlice({
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
       state.activeCourseLoading = action.payload;
     },
+    setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
+      state.activeMissingPrerequisites = action.payload;
+    },
     setYearPlans: (state, action: PayloadAction<PlannerData>) => {
       state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
     },
@@ -379,6 +384,7 @@ export const {
   clearPlanner,
   setActiveCourse,
   setActiveCourseLoading,
+  setActiveMissingPrerequisites,
   setYearPlans,
   setAllPlans,
   setInvalidCourses,
