@@ -39,7 +39,7 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   terms: [],
   instructors: {},
   prerequisites: {},
-  dependencies: {},
+  dependents: {},
 };
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {

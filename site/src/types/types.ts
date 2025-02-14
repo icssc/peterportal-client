@@ -66,7 +66,7 @@ export interface CourseLookup {
 
 export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
 
-export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependents'> & {
+export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
   dependents: CourseLookup;
