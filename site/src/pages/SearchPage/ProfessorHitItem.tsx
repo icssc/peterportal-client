@@ -59,7 +59,9 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <Link to={'/course/' + item.replace(/\s+/g, '')}>{item}</Link>
+                  <Link to={'/course/' + item.replace(/\s+/g, '')} onClick={(e) => e.stopPropagation()}>
+                    {item}
+                  </Link>
                 </span>
               );
             })}
