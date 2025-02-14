@@ -30,7 +30,7 @@ const RequirementsListSelector: FC = () => {
       <ListSelector text="Major" />
       <ListSelector text="Minor" />
       <ListSelector text="GE" />
-      <ListSelector text="All Courses" />
+      <ListSelector text="Search" />
     </div>
   );
 };

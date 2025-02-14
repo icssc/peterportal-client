@@ -55,7 +55,7 @@ const SearchSidebar = () => {
         {selectedCourseList === 'Major' && <MajorRequiredCourseList />}
         {selectedCourseList === 'Minor' && <MinorRequiredCourseList />}
         {selectedCourseList === 'GE' && <GERequiredCourseList />}
-        {selectedCourseList === 'All Courses' && <AllCourseSearch />}
+        {selectedCourseList === 'Search' && <AllCourseSearch />}
 
         <CloseRoadmapSearchButton />
       </div>

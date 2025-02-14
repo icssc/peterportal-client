@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { MajorProgram, MajorSpecialization, ProgramRequirement, MinorProgram } from '@peterportal/types';
 
-export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'All Courses';
+export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'Search';
 
 const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
