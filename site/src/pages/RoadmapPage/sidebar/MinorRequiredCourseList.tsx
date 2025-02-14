@@ -4,7 +4,7 @@ import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
-import { setRequirements, setMinor, setMinorList } from '../../../store/slices/courseRequirementsSlice';
+import { setMinorRequirements, setMinor, setMinorList } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 import { MinorProgram } from '@peterportal/types';
@@ -26,7 +26,7 @@ const MinorRequiredCourseList: FC = () => {
 
   /** Must ONLY contain requirements for the selected major/spec. This is used to check whether a major is
    * already loaded, so it must be set to empty if we change the major or spec */
-  const requirements = useAppSelector((state) => state.courseRequirements.currentRequirements);
+  const requirements = useAppSelector((state) => state.courseRequirements.minorRequirements);
 
   const [minorsLoading, setMinorsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -56,7 +56,7 @@ const MinorRequiredCourseList: FC = () => {
 
     setResultsLoading(true);
     getCoursesForMinor(selectedMinor.id).then(async (minorReqs) => {
-      dispatch(setRequirements(minorReqs));
+      dispatch(setMinorRequirements(minorReqs));
       setResultsLoading(false);
       return;
     });
@@ -77,7 +77,7 @@ const MinorRequiredCourseList: FC = () => {
     setResultsLoading(true);
     if (!foundMinor) return;
     getCoursesForMinor(foundMinor.id).then(async (minorReqs) => {
-      dispatch(setRequirements(minorReqs));
+      dispatch(setMinorRequirements(minorReqs));
       setResultsLoading(false);
       return;
     });
@@ -104,7 +104,7 @@ const MinorRequiredCourseList: FC = () => {
         isLoading={minorsLoading}
         onChange={(data) => {
           if (data!.value.id === selectedMinor?.id) return;
-          dispatch(setRequirements([])); // set to empty immediately because otherwise it's out of date
+          dispatch(setMinorRequirements([])); // set to empty immediately because otherwise it's out of date
           dispatch(setMinor(data!.value));
         }}
         className="ppc-combobox"
