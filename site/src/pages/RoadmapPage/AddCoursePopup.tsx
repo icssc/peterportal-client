@@ -7,6 +7,7 @@ import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import { pluralize } from '../../helpers/util';
 import {
   CourseBookmarkButton,
   CourseDescription,
@@ -64,7 +65,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
             {department} {courseNumber}
           </h2>
           <span className="unit-count">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'})
+            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
           </span>
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>

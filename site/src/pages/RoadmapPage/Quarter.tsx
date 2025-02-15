@@ -2,7 +2,7 @@ import { FC, useContext, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
-import { deepCopy, useIsMobile } from '../../helpers/util';
+import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   clearQuarter,
@@ -119,7 +119,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           {quarterTitle} {year}
         </h2>
         <div className="quarter-units">
-          {unitCount} {unitCount === 1 ? 'unit' : 'units'}
+          {unitCount} unit{pluralize(unitCount)}
         </div>
         <OverlayTrigger
           trigger="click"

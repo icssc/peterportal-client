@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
 import { ArrowLeftRight, List, Save, Trash } from 'react-bootstrap-icons';
-import { useIsDesktop, useIsMobile } from '../../helpers/util';
+import { useIsDesktop, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch } from '../../store/hooks';
 import { clearPlanner, setShowTransfer } from '../../store/slices/roadmapSlice';
 import './Header.scss';
@@ -66,8 +66,8 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> {courseCount === 1 ? 'course' : 'courses'},{' '}
-          <span id="unit-count">{unitCount}</span> {unitCount === 1 ? 'unit' : 'units'}
+          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
       <div className="planner-right">
