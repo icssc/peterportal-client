@@ -5,6 +5,7 @@ import {
   collapseSingletonRequirements,
   COMPLETE_ALL_TEXT,
   CompletedCourseSet,
+  flattenSingletonGroups,
   LOADING_COURSE_PLACEHOLDER,
 } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
@@ -123,7 +124,7 @@ interface IndividualRequirementProps {
 
 const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(!complete);
+  const [open, setOpen] = useState(false);
 
   let label: string | number;
   if ('courseCount' in data) {
@@ -166,11 +167,10 @@ const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenC
 interface GroupRequirementProps {
   data: TypedProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
-  nested?: boolean;
 }
-const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, nested }) => {
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(!nested && !complete);
+  const [open, setOpen] = useState(false);
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -202,7 +202,7 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ require
       return <DisplayComponent data={requirement} takenCourseIDs={takenCourseIDs} />;
     }
     case 'Group':
-      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} nested={nested} />;
+      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} />;
   }
 };
 
@@ -211,7 +211,7 @@ interface RequireCourseListProps {
 }
 
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) => {
-  const collapsedRequirements = collapseSingletonRequirements(requirements);
+  const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
