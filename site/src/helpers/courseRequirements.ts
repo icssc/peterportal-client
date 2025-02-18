@@ -109,6 +109,17 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
   return computedRequirements;
 }
 
+export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  const res = requirements.flatMap((r) => {
+    if (r.requirementType !== 'Group') return r;
+    /** @todo after markers are implemented, delete this. */
+    const nonMarkers = r.requirements.filter((s) => s.requirementType !== 'Marker');
+    if (r.requirementCount !== nonMarkers.length) return r;
+    return flattenSingletonGroups(r.requirements);
+  });
+  return res;
+}
+
 export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorSpecialization) {
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
