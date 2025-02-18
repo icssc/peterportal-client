@@ -6,7 +6,7 @@ import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarter
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import { useIsMobile } from '../../helpers/util';
+import { useIsMobile, pluralize } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
@@ -146,7 +146,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="course-and-info">
           <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
         </div>
         <div className="spacer"></div>
