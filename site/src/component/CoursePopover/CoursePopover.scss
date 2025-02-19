@@ -1,5 +1,6 @@
 .course-popover {
   line-height: normal;
+  width: 375px;
 
   .popover-name {
     font-weight: bold;
@@ -52,5 +53,19 @@
       font-size: 12px;
       margin-bottom: 0px;
     }
+  }
+
+  .popover-detail-italics {
+    padding-top: 6px;
+    font-weight: 400;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--petr-gray);
+  }
+
+  .center {
+    display: flex;
+    justify-content: center;
+    margin: 8px auto;
   }
 }
