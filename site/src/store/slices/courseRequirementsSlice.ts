@@ -58,6 +58,9 @@ const courseRequirementsSlice = createSlice({
     setMinorRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.minorRequirements = action.payload;
     },
+    setMinorRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
+      state.minorRequirements = action.payload;
+    },
     setMinorList: (state, action: PayloadAction<MinorProgram[]>) => {
       state.minorList = action.payload;
     },

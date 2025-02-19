@@ -46,12 +46,17 @@ $complete-color: green;
   &.completed {
     border-color: rgba($complete-color, 0.5);
 
-    .group-header {
+    > .group-header {
       color: $complete-color;
-    }
-    .group-header {
       text-decoration: line-through;
       text-decoration-thickness: 2px;
+    }
+
+    .group-requirement:not(.completed) {
+      border-color: var(--peterportal-mid-gray);
+      .group-header {
+        color: var(--peterportal-mid-gray);
+      }
     }
   }
 

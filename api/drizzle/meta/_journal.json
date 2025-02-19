@@ -43,6 +43,13 @@
       "when": 1738730330252,
       "tag": "0005_loving_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739900204412,
+      "tag": "0006_nasty_gambit",
+      "breakpoints": true
     }
   ]
 }

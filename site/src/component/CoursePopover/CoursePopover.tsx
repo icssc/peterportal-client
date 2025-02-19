@@ -26,7 +26,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <div className="popover-name">
           {department + ' ' + courseNumber + ' '}
           <span className="popover-units">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
+            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
           </span>
 
           <div className="spacer"></div>
