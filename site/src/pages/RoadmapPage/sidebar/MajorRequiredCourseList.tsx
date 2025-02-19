@@ -4,6 +4,7 @@ import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
+import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import {
   addMajor,
   removeMajor,
@@ -39,14 +40,11 @@ const MajorRequiredCourseList: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
+  const [expandedMajors, setExpandedMajors] = useState<{ [majorId: string]: boolean }>({});
 
   const plans = useAppSelector((state) => state.roadmap.plans);
   const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const activePlanID = plans[planIndex].id;
-
-  /** Must ONLY contain requirements for the selected major/spec. This is used to check whether a major is
-   * already loaded, so it must be set to empty if we change the major or spec */
-
   const [majorsLoading, setMajorsLoading] = useState(false);
   const [specsLoading, setSpecsLoading] = useState<{ [majorId: string]: boolean }>({});
   const [resultsLoading, setResultsLoading] = useState<{ [majorId: string]: boolean }>({});
@@ -88,6 +86,27 @@ const MajorRequiredCourseList: FC = () => {
     [activePlanID, isLoggedIn],
   );
 
+  const fetchSpecializations = useCallback(async (majorId: string) => {
+    if (!specsLoading[majorId]) {
+      setSpecsLoading((prev) => ({ ...prev, [majorId]: true }));
+      try {
+        const specs = await getMajorSpecializations(majorId);
+        specs.forEach((s) => (s.name = normalizeMajorName(s)));
+        specs.sort((a, b) => a.name.localeCompare(b.name));
+        const options = specs.map((s) => ({
+          value: s,
+          label: s.name,
+        }));
+        setSpecOptions((prev) => ({
+          ...prev,
+          [majorId]: options,
+        }));
+      } finally {
+        setSpecsLoading((prev) => ({ ...prev, [majorId]: false }));
+      }
+    }
+  }, []);
+
   const fetchRequirements = useCallback(
     async (majorId: string, specializationId?: string | null) => {
       setResultsLoading((prev) => ({ ...prev, [majorId]: true }));
@@ -102,74 +121,122 @@ const MajorRequiredCourseList: FC = () => {
         }
 
         dispatch(setRequirements({ majorId, requirements: allReqs }));
-        if (!specsLoading[majorId] && !specOptions[majorId]) {
-          // console.log('fetching specs');
-          setSpecsLoading((prev) => ({ ...prev, [majorId]: true }));
-          const specs = await getMajorSpecializations(majorId);
-          specs.forEach((s) => (s.name = normalizeMajorName(s)));
-          specs.sort((a, b) => a.name.localeCompare(b.name));
-          const options = specs.map((s) => ({
-            value: s,
-            label: s.name,
-          }));
-          setSpecOptions((prev) => ({
-            ...prev,
-            [majorId]: options,
-          }));
-          setSpecsLoading((prev) => ({ ...prev, [majorId]: false }));
+        if (majorId) {
+          await fetchSpecializations(majorId);
+        } else {
+          setSpecOptions((prev) => ({ ...prev, [majorId]: [] }));
         }
       } finally {
         setResultsLoading((prev) => ({ ...prev, [majorId]: false }));
       }
     },
-    [dispatch],
+    [dispatch, fetchSpecializations],
   );
 
-  // Switching roadmaps should restore major/spec
+  const handleMajorChange = useCallback(
+    (
+      selections:
+        | readonly {
+            value: MajorProgram;
+            label: string;
+          }[]
+        | null,
+    ) => {
+      const newMajors = selections?.map((s) => s.value) || [];
+      const currentMajorIds = selectedMajors.map((m) => m.major.id);
+
+      currentMajorIds.forEach((id) => {
+        if (!newMajors.find((m) => m.id === id)) {
+          dispatch(removeMajor(id));
+        }
+      });
+
+      newMajors.forEach((major) => {
+        if (!currentMajorIds.includes(major.id)) {
+          dispatch(addMajor(major));
+          fetchRequirements(major.id);
+          setExpandedMajors((prev) => ({
+            ...prev,
+            [major.id]: true,
+          }));
+        }
+      });
+
+      const updatedMajors = newMajors.map((major) => ({
+        major,
+        specialization: selectedMajors.find((m) => m.major.id === major.id)?.specialization || null,
+        requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
+      }));
+      saveMajors(updatedMajors);
+    },
+    [dispatch, fetchRequirements, saveMajors, selectedMajors],
+  );
+
+  const handleSpecializationChange = useCallback(
+    async (majorId: string, data: { value: MajorSpecialization; label: string } | null) => {
+      const updatedSpec = data?.value || null;
+      setResultsLoading((prev) => ({ ...prev, [majorId]: true }));
+      dispatch(setRequirements({ majorId, requirements: [] }));
+      dispatch(
+        setSpecialization({
+          majorId,
+          specialization: updatedSpec,
+        }),
+      );
+      await fetchRequirements(majorId, updatedSpec?.id || null);
+      const updatedMajors = selectedMajors.map((m) =>
+        m.major.id === majorId ? { ...m, specialization: updatedSpec } : m,
+      );
+      saveMajors(updatedMajors);
+    },
+    [dispatch, fetchRequirements, saveMajors, selectedMajors],
+  );
+
   useEffect(() => {
     if (!majors.length || !activePlanID || !isLoggedIn) return;
-
-    let mounted = true;
     setMajorsLoading(true);
-
     const loadMajorsAndSpecs = async () => {
       try {
         const pairs = await trpc.programs.getSavedMajorSpecPairs.query(activePlanID);
-        if (!mounted) return; //mounted is false if the component is unmounted, prevents loop rendering issue i had
         const currentMajorIds = selectedMajors.map((m) => m.major.id);
         currentMajorIds.forEach((id) => dispatch(removeMajor(id)));
         for (const pair of pairs) {
           const foundMajor = majors.find((m) => m.id === pair.majorId);
-          if (!foundMajor || !mounted) continue;
-
+          if (!foundMajor) continue;
           dispatch(addMajor(foundMajor));
-
           if (pair.specializationId && foundMajor.specializations.length) {
             setSpecsLoading((prev) => ({ ...prev, [foundMajor.id]: true }));
             const specs = await getMajorSpecializations(foundMajor.id);
-            if (!mounted) return;
             const foundSpec = specs.find((s) => s.id === pair.specializationId);
             if (foundSpec) {
               dispatch(setSpecialization({ majorId: foundMajor.id, specialization: foundSpec }));
+              await fetchRequirements(foundMajor.id, pair.specializationId);
             }
             setSpecsLoading((prev) => ({ ...prev, [foundMajor.id]: false }));
+          } else if (foundMajor.specializations.length === 0) {
+            await fetchRequirements(foundMajor.id, null);
           }
-
-          await fetchRequirements(foundMajor.id, pair.specializationId);
         }
       } finally {
-        if (mounted) {
-          setMajorsLoading(false);
-        }
+        setMajorsLoading(false);
       }
     };
 
     loadMajorsAndSpecs();
-
-    return () => {
-      mounted = false;
-    };
   }, [dispatch, activePlanID, majors, isLoggedIn, fetchRequirements]);
+
+  useEffect(() => {
+    if (selectedMajors.length > 0) {
+      const expandedState = selectedMajors.reduce(
+        (acc, major) => ({
+          ...acc,
+          [major.major.id]: true,
+        }),
+        {},
+      );
+      setExpandedMajors(expandedState);
+    }
+  }, [selectedMajors]);
 
   const majorSelectOptions = majors.map((m) => ({
     value: m,
@@ -182,6 +249,16 @@ const MajorRequiredCourseList: FC = () => {
     </div>
   );
 
+  const Loading = ({ majorWithSpec }: { majorWithSpec: MajorWithSpecialization }) => {
+    if (resultsLoading[majorWithSpec.major.id]) {
+      return loadingIcon;
+    } else if (majorWithSpec.major.specializations.length > 0 && !majorWithSpec.specialization) {
+      return <div className="mt-3 text-muted">Please select a specialization to view requirements</div>;
+    } else {
+      return <ProgramRequirementsList requirements={majorWithSpec.requirements} />;
+    }
+  };
+
   return (
     <>
       <Select
@@ -190,27 +267,7 @@ const MajorRequiredCourseList: FC = () => {
         value={selectedMajors.map((m) => majorSelectOptions.find((o) => o.value.id === m.major.id)!)}
         isDisabled={majorsLoading}
         isLoading={majorsLoading}
-        onChange={(selections) => {
-          const newMajors = selections?.map((s) => s.value) || [];
-          const currentMajorIds = selectedMajors.map((m) => m.major.id);
-          currentMajorIds.forEach((id) => {
-            if (!newMajors.find((m) => m.id === id)) {
-              dispatch(removeMajor(id));
-            }
-          });
-          newMajors.forEach((major) => {
-            if (!currentMajorIds.includes(major.id)) {
-              dispatch(addMajor(major));
-              fetchRequirements(major.id);
-            }
-          });
-          const updatedMajors = newMajors.map((major) => ({
-            major,
-            specialization: selectedMajors.find((m) => m.major.id === major.id)?.specialization || null,
-            requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
-          }));
-          saveMajors(updatedMajors);
-        }}
+        onChange={handleMajorChange}
         className="ppc-combobox"
         classNamePrefix="ppc-combobox"
         placeholder="Select majors..."
@@ -219,47 +276,55 @@ const MajorRequiredCourseList: FC = () => {
 
       {selectedMajors.map((majorWithSpec) => (
         <div key={majorWithSpec.major.id} className="major-section mt-3">
-          <h4>{majorWithSpec.major.name}</h4>
-          {majorWithSpec.major.specializations.length > 0 && (
-            <Select
-              options={specOptions[majorWithSpec.major.id] || []}
-              value={
-                majorWithSpec.specialization
-                  ? {
-                      value: majorWithSpec.specialization,
-                      label: majorWithSpec.specialization.name,
-                    }
-                  : null
+          <div
+            role="button"
+            tabIndex={0}
+            className="d-flex align-items-center cursor-pointer"
+            onClick={() =>
+              setExpandedMajors((prev) => ({
+                ...prev,
+                [majorWithSpec.major.id]: !prev[majorWithSpec.major.id],
+              }))
+            }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setExpandedMajors((prev) => ({
+                  ...prev,
+                  [majorWithSpec.major.id]: !prev[majorWithSpec.major.id],
+                }));
               }
-              isDisabled={specsLoading[majorWithSpec.major.id]}
-              isLoading={specsLoading[majorWithSpec.major.id]}
-              onChange={async (data) => {
-                const updatedSpec = data?.value || null;
-                setResultsLoading((prev) => ({ ...prev, [majorWithSpec.major.id]: true }));
-                dispatch(setRequirements({ majorId: majorWithSpec.major.id, requirements: [] })); // set to empty immediately because otherwise it's out of date
-                dispatch(
-                  setSpecialization({
-                    majorId: majorWithSpec.major.id,
-                    specialization: updatedSpec,
-                  }),
-                );
-                await fetchRequirements(majorWithSpec.major.id, updatedSpec?.id || null);
-                const updatedMajors = selectedMajors.map((m) =>
-                  m.major.id === majorWithSpec.major.id ? { ...m, specialization: updatedSpec } : m,
-                );
-                saveMajors(updatedMajors);
-              }}
-              className="ppc-combobox"
-              classNamePrefix="ppc-combobox"
-              placeholder="Select a specialization..."
-              theme={(t) => comboboxTheme(t, isDark)}
-              onFocus={async () => {}}
-            />
-          )}
-          {resultsLoading[majorWithSpec.major.id] ? (
-            loadingIcon
-          ) : (
-            <ProgramRequirementsList requirements={majorWithSpec.requirements} />
+            }}
+          >
+            <h4 className="mb-0 flex-grow-1">{majorWithSpec.major.name}</h4>
+            <span className="ms-2">
+              {expandedMajors[majorWithSpec.major.id] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            </span>
+          </div>
+          {expandedMajors[majorWithSpec.major.id] && (
+            <>
+              {majorWithSpec.major.specializations.length > 0 && (
+                <Select
+                  options={specOptions[majorWithSpec.major.id] || []}
+                  value={
+                    majorWithSpec.specialization
+                      ? {
+                          value: majorWithSpec.specialization,
+                          label: majorWithSpec.specialization.name,
+                        }
+                      : null
+                  }
+                  isDisabled={specsLoading[majorWithSpec.major.id]}
+                  isLoading={specsLoading[majorWithSpec.major.id]}
+                  onChange={(data) => handleSpecializationChange(majorWithSpec.major.id, data)}
+                  className="ppc-combobox mt-3"
+                  classNamePrefix="ppc-combobox"
+                  placeholder="Select a specialization..."
+                  theme={(t) => comboboxTheme(t, isDark)}
+                />
+              )}
+              <Loading majorWithSpec={majorWithSpec} />
+            </>
           )}
         </div>
       ))}
