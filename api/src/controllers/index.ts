@@ -9,8 +9,10 @@ import scheduleRouter from './schedule';
 import usersRouter from './users';
 import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
+import { externalAppRouter } from './external';
 
 export const appRouter = router({
+  external: externalAppRouter,
   courses: coursesRouter,
   professors: professorsRouter,
   roadmaps: roadmapsRouter,
