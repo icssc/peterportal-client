@@ -2,6 +2,7 @@ import { FC } from 'react';
 import './CoursePopover.scss';
 import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
+import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
@@ -18,19 +19,15 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
-  let content = (
-    <div className="center">
-      <Spinner animation="border" />
-    </div>
-  );
-
   if (typeof course !== 'string') {
     const { department, courseNumber, minUnits, maxUnits } = course;
-    content = (
-      <>
+    return (
+      <Popover.Content className="course-popover">
         <div className="popover-name">
           {department + ' ' + courseNumber + ' '}
-          <span className="popover-units">({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units)</span>
+          <span className="popover-units">
+            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
+          </span>
 
           <div className="spacer"></div>
           {interactive && <CourseBookmarkButton course={course} />}
@@ -40,10 +37,16 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <PrerequisiteText course={course} />
         <CorequisiteText course={course} />
         <IncompletePrerequisiteText requiredCourses={requiredCourses} />
-      </>
+      </Popover.Content>
     );
   }
-  return <Popover.Content className="course-popover">{content}</Popover.Content>;
+  return (
+    <Popover.Content className="course-popover">
+      <div className="center">
+        <Spinner animation="border" />
+      </div>
+    </Popover.Content>
+  );
 };
 
 export default CoursePopover;
