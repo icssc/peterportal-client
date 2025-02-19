@@ -38,22 +38,25 @@ function toCourseID(course: TranscriptCourse) {
   return (course.dept + course.code).replace(/\s/g, '');
 }
 
-function processRow(row: HTMLElement, transfers: TransferUnitDetails[], quarters: TranscriptQuarter[]): void {
+function processSchoolsRows(rows: HTMLElement[], transfers: TransferUnitDetails[]) {
+  for (const row of rows) {
+    const text = row.text.trim();
+    if (!text) continue;
+    if (row.classList.contains('title')) return;
+
+    const [raw, name, score, units, date] =
+      text.match(/^((?:.(?!\(Score|\(Units))+)\s\((?:Score\s(\d))?(?:,\s)?Units ([\d.]+)\).*?(\d+\/\d+)/) || [];
+    if (!raw) continue;
+    transfers.push({ raw, name, score: Number(score), units: Number(units), date });
+  }
+}
+
+function processQuartersRow(row: HTMLElement, quarters: TranscriptQuarter[]): void {
   const text = row.text.trim();
   if (!text) return;
 
   if (row.classList.contains('title')) {
     quarters.push({ name: text, courses: [] });
-    return;
-  }
-
-  // No quarters at UCI Yet; these are transferred credits
-  if (!quarters.length) {
-    if (text.startsWith('Units Transferred')) return;
-    const [raw, name, score, units, date] =
-      text.match(/^((?:.(?!\(Score|\(Units))+)\s\((?:Score\s(\d))?(?:,\s)?Units ([\d.]+)\).*?(\d+\/\d+)/) || [];
-    if (!raw) return;
-    transfers.push({ raw, name, score: Number(score), units: Number(units), date });
     return;
   }
 
@@ -122,12 +125,15 @@ function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterDa
 async function processTranscript(file: Blob) {
   const doc = await htmlFromFile(file);
 
-  const rows = [...doc.querySelectorAll('#chrono-view .lineItems tr')];
+  const quartersRows = [...doc.querySelectorAll('#chrono-view .lineItems tr')];
+  const schoolsRows = [...doc.querySelectorAll('#school-view .lineItems tr')];
   const transfers: TransferUnitDetails[] = [];
   const quarters: TranscriptQuarter[] = [];
 
   // Process the rows in the transcript and create a course lookup by code
-  rows.forEach((r) => processRow(r, transfers, quarters));
+  quartersRows.forEach((r) => processQuartersRow(r, quarters));
+  processSchoolsRows(schoolsRows, transfers);
+
   const courses = await transcriptCourseDetails(quarters);
 
   // Create the planner quarter format (with course details) by using the
