@@ -181,7 +181,7 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years" data-max-year-len={getMaxYearLen(currentPlanData)}>
+      <section className="years" style={{ '--max-year-len': getMaxYearLen(currentPlanData) } as React.CSSProperties}>
         {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
