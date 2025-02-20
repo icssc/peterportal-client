@@ -143,7 +143,7 @@ export default class Pie extends React.Component<PieProps> {
         color: GradeColors.NP,
       },
     ];
-    return data;
+    return data.filter((slice) => slice.value != 0);
   };
 
   gpaToGradeConverter(gpa: string) {
