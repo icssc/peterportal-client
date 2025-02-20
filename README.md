@@ -12,19 +12,19 @@ Features include:
   - Schedule of classes
   - Reviews
 
-![catalogue](https://github.com/user-attachments/assets/ac7b906c-6ec0-4caa-b268-daa30447bcc9)
-![coursepage](https://github.com/user-attachments/assets/f34da84d-1f91-423d-94da-2541853995e6)
+![catalogue](assets/catalogue.png)
+![coursepage](assets/coursepage.png)
 
 - Professor catalog with:
   - Schedule of classes
   - Grade distribution graphs/charts
   - Reviews
 
-![professors](https://github.com/user-attachments/assets/616fd02d-9597-4011-bf9d-57254003a0da)
+![professors](assets/professors.png)
  
 - Peter's Roadmap, a drag-and-drop 4-year course planner
 
-![roadmap](https://github.com/user-attachments/assets/860f8894-6793-48da-b1f1-8ff9ee8faee1)
+![roadmap](assets/roadmap.png)
 
 ## 🔨 Built with
 
