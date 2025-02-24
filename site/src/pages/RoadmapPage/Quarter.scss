@@ -111,7 +111,7 @@ body:has(> #profile-popover) {
     transition: background-color 0s;
   }
 }
-body:has(> .course.sortable-fallback) * {
+body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
   // when a course is dragged, show grabbing cursor no matter what
   cursor: grabbing !important;
 }

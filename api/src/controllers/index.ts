@@ -1,6 +1,7 @@
 import { router } from '../helpers/trpc';
 import coursesRouter from './courses';
 import professorsRouter from './professors';
+import programsRouter from './programs';
 import reportsRouter from './reports';
 import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
@@ -15,6 +16,7 @@ export const appRouter = router({
   external: externalAppRouter,
   courses: coursesRouter,
   professors: professorsRouter,
+  programs: programsRouter,
   roadmaps: roadmapsRouter,
   reports: reportsRouter,
   reviews: reviewsRouter,

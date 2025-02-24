@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import courseRequirementsReducer from './slices/courseRequirementsSlice';
 import coursebagReducer from './slices/coursebagSlice';
 import reviewReducer from './slices/reviewSlice';
 import uiReducer from './slices/uiSlice';
@@ -8,6 +9,7 @@ import searchReducer from './slices/searchSlice';
 
 export const store = configureStore({
   reducer: {
+    courseRequirements: courseRequirementsReducer,
     coursebag: coursebagReducer,
     review: reviewReducer,
     ui: uiReducer,
