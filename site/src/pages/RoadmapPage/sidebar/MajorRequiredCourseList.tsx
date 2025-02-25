@@ -1,10 +1,7 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
-import ProgramRequirementsList from './ProgramRequirementsList';
+import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
-import { Spinner } from 'react-bootstrap';
-import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import {
   addMajor,
   removeMajor,
@@ -17,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import SingleMajorCourseList from './SingleMajorCourseList';
 
 function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpecializationPair[]) {
   if (!plannerId) return;
@@ -57,6 +55,9 @@ const MajorRequiredCourseList: FC = () => {
 
   const dispatch = useAppDispatch();
 
+  const loadingMajorsRef = useRef<Set<string>>(new Set());
+  const planEffectRef = useRef<number | null>(null);
+
   // Initial Load Helpers
   const saveInitialMajorList = useCallback(
     (majors: MajorProgram[]) => {
@@ -87,23 +88,27 @@ const MajorRequiredCourseList: FC = () => {
   );
 
   const fetchSpecializations = useCallback(async (majorId: string) => {
-    if (!specsLoading[majorId]) {
-      setSpecsLoading((prev) => ({ ...prev, [majorId]: true }));
-      try {
-        const specs = await getMajorSpecializations(majorId);
-        specs.forEach((s) => (s.name = normalizeMajorName(s)));
-        specs.sort((a, b) => a.name.localeCompare(b.name));
-        const options = specs.map((s) => ({
-          value: s,
-          label: s.name,
-        }));
-        setSpecOptions((prev) => ({
-          ...prev,
-          [majorId]: options,
-        }));
-      } finally {
-        setSpecsLoading((prev) => ({ ...prev, [majorId]: false }));
-      }
+    if (loadingMajorsRef.current.has(majorId)) {
+      return;
+    }
+    loadingMajorsRef.current.add(majorId);
+    setSpecsLoading((prev) => ({ ...prev, [majorId]: true }));
+
+    try {
+      const specs = await getMajorSpecializations(majorId);
+      specs.forEach((s) => (s.name = normalizeMajorName(s)));
+      specs.sort((a, b) => a.name.localeCompare(b.name));
+      const options = specs.map((s) => ({
+        value: s,
+        label: s.name,
+      }));
+      setSpecOptions((prev) => ({
+        ...prev,
+        [majorId]: options,
+      }));
+    } finally {
+      loadingMajorsRef.current.delete(majorId);
+      setSpecsLoading((prev) => ({ ...prev, [majorId]: false }));
     }
   }, []);
 
@@ -194,25 +199,33 @@ const MajorRequiredCourseList: FC = () => {
 
   useEffect(() => {
     if (!majors.length || !activePlanID || !isLoggedIn) return;
+    if (planEffectRef.current === activePlanID) {
+      return;
+    }
+
     setMajorsLoading(true);
     const loadMajorsAndSpecs = async () => {
       try {
         const pairs = await trpc.programs.getSavedMajorSpecPairs.query(activePlanID);
+
+        planEffectRef.current = activePlanID;
+
         const currentMajorIds = selectedMajors.map((m) => m.major.id);
         currentMajorIds.forEach((id) => dispatch(removeMajor(id)));
+
         for (const pair of pairs) {
           const foundMajor = majors.find((m) => m.id === pair.majorId);
           if (!foundMajor) continue;
           dispatch(addMajor(foundMajor));
+
           if (pair.specializationId && foundMajor.specializations.length) {
-            setSpecsLoading((prev) => ({ ...prev, [foundMajor.id]: true }));
+            await fetchSpecializations(foundMajor.id);
             const specs = await getMajorSpecializations(foundMajor.id);
             const foundSpec = specs.find((s) => s.id === pair.specializationId);
             if (foundSpec) {
               dispatch(setSpecialization({ majorId: foundMajor.id, specialization: foundSpec }));
               await fetchRequirements(foundMajor.id, pair.specializationId);
             }
-            setSpecsLoading((prev) => ({ ...prev, [foundMajor.id]: false }));
           } else if (foundMajor.specializations.length === 0) {
             await fetchRequirements(foundMajor.id, null);
           }
@@ -223,7 +236,7 @@ const MajorRequiredCourseList: FC = () => {
     };
 
     loadMajorsAndSpecs();
-  }, [dispatch, activePlanID, majors, isLoggedIn, fetchRequirements]);
+  }, [dispatch, activePlanID, majors, isLoggedIn, fetchRequirements, fetchSpecializations, selectedMajors]);
 
   useEffect(() => {
     if (selectedMajors.length > 0) {
@@ -243,21 +256,12 @@ const MajorRequiredCourseList: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
-  const loadingIcon = (
-    <div className="requirements-loading">
-      <Spinner animation="border" />
-    </div>
-  );
-
-  const Loading = ({ majorWithSpec }: { majorWithSpec: MajorWithSpecialization }) => {
-    if (resultsLoading[majorWithSpec.major.id]) {
-      return loadingIcon;
-    } else if (majorWithSpec.major.specializations.length > 0 && !majorWithSpec.specialization) {
-      return <div className="mt-3 text-muted">Please select a specialization to view requirements</div>;
-    } else {
-      return <ProgramRequirementsList requirements={majorWithSpec.requirements} />;
-    }
-  };
+  const handleToggleExpand = useCallback((majorId: string) => {
+    setExpandedMajors((prev) => ({
+      ...prev,
+      [majorId]: !prev[majorId],
+    }));
+  }, []);
 
   return (
     <>
@@ -275,58 +279,17 @@ const MajorRequiredCourseList: FC = () => {
       />
 
       {selectedMajors.map((majorWithSpec) => (
-        <div key={majorWithSpec.major.id} className="major-section mt-3">
-          <div
-            role="button"
-            tabIndex={0}
-            className="d-flex align-items-center cursor-pointer"
-            onClick={() =>
-              setExpandedMajors((prev) => ({
-                ...prev,
-                [majorWithSpec.major.id]: !prev[majorWithSpec.major.id],
-              }))
-            }
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setExpandedMajors((prev) => ({
-                  ...prev,
-                  [majorWithSpec.major.id]: !prev[majorWithSpec.major.id],
-                }));
-              }
-            }}
-          >
-            <h4 className="mb-0 flex-grow-1">{majorWithSpec.major.name}</h4>
-            <span className="ms-2">
-              {expandedMajors[majorWithSpec.major.id] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </span>
-          </div>
-          {expandedMajors[majorWithSpec.major.id] && (
-            <>
-              {majorWithSpec.major.specializations.length > 0 && (
-                <Select
-                  options={specOptions[majorWithSpec.major.id] || []}
-                  value={
-                    majorWithSpec.specialization
-                      ? {
-                          value: majorWithSpec.specialization,
-                          label: majorWithSpec.specialization.name,
-                        }
-                      : null
-                  }
-                  isDisabled={specsLoading[majorWithSpec.major.id]}
-                  isLoading={specsLoading[majorWithSpec.major.id]}
-                  onChange={(data) => handleSpecializationChange(majorWithSpec.major.id, data)}
-                  className="ppc-combobox mt-3"
-                  classNamePrefix="ppc-combobox"
-                  placeholder="Select a specialization..."
-                  theme={(t) => comboboxTheme(t, isDark)}
-                />
-              )}
-              <Loading majorWithSpec={majorWithSpec} />
-            </>
-          )}
-        </div>
+        <SingleMajorCourseList
+          key={majorWithSpec.major.id}
+          majorWithSpec={majorWithSpec}
+          isExpanded={!!expandedMajors[majorWithSpec.major.id]}
+          onToggleExpand={handleToggleExpand}
+          specOptions={specOptions[majorWithSpec.major.id] || []}
+          specsLoading={specsLoading[majorWithSpec.major.id]}
+          resultsLoading={resultsLoading[majorWithSpec.major.id]}
+          onSpecializationChange={handleSpecializationChange}
+          fetchRequirements={fetchRequirements}
+        />
       ))}
     </>
   );
