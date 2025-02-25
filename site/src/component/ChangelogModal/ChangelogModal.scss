@@ -31,6 +31,14 @@
     object-fit: contain;
   }
 
+  .modal-side-by-side {
+    display: flex;
+    flex-direction: row;
+    .modal-img {
+      width: 50%;
+    }
+  }
+
   button.close {
     font-size: 32px;
   }

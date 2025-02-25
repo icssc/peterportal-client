@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/hover-course.png';
+import changelogImage1 from '../../asset/degree-reqs-major.png';
+import changelogImage2 from '../../asset/degree-reqs-minor.png';
 
-const DESCRIPTION = 'Along with visual updates, course info is now found when you hover over the course title';
-const LAST_UPDATED = '01/27/2025';
+const DESCRIPTION = 'You can now view completion of major, minor, and GE requirements on your roadmap';
+const LAST_UPDATED = '2/25/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -34,7 +35,10 @@ const ChangelogModal = () => {
       </Modal.Header>
 
       <p className="modal-body">{DESCRIPTION}</p>
-      <img className="modal-img" src={changelogImage} alt="Screenshot or gif of new changes" />
+      <div className="modal-side-by-side">
+        <img className="modal-img" src={changelogImage1} alt="Screenshot or gif of new changes" />
+        <img className="modal-img" src={changelogImage2} alt="Screenshot or gif of new changes" />
+      </div>
     </Modal>
   );
 };
