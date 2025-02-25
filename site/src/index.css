@@ -37,13 +37,13 @@ code {
 }
 
 ::-moz-selection {
-  background: var(--peterportal-uci-gold);
+  background: var(--peterportal-primary-color-2);
   color: black;
   opacity: 1;
 }
 
 ::selection {
-  background: var(--peterportal-uci-gold);
+  background: var(--peterportal-primary-color-2);
   color: black;
   opacity: 1;
 }
