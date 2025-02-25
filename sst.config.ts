@@ -30,6 +30,7 @@ function createLambdaFunction() {
     ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
     NODE_ENV: process.env.NODE_ENV ?? 'staging',
     ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
+    EXTERNAL_USER_READ_SECRET: process.env.EXTERNAL_USER_READ_SECRET!,
   };
 
   return new sst.aws.Function('PeterPortal Backend', {
