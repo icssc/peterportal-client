@@ -36,18 +36,6 @@ code {
   --border-radius: 8px;
 }
 
-::-moz-selection {
-  background: var(--peterportal-uci-gold);
-  color: black;
-  opacity: 1;
-}
-
-::selection {
-  background: var(--peterportal-uci-gold);
-  color: black;
-  opacity: 1;
-}
-
 .hide {
   display: none;
 }
