@@ -24,7 +24,6 @@ import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { PlannerData, PlannerYearData } from '../../types/types';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -141,11 +140,8 @@ const Planner: FC = () => {
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
-  const getMaxYearLen = (years: PlannerData) => {
-    return years.reduce((maxYearLen: number, year: PlannerYearData) => {
-      return year.quarters.length > maxYearLen ? year.quarters.length : maxYearLen;
-    }, 0);
-  };
+  const quarterCounts = currentPlanData.map((years) => years.quarters.length);
+  const maxQuarterCount = Math.max(...quarterCounts);
 
   return (
     <div className="planner">
@@ -181,13 +177,13 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years" style={{ '--max-year-len': getMaxYearLen(currentPlanData) } as React.CSSProperties}>
+      <section className="years" data-max-quarter-count={maxQuarterCount}>
         {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
       </section>
       <AddYearPopup
-        placeholderName={'Year ' + (currentPlanData.length + 1)}
+        placeholderName={`Year ${currentPlanData.length + 1}`}
         placeholderYear={
           currentPlanData.length === 0
             ? new Date().getFullYear()
