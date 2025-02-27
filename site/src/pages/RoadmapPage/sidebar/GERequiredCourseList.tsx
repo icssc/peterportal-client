@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import trpc from '../../../trpc';
-import { Spinner } from 'react-bootstrap';
+import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
@@ -27,13 +27,7 @@ const GERequiredCourseList: FC = () => {
     });
   }, [dispatch, requirements]);
 
-  const loadingIcon = (
-    <div className="requirements-loading">
-      <Spinner animation="border" />
-    </div>
-  );
-
-  return <>{resultsLoading ? loadingIcon : <ProgramRequirementsList requirements={requirements} />}</>;
+  return <>{resultsLoading ? <RequirementsLoadingIcon /> : <ProgramRequirementsList requirements={requirements} />}</>;
 };
 
 export default GERequiredCourseList;
