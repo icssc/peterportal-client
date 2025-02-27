@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
 import changelogImage1 from '../../asset/degree-reqs-major.png';
-import changelogImage2 from '../../asset/degree-reqs-minor.png';
+import changelogImage2 from '../../asset/degree-reqs-ge.png';
 
-const DESCRIPTION = 'You can now view completion of major, minor, and GE requirements on your roadmap';
+// Note: when updating the changelog back to including only one image,
+// remove the `modal-side-by-side` and `modal-img-hide-mobile` classes
+
+const DESCRIPTION = 'You can now view completion of major, minor, and GE requirements on your roadmap!';
 const LAST_UPDATED = '2/25/2025';
 
 const ChangelogModal = () => {
@@ -37,7 +40,7 @@ const ChangelogModal = () => {
       <p className="modal-body">{DESCRIPTION}</p>
       <div className="modal-side-by-side">
         <img className="modal-img" src={changelogImage1} alt="Screenshot or gif of new changes" />
-        <img className="modal-img" src={changelogImage2} alt="Screenshot or gif of new changes" />
+        <img className="modal-img modal-img-hide-mobile" src={changelogImage2} alt="Screenshot or gif of new changes" />
       </div>
     </Modal>
   );
