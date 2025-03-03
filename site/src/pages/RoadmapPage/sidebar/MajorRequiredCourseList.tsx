@@ -3,7 +3,7 @@ import ProgramRequirementsList from './ProgramRequirementsList';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
-import { Spinner } from 'react-bootstrap';
+import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import {
   setMajor,
   setMajorList,
@@ -173,12 +173,6 @@ const MajorRequiredCourseList: FC = () => {
 
   const specSelectOptions = specializations.map((s) => ({ value: s, label: s.name }));
 
-  const loadingIcon = (
-    <div className="requirements-loading">
-      <Spinner animation="border" />
-    </div>
-  );
-
   return (
     <>
       <Select
@@ -220,7 +214,7 @@ const MajorRequiredCourseList: FC = () => {
         />
       )}
       {selectedMajor && (!selectedMajor.specializations.length || selectedSpec) && (
-        <>{resultsLoading ? loadingIcon : <ProgramRequirementsList requirements={requirements} />}</>
+        <>{resultsLoading ? <RequirementsLoadingIcon /> : <ProgramRequirementsList requirements={requirements} />}</>
       )}
     </>
   );

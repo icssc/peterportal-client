@@ -3,7 +3,7 @@ import ProgramRequirementsList from './ProgramRequirementsList';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
-import { Spinner } from 'react-bootstrap';
+import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setMinorRequirements, setMinor, setMinorList } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
@@ -88,12 +88,6 @@ const MinorRequiredCourseList: FC = () => {
     label: `${m.name}`,
   }));
 
-  const loadingIcon = (
-    <div className="requirements-loading">
-      <Spinner animation="border" />
-    </div>
-  );
-
   return (
     <>
       <Select
@@ -112,7 +106,9 @@ const MinorRequiredCourseList: FC = () => {
         placeholder="Select a minor..."
         theme={(t) => comboboxTheme(t, isDark)}
       />
-      {selectedMinor && <>{resultsLoading ? loadingIcon : <ProgramRequirementsList requirements={requirements} />}</>}
+      {selectedMinor && (
+        <>{resultsLoading ? <RequirementsLoadingIcon /> : <ProgramRequirementsList requirements={requirements} />}</>
+      )}
     </>
   );
 };
