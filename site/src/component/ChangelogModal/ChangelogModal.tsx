@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/hover-course.png';
+import changelogImage from '../../asset/degree-reqs-wide.png';
 
-const DESCRIPTION = 'Along with visual updates, course info is now found when you hover over the course title';
-const LAST_UPDATED = '01/27/2025';
+const DESCRIPTION = 'You can now view completion of major, minor, and GE requirements on your roadmap!';
+const LAST_UPDATED = '2/25/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);

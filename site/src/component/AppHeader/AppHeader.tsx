@@ -55,7 +55,7 @@ const AppHeader: FC = () => {
               position="bottom right"
               trigger={
                 <Label as="a" color="yellow" image>
-                  beta<Label.Detail>v1.1</Label.Detail>
+                  beta<Label.Detail>v1.2</Label.Detail>
                 </Label>
               }
               flowing
