@@ -19,10 +19,16 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
+  let content = (
+    <div className="center">
+      <Spinner animation="border" />
+    </div>
+  );
+
   if (typeof course !== 'string') {
     const { department, courseNumber, minUnits, maxUnits } = course;
-    return (
-      <Popover.Content className="course-popover">
+    content = (
+      <>
         <div className="popover-name">
           {department + ' ' + courseNumber + ' '}
           <span className="popover-units">
@@ -37,16 +43,10 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <PrerequisiteText course={course} />
         <CorequisiteText course={course} />
         <IncompletePrerequisiteText requiredCourses={requiredCourses} />
-      </Popover.Content>
+      </>
     );
   }
-  return (
-    <Popover.Content className="course-popover">
-      <div className="center">
-        <Spinner animation="border" />
-      </div>
-    </Popover.Content>
-  );
+  return <Popover.Content className="course-popover">{content}</Popover.Content>;
 };
 
 export default CoursePopover;
