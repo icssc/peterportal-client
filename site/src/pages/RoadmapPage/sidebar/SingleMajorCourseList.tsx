@@ -1,12 +1,12 @@
 import { FC, useCallback, useContext } from 'react';
 import Select from 'react-select';
-import { Spinner } from 'react-bootstrap';
 import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import { MajorWithSpecialization } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
+import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 
 interface SingleMajorCourseListProps {
   majorWithSpec: MajorWithSpecialization;
@@ -41,15 +41,9 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
     onToggleExpand(majorWithSpec.major.id);
   };
 
-  const loadingIcon = (
-    <div className="requirements-loading">
-      <Spinner animation="border" />
-    </div>
-  );
-
   const renderRequirements = () => {
     if (resultsLoading) {
-      return loadingIcon;
+      return <RequirementsLoadingIcon />;
     } else if (majorWithSpec.major.specializations.length > 0 && !majorWithSpec.specialization) {
       return <div className="mt-3 text-muted">Please select a specialization to view requirements</div>;
     } else {
