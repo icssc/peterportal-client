@@ -31,28 +31,6 @@
     object-fit: contain;
   }
 
-  .modal-side-by-side {
-    display: flex;
-    flex-direction: row;
-    padding: 1rem;
-    gap: 1rem;
-    .modal-img {
-      flex: 1;
-      min-width: 0;
-      margin: 0px;
-    }
-  }
-
-  .modal-img-hide-mobile {
-    display: auto;
-  }
-
-  @media only screen and (max-width: globals.$mobile-cutoff) {
-    .modal-img-hide-mobile {
-      display: none;
-    }
-  }
-
   button.close {
     font-size: 32px;
   }
