@@ -11,6 +11,7 @@ import {
   PrerequisiteText,
 } from '../CourseInfo/CourseInfo';
 import { Spinner } from 'react-bootstrap';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
@@ -43,6 +44,14 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <PrerequisiteText course={course} />
         <CorequisiteText course={course} />
         <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+        {course.terms && course.terms.length > 0 && (
+          <div className="quarter-offerings">
+            <b>Quarter Offerings:</b>
+            <div className="quarter-indicator-wrapper">
+              <CourseQuarterIndicator terms={course.terms} size="sm" />
+            </div>
+          </div>
+        )}
       </>
     );
   }
