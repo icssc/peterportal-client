@@ -1,3 +1,4 @@
+import './SingleMajorCourseList.scss';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
@@ -29,16 +30,12 @@ function getCoursesForSpecialization(programId?: string | null) {
 
 interface SingleMajorCourseListProps {
   majorWithSpec: MajorWithSpecialization;
-  isExpanded: boolean;
-  onToggleExpand: (majorId: string) => void;
   onSpecializationChange: (majorId: string, spec: MajorSpecialization | null) => void;
   selectedSpecId?: string;
 }
 
 const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   majorWithSpec,
-  isExpanded,
-  onToggleExpand,
   onSpecializationChange,
   selectedSpecId,
 }) => {
@@ -46,16 +43,15 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   const [specsLoading, setSpecsLoading] = useState(false);
   const [specOptions, setSpecOptions] = useState<{ value: MajorSpecialization; label: string }[]>([]);
   const [resultsLoading, setResultsLoading] = useState(false);
+  const [open, setOpen] = useState(true);
+
   const { major, specialization } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
 
   const dispatch = useAppDispatch();
 
-  // DATA LOADERS
-
-  const updateAvailableSpecs = useCallback(async () => {
+  const loadSpecs = useCallback(async () => {
     setSpecsLoading(true);
-
     try {
       const specs = await getMajorSpecializations(major.id);
       specs.forEach((s) => (s.name = normalizeMajorName(s)));
@@ -83,7 +79,6 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   );
 
   const loadSpecRequirements = useCallback(async () => {
-    console.log(hasSpecs, major.id);
     if (!hasSpecs) return await fetchRequirements(major.id, null);
     if (!selectedSpecId && !specialization?.id) return;
     if (selectedSpecId === specialization?.id) return;
@@ -100,16 +95,15 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   useEffect(() => {
     if (specOptions.length) return;
     if (hasSpecs && !specOptions.length) {
-      updateAvailableSpecs().then(loadSpecRequirements);
+      loadSpecs().then(loadSpecRequirements);
     } else {
       loadSpecRequirements();
     }
-  }, [hasSpecs, loadSpecRequirements, specOptions.length, updateAvailableSpecs]);
+  }, [hasSpecs, loadSpecRequirements, specOptions.length, loadSpecs]);
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
       const updatedSpec = data?.value || null;
-
       if (updatedSpec?.id === selectedSpecId) return;
 
       setResultsLoading(true);
@@ -121,48 +115,34 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
     [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
   );
 
-  const handleToggleExpand = () => {
-    onToggleExpand(major.id);
-  };
+  const toggleExpand = () => setOpen(!open);
 
   const renderRequirements = () => {
     if (resultsLoading) return <RequirementsLoadingIcon />;
     if (hasSpecs && !majorWithSpec.specialization) {
-      return <div className="mt-3 text-muted">Please select a specialization to view requirements</div>;
+      return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
     }
     return <ProgramRequirementsList requirements={majorWithSpec.requirements} />;
   };
 
   return (
-    <div className="major-section mt-3">
-      <div
-        role="button"
-        tabIndex={0}
-        className="d-flex align-items-center cursor-pointer"
-        onClick={handleToggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleToggleExpand();
-          }
-        }}
-      >
-        <h4 className="mb-0 flex-grow-1">{major.name}</h4>
-        <span className="ms-2">{isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}</span>
-      </div>
-      {isExpanded && (
+    <div className="major-section">
+      <button className="header-tab" onClick={toggleExpand}>
+        {open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+        <h4 className="major-name">{major.name}</h4>
+      </button>
+      {open && (
         <>
           {hasSpecs && (
             <Select
               options={specOptions}
-              // value={specOptions.find(s => s.value.id === majorWithSpec.specialization?.id) ?? null}
               value={
                 specOptions.find((s) => s.value.id === (majorWithSpec.specialization?.id ?? selectedSpecId)) ?? null
               }
               isDisabled={specsLoading}
               isLoading={specsLoading}
               onChange={handleSpecializationChange}
-              className="ppc-combobox mt-3"
+              className="ppc-combobox"
               classNamePrefix="ppc-combobox"
               placeholder="Select a specialization..."
               theme={(t) => comboboxTheme(t, isDark)}

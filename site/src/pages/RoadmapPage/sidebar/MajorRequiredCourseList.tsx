@@ -19,12 +19,16 @@ function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpe
   trpc.programs.saveSelectedMajorSpecPair.mutate({ plannerId, pairs });
 }
 
+interface MajorOption {
+  value: MajorProgram;
+  label: string;
+}
+
 const MajorRequiredCourseList: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
-  const [expandedMajors, setExpandedMajors] = useState<{ [majorId: string]: boolean }>({});
   const [defaultPairs, setDefaultPairs] = useState<MajorSpecializationPair[]>([]);
 
   const plans = useAppSelector((state) => state.roadmap.plans);
@@ -66,32 +70,15 @@ const MajorRequiredCourseList: FC = () => {
   );
 
   const handleMajorChange = useCallback(
-    (
-      selections:
-        | readonly {
-            value: MajorProgram;
-            label: string;
-          }[]
-        | null,
-    ) => {
+    (selections: readonly MajorOption[] | null) => {
       const newMajors = selections?.map((s) => s.value) || [];
       const currentMajorIds = selectedMajors.map((m) => m.major.id);
 
       currentMajorIds.forEach((id) => {
-        if (!newMajors.find((m) => m.id === id)) {
-          dispatch(removeMajor(id));
-        }
+        if (!newMajors.find((m) => m.id === id)) dispatch(removeMajor(id));
       });
-
       newMajors.forEach((major) => {
-        if (!currentMajorIds.includes(major.id)) {
-          dispatch(addMajor(major));
-          // fetchRequirements(major.id);
-          setExpandedMajors((prev) => ({
-            ...prev,
-            [major.id]: true,
-          }));
-        }
+        if (!currentMajorIds.includes(major.id)) dispatch(addMajor(major));
       });
 
       const updatedMajors = newMajors.map((major) => ({
@@ -122,12 +109,11 @@ const MajorRequiredCourseList: FC = () => {
     }
 
     setMajorsLoading(true);
-    const loadMajorsAndSpecs = async () => {
-      try {
-        const pairs = await trpc.programs.getSavedMajorSpecPairs.query(activePlanID);
 
+    trpc.programs.getSavedMajorSpecPairs
+      .query(activePlanID)
+      .then((pairs) => {
         planEffectRef.current = activePlanID;
-
         const currentMajorIds = selectedMajors.map((m) => m.major.id);
         currentMajorIds.forEach((id) => dispatch(removeMajor(id)));
 
@@ -137,38 +123,16 @@ const MajorRequiredCourseList: FC = () => {
           dispatch(addMajor(foundMajor));
         }
         setDefaultPairs(pairs);
-      } finally {
+      })
+      .finally(() => {
         setMajorsLoading(false);
-      }
-    };
-
-    loadMajorsAndSpecs();
+      });
   }, [dispatch, activePlanID, majors, isLoggedIn, selectedMajors]);
 
-  useEffect(() => {
-    if (selectedMajors.length > 0) {
-      const expandedState = selectedMajors.reduce(
-        (acc, major) => ({
-          ...acc,
-          [major.major.id]: true,
-        }),
-        {},
-      );
-      setExpandedMajors(expandedState);
-    }
-  }, [selectedMajors]);
-
-  const majorSelectOptions = majors.map((m) => ({
+  const majorSelectOptions: MajorOption[] = majors.map((m) => ({
     value: m,
     label: `${m.name}, ${m.type}`,
   }));
-
-  const handleToggleExpand = useCallback((majorId: string) => {
-    setExpandedMajors((prev) => ({
-      ...prev,
-      [majorId]: !prev[majorId],
-    }));
-  }, []);
 
   return (
     <>
@@ -189,8 +153,6 @@ const MajorRequiredCourseList: FC = () => {
           key={data.major.id}
           majorWithSpec={data}
           selectedSpecId={defaultPairs.find((p) => p.majorId === data.major.id)?.specializationId}
-          isExpanded={!!expandedMajors[data.major.id]}
-          onToggleExpand={handleToggleExpand}
           onSpecializationChange={handleSpecializationChange}
         />
       ))}
