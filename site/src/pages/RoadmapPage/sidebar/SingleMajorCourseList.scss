@@ -1,0 +1,29 @@
+.major-section {
+  margin-bottom: 16px;
+
+  button.header-tab {
+    background: none;
+    border: none;
+    font: inherit;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 6px;
+    overflow: visible;
+  }
+  .header-tab + .program-requirements {
+    margin-top: 8px;
+  }
+
+  h4 {
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  > .ppc-combobox {
+    margin-top: 8px;
+  }
+  .program-requirements {
+    gap: 12px;
+  }
+}
