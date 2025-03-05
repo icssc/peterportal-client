@@ -6,8 +6,6 @@ import {
   addMajor,
   removeMajor,
   setMajorList,
-  setRequirements,
-  setSpecialization,
   MajorWithSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -21,41 +19,21 @@ function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpe
   trpc.programs.saveSelectedMajorSpecPair.mutate({ plannerId, pairs });
 }
 
-function getMajorSpecializations(majorId: string) {
-  return trpc.programs.getSpecializations.query({ major: majorId });
-}
-
-function getCoursesForMajor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId });
-}
-
-function getCoursesForSpecialization(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
-}
-
 const MajorRequiredCourseList: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
   const [expandedMajors, setExpandedMajors] = useState<{ [majorId: string]: boolean }>({});
+  const [defaultPairs, setDefaultPairs] = useState<MajorSpecializationPair[]>([]);
 
   const plans = useAppSelector((state) => state.roadmap.plans);
   const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const activePlanID = plans[planIndex].id;
   const [majorsLoading, setMajorsLoading] = useState(false);
-  const [specsLoading, setSpecsLoading] = useState<{ [majorId: string]: boolean }>({});
-  const [resultsLoading, setResultsLoading] = useState<{ [majorId: string]: boolean }>({});
-  const [specOptions, setSpecOptions] = useState<{
-    [majorId: string]: {
-      value: MajorSpecialization;
-      label: string;
-    }[];
-  }>({});
 
   const dispatch = useAppDispatch();
 
-  const loadingMajorsRef = useRef<Set<string>>(new Set());
   const planEffectRef = useRef<number | null>(null);
 
   // Initial Load Helpers
@@ -87,57 +65,6 @@ const MajorRequiredCourseList: FC = () => {
     [activePlanID, isLoggedIn],
   );
 
-  const fetchSpecializations = useCallback(async (majorId: string) => {
-    if (loadingMajorsRef.current.has(majorId)) {
-      return;
-    }
-    loadingMajorsRef.current.add(majorId);
-    setSpecsLoading((prev) => ({ ...prev, [majorId]: true }));
-
-    try {
-      const specs = await getMajorSpecializations(majorId);
-      specs.forEach((s) => (s.name = normalizeMajorName(s)));
-      specs.sort((a, b) => a.name.localeCompare(b.name));
-      const options = specs.map((s) => ({
-        value: s,
-        label: s.name,
-      }));
-      setSpecOptions((prev) => ({
-        ...prev,
-        [majorId]: options,
-      }));
-    } finally {
-      loadingMajorsRef.current.delete(majorId);
-      setSpecsLoading((prev) => ({ ...prev, [majorId]: false }));
-    }
-  }, []);
-
-  const fetchRequirements = useCallback(
-    async (majorId: string, specializationId?: string | null) => {
-      setResultsLoading((prev) => ({ ...prev, [majorId]: true }));
-
-      try {
-        const majorReqs = await getCoursesForMajor(majorId);
-        let allReqs = majorReqs;
-
-        if (specializationId) {
-          const specReqs = await getCoursesForSpecialization(specializationId);
-          allReqs = majorReqs.concat(specReqs);
-        }
-
-        dispatch(setRequirements({ majorId, requirements: allReqs }));
-        if (majorId) {
-          await fetchSpecializations(majorId);
-        } else {
-          setSpecOptions((prev) => ({ ...prev, [majorId]: [] }));
-        }
-      } finally {
-        setResultsLoading((prev) => ({ ...prev, [majorId]: false }));
-      }
-    },
-    [dispatch, fetchSpecializations],
-  );
-
   const handleMajorChange = useCallback(
     (
       selections:
@@ -159,7 +86,7 @@ const MajorRequiredCourseList: FC = () => {
       newMajors.forEach((major) => {
         if (!currentMajorIds.includes(major.id)) {
           dispatch(addMajor(major));
-          fetchRequirements(major.id);
+          // fetchRequirements(major.id);
           setExpandedMajors((prev) => ({
             ...prev,
             [major.id]: true,
@@ -174,27 +101,18 @@ const MajorRequiredCourseList: FC = () => {
       }));
       saveMajors(updatedMajors);
     },
-    [dispatch, fetchRequirements, saveMajors, selectedMajors],
+    [dispatch, saveMajors, selectedMajors],
   );
 
   const handleSpecializationChange = useCallback(
-    async (majorId: string, data: { value: MajorSpecialization; label: string } | null) => {
-      const updatedSpec = data?.value || null;
-      setResultsLoading((prev) => ({ ...prev, [majorId]: true }));
-      dispatch(setRequirements({ majorId, requirements: [] }));
-      dispatch(
-        setSpecialization({
-          majorId,
-          specialization: updatedSpec,
-        }),
-      );
-      await fetchRequirements(majorId, updatedSpec?.id || null);
-      const updatedMajors = selectedMajors.map((m) =>
-        m.major.id === majorId ? { ...m, specialization: updatedSpec } : m,
+    async (majorId: string, specialization: MajorSpecialization | null) => {
+      const updatedMajors = selectedMajors.map((m) => (m.major.id === majorId ? { ...m, specialization } : m));
+      setDefaultPairs(
+        defaultPairs.map((p) => (p.majorId === majorId ? { ...p, specializationId: specialization?.id } : p)),
       );
       saveMajors(updatedMajors);
     },
-    [dispatch, fetchRequirements, saveMajors, selectedMajors],
+    [defaultPairs, saveMajors, selectedMajors],
   );
 
   useEffect(() => {
@@ -217,26 +135,15 @@ const MajorRequiredCourseList: FC = () => {
           const foundMajor = majors.find((m) => m.id === pair.majorId);
           if (!foundMajor) continue;
           dispatch(addMajor(foundMajor));
-
-          if (pair.specializationId && foundMajor.specializations.length) {
-            await fetchSpecializations(foundMajor.id);
-            const specs = await getMajorSpecializations(foundMajor.id);
-            const foundSpec = specs.find((s) => s.id === pair.specializationId);
-            if (foundSpec) {
-              dispatch(setSpecialization({ majorId: foundMajor.id, specialization: foundSpec }));
-              await fetchRequirements(foundMajor.id, pair.specializationId);
-            }
-          } else if (foundMajor.specializations.length === 0) {
-            await fetchRequirements(foundMajor.id, null);
-          }
         }
+        setDefaultPairs(pairs);
       } finally {
         setMajorsLoading(false);
       }
     };
 
     loadMajorsAndSpecs();
-  }, [dispatch, activePlanID, majors, isLoggedIn, fetchRequirements, fetchSpecializations, selectedMajors]);
+  }, [dispatch, activePlanID, majors, isLoggedIn, selectedMajors]);
 
   useEffect(() => {
     if (selectedMajors.length > 0) {
@@ -277,18 +184,14 @@ const MajorRequiredCourseList: FC = () => {
         placeholder="Select majors..."
         theme={(t) => comboboxTheme(t, isDark)}
       />
-
-      {selectedMajors.map((majorWithSpec) => (
+      {selectedMajors.map((data) => (
         <SingleMajorCourseList
-          key={majorWithSpec.major.id}
-          majorWithSpec={majorWithSpec}
-          isExpanded={!!expandedMajors[majorWithSpec.major.id]}
+          key={data.major.id}
+          majorWithSpec={data}
+          selectedSpecId={defaultPairs.find((p) => p.majorId === data.major.id)?.specializationId}
+          isExpanded={!!expandedMajors[data.major.id]}
           onToggleExpand={handleToggleExpand}
-          specOptions={specOptions[majorWithSpec.major.id] || []}
-          specsLoading={specsLoading[majorWithSpec.major.id]}
-          resultsLoading={resultsLoading[majorWithSpec.major.id]}
           onSpecializationChange={handleSpecializationChange}
-          fetchRequirements={fetchRequirements}
         />
       ))}
     </>
