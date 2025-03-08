@@ -67,6 +67,14 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const setSystemTheme = () => setThemeState('system');
+    const matcher = window.matchMedia('(prefers-color-scheme: dark)');
+
+    if (usingSystemTheme) matcher.addEventListener('change', setSystemTheme);
+    return () => matcher.removeEventListener('change', setSystemTheme);
+  }, [setThemeState, usingSystemTheme]);
+
   /**
    * Sets the theme state and saves the users theme preference.
    * Saves to account if logged in, local storage if not
