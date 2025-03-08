@@ -104,9 +104,8 @@ const MajorRequiredCourseList: FC = () => {
 
   useEffect(() => {
     if (!majors.length || !activePlanID || !isLoggedIn) return;
-    if (planEffectRef.current === activePlanID) {
-      return;
-    }
+    if (planEffectRef.current === activePlanID) return;
+    if (selectedMajors.length) return;
 
     setMajorsLoading(true);
 
