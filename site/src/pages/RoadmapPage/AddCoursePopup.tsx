@@ -6,7 +6,6 @@ import './AddCoursePopup.scss';
 import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import { pluralize } from '../../helpers/util';
 import {
   CourseBookmarkButton,
@@ -14,7 +13,7 @@ import {
   IncompletePrerequisiteText,
   PrerequisiteText,
 } from '../../component/CourseInfo/CourseInfo';
-
+import CourseQuarterIndicatorPopoverSection from './CourseQuarterIndicatorPopoverSection';
 interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
@@ -80,10 +79,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           ) : (
             <PrerequisiteText course={activeCourse} />
           )}
-          <p className="quarter-offerings-section">
-            <b>Previous Offerings:</b>
-            <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
-          </p>
+          <CourseQuarterIndicatorPopoverSection course={activeCourse} />
         </Modal.Body>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
