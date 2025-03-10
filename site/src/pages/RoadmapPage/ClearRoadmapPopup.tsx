@@ -2,7 +2,7 @@ import { clearPlanner, setShowClearRoadmapPopup } from '../../store/slices/roadm
 import { Button, Modal } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-const ClearRoadmapModal = () => {
+const ClearRoadmapPopup = () => {
   const dispatch = useAppDispatch();
   const show = useAppSelector((state) => state.roadmap.showClearRoadmapPopup);
   const handleClose = () => dispatch(setShowClearRoadmapPopup(false));
@@ -32,4 +32,4 @@ const ClearRoadmapModal = () => {
     </Modal>
   );
 };
-export default ClearRoadmapModal;
+export default ClearRoadmapPopup;

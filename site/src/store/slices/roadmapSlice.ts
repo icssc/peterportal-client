@@ -73,7 +73,7 @@ interface RoadmapSliceState {
   showTransfer: boolean;
   // Store transfer course data
   transfers: TransferData[];
-  //Whether or not to show the clear roadmap confirmation
+  // Whether or not to show the clear roadmap confirmation
   showClearRoadmapPopup: boolean;
 }
 
