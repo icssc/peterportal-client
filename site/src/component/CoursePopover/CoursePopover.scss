@@ -69,3 +69,18 @@
     margin: 8px auto;
   }
 }
+
+.quarter-offerings {
+  margin-top: 10px;
+
+  .quarter-indicator-wrapper {
+    display: flex;
+    margin-left: 0;
+    margin-top: 4px;
+    text-align: left;
+    align-items: flex-start;
+    .quarter-indicator-container {
+      margin-left: 0;
+    }
+  }
+}
