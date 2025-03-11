@@ -36,7 +36,7 @@ function createLambdaFunction() {
   return new sst.aws.Function('PeterPortal Backend', {
     handler: 'api/src/app.handler',
     memory: '256 MB',
-    runtime: 'nodejs20.x',
+    runtime: 'nodejs22.x',
     logging: {
       retention: $app.stage === 'prod' ? '2 years' : '1 week',
     },
