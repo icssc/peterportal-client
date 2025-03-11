@@ -19,20 +19,31 @@ code {
 }
 
 :root {
+  /*
+  Ideas
+    - simplify/normalize color names
+      - get rid of --zot-blue and --aldrich-blue
+      - remove custom names ("ring-road" in ring-road-white, "petr" in petr-gray, etc.)
+      - remove "peterportal" from colors' name
+    - move variables from globals.scss to this file (index.css)
+      - already done for blue and green colors
+      - not yet done for mobile-cutoff
+  */
   --peterportal-primary-color-1: #2484c6;
   --peterportal-primary-color-2: #74d1f6;
   --peterportal-secondary-green: #81c284;
   --peterportal-secondary-yellow: #f5d77f;
   --peterportal-secondary-orange: #ecad6d;
   --peterportal-secondary-red: #e7966d;
-  --peterportal-light-gray: #eeeeee;
+  --peterportal-light-gray: #eeeeee; /* Not being used anywhere */
   --peterportal-mid-gray: #8d8d8d;
-  --peterportal-uci-gold: #ffd200;
+  --peterportal-uci-gold: #ffd200; /* Not technically UCI gold */
   --peterportal-gray-blue: #f5f6fc;
   --zot-blue: var(--peterportal-primary-color-1);
   --aldrich-blue: var(--peterportal-primary-color-2);
-  --ring-road-white: #ffffff;
+  --ring-road-white: #ffffff; /* regular white */
   --petr-gray: #808080;
+  --green: green; /* regular green */
   --border-radius: 8px;
 }
 
