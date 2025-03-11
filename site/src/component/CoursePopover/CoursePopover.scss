@@ -68,19 +68,19 @@
     justify-content: center;
     margin: 8px auto;
   }
-}
 
-.quarter-offerings {
-  margin-top: 10px;
-
-  .quarter-indicator-wrapper {
+  .quarter-offerings-section {
     display: flex;
+    gap: 4px;
+  }
+
+  .course-info-warning + .quarter-offerings-section {
+    margin-top: 10px;
+  }
+
+  .quarter-indicator-container {
     margin-left: 0;
-    margin-top: 4px;
-    text-align: left;
-    align-items: flex-start;
-    .quarter-indicator-container {
-      margin-left: 0;
-    }
+    float: none;
+    align-items: center;
   }
 }
