@@ -9,9 +9,9 @@ import {
   CourseDescription,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
 import { Spinner } from 'react-bootstrap';
-import CourseQuarterIndicatorPopoverSection from '../../pages/RoadmapPage/CourseQuarterIndicatorPopoverSection';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
@@ -44,7 +44,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <PrerequisiteText course={course} />
         <CorequisiteText course={course} />
         <IncompletePrerequisiteText requiredCourses={requiredCourses} />
-        <CourseQuarterIndicatorPopoverSection course={course} />
+        <PreviousOfferingsRow course={course} />
       </>
     );
   }

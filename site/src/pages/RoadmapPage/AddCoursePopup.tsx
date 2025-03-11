@@ -12,8 +12,8 @@ import {
   CourseDescription,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  PreviousOfferingsRow,
 } from '../../component/CourseInfo/CourseInfo';
-import CourseQuarterIndicatorPopoverSection from './CourseQuarterIndicatorPopoverSection';
 interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
@@ -79,7 +79,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           ) : (
             <PrerequisiteText course={activeCourse} />
           )}
-          <CourseQuarterIndicatorPopoverSection course={activeCourse} />
+          <PreviousOfferingsRow course={activeCourse} />
         </Modal.Body>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
