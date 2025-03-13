@@ -79,7 +79,10 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   );
 
   const loadSpecRequirements = useCallback(async () => {
-    if (!hasSpecs) return await fetchRequirements(major.id, null);
+    if (!hasSpecs) {
+      if (majorWithSpec.requirements.length > 0) return;
+      else return await fetchRequirements(major.id, null);
+    }
     if (!selectedSpecId && !specialization?.id) return;
     if (selectedSpecId === specialization?.id) return;
 
