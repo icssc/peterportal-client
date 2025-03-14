@@ -3,7 +3,13 @@
 */
 
 import { publicProcedure, router } from '../helpers/trpc';
-import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
+import {
+  MajorProgram,
+  MajorSpecialization,
+  MajorSpecializationPair,
+  MinorProgram,
+  ProgramRequirement,
+} from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
@@ -65,23 +71,32 @@ const programsRouter = router({
         .then((res) => res.data.requirements as ProgramRequirement[]);
       return response;
     }),
-  getSavedMajorSpecPairs: publicProcedure.input(z.number()).query(async ({ input: plannerId, ctx }) => {
-    const userId = ctx.session.userId;
-    if (!userId) return [];
+  getSavedMajorSpecPairs: publicProcedure
+    .input(z.number())
+    .query(async ({ input: plannerId, ctx }): Promise<MajorSpecializationPair[]> => {
+      const userId = ctx.session.userId;
+      if (!userId) return [];
 
-    return await db
-      .select({ majorId: plannerMajor.majorId, specializationId: plannerMajor.specializationId })
-      .from(plannerMajor)
-      .innerJoin(planner, eq(planner.id, plannerMajor.plannerId))
-      .where(and(eq(plannerMajor.plannerId, plannerId), eq(planner.userId, userId)));
-  }),
+      const res = await db
+        .select({ majorId: plannerMajor.majorId, specializationId: plannerMajor.specializationId })
+        .from(plannerMajor)
+        .innerJoin(planner, eq(planner.id, plannerMajor.plannerId))
+        .where(and(eq(plannerMajor.plannerId, plannerId), eq(planner.userId, userId)));
+
+      // undefined instead of null for return type consistency
+      (res as Partial<(typeof res)[0]>[]).forEach((r) => {
+        if (!r.specializationId) delete r.specializationId;
+      });
+
+      return res as MajorSpecializationPair[];
+    }),
   /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
   saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input }) => {
     const { plannerId, pairs } = input;
     await db.delete(plannerMajor).where(eq(plannerMajor.plannerId, plannerId));
 
     const rowsToInsert = pairs.map((p) => ({ plannerId, majorId: p.majorId, specializationId: p.specializationId }));
-    await db.insert(plannerMajor).values(rowsToInsert);
+    if (rowsToInsert.length) await db.insert(plannerMajor).values(rowsToInsert);
   }),
   /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
 });
