@@ -1,5 +1,7 @@
 .major-section {
-  margin-bottom: 16px;
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
 
   button.header-tab {
     background: none;
@@ -16,8 +18,11 @@
   }
 
   h4 {
+    position: relative;
+    top: -1px;
     font-weight: 500;
     font-size: 20px;
+    text-align: left;
   }
 
   > .ppc-combobox {
