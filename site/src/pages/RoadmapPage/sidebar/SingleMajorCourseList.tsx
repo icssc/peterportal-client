@@ -92,7 +92,15 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
       await fetchRequirements(major.id, specialization?.id);
     }
-  }, [dispatch, fetchRequirements, hasSpecs, major.id, selectedSpecId, specialization]);
+  }, [
+    dispatch,
+    fetchRequirements,
+    hasSpecs,
+    major.id,
+    majorWithSpec.requirements.length,
+    selectedSpecId,
+    specialization?.id,
+  ]);
 
   // Initial Loader
   useEffect(() => {
