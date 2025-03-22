@@ -9,6 +9,7 @@ import {
   CourseDescription,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
 import { Spinner } from 'react-bootstrap';
 
@@ -43,6 +44,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
         <PrerequisiteText course={course} />
         <CorequisiteText course={course} />
         <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+        <PreviousOfferingsRow course={course} />
       </>
     );
   }

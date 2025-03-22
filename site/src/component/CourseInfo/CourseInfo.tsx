@@ -4,6 +4,7 @@ import { useCoursebag } from '../../hooks/coursebag';
 import { Bookmark, BookmarkFill, ExclamationTriangle } from 'react-bootstrap-icons';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 interface CourseProp {
   course: CourseGQLData;
@@ -62,5 +63,18 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
         {pluralize(requiredCourses.length, 'these prerequisites', 'this prerequisite')}.
       </div>
     </div>
+  );
+};
+
+export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
+  return (
+    <>
+      {course.terms && course.terms.length > 0 && (
+        <p className="quarter-offerings-section">
+          <b>Previous Offerings:</b>
+          <CourseQuarterIndicator terms={course.terms} size="sm" />
+        </p>
+      )}
+    </>
   );
 };
