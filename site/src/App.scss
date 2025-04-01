@@ -122,7 +122,6 @@ button {
 
 .ppc-modal {
   font-size: 18px;
-  margin: auto;
 
   .modal-header {
     align-items: center;
@@ -136,6 +135,7 @@ button {
   }
   .modal-dialog {
     max-width: 400px;
+    margin: auto;
   }
   .modal-footer {
     border-top: none;
