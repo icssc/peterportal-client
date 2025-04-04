@@ -129,13 +129,10 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
 
   const complete = checkCompletion(takenCourseIDs, data).done;
 
-  const open = useAppSelector((state) => {
-    const fullKey = state.courseRequirements.selectedTab + '-' + storeKey;
-    return state.courseRequirements.expandedGroups[fullKey] ?? false;
-  });
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
-    dispatch(setGroupExpanded({ storeKeySuffix: storeKey, expanded: isOpen }));
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
 
   let label: string | number;
@@ -191,13 +188,10 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
 
   const complete = checkCompletion(takenCourseIDs, data).done;
 
-  const open = useAppSelector((state) => {
-    const fullKey = state.courseRequirements.selectedTab + '-' + storeKey;
-    return state.courseRequirements.expandedGroups[fullKey] ?? false;
-  });
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
-    dispatch(setGroupExpanded({ storeKeySuffix: storeKey, expanded: isOpen }));
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
@@ -252,9 +246,10 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
 
 interface RequireCourseListProps {
   requirements: ProgramRequirement[];
+  storeKeyPrefix: string;
 }
 
-const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) => {
+const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
@@ -277,7 +272,12 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) =
     <div className="program-requirements">
       {/* key is ok because we don't reorder these */}
       {collapsedRequirements.map((r, i) => (
-        <ProgramRequirementDisplay requirement={r} key={i} storeKey={'' + i} takenCourseIDs={takenCourseSet} />
+        <ProgramRequirementDisplay
+          requirement={r}
+          key={i}
+          storeKey={storeKeyPrefix + '-' + i}
+          takenCourseIDs={takenCourseSet}
+        />
       ))}
     </div>
   );

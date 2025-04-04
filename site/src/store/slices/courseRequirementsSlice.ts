@@ -70,12 +70,11 @@ const courseRequirementsSlice = createSlice({
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
     },
-    setGroupExpanded: (state, action: PayloadAction<{ storeKeySuffix: string; expanded: boolean }>) => {
-      const fullKey = state.selectedTab + '-' + action.payload.storeKeySuffix;
+    setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
       if (action.payload.expanded) {
-        state.expandedGroups[fullKey] = true;
+        state.expandedGroups[action.payload.storeKey] = true;
       } else {
-        delete state.expandedGroups[fullKey];
+        delete state.expandedGroups[action.payload.storeKey];
       }
     },
   },
