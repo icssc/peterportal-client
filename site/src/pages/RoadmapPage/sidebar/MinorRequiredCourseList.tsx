@@ -107,7 +107,13 @@ const MinorRequiredCourseList: FC = () => {
         theme={(t) => comboboxTheme(t, isDark)}
       />
       {selectedMinor && (
-        <>{resultsLoading ? <RequirementsLoadingIcon /> : <ProgramRequirementsList requirements={requirements} />}</>
+        <>
+          {resultsLoading ? (
+            <RequirementsLoadingIcon />
+          ) : (
+            <ProgramRequirementsList requirements={requirements} storeKeyPrefix={`minor-${selectedMinor.id}`} />
+          )}
+        </>
       )}
     </>
   );

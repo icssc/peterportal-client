@@ -133,7 +133,12 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
     if (hasSpecs && !majorWithSpec.specialization) {
       return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
     }
-    return <ProgramRequirementsList requirements={majorWithSpec.requirements} />;
+    return (
+      <ProgramRequirementsList
+        requirements={majorWithSpec.requirements}
+        storeKeyPrefix={`major-${majorWithSpec.major.id}`}
+      />
+    );
   };
 
   return (
