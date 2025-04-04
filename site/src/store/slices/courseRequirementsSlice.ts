@@ -9,6 +9,8 @@ export interface MajorWithSpecialization {
   requirements: ProgramRequirement[];
 }
 
+type ExpandedGroupsList = { [key: string]: boolean | undefined };
+
 const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
   initialState: {
@@ -20,6 +22,7 @@ const courseRequirementsSlice = createSlice({
     minorList: [] as MinorProgram[],
     minorRequirements: [] as ProgramRequirement[],
     geRequirements: [] as ProgramRequirement[],
+    expandedGroups: {} as ExpandedGroupsList,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -67,6 +70,14 @@ const courseRequirementsSlice = createSlice({
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
     },
+    setGroupExpanded: (state, action: PayloadAction<{ storeKeySuffix: string; expanded: boolean }>) => {
+      const fullKey = state.selectedTab + '-' + action.payload.storeKeySuffix;
+      if (action.payload.expanded) {
+        state.expandedGroups[fullKey] = true;
+      } else {
+        delete state.expandedGroups[fullKey];
+      }
+    },
   },
 });
 
@@ -81,6 +92,7 @@ export const {
   setMinor,
   setMinorRequirements,
   setGERequirements,
+  setGroupExpanded,
 } = courseRequirementsSlice.actions;
 
 export default courseRequirementsSlice.reducer;
