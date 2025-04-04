@@ -136,6 +136,7 @@ button {
   .modal-dialog {
     max-width: 400px;
     margin: auto;
+    width: calc(100% - 32px);
   }
   .modal-footer {
     border-top: none;
