@@ -12,6 +12,7 @@ import {
   selectAllPlans,
   setAllPlans,
   defaultPlan,
+  RoadmapPlan,
 } from '../../store/slices/roadmapSlice';
 import { useFirstRender } from '../../hooks/firstRenderer';
 import { SavedRoadmap } from '@peterportal/types';
@@ -51,13 +52,12 @@ const Planner: FC = () => {
     setShowSyncModal(false);
   };
 
-  const saveRoadmap = () => {
+  const saveRoadmap = async (planner?: RoadmapPlan[]) => {
     const roadmap: SavedRoadmap = {
       timestamp: new Date().toISOString(),
-      planners: collapseAllPlanners(allPlanData),
+      planners: collapseAllPlanners(planner?.length ? planner : allPlanData),
       transfers: transfers,
     };
-
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
     // mark changes as saved to bypass alert on page leave
@@ -65,7 +65,7 @@ const Planner: FC = () => {
 
     // if logged in, save data to account
     if (isLoggedIn) {
-      trpc.roadmaps.save
+      await trpc.roadmaps.save
         .mutate(roadmap)
         .then(() => {
           spawnToast(`Roadmap saved to your account!`);
@@ -140,6 +140,9 @@ const Planner: FC = () => {
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
+  const quarterCounts = currentPlanData.map((years) => years.quarters.length);
+  const maxQuarterCount = Math.max(...quarterCounts);
+
   return (
     <div className="planner">
       <Modal
@@ -174,7 +177,7 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years">
+      <section className="years" data-max-quarter-count={maxQuarterCount}>
         {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
@@ -189,7 +192,7 @@ const Planner: FC = () => {
           }
         />
         <ImportTranscriptPopup />
-        <ImportZot4PlanPopup />
+        <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
       </div>
     </div>
   );

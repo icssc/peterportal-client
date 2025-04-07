@@ -21,3 +21,11 @@ export const courseSearchSortable: SortableOptions & Partial<ReactSortableProps<
   revertOnSpill: true,
   group: { name: 'courses', pull: 'clone', put: false },
 };
+
+export const programRequirementsSortable: SortableOptions & Partial<ReactSortableProps<{ id: string }>> = {
+  ...baseSortable,
+  setList: () => {},
+  sort: false,
+  revertOnSpill: true,
+  group: { name: 'courses', pull: 'clone', put: false },
+};

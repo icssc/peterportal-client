@@ -65,10 +65,16 @@ interface RoadmapSliceState {
   showAddCourse: boolean;
   // Store the course data of the active dragging item
   activeCourse?: CourseGQLData;
+  /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
+  activeCourseLoading: boolean;
+  /** Store missing prerequisites for courses when adding on mobile */
+  activeMissingPrerequisites?: string[];
   // Whether or not to show the transfer modal
   showTransfer: boolean;
   // Store transfer course data
   transfers: TransferData[];
+  // Whether or not to show the clear roadmap confirmation
+  showClearRoadmapPopup: boolean;
 }
 
 // define initial empty plans
@@ -82,11 +88,13 @@ const initialSliceState: RoadmapSliceState = {
   showTransfer: false,
   transfers: [],
   showCourseBag: true,
+  activeCourseLoading: false,
+  showClearRoadmapPopup: false,
 };
 /** added for multiple planner */
 
 // Payload to pass in to move a course
-interface MoveCoursePayload {
+export interface MoveCoursePayload {
   from: CourseIdentifier;
   to: CourseIdentifier;
 }
@@ -282,12 +290,16 @@ export const roadmapSlice = createSlice({
       state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].name = newName;
     },
     clearPlanner: (state) => {
-      if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.plans[state.currentPlanIndex].content.yearPlans = initialPlanState.yearPlans;
-      }
+      state.plans[state.currentPlanIndex].content.yearPlans = initialPlanState.yearPlans;
     },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
       state.activeCourse = action.payload;
+    },
+    setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
+      state.activeCourseLoading = action.payload;
+    },
+    setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
+      state.activeMissingPrerequisites = action.payload;
     },
     setYearPlans: (state, action: PayloadAction<PlannerData>) => {
       state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
@@ -300,6 +312,9 @@ export const roadmapSlice = createSlice({
     },
     setShowTransfer: (state, action: PayloadAction<boolean>) => {
       state.showTransfer = action.payload;
+    },
+    setShowClearRoadmapPopup: (state, action: PayloadAction<boolean>) => {
+      state.showClearRoadmapPopup = action.payload;
     },
     addTransfer: (state, action: PayloadAction<TransferData>) => {
       state.transfers.push(action.payload);
@@ -372,10 +387,13 @@ export const {
   deleteYear,
   clearPlanner,
   setActiveCourse,
+  setActiveCourseLoading,
+  setActiveMissingPrerequisites,
   setYearPlans,
   setAllPlans,
   setInvalidCourses,
   setShowTransfer,
+  setShowClearRoadmapPopup,
   addTransfer,
   setTransfer,
   setTransfers,

@@ -9,6 +9,7 @@ import {
   pgTable,
   primaryKey,
   real,
+  serial,
   text,
   timestamp,
   unique,
@@ -87,6 +88,31 @@ export const planner = pgTable(
   (table) => [index('planners_user_id_idx').on(table.userId)],
 );
 
+export const plannerMajor = pgTable(
+  'planner_major',
+  {
+    id: serial('id').primaryKey().notNull(),
+    plannerId: integer('planner_id')
+      .references(() => planner.id)
+      .notNull(),
+    majorId: text('major_id').notNull(),
+    specializationId: text('specialization_id'),
+  },
+  (table) => [index('planner_major_planner_id_idx').on(table.plannerId)],
+);
+
+export const plannerMinor = pgTable(
+  'planner_minor',
+  {
+    id: serial('id').primaryKey().notNull(),
+    plannerId: integer('planner_id')
+      .references(() => planner.id)
+      .notNull(),
+    minorId: text('minor_id'),
+  },
+  (table) => [index('planner_minor_planner_id_idx').on(table.plannerId)],
+);
+
 export const transferredCourse = pgTable(
   'transferred_course',
   {
@@ -124,6 +150,18 @@ export const savedCourse = pgTable(
     courseId: text('course_id').notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
+);
+
+export const zot4PlanImports = pgTable(
+  'zot4plan_imports',
+  {
+    scheduleId: text('schedule_id').notNull(),
+    userId: integer('user_id').references(() => user.id),
+    timestamp: timestamp('timestamp')
+      .notNull()
+      .default(sql`now()`),
+  },
+  (table) => [primaryKey({ columns: [table.scheduleId, table.timestamp] })],
 );
 
 export const session = pgTable('session', {

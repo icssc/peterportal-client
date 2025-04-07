@@ -1,4 +1,4 @@
-.dependency-list-branch {
+.dependent-list-branch {
   margin: auto;
 }
 
@@ -24,7 +24,7 @@
 }
 
 .prereq-branch,
-.dependency-branch {
+.dependent-branch {
   position: relative;
   display: flex;
   justify-content: center;
@@ -36,7 +36,7 @@
   border: 0;
 }
 
-.dependency-needs {
+.dependent-needs {
   &::before {
     content: '';
     position: absolute;
@@ -62,7 +62,7 @@
   margin: auto 1rem auto 0;
 }
 
-.dependency-node {
+.dependent-node {
   position: relative;
   display: flex;
   width: fit-content;

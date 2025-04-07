@@ -6,11 +6,11 @@ import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarter
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import { useIsMobile } from '../../helpers/util';
+import { useIsMobile, pluralize } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
-import { setActiveCourse, setShowAddCourse } from '../../store/slices/roadmapSlice';
+import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
@@ -23,30 +23,56 @@ export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = (
 );
 
 interface CourseNameAndInfoProps {
-  data: CourseGQLData;
+  data: CourseGQLData | string;
+  popupListener?: (open: boolean) => void;
   openPopoverLeft?: boolean;
   requiredCourses?: string[];
+  /** Whether to always collapse whitespace in the course name */
+  alwaysCollapse?: boolean;
 }
-const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopoverLeft, requiredCourses }) => {
-  const { id, department, courseNumber } = data;
+export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
+  const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
+  const { id, department, courseNumber } =
+    typeof data === 'string' ? { id: data, department: data, courseNumber: '' } : data;
 
   const [showInfoPopover, setShowInfoPopover] = useState(false);
   const [allowTouchClick, setAllowTouchClick] = useState(false);
+  const [showPopoverTimeout, setShowPopoverTimeout] = useState(0);
   const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
+  let courseID = department + ' ' + courseNumber;
+  if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
-  const showPopover = () => setShowInfoPopover(true);
+  const POPOVER_DELAY = 80;
+  const TOUCH_DELAY = 120;
+
+  const showPopover = () => {
+    setShowInfoPopover(true);
+    popupListener?.(true);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(0);
+    setTimeout(() => setAllowTouchClick(true), TOUCH_DELAY);
+  };
   const hidePopover = () => {
     setShowInfoPopover(false);
     setAllowTouchClick(false);
+    popupListener?.(false);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(0);
+  };
+
+  const handleMouseMove = () => {
+    if (!showPopoverTimeout) return;
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
   };
 
   const handleHoverTitle = () => {
     if (document.querySelector('.course.sortable-fallback')) return;
     if (isMobile && showSearch) return;
-    showPopover();
-    setTimeout(() => setAllowTouchClick(true), 100);
+    clearTimeout(showPopoverTimeout);
+    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
   };
   const handleUnhoverTitle = (event: React.MouseEvent) => {
     try {
@@ -74,9 +100,9 @@ const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopover
       placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       overlay={popover}
     >
-      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle}>
+      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle} onMouseMove={handleMouseMove}>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
-          {department + ' ' + courseNumber}
+          {courseID}
         </a>
         {requiredCourses && (
           <span className="warning-container">
@@ -90,7 +116,6 @@ const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = ({ data, openPopover
 
 interface CourseProps {
   requiredCourses?: string[];
-  unmatchedPrerequisites?: string[];
   onDelete?: () => void;
   onAddToBag?: () => void;
   isInBag?: boolean;
@@ -108,6 +133,7 @@ const Course: FC<CourseProps> = (props) => {
 
   const insertCourseOnClick = () => {
     dispatch(setActiveCourse(props.data));
+    dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };
 
@@ -120,7 +146,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="course-and-info">
           <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'}
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
         </div>
         <div className="spacer"></div>
@@ -145,14 +171,6 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-footer">
         {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
         {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
-        {/* <div className="course-footer">
-        {requiredCourses && (
-          <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={WarningPopover} delay={100}>
-            <ExclamationTriangle />
-          </OverlayTrigger>
-        )}
-        {/* <div className="units">{minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} units</div> * /}
-      </div> */}
       </div>
     </div>
   );
