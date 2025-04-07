@@ -39,7 +39,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
 
   if (!selected) {
     return (
-      <div className="search-popup">
+      <div className="side-panel search-popup">
         <div className="search-popup-missing">
           <img style={{ width: '80%' }} src={searching} alt="searching" />
           <p>Click on a {props.searchType} card to view more information!</p>
@@ -71,7 +71,7 @@ const responsive = {
 
 const SearchPopupContent: FC<SearchPopupProps> = (props) => {
   return (
-    <div className="search-popup">
+    <div className="side-panel search-popup">
       <div className="search-popup-header">
         <h2 className="search-popup-id">
           {props.name}

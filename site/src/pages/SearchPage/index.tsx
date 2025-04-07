@@ -25,10 +25,8 @@ const SearchPage: FC = () => {
           <SearchModule index={index} />
           <SearchHitContainer index={index} CourseHitItem={CourseHitItem} ProfessorHitItem={ProfessorHitItem} />
         </div>
-        <div className="search-popup-container">
-          {index == 'courses' && <CoursePopup />}
-          {index == 'professors' && <ProfessorPopup />}
-        </div>
+        {index == 'courses' && <CoursePopup />}
+        {index == 'professors' && <ProfessorPopup />}
       </div>
     </>
   );

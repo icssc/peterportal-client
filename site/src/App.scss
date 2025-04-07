@@ -28,6 +28,11 @@ button {
   }
 }
 
+.side-panel {
+  background-color: var(--overlay1);
+  height: 100%;
+}
+
 .ppc-btn {
   border: none;
   display: inline-flex;

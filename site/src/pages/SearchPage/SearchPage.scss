@@ -14,13 +14,18 @@
     flex-direction: column;
     height: 100%;
     padding-top: 36px;
+    position: relative;
+    padding-top: 0;
   }
 
   .search-list .search-module {
-    margin-inline: 36px 20px;
-    @media only screen and (max-width: globals.$mobile-cutoff) {
-      margin-right: 36px;
-    }
+    margin-inline: 36px;
+    position: absolute;
+    width: calc(100% - 72px);
+    padding-top: 32px;
+    background-color: var(--background);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 16px 8px var(--background);
   }
 }
 
