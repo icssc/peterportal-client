@@ -59,10 +59,11 @@ export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   themeCopy.colors.dangerLight = theme.colors.danger;
 
   themeCopy.colors.primary = theme.colors.primary75;
-  themeCopy.colors.primary25 = '#343a40'; // same as bootstrap dark
+  themeCopy.colors.primary25 = '#343a40'; // replace this with var(--bootstrap-dark)
 
   return themeCopy;
 };
+
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
  * @param requirements The raw course requirements, as returned from the API

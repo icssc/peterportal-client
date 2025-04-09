@@ -43,6 +43,7 @@ code {
   --aldrich-blue: var(--peterportal-primary-color-2);
   --ring-road-white: #ffffff; /* regular white */
   --petr-gray: #808080;
+  --boostrap-dark: #343a40;
   --green: green; /* regular green */
   --border-radius: 8px;
 }

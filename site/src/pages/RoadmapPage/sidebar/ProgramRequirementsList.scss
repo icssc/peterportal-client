@@ -103,7 +103,7 @@
 
 body[data-theme='dark'] {
   .program-course-tile.completed {
-    background-color: #343a40;
+    background-color: var(--bootstrap-dark);
   }
 }
 
