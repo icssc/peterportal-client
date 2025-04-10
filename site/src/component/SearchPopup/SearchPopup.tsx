@@ -39,7 +39,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
 
   if (!selected) {
     return (
-      <div className="search-popup">
+      <div className="side-panel search-popup">
         <div className="search-popup-missing">
           <img style={{ width: '80%' }} src={searching} alt="searching" />
           <p>Click on a {props.searchType} card to view more information!</p>
@@ -71,71 +71,69 @@ const responsive = {
 
 const SearchPopupContent: FC<SearchPopupProps> = (props) => {
   return (
-    <div>
-      <div className="search-popup">
-        <div className="search-popup-header">
-          <h2 className="search-popup-id">
-            {props.name}
-            <Link to={`/${props.searchType}/${props.id}`}>
-              <Button type="button" className="search-popup-more btn btn-outline-primary">
-                More Information
-              </Button>
-            </Link>
-          </h2>
-          <h5 className="search-popup-title">{props.title}</h5>
+    <div className="side-panel search-popup">
+      <div className="search-popup-header">
+        <h2 className="search-popup-id">
+          {props.name}
+          <Link to={`/${props.searchType}/${props.id}`}>
+            <Button type="button" className="search-popup-more btn btn-outline-primary">
+              More Information
+            </Button>
+          </Link>
+        </h2>
+        <h5 className="search-popup-title">{props.title}</h5>
+      </div>
+      <div>
+        <div className="search-popup-infos">
+          {props.infos.map((info, i) => (
+            <div className="search-popup-info search-popup-block" key={`search-popup-info-${i}`}>
+              <h3>{info.title}</h3>
+              <p>{info.content || `No ${info.title}`}</p>
+            </div>
+          ))}
         </div>
+
+        <h2 className="search-popup-label">Grade Distribution</h2>
+        <div className="search-popup-block">
+          <GradeDist course={props.course} professor={props.professor} minify={true} />
+        </div>
+
+        <h2 className="search-popup-label">
+          {props.searchType == 'course' ? 'Current Instructors' : 'Previously Taught'}
+        </h2>
         <div>
-          <div className="search-popup-infos">
-            {props.infos.map((info, i) => (
-              <div className="search-popup-info search-popup-block" key={`search-popup-info-${i}`}>
-                <h3>{info.title}</h3>
-                <p>{info.content || `No ${info.title}`}</p>
-              </div>
-            ))}
-          </div>
-
-          <h2 className="search-popup-label">Grade Distribution</h2>
-          <div className="search-popup-block">
-            <GradeDist course={props.course} professor={props.professor} minify={true} />
-          </div>
-
-          <h2 className="search-popup-label">
-            {props.searchType == 'course' ? 'Current Instructors' : 'Previously Taught'}
-          </h2>
-          <div>
-            {props.scores.length > 0 ? (
-              <Carousel responsive={responsive} renderButtonGroupOutside>
-                {props.scores.map((score, i) => (
-                  <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
-                    <div>
-                      <span className="search-popup-carousel-score">
-                        {score.avgRating == -1
-                          ? '?'
-                          : Number.isInteger(score.avgRating)
-                            ? score.avgRating
-                            : score.avgRating.toFixed(2)}
-                      </span>
-                      <span className="search-popup-carousel-max-score">/ 5.0</span>
-                    </div>
-                    <Link to={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
-                      <span className="search-popup-professor-name" title={score.name}>
-                        {score.name.split(' ').map((part, idx) => {
-                          const isTooLong = part.length > 13;
-                          return (
-                            <span key={idx} className={isTooLong ? 'ellipsis' : ''}>
-                              {part}
-                            </span>
-                          );
-                        })}
-                      </span>
-                    </Link>
+          {props.scores.length > 0 ? (
+            <Carousel responsive={responsive} renderButtonGroupOutside>
+              {props.scores.map((score, i) => (
+                <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
+                  <div>
+                    <span className="search-popup-carousel-score">
+                      {score.avgRating == -1
+                        ? '?'
+                        : Number.isInteger(score.avgRating)
+                          ? score.avgRating
+                          : score.avgRating.toFixed(2)}
+                    </span>
+                    <span className="search-popup-carousel-max-score">/ 5.0</span>
                   </div>
-                ))}
-              </Carousel>
-            ) : (
-              'No Instructors Found'
-            )}
-          </div>
+                  <Link to={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
+                    <span className="search-popup-professor-name" title={score.name}>
+                      {score.name.split(' ').map((part, idx) => {
+                        const isTooLong = part.length > 13;
+                        return (
+                          <span key={idx} className={isTooLong ? 'ellipsis' : ''}>
+                            {part}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  </Link>
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            'No Instructors Found'
+          )}
         </div>
       </div>
     </div>

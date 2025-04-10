@@ -45,7 +45,7 @@ const CoursePage: FC = () => {
     return <LoadingPage />;
   } else {
     return (
-      <div className="course-page">
+      <div className="content-wrapper course-page">
         <div>
           <SideInfo
             searchType="course"

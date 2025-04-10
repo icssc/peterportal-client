@@ -1,18 +1,14 @@
 @use '../../globals';
 
 .search-sidebar {
-  position: sticky;
-  right: 0;
-  top: 0;
   overflow: auto;
   width: 368px;
-  height: 100%;
+
   background-color: var(--overlay1);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   padding: 16px 20px;
-  border-radius: 8px;
 
   .search-body {
     display: flex;

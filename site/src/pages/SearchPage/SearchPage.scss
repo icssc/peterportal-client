@@ -1,45 +1,41 @@
 @use '../../globals';
 
-#content-container {
+.search-wrapper {
+  flex-direction: row;
   display: flex;
   flex-grow: 1;
-  max-width: 100%;
+  width: 100%;
   height: 100%;
   margin-inline: auto;
 
-  #search-list {
-    width: 50vw;
+  .search-list {
+    width: 100%;
     display: flex;
     flex-direction: column;
     height: 100%;
-  }
-
-  #search-popup {
-    flex-grow: 1;
-    height: fit-content;
-  }
-
-  .search-hit-container {
-    margin-top: 8px; // use margin instead of padding so the scroll bar isn't offset/above the first hit item
+    padding-top: 36px;
+    position: relative;
     padding-top: 0;
+  }
 
-    .hit-item:last-child {
-      margin-bottom: 0; // so scroll bar doesn't extend past the last hit item
-    }
-
-    @media (max-width: globals.$mobile-cutoff) {
-      margin-top: 4px;
-    }
+  .search-list .search-module {
+    margin-inline: 36px;
+    position: absolute;
+    width: calc(100% - 72px);
+    padding-top: 32px;
+    background-color: var(--background);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 16px 8px var(--background);
   }
 }
 
 @media only screen and (max-width: globals.$mobile-cutoff) {
-  #content-container {
-    #search-list {
+  .search-wrapper {
+    .search-list {
       width: 100%;
     }
 
-    #search-popup {
+    .search-popup {
       display: none;
     }
   }
