@@ -18,36 +18,6 @@ code {
   height: 100vh;
 }
 
-/*
-
-Notes for draft:
-
-Already done in this PR:
-- Moved ProgramRequirementsList.css's "$complete-color" into index.css, and renamed it to "--peterportal-primary-green"
-- Folded global.scss's "$primary-blue-1" into --peterportal-primary-color-1 in index.css
-- Created --blue-primary, intended to replace --peterportal-primary-color-1 and --zot-blue
-- Created --blue-secondary and --blue-tertiary for the degree requirements selection box theme
-- Created --blue-accent, intended to replace --peterportal-primary-color-2 and --aldrich-blue
-- Removed --peterportal-light-gray and --peterportal-uci-gold, since they were unused (--uci-gold was previously only used for the text selection highlight color)
-
-Still to do in this PR:
-- Create an inverted version of --peterportal-secondary-green for dark mode (take opposide HSL)
-- Update comboboxTheme() in courseRequrements.ts, to apply new blues to selection box theme. Make default theme "baseTheme" for light mode with theme colors from index.css as 25%, 50%, and 100% (and 75% if necessary). For dark mode, override with dark mode colors (does this automatically happen?)
-- In ProgramRequirementsList.css, replace rgba(var()) with CSS variables, since rgba() doesn't work with CSS variables 
-- In ProgramRequirementsList.css, overwrite dark mode for --peterportal-secondary-green
-
-Future issues:
-- Replace both --peterportal-primary-color-1 and --zot-blue with --blue-primary in the entire codebase
-- Replace both --peterportal-primary-color-2 and --aldrich-blue with --blue-accent in the entire codebase
-- Rename --peterportal-secondary-green/yellow/orange/red to --rating-1/2/3/4, and update the entire codebase to match
-- Combine --peterportal-mid-gray and --petr-gray, since they're so similar
-- Maybe: Remove ring-road-white, since it's just white
-- Maybe: Combine all custom files into one file (current defined in index.css, style/theme.scss, and other random files, such as pages/Schedule/Schedule.css).
-
-Note: Some colors used in peterportal come from semantic-ui or bootstrap, and aren't defined directly in this codebase. How should we handle that? How does this relate to the potential future use of MUI, when merging with AntAlmanac?
-
-*/
-
 :root {
   --blue-primary: #2484c6;
   --blue-secondary: #5babe1;
