@@ -18,34 +18,68 @@ code {
   height: 100vh;
 }
 
+/*
+
+Notes for draft:
+
+Already done in this PR:
+- Moved ProgramRequirementsList.css's "$complete-color" into index.css, and renamed it to "--peterportal-primary-green"
+- Folded global.scss's "$primary-blue-1" into --peterportal-primary-color-1 in index.css
+- Created --blue-primary, intended to replace --peterportal-primary-color-1 and --zot-blue
+- Created --blue-secondary and --blue-tertiary for the degree requirements selection box theme
+- Created --blue-accent, intended to replace --peterportal-primary-color-2 and --aldrich-blue
+- Removed --peterportal-light-gray and --peterportal-uci-gold, since they were unused (--uci-gold was previously only used for the text selection highlight color)
+
+Still to do in this PR:
+- Create an inverted version of --peterportal-secondary-green for dark mode (take opposide HSL)
+- Update comboboxTheme() in courseRequrements.ts, to apply new blues to selection box theme. Make default theme "baseTheme" for light mode with theme colors from index.css as 25%, 50%, and 100% (and 75% if necessary). For dark mode, override with dark mode colors (does this automatically happen?)
+- In ProgramRequirementsList.css, replace rgba(var()) with CSS variables, since rgba() doesn't work with CSS variables 
+- In ProgramRequirementsList.css, overwrite dark mode for --peterportal-secondary-green
+
+Future issues:
+- Replace both --peterportal-primary-color-1 and --zot-blue with --blue-primary in the entire codebase
+- Replace both --peterportal-primary-color-2 and --aldrich-blue with --blue-accent in the entire codebase
+- Rename --peterportal-secondary-green/yellow/orange/red to --rating-1/2/3/4, and update the entire codebase to match
+- Combine --peterportal-mid-gray and --petr-gray, since they're so similar
+- Maybe: Remove ring-road-white, since it's just white
+- Maybe: Combine all custom files into one file (current defined in index.css, style/theme.scss, and other random files, such as pages/Schedule/Schedule.css).
+
+Note: Some colors used in peterportal come from semantic-ui or bootstrap, and aren't defined directly in this codebase. How should we handle that? How does this relate to the potential future use of MUI, when merging with AntAlmanac?
+
+*/
+
 :root {
-  /*
-  Ideas
-    - simplify/normalize color names
-      - get rid of --zot-blue and --aldrich-blue
-      - remove custom names ("ring-road" in ring-road-white, "petr" in petr-gray, etc.)
-      - remove "peterportal" from colors' name
-    - move variables from globals.scss to this file (index.css)
-      - already done for blue and green colors
-      - not yet done for mobile-cutoff
-  */
-  --peterportal-primary-color-1: #2484c6;
-  --peterportal-primary-color-2: #74d1f6;
+  --blue-primary: #2484c6;
+  --blue-secondary: #5babe1;
+  --blue-tertiary: #a0ceee;
+  --blue-accent: #74d1f6;
+
+  --peterportal-primary-color-1: var(--blue-primary);
+  --zot-blue: var(--blue-primary);
+  --peterportal-primary-color-2: var(--blue-accent);
+  --aldrich-blue: var(--blue-accent);
+
+  --peterportal-primary-green: green;
   --peterportal-secondary-green: #81c284;
   --peterportal-secondary-yellow: #f5d77f;
   --peterportal-secondary-orange: #ecad6d;
   --peterportal-secondary-red: #e7966d;
-  --peterportal-light-gray: #eeeeee; /* Not being used anywhere */
-  --peterportal-mid-gray: #8d8d8d;
-  --peterportal-uci-gold: #ffd200; /* Not technically UCI gold */
+
   --peterportal-gray-blue: #f5f6fc;
-  --zot-blue: var(--peterportal-primary-color-1);
-  --aldrich-blue: var(--peterportal-primary-color-2);
-  --ring-road-white: #ffffff; /* regular white */
+  --peterportal-mid-gray: #8d8d8d;
   --petr-gray: #808080;
-  --boostrap-dark: #343a40;
-  --green: green; /* regular green */
+  --ring-road-white: #ffffff;
+
   --border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --blue-primary: #2484c6;
+    --blue-secondary: #185580;
+    --blue-tertiary: #0b283c;
+    --peterportal-secondary-green: #81c284;
+  }
 }
 
 .hide {

@@ -42,10 +42,10 @@
   }
 
   &.completed {
-    border-color: rgba(var(--green), 0.5);
+    border-color: var(--peterportal-secondary-green);
 
     > .group-header {
-      color: var(--green);
+      color: var(--peterportal-primary-green);
       text-decoration: line-through;
       text-decoration-thickness: 2px;
     }
@@ -59,7 +59,7 @@
   }
 
   .course-requirement.completed {
-    color: var(--green);
+    color: var(--peterportal-primary-green);
   }
 
   > .group-requirement:not(:last-child) {
@@ -103,7 +103,7 @@
 
 body[data-theme='dark'] {
   .program-course-tile.completed {
-    background-color: var(--bootstrap-dark);
+    background-color: #343a40;
   }
 }
 

@@ -59,7 +59,7 @@ export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   themeCopy.colors.dangerLight = theme.colors.danger;
 
   themeCopy.colors.primary = theme.colors.primary75;
-  themeCopy.colors.primary25 = '#343a40'; // replace this with var(--bootstrap-dark)
+  themeCopy.colors.primary25 = '#343a40';
 
   return themeCopy;
 };
