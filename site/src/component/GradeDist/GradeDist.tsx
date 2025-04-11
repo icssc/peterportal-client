@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
-import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
+import { Dropdown, DropdownProps } from 'semantic-ui-react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -189,9 +189,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const optionsRow = (
-    <Grid.Row id="menu">
+    <div className="gradedist-menu">
       {props.minify && (
-        <Grid.Column className="gradedist-filter">
+        <div className="gradedist-filter">
           <Dropdown
             placeholder="Chart Type"
             scrolling
@@ -203,10 +203,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             value={chartType}
             onChange={(_, s) => setChartType(s.value as ChartTypes)}
           />
-        </Grid.Column>
+        </div>
       )}
 
-      <Grid.Column className="gradedist-filter">
+      <div className="gradedist-filter">
         <Dropdown
           placeholder={props.course ? 'Professor' : 'Course'}
           scrolling
@@ -215,9 +215,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           value={props.course ? currentProf : currentCourse}
           onChange={props.course ? updateCurrentProf : updateCurrentCourse}
         />
-      </Grid.Column>
+      </div>
 
-      <Grid.Column className="gradedist-filter">
+      <div className="gradedist-filter">
         <Dropdown
           placeholder="Quarter"
           scrolling
@@ -226,8 +226,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           value={currentQuarter}
           onChange={updateCurrentQuarter}
         />
-      </Grid.Column>
-    </Grid.Row>
+      </div>
+    </div>
   );
 
   if (gradeDistData?.length) {
@@ -240,19 +240,16 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-
-        <Grid.Row id="chart">
-          {((props.minify && chartType == 'bar') || !props.minify) && (
-            <div className={'grade_distribution_chart-container chart'}>
-              <Chart {...graphProps} />
-            </div>
-          )}
-          {((props.minify && chartType == 'pie') || !props.minify) && (
-            <div className={'grade_distribution_chart-container pie'}>
-              <Pie {...graphProps} />
-            </div>
-          )}
-        </Grid.Row>
+        {((props.minify && chartType == 'bar') || !props.minify) && (
+          <div className={'grade_distribution_chart-container chart'}>
+            <Chart {...graphProps} />
+          </div>
+        )}
+        {((props.minify && chartType == 'pie') || !props.minify) && (
+          <div className={'grade_distribution_chart-container pie'}>
+            <Pie {...graphProps} />
+          </div>
+        )}
       </div>
     );
   } else if (gradeDistData == null) {

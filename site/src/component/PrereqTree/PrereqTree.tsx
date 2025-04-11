@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import './PrereqTree.scss';
-import { Grid } from 'semantic-ui-react';
 import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
@@ -23,7 +22,7 @@ const phraseMapping = {
 };
 const Node: FC<NodeProps> = (props) => {
   const popover = (
-    <Popover className="tree-node-popover">
+    <Popover id="tree-node-popover" className="tree-node-popover">
       <Popover.Content>{props.content ? props.content : props.label}</Popover.Content>
     </Popover>
   );
@@ -127,7 +126,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
     );
   return (
     <div>
-      <Grid.Row className="prereq">
+      <div className="prereq">
         <div
           style={{
             display: 'inline-flex',
@@ -198,7 +197,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             </p>
           </div>
         )}
-      </Grid.Row>
+      </div>
     </div>
   );
 };
