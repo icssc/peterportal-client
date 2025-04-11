@@ -55,6 +55,14 @@
   }
 }
 
+.roadmap-page .quarter-indicator-container {
+  .quarter-indicator-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+  }
+}
+
 @media only screen and (max-width: 400px) {
   .quarter-indicator-container {
     .quarter-indicator-row {

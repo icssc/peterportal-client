@@ -86,7 +86,7 @@ const AppHeader: FC = () => {
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <OverlayTrigger overlay={popover} placement="bottom">
               <Label as="a" color="yellow" image>
-                beta<Label.Detail>v1.1</Label.Detail>
+                beta<Label.Detail>v1.2</Label.Detail>
               </Label>
             </OverlayTrigger>
           </div>

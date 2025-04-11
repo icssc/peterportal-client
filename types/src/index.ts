@@ -1,4 +1,5 @@
 export * from './course';
+export * from './courseRequirements';
 export * from './grades';
 export * from './professor';
 export * from './roadmap';

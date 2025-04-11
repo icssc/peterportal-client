@@ -15,6 +15,7 @@ declare global {
       PRODUCTION_DOMAIN: string;
       ADMIN_EMAILS: string;
       ANTEATER_API_KEY?: string;
+      EXTERNAL_USER_READ_SECRET?: string;
     }
   }
 }

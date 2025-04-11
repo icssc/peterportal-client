@@ -1,6 +1,7 @@
 import { router } from '../helpers/trpc';
 import coursesRouter from './courses';
 import professorsRouter from './professors';
+import programsRouter from './programs';
 import reportsRouter from './reports';
 import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
@@ -9,10 +10,13 @@ import scheduleRouter from './schedule';
 import usersRouter from './users';
 import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
+import { externalAppRouter } from './external';
 
 export const appRouter = router({
+  external: externalAppRouter,
   courses: coursesRouter,
   professors: professorsRouter,
+  programs: programsRouter,
   roadmaps: roadmapsRouter,
   reports: reportsRouter,
   reviews: reviewsRouter,

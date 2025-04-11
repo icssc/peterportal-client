@@ -115,13 +115,13 @@ interface PrereqProps extends CourseGQLData {}
 
 const PrereqTree: FC<PrereqProps> = (props) => {
   const hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
-  const hasDependencies = Object.keys(props.dependencies).length !== 0;
+  const hasDependents = Object.keys(props.dependents).length !== 0;
 
   if (props.id === undefined) return <></>;
-  else if (!hasPrereqs && !hasDependencies)
+  else if (!hasPrereqs && !hasDependents)
     return (
       <div className="prereq-text-box">
-        <p>No Dependencies or Prerequisites!</p>
+        <p>No Prerequisites or Dependents!</p>
       </div>
     );
   return (
@@ -136,17 +136,17 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             margin: 'auto',
           }}
         >
-          {/* Display dependencies */}
-          {hasDependencies && (
+          {/* Display dependents */}
+          {hasDependents && (
             <>
               <ul style={{ padding: '0', display: 'flex' }}>
-                <div className="dependency-list-branch">
-                  {Object.values(props.dependencies).map((dependency, index) => (
-                    <li key={`dependency-node-${index}`} className={'dependency-node'}>
+                <div className="dependent-list-branch">
+                  {Object.values(props.dependents).map((dependent, index) => (
+                    <li key={`dependent-node-${index}`} className={'dependent-node'}>
                       <Node
-                        label={`${dependency.department} ${dependency.courseNumber}`}
-                        content={dependency.title}
-                        node={'dependency-node'}
+                        label={`${dependent.department} ${dependent.courseNumber}`}
+                        content={dependent.title}
+                        node={'dependent-node'}
                       />
                     </li>
                   ))}
@@ -155,15 +155,15 @@ const PrereqTree: FC<PrereqProps> = (props) => {
 
               <div style={{ display: 'inline-flex', flexDirection: 'row', marginLeft: '0.5rem' }}>
                 <span style={{ margin: 'auto 1rem' }}>
-                  <div className="dependency-needs dependency-branch">needs</div>
+                  <div className="dependent-needs dependent-branch">needs</div>
                 </span>
               </div>
             </>
           )}
 
-          {/* {!hasDependencies && <div className='dependency-branch'>
+          {/* {!hasDependents && <div className='dependent-branch'>
             <p className='missing-tree'>
-              No Dependencies!
+              No Dependents!
             </p>
           </div>} */}
 
@@ -177,7 +177,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             </div>
           )}
 
-          {/* {!hasPrereqs && <div className='dependency-branch'>
+          {/* {!hasPrereqs && <div className='dependent-branch'>
             <p className='missing-tree'>
               No Prerequisites!
             </p>

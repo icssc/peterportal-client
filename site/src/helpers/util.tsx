@@ -16,11 +16,7 @@ export function getCourseTags(course: CourseGQLData) {
   const tags: string[] = [];
   // units
   const { minUnits, maxUnits } = course;
-  tags.push(
-    `${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${
-      minUnits === maxUnits ? (maxUnits !== 1 ? 's' : '') : 's'
-    }`,
-  );
+  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`);
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {
@@ -81,7 +77,8 @@ function transformCourseGQL(data: CourseAAPIResponse) {
   const course = { ...data } as unknown as CourseGQLData;
   course.instructors = Object.fromEntries(data.instructors.map((instructor) => [instructor.ucinetid, instructor]));
   course.prerequisites = Object.fromEntries(data.prerequisites.map((prerequisite) => [prerequisite.id, prerequisite]));
-  course.dependencies = Object.fromEntries(data.dependencies.map((dependency) => [dependency.id, dependency]));
+  /** @todo Change "dependencies" to "dependents" once it is changed in AAPI */
+  course.dependents = Object.fromEntries(data.dependencies.map((dependency) => [dependency.id, dependency]));
   return course;
 }
 

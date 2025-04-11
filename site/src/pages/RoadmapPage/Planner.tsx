@@ -140,6 +140,9 @@ const Planner: FC = () => {
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
+  const quarterCounts = currentPlanData.map((years) => years.quarters.length);
+  const maxQuarterCount = Math.max(...quarterCounts);
+
   return (
     <div className="planner">
       <Modal
@@ -174,21 +177,23 @@ const Planner: FC = () => {
         saveRoadmap={saveRoadmap}
         missingPrerequisites={missingPrerequisites}
       />
-      <section className="years">
+      <section className="years" data-max-quarter-count={maxQuarterCount}>
         {currentPlanData.map((year, yearIndex) => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
       </section>
-      <AddYearPopup
-        placeholderName={'Year ' + (currentPlanData.length + 1)}
-        placeholderYear={
-          currentPlanData.length === 0
-            ? new Date().getFullYear()
-            : currentPlanData[currentPlanData.length - 1].startYear + 1
-        }
-      />
-      <ImportTranscriptPopup />
-      <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
+      <div className="action-row">
+        <AddYearPopup
+          placeholderName={'Year ' + (currentPlanData.length + 1)}
+          placeholderYear={
+            currentPlanData.length === 0
+              ? new Date().getFullYear()
+              : currentPlanData[currentPlanData.length - 1].startYear + 1
+          }
+        />
+        <ImportTranscriptPopup />
+        <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
+      </div>
     </div>
   );
 };

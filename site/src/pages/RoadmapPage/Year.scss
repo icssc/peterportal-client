@@ -17,7 +17,6 @@
 
 .year {
   $padding-x: 20px;
-  margin: 1rem 0;
   padding: 16px $padding-x;
   align-items: center;
   background-color: var(--overlay1);
@@ -44,9 +43,70 @@
 .year-accordion-content {
   border-radius: var(--border-radius);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  --min-quarter-width: 250px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--min-quarter-width), 1fr));
   gap: 20px;
   margin-block: 16px 4px;
+}
+
+// Each breakpoint is the width at which a quarter can be added to a year, given a min width of 250px.
+// The corresponding value of --min-quarter-width is the maximum width that a quarter can be
+// at that breakpoint with data-max-quarter-count quarters, without overflowing into a 2nd row.
+// This code works up until 2598px wide, at which quarter count 5 doesn't extend to the full width.
+// If there was a formula to calculate all of this, that would be extremely beneficial.
+
+@media only screen and (min-width: 1108px) {
+  .years[data-max-quarter-count='1'] .year-accordion-content {
+    --min-quarter-width: 520px;
+  }
+}
+
+@media only screen and (min-width: 1378px) {
+  .years[data-max-quarter-count='2'] .year-accordion-content {
+    --min-quarter-width: 380px;
+  }
+}
+
+@media only screen and (min-width: 1648px) {
+  .years[data-max-quarter-count='1'] .year-accordion-content {
+    --min-quarter-width: 1060px;
+  }
+  .years[data-max-quarter-count='2'] .year-accordion-content {
+    --min-quarter-width: 520px;
+  }
+  .years[data-max-quarter-count='3'] .year-accordion-content {
+    --min-quarter-width: 340px;
+  }
+}
+
+@media only screen and (min-width: 1918px) {
+  .years[data-max-quarter-count='2'] .year-accordion-content {
+    --min-quarter-width: 655px;
+  }
+  .years[data-max-quarter-count='3'] .year-accordion-content {
+    --min-quarter-width: 430px;
+  }
+  .years[data-max-quarter-count='4'] .year-accordion-content {
+    --min-quarter-width: 304px;
+  }
+}
+
+@media only screen and (min-width: 2194px) {
+  .years[data-max-quarter-count='3'] .year-accordion-content {
+    --min-quarter-width: 520px;
+  }
+  .years[data-max-quarter-count='4'] .year-accordion-content {
+    --min-quarter-width: 385px;
+  }
+  .years[data-max-quarter-count='5'] .year-accordion-content {
+    --min-quarter-width: 304px;
+  }
+}
+
+@media only screen and (min-width: 2532px) {
+  .years[data-max-quarter-count='6'] .year-accordion-content {
+    --min-quarter-width: 258px;
+  }
 }
 
 .year-accordion-title {

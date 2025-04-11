@@ -39,7 +39,7 @@ const Verify: FC = () => {
     return <p>No reviews to display at the moment.</p>;
   } else {
     return (
-      <div className="verify-container">
+      <div className="content-wrapper verify-container">
         <h1>Unverified Reviews</h1>
         <p>Verifying a review will display the review on top of unverified reviews.</p>
         <p>Deleting a review will remove it permanently.</p>

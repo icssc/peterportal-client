@@ -6,15 +6,21 @@ import './AddCoursePopup.scss';
 import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import { CourseBookmarkButton, CourseDescription } from '../../component/CourseInfo/CourseInfo';
-
+import { pluralize } from '../../helpers/util';
+import {
+  CourseBookmarkButton,
+  CourseDescription,
+  IncompletePrerequisiteText,
+  PrerequisiteText,
+  PreviousOfferingsRow,
+} from '../../component/CourseInfo/CourseInfo';
 interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
   const term = useNamedAcademicTerm();
 
   const dispatch = useAppDispatch();
@@ -58,7 +64,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
             {department} {courseNumber}
           </h2>
           <span className="unit-count">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{maxUnits === 1 ? '' : 's'})
+            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
           </span>
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
@@ -68,11 +74,12 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />
-          <p className="quarter-offerings-section">
-            <b>Previous Offerings:</b>
-            <CourseQuarterIndicator terms={activeCourse.terms} size="sm" />
-          </p>
-          {/** @todo Add UnmetPrerequisiteText for prerequisites that don't exist in the planner */}
+          {activeMissingPrerequisites ? (
+            <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
+          ) : (
+            <PrerequisiteText course={activeCourse} />
+          )}
+          <PreviousOfferingsRow course={activeCourse} />
         </Modal.Body>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}

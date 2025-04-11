@@ -1,5 +1,6 @@
 .course-popover {
   line-height: normal;
+  width: 375px;
 
   .popover-name {
     font-weight: bold;
@@ -38,15 +39,19 @@
     font-weight: bold;
   }
 
-  .popover-detail-warning {
-    font-size: 14px;
-    color: var(--warning-red);
-    gap: 5px;
+  .course-info-warning {
+    .warning-primary {
+      font-size: 14px;
+      gap: 5px;
 
-    .popover-detail-warning-icon {
-      margin-bottom: 4px;
-      margin-right: 4px;
-      font-size: 16px;
+      .warning-primary-icon {
+        font-size: 16px;
+      }
+    }
+
+    .warning-hint-italics {
+      font-size: 12px;
+      margin-bottom: 0px;
     }
   }
 
@@ -56,5 +61,26 @@
     font-size: 12px;
     font-style: italic;
     color: var(--petr-gray);
+  }
+
+  .center {
+    display: flex;
+    justify-content: center;
+    margin: 8px auto;
+  }
+
+  .quarter-offerings-section {
+    display: flex;
+    gap: 4px;
+  }
+
+  .course-info-warning + .quarter-offerings-section {
+    margin-top: 10px;
+  }
+
+  .quarter-indicator-container {
+    margin-left: 0;
+    float: none;
+    align-items: center;
   }
 }

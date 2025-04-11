@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react';
 import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
 import { ArrowLeftRight, List, Save, Trash } from 'react-bootstrap-icons';
-import { useIsDesktop, useIsMobile } from '../../helpers/util';
+import { useIsDesktop, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch } from '../../store/hooks';
-import { clearPlanner, setShowTransfer } from '../../store/slices/roadmapSlice';
+import { setShowClearRoadmapPopup, setShowTransfer } from '../../store/slices/roadmapSlice';
 import './Header.scss';
 import Transfer from './Transfer';
 import RoadmapMultiplan from './RoadmapMultiplan';
+import ClearRoadmapPopup from './ClearRoadmapPopup';
 
 interface HeaderProps {
   courseCount: number;
@@ -47,7 +48,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
       <Button
         variant={isMobile ? 'primary' : 'light'}
         className={isMobile ? 'my-1' : 'header-btn'}
-        onClick={() => dispatch(clearPlanner())}
+        onClick={() => dispatch(setShowClearRoadmapPopup(true))}
       >
         Clear
         <Trash className="header-icon" />
@@ -66,10 +67,11 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> {courseCount === 1 ? 'course' : 'courses'},{' '}
-          <span id="unit-count">{unitCount}</span> {unitCount === 1 ? 'unit' : 'units'}
+          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
+      <ClearRoadmapPopup />
       <div className="planner-right">
         {isMobile && (
           <>

@@ -9,6 +9,7 @@ import {
   pgTable,
   primaryKey,
   real,
+  serial,
   text,
   timestamp,
   unique,
@@ -85,6 +86,31 @@ export const planner = pgTable(
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
+);
+
+export const plannerMajor = pgTable(
+  'planner_major',
+  {
+    id: serial('id').primaryKey().notNull(),
+    plannerId: integer('planner_id')
+      .references(() => planner.id)
+      .notNull(),
+    majorId: text('major_id').notNull(),
+    specializationId: text('specialization_id'),
+  },
+  (table) => [index('planner_major_planner_id_idx').on(table.plannerId)],
+);
+
+export const plannerMinor = pgTable(
+  'planner_minor',
+  {
+    id: serial('id').primaryKey().notNull(),
+    plannerId: integer('planner_id')
+      .references(() => planner.id)
+      .notNull(),
+    minorId: text('minor_id'),
+  },
+  (table) => [index('planner_minor_planner_id_idx').on(table.plannerId)],
 );
 
 export const transferredCourse = pgTable(

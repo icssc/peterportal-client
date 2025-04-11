@@ -44,7 +44,7 @@ const ProfessorPage: FC = () => {
   } else {
     return (
       <Twemoji options={{ className: 'twemoji' }}>
-        <div className="professor-page">
+        <div className="content-wrapper professor-page">
           <div>
             <SideInfo
               searchType="professor"
