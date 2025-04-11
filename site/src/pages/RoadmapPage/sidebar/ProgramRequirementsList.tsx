@@ -208,7 +208,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
         data.requirements.map((r, i) => (
           <ProgramRequirementDisplay
             key={i}
-            storeKey={storeKey + '-' + i}
+            storeKey={`${storeKey}-${i}`}
             requirement={r}
             nested
             takenCourseIDs={takenCourseIDs}
@@ -275,7 +275,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
         <ProgramRequirementDisplay
           requirement={r}
           key={i}
-          storeKey={storeKeyPrefix + '-' + i}
+          storeKey={`${storeKeyPrefix}-${i}`}
           takenCourseIDs={takenCourseSet}
         />
       ))}
