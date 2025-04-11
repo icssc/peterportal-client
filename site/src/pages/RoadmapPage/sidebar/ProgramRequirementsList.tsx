@@ -19,6 +19,7 @@ import { setActiveCourse, setActiveCourseLoading, setShowAddCourse } from '../..
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
+import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
 
 interface CourseTileProps {
   courseID: string;
@@ -117,14 +118,22 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
-interface IndividualRequirementProps {
+interface CourseRequirementProps {
   data: TypedProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
 
-const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
+const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const dispatch = useAppDispatch();
+
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(false);
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
+  };
 
   let label: string | number;
   if ('courseCount' in data) {
@@ -148,7 +157,12 @@ const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseID
   );
 };
 
-const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
+interface GroupedCourseRequirementProps {
+  data: TypedProgramRequirement<'Course' | 'Unit'>;
+  takenCourseIDs: CompletedCourseSet;
+}
+
+const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = checkCompletion(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
 
@@ -167,10 +181,19 @@ const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenC
 interface GroupRequirementProps {
   data: TypedProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
-const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const dispatch = useAppDispatch();
+
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(false);
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
+  };
+
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -183,7 +206,13 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) =
       )}
       {open &&
         data.requirements.map((r, i) => (
-          <ProgramRequirementDisplay key={i} requirement={r} nested takenCourseIDs={takenCourseIDs} />
+          <ProgramRequirementDisplay
+            key={i}
+            storeKey={`${storeKey}-${i}`}
+            requirement={r}
+            nested
+            takenCourseIDs={takenCourseIDs}
+          />
         ))}
     </div>
   );
@@ -193,24 +222,34 @@ interface ProgramRequirementDisplayProps {
   requirement: ProgramRequirement;
   nested?: boolean;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
-const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ requirement, nested, takenCourseIDs }) => {
+const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
+  requirement,
+  nested,
+  takenCourseIDs,
+  storeKey,
+}) => {
   switch (requirement.requirementType) {
     case 'Unit':
     case 'Course': {
-      const DisplayComponent = nested ? GroupedCourseRequirement : CourseRequirement;
-      return <DisplayComponent data={requirement} takenCourseIDs={takenCourseIDs} />;
+      return nested ? (
+        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
+      ) : (
+        <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
+      );
     }
     case 'Group':
-      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} />;
+      return <GroupRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
   }
 };
 
 interface RequireCourseListProps {
   requirements: ProgramRequirement[];
+  storeKeyPrefix: string;
 }
 
-const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) => {
+const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
@@ -233,7 +272,12 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) =
     <div className="program-requirements">
       {/* key is ok because we don't reorder these */}
       {collapsedRequirements.map((r, i) => (
-        <ProgramRequirementDisplay requirement={r} key={i} takenCourseIDs={takenCourseSet} />
+        <ProgramRequirementDisplay
+          requirement={r}
+          key={i}
+          storeKey={`${storeKeyPrefix}-${i}`}
+          takenCourseIDs={takenCourseSet}
+        />
       ))}
     </div>
   );
