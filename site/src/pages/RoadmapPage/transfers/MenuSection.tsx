@@ -1,6 +1,10 @@
 import './MenuSection.scss';
 import { FC, ReactNode } from 'react';
 
+export const SectionDescription: FC<{ children: ReactNode }> = ({ children }) => {
+  return <p className="section-description">{children}</p>;
+};
+
 interface MenuSectionProps {
   title: string;
   children?: ReactNode;

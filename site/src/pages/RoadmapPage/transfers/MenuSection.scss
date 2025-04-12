@@ -3,4 +3,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  .section-description {
+    font-size: 14px;
+  }
+
+  .section-description a {
+    color: var(--peterportal-primary-color-1);
+  }
 }
