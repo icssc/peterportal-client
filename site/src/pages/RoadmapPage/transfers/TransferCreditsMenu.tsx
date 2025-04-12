@@ -46,6 +46,10 @@ const TransferCreditsMenu: FC = () => {
     overlayRef.current?.classList.toggle('enter-done', show);
   }, [isMobile, show]);
 
+  useEffect(() => {
+    if (!isMobile) dispatch(setShowTransfersMenu(false));
+  }, [dispatch, isMobile]);
+
   const closeMenu = () => dispatch(setShowTransfersMenu(false));
 
   return (
