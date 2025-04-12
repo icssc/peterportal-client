@@ -35,6 +35,36 @@ button {
 .side-panel {
   background-color: var(--overlay1);
   height: 100%;
+  overflow: auto;
+  width: globals.$roadmap-sidebar-width;
+
+  background-color: var(--overlay1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 16px 20px 56px;
+
+  .search-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &.mobile {
+    border-radius: 8px 8px 0 0;
+  }
+
+  button.fixed {
+    @include globals.bottom-button();
+    z-index: 1;
+  }
+
+  .ppc-combobox__clear-indicator {
+    display: none;
+  }
 }
 
 .ppc-btn {
