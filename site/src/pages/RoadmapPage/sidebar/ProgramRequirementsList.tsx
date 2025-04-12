@@ -15,11 +15,18 @@ import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useIsMobile } from '../../../helpers/util';
-import { setActiveCourse, setActiveCourseLoading, setShowAddCourse } from '../../../store/slices/roadmapSlice';
+import {
+  setActiveCourse,
+  setActiveCourseLoading,
+  setActiveMissingPrerequisites,
+  setShowAddCourse,
+} from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
+import { getMissingPrerequisites } from '../../../helpers/planner';
+import { useClearedCourses } from '../../../hooks/planner';
 
 interface CourseTileProps {
   courseID: string;
@@ -32,6 +39,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
+  const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
 
   const loadFullData = useCallback(async () => {
@@ -61,7 +69,9 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const insertCourseOnClick = async () => {
     setLoading(true);
     const fullData = await loadFullData();
+    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData);
     dispatch(setActiveCourse(fullData as CourseGQLData));
+    dispatch(setActiveMissingPrerequisites(missingPrerequisites));
     dispatch(setShowAddCourse(true));
     setLoading(false);
   };

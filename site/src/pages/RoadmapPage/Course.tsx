@@ -29,6 +29,7 @@ interface CourseNameAndInfoProps {
   requiredCourses?: string[];
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
+  // change prev to isTile
 }
 export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
@@ -104,6 +105,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </a>
+        {/* use isTile here to NOT show exclaim on non-search tabs */}
         {requiredCourses && (
           <span className="warning-container">
             <ExclamationTriangle />
