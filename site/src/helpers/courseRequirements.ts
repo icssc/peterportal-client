@@ -45,7 +45,7 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
 
-  // These need to match the CSS variabels defined in index.css
+  // These need to match the CSS variables defined in index.css
   const cssVars = {
     '--blue-primary': '#2484c6',
     '--blue-secondary': darkMode ? '#185580' : '#5babe1',
