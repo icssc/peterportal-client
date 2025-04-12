@@ -42,7 +42,6 @@ code {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --blue-primary: #268cd3; /*! Note: different from the color above */
     --blue-secondary: #185580;
     --blue-tertiary: #0b283c;
     --rating-4: #3e7f41;

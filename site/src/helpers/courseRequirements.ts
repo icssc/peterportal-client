@@ -43,23 +43,29 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
 };
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
-  if (!darkMode) return theme;
-
   const themeCopy = { ...theme, colors: { ...theme.colors } };
-  const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-  Object.entries(theme.colors).forEach(([key]) => {
-    if (key.startsWith('neutral')) {
-      const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
-      const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
-      themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
-    }
-  });
 
-  themeCopy.colors.danger = theme.colors.dangerLight;
-  themeCopy.colors.dangerLight = theme.colors.danger;
+  // These need to match the CSS variabels defined in index.css
+  const cssVars = {
+    '--blue-primary': '#2484c6',
+    '--blue-secondary': darkMode ? '#185580' : '#5babe1',
+    '--blue-tertiary': darkMode ? '#0b283c' : '#a0ceee',
+  };
 
-  themeCopy.colors.primary = theme.colors.primary75;
-  themeCopy.colors.primary25 = '#343a40';
+  themeCopy.colors.primary = cssVars['--blue-primary']; // box border
+  themeCopy.colors.primary50 = cssVars['--blue-secondary']; // active
+  themeCopy.colors.primary25 = cssVars['--blue-tertiary']; // hover
+
+  if (darkMode) {
+    const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+    Object.entries(theme.colors).forEach(([key]) => {
+      if (key.startsWith('neutral')) {
+        const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
+        const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
+        themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
+      }
+    });
+  }
 
   return themeCopy;
 };
