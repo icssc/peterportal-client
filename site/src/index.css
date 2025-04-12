@@ -24,6 +24,9 @@ code {
   --blue-tertiary: #a0ceee;
   --blue-accent: #74d1f6;
 
+  --blue-primary-50-percent: #2484c680;
+  --blue-primary-80-percent: #2484c6cc;
+
   --peterportal-primary-color-1: var(--blue-primary);
   --zot-blue: var(--blue-primary);
   --peterportal-primary-color-2: var(--blue-accent);
@@ -48,7 +51,7 @@ code {
     --blue-primary: #2484c6;
     --blue-secondary: #185580;
     --blue-tertiary: #0b283c;
-    --peterportal-secondary-green: #81c284;
+    --peterportal-secondary-green: #3e7f41;
   }
 }
 
