@@ -30,7 +30,7 @@
 
 .add-entry {
   background-color: transparent;
-  color: var(--peterportal-primary-color-1);
+  color: var(--blue-primary);
   font-size: 16px;
   font-weight: bold;
   width: fit-content;
@@ -42,13 +42,13 @@
 
 .add-entry:hover {
   background-color: transparent;
-  color: var(--peterportal-primary-color-1);
+  color: var(--blue-primary);
 }
 
 [data-theme='dark'] {
   .add-entry,
   .add-entry:hover {
-    color: var(--peterportal-primary-color-2);
+    color: var(--blue-accent);
   }
 }
 

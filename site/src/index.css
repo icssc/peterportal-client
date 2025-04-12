@@ -27,19 +27,14 @@ code {
   --blue-primary-50-percent: #2484c680;
   --blue-primary-80-percent: #2484c6cc;
 
-  --peterportal-primary-color-1: var(--blue-primary);
-  --zot-blue: var(--blue-primary);
-  --peterportal-primary-color-2: var(--blue-accent);
-  --aldrich-blue: var(--blue-accent);
+  --green-primary: green;
+  --rating-4: #81c284;
+  --rating-3: #f5d77f;
+  --rating-2: #ecad6d;
+  --rating-1: #e7966d;
 
-  --peterportal-primary-green: green;
-  --peterportal-secondary-green: #81c284;
-  --peterportal-secondary-yellow: #f5d77f;
-  --peterportal-secondary-orange: #ecad6d;
-  --peterportal-secondary-red: #e7966d;
-
-  --peterportal-gray-blue: #f5f6fc;
-  --peterportal-mid-gray: #8d8d8d;
+  --mid-gray: #8d8d8d;
+  --gray-blue: #f5f6fc;
   --ring-road-white: #ffffff;
 
   --border-radius: 8px;
@@ -47,10 +42,10 @@ code {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --blue-primary: #2484c6;
+    --blue-primary: #268cd3; /*! Note: different from the color above */
     --blue-secondary: #185580;
     --blue-tertiary: #0b283c;
-    --peterportal-secondary-green: #3e7f41;
+    --rating-4: #3e7f41;
   }
 }
 

@@ -7,7 +7,7 @@
   font-weight: bold;
   margin: 1rem auto 0 auto;
   font-size: 1.25rem;
-  background-color: var(--peterportal-primary-color-1);
+  background-color: var(--blue-primary);
   border-radius: var(--border-radius);
 }
 
@@ -110,19 +110,19 @@
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
 .r1 {
-  background-color: var(--peterportal-secondary-red);
+  background-color: var(--rating-1);
 }
 .r2 {
-  background-color: var(--peterportal-secondary-orange);
+  background-color: var(--rating-2);
 }
 .r3 {
-  background-color: var(--peterportal-secondary-yellow);
+  background-color: var(--rating-3);
 }
 .r4 {
-  background-color: var(--peterportal-secondary-green);
+  background-color: var(--rating-4);
 }
 .r5 {
-  background-color: var(--peterportal-primary-color-1);
+  background-color: var(--blue-primary);
 }
 
 // subreview info
@@ -155,7 +155,7 @@
   flex-direction: row;
   justify-content: left;
   align-items: center;
-  color: var(--peterportal-mid-gray);
+  color: var(--mid-gray);
 }
 .subreview-author-name {
   margin: 0;
@@ -177,7 +177,7 @@
 }
 .subreview-tag {
   padding: 1rem;
-  background-color: var(--peterportal-primary-color-1);
+  background-color: var(--blue-primary);
   color: white;
 }
 // footer
@@ -211,14 +211,14 @@
   border: none;
   height: fit-content;
   background-color: transparent;
-  color: var(--peterportal-mid-gray);
+  color: var(--mid-gray);
   transition: 0.25s;
 }
 .colored-upvote {
-  color: var(--peterportal-primary-color-1);
+  color: var(--blue-primary);
 }
 .colored-downvote {
-  color: var(--peterportal-secondary-red);
+  color: var(--rating-1);
 }
 // report a review
 .add-report-button {

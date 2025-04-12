@@ -17,7 +17,7 @@
     display: flex;
     gap: 8px;
     align-items: center;
-    color: var(--peterportal-primary-color-1);
+    color: var(--blue-primary);
     text-align: left;
     padding: 0;
     background: none;
@@ -42,24 +42,24 @@
   }
 
   &.completed {
-    border-color: var(--peterportal-secondary-green);
+    border-color: var(--rating-4);
 
     > .group-header {
-      color: var(--peterportal-primary-green);
+      color: var(--green-primary);
       text-decoration: line-through;
       text-decoration-thickness: 2px;
     }
 
     .group-requirement:not(.completed) {
-      border-color: var(--peterportal-mid-gray);
+      border-color: var(--mid-gray);
       .group-header {
-        color: var(--peterportal-mid-gray);
+        color: var(--mid-gray);
       }
     }
   }
 
   .course-requirement.completed {
-    color: var(--peterportal-primary-green);
+    color: var(--green-primary);
   }
 
   > .group-requirement:not(:last-child) {
@@ -79,7 +79,7 @@
   justify-content: center;
   align-items: center;
   padding: 5px 10px;
-  background-color: var(--peterportal-primary-color-1);
+  background-color: var(--blue-primary);
   color: white;
   font-weight: bold;
   font-size: 13px;
@@ -91,7 +91,7 @@
   }
 
   &.completed {
-    background-color: var(--peterportal-gray-blue);
+    background-color: var(--gray-blue);
     outline: 1.5px solid var(--text-secondary);
     outline-offset: -1.5px;
     color: var(--text-secondary);
