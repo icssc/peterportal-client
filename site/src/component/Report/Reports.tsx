@@ -62,7 +62,7 @@ const Reports: FC = () => {
     return <p>No reports to display at the moment.</p>;
   } else {
     return (
-      <div className="reports-container">
+      <div className="content-wrapper reports-container">
         <h1>User Review Reports</h1>
         <p>Denying a review's reports will discard the reports and preserve the review.</p>
         <p>Accepting a review's reports will discard the reports and the review.</p>

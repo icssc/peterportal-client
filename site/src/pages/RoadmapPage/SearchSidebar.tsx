@@ -49,7 +49,7 @@ const SearchSidebar = () => {
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
-      <div className={`search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
+      <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
 
         {selectedCourseList === 'Major' && <MajorSelector />}

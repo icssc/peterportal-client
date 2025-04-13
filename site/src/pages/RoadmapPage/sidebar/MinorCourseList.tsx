@@ -43,7 +43,9 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const renderRequirements = () => {
     if (resultsLoading) return <RequirementsLoadingIcon />;
-    return <ProgramRequirementsList requirements={minorReqs.requirements} />;
+    return (
+      <ProgramRequirementsList requirements={minorReqs.requirements} storeKeyPrefix={`minor-${minorReqs.minor.id}`} />
+    );
   };
 
   return (
