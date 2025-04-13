@@ -24,14 +24,11 @@ code {
   --blue-tertiary: #a0ceee;
   --blue-accent: #74d1f6;
 
-  --blue-primary-50-percent: #2484c680;
-  --blue-primary-80-percent: #2484c6cc;
-
   --green-primary: green;
-  --rating-4: #81c284;
-  --rating-3: #f5d77f;
-  --rating-2: #ecad6d;
-  --rating-1: #e7966d;
+  --green-secondary: #81c284;
+  --yellow-secondary: #f5d77f;
+  --orange-secondary: #ecad6d;
+  --red-secondary: #e7966d;
 
   --mid-gray: #8d8d8d;
   --gray-blue: #f5f6fc;
@@ -44,7 +41,7 @@ code {
   :root {
     --blue-secondary: #185580;
     --blue-tertiary: #0b283c;
-    --rating-4: #3e7f41;
+    --green-secondary: #3e7f41;
   }
 }
 
