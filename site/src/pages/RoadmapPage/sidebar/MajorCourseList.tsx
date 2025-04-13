@@ -1,4 +1,4 @@
-import './SingleMajorCourseList.scss';
+import './MajorCourseList.scss';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
@@ -28,17 +28,13 @@ function getCoursesForSpecialization(programId?: string | null) {
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
 }
 
-interface SingleMajorCourseListProps {
+interface MajorCourseListProps {
   majorWithSpec: MajorWithSpecialization;
   onSpecializationChange: (majorId: string, spec: MajorSpecialization | null) => void;
   selectedSpecId?: string;
 }
 
-const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
-  majorWithSpec,
-  onSpecializationChange,
-  selectedSpecId,
-}) => {
+const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [specOptions, setSpecOptions] = useState<{ value: MajorSpecialization; label: string }[]>([]);
@@ -166,4 +162,4 @@ const SingleMajorCourseList: FC<SingleMajorCourseListProps> = ({
   );
 };
 
-export default SingleMajorCourseList;
+export default MajorCourseList;

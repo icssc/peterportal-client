@@ -9,6 +9,11 @@ export interface MajorWithSpecialization {
   requirements: ProgramRequirement[];
 }
 
+export interface minorRequirements {
+  minor: MinorProgram;
+  requirements: ProgramRequirement[];
+}
+
 const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
   initialState: {
@@ -16,8 +21,8 @@ const courseRequirementsSlice = createSlice({
     majorList: [] as MajorProgram[],
     selectedMajors: [] as MajorWithSpecialization[],
     specialization: null as MajorSpecialization | null,
-    minor: null as MinorProgram | null,
     minorList: [] as MinorProgram[],
+    selectedMinors: [] as minorRequirements[],
     minorRequirements: [] as ProgramRequirement[],
     geRequirements: [] as ProgramRequirement[],
   },
@@ -55,14 +60,25 @@ const courseRequirementsSlice = createSlice({
         major.requirements = action.payload.requirements;
       }
     },
-    setMinorRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
-      state.minorRequirements = action.payload;
+    setMinorRequirements: (state, action: PayloadAction<{ minorId: string; requirements: ProgramRequirement[] }>) => {
+      const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
+      if (minor) {
+        minor.requirements = action.payload.requirements;
+      }
     },
     setMinorList: (state, action: PayloadAction<MinorProgram[]>) => {
       state.minorList = action.payload;
     },
-    setMinor: (state, action: PayloadAction<MinorProgram | null>) => {
-      state.minor = action.payload;
+    addMinor: (state, action: PayloadAction<MinorProgram>) => {
+      if (!state.selectedMinors.find((m) => m.minor.id === action.payload.id)) {
+        state.selectedMinors.push({
+          minor: action.payload,
+          requirements: [],
+        });
+      }
+    },
+    removeMinor: (state, action: PayloadAction<string>) => {
+      state.selectedMinors = state.selectedMinors.filter((m) => m.minor.id !== action.payload);
     },
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
@@ -78,7 +94,8 @@ export const {
   setSpecialization,
   setRequirements,
   setMinorList,
-  setMinor,
+  addMinor,
+  removeMinor,
   setMinorRequirements,
   setGERequirements,
 } = courseRequirementsSlice.actions;
