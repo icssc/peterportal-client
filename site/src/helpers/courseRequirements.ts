@@ -45,16 +45,14 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
 
-  // These need to match the CSS variables defined in index.css
-  const cssVars = {
-    '--blue-primary': '#2484c6',
-    '--blue-secondary': darkMode ? '#185580' : '#5babe1',
-    '--blue-tertiary': darkMode ? '#0b283c' : '#a0ceee',
+  const getCssVariable = (variableName: string) => {
+    const bodyStyles = getComputedStyle(document.body);
+    return bodyStyles.getPropertyValue(variableName).trim();
   };
 
-  themeCopy.colors.primary = cssVars['--blue-primary']; // box border
-  themeCopy.colors.primary50 = cssVars['--blue-secondary']; // active
-  themeCopy.colors.primary25 = cssVars['--blue-tertiary']; // hover
+  themeCopy.colors.primary = getCssVariable('--blue-primary'); // box border
+  themeCopy.colors.primary50 = getCssVariable('--blue-secondary'); // active
+  themeCopy.colors.primary25 = getCssVariable('--blue-tertiary'); // hover
 
   if (darkMode) {
     const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];

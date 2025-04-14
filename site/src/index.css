@@ -37,12 +37,11 @@ code {
   --border-radius: 8px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --blue-secondary: #185580;
-    --blue-tertiary: #0b283c;
-    --green-secondary: #3e7f41;
-  }
+/* Keep in mind that these colors are defined in :root but overridden in body */
+body[data-theme='dark'] {
+  --blue-secondary: #185580;
+  --blue-tertiary: #0b283c;
+  --green-secondary: #3e7f41;
 }
 
 .hide {
