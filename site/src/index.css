@@ -37,7 +37,7 @@ code {
   --border-radius: 8px;
 }
 
-/* Keep in mind that these colors are defined in :root but overridden in body */
+/* User theme is not accessible to :root, so we override them in body */
 body[data-theme='dark'] {
   --blue-secondary: #185580;
   --blue-tertiary: #0b283c;
