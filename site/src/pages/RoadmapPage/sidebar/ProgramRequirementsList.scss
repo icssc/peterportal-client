@@ -8,7 +8,7 @@
 }
 
 .group-requirement {
-  border: 2px solid color-mix(in srgb, var(--blue-primary) 50%, transparent);
+  border: 2px solid var(--blue-secondary);
   border-radius: 8px;
   padding: 12px;
   position: relative;
@@ -125,7 +125,7 @@ body[data-theme='dark'] {
 
   &.loading {
     color: #fff6;
-    background-color: color-mix(in srgb, var(--blue-primary) 80%, transparent);
+    background-color: var(--blue-secondary);
   }
 }
 
