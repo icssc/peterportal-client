@@ -79,9 +79,16 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = isMobile ? tapProps : {};
   const className = `program-course-tile${isMobile ? ' mobile' : ''}${loading ? ' loading' : ''}${taken ? ' completed' : ''}`;
+  let fontSize: string | undefined;
+
+  if (courseID.length > 10) {
+    const charsExtra = courseID.length - 10;
+    const computedSize = 13 - charsExtra;
+    fontSize = computedSize + 'px';
+  }
 
   return (
-    <div className={className} {...tappableCourseProps}>
+    <div className={className} {...tappableCourseProps} style={{ fontSize }}>
       <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && <Spinner animation="border" />}
     </div>
