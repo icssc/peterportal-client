@@ -31,9 +31,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
   const clearedCourses = useClearedCourses();
   if (typeof course !== 'string') {
     requiredCourses = getMissingPrerequisites(clearedCourses, course);
-  }
 
-  if (typeof course !== 'string') {
     const { department, courseNumber, minUnits, maxUnits } = course;
     content = (
       <>
