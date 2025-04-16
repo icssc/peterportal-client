@@ -10,9 +10,11 @@
 
   .section-description {
     font-size: 14px;
+    margin-bottom: 0;
+    color: var(--text-secondary);
   }
 
   .section-description a {
-    color: var(--peterportal-primary-color-1);
+    color: var(--blue-primary);
   }
 }
