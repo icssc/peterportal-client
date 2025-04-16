@@ -10,8 +10,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 6px;
-    height: 16px;
+    margin-block: -2px 4px;
   }
   .tile-info p {
     margin: 0;
@@ -64,5 +63,13 @@
   input[type='number'] {
     appearance: textfield;
     -moz-appearance: textfield;
+  }
+
+  select {
+    font-size: 12px;
+  }
+
+  .units-display {
+    white-space: nowrap;
   }
 }

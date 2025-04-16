@@ -68,8 +68,9 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
   return (
     <div className="menu-tile">
       <div className="tile-info">
-        <p className="name">{title}</p>
-        {headerItems}
+        <p className="name">
+          {title} {headerItems}
+        </p>
         <hr />
         {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
         <button className="delete-btn" onClick={deleteFn}>
