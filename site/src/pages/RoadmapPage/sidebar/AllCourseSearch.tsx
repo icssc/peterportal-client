@@ -6,11 +6,12 @@ import { CourseGQLData } from '../../../types/types';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
-import { getAllCoursesFromPlan, validateCourse } from '../../../helpers/planner';
+import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
 import { Spinner } from 'react-bootstrap';
 import noResultsImg from '../../../asset/no-results-crop.webp';
+import { useClearedCourses } from '../../../hooks/planner';
 
 interface SearchPlaceholderProps {
   searchInProgress: boolean;
@@ -46,10 +47,7 @@ const AllCourseSearch: FC = () => {
     dispatch(setActiveCourse(course));
   };
 
-  const roadmap = useAppSelector((state) => state.roadmap);
-  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
-  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
-  const clearedCourses = new Set([...allExistingCourses, ...transfers]);
+  const clearedCourses = useClearedCourses();
 
   return (
     <>
@@ -67,17 +65,14 @@ const AllCourseSearch: FC = () => {
           className={'search-body' + (isMobile ? ' disabled' : '')}
         >
           {shownCourses.map((course, i) => {
-            const missingPrerequisites = Array.from(
-              validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
-            );
-            const requiredCourses = missingPrerequisites.length ? missingPrerequisites : undefined;
+            const missingPrerequisites = getMissingPrerequisites(clearedCourses, course);
             return (
               <Course
                 data={course}
                 key={i}
                 addMode={isMobile ? 'tap' : 'drag'}
                 openPopoverLeft={true}
-                requiredCourses={requiredCourses}
+                requiredCourses={missingPrerequisites}
               />
             );
           })}
