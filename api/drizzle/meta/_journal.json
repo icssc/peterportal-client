@@ -50,6 +50,13 @@
       "when": 1739900204412,
       "tag": "0006_nasty_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1744827145279,
+      "tag": "0007_left_mathemanic",
+      "breakpoints": true
     }
   ]
 }

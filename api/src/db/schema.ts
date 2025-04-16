@@ -113,8 +113,8 @@ export const plannerMinor = pgTable(
   (table) => [index('planner_minor_planner_id_idx').on(table.plannerId)],
 );
 
-export const transferredCourse = pgTable(
-  'transferred_course',
+export const transferredMisc = pgTable(
+  'transferred_misc',
   {
     userId: integer('user_id').references(() => user.id),
     courseName: text('course_name'),
@@ -169,3 +169,54 @@ export const session = pgTable('session', {
   sess: jsonb('sess').notNull(),
   expire: timestamp('expire').notNull(),
 });
+
+/*export const transferredApExam = pgTable(
+  'transferred_ap_exam',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+    examName: text('exam_name')
+      .notNull(),
+    score: integer('score'),
+  },
+  (table) => [
+    check('score_in_range', sql`${table.score} IS NULL OR (${table.score} >= 1 AND ${table.score} <= 5)`),
+    primaryKey({ columns: [table.userId, table.examName] })
+  ],
+);
+
+export const transferredGe = pgTable(
+  'transferred_ge',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+    geName: text('ge_name')
+      .notNull(),
+    numberOfCourses: integer('number_of_courses')
+      .notNull(),
+    units: real('units')
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.geName] })
+  ],
+);
+
+export const transferredCourse = pgTable(
+  'transferred_course',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+    courseName: text('course_name')
+      .notNull(),
+    units: real('units')
+      .notNull().default(0),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.courseName] }),
+    index('transferred_courses_user_id_idx').on(table.userId)
+  ],
+);*/
