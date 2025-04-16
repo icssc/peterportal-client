@@ -57,6 +57,20 @@
       "when": 1744827145279,
       "tag": "0007_left_mathemanic",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1744827880504,
+      "tag": "0008_curious_doctor_doom",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1744827972593,
+      "tag": "0009_parched_madame_masque",
+      "breakpoints": true
     }
   ]
 }

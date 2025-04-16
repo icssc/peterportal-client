@@ -170,19 +170,19 @@ export const session = pgTable('session', {
   expire: timestamp('expire').notNull(),
 });
 
-/*export const transferredApExam = pgTable(
+export const transferredApExam = pgTable(
   'transferred_ap_exam',
   {
     userId: integer('user_id')
       .references(() => user.id)
       .notNull(),
-    examName: text('exam_name')
-      .notNull(),
+    examName: text('exam_name').notNull(),
     score: integer('score'),
+    units: real('units').notNull(),
   },
   (table) => [
     check('score_in_range', sql`${table.score} IS NULL OR (${table.score} >= 1 AND ${table.score} <= 5)`),
-    primaryKey({ columns: [table.userId, table.examName] })
+    primaryKey({ columns: [table.userId, table.examName] }),
   ],
 );
 
@@ -192,16 +192,11 @@ export const transferredGe = pgTable(
     userId: integer('user_id')
       .references(() => user.id)
       .notNull(),
-    geName: text('ge_name')
-      .notNull(),
-    numberOfCourses: integer('number_of_courses')
-      .notNull(),
-    units: real('units')
-      .notNull(),
+    geName: text('ge_name').notNull(),
+    numberOfCourses: integer('number_of_courses').notNull(),
+    units: real('units').notNull(),
   },
-  (table) => [
-    primaryKey({ columns: [table.userId, table.geName] })
-  ],
+  (table) => [primaryKey({ columns: [table.userId, table.geName] })],
 );
 
 export const transferredCourse = pgTable(
@@ -210,13 +205,8 @@ export const transferredCourse = pgTable(
     userId: integer('user_id')
       .references(() => user.id)
       .notNull(),
-    courseName: text('course_name')
-      .notNull(),
-    units: real('units')
-      .notNull().default(0),
+    courseName: text('course_name').notNull(),
+    units: real('units').notNull().default(0),
   },
-  (table) => [
-    primaryKey({ columns: [table.userId, table.courseName] }),
-    index('transferred_courses_user_id_idx').on(table.userId)
-  ],
-);*/
+  (table) => [primaryKey({ columns: [table.userId, table.courseName] })],
+);
