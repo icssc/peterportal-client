@@ -2,7 +2,7 @@ import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { setMinorRequirements, minorRequirements } from '../../../store/slices/courseRequirementsSlice';
+import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
@@ -12,7 +12,7 @@ function getCoursesForMinor(programId: string) {
 }
 
 interface MinorCourseListProps {
-  minorReqs: minorRequirements;
+  minorReqs: MinorRequirements;
 }
 
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
@@ -36,8 +36,10 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   );
 
   useEffect(() => {
-    fetchRequirements(minorReqs.minor.id);
-  }, [fetchRequirements, minorReqs.minor.id]);
+    if (!minorReqs.requirements || minorReqs.requirements.length === 0) {
+      fetchRequirements(minorReqs.minor.id);
+    }
+  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements]);
 
   const toggleExpand = () => setOpen(!open);
 

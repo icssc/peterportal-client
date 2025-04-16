@@ -1,8 +1,8 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
-import { addMinor, removeMinor, setMinorList, minorRequirements } from '../../../store/slices/courseRequirementsSlice';
+import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 import { MinorProgram } from '@peterportal/types';
@@ -30,9 +30,10 @@ const MinorSelector: FC = () => {
   const activePlanID = plans[planIndex].id;
 
   const [minorsLoading, setMinorsLoading] = useState(false);
-  // const [resultsLoading, setResultsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
+
+  const planEffectRef = useRef<number | null>(null);
 
   // Initial Load Helpers
   const saveInitialMinorList = useCallback(
@@ -52,7 +53,7 @@ const MinorSelector: FC = () => {
   }, [dispatch, minors.length, saveInitialMinorList]);
 
   const saveMinors = useCallback(
-    (minorsToSave: minorRequirements[]) => {
+    (minorsToSave: MinorRequirements[]) => {
       if (!activePlanID || !isLoggedIn) return;
       const minorIds: string[] = minorsToSave.map((m) => m.minor.id);
       updateSelectedMinors(activePlanID, minorIds);
@@ -82,14 +83,15 @@ const MinorSelector: FC = () => {
   );
 
   useEffect(() => {
-    if (!minors.length || !activePlanID) return;
-    if (!activePlanID) return;
-    if (!isLoggedIn) return;
+    if (!minors.length || !activePlanID || !isLoggedIn) return;
+    if (planEffectRef.current === activePlanID) return;
+    if (selectedMinors.length) return;
 
     setMinorsLoading(true);
     trpc.programs.getSavedMinors
       .query(activePlanID)
       .then((minorIds) => {
+        planEffectRef.current = activePlanID;
         for (const minor of minorIds) {
           const foundMinor = minors.find((m) => m.id === minor.id);
           if (!foundMinor) continue;
@@ -99,7 +101,7 @@ const MinorSelector: FC = () => {
       .finally(() => {
         setMinorsLoading(false);
       });
-  }, [dispatch, activePlanID, minors, isLoggedIn, selectedMinors]);
+  }, [dispatch, activePlanID, minors, isLoggedIn, selectedMinors.length]);
 
   const minorSelectOptions: MinorOption[] = minors.map((m) => ({
     value: m,

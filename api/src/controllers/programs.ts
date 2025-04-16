@@ -39,7 +39,7 @@ const zodMajorSpecPairSchema = z.object({
   ),
 });
 
-const MinorProgramSchema = z.object({
+const zodMinorProgramSchema = z.object({
   plannerId: z.number(),
   minorIds: z.array(z.string()),
 });
@@ -117,7 +117,7 @@ const programsRouter = router({
     if (rowsToInsert.length) await db.insert(plannerMajor).values(rowsToInsert);
   }),
   /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
-  saveSelectedMinor: publicProcedure.input(MinorProgramSchema).mutation(async ({ input }) => {
+  saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input }) => {
     const { plannerId, minorIds } = input;
     await db.delete(plannerMinor).where(eq(plannerMinor.plannerId, plannerId));
 

@@ -11,7 +11,7 @@ export interface MajorWithSpecialization {
 
 type ExpandedGroupsList = { [key: string]: boolean | undefined };
 
-export interface minorRequirements {
+export interface MinorRequirements {
   minor: MinorProgram;
   requirements: ProgramRequirement[];
 }
@@ -24,8 +24,8 @@ const courseRequirementsSlice = createSlice({
     selectedMajors: [] as MajorWithSpecialization[],
     specialization: null as MajorSpecialization | null,
     minorList: [] as MinorProgram[],
-    selectedMinors: [] as minorRequirements[],
-    minorRequirements: [] as ProgramRequirement[],
+    selectedMinors: [] as MinorRequirements[],
+    MinorRequirements: [] as ProgramRequirement[],
     geRequirements: [] as ProgramRequirement[],
     expandedGroups: {} as ExpandedGroupsList,
   },
