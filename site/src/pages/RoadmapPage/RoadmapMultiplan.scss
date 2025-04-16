@@ -35,13 +35,13 @@
     }
   }
   .btn-primary {
-    border: 2px solid var(--aldrich-blue);
+    border: 2px solid var(--blue-accent);
     background-color: transparent;
     border-radius: 4px;
     font-weight: bold;
     &[aria-expanded='true'],
     &:not(.disabled):active {
-      border-color: var(--zot-blue);
+      border-color: var(--blue-primary);
       background-color: #0062cc88;
     }
   }

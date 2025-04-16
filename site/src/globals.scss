@@ -1,6 +1,5 @@
 $mobile-cutoff: 800px;
 
-$primary-blue-1: #2484c6;
 $roadmap-sidebar-width: 368px;
 
 @mixin card-padding {
@@ -43,7 +42,7 @@ $roadmap-sidebar-width: 368px;
   bottom: 0;
   left: 0;
   height: 40px;
-  background-color: var(--zot-blue);
+  background-color: var(--blue-primary);
   width: 100%;
   border: none;
   appearance: none;
