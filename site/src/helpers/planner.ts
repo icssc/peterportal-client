@@ -11,7 +11,14 @@ import {
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
-import { BatchCourseData, InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  BatchCourseData,
+  CourseGQLData,
+  InvalidCourseData,
+  PlannerData,
+  PlannerQuarterData,
+  PlannerYearData,
+} from '../types/types';
 import trpc from '../trpc';
 
 export function defaultYear() {
@@ -297,4 +304,11 @@ export const validateCourse = (
       return new Set();
     }
   }
+};
+
+export const getMissingPrerequisites = (clearedCourses: Set<string>, course: CourseGQLData) => {
+  const missingPrerequisites = Array.from(
+    validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
+  );
+  return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
