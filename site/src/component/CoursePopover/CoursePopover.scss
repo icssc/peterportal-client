@@ -60,12 +60,27 @@
     font-weight: 400;
     font-size: 12px;
     font-style: italic;
-    color: var(--petr-gray);
+    color: var(--mid-gray);
   }
 
   .center {
     display: flex;
     justify-content: center;
     margin: 8px auto;
+  }
+
+  .quarter-offerings-section {
+    display: flex;
+    gap: 4px;
+  }
+
+  .course-info-warning + .quarter-offerings-section {
+    margin-top: 10px;
+  }
+
+  .quarter-indicator-container {
+    margin-left: 0;
+    float: none;
+    align-items: center;
   }
 }

@@ -7,7 +7,7 @@
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
   position: sticky;
-  top: 0;
+  top: 32px;
   overflow-y: auto;
   @include globals.card-padding;
 }

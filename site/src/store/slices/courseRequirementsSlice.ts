@@ -3,19 +3,31 @@ import { MajorProgram, MajorSpecialization, ProgramRequirement, MinorProgram } f
 
 export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'Search';
 
+export interface MajorWithSpecialization {
+  major: MajorProgram;
+  specialization: MajorSpecialization | null;
+  requirements: ProgramRequirement[];
+}
+
+type ExpandedGroupsList = { [key: string]: boolean | undefined };
+
+export interface MinorRequirements {
+  minor: MinorProgram;
+  requirements: ProgramRequirement[];
+}
+
 const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
   initialState: {
     selectedTab: 'Major' as RequirementsTabName,
     majorList: [] as MajorProgram[],
-    specializationList: [] as MajorSpecialization[],
-    major: null as MajorProgram | null,
+    selectedMajors: [] as MajorWithSpecialization[],
     specialization: null as MajorSpecialization | null,
-    currentRequirements: [] as ProgramRequirement[],
-    minor: null as MinorProgram | null,
     minorList: [] as MinorProgram[],
-    minorRequirements: [] as ProgramRequirement[],
+    selectedMinors: [] as MinorRequirements[],
+    MinorRequirements: [] as ProgramRequirement[],
     geRequirements: [] as ProgramRequirement[],
+    expandedGroups: {} as ExpandedGroupsList,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -24,29 +36,62 @@ const courseRequirementsSlice = createSlice({
     setMajorList: (state, action: PayloadAction<MajorProgram[]>) => {
       state.majorList = action.payload;
     },
-    setSpecializationList: (state, action: PayloadAction<MajorSpecialization[]>) => {
-      state.specializationList = action.payload;
+    addMajor: (state, action: PayloadAction<MajorProgram>) => {
+      if (!state.selectedMajors.find((m) => m.major.id === action.payload.id)) {
+        state.selectedMajors.push({
+          major: action.payload,
+          specialization: null,
+          requirements: [],
+        });
+      }
     },
-    setMajor: (state, action: PayloadAction<MajorProgram | null>) => {
-      state.major = action.payload;
+    removeMajor: (state, action: PayloadAction<string>) => {
+      state.selectedMajors = state.selectedMajors.filter((m) => m.major.id !== action.payload);
     },
-    setSpecialization: (state, action: PayloadAction<MajorSpecialization | null>) => {
-      state.specialization = action.payload;
+    setSpecialization: (
+      state,
+      action: PayloadAction<{ majorId: string; specialization: MajorSpecialization | null }>,
+    ) => {
+      const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
+      if (major) {
+        major.specialization = action.payload.specialization;
+      }
     },
-    setRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
-      state.currentRequirements = action.payload;
+    setRequirements: (state, action: PayloadAction<{ majorId: string; requirements: ProgramRequirement[] }>) => {
+      const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
+      if (major) {
+        major.requirements = action.payload.requirements;
+      }
     },
-    setMinorRequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
-      state.minorRequirements = action.payload;
+    setMinorRequirements: (state, action: PayloadAction<{ minorId: string; requirements: ProgramRequirement[] }>) => {
+      const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
+      if (minor) {
+        minor.requirements = action.payload.requirements;
+      }
     },
     setMinorList: (state, action: PayloadAction<MinorProgram[]>) => {
       state.minorList = action.payload;
     },
-    setMinor: (state, action: PayloadAction<MinorProgram | null>) => {
-      state.minor = action.payload;
+    addMinor: (state, action: PayloadAction<MinorProgram>) => {
+      if (!state.selectedMinors.find((m) => m.minor.id === action.payload.id)) {
+        state.selectedMinors.push({
+          minor: action.payload,
+          requirements: [],
+        });
+      }
+    },
+    removeMinor: (state, action: PayloadAction<string>) => {
+      state.selectedMinors = state.selectedMinors.filter((m) => m.minor.id !== action.payload);
     },
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
+    },
+    setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
+      if (action.payload.expanded) {
+        state.expandedGroups[action.payload.storeKey] = true;
+      } else {
+        delete state.expandedGroups[action.payload.storeKey];
+      }
     },
   },
 });
@@ -54,14 +99,16 @@ const courseRequirementsSlice = createSlice({
 export const {
   setSelectedTab,
   setMajorList,
-  setSpecializationList,
-  setMajor,
+  addMajor,
+  removeMajor,
   setSpecialization,
   setRequirements,
   setMinorList,
-  setMinor,
+  addMinor,
+  removeMinor,
   setMinorRequirements,
   setGERequirements,
+  setGroupExpanded,
 } = courseRequirementsSlice.actions;
 
 export default courseRequirementsSlice.reducer;

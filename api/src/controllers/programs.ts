@@ -3,11 +3,17 @@
 */
 
 import { publicProcedure, router } from '../helpers/trpc';
-import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
+import {
+  MajorProgram,
+  MajorSpecialization,
+  MajorSpecializationPair,
+  MinorProgram,
+  ProgramRequirement,
+} from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
-import { planner, plannerMajor } from '../db/schema';
+import { planner, plannerMajor, plannerMinor } from '../db/schema';
 import { and, eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
@@ -31,6 +37,11 @@ const zodMajorSpecPairSchema = z.object({
       specializationId: z.string().optional(),
     }),
   ),
+});
+
+const zodMinorProgramSchema = z.object({
+  plannerId: z.number(),
+  minorIds: z.array(z.string()),
 });
 
 const programsRouter = router({
@@ -65,25 +76,54 @@ const programsRouter = router({
         .then((res) => res.data.requirements as ProgramRequirement[]);
       return response;
     }),
-  getSavedMajorSpecPairs: publicProcedure.input(z.number()).query(async ({ input: plannerId, ctx }) => {
-    const userId = ctx.session.userId;
-    if (!userId) return [];
+  getSavedMajorSpecPairs: publicProcedure
+    .input(z.number())
+    .query(async ({ input: plannerId, ctx }): Promise<MajorSpecializationPair[]> => {
+      const userId = ctx.session.userId;
+      if (!userId) return [];
 
-    return await db
-      .select({ majorId: plannerMajor.majorId, specializationId: plannerMajor.specializationId })
-      .from(plannerMajor)
-      .innerJoin(planner, eq(planner.id, plannerMajor.plannerId))
-      .where(and(eq(plannerMajor.plannerId, plannerId), eq(planner.userId, userId)));
-  }),
+      const res = await db
+        .select({ majorId: plannerMajor.majorId, specializationId: plannerMajor.specializationId })
+        .from(plannerMajor)
+        .innerJoin(planner, eq(planner.id, plannerMajor.plannerId))
+        .where(and(eq(plannerMajor.plannerId, plannerId), eq(planner.userId, userId)));
+
+      // undefined instead of null for return type consistency
+      (res as Partial<(typeof res)[0]>[]).forEach((r) => {
+        if (!r.specializationId) delete r.specializationId;
+      });
+
+      return res as MajorSpecializationPair[];
+    }),
+  getSavedMinors: publicProcedure
+    .input(z.number())
+    .query(async ({ input: plannerId, ctx }): Promise<MinorProgram[]> => {
+      const userId = ctx.session.userId;
+      if (!userId) return [];
+
+      const res = await db
+        .select({ minorId: plannerMinor.minorId })
+        .from(plannerMinor)
+        .innerJoin(planner, eq(planner.id, plannerMinor.plannerId))
+        .where(and(eq(plannerMinor.plannerId, plannerId), eq(planner.userId, userId)));
+      return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
+    }),
   /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
   saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input }) => {
     const { plannerId, pairs } = input;
     await db.delete(plannerMajor).where(eq(plannerMajor.plannerId, plannerId));
 
     const rowsToInsert = pairs.map((p) => ({ plannerId, majorId: p.majorId, specializationId: p.specializationId }));
-    await db.insert(plannerMajor).values(rowsToInsert);
+    if (rowsToInsert.length) await db.insert(plannerMajor).values(rowsToInsert);
   }),
   /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
+  saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input }) => {
+    const { plannerId, minorIds } = input;
+    await db.delete(plannerMinor).where(eq(plannerMinor.plannerId, plannerId));
+
+    const rowsToInsert = minorIds.map((minorId) => ({ plannerId, minorId }));
+    if (rowsToInsert.length) await db.insert(plannerMinor).values(rowsToInsert);
+  }),
 });
 
 export default programsRouter;

@@ -1,6 +1,4 @@
 .verify-container {
-  padding: 2rem;
-  background-color: var(--overlay1);
   border-radius: var(--border-radius);
 }
 
@@ -12,5 +10,6 @@
     flex-direction: row;
     width: 100%;
     align-items: flex-end;
+    margin-top: 16px;
   }
 }
