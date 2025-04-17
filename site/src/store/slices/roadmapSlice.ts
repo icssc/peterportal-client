@@ -286,11 +286,6 @@ export const roadmapSlice = createSlice({
       // edit name
       state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].name = newName;
     },
-    clearPlanner: (state) => {
-      if (window.confirm('Are you sure you want to clear your Roadmap?')) {
-        state.plans[state.currentPlanIndex].content.yearPlans = initialPlanState.yearPlans;
-      }
-    },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
       state.activeCourse = action.payload;
     },
@@ -381,7 +376,6 @@ export const {
   editYear,
   editName,
   deleteYear,
-  clearPlanner,
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
