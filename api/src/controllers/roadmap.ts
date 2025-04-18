@@ -1,7 +1,7 @@
 import { router, userProcedure } from '../helpers/trpc';
 import { SavedPlannerData, savedRoadmap, SavedRoadmap, TransferData } from '@peterportal/types';
 import { db } from '../db';
-import { planner, transferredCourse, user } from '../db/schema';
+import { planner, transferredMisc, user } from '../db/schema';
 import { and, asc, eq, inArray, not } from 'drizzle-orm';
 
 const roadmapsRouter = router({
@@ -16,9 +16,9 @@ const roadmapsRouter = router({
         .where(eq(planner.userId, ctx.session.userId!))
         .orderBy(asc(planner.id)),
       db
-        .select({ name: transferredCourse.courseName, units: transferredCourse.units })
-        .from(transferredCourse)
-        .where(eq(transferredCourse.userId, ctx.session.userId!)),
+        .select({ name: transferredMisc.courseName, units: transferredMisc.units })
+        .from(transferredMisc)
+        .where(eq(transferredMisc.userId, ctx.session.userId!)),
       db.select({ timestamp: user.lastRoadmapEditAt }).from(user).where(eq(user.id, ctx.session.userId!)),
     ]);
     if (planners.length === 0) {
@@ -67,12 +67,12 @@ const roadmapsRouter = router({
       });
 
     const replaceTransferredCourses = db
-      .delete(transferredCourse)
-      .where(eq(transferredCourse.userId, userId))
+      .delete(transferredMisc)
+      .where(eq(transferredMisc.userId, userId))
       .then(() => {
         if (transfers.length > 0) {
           return db
-            .insert(transferredCourse)
+            .insert(transferredMisc)
             .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
         }
       });
