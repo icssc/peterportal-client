@@ -30,7 +30,7 @@
   left: unset;
   right: 0;
   z-index: 400;
-  width: SearchSidebar.$wrapper-width;
+  width: globals.$roadmap-sidebar-width;
   &.mobile {
     width: 100%;
   }
