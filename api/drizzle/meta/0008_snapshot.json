@@ -1,6 +1,6 @@
 {
-  "id": "50d16841-4865-49e7-ab7c-b2022423d04b",
-  "prevId": "29150896-c160-4ede-9ab5-ad27f601af4a",
+  "id": "651ddb3f-b998-484e-94c7-07485c5f8ad3",
+  "prevId": "6d15c588-bc66-45de-8fee-eda20366a437",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -534,8 +534,158 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.transferred_ap_exam": {
+      "name": "transferred_ap_exam",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "exam_name": {
+          "name": "exam_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "score": {
+          "name": "score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transferred_ap_exam_user_id_user_id_fk": {
+          "name": "transferred_ap_exam_user_id_user_id_fk",
+          "tableFrom": "transferred_ap_exam",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "transferred_ap_exam_user_id_exam_name_pk": {
+          "name": "transferred_ap_exam_user_id_exam_name_pk",
+          "columns": ["user_id", "exam_name"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "score_in_range": {
+          "name": "score_in_range",
+          "value": "\"transferred_ap_exam\".\"score\" IS NULL OR (\"transferred_ap_exam\".\"score\" >= 1 AND \"transferred_ap_exam\".\"score\" <= 5)"
+        }
+      },
+      "isRLSEnabled": false
+    },
     "public.transferred_course": {
       "name": "transferred_course",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_name": {
+          "name": "course_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "units": {
+          "name": "units",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transferred_course_user_id_user_id_fk": {
+          "name": "transferred_course_user_id_user_id_fk",
+          "tableFrom": "transferred_course",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "transferred_course_user_id_course_name_pk": {
+          "name": "transferred_course_user_id_course_name_pk",
+          "columns": ["user_id", "course_name"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.transferred_ge": {
+      "name": "transferred_ge",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ge_name": {
+          "name": "ge_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number_of_courses": {
+          "name": "number_of_courses",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "units": {
+          "name": "units",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "transferred_ge_user_id_user_id_fk": {
+          "name": "transferred_ge_user_id_user_id_fk",
+          "tableFrom": "transferred_ge",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "transferred_ge_user_id_ge_name_pk": {
+          "name": "transferred_ge_user_id_ge_name_pk",
+          "columns": ["user_id", "ge_name"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.transferred_misc": {
+      "name": "transferred_misc",
       "schema": "",
       "columns": {
         "user_id": {
@@ -575,9 +725,9 @@
         }
       },
       "foreignKeys": {
-        "transferred_course_user_id_user_id_fk": {
-          "name": "transferred_course_user_id_user_id_fk",
-          "tableFrom": "transferred_course",
+        "transferred_misc_user_id_user_id_fk": {
+          "name": "transferred_misc_user_id_user_id_fk",
+          "tableFrom": "transferred_misc",
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
