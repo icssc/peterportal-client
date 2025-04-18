@@ -7,6 +7,7 @@ import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
 import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
+import transferCreditsRouter from './transferCredits';
 import usersRouter from './users';
 import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
@@ -23,6 +24,7 @@ export const appRouter = router({
   savedCourses: savedCoursesRouter,
   search: searchRouter,
   schedule: scheduleRouter,
+  transferCredits: transferCreditsRouter,
   users: usersRouter,
   zot4PlanImportRouter: zot4PlanImportRouter,
 });
