@@ -1,5 +1,5 @@
 .course {
-  box-shadow: 0px 0px 4px var(--zot-blue);
+  box-shadow: 0px 0px 4px var(--blue-primary);
   background: var(--overlay1);
   border-radius: 15px;
   height: auto;
@@ -9,7 +9,7 @@
   margin: 4px;
 
   .course-and-info {
-    color: var(--zot-blue);
+    color: var(--blue-primary);
     a {
       color: inherit;
     }
@@ -110,13 +110,13 @@
     width: calc(100% - 4px);
     margin: 2px;
     padding: 6px 12px;
-    box-shadow: 0 0 2px 0 var(--zot-blue);
+    box-shadow: 0 0 2px 0 var(--blue-primary);
 
     .name {
       font-size: $header-font-size;
       margin: 0;
 
-      color: var(--zot-blue);
+      color: var(--blue-primary);
     }
     .warning-container svg {
       color: #ce0000;

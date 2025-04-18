@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import ThemeContext from '../../../style/theme-context';
 import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import SingleMajorCourseList from './SingleMajorCourseList';
+import MajorCourseList from './MajorCourseList';
 
 function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpecializationPair[]) {
   if (!plannerId) return;
@@ -24,7 +24,7 @@ interface MajorOption {
   label: string;
 }
 
-const MajorRequiredCourseList: FC = () => {
+const MajorSelector: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
@@ -148,7 +148,7 @@ const MajorRequiredCourseList: FC = () => {
         theme={(t) => comboboxTheme(t, isDark)}
       />
       {selectedMajors.map((data) => (
-        <SingleMajorCourseList
+        <MajorCourseList
           key={data.major.id}
           majorWithSpec={data}
           selectedSpecId={defaultPairs.find((p) => p.majorId === data.major.id)?.specializationId}
@@ -159,4 +159,4 @@ const MajorRequiredCourseList: FC = () => {
   );
 };
 
-export default MajorRequiredCourseList;
+export default MajorSelector;
