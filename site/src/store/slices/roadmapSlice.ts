@@ -73,8 +73,6 @@ interface RoadmapSliceState {
   showTransfer: boolean;
   // Store transfer course data
   transfers: TransferData[];
-  // Whether or not to show the clear roadmap confirmation
-  showClearRoadmapPopup: boolean;
 }
 
 // define initial empty plans
@@ -89,7 +87,6 @@ const initialSliceState: RoadmapSliceState = {
   transfers: [],
   showCourseBag: true,
   activeCourseLoading: false,
-  showClearRoadmapPopup: false,
 };
 /** added for multiple planner */
 
@@ -310,9 +307,6 @@ export const roadmapSlice = createSlice({
     setShowTransfer: (state, action: PayloadAction<boolean>) => {
       state.showTransfer = action.payload;
     },
-    setShowClearRoadmapPopup: (state, action: PayloadAction<boolean>) => {
-      state.showClearRoadmapPopup = action.payload;
-    },
     addTransfer: (state, action: PayloadAction<TransferData>) => {
       state.transfers.push(action.payload);
     },
@@ -389,7 +383,6 @@ export const {
   setAllPlans,
   setInvalidCourses,
   setShowTransfer,
-  setShowClearRoadmapPopup,
   addTransfer,
   setTransfer,
   setTransfers,

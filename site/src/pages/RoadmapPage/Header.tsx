@@ -7,7 +7,6 @@ import { setShowTransfer } from '../../store/slices/roadmapSlice';
 import './Header.scss';
 import Transfer from './Transfer';
 import RoadmapMultiplan from './RoadmapMultiplan';
-import ClearRoadmapPopup from './ClearRoadmapPopup';
 
 interface HeaderProps {
   courseCount: number;
@@ -63,7 +62,6 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
           <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
-      <ClearRoadmapPopup />
       <div className="planner-right">
         {isMobile && (
           <>
