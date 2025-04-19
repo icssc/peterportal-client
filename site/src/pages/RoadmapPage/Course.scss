@@ -38,8 +38,12 @@
   }
 }
 
-.invalid {
+.invalid-shadow {
   box-shadow: 0px 0px 4px orange;
+}
+
+.invalid-name {
+  color: #ce0000;
 }
 
 .course-card-top {
@@ -72,7 +76,7 @@
 }
 
 .course-delete-icon {
-  color: red;
+  color: #ce0000;
 }
 
 .course-footer {
@@ -117,9 +121,6 @@
       margin: 0;
 
       color: var(--zot-blue);
-    }
-    .warning-container svg {
-      color: #ce0000;
     }
     .title {
       font-size: 12px;
