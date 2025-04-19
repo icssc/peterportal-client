@@ -43,26 +43,31 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
 };
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
-  if (!darkMode) return theme;
-
   const themeCopy = { ...theme, colors: { ...theme.colors } };
-  const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-  Object.entries(theme.colors).forEach(([key]) => {
-    if (key.startsWith('neutral')) {
-      const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
-      const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
-      themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
-    }
-  });
 
-  themeCopy.colors.danger = theme.colors.dangerLight;
-  themeCopy.colors.dangerLight = theme.colors.danger;
+  const getCssVariable = (variableName: string) => {
+    const bodyStyles = getComputedStyle(document.body);
+    return bodyStyles.getPropertyValue(variableName).trim();
+  };
 
-  themeCopy.colors.primary = theme.colors.primary75;
-  themeCopy.colors.primary25 = '#343a40'; // same as bootstrap dark
+  themeCopy.colors.primary = getCssVariable('--blue-primary'); // box border
+  themeCopy.colors.primary50 = getCssVariable('--blue-secondary'); // active
+  themeCopy.colors.primary25 = getCssVariable('--blue-tertiary'); // hover
+
+  if (darkMode) {
+    const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+    Object.entries(theme.colors).forEach(([key]) => {
+      if (key.startsWith('neutral')) {
+        const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
+        const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
+        themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
+      }
+    });
+  }
 
   return themeCopy;
 };
+
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
  * @param requirements The raw course requirements, as returned from the API
