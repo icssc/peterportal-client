@@ -10,6 +10,7 @@ import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import RecentOfferings from '../RecentOfferings/RecentOfferings';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -159,6 +160,10 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             </Badge>
           ))}
         </div>
+      </div>
+
+      <div className="side-info-recent-offerings">
+        <RecentOfferings terms={props.terms ? props.terms : []} />
       </div>
 
       <div className="side-info-ratings">
