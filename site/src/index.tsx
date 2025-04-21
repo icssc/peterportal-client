@@ -20,7 +20,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
         options={{ api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST, autocapture: true, enable_heatmaps: true }}
       >
-        {' '}
         <App />
       </PostHogProvider>
     </Provider>
