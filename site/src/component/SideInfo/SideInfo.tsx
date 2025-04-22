@@ -162,9 +162,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         </div>
       </div>
 
-      <div className="side-info-recent-offerings">
-        <RecentOfferings terms={props.terms ? props.terms : []} />
-      </div>
+      {props.terms && <RecentOfferings terms={props.terms ? props.terms : []} />}
 
       <div className="side-info-ratings">
         <div className="side-info-buttons">

@@ -20,15 +20,14 @@ function parseOfferings(terms: string[]): { [academicYear: string]: boolean[] } 
     else if (quarter.startsWith('Summer')) quarterIndex = 3;
     else continue;
 
-    // if the course is not described as a "Fall" course, it should be listed as the previous academic year
+    // if the course is not described as a "Fall" course, it should be listed as starting in the previous academic year
     // e.g. "Winter 2023" should be in "2022-2023", but "Fall 2023" should be in "2023-2024"
-    const academicYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+    const startYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
-    if (!offerings[academicYear]) {
-      offerings[academicYear] = [false, false, false, false]; // Fall, Winter, Spring, Summer
-    }
+    // Initialize Fall, Winter, Spring, Summer of the year to false
+    offerings[startYear] ??= [false, false, false, false]; // Fall, Winter, Spring, Summer
 
-    offerings[academicYear][quarterIndex] = true;
+    offerings[startYear][quarterIndex] = true;
   }
 
   return offerings;
@@ -41,7 +40,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
   const offerings = parseOfferings(termsInOrder);
 
   return (
-    <div className="recent-offerings-container">
+    <div className="recent-offerings">
       <h2>Recent Offerings</h2>
 
       <table className="recent-offerings-table">
