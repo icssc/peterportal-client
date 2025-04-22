@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Label } from 'semantic-ui-react';
 import './CourseQuarterIndicator.scss';
 import Chart from './Chart';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
@@ -38,7 +37,7 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
   const maxYear = years.reduce((max, val) => Math.max(max, val), 0);
 
   const popover = (
-    <Popover>
+    <Popover id="quarter-tooltip-popover">
       <Popover.Content>
         <div className="quarter-tooltip">
           {props.terms.length ? (
@@ -106,7 +105,7 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
   return (
     <div className="quarter-indicator-container">
       <OverlayTrigger overlay={popover} placement="auto">
-        <Label as="a" color="white" image>
+        <div>
           {offeredLastYear ? (
             // icons to show which terms were offered last year
             <span className="quarter-indicator-row">
@@ -139,9 +138,15 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
             </span>
           ) : (
             // no offerings from last year, no icons to show
-            <Label circular color="grey" empty />
+            <div>
+              <span className="quarter-indicator-row">
+                <span>
+                  <span className={emojiSize}>❌</span>
+                </span>
+              </span>
+            </div>
           )}
-        </Label>
+        </div>
       </OverlayTrigger>
     </div>
   );

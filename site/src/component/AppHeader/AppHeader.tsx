@@ -1,5 +1,4 @@
 import { useState, useEffect, FC } from 'react';
-import { Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import { ChatLeftDotsFill, Github, List } from 'react-bootstrap-icons';
@@ -85,9 +84,32 @@ const AppHeader: FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <OverlayTrigger overlay={popover} placement="bottom">
-              <Label as="a" color="yellow" image>
-                beta<Label.Detail>v1.2</Label.Detail>
-              </Label>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  backgroundColor: '#fbbd08', // Yellow background
+                  color: 'white',
+                  padding: '.2em 1em',
+                  borderRadius: '4px',
+                  fontSize: '0.9em',
+                  fontWeight: 'bold',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                beta
+                <span
+                  style={{
+                    marginLeft: '0.5em',
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    padding: '0.2em 0.5em',
+                    borderRadius: '3px',
+                  }}
+                >
+                  v1.2
+                </span>
+              </div>
             </OverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>

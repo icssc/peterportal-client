@@ -35,7 +35,7 @@
     }
   }
   .btn-primary {
-    border: 2px solid var(--aldrich-blue);
+    border: 0px solid var(--aldrich-blue);
     background-color: transparent;
     border-radius: 4px;
     font-weight: bold;
@@ -45,4 +45,13 @@
       background-color: #0062cc88;
     }
   }
+  .btn-primary:hover {
+    background-color: #1e1e1e;
+  }
+}
+.new-roadmap-button svg {
+  padding: 0px 10px;
+}
+.multi-plan-selector svg {
+  width: 18px;
 }

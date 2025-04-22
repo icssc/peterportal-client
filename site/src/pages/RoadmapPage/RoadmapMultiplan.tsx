@@ -12,7 +12,6 @@ import {
 import Dropdown from 'react-bootstrap/esm/Dropdown';
 import './RoadmapMultiplan.scss';
 import * as Icon from 'react-bootstrap-icons';
-import { Button } from 'semantic-ui-react';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
@@ -36,17 +35,17 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   return (
     <div className="select-item">
       <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
-        <Button className="planner-name-btn">{plan.name}</Button>
+        <Button2 className="planner-name-btn">{plan.name}</Button2>
       </Dropdown.Item>
-      <Button onClick={editHandler}>
+      <Button2 onClick={editHandler}>
         <Icon.PencilFill width="16" height="16" />
-      </Button>
-      <Button onClick={duplicateHandler}>
+      </Button2>
+      <Button2 onClick={duplicateHandler}>
         <Icon.Files width="16" height="16" />
-      </Button>
-      <Button onClick={deleteHandler}>
+      </Button2>
+      <Button2 onClick={deleteHandler}>
         <Icon.TrashFill width="16" height="16" />
-      </Button>
+      </Button2>
     </div>
   );
 };
@@ -142,10 +141,12 @@ const RoadmapMultiplan: FC = () => {
           ))}
           <div className="select-item add-item">
             <Dropdown.Item onClick={() => setIsOpen(true)}>
-              <Button>
-                <Icon.PlusLg width="16" height="16" />
-                New Roadmap
-              </Button>
+              <div>
+                <Button2>
+                  <Icon.PlusLg width="16" height="16" />
+                  New Roadmap
+                </Button2>
+              </div>
             </Dropdown.Item>
           </div>
         </Dropdown.Menu>

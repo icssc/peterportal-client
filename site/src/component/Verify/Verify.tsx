@@ -1,7 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
-import { Divider } from 'semantic-ui-react';
 import './Verify.scss';
 import trpc from '../../trpc';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -45,7 +44,8 @@ const Verify: FC = () => {
         <p>Deleting a review will remove it permanently.</p>
         {reviews.map((review, i) => (
           <div key={`verify-${i}`} className="verify">
-            <Divider />
+            <br />
+            <br />
             <SubReview review={review}></SubReview>
             <div className="verify-footer">
               <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>

@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
-import { Divider } from 'semantic-ui-react';
 import './UserReviews.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -32,7 +31,8 @@ const UserReviews: FC = () => {
         <p>Deleting a review will remove it permanently.</p>
         {reviews.map((review) => (
           <div key={review.id!} className="user-reviews">
-            <Divider />
+            <br />
+            <br />
             <SubReview review={review} />
           </div>
         ))}
