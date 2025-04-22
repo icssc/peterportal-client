@@ -43,7 +43,7 @@ code {
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
-  --red-primary: purple;
+  --red-primary: red;
   --green-secondary: #295629;
 }
 
