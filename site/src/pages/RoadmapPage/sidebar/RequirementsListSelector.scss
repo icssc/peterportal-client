@@ -23,10 +23,10 @@
       box-shadow: none;
     }
     &:not(.btn-primary) {
-      color: var(--peterportal-primary-color-1);
+      color: var(--blue-primary);
     }
   }
   button.ppc-btn.btn-primary:active {
-    background-color: var(--peterportal-primary-color-1);
+    background-color: var(--blue-primary);
   }
 }
