@@ -39,11 +39,11 @@
 }
 
 .invalid-shadow {
-  box-shadow: 0px 0px 4px orange;
+  box-shadow: 0px 0px 4px var(--blue-primary);
 }
 
 .invalid-name {
-  color: #ce0000;
+  color: var(--red-primary);
 }
 
 .course-card-top {
@@ -76,7 +76,7 @@
 }
 
 .course-delete-icon {
-  color: #ce0000;
+  color: var(--red-primary);
 }
 
 .course-footer {

@@ -25,6 +25,8 @@ code {
   --blue-accent: #74d1f6;
 
   --green-primary: green;
+  --red-primary: #ce0000;
+
   --green-secondary: #87c587;
   --yellow-secondary: #f5d77f;
   --orange-secondary: #ecad6d;
@@ -41,6 +43,7 @@ code {
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
+  --red-primary: purple;
   --green-secondary: #295629;
 }
 
