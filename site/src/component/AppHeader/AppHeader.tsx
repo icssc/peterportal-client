@@ -1,4 +1,4 @@
-import { useState, useEffect, FC } from 'react';
+import { useState, useEffect, FC, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ChatLeftDotsFill, Github, List } from 'react-bootstrap-icons';
@@ -10,13 +10,16 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
-import { Popover } from 'react-bootstrap';
+import { Button, Popover } from 'react-bootstrap';
 import PPCOverlayTrigger from '../PPCOverlayTrigger';
+import ThemeContext from '../../style/theme-context';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
   const [week, setWeek] = useState('');
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   useEffect(() => {
     // Get the current week data
@@ -43,20 +46,22 @@ const AppHeader: FC = () => {
       </p>
       <div className="feedback">
         <a
-          className="ui button"
           href="https://github.com/icssc-projects/peterportal-client/issues/new"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Github /> Report an issue
+          <Button variant={buttonVariant}>
+            <Github /> Report an issue
+          </Button>
         </a>
         <a
-          className="ui button"
           href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <ChatLeftDotsFill /> Feedback
+          <Button variant={buttonVariant}>
+            <ChatLeftDotsFill /> Feedback
+          </Button>
         </a>
       </div>
     </Popover.Content>

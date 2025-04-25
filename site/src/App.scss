@@ -107,6 +107,10 @@ button {
       border-right-color: var(--overlay1);
     }
   }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .bs-popover-left {
@@ -234,7 +238,21 @@ button {
     width: 100%;
     max-height: 200px;
     overflow: auto;
+    min-width: fit-content;
   }
+
+  .dropdown-item {
+    padding: 4px 12px;
+  }
+
+  .dropdown-item:active {
+    background-color: var(--overlay2);
+    color: inherit;
+  }
+}
+[data-theme='light'] .ppc-dropdown-btn button {
+  background-color: var(--overlay2);
+  border-color: var(--overlay2);
 }
 
 .form-check-input {

@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -7,6 +7,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -37,6 +38,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -177,7 +180,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           <DropdownButton
             className="ppc-dropdown-btn"
             title="Chart Type"
-            variant="secondary"
+            variant={buttonVariant}
             onSelect={(value) => setChartType(value as ChartTypes)}
           >
             <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
@@ -190,7 +193,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         <DropdownButton
           className="ppc-dropdown-btn"
           title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
-          variant="secondary"
+          variant={buttonVariant}
           onSelect={updateProfCourse}
         >
           {profCourseOptions?.map((q) => {
@@ -207,7 +210,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         <DropdownButton
           className="ppc-dropdown-btn"
           title={selectedQuarterName}
-          variant="secondary"
+          variant={buttonVariant}
           onSelect={(value) => setCurrentQuarter(value!)}
         >
           {quarterEntries?.map((q) => {
@@ -232,16 +235,18 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        {((props.minify && chartType == 'bar') || !props.minify) && (
-          <div className={'grade_distribution_chart-container chart'}>
-            <Chart {...graphProps} />
-          </div>
-        )}
-        {((props.minify && chartType == 'pie') || !props.minify) && (
-          <div className={'grade_distribution_chart-container pie'}>
-            <Pie {...graphProps} />
-          </div>
-        )}
+        <div className="flex">
+          {((props.minify && chartType == 'bar') || !props.minify) && (
+            <div className={'grade_distribution_chart-container chart'}>
+              <Chart {...graphProps} />
+            </div>
+          )}
+          {((props.minify && chartType == 'pie') || !props.minify) && (
+            <div className={'grade_distribution_chart-container pie'}>
+              <Pie {...graphProps} />
+            </div>
+          )}
+        </div>
       </div>
     );
   } else if (gradeDistData == null) {

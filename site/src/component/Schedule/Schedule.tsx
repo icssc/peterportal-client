@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -8,6 +8,7 @@ import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection a
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface ScheduleProps {
   courseID?: string;
@@ -28,6 +29,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const [currentQuarter, setCurrentQuarter] = useState<string>('');
   const [selectedQuarter, setSelectedQuarter] = useState<string>('');
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get the current quarter used in websoc
@@ -192,7 +194,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
           <DropdownButton
             className="ppc-dropdown-btn"
             title={selectedQuarter ?? currentQuarter}
-            variant="secondary"
+            variant={darkMode ? 'dark' : 'light'}
             onSelect={(value) => setSelectedQuarter(value!)}
           >
             {termOptions.map((opt) => (

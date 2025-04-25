@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
@@ -9,6 +9,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
+import ThemeContext from '../../style/theme-context';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -28,6 +29,8 @@ const Review: FC<ReviewProps> = (props) => {
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
@@ -147,7 +150,7 @@ const Review: FC<ReviewProps> = (props) => {
               <DropdownButton
                 className="ppc-dropdown-btn"
                 title={selectedSortOptionText}
-                variant="secondary"
+                variant={buttonVariant}
                 onSelect={(value) => setSortingOption(parseInt(value!) as SortingOption)}
               >
                 {reviewSortOptions.map((opt) => (
@@ -162,7 +165,7 @@ const Review: FC<ReviewProps> = (props) => {
                 <DropdownButton
                   className="ppc-dropdown-btn"
                   title={selectedProfessorOptionText ?? 'Select Professor...'}
-                  variant="secondary"
+                  variant={buttonVariant}
                   onSelect={(value) => setFilterOption(value!)}
                 >
                   {professorOptions.map((opt) => (
@@ -178,7 +181,7 @@ const Review: FC<ReviewProps> = (props) => {
                 <DropdownButton
                   className="ppc-dropdown-btn"
                   title={selectedCourseOptionText ?? 'Select Course...'}
-                  variant="secondary"
+                  variant={buttonVariant}
                   onSelect={(value) => setFilterOption(value!)}
                 >
                   {courseOptions.map((opt) => (

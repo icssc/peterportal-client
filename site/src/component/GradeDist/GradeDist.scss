@@ -4,15 +4,18 @@
   flex-direction: column;
   align-items: center;
 
-  .gradedist-filter {
-    margin: 1vh;
-    min-width: 200px;
+  .flex {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    padding-inline: 20px;
   }
 }
 .gradedist-menu {
   display: flex;
   flex-wrap: wrap;
   padding: 10px 20px 0px;
+  gap: 16px;
 }
 
 #grade-dist-label {
