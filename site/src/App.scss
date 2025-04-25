@@ -218,6 +218,21 @@ button {
   font-weight: bold;
 }
 
+.ppc-dropdown-btn {
+  min-width: 192px;
+  button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dropdown-menu {
+    width: 100%;
+    max-height: 200px;
+    overflow: auto;
+  }
+}
+
 .form-check-input {
   --bs-form-check-bg: var(--overlay1);
   -webkit-appearance: none;

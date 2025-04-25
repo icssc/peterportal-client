@@ -7,25 +7,12 @@
   .gradedist-filter {
     margin: 1vh;
     min-width: 200px;
-    .dropdown,
-    .dropdown button {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
   }
 }
 .gradedist-menu {
   display: flex;
   flex-wrap: wrap;
   padding: 10px 20px 0px;
-
-  .dropdown-menu {
-    width: 100%;
-    max-height: 200px;
-    overflow: auto;
-  }
 }
 
 #grade-dist-label {

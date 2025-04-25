@@ -175,6 +175,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       {props.minify && (
         <div className="gradedist-filter">
           <DropdownButton
+            className="ppc-dropdown-btn"
             title="Chart Type"
             variant="secondary"
             onSelect={(value) => setChartType(value as ChartTypes)}
@@ -187,6 +188,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
       <div className="gradedist-filter">
         <DropdownButton
+          className="ppc-dropdown-btn"
           title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
           variant="secondary"
           onSelect={updateProfCourse}
@@ -202,7 +204,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       </div>
 
       <div className="gradedist-filter">
-        <DropdownButton title={selectedQuarterName} variant="secondary" onSelect={(value) => setCurrentQuarter(value!)}>
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title={selectedQuarterName}
+          variant="secondary"
+          onSelect={(value) => setCurrentQuarter(value!)}
+        >
           {quarterEntries?.map((q) => {
             return (
               <Dropdown.Item key={q.value} eventKey={q.value}>
