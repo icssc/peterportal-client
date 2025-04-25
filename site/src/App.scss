@@ -221,11 +221,14 @@ button {
 .ppc-dropdown-btn {
   width: 192px;
   min-width: fit-content;
+
   button {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--overlay3);
+    border-color: var(--overlay2);
   }
   .dropdown-menu {
     width: 100%;

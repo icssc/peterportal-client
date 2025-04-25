@@ -87,9 +87,9 @@ const AppHeader: FC = () => {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  backgroundColor: '#fbbd08', // Yellow background
+                  backgroundColor: 'var(--zot-blue)', // Yellow background
                   color: 'white',
-                  padding: '.2em 1em',
+                  padding: '4px 10px',
                   borderRadius: '4px',
                   fontSize: '0.9em',
                   fontWeight: 'bold',
@@ -97,17 +97,8 @@ const AppHeader: FC = () => {
                   cursor: 'pointer',
                 }}
               >
-                beta
-                <span
-                  style={{
-                    marginLeft: '0.5em',
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    padding: '0.2em 0.5em',
-                    borderRadius: '3px',
-                  }}
-                >
-                  v1.2
-                </span>
+                <div>beta</div>
+                <div style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>v1.2</div>
               </div>
             </PPCOverlayTrigger>
           </div>

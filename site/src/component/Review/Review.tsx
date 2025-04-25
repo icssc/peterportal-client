@@ -136,7 +136,8 @@ const Review: FC<ReviewProps> = (props) => {
         .filter(({ value }) => reviewFreq.get(value))
         .sort((a, b) => a.text.localeCompare(b.text)),
     );
-    const selectedFilterOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
+    const selectedProfessorOptionText = professorOptions.find((opt) => opt.value === filterOption)?.text;
+    const selectedCourseOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
 
     return (
       <>
@@ -160,7 +161,7 @@ const Review: FC<ReviewProps> = (props) => {
               <div className="filter-dropdown">
                 <DropdownButton
                   className="ppc-dropdown-btn"
-                  title={selectedFilterOptionText ?? 'Select Professor...'}
+                  title={selectedProfessorOptionText ?? 'Select Professor...'}
                   variant="secondary"
                   onSelect={(value) => setFilterOption(value!)}
                 >
@@ -176,7 +177,7 @@ const Review: FC<ReviewProps> = (props) => {
               <div className="filter-dropdown">
                 <DropdownButton
                   className="ppc-dropdown-btn"
-                  title={selectedFilterOptionText ?? 'Select Course...'}
+                  title={selectedCourseOptionText ?? 'Select Course...'}
                   variant="secondary"
                   onSelect={(value) => setFilterOption(value!)}
                 >
