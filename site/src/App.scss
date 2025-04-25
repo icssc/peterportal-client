@@ -219,7 +219,8 @@ button {
 }
 
 .ppc-dropdown-btn {
-  min-width: 192px;
+  width: 192px;
+  min-width: fit-content;
   button {
     width: 100%;
     display: flex;
