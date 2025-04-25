@@ -1,6 +1,6 @@
 {
-  "id": "50d16841-4865-49e7-ab7c-b2022423d04b",
-  "prevId": "29150896-c160-4ede-9ab5-ad27f601af4a",
+  "id": "6d15c588-bc66-45de-8fee-eda20366a437",
+  "prevId": "50d16841-4865-49e7-ab7c-b2022423d04b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -534,8 +534,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.transferred_course": {
-      "name": "transferred_course",
+    "public.transferred_misc": {
+      "name": "transferred_misc",
       "schema": "",
       "columns": {
         "user_id": {
@@ -575,9 +575,9 @@
         }
       },
       "foreignKeys": {
-        "transferred_course_user_id_user_id_fk": {
-          "name": "transferred_course_user_id_user_id_fk",
-          "tableFrom": "transferred_course",
+        "transferred_misc_user_id_user_id_fk": {
+          "name": "transferred_misc_user_id_user_id_fk",
+          "tableFrom": "transferred_misc",
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],

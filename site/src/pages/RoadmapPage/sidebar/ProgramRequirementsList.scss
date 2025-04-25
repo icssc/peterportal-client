@@ -1,8 +1,6 @@
 @use '../../../globals.scss';
 @use 'sass:color';
 
-$complete-color: green;
-
 .program-requirements {
   display: flex;
   flex-direction: column;
@@ -10,7 +8,7 @@ $complete-color: green;
 }
 
 .group-requirement {
-  border: 2px solid rgba(globals.$primary-blue-1, 0.5);
+  border: 2px solid var(--blue-secondary);
   border-radius: 8px;
   padding: 12px;
   position: relative;
@@ -19,7 +17,7 @@ $complete-color: green;
     display: flex;
     gap: 8px;
     align-items: center;
-    color: globals.$primary-blue-1;
+    color: var(--blue-primary);
     text-align: left;
     padding: 0;
     background: none;
@@ -44,24 +42,24 @@ $complete-color: green;
   }
 
   &.completed {
-    border-color: rgba($complete-color, 0.5);
+    border-color: var(--green-secondary);
 
     > .group-header {
-      color: $complete-color;
+      color: var(--green-primary);
       text-decoration: line-through;
       text-decoration-thickness: 2px;
     }
 
     .group-requirement:not(.completed) {
-      border-color: var(--peterportal-mid-gray);
+      border-color: var(--mid-gray);
       .group-header {
-        color: var(--peterportal-mid-gray);
+        color: var(--mid-gray);
       }
     }
   }
 
   .course-requirement.completed {
-    color: $complete-color;
+    color: var(--green-primary);
   }
 
   > .group-requirement:not(:last-child) {
@@ -80,8 +78,8 @@ $complete-color: green;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 10px;
-  background-color: globals.$primary-blue-1;
+  padding: 5px 2px;
+  background-color: var(--blue-primary);
   color: white;
   font-weight: bold;
   font-size: 13px;
@@ -93,7 +91,7 @@ $complete-color: green;
   }
 
   &.completed {
-    background-color: var(--peterportal-gray-blue);
+    background-color: var(--gray-blue);
     outline: 1.5px solid var(--text-secondary);
     outline-offset: -1.5px;
     color: var(--text-secondary);
@@ -127,7 +125,7 @@ body[data-theme='dark'] {
 
   &.loading {
     color: #fff6;
-    background-color: rgba(globals.$primary-blue-1, 0.8);
+    background-color: var(--blue-secondary);
   }
 }
 

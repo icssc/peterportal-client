@@ -15,10 +15,18 @@ import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useIsMobile } from '../../../helpers/util';
-import { setActiveCourse, setActiveCourseLoading, setShowAddCourse } from '../../../store/slices/roadmapSlice';
+import {
+  setActiveCourse,
+  setActiveCourseLoading,
+  setActiveMissingPrerequisites,
+  setShowAddCourse,
+} from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
+import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
+import { getMissingPrerequisites } from '../../../helpers/planner';
+import { useClearedCourses } from '../../../hooks/planner';
 
 interface CourseTileProps {
   courseID: string;
@@ -31,6 +39,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
+  const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
 
   const loadFullData = useCallback(async () => {
@@ -60,7 +69,9 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const insertCourseOnClick = async () => {
     setLoading(true);
     const fullData = await loadFullData();
+    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData);
     dispatch(setActiveCourse(fullData as CourseGQLData));
+    dispatch(setActiveMissingPrerequisites(missingPrerequisites));
     dispatch(setShowAddCourse(true));
     setLoading(false);
   };
@@ -68,9 +79,16 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = isMobile ? tapProps : {};
   const className = `program-course-tile${isMobile ? ' mobile' : ''}${loading ? ' loading' : ''}${taken ? ' completed' : ''}`;
+  let fontSize: string | undefined;
+
+  if (courseID.length > 10) {
+    const charsExtra = courseID.length - 10;
+    const computedSize = 13 - charsExtra;
+    fontSize = computedSize + 'px';
+  }
 
   return (
-    <div className={className} {...tappableCourseProps}>
+    <div className={className} {...tappableCourseProps} style={{ fontSize }}>
       <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && <Spinner animation="border" />}
     </div>
@@ -117,14 +135,22 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
-interface IndividualRequirementProps {
+interface CourseRequirementProps {
   data: TypedProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
 
-const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
+const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const dispatch = useAppDispatch();
+
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(false);
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
+  };
 
   let label: string | number;
   if ('courseCount' in data) {
@@ -148,7 +174,12 @@ const CourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseID
   );
 };
 
-const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenCourseIDs }) => {
+interface GroupedCourseRequirementProps {
+  data: TypedProgramRequirement<'Course' | 'Unit'>;
+  takenCourseIDs: CompletedCourseSet;
+}
+
+const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = checkCompletion(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
 
@@ -167,10 +198,19 @@ const GroupedCourseRequirement: FC<IndividualRequirementProps> = ({ data, takenC
 interface GroupRequirementProps {
   data: TypedProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
-const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) => {
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const dispatch = useAppDispatch();
+
   const complete = checkCompletion(takenCourseIDs, data).done;
-  const [open, setOpen] = useState(false);
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
+  };
+
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -183,7 +223,13 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs }) =
       )}
       {open &&
         data.requirements.map((r, i) => (
-          <ProgramRequirementDisplay key={i} requirement={r} nested takenCourseIDs={takenCourseIDs} />
+          <ProgramRequirementDisplay
+            key={i}
+            storeKey={`${storeKey}-${i}`}
+            requirement={r}
+            nested
+            takenCourseIDs={takenCourseIDs}
+          />
         ))}
     </div>
   );
@@ -193,24 +239,34 @@ interface ProgramRequirementDisplayProps {
   requirement: ProgramRequirement;
   nested?: boolean;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
-const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({ requirement, nested, takenCourseIDs }) => {
+const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
+  requirement,
+  nested,
+  takenCourseIDs,
+  storeKey,
+}) => {
   switch (requirement.requirementType) {
     case 'Unit':
     case 'Course': {
-      const DisplayComponent = nested ? GroupedCourseRequirement : CourseRequirement;
-      return <DisplayComponent data={requirement} takenCourseIDs={takenCourseIDs} />;
+      return nested ? (
+        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
+      ) : (
+        <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
+      );
     }
     case 'Group':
-      return <GroupRequirement data={requirement} takenCourseIDs={takenCourseIDs} />;
+      return <GroupRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
   }
 };
 
 interface RequireCourseListProps {
   requirements: ProgramRequirement[];
+  storeKeyPrefix: string;
 }
 
-const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) => {
+const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
@@ -233,7 +289,12 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements }) =
     <div className="program-requirements">
       {/* key is ok because we don't reorder these */}
       {collapsedRequirements.map((r, i) => (
-        <ProgramRequirementDisplay requirement={r} key={i} takenCourseIDs={takenCourseSet} />
+        <ProgramRequirementDisplay
+          requirement={r}
+          key={i}
+          storeKey={`${storeKeyPrefix}-${i}`}
+          takenCourseIDs={takenCourseSet}
+        />
       ))}
     </div>
   );

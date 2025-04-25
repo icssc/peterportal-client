@@ -45,11 +45,11 @@ button {
 
   &.btn-primary {
     color: var(--ring-road-white);
-    border-color: var(--peterportal-primary-color-1);
-    background-color: var(--peterportal-primary-color-1);
+    border-color: var(--blue-primary);
+    background-color: var(--blue-primary);
     &:hover,
     &:focus {
-      background-color: var(--peterportal-primary-color-1);
+      background-color: var(--blue-primary);
     }
   }
 }
@@ -196,13 +196,13 @@ button {
     color: #1b76b4;
   }
   button.btn-primary {
-    border-color: var(--peterportal-primary-color-1);
-    background-color: var(--peterportal-primary-color-1);
+    border-color: var(--blue-primary);
+    background-color: var(--blue-primary);
   }
 }
 
 [data-theme='dark'] .ppc-modal a {
-  color: var(--peterportal-primary-color-2);
+  color: var(--blue-accent);
 }
 
 [data-theme='dark'] {
@@ -258,8 +258,8 @@ button {
     outline: 0;
   }
   &:checked {
-    background-color: var(--peterportal-primary-color-1);
-    border-color: var(--peterportal-primary-color-1);
+    background-color: var(--blue-primary);
+    border-color: var(--blue-primary);
     &[type='checkbox'] {
       --bs-form-check-bg-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3E%3C/svg%3E");
     }

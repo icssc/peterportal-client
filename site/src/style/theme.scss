@@ -1,10 +1,10 @@
 // light theme vars
 :root {
-  --background: var(--peterportal-gray-blue); // defined in index.css
+  --background: var(--gray-blue); // defined in index.css
   --overlay1: #fff;
-  --overlay2: var(--peterportal-gray-blue);
+  --overlay2: var(--gray-blue);
   --overlay3: #fff;
-  --overlay4: var(--peterportal-gray-blue);
+  --overlay4: var(--gray-blue);
   --text: #212529; // default bootstrap color
   --text-secondary: #606166;
   --text-dark: #000;
@@ -29,8 +29,6 @@
   --text-light: #fff;
   --hover: #cacbcd;
   --warning-red: red;
-  --peterportal-primary-color-1: #268cd3;
-  --zot-blue: var(--peterportal-primary-color-1);
 
   color-scheme: dark;
 }
