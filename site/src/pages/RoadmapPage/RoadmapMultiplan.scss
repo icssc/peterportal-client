@@ -5,7 +5,7 @@
     padding: 4px 8px;
     align-items: center;
   }
-  .add-item .button {
+  .add-item .btn {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -14,17 +14,28 @@
     display: contents;
     color: inherit;
   }
-  .dropdown-item .button {
+  .dropdown-item .btn {
     padding: 8px 20px 8px 12px;
     text-align: left;
   }
   .dropdown-item > * {
     width: 100%;
   }
-  .button {
+  .btn {
+    font: inherit;
+    color: inherit;
+    font-weight: bold;
+    background-color: inherit;
+    text-align: left;
+    border: none;
     padding: 6px;
     margin: 0;
     background-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+
     &:hover,
     &:focus {
       background-color: #8882;
@@ -39,19 +50,13 @@
     background-color: transparent;
     border-radius: 4px;
     font-weight: bold;
+    padding: 4px 10px;
+    height: 34px;
+
     &[aria-expanded='true'],
     &:not(.disabled):active {
       border-color: var(--blue-primary);
       background-color: #0062cc88;
     }
   }
-  .dropdown-menu .btn-primary:hover {
-    background-color: #1e1e1e;
-  }
-}
-.new-roadmap-button svg {
-  padding: 0px 10px;
-}
-.multi-plan-selector svg {
-  width: 18px;
 }
