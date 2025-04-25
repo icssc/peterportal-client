@@ -6,6 +6,21 @@
   display: flex;
   flex-direction: column;
   overflow-x: auto;
+
+  .node {
+    color: var(--text);
+    background-color: var(--overlay2);
+    border: none;
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: #8884;
+    }
+  }
 }
 
 .prereq-clump {
@@ -194,4 +209,6 @@
 }
 .tree-node-popover {
   font-size: 14px;
+  text-align: center;
+  pointer-events: none;
 }

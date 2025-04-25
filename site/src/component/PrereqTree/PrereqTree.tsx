@@ -22,7 +22,7 @@ const phraseMapping = {
 };
 const Node: FC<NodeProps> = (props) => {
   const popover = (
-    <Popover id="tree-node-popover" className="tree-node-popover">
+    <Popover id="tree-node-popover" className="tree-node-popover" placement="bottom">
       <Popover.Content>{props.content ? props.content : props.label}</Popover.Content>
     </Popover>
   );
@@ -34,12 +34,12 @@ const Node: FC<NodeProps> = (props) => {
             to={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
             role="button"
             style={{ padding: '0.5rem' }}
-            className={`node ui button`}
+            className="node"
           >
             {props.label}
           </Link>
         ) : (
-          <button style={{ padding: '0.5rem' }} className={`node ui button`}>{`${props.label}`}</button>
+          <button style={{ padding: '0.5rem' }} className="node">{`${props.label}`}</button>
         )}
       </OverlayTrigger>
     </div>

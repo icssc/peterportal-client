@@ -60,7 +60,6 @@ const ProfessorPage: FC = () => {
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <br />
-              <br />
               <Schedule
                 professorIDs={professorGQLData.shortenedNames}
                 termsOffered={unionTerms(professorGQLData.courses)}
@@ -72,7 +71,6 @@ const ProfessorPage: FC = () => {
                 <h2>📊 Grade Distribution</h2>
               </div>
               <br />
-              <br />
               <GradeDist professor={professorGQLData} />
             </div>
 
@@ -80,7 +78,6 @@ const ProfessorPage: FC = () => {
               <div>
                 <h2>💬 Reviews</h2>
               </div>
-              <br />
               <br />
               <Review professor={professorGQLData} />
             </div>

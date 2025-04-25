@@ -63,7 +63,6 @@ const CoursePage: FC = () => {
                 <h2>🌲 Prerequisite Tree</h2>
               </div>
               <br />
-              <br />
               <PrereqTree key={courseGQLData.id} {...courseGQLData} />
             </div>
 
@@ -71,7 +70,6 @@ const CoursePage: FC = () => {
               <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
-              <br />
               <br />
               <Schedule
                 key={courseGQLData.id}
@@ -85,7 +83,6 @@ const CoursePage: FC = () => {
                 <h2>📊 Grade Distribution</h2>
               </div>
               <br />
-              <br />
               <GradeDist course={courseGQLData} />
             </div>
 
@@ -93,7 +90,6 @@ const CoursePage: FC = () => {
               <div>
                 <h2>💬 Reviews</h2>
               </div>
-              <br />
               <br />
               <Review key={courseGQLData.id} course={courseGQLData} />
             </div>
