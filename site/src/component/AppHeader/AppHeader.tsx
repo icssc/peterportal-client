@@ -83,22 +83,9 @@ const AppHeader: FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <PPCOverlayTrigger popoverContent={popover} placement="bottom">
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  backgroundColor: 'var(--zot-blue)', // Yellow background
-                  color: 'white',
-                  padding: '4px 10px',
-                  borderRadius: '4px',
-                  fontSize: '0.9em',
-                  fontWeight: 'bold',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                }}
-              >
+              <div id="beta-tag">
                 <div>beta</div>
-                <div style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>v1.2</div>
+                <div className="shade">v1.2</div>
               </div>
             </PPCOverlayTrigger>
           </div>
