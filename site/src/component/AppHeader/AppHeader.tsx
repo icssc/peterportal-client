@@ -10,7 +10,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { Popover } from 'react-bootstrap';
+import PPCOverlayTrigger from '../PPCOverlayTrigger';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -30,37 +31,35 @@ const AppHeader: FC = () => {
   };
 
   const popover = (
-    <Popover id="beta-info" className="beta-popup ppc-popover">
-      <Popover.Content>
-        <h4>Beta Disclaimer</h4>
-        <p>
-          Please note that this is a beta version of PeterPortal, which is still undergoing development. Some content on
-          this web application may not be accurate. Users are encouraged to double check details.
-        </p>
-        <p>
-          Should you encounter any bugs, glitches, lack of functionality or other problems on the application, please
-          let us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
-        </p>
-        <div className="feedback">
-          <a
-            className="ui button"
-            href="https://github.com/icssc-projects/peterportal-client/issues/new"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Github /> Report an issue
-          </a>
-          <a
-            className="ui button"
-            href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ChatLeftDotsFill /> Feedback
-          </a>
-        </div>
-      </Popover.Content>
-    </Popover>
+    <Popover.Content>
+      <h4>Beta Disclaimer</h4>
+      <p>
+        Please note that this is a beta version of PeterPortal, which is still undergoing development. Some content on
+        this web application may not be accurate. Users are encouraged to double check details.
+      </p>
+      <p>
+        Should you encounter any bugs, glitches, lack of functionality or other problems on the application, please let
+        us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
+      </p>
+      <div className="feedback">
+        <a
+          className="ui button"
+          href="https://github.com/icssc-projects/peterportal-client/issues/new"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Github /> Report an issue
+        </a>
+        <a
+          className="ui button"
+          href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ChatLeftDotsFill /> Feedback
+        </a>
+      </div>
+    </Popover.Content>
   );
 
   return (
@@ -83,7 +82,7 @@ const AppHeader: FC = () => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
-            <OverlayTrigger overlay={popover} placement="bottom">
+            <PPCOverlayTrigger popoverContent={popover} placement="bottom">
               <div
                 style={{
                   display: 'inline-flex',
@@ -110,7 +109,7 @@ const AppHeader: FC = () => {
                   v1.2
                 </span>
               </div>
-            </OverlayTrigger>
+            </PPCOverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {week}
