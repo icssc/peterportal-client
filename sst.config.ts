@@ -33,10 +33,12 @@ function createLambdaFunction() {
     EXTERNAL_USER_READ_SECRET: process.env.EXTERNAL_USER_READ_SECRET!,
     OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS!,
     // hardcoded OTEL options
-    AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
-    NODE_OPTIONS: '--require @opentelemetry/auto-instrumentations-node/register',
-    OTEL_SERVICE_NAME: 'peterportal-backend',
-    OTEL_EXPORTER_OTLP_ENDPOINT: 'https://ingress.us-west-2.aws.dash0.com',
+    ...($app.stage === 'prod' && {
+      AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      NODE_OPTIONS: '--require @opentelemetry/auto-instrumentations-node/register',
+      OTEL_SERVICE_NAME: 'peterportal-backend',
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'https://ingress.us-west-2.aws.dash0.com',
+    }),
   };
 
   return new sst.aws.Function('PeterPortal Backend', {
