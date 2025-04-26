@@ -50,7 +50,7 @@ function createLambdaFunction() {
     url: true,
     layers: ['arn:aws:lambda:us-west-1:184161586896:layer:opentelemetry-nodejs-0_13_0:1'],
     nodejs: {
-      install: ['@opentelemetry/auto-instrumentations-node/register'],
+      install: ['@opentelemetry/auto-instrumentations-node'],
     },
   });
 }
