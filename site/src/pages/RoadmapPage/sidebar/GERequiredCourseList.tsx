@@ -4,9 +4,26 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { getCommonPrefix, stripSecondParenthesis } from '../../../helpers/substitutions';
 
-function getCoursesForGE() {
-  return trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+async function getCoursesForGE() {
+  const fetchedCourses = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+
+  fetchedCourses.forEach((courseBlock) => {
+    if (courseBlock.label === 'Select 1 of the following' && courseBlock.requirementType === 'Group') {
+      const requirementLabels = courseBlock.requirements
+        .filter((req) => req.requirementType === 'Group')
+        .map((req) => stripSecondParenthesis(req.label));
+
+      const commonBase = getCommonPrefix(requirementLabels);
+
+      if (commonBase) {
+        courseBlock.label = commonBase.trim();
+      }
+    }
+  });
+
+  return fetchedCourses;
 }
 
 const GERequiredCourseList: FC = () => {
