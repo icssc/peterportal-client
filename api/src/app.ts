@@ -33,39 +33,41 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
 
 // OTEL setup
-if (!process.env.DASH0_TOKEN) {
-  console.log('DASH0_TOKEN env var not defined. Telemetry will be logged to standard output.');
-}
+const setupOTEL = () => {
+  if (!process.env.DASH0_TOKEN) {
+    console.log('DASH0_TOKEN env var not defined. Telemetry will be logged to standard output.');
+  }
 
-const traceExporter = process.env.DASH0_TOKEN
-  ? new OTLPTraceExporter({
-      url: 'https://ingress.us-west-2.aws.dash0.com/v1/traces',
-      headers: {
-        Authorization: process.env.DASH0_TOKEN,
-        'Dash0-Dataset': 'peterportal-backend',
-      },
-    })
-  : new ConsoleSpanExporter();
+  const traceExporter = process.env.DASH0_TOKEN
+    ? new OTLPTraceExporter({
+        url: 'https://ingress.us-west-2.aws.dash0.com/v1/traces',
+        headers: {
+          Authorization: process.env.DASH0_TOKEN,
+          'Dash0-Dataset': 'peterportal-backend',
+        },
+      })
+    : new ConsoleSpanExporter();
 
-const exporter = process.env.DASH0_TOKEN
-  ? new OTLPMetricExporter({
-      url: 'https://ingress.us-west-2.aws.dash0.com/v1/metrics',
-      headers: {
-        Authorization: process.env.DASH0_TOKEN,
-        'Dash0-Dataset': 'peterportal-backend',
-      },
-    })
-  : new ConsoleMetricExporter();
+  const exporter = process.env.DASH0_TOKEN
+    ? new OTLPMetricExporter({
+        url: 'https://ingress.us-west-2.aws.dash0.com/v1/metrics',
+        headers: {
+          Authorization: process.env.DASH0_TOKEN,
+          'Dash0-Dataset': 'peterportal-backend',
+        },
+      })
+    : new ConsoleMetricExporter();
 
-const sdk = new NodeSDK({
-  traceExporter,
-  metricReader: new PeriodicExportingMetricReader({
-    exporter,
-  }),
-  instrumentations: [getNodeAutoInstrumentations(), new HttpInstrumentation(), new ExpressInstrumentation()],
-});
+  const sdk = new NodeSDK({
+    traceExporter,
+    metricReader: new PeriodicExportingMetricReader({
+      exporter,
+    }),
+    instrumentations: [getNodeAutoInstrumentations(), new HttpInstrumentation(), new ExpressInstrumentation()],
+  });
 
-sdk.start();
+  sdk.start();
+};
 
 // instantiate app
 const app = express();
@@ -154,6 +156,7 @@ app.use(errorHandler);
 // run local dev server
 const NODE_ENV = process.env.NODE_ENV ?? 'development';
 if (NODE_ENV === 'development') {
+  setupOTEL();
   const port = process.env.PORT ?? 8080;
   app.listen(port, () => {
     console.log('Listening on port', port);
@@ -161,4 +164,9 @@ if (NODE_ENV === 'development') {
 }
 
 // export for serverless
-export const handler = serverlessExpress({ app });
+export const handler = serverlessExpress({
+  app: (() => {
+    setupOTEL();
+    return app;
+  })(),
+});
