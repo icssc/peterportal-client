@@ -48,45 +48,9 @@ importers:
 
   api:
     dependencies:
-      '@opentelemetry/api':
-        specifier: 1.9.0
-        version: 1.9.0
       '@opentelemetry/auto-instrumentations-node':
         specifier: 0.58.0
         version: 0.58.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@2.0.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)
-      '@opentelemetry/exporter-metrics-otlp-proto':
-        specifier: 0.200.0
-        version: 0.200.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/exporter-trace-otlp-proto':
-        specifier: 0.200.0
-        version: 0.200.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation':
-        specifier: 0.200.0
-        version: 0.200.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation-express':
-        specifier: 0.48.1
-        version: 0.48.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/instrumentation-http':
-        specifier: 0.200.0
-        version: 0.200.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/resources':
-        specifier: 2.0.0
-        version: 2.0.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-metrics':
-        specifier: 2.0.0
-        version: 2.0.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-node':
-        specifier: 0.200.0
-        version: 0.200.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-base':
-        specifier: 2.0.0
-        version: 2.0.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/sdk-trace-node':
-        specifier: 2.0.0
-        version: 2.0.0(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions':
-        specifier: 1.32.0
-        version: 1.32.0
       '@trpc/server':
         specifier: ^10.45.2
         version: 10.45.2
