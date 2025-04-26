@@ -12,12 +12,6 @@ import connectPgSimple from 'connect-pg-simple';
 import dotenv from 'dotenv-flow';
 import serverlessExpress from '@vendia/serverless-express';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { PeriodicExportingMetricReader, ConsoleMetricExporter } from '@opentelemetry/sdk-metrics';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 
 // load env
 dotenv.config();
@@ -29,43 +23,6 @@ import { SESSION_LENGTH } from './config/constants';
 import { createContext } from './helpers/trpc';
 import { appRouter } from './controllers';
 import passportInit from './config/passport';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto';
-
-// OTEL setup
-if (!process.env.DASH0_TOKEN) {
-  console.log('DASH0_TOKEN env var not defined. Telemetry will be logged to standard output.');
-}
-
-const traceExporter = process.env.DASH0_TOKEN
-  ? new OTLPTraceExporter({
-      url: 'https://ingress.us-west-2.aws.dash0.com/v1/traces',
-      headers: {
-        Authorization: process.env.DASH0_TOKEN,
-        'Dash0-Dataset': 'peterportal-backend',
-      },
-    })
-  : new ConsoleSpanExporter();
-
-const exporter = process.env.DASH0_TOKEN
-  ? new OTLPMetricExporter({
-      url: 'https://ingress.us-west-2.aws.dash0.com/v1/metrics',
-      headers: {
-        Authorization: process.env.DASH0_TOKEN,
-        'Dash0-Dataset': 'peterportal-backend',
-      },
-    })
-  : new ConsoleMetricExporter();
-
-const sdk = new NodeSDK({
-  traceExporter,
-  metricReader: new PeriodicExportingMetricReader({
-    exporter,
-  }),
-  instrumentations: [getNodeAutoInstrumentations(), new HttpInstrumentation(), new ExpressInstrumentation()],
-});
-
-sdk.start();
 
 // instantiate app
 const app = express();

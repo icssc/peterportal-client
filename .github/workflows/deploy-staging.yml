@@ -49,4 +49,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
           EXTERNAL_USER_READ_SECRET: ${{ secrets.EXTERNAL_USER_READ_SECRET }}
-          DASH0_TOKEN: ${{ secrets.DASH0_TOKEN }}
+          OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
