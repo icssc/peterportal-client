@@ -19,21 +19,29 @@ code {
 }
 
 :root {
-  --peterportal-primary-color-1: #2484c6;
-  --peterportal-primary-color-2: #74d1f6;
-  --peterportal-secondary-green: #81c284;
-  --peterportal-secondary-yellow: #f5d77f;
-  --peterportal-secondary-orange: #ecad6d;
-  --peterportal-secondary-red: #e7966d;
-  --peterportal-light-gray: #eeeeee;
-  --peterportal-mid-gray: #8d8d8d;
-  --peterportal-uci-gold: #ffd200;
-  --peterportal-gray-blue: #f5f6fc;
-  --zot-blue: var(--peterportal-primary-color-1);
-  --aldrich-blue: var(--peterportal-primary-color-2);
+  --blue-primary: #2484c6;
+  --blue-secondary: #5babe1;
+  --blue-tertiary: #a0ceee;
+  --blue-accent: #74d1f6;
+
+  --green-primary: green;
+  --green-secondary: #87c587;
+  --yellow-secondary: #f5d77f;
+  --orange-secondary: #ecad6d;
+  --red-secondary: #e7966d;
+
+  --mid-gray: #8d8d8d;
+  --gray-blue: #f5f6fc;
   --ring-road-white: #ffffff;
-  --petr-gray: #808080;
+
   --border-radius: 8px;
+}
+
+/* User theme is not accessible to :root, so we override them in body */
+body[data-theme='dark'] {
+  --blue-secondary: #185680;
+  --blue-tertiary: #0b293c;
+  --green-secondary: #295629;
 }
 
 .hide {

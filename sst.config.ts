@@ -120,6 +120,10 @@ function createStaticSite(
         ];
       },
     },
+    environment: {
+      VITE_PUBLIC_POSTHOG_KEY: process.env.VITE_PUBLIC_POSTHOG_KEY!,
+      VITE_PUBLIC_POSTHOG_HOST: process.env.VITE_PUBLIC_POSTHOG_HOST!,
+    },
   });
 }
 
