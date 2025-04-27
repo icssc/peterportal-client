@@ -4,11 +4,11 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { normalizeGERequirements } from '../../../helpers/substitutions';
+import { normalizeTitleLabels } from '../../../helpers/substitutions';
 
 async function getCoursesForGE() {
   const fetchedRequirements = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
-  normalizeGERequirements(fetchedRequirements);
+  normalizeTitleLabels(fetchedRequirements);
 
   return fetchedRequirements;
 }
