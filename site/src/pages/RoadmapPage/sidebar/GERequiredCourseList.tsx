@@ -4,21 +4,20 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { getCommonLabelPrefix, expandAbbreviation } from '../../../helpers/substitutions';
+import { findCommonLabelPrefix } from '../../../helpers/substitutions';
 
 async function getCoursesForGE() {
   const fetchedCourses = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
 
-  fetchedCourses.forEach((courseBlock) => {
-    if (courseBlock.label === 'Select 1 of the following' && courseBlock.requirementType === 'Group') {
-      const requirementLabels = courseBlock.requirements
-        .filter((req) => req.requirementType === 'Group')
-        .map((req) => req.label);
+  /* if a top level "Select 1 of the following" group of requirements is seen, attempt to replace the label */
+  fetchedCourses.forEach((geRequirement) => {
+    if (geRequirement.requirementType === 'Group' && geRequirement.label === 'Select 1 of the following') {
+      const requirementSubLabels = geRequirement.requirements.map((req) => req.label);
 
-      const commonBase = getCommonLabelPrefix(requirementLabels);
+      const commonLabelPrefix = findCommonLabelPrefix(requirementSubLabels);
 
-      if (commonBase) {
-        courseBlock.label = expandAbbreviation(commonBase.trim());
+      if (commonLabelPrefix) {
+        geRequirement.label = commonLabelPrefix; // if a common label prefix is found, use it as the top level label
       }
     }
   });
