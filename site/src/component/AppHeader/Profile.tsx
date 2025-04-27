@@ -60,9 +60,7 @@ const Profile = () => {
           </li>
           <li>
             <button className="theme-button profile-popover__link" onClick={() => setTab('theme')}>
-              <div>
-                {usingSystemTheme ? <Laptop /> : darkMode ? <Moon /> : <Sun />}
-              </div>
+              <div>{usingSystemTheme ? <Laptop /> : darkMode ? <Moon /> : <Sun />}</div>
               Theme
             </button>
           </li>
