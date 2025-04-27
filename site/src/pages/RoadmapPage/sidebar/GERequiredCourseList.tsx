@@ -4,25 +4,13 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { findCommonLabelPrefix } from '../../../helpers/substitutions';
+import { normalizeGERequirements } from '../../../helpers/substitutions';
 
 async function getCoursesForGE() {
-  const fetchedCourses = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+  const fetchedRequirements = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+  normalizeGERequirements(fetchedRequirements);
 
-  /* if a top level "Select 1 of the following" group of requirements is seen, attempt to replace the label */
-  fetchedCourses.forEach((geRequirement) => {
-    if (geRequirement.requirementType === 'Group' && geRequirement.label === 'Select 1 of the following') {
-      const requirementSubLabels = geRequirement.requirements.map((req) => req.label);
-
-      const commonLabelPrefix = findCommonLabelPrefix(requirementSubLabels);
-
-      if (commonLabelPrefix) {
-        geRequirement.label = commonLabelPrefix; // if a common label prefix is found, use it as the top level label
-      }
-    }
-  });
-
-  return fetchedCourses;
+  return fetchedRequirements;
 }
 
 const GERequiredCourseList: FC = () => {
