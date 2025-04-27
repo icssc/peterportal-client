@@ -4,7 +4,7 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { getCommonPrefix, stripSecondParenthesis } from '../../../helpers/substitutions';
+import { getCommonLabelPrefix, expandAbbreviation } from '../../../helpers/substitutions';
 
 async function getCoursesForGE() {
   const fetchedCourses = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
@@ -13,12 +13,12 @@ async function getCoursesForGE() {
     if (courseBlock.label === 'Select 1 of the following' && courseBlock.requirementType === 'Group') {
       const requirementLabels = courseBlock.requirements
         .filter((req) => req.requirementType === 'Group')
-        .map((req) => stripSecondParenthesis(req.label));
+        .map((req) => req.label);
 
-      const commonBase = getCommonPrefix(requirementLabels);
+      const commonBase = getCommonLabelPrefix(requirementLabels);
 
       if (commonBase) {
-        courseBlock.label = commonBase.trim();
+        courseBlock.label = expandAbbreviation(commonBase.trim());
       }
     }
   });
