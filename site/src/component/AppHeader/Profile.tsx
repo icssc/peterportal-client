@@ -61,7 +61,6 @@ const Profile = () => {
           <li>
             <button className="theme-button profile-popover__link" onClick={() => setTab('theme')}>
               <div>
-                {/* <Icon name={usingSystemTheme ? 'laptop' : darkMode ? 'moon outline' : 'sun outline'} size="large" /> */}
                 {usingSystemTheme ? <Laptop /> : darkMode ? <Moon /> : <Sun />}
               </div>
               Theme
@@ -95,7 +94,6 @@ const Profile = () => {
               onClick={() => setTheme('light')}
             >
               <div>
-                {/* <Icon name="sun outline" size="large" /> */}
                 <Sun />
               </div>
               Light
@@ -107,7 +105,6 @@ const Profile = () => {
               onClick={() => setTheme('dark')}
             >
               <div>
-                {/* <Icon name="moon outline" size="large" /> */}
                 <Moon />
               </div>
               Dark
@@ -119,7 +116,6 @@ const Profile = () => {
               onClick={() => setTheme('system')}
             >
               <div>
-                {/* <Icon name="laptop" size="large" /> */}
                 <Laptop />
               </div>
               System
