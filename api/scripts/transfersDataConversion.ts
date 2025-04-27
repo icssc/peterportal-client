@@ -17,17 +17,6 @@ type ApExamBasicInfo = {
   catalogueName: string | undefined; // E.g. "AP ECONOMICS:MICRO"
 };
 
-/** Normalize a transfer name by converting it to lowercase
-  then removing punctuation and trailing/leading whitespace;
-  if undefined, return an empty string */
-const normalizeTransferName = (transferName: string | undefined) => {
-  if (!transferName) return '';
-  return transferName
-    .toLowerCase()
-    .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
-    .trim();
-};
-
 const removeAllSpaces = (transferName: string | undefined) => {
   if (!transferName) return '';
   return transferName.replace(/\s/g, '');
@@ -53,16 +42,28 @@ const getAPICourseById = async (courseId: string): Promise<CourseAAPIResponse | 
   return response;
 };
 
+/** Normalize a transfer name by converting it to lowercase
+  then removing punctuation and trailing/leading whitespace;
+  if undefined, return an empty string */
+const normalizeTransferName = (transferName: string | undefined) => {
+  if (!transferName) return '';
+  return transferName
+    .toLowerCase()
+    .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, '')
+    .trim();
+};
+
 /**
   Check whether a specific AP is a match for a transfer name, returning how good the match is
   0: not a match
   1: a partial match (starts with)
   2: an exact match (normalized)
 */
-const apMatchQuality = (normalizedName: string, ap: ApExamBasicInfo): number => {
+const apMatchQuality = (transferName: string, ap: ApExamBasicInfo): number => {
   // TODO: improve this algorithm?
   // TODO: hardcode any specific exceptions (ex. "ap us his(tory)", "ap us gov(ernment)", "ap calculus ab" with the BC subscore)?
   // TODO: handle duplicates?
+  const normalizedName = normalizeTransferName(transferName);
   const normalizedApFull = normalizeTransferName(ap.fullName);
   const normalizedApCat = normalizeTransferName(ap.catalogueName);
   if (normalizedApFull == normalizedName) return 2;
@@ -75,11 +76,10 @@ const apMatchQuality = (normalizedName: string, ap: ApExamBasicInfo): number => 
 /** Try to find the best match for a transfer name out of all the AP exams; undefined if no match */
 const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
   // TODO: test
-  const normalizedName = normalizeTransferName(transferName);
   let bestMatch: ApExamBasicInfo | undefined = undefined;
   let bestMatchQuality = 0;
   for (const ap of allAps) {
-    const matchQuality = apMatchQuality(normalizedName, ap);
+    const matchQuality = apMatchQuality(transferName, ap);
     if (matchQuality > bestMatchQuality) {
       bestMatch = ap;
       bestMatchQuality = matchQuality;
@@ -117,7 +117,7 @@ const organize = async () => {
     .limit(10); // For testing, we will only look at a few entries
   for (const transfer of transfers) {
     if (transfer.courseName == null || transfer.userId == null) {
-      // TODO: should we just remove it?
+      // TODO: should we just remove it from the database in this case, because it's clutter?
       continue;
     }
     const transferName = transfer.courseName.trim();
