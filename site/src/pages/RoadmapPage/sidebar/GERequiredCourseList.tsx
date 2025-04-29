@@ -4,9 +4,13 @@ import trpc from '../../../trpc';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { normalizeTitleLabels } from '../../../helpers/substitutions';
 
-function getCoursesForGE() {
-  return trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+async function getCoursesForGE() {
+  const fetchedRequirements = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
+  normalizeTitleLabels(fetchedRequirements);
+
+  return fetchedRequirements;
 }
 
 const GERequiredCourseList: FC = () => {
