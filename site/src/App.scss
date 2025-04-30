@@ -281,7 +281,9 @@ button.unstyled {
 .professor-page {
   $side-info-width: 560px;
   $max-main-content-width: 1000px;
-  $left-column-width: math.div($side-info-width, ($side-info-width + $max-main-content-width)) * 100%;
+  $base-percent: math.div($side-info-width, ($side-info-width + $max-main-content-width)) * 100%;
+  $base-content-width: $side-info-width + $max-main-content-width + globals.$sidebar-width-closed;
+  $gap: 32px;
 
   display: flex;
   max-height: 100%;
@@ -289,15 +291,19 @@ button.unstyled {
   padding: 0;
 
   > .side-content-wrapper {
-    width: $left-column-width;
-    padding: 32px;
-    padding-right: 0;
+    padding: 32px 0;
+    max-width: $base-percent;
+
+    @media (min-width: 1700px) {
+      min-width: fit-content;
+    }
   }
 
   // twemoji wrapper does not allow setting className
   > .side-content-wrapper + * {
-    width: 100% - $left-column-width;
+    width: 100%;
     max-height: 100%;
+    max-width: 100% - $base-percent;
   }
 
   .course-page-body,
@@ -307,8 +313,11 @@ button.unstyled {
 
   .side-info {
     max-height: 100%;
-    margin-left: auto;
-    max-width: 560px;
+    max-width: $side-info-width;
+    width: calc(100% - 32px);
+
+    $side-margin: calc(50vw - #{math.div($base-content-width + $gap, 2)});
+    margin-left: max(#{$side-margin}, 32px);
   }
 
   .course-page-section,
@@ -316,7 +325,7 @@ button.unstyled {
     background-color: var(--overlay1);
     border-radius: var(--border-radius);
     max-width: 1000px;
-    margin-bottom: 32px;
+    margin: 0 32px 32px $gap;
 
     @include globals.card-padding;
     &:last-child {
@@ -329,6 +338,7 @@ button.unstyled {
     max-height: 100%;
     overflow: auto;
     margin-top: 0;
+    padding-inline: 0;
   }
 
   @media only screen and (max-width: 1300px) {
@@ -338,6 +348,7 @@ button.unstyled {
     > .side-content-wrapper,
     .side-content-wrapper + * {
       width: 100%;
+      max-width: none;
     }
     .side-content-wrapper {
       padding-inline: 32px;
@@ -348,6 +359,11 @@ button.unstyled {
     .professor-page-section {
       margin-inline: 0;
       max-width: none;
+      width: 100%;
+    }
+    .course-page-body,
+    .professor-page-body {
+      padding-inline: 32px;
     }
   }
 }
