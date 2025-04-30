@@ -14,7 +14,6 @@ import Error from '../../component/Error/Error';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
-import './CoursePage.scss';
 
 const CoursePage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +58,15 @@ const CoursePage: FC = () => {
         </div>
         <Twemoji options={{ className: 'twemoji' }}>
           <div className="course-page-body">
-            <div className="course-page-section">
+            <div className="result-page-section">
+              <div>
+                <h2>📊 Grade Distribution</h2>
+              </div>
+              <Divider />
+              <GradeDist course={courseGQLData} />
+            </div>
+
+            <div className="result-page-section">
               <div>
                 <h2>🌲 Prerequisite Tree</h2>
               </div>
@@ -67,7 +74,7 @@ const CoursePage: FC = () => {
               <PrereqTree key={courseGQLData.id} {...courseGQLData} />
             </div>
 
-            <div className="course-page-section">
+            <div className="result-page-section">
               <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
@@ -79,15 +86,7 @@ const CoursePage: FC = () => {
               />
             </div>
 
-            <div className="course-page-section">
-              <div>
-                <h2>📊 Grade Distribution</h2>
-              </div>
-              <Divider />
-              <GradeDist course={courseGQLData} />
-            </div>
-
-            <div className="course-page-section">
+            <div className="result-page-section">
               <div>
                 <h2>💬 Reviews</h2>
               </div>

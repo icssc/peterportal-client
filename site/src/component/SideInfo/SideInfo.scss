@@ -105,12 +105,6 @@
   margin-bottom: 0;
   justify-content: flex-start;
 
-  @media (max-width: 440px) {
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-  }
-
   > :first-child .field-value {
     white-space: initial;
   }
@@ -123,6 +117,16 @@
     justify-content: space-between;
     > :first-child {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 440px) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px 20px;
+    width: 100%;
+    > :first-child {
+      max-width: 100%;
     }
   }
 

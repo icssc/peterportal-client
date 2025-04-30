@@ -320,8 +320,7 @@ button.unstyled {
     margin-left: max(#{$side-margin}, 32px);
   }
 
-  .course-page-section,
-  .professor-page-section {
+  .result-page-section {
     background-color: var(--overlay1);
     border-radius: var(--border-radius);
     max-width: 1000px;
@@ -330,6 +329,19 @@ button.unstyled {
     @include globals.card-padding;
     &:last-child {
       margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      &:first-child {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+    }
+
+    .twemoji {
+      width: 1.25em;
     }
   }
 
@@ -355,8 +367,7 @@ button.unstyled {
       padding-bottom: 0;
     }
     .side-info,
-    .course-page-section,
-    .professor-page-section {
+    .result-page-section {
       margin-inline: 0;
       max-width: none;
       width: 100%;

@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from 'react';
-import './ProfessorPage.scss';
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
@@ -56,7 +55,7 @@ const ProfessorPage: FC = () => {
             />
           </div>
           <article className="professor-page-body">
-            <div className="professor-page-section">
+            <div className="result-page-section">
               <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
@@ -67,7 +66,7 @@ const ProfessorPage: FC = () => {
               />
             </div>
 
-            <div className="professor-page-section">
+            <div className="result-page-section">
               <div>
                 <h2>📊 Grade Distribution</h2>
               </div>
@@ -75,7 +74,7 @@ const ProfessorPage: FC = () => {
               <GradeDist professor={professorGQLData} />
             </div>
 
-            <div className="professor-page-section">
+            <div className="result-page-section">
               <div>
                 <h2>💬 Reviews</h2>
               </div>
