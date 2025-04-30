@@ -24,6 +24,31 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
   if (averageReviews[reviewKey] === undefined) {
     return <></>;
   }
+
+  // rating and difficulty were constructed as totals (??)
+  const { rating, difficulty, count } = averageReviews[reviewKey];
+
+  return (
+    <div className="ratings-widget">
+      <div className="column">
+        <p className="field-name">{featureType} Rated</p>
+        <p className="field-value">
+          <Link to={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
+            {displayName}
+          </Link>
+        </p>
+      </div>
+      <div className="column">
+        <p className="field-name">Rating</p>
+        <p className="field-value">{(rating / count).toFixed(2)} / 5</p>
+      </div>
+      <div className="column">
+        <p className="field-name">Difficulty</p>
+        <p className="field-value">{(difficulty / count).toFixed(2)} / 5</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="side-info-feature">
       <div className="side-info-feature-title">
@@ -141,9 +166,12 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   const sortedReviews = Object.keys(averageReviews);
   sortedReviews.sort((a, b) => averageReviews[b].count - averageReviews[a].count);
 
+  const { count, rating, difficulty, takeAgain } = averageReviews[selectedReview] ?? {};
+  const hasReviews = Object.keys(averageReviews).length > 1; // always has "All Instructors"
+
   return (
     <div className="side-info">
-      <div className="side-info-data">
+      <div className="course-synopsis">
         <div className="title-and-offerings">
           <h2>{props.name}</h2>
           {props.terms && <CourseQuarterIndicator terms={props.terms} size="sm" />}
@@ -163,6 +191,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       {props.terms?.length && <RecentOfferings terms={props.terms} />}
 
       <div className="side-info-ratings">
+        <h2>Average Rating</h2>
         <div className="side-info-buttons">
           {/* Dropdown to select specific course/professor */}
           <DropdownButton
@@ -194,83 +223,81 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             Rate {props.searchType}
           </Button>
         </div>
-        {/* Show stats of selected course/professor */}
-        {selectedReview && (
-          <div className="side-info-selected-based">Based on {averageReviews[selectedReview].count} reviews</div>
+        {hasReviews && (
+          <>
+            {/* Show stats of selected course/professor */}
+            {selectedReview && <div className="side-info-selected-based">Based on {count} reviews</div>}
+            {selectedReview && (
+              <div className="side-info-selected-rating">
+                <div className="side-info-stat">
+                  <div className="side-info-stat-label">
+                    {props.searchType.replace(/./, (x) => x.toUpperCase())} Rating
+                  </div>
+                  <div className="side-info-stat-value">{count > 0 ? (rating / count).toFixed(2) : '\u2013'}</div>
+                </div>
+
+                <div className="side-info-stat">
+                  <div className="side-info-stat-label">Would Take Again</div>
+                  <div className="side-info-stat-value">
+                    {count > 0 ? ((takeAgain / count) * 100).toFixed(0) + '%' : '\u2013'}
+                  </div>
+                </div>
+
+                <div className="side-info-stat">
+                  <div className="side-info-stat-label">Difficulty Level</div>
+                  <div className="side-info-stat-value">{count > 0 ? (difficulty / count).toFixed(2) : '\u2013'}</div>
+                </div>
+              </div>
+            )}
+          </>
         )}
-        {selectedReview && (
-          <div className="side-info-selected-rating">
-            <div className="side-info-stat">
-              <div className="side-info-stat-label">Rating</div>
-              <div className="side-info-stat-value">
-                {averageReviews[selectedReview].count > 0 &&
-                  (averageReviews[selectedReview].rating / averageReviews[selectedReview].count).toFixed(2)}
-                {averageReviews[selectedReview].count == 0 && '?'}
-                <span className="side-info-denominator">/ 5.0</span>
-              </div>
-            </div>
+        {!hasReviews && <span className="side-info-selected-based">No reviews found for this {props.searchType}!</span>}
+      </div>
 
-            <div className="side-info-stat">
-              <div className="side-info-stat-label">Would take again</div>
-              <div className="side-info-stat-value">
-                {averageReviews[selectedReview].count > 0 &&
-                  ((averageReviews[selectedReview].takeAgain / averageReviews[selectedReview].count) * 100).toFixed(0) +
-                    '%'}
-                {averageReviews[selectedReview].count == 0 && '?'}
-              </div>
-            </div>
-
-            <div className="side-info-stat">
-              <div className="side-info-stat-label">Difficulty level</div>
-              <div className="side-info-stat-value">
-                {averageReviews[selectedReview].count > 0 &&
-                  (averageReviews[selectedReview].difficulty / averageReviews[selectedReview].count).toFixed(2)}
-                {averageReviews[selectedReview].count == 0 && '?'}
-                <span className="side-info-denominator">/ 5.0</span>
-              </div>
-            </div>
+      {hasReviews && (
+        <div className="side-info-featured">
+          <h2>{props.searchType == 'course' ? 'Instructors' : 'Courses'}</h2>
+          <div className="flex">
+            {highestReview && (
+              <FeaturedInfo
+                searchType={props.searchType}
+                featureType="Highest"
+                averageReviews={averageReviews}
+                reviewKey={highestReview}
+                displayName={
+                  props.searchType == 'course'
+                    ? (Object.values(props.course?.instructors ?? {})?.find(
+                        ({ ucinetid }) => ucinetid === highestReview,
+                      )?.name ?? '')
+                    : props.professor?.courses[highestReview]
+                      ? props.professor?.courses[highestReview].department +
+                        ' ' +
+                        props.professor?.courses[highestReview].courseNumber
+                      : highestReview
+                }
+              />
+            )}
+            {lowestReview && (
+              <FeaturedInfo
+                searchType={props.searchType}
+                featureType="Lowest"
+                averageReviews={averageReviews}
+                reviewKey={lowestReview}
+                displayName={
+                  props.searchType == 'course'
+                    ? (Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
+                        ?.name ?? '')
+                    : props.professor?.courses[lowestReview]
+                      ? props.professor?.courses[lowestReview].department +
+                        ' ' +
+                        props.professor?.courses[lowestReview].courseNumber
+                      : lowestReview
+                }
+              />
+            )}
           </div>
-        )}
-      </div>
-
-      <div className="side-info-featured">
-        {highestReview && (
-          <FeaturedInfo
-            searchType={props.searchType}
-            featureType="Highest"
-            averageReviews={averageReviews}
-            reviewKey={highestReview}
-            displayName={
-              props.searchType == 'course'
-                ? (Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === highestReview)
-                    ?.name ?? '')
-                : props.professor?.courses[highestReview]
-                  ? props.professor?.courses[highestReview].department +
-                    ' ' +
-                    props.professor?.courses[highestReview].courseNumber
-                  : highestReview
-            }
-          />
-        )}
-        {lowestReview && (
-          <FeaturedInfo
-            searchType={props.searchType}
-            featureType="Lowest"
-            averageReviews={averageReviews}
-            reviewKey={lowestReview}
-            displayName={
-              props.searchType == 'course'
-                ? (Object.values(props.course?.instructors ?? {})?.find(({ ucinetid }) => ucinetid === lowestReview)
-                    ?.name ?? '')
-                : props.professor?.courses[lowestReview]
-                  ? props.professor?.courses[lowestReview].department +
-                    ' ' +
-                    props.professor?.courses[lowestReview].courseNumber
-                  : lowestReview
-            }
-          />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
