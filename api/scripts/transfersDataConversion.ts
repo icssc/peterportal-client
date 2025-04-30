@@ -2,7 +2,8 @@ import { db } from '.././src/db';
 import { transferredMisc } from '.././src/db/schema';
 import { ANTEATER_API_REQUEST_HEADERS } from '.././src/helpers/headers';
 import dotenv from 'dotenv-flow';
-import { count, and, eq, SQL, sql } from 'drizzle-orm';
+import { count, and, eq, or, SQL, sql } from 'drizzle-orm';
+import { QueryBuilder } from 'drizzle-orm/pg-core';
 import { CourseAAPIResponse } from '../../types/src/course';
 // load env (because this is a separate script)
 dotenv.config();
@@ -45,7 +46,8 @@ const getAPICourseById = async (courseId: string): Promise<CourseAAPIResponse | 
 
 /** Normalize a transfer name by converting it to lowercase
   then removing punctuation and trailing/leading whitespace;
-  if undefined, return an empty string */
+  if undefined, return an empty string
+  "&" will become "and" */
 const normalizeTransferName = (transferName: string | undefined) => {
   if (!transferName) return '';
   return transferName
@@ -97,8 +99,19 @@ const apMatchQuality = (normalizedName: string, comparingName: string, ap: ApExa
 const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
   // Normalize the transfer name
   const normalizedName = normalizeTransferName(transferName);
-  // Some hardcoded exceptions (specifically for matching the full name rather than cat name)
+  // Some hardcoded exceptions (specifically for matching the full name rather than cat name, order matters)
   const comparingName = apSubstitutions(normalizedName, [
+    // Hardcoded exceptions for specific rows
+    { from: 'ap economics ma', to: 'ap macroeconomics' },
+    { from: 'ap world modern', to: 'ap world history modern' },
+    { from: 'ap chinese lang cult', to: 'ap chinese language and culture' },
+    { from: 'ap govt and polc', to: 'ap united states government and politics' },
+    { from: 'ap govt and polu', to: 'ap united states government and politics' },
+    { from: 'ap modern world history', to: 'ap world history modern' },
+    { from: 'ap micro econ', to: 'ap microeconomics' },
+    { from: 'ap art studio 3', to: 'ap 3d art and design' },
+    { from: 'ap artstudio 2', to: 'ap 2d art and design' },
+    // Turn abbreviations into larger ones
     { from: 'us', to: 'united states' },
     { from: 'lang', to: 'language' },
     { from: 'lng', to: 'language' },
@@ -108,14 +121,14 @@ const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasi
     { from: 'govt', to: 'government' },
     { from: 'stats', to: 'statistics' },
     { from: 'calc', to: 'calculus' },
-    { from: 'comp', to: 'computer' },
+    { from: 'comp sci', to: 'computer science' },
     { from: 'sci', to: 'science' },
     { from: 'eng', to: 'english' },
     { from: 'spa', to: 'spanish' },
+    // Add missing words
     { from: 'ap literature', to: 'ap english literature' },
     { from: 'ap language', to: 'ap english language' },
     { from: 'ap government', to: 'ap united states government' },
-    //{ from: "&", to: "and" },
   ]);
   let bestMatch: ApExamBasicInfo | undefined = undefined;
   let bestMatchQuality = 0;
@@ -160,8 +173,8 @@ const organize = async () => {
     })
     .from(transferredMisc)
     .groupBy(transferredMisc.userId, transferredMisc.courseName)
-    .limit(10); // For testing, we will only look at a few entries*/
-  const toDelete: (SQL<unknown> | undefined)[] = [];
+    .limit(10); // For testing, we will only look at a few entries
+  const toDelete: (SQL<unknown> | undefined)[] = []; // Or should be valid if we pass nothing into it
   for (const transfer of transfers) {
     if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
       // TODO: should we just remove it from the database in this case, because it's clutter?
@@ -187,13 +200,15 @@ const organize = async () => {
             eq(transferredMisc.userId, transfer.userId),
             eq(transferredMisc.courseName, transfer.courseName),
             //transfer.units ? eq(transferredMisc.units, transfer.units) : undefined
-          ),
+          )!,
         );
-        console.log(`  MATCHED: '${transferName}' with: '${bestMatch.fullName}' ('${bestMatch.catalogueName}')`);
+        console.log(
+          `  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch.fullName}' ('${bestMatch.catalogueName}')`,
+        );
         // TODO: Delete with or (if desired)
       } else {
         // Could not match; leave it here
-        console.log(`x FAILED:  '${transferName}'      could not be matched with any AP`);
+        console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any AP`);
       }
     } else {
       const bestMatch = await tryMatchCourse(transferName);
@@ -205,15 +220,23 @@ const organize = async () => {
           courseName: bestMatch,
           units: transfer.units ?? 0
         };*/
-        console.log(`  MATCHED: '${transferName}' with: '${bestMatch}'`);
+        console.log(`  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch}'`);
       } else {
         // Could not match; leave it here
-        console.log(`x FAILED:  '${transferName}'      could not be matched with any course`);
+        console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any course`);
       }
     }
   }
   // Delete everything with the query
   // TODO: print/delete everything that should be deleted
+  // TODO: test with duplicates
+  const qb = new QueryBuilder();
+  const query = qb
+    .select()
+    .from(transferredMisc)
+    .where(or(...toDelete))
+    .toSQL();
+  console.log('Would execute: ' + query.sql + ',\n params: ' + query.params);
 };
 
 organize();
