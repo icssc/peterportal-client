@@ -36,6 +36,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-weight: bold;
+    padding-bottom: 8px;
+    margin: 0;
   }
 
   h2 {
@@ -43,6 +45,8 @@
     color: var(--text-light);
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-bottom: 4px;
+    margin: 0;
   }
 }
 [data-theme='dark'] {

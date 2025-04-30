@@ -45,24 +45,24 @@ const AppHeader: FC = () => {
         us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
       </p>
       <div className="feedback">
-        <a
+        <Button
+          as="a"
           href="https://github.com/icssc-projects/peterportal-client/issues/new"
           target="_blank"
           rel="noopener noreferrer"
+          variant={buttonVariant}
         >
-          <Button variant={buttonVariant}>
-            <Github /> Report an issue
-          </Button>
-        </a>
-        <a
+          <Github /> Report an issue
+        </Button>
+        <Button
+          as="a"
           href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
           target="_blank"
           rel="noopener noreferrer"
+          variant={buttonVariant}
         >
-          <Button variant={buttonVariant}>
-            <ChatLeftDotsFill /> Feedback
-          </Button>
-        </a>
+          <ChatLeftDotsFill /> Feedback
+        </Button>
       </div>
     </Popover.Content>
   );

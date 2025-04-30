@@ -235,7 +235,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <div className="flex">
+        <div className="chart-container">
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
               <Chart {...graphProps} />

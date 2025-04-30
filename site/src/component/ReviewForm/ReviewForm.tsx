@@ -409,7 +409,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
                     <Badge
                       key={tag}
                       pill
-                      className="p-3 mr-2 mt-2"
                       variant={selectedTags.includes(tag) ? 'success' : 'info'}
                       onClick={() => {
                         selectTag(tag);

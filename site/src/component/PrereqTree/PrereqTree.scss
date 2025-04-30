@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   overflow-x: auto;
+  font-size: 13px;
 
   .node {
     color: var(--text);
@@ -16,6 +17,7 @@
     display: block;
     text-decoration: none;
     border-radius: 6px;
+    padding: 4px 6px;
 
     &:hover {
       background-color: #8884;
@@ -201,6 +203,9 @@
   padding: 1em;
   margin-top: 2em;
   background-color: var(--overlay2);
+  p {
+    margin: 0;
+  }
 }
 
 .prereq ul {
