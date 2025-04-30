@@ -145,15 +145,15 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     <div className="side-info">
       <div className="side-info-data">
         <div className="title-and-offerings">
-          <h1>{props.name}</h1>
-          {props.terms && <CourseQuarterIndicator terms={props.terms} size="lg" />}
+          <h2>{props.name}</h2>
+          {props.terms && <CourseQuarterIndicator terms={props.terms} size="sm" />}
         </div>
-        <h2>{props.title}</h2>
+        <h3>{props.title}</h3>
 
-        <h4>{props.description}</h4>
+        <p className="description">{props.description}</p>
         <div>
           {props.tags.map((tag, i) => (
-            <Badge pill className="p-3 mr-3" variant="info" key={`side-info-badge-${i}`}>
+            <Badge pill variant="info" key={`side-info-badge-${i}`}>
               {tag}
             </Badge>
           ))}
