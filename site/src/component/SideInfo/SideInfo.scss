@@ -16,10 +16,12 @@
   h1,
   h2 {
     font-weight: bold;
+    margin: 0;
   }
 
-  .name-row {
+  .title-and-offerings {
     display: flex;
+    align-items: center;
   }
 
   .emoji {

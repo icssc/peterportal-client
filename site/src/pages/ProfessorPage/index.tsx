@@ -45,7 +45,7 @@ const ProfessorPage: FC = () => {
     return (
       <Twemoji options={{ className: 'twemoji' }}>
         <div className="content-wrapper professor-page">
-          <div>
+          <div className="side-content-wrapper">
             <SideInfo
               searchType="professor"
               name={professorGQLData.name}

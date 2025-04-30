@@ -144,13 +144,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   return (
     <div className="side-info">
       <div className="side-info-data">
-        <div className="name-row">
-          <span>
-            <h1>{props.name}</h1>
-            <h2>{props.title}</h2>
-          </span>
+        <div className="title-and-offerings">
+          <h1>{props.name}</h1>
           {props.terms && <CourseQuarterIndicator terms={props.terms} size="lg" />}
         </div>
+        <h2>{props.title}</h2>
 
         <h4>{props.description}</h4>
         <div>
@@ -162,7 +160,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         </div>
       </div>
 
-      {props.terms && <RecentOfferings terms={props.terms} />}
+      {props.terms?.length && <RecentOfferings terms={props.terms} />}
 
       <div className="side-info-ratings">
         <div className="side-info-buttons">

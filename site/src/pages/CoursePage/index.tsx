@@ -46,7 +46,7 @@ const CoursePage: FC = () => {
   } else {
     return (
       <div className="content-wrapper course-page">
-        <div>
+        <div className="side-content-wrapper">
           <SideInfo
             searchType="course"
             name={courseGQLData.department + ' ' + courseGQLData.courseNumber}

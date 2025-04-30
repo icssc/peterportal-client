@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use 'globals';
 
 button {
@@ -274,4 +275,79 @@ button.unstyled {
   display: flex;
   align-items: center;
   padding: 0;
+}
+
+.course-page,
+.professor-page {
+  $side-info-width: 560px;
+  $max-main-content-width: 1000px;
+  $left-column-width: math.div($side-info-width, ($side-info-width + $max-main-content-width)) * 100%;
+
+  display: flex;
+  max-height: 100%;
+  justify-content: center;
+  padding: 0;
+
+  > .side-content-wrapper {
+    width: $left-column-width;
+    padding: 32px;
+    padding-right: 0;
+  }
+
+  // twemoji wrapper does not allow setting className
+  > .side-content-wrapper + * {
+    width: 100% - $left-column-width;
+    max-height: 100%;
+  }
+
+  .course-page-body,
+  .professor-page-body {
+    padding: 32px;
+  }
+
+  .side-info {
+    max-height: 100%;
+    margin-left: auto;
+    max-width: 560px;
+  }
+
+  .course-page-section,
+  .professor-page-section {
+    background-color: var(--overlay1);
+    border-radius: var(--border-radius);
+    max-width: 1000px;
+    margin-bottom: 32px;
+
+    @include globals.card-padding;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .course-page-body,
+  .professor-page-body {
+    max-height: 100%;
+    overflow: auto;
+    margin-top: 0;
+  }
+
+  @media only screen and (max-width: 1300px) {
+    max-height: none;
+    flex-direction: column;
+
+    > .side-content-wrapper,
+    .side-content-wrapper + * {
+      width: 100%;
+    }
+    .side-content-wrapper {
+      padding-inline: 32px;
+      padding-bottom: 0;
+    }
+    .side-info,
+    .course-page-section,
+    .professor-page-section {
+      margin-inline: 0;
+      max-width: none;
+    }
+  }
 }
