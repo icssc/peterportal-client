@@ -1,20 +1,33 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
+import trpc from '../../../trpc';
 
 /** @todo retrieve all uncategorized transfer credits */
 
-const UncategorizedMenuTile: FC = () => {
-  const [units, setUnits] = useState<number>(0);
+interface UncategorizedCreditsEntry {
+  name: string | null;
+  units: number | null;
+}
 
+const UncategorizedMenuTile: FC<UncategorizedCreditsEntry> = ({ name, units }) => {
   const deleteFn = () => {};
 
   /** @todo router to remove individual transfer courses */
+  // delete something where ctx user and name and units
 
-  return <MenuTile title="Name" units={units} setUnits={setUnits} deleteFn={deleteFn}></MenuTile>;
+  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn}></MenuTile>;
 };
 
 const UncategorizedCreditsSection: FC = () => {
+  const [courses, setCourses] = useState<UncategorizedCreditsEntry[]>([]);
+
+  useEffect(() => {
+    trpc.transferCredits.getUncategorizedTransfers.query().then((response) => {
+      setCourses(response);
+    });
+  }, []);
+
   return (
     <MenuSection title="Other Transferred Credits">
       <SectionDescription>
@@ -22,9 +35,9 @@ const UncategorizedCreditsSection: FC = () => {
         you can remove them.
       </SectionDescription>
 
-      {/** @todo map each item in array with component */}
-
-      <UncategorizedMenuTile />
+      {courses.map((course) => (
+        <UncategorizedMenuTile key={`${course.name}-${course.units}`} name={course.name} units={course.units} />
+      ))}
     </MenuSection>
   );
 };
