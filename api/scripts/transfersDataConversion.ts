@@ -22,6 +22,12 @@ type ApExamBasicInfo = {
   catalogueName: string | undefined; // E.g. "AP ECONOMICS:MICRO"
 };
 
+type TransferredMiscRow = {
+  userId: number | null;
+  courseName: string | null;
+  units: number | null;
+};
+
 type TransferredMiscSelectedRow = {
   userId: number;
   courseName: string;
@@ -102,9 +108,6 @@ const apSubstitutions = (normalizedName: string, substitutions: { from: string; 
   4: an exact match (no substitutions)
 */
 const apMatchQuality = (normalizedName: string, comparingName: string, ap: ApExamBasicInfo): number => {
-  // TODO: improve this algorithm?
-  // TODO: hardcode any specific exceptions (ex. "ap us his(tory)", "ap us gov(ernment)", "ap calculus ab" with the BC subscore)?
-  //console.log(comparingName);
   const normalizedApFull = normalizeTransferName(ap.fullName);
   const normalizedApCat = normalizeTransferName(ap.catalogueName);
   if (normalizedApFull == normalizedName) return 4;
@@ -177,7 +180,7 @@ const tryMatchCourse = async (transferName: string): Promise<string | undefined>
   }
 };
 
-/** Handle organizing an AP exam */
+/** Handle organizing an AP exam, returning whether it will be moved to APs */
 const organizeApExam = (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
@@ -185,12 +188,12 @@ const organizeApExam = (
   toInsertAp: TransferredApExamRow[],
   usersWithABSubscore: { [userId: number]: boolean },
   allAps: ApExamBasicInfo[],
-) => {
+): boolean => {
   const bestMatch = tryMatchAp(transferName, allAps);
   if (!bestMatch) {
     // Could not match; leave it here
     console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any AP`);
-    return;
+    return false;
   }
 
   // Handle special case for subscore
@@ -202,7 +205,7 @@ const organizeApExam = (
       console.log(
         `x FAILED:  x${transfer.count}    '${transferName}'      has ambiguity: AP Calculus AB vs the BC Subscore`,
       );
-      return;
+      return false;
     } else {
       // The user has AP Calculus AB 2+ times and no AB subscore,
       // so we assume one of them is the BC subscore and the other isn't
@@ -218,7 +221,6 @@ const organizeApExam = (
   }
 
   // Move this transfer item to the APs table with the name of the best match
-  // If different units among the duplicates, get all the units then divide evenly among the two/several
   toDelete.push(and(eq(transferredMisc.userId, transfer.userId), eq(transferredMisc.courseName, transfer.courseName)));
   toInsertAp.push({
     userId: transfer.userId,
@@ -229,20 +231,21 @@ const organizeApExam = (
   console.log(
     `  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch.fullName}' ('${bestMatch.catalogueName}')`,
   );
+  return true;
 };
 
-/** Handle organizing a course */
+/** Handle organizing a course, returning whether it will be moved to courses */
 const organizeCourse = async (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toInsertCourse: TransferredCourseRow[],
-) => {
+): Promise<boolean> => {
   const bestMatch = await tryMatchCourse(transferName);
   if (!bestMatch) {
     // Could not match; leave it here
     console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any course`);
-    return;
+    return false;
   }
 
   // Move this transfer item to the transferred courses table with the name of the best match
@@ -253,6 +256,27 @@ const organizeCourse = async (
     units: transfer.totalUnits,
   });
   console.log(`  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch}'`);
+  return true;
+};
+
+/** Handle organizing a misc transfer, only to deal with duplicate rows */
+const organizeMisc = (
+  transfer: TransferredMiscSelectedRow,
+  toDelete: (SQL<unknown> | undefined)[],
+  toReinsertMisc: TransferredMiscRow[],
+) => {
+  if (transfer.count == 1) {
+    // It's fine as it is, this is not a duplicate
+    return;
+  }
+
+  // Delete this then re-add only one copy
+  toDelete.push(and(eq(transferredMisc.userId, transfer.userId), eq(transferredMisc.courseName, transfer.courseName)));
+  toReinsertMisc.push({
+    userId: transfer.userId,
+    courseName: transfer.courseName,
+    units: transfer.totalUnits,
+  });
 };
 
 /** Organize the data in the database */
@@ -266,7 +290,6 @@ const organize = async () => {
     .select({
       userId: transferredMisc.userId,
       courseName: transferredMisc.courseName,
-      //units: transferredMisc.units,
       totalUnits: sql<number>`coalesce(sum(${transferredMisc.units}), 0)`.mapWith(Number),
       count: count(transferredMisc.userId),
     })
@@ -276,6 +299,7 @@ const organize = async () => {
   const toDelete: (SQL<unknown> | undefined)[] = []; // `or()` should still be valid if we pass nothing into it
   const toInsertAp: TransferredApExamRow[] = [];
   const toInsertCourse: TransferredCourseRow[] = [];
+  const toReinsertMisc: TransferredMiscRow[] = [];
   const usersWithABSubscore: { [userId: number]: boolean } = {};
   for (const transfer of transfers) {
     if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
@@ -292,7 +316,7 @@ const organize = async () => {
     }
     const transferName = transfer.courseName.trim();
     if (transferName.startsWith('AP ')) {
-      organizeApExam(
+      const reorganized = organizeApExam(
         transfer as TransferredMiscSelectedRow,
         transferName,
         toDelete,
@@ -300,12 +324,22 @@ const organize = async () => {
         usersWithABSubscore,
         allAps,
       );
+      if (!reorganized) {
+        organizeMisc(transfer as TransferredMiscSelectedRow, toDelete, toReinsertMisc);
+      }
     } else {
-      await organizeCourse(transfer as TransferredMiscSelectedRow, transferName, toDelete, toInsertCourse);
+      const reorganized = await organizeCourse(
+        transfer as TransferredMiscSelectedRow,
+        transferName,
+        toDelete,
+        toInsertCourse,
+      );
+      if (!reorganized) {
+        organizeMisc(transfer as TransferredMiscSelectedRow, toDelete, toReinsertMisc);
+      }
     }
   }
   // Delete and insert everything with several large queries
-  // TODO: test with duplicates
   // Debug print
   const qb = new QueryBuilder();
   const delQuery = qb
@@ -317,12 +351,16 @@ const organize = async () => {
   console.log();
   console.log('Would insert into transferredApExam: ' + JSON.stringify(toInsertAp, null, 4));
   console.log('Would insert into transferredCourse: ' + JSON.stringify(toInsertCourse, null, 4));
+  console.log('Would delete from transferredMisc as specified above');
+  console.log('Would insert into transferredMisc: ' + JSON.stringify(toReinsertMisc, null, 4));
 
   /*
   // Queries will look like this, with `db` on the left
+  // ORDER MATTERS for transferredMisc
   //!!.insert(transferredApExam).values(toInsertAp);
   //!!.insert(transferredCourse).values(toInsertCourse);
   //!!.delete(transferredMisc).where(or(...toDelete));
+  //!!.insert(transferredMisc).values(toReinsertMisc);
   */
 };
 
