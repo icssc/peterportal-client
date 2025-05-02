@@ -34,8 +34,15 @@ const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course, setCourse
 
 const CoursesSection: FC = () => {
   const [courses, setCourses] = useState<TransferredCourse[]>([]);
+  const [timeout, setTimeout] = useState<number | null>(null);
+  const [abortFn, setAbortFn] = useState<() => void>();
 
   const isDark = useContext(ThemeContext).darkMode;
+
+  const cancelIncompleteSearch = () => {
+    abortFn?.();
+    if (timeout) clearTimeout(timeout);
+  };
 
   const loadCourses = async (query: string) => {
     const response = await trpc.search.get.query({ query, skip: 0, take: 10, resultType: 'course' });
@@ -47,6 +54,18 @@ const CoursesSection: FC = () => {
     return options;
   };
 
+  const loadAfterTimeout = async (query: string) => {
+    if (timeout) clearTimeout(timeout);
+    return new Promise<CourseSelectOption[]>((resolve) => {
+      const initSearch = async () => {
+        const abortPromise = new Promise<null>((resolve) => setAbortFn(() => resolve));
+        const response = await Promise.race([abortPromise, loadCourses(query)]);
+        if (response) resolve(response);
+      };
+      setTimeout(window.setTimeout(initSearch, 300));
+    });
+  };
+
   const addCourse = (course: TransferredCourse) => {
     setCourses([...courses, course]);
     trpc.transferCredits.addTransferredCourse.mutate(course);
@@ -54,7 +73,6 @@ const CoursesSection: FC = () => {
 
   useEffect(() => {
     trpc.transferCredits.getTransferredCourses.query().then(setCourses);
-    // equivalent of fetch('/some-route').then(x => x.json()).then(response => setCourses(response))
   }, []);
 
   return (
@@ -81,7 +99,8 @@ const CoursesSection: FC = () => {
         placeholder="Search for a course to add..."
         theme={(t) => comboboxTheme(t, isDark)}
         cacheOptions
-        loadOptions={loadCourses}
+        onInputChange={cancelIncompleteSearch}
+        loadOptions={loadAfterTimeout}
         onChange={(option) => addCourse(option!.value)}
         value={null}
       />
