@@ -5,6 +5,7 @@ import dotenv from 'dotenv-flow';
 import { count, and, eq, or, SQL, sql } from 'drizzle-orm';
 import { QueryBuilder } from 'drizzle-orm/pg-core';
 import { CourseAAPIResponse } from '../../types/src/course';
+import * as fs from 'fs';
 // load env (because this is a separate script)
 dotenv.config();
 
@@ -46,11 +47,6 @@ type TransferredCourseRow = {
   userId: number;
   courseName: string;
   units: number;
-};
-
-const removeAllSpaces = (transferName: string | undefined) => {
-  if (!transferName) return '';
-  return transferName.replace(/\s/g, '');
 };
 
 /** Get all AP exams */
@@ -107,26 +103,25 @@ const apSubstitutions = (normalizedName: string, substitutions: { from: string; 
   3: a partial match/starts with (no substitutions)
   4: an exact match (no substitutions)
 */
-const apMatchQuality = (normalizedName: string, comparingName: string, ap: ApExamBasicInfo): number => {
+const apMatchQuality = (normalizedName: string, substitutedName: string, ap: ApExamBasicInfo): number => {
   const normalizedApFull = normalizeTransferName(ap.fullName);
   const normalizedApCat = normalizeTransferName(ap.catalogueName);
   if (normalizedApFull == normalizedName) return 4;
   if (normalizedApCat == normalizedName) return 4;
   if (normalizedApFull.startsWith(normalizedName)) return 3;
   if (normalizedApCat.startsWith(normalizedName)) return 3;
-  if (normalizedApFull == comparingName) return 2;
-  if (normalizedApCat == comparingName) return 2;
-  if (normalizedApFull.startsWith(comparingName)) return 1;
-  if (normalizedApCat.startsWith(comparingName)) return 1;
+  if (normalizedApFull == substitutedName) return 2;
+  if (normalizedApCat == substitutedName) return 2;
+  if (normalizedApFull.startsWith(substitutedName)) return 1;
+  if (normalizedApCat.startsWith(substitutedName)) return 1;
   return 0;
 };
 
 /** Try to find the best match for a transfer name out of all the AP exams; undefined if no match */
 const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
-  // Normalize the transfer name
   const normalizedName = normalizeTransferName(transferName);
   // Some hardcoded exceptions (specifically for matching the full name rather than cat name, order matters)
-  const comparingName = apSubstitutions(normalizedName, [
+  const substitutedName = apSubstitutions(normalizedName, [
     // Hardcoded exceptions for specific rows
     { from: 'ap economics ma', to: 'ap macroeconomics' },
     { from: 'ap world modern', to: 'ap world history modern' },
@@ -159,7 +154,7 @@ const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasi
   let bestMatch: ApExamBasicInfo | undefined = undefined;
   let bestMatchQuality = 0;
   for (const ap of allAps) {
-    const matchQuality = apMatchQuality(normalizedName, comparingName, ap);
+    const matchQuality = apMatchQuality(normalizedName, substitutedName, ap);
     if (matchQuality > bestMatchQuality) {
       bestMatch = ap;
       bestMatchQuality = matchQuality;
@@ -168,9 +163,12 @@ const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasi
   return bestMatch;
 };
 
+const removeAllSpaces = (transferName: string) => {
+  return transferName.replace(/\s/g, '');
+};
+
 /** Try to match a transfer name with an existing UCI course; undefined if no match */
 const tryMatchCourse = async (transferName: string): Promise<string | undefined> => {
-  // TODO: improve comparison with spaces?
   const res = await getAPICourseById(removeAllSpaces(transferName));
   if (!res) {
     return undefined;
@@ -180,7 +178,39 @@ const tryMatchCourse = async (transferName: string): Promise<string | undefined>
   }
 };
 
-/** Handle organizing an AP exam, returning whether it will be moved to APs */
+/** Handle some special cases for AP Calc AB, which could have a subscore,
+  returning whether it's okay to proceed to add "AP Calculus AB" */
+const handleApCalcAB = (
+  transfer: TransferredMiscSelectedRow,
+  transferName: string,
+  toInsertAp: TransferredApExamRow[],
+  usersWithABSubscore: { [userId: number]: boolean },
+): boolean => {
+  if (transfer.userId in usersWithABSubscore) {
+    // Okay to proceed normally because we know the user has an explicit AB subscore
+    return true;
+  } else if (transfer.count == 1) {
+    // Not okay because we don't know whether this is AB or the subscore
+    console.log(
+      `x FAILED:  x${transfer.count}    '${transferName}'      has ambiguity: AP Calculus AB vs the BC Subscore`,
+    );
+    return false;
+  } else {
+    // The user has AP Calculus AB 2+ times and no AB subscore,
+    // so we assume one of them is the BC subscore and the other isn't
+    // Insert the BC subscore here, then proceed normally so that AB is also inserted
+    console.log(`+ MATCHED:       '${transferName}' with the AP Calc AB Subscore on the BC test AS WELL AS:`);
+    toInsertAp.push({
+      userId: transfer.userId,
+      examName: AP_CALC_AB_SUBSCORE,
+      score: null,
+      units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0
+    });
+    return true;
+  }
+};
+
+/** Handle organizing an AP exam, returning whether it was successfully categorized */
 const organizeApExam = (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
@@ -198,26 +228,8 @@ const organizeApExam = (
 
   // Handle special case for subscore
   if (bestMatch.fullName == AP_CALC_AB) {
-    if (transfer.userId in usersWithABSubscore) {
-      // Okay to proceed normally because we know the user has an explicit AB subscore
-    } else if (transfer.count == 1) {
-      // Not okay because we don't know whether this is AB or the subscore
-      console.log(
-        `x FAILED:  x${transfer.count}    '${transferName}'      has ambiguity: AP Calculus AB vs the BC Subscore`,
-      );
-      return false;
-    } else {
-      // The user has AP Calculus AB 2+ times and no AB subscore,
-      // so we assume one of them is the BC subscore and the other isn't
-      // Insert the BC subscore here, then proceed normally so that AB is also inserted
-      console.log(`+ MATCHED:       '${transferName}' with the AP Calc AB Subscore on the BC test AS WELL AS:`);
-      toInsertAp.push({
-        userId: transfer.userId,
-        examName: AP_CALC_AB_SUBSCORE,
-        score: null,
-        units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0
-      });
-    }
+    const proceedToAdd = handleApCalcAB(transfer, transferName, toInsertAp, usersWithABSubscore);
+    if (!proceedToAdd) return false;
   }
 
   // Move this transfer item to the APs table with the name of the best match
@@ -234,7 +246,7 @@ const organizeApExam = (
   return true;
 };
 
-/** Handle organizing a course, returning whether it will be moved to courses */
+/** Handle organizing a course, returning whether it was successfully categorized */
 const organizeCourse = async (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
@@ -294,12 +306,8 @@ const organize = async () => {
       count: count(transferredMisc.userId),
     })
     .from(transferredMisc)
-    .groupBy(transferredMisc.userId, transferredMisc.courseName)
-    .limit(40); // For testing, we will only look at a few entries
-  const toDelete: (SQL<unknown> | undefined)[] = []; // `or()` should still be valid if we pass nothing into it
-  const toInsertAp: TransferredApExamRow[] = [];
-  const toInsertCourse: TransferredCourseRow[] = [];
-  const toReinsertMisc: TransferredMiscRow[] = [];
+    .groupBy(transferredMisc.userId, transferredMisc.courseName);
+  //.limit(40); // For testing, we will only look at a few entries
   const usersWithABSubscore: { [userId: number]: boolean } = {};
   for (const transfer of transfers) {
     if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
@@ -310,6 +318,12 @@ const organize = async () => {
       usersWithABSubscore[transfer.userId] = true;
     }
   }
+
+  // Build several large queries
+  const toDelete: (SQL<unknown> | undefined)[] = []; // `or()` should still be valid if we pass nothing into it
+  const toInsertAp: TransferredApExamRow[] = [];
+  const toInsertCourse: TransferredCourseRow[] = [];
+  const toReinsertMisc: TransferredMiscRow[] = [];
   for (const transfer of transfers) {
     if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
       continue;
@@ -339,28 +353,51 @@ const organize = async () => {
       }
     }
   }
-  // Delete and insert everything with several large queries
-  // Debug print
+
+  // Delete and insert everything using the large queries
+
+  // First, logging/debugging
   const qb = new QueryBuilder();
   const delQuery = qb
     .select()
     .from(transferredMisc)
     .where(or(...toDelete))
     .toSQL();
-  console.log('Would execute: ' + delQuery.sql + ',\n params: ' + delQuery.params);
+
+  // Dump into log files (in case there is a lot of data)
+  console.log('Dumping the query inputs into log files...');
+  console.log('- Delete query');
+  fs.writeFileSync('transfersDataConversion_DeleteQuery.log', delQuery.sql);
+  console.log('- Delete parameters');
+  fs.writeFileSync('transfersDataConversion_DeleteParameters.log', JSON.stringify(delQuery.params, null, 4));
+  console.log('- To insert into transferred AP exam table');
+  fs.writeFileSync('transfersDataConversion_InsertApExam.log', JSON.stringify(toInsertAp, null, 4));
+  console.log('- To insert into transferred course table');
+  fs.writeFileSync('transfersDataConversion_InsertCourse.log', JSON.stringify(toInsertCourse, null, 4));
+  console.log('- To reinsert into transferred misc table');
+  fs.writeFileSync('transfersDataConversion_ReinsertMisc.log', JSON.stringify(toReinsertMisc, null, 4));
+  console.log('Finished logging');
+
+  // Debug print (comment out if dealing with a lot of data, use the log files instead)
+  /*console.log('Would execute: ' + delQuery.sql + ',\n params: ' + delQuery.params);
   console.log();
   console.log('Would insert into transferredApExam: ' + JSON.stringify(toInsertAp, null, 4));
   console.log('Would insert into transferredCourse: ' + JSON.stringify(toInsertCourse, null, 4));
   console.log('Would delete from transferredMisc as specified above');
-  console.log('Would insert into transferredMisc: ' + JSON.stringify(toReinsertMisc, null, 4));
+  console.log('Would insert into transferredMisc: ' + JSON.stringify(toReinsertMisc, null, 4));*/
+
+  // Finally, execute the actual queries (uncomment when ready to perform the changes)
+  // ORDER MATTERS for transferredMisc
 
   /*
-  // Queries will look like this, with `db` on the left
-  // ORDER MATTERS for transferredMisc
-  //!!.insert(transferredApExam).values(toInsertAp);
-  //!!.insert(transferredCourse).values(toInsertCourse);
-  //!!.delete(transferredMisc).where(or(...toDelete));
-  //!!.insert(transferredMisc).values(toReinsertMisc);
+  console.log('Starting transaction...');
+  // await db.transaction(async (tx) => {
+  //   await tx.insert(transferredApExam).values(toInsertAp);
+  //   await tx.insert(transferredCourse).values(toInsertCourse);
+  //   await tx.delete(transferredMisc).where(or(...toDelete));
+  //   await tx.insert(transferredMisc).values(toReinsertMisc);
+  // });
+  console.log('Finished transaction');
   */
 };
 
