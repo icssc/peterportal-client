@@ -1,5 +1,4 @@
-import React, { FC, useState, useEffect, useCallback } from 'react';
-import { Dropdown, Grid, DropdownProps } from 'semantic-ui-react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -7,6 +6,8 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -37,6 +38,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -161,73 +164,65 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     }
   }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
 
-  /*
-   * Record what is in the quarter dropdown menu at the moment.
-   * @param event an event object recording the mouse movement, etc.
-   * @param status details about the status in the dropdown menu
-   */
-  const updateCurrentQuarter = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
-    setCurrentQuarter(status.value as string);
+  const profCourseOptions = props.course ? profEntries : courseEntries;
+  const profCourseSelectedValue = props.course ? currentProf : currentCourse;
+  const updateProfCourse = (value: string | null) => {
+    if (props.course) setCurrentProf(value!);
+    else setCurrentCourse(value!);
   };
 
-  /*
-   * Record what is in the professor dropdown menu at the moment.
-   * @param event an event object recording the mouse movement, etc.
-   * @param status details about the status in the dropdown menu
-   */
-  const updateCurrentProf = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
-    setCurrentProf(status.value as string);
-  };
-
-  /*
-   * Record what is in the course dropdown menu at the moment.
-   * @param event an event object recording the mouse movement, etc.
-   * @param status details about the status in the dropdown menu
-   */
-  const updateCurrentCourse = (_: React.SyntheticEvent<HTMLElement>, status: DropdownProps) => {
-    setCurrentCourse(status.value as string);
-  };
+  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (
-    <Grid.Row id="menu">
+    <div className="gradedist-menu">
       {props.minify && (
-        <Grid.Column className="gradedist-filter">
-          <Dropdown
-            placeholder="Chart Type"
-            scrolling
-            selection
-            options={[
-              { text: 'Bar', value: 'bar' },
-              { text: 'Pie', value: 'pie' },
-            ]}
-            value={chartType}
-            onChange={(_, s) => setChartType(s.value as ChartTypes)}
-          />
-        </Grid.Column>
+        <div className="gradedist-filter">
+          <DropdownButton
+            className="ppc-dropdown-btn"
+            title="Chart Type"
+            variant={buttonVariant}
+            onSelect={(value) => setChartType(value as ChartTypes)}
+          >
+            <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
+            <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
+          </DropdownButton>
+        </div>
       )}
 
-      <Grid.Column className="gradedist-filter">
-        <Dropdown
-          placeholder={props.course ? 'Professor' : 'Course'}
-          scrolling
-          selection
-          options={props.course ? profEntries : courseEntries}
-          value={props.course ? currentProf : currentCourse}
-          onChange={props.course ? updateCurrentProf : updateCurrentCourse}
-        />
-      </Grid.Column>
+      <div className="gradedist-filter">
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
+          variant={buttonVariant}
+          onSelect={updateProfCourse}
+        >
+          {profCourseOptions?.map((q) => {
+            return (
+              <Dropdown.Item key={q.value} eventKey={q.value}>
+                {q.text}
+              </Dropdown.Item>
+            );
+          })}
+        </DropdownButton>
+      </div>
 
-      <Grid.Column className="gradedist-filter">
-        <Dropdown
-          placeholder="Quarter"
-          scrolling
-          selection
-          options={quarterEntries}
-          value={currentQuarter}
-          onChange={updateCurrentQuarter}
-        />
-      </Grid.Column>
-    </Grid.Row>
+      <div className="gradedist-filter">
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title={selectedQuarterName}
+          variant={buttonVariant}
+          onSelect={(value) => setCurrentQuarter(value!)}
+        >
+          {quarterEntries?.map((q) => {
+            return (
+              <Dropdown.Item key={q.value} eventKey={q.value}>
+                {q.text}
+              </Dropdown.Item>
+            );
+          })}
+        </DropdownButton>
+      </div>
+    </div>
   );
 
   if (gradeDistData?.length) {
@@ -240,8 +235,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-
-        <Grid.Row id="chart">
+        <div className="chart-container">
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
               <Chart {...graphProps} />
@@ -252,7 +246,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               <Pie {...graphProps} />
             </div>
           )}
-        </Grid.Row>
+        </div>
       </div>
     );
   } else if (gradeDistData == null) {
