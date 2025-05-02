@@ -6,32 +6,15 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addUserAPExam, setAPExams } from '../../../store/slices/transferCreditsSlice';
+import { setAPExams, addUserAPExam, removeUserAPExam } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import { APExams } from '@peterportal/types';
+
+type APExam = APExams[number];
 
 interface ScoreSelectionProps {
   score: number | null;
   setScore: (value: number) => void;
-}
-
-interface APExam {
-  fullName: string;
-  catalogueName: string;
-  rewards: {
-    acceptableScores: number[];
-    unitsGranted: number;
-    electiveUnitsGranted: number;
-    geCategories: string[];
-    coursesGranted: {
-      string: string[];
-    };
-  }[];
-}
-
-interface userAPExam {
-  examName: string;
-  score: number;
-  units: number;
 }
 
 interface APExamOption {
@@ -64,13 +47,30 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
   // For each saved AP Exam, create a menu tile
   const [score, setScore] = useState<number | null>(null);
   const [units, setUnits] = useState<number>(0);
+  // const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const dispatch = useAppDispatch();
+
+  const handleInfoChange = useCallback(
+    async (examName: string, score: number | null, units: number | null) => {
+      // const oldExamInfo = userAPExams.find((exam) => exam.examName === examName);
+      dispatch(removeUserAPExam(examName));
+      dispatch(addUserAPExam({ examName, score: score ?? 0, units: units ?? 0 }));
+      // trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
+    },
+    [dispatch],
+  );
+
   useEffect(() => {
     setScore(userScore);
     setUnits(userUnits);
-  }, [userScore, userUnits]);
+    handleInfoChange(examName, userScore, userUnits);
+  }, [examName, handleInfoChange, userScore, userUnits]);
 
   const selectBox = <ScoreSelection score={score} setScore={setScore} />;
-  const deleteFn = () => {};
+
+  const deleteFn = useCallback(() => {
+    dispatch(removeUserAPExam(examName));
+  }, [dispatch, examName]);
 
   return (
     <MenuTile title={examName} headerItems={selectBox} units={units} setUnits={setUnits} deleteFn={deleteFn}>
@@ -100,28 +100,38 @@ const APExamsSection: FC = () => {
   useEffect(() => {
     if (APExams.length) return;
     trpc.transferCredits.getAPExamInfo.query().then((allExams) => {
-      saveAllAPExams(allExams);
+      const processedExams = allExams.map((exam) => ({
+        ...exam,
+        catalogueName: exam.catalogueName ?? null, // Ensure catalogueName is explicitly set
+      }));
+      saveAllAPExams(processedExams);
     });
   }, [dispatch, APExams.length, saveAllAPExams]);
 
   // Save AP Exams for user
-  const saveUserAPExams = useCallback(
-    (examsToSave: userAPExam[]) => {
+  /** const saveUserAPExams = useCallback(() => {
       if (!isLoggedIn) return;
-      trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: examsToSave });
+      trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
     },
-    [isLoggedIn],
-  );
+    [isLoggedIn, userAPExams],
+  ); */
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    if (!userAPExams.length) return;
+
+    trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
+  }, [userAPExams, isLoggedIn]);
 
   // Save AP Exam to store
   useEffect(() => {
     if (!currentExam || !currentScore) return;
     const foundUnits = APExams.find((exam) => exam.fullName === currentExam)?.rewards[0].unitsGranted ?? 0;
     dispatch(addUserAPExam({ examName: currentExam, score: currentScore, units: foundUnits }));
-    saveUserAPExams([{ examName: currentExam, score: currentScore, units: foundUnits }]);
+    // saveUserAPExams();
     setCurrentExam(null);
     setCurrentScore(null);
-  }, [dispatch, currentExam, currentScore, APExams, saveUserAPExams]);
+  }, [dispatch, currentExam, currentScore, APExams, userAPExams]);
 
   // Fetch saved AP exams and save to store
   useEffect(() => {

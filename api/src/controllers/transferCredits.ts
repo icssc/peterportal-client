@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { db } from '../db';
 import { transferredApExam } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { APExams } from '@peterportal/types';
 
 interface userAPExam {
   examName: string;
@@ -11,19 +12,7 @@ interface userAPExam {
   units: number;
 }
 
-interface APExam {
-  fullName: string;
-  catalogueName: string;
-  rewards: {
-    acceptableScores: number[];
-    unitsGranted: number;
-    electiveUnitsGranted: number;
-    geCategories: string[];
-    coursesGranted: {
-      string: string[];
-    };
-  }[];
-}
+type APExam = APExams[number];
 
 const zodAPExamSchema = z.object({
   apExams: z.array(

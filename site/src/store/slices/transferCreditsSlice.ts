@@ -1,18 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { APExams } from '@peterportal/types';
 
-interface APExam {
-  fullName: string;
-  catalogueName: string;
-  rewards: {
-    acceptableScores: number[];
-    unitsGranted: number;
-    electiveUnitsGranted: number;
-    geCategories: string[];
-    coursesGranted: {
-      string: string[];
-    };
-  }[];
-}
+type APExam = APExams[number];
 
 interface userAPExam {
   examName: string;
