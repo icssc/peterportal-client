@@ -1,10 +1,4 @@
-import {
-  MajorProgram,
-  MajorSpecialization,
-  MinorProgram,
-  ProgramRequirement,
-  TypedProgramRequirement,
-} from '@peterportal/types';
+import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
 
@@ -73,7 +67,7 @@ export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
  * @param requirements The raw course requirements, as returned from the API
  */
 export function collapseSingletonRequirements(requirements: ProgramRequirement[]) {
-  let builtGroup: TypedProgramRequirement<'Group'> | null = null;
+  let builtGroup: ProgramRequirement<'Group'> | null = null;
 
   const computedRequirements: ProgramRequirement[] = [];
 
@@ -81,11 +75,11 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
     if (builtGroup?.requirements?.length === 1) {
       computedRequirements.push(builtGroup.requirements[0]);
     } else if (builtGroup) {
-      const courseReqs: TypedProgramRequirement<'Course'> = {
+      const courseReqs: ProgramRequirement<'Course'> = {
         requirementType: 'Course',
         label: builtGroup.label,
         courseCount: builtGroup.requirementCount,
-        courses: (builtGroup.requirements as TypedProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
+        courses: (builtGroup.requirements as ProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
       };
       computedRequirements.push(courseReqs);
     }
@@ -141,7 +135,7 @@ export interface CompletionStatus {
 
 function checkCourseListCompletion(
   completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Course'>,
+  requirement: ProgramRequirement<'Course'>,
 ): CompletionStatus {
   const completedCount = requirement.courses.filter((c) => c in completed).length;
   const required = requirement.courseCount;
@@ -150,7 +144,7 @@ function checkCourseListCompletion(
 
 function checkGroupCompletion(
   completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Group'>,
+  requirement: ProgramRequirement<'Group'>,
 ): CompletionStatus {
   const checkIsDone = (req: ProgramRequirement) => checkCompletion(completed, req).done;
   const completedGroups = requirement.requirements.filter(checkIsDone).length;
@@ -158,10 +152,7 @@ function checkGroupCompletion(
   return { required, completed: completedGroups, done: completedGroups >= required };
 }
 
-function checkUnitCompletion(
-  completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Unit'>,
-): CompletionStatus {
+function checkUnitCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement<'Unit'>): CompletionStatus {
   const required = requirement.unitCount;
   const completedCourses = requirement.courses.filter((c) => c in completed);
   const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
