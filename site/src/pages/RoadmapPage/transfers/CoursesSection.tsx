@@ -102,6 +102,7 @@ const CoursesSection: FC = () => {
         onInputChange={cancelIncompleteSearch}
         loadOptions={loadAfterTimeout}
         onChange={(option) => addCourse(option!.value)}
+        noOptionsMessage={({ inputValue }) => (inputValue ? 'No courses found' : null)}
         value={null}
       />
     </MenuSection>
