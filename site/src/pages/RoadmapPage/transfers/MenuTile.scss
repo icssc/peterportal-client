@@ -1,3 +1,5 @@
+@use '../../../globals.scss';
+
 .menu-tile {
   border: 2px solid var(--blue-secondary);
   border-radius: 8px;
@@ -11,6 +13,9 @@
     align-items: center;
     gap: 4px;
     margin-block: -2px 4px;
+    &:last-child {
+      margin-block: -2px;
+    }
   }
   .tile-info p {
     margin: 0;
@@ -38,6 +43,7 @@
   }
   button.delete-btn {
     color: red;
+    @include globals.clickable();
   }
 
   form {
