@@ -64,8 +64,10 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
   // For each saved AP Exam, create a menu tile
   const [score, setScore] = useState<number | null>(null);
   const [units, setUnits] = useState<number>(0);
-  setScore(userScore);
-  setUnits(userUnits);
+  useEffect(() => {
+    setScore(userScore);
+    setUnits(userUnits);
+  }, [userScore, userUnits]);
 
   const selectBox = <ScoreSelection score={score} setScore={setScore} />;
   const deleteFn = () => {};
@@ -111,19 +113,17 @@ const APExamsSection: FC = () => {
     [isLoggedIn],
   );
 
+  // Save AP Exam to store
   useEffect(() => {
-    const examName = currentExam;
-    const score = currentScore;
-    if (!examName || !score) return;
-    const foundUnits = APExams.find((exam) => exam.fullName === examName)?.rewards[0].unitsGranted ?? 0;
-    saveUserAPExams([{ examName, score, units: foundUnits }]);
-  }, [APExams, currentExam, currentScore, saveUserAPExams]);
+    if (!currentExam || !currentScore) return;
+    const foundUnits = APExams.find((exam) => exam.fullName === currentExam)?.rewards[0].unitsGranted ?? 0;
+    dispatch(addUserAPExam({ examName: currentExam, score: currentScore, units: foundUnits }));
+    saveUserAPExams([{ examName: currentExam, score: currentScore, units: foundUnits }]);
+    setCurrentExam(null);
+    setCurrentScore(null);
+  }, [dispatch, currentExam, currentScore, APExams, saveUserAPExams]);
 
-  // Get user's AP Exams and save to state
-  // Fetch data for those exams
-  // render menu tiles for user's AP Exams
-  // On change, (useCallback?) re-render and save
-
+  // Fetch saved AP exams and save to store
   useEffect(() => {
     trpc.transferCredits.getSavedAPExams.query().then((savedExams) => {
       for (const exam of savedExams) {
@@ -150,6 +150,7 @@ const APExamsSection: FC = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <div style={{ flex: '1' }}>
           <Select
+            value={APSelectOptions.find((opt) => opt.label === currentExam) ?? null}
             options={APSelectOptions}
             isSearchable
             onChange={(selectedOption) => setCurrentExam(selectedOption?.label || null)}
@@ -159,6 +160,7 @@ const APExamsSection: FC = () => {
         </div>
         <div style={{ flex: '0.5' }}>
           <Select
+            value={currentScore ? { value: currentScore, label: currentScore.toString() } : null}
             options={[
               { value: 1, label: '1' },
               { value: 2, label: '2' },
