@@ -274,6 +274,7 @@ const organizeCourse = async (
 /** Handle organizing a misc transfer, only to deal with duplicate rows */
 const organizeMisc = (
   transfer: TransferredMiscSelectedRow,
+  transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toReinsertMisc: TransferredMiscRow[],
 ) => {
@@ -289,6 +290,7 @@ const organizeMisc = (
     courseName: transfer.courseName,
     units: transfer.totalUnits,
   });
+  console.log(`- COMBINED:      '${transferName}' (above): duplicates will be combined into one entry`);
 };
 
 /** Organize the data in the database */
@@ -339,7 +341,7 @@ const organize = async () => {
         allAps,
       );
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toDelete, toReinsertMisc);
+        organizeMisc(transfer as TransferredMiscSelectedRow, transferName, toDelete, toReinsertMisc);
       }
     } else {
       const reorganized = await organizeCourse(
@@ -349,7 +351,7 @@ const organize = async () => {
         toInsertCourse,
       );
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toDelete, toReinsertMisc);
+        organizeMisc(transfer as TransferredMiscSelectedRow, transferName, toDelete, toReinsertMisc);
       }
     }
   }
