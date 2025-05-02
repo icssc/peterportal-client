@@ -5,8 +5,9 @@ export type MinorProgram = operations['getMinors']['responses']['200']['content'
 export type MajorSpecialization =
   operations['getSpecializations']['responses']['200']['content']['application/json']['data'][0];
 
-export type ProgramRequirement = components['schemas']['programRequirement'];
-export type TypedProgramRequirement<T extends string> = ProgramRequirement & { requirementType: T };
+type RequirementSchema = components['schemas']['programRequirement'];
+type ReqType = RequirementSchema['requirementType'];
+export type ProgramRequirement<T extends ReqType = ReqType> = RequirementSchema & { requirementType: T };
 
 export interface MajorSpecializationPair {
   majorId: string;
