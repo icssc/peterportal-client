@@ -59,7 +59,7 @@ export interface MenuTileProps {
   title: string;
   units?: number;
   setUnits?: (value: number) => void;
-  deleteFn: () => void;
+  deleteFn?: () => void;
   /** Additional items to include alongsite the title */
   headerItems?: ReactNode;
 }
@@ -73,9 +73,11 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         </p>
         <hr />
         {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
-        <button className="delete-btn" onClick={deleteFn}>
-          <Trash />
-        </button>
+        {deleteFn && (
+          <button className="delete-btn" onClick={deleteFn}>
+            <Trash />
+          </button>
+        )}
       </div>
       {children}
     </div>
