@@ -13,7 +13,7 @@ import { APExams } from '@peterportal/types';
 type APExam = APExams[number];
 
 interface ScoreSelectionProps {
-  score: number | null;
+  score: number;
   setScore: (value: number) => void;
 }
 
@@ -24,7 +24,7 @@ interface APExamOption {
 
 interface APCreditMenuTileProps {
   examName: string;
-  userScore: number | null;
+  userScore: number;
   userUnits: number;
 }
 
@@ -33,11 +33,11 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   return (
     <select value={score ?? ''} onInput={(event) => setScore(parseInt((event.target as HTMLInputElement).value))}>
       <optgroup label="Score">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
       </optgroup>
     </select>
   );
@@ -45,28 +45,30 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
 
 const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, userUnits }) => {
   // For each saved AP Exam, create a menu tile
-  const [score, setScore] = useState<number | null>(null);
-  const [units, setUnits] = useState<number>(0);
-  // const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const [score, setScore] = useState<number>(userScore);
+  const [units, setUnits] = useState<number>(userUnits);
   const dispatch = useAppDispatch();
 
-  const handleInfoChange = useCallback(
-    async (examName: string, score: number | null, units: number | null) => {
-      // const oldExamInfo = userAPExams.find((exam) => exam.examName === examName);
+  const selectBox = <ScoreSelection score={score} setScore={setScore} />;
+
+  const handleChange = useCallback(
+    async (score: number, units: number) => {
       dispatch(removeUserAPExam(examName));
-      dispatch(addUserAPExam({ examName, score: score ?? 0, units: units ?? 0 }));
-      // trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
+      dispatch(addUserAPExam({ examName, score: score, units: units }));
     },
-    [dispatch],
+    [dispatch, examName],
   );
 
   useEffect(() => {
     setScore(userScore);
     setUnits(userUnits);
-    handleInfoChange(examName, userScore, userUnits);
-  }, [examName, handleInfoChange, userScore, userUnits]);
+  }, [examName, userScore, userUnits]);
 
-  const selectBox = <ScoreSelection score={score} setScore={setScore} />;
+  useEffect(() => {
+    if (score !== userScore || units !== userUnits) {
+      handleChange(score, units);
+    }
+  }, [score, units, userScore, userUnits, handleChange]);
 
   const deleteFn = useCallback(() => {
     dispatch(removeUserAPExam(examName));
@@ -102,24 +104,15 @@ const APExamsSection: FC = () => {
     trpc.transferCredits.getAPExamInfo.query().then((allExams) => {
       const processedExams = allExams.map((exam) => ({
         ...exam,
-        catalogueName: exam.catalogueName ?? null, // Ensure catalogueName is explicitly set
+        catalogueName: exam.catalogueName ?? null,
       }));
       saveAllAPExams(processedExams);
     });
   }, [dispatch, APExams.length, saveAllAPExams]);
 
   // Save AP Exams for user
-  /** const saveUserAPExams = useCallback(() => {
-      if (!isLoggedIn) return;
-      trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
-    },
-    [isLoggedIn, userAPExams],
-  ); */
-
   useEffect(() => {
     if (!isLoggedIn) return;
-    if (!userAPExams.length) return;
-
     trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
   }, [userAPExams, isLoggedIn]);
 
