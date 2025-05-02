@@ -3,7 +3,6 @@ import './ProfessorPage.scss';
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
-import { Divider } from 'semantic-ui-react';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
@@ -60,7 +59,7 @@ const ProfessorPage: FC = () => {
               <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
-              <Divider />
+              <br />
               <Schedule
                 professorIDs={professorGQLData.shortenedNames}
                 termsOffered={unionTerms(professorGQLData.courses)}
@@ -71,7 +70,7 @@ const ProfessorPage: FC = () => {
               <div>
                 <h2>📊 Grade Distribution</h2>
               </div>
-              <Divider />
+              <br />
               <GradeDist professor={professorGQLData} />
             </div>
 
@@ -79,7 +78,7 @@ const ProfessorPage: FC = () => {
               <div>
                 <h2>💬 Reviews</h2>
               </div>
-              <Divider />
+              <br />
               <Review professor={professorGQLData} />
             </div>
           </article>

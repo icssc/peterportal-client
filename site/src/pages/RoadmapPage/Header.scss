@@ -8,6 +8,8 @@
   position: sticky;
   top: 36px;
   z-index: 2;
+  font-size: 14px;
+
   &::before {
     content: ' ';
     position: absolute;
@@ -72,6 +74,8 @@
   background-color: transparent;
   font-weight: bold;
   border: none;
+  font-size: 14px;
+  padding: 6px 12px;
 }
 
 .header-btn:hover,

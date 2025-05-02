@@ -9,7 +9,6 @@
   --text-secondary: #606166;
   --text-dark: #000;
   --text-light: #495057;
-  --hover: #cacbcd; // semantic-ui default
   --warning-red: #ce0000;
 }
 
@@ -27,7 +26,6 @@
   --text-secondary: #99999f;
   --text-dark: #fff;
   --text-light: #fff;
-  --hover: #cacbcd;
   --warning-red: red;
 
   color-scheme: dark;
@@ -137,37 +135,10 @@
 
 // general semantic-ui overwrites. bg/border color may need to be customized per component
 [data-theme='dark'] {
-  .ui,
-  .ui.popup:before {
+  .ui {
     color: var(--text);
     background-color: var(--overlay2);
     border-color: var(--overlay1);
-  }
-
-  .ui.bottom.popup:before {
-    box-shadow: -1px -1px 0 0 var(--overlay1);
-  }
-
-  .ui.dropdown,
-  .ui.dropdown .menu {
-    color: var(--text);
-    background-color: var(--overlay2);
-    border-color: var(--overlay1);
-  }
-
-  .ui.selection.visible.dropdown > .text:not(.default),
-  .ui.dropdown .menu > .item {
-    color: var(--text);
-  }
-
-  .ui.dropdown:hover {
-    border-color: var(--overlay3);
-  }
-  .ui.dropdown {
-    .menu > .item:hover,
-    .menu > .item.active {
-      background-color: var(--overlay3);
-    }
   }
 }
 // end semantic-ui overwrites

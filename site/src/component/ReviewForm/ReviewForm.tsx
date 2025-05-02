@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import { Icon } from 'semantic-ui-react';
 import Form from 'react-bootstrap/Form';
 import Badge from 'react-bootstrap/Badge';
 import Row from 'react-bootstrap/Row';
@@ -28,6 +27,7 @@ import {
 } from '@peterportal/types';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { ExclamationTriangleFill } from 'react-bootstrap-icons';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -409,7 +409,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
                     <Badge
                       key={tag}
                       pill
-                      className="p-3 mr-2 mt-2"
                       variant={selectedTags.includes(tag) ? 'success' : 'info'}
                       onClick={() => {
                         selectTag(tag);
@@ -438,8 +437,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   <p className="chars">{content.length}/500</p>
                 </div>
                 <Form.Text>
-                  <Icon name="warning sign" />
+                  <ExclamationTriangleFill />
                   <span className="profanity-warning">
+                    {' '}
                     Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!
                   </span>
                 </Form.Text>

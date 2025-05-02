@@ -6,6 +6,23 @@
   display: flex;
   flex-direction: column;
   overflow-x: auto;
+  font-size: 13px;
+
+  .node {
+    color: var(--text);
+    background-color: var(--overlay2);
+    border: none;
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    border-radius: 6px;
+    padding: 4px 6px;
+
+    &:hover {
+      background-color: #8884;
+    }
+  }
 }
 
 .prereq-clump {
@@ -186,9 +203,17 @@
   padding: 1em;
   margin-top: 2em;
   background-color: var(--overlay2);
+  p {
+    margin: 0;
+  }
 }
 
 .prereq ul {
   margin: 0;
   padding: 0;
+}
+.tree-node-popover {
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
 }

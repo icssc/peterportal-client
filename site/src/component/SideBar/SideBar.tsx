@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { XCircle } from 'react-bootstrap-icons';
+import { CardList, Clipboard2Check, ExclamationTriangle, Map, People, XCircle } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import { Icon } from 'semantic-ui-react';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
 
@@ -42,7 +41,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <Icon name="list alternate outline" size="large" />
+              <CardList />
             </div>
             <span className="full-name">Course Catalog</span>
             <span>Courses</span>
@@ -55,7 +54,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <Icon name="users" size="large" />
+              <People />
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
@@ -68,7 +67,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <Icon name="map outline" size="large" />
+              <Map />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
@@ -83,7 +82,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <Icon name="check" size="large" />
+                  <Clipboard2Check />
                 </div>
                 <span className="full-name">Verify Reviews</span>
                 <span>Verification</span>
@@ -96,7 +95,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <Icon name="exclamation triangle" size="large" />
+                  <ExclamationTriangle />
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>

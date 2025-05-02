@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import './Schedule.css';
 import Table from 'react-bootstrap/Table';
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -7,7 +7,8 @@ import Button from 'react-bootstrap/Button';
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface ScheduleProps {
   courseID?: string;
@@ -28,6 +29,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const [currentQuarter, setCurrentQuarter] = useState<string>('');
   const [selectedQuarter, setSelectedQuarter] = useState<string>('');
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get the current quarter used in websoc
@@ -181,24 +183,26 @@ const Schedule: FC<ScheduleProps> = (props) => {
       });
     });
 
+    const termOptions =
+      props.termsOffered?.map((term) => {
+        return { text: term, value: term };
+      }) ?? [];
+
     return (
       <div>
         {props.termsOffered ? (
-          <Dropdown
-            placeholder={currentQuarter}
-            scrolling
-            selection
-            options={[
-              ...props.termsOffered.map((term) => {
-                return {
-                  text: term,
-                  value: term,
-                };
-              }),
-            ]}
-            value={selectedQuarter}
-            onChange={(_, s) => setSelectedQuarter(s.value as string)}
-          />
+          <DropdownButton
+            className="ppc-dropdown-btn"
+            title={selectedQuarter ?? currentQuarter}
+            variant={darkMode ? 'dark' : 'light'}
+            onSelect={(value) => setSelectedQuarter(value!)}
+          >
+            {termOptions.map((opt) => (
+              <Dropdown.Item key={opt.value} eventKey={opt.value}>
+                {opt.text}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
