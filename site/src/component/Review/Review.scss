@@ -15,13 +15,13 @@
 .sort-filter-menu {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 .sort-dropdown,
 .filter-dropdown {
   max-width: 15rem;
-  width: 100%;
 }
 .verified-only-checkbox {
   display: flex;

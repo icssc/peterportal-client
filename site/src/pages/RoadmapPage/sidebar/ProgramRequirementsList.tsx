@@ -23,7 +23,7 @@ import {
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
-import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types';
+import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
@@ -136,7 +136,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
 };
 
 interface CourseRequirementProps {
-  data: TypedProgramRequirement<'Course' | 'Unit'>;
+  data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
   storeKey: string;
 }
@@ -175,7 +175,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
 };
 
 interface GroupedCourseRequirementProps {
-  data: TypedProgramRequirement<'Course' | 'Unit'>;
+  data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
 }
 
@@ -196,7 +196,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
 };
 
 interface GroupRequirementProps {
-  data: TypedProgramRequirement<'Group'>;
+  data: ProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
   storeKey: string;
 }

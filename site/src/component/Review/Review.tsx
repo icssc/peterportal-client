@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
@@ -6,10 +6,10 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Dropdown } from 'semantic-ui-react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
+import ThemeContext from '../../style/theme-context';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -29,6 +29,8 @@ const Review: FC<ReviewProps> = (props) => {
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
+  const { darkMode } = useContext(ThemeContext);
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
@@ -57,6 +59,20 @@ const Review: FC<ReviewProps> = (props) => {
     sortedReviews = reviewData.slice(0);
   }
 
+  // calculate frequencies of professors or courses in list of reviews
+  let reviewFreq = new Map<string, number>();
+  if (props.course) {
+    reviewFreq = sortedReviews.reduce(
+      (acc, review) => acc.set(review.professorId, (acc.get(review.professorId) || 0) + 1),
+      reviewFreq,
+    );
+  } else if (props.professor) {
+    reviewFreq = sortedReviews.reduce(
+      (acc, review) => acc.set(review.courseId, (acc.get(review.courseId) || 0) + 1),
+      reviewFreq,
+    );
+  }
+
   if (filterOption.length > 0) {
     if (props.course) {
       // filter course reviews by specific professor
@@ -83,20 +99,6 @@ const Review: FC<ReviewProps> = (props) => {
       break;
   }
 
-  // calculate frequencies of professors or courses in list of reviews
-  let reviewFreq = new Map<string, number>();
-  if (props.course) {
-    reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.professorId, (acc.get(review.professorId) || 0) + 1),
-      reviewFreq,
-    );
-  } else if (props.professor) {
-    reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.courseId, (acc.get(review.courseId) || 0) + 1),
-      reviewFreq,
-    );
-  }
-
   const openReviewForm = () => {
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
@@ -109,78 +111,85 @@ const Review: FC<ReviewProps> = (props) => {
   if (!reviewData) {
     return <p>Loading reviews..</p>;
   } else {
+    /** @todo refactor. last change was just pulling this out of semantic */
+    const reviewSortOptions = [
+      { text: 'Most Recent', value: SortingOption.MOST_RECENT },
+      { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+      { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
+    ];
+    const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text;
+
+    const professorOptions = [{ text: 'All Professors', value: '' }].concat(
+      Object.keys(props.course?.instructors ?? {})
+        .map((profID) => {
+          const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
+          return { text: name, value: profID };
+        })
+        .filter(({ value }) => reviewFreq.get(value))
+        .sort((a, b) => a.text.localeCompare(b.text)),
+    );
+    const courseOptions = [{ text: 'All Courses', value: '' }].concat(
+      Object.keys(props.professor?.courses ?? {})
+        .map((courseID) => {
+          const { department, courseNumber } = props.professor!.courses[courseID];
+          const reviewCt = reviewFreq.get(courseID) || 0;
+          const name = `${department} ${courseNumber} (${reviewCt})`;
+          return { text: name, value: courseID };
+        })
+        .filter(({ value }) => reviewFreq.get(value))
+        .sort((a, b) => a.text.localeCompare(b.text)),
+    );
+    const selectedProfessorOptionText = professorOptions.find((opt) => opt.value === filterOption)?.text;
+    const selectedCourseOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
+
     return (
       <>
         <div className="reviews">
           <div className="sort-filter-menu">
             <div className="sort-dropdown">
-              <Dropdown
-                placeholder="Sorting Option"
-                fluid
-                selection
-                options={[
-                  { text: 'Most Recent', value: SortingOption.MOST_RECENT },
-                  { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
-                  { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
-                ]}
-                value={sortingOption}
-                onChange={(_, s) => setSortingOption(s.value as SortingOption)}
-              />
+              <DropdownButton
+                className="ppc-dropdown-btn"
+                title={selectedSortOptionText}
+                variant={buttonVariant}
+                onSelect={(value) => setSortingOption(parseInt(value!) as SortingOption)}
+              >
+                {reviewSortOptions.map((opt) => (
+                  <Dropdown.Item key={opt.value} eventKey={opt.value}>
+                    {opt.text}
+                  </Dropdown.Item>
+                ))}
+              </DropdownButton>
             </div>
             {props.course && (
               <div className="filter-dropdown">
-                <Dropdown
-                  placeholder="All Professors"
-                  fluid
-                  selection
-                  options={
-                    // include option for filter to be empty
-                    [{ text: 'All Professors', value: '' }].concat(
-                      // map course's instructors to dropdown options
-                      Object.keys(props.course?.instructors)
-                        .map((profID) => {
-                          const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
-                          return {
-                            text: name,
-                            value: profID,
-                          };
-                        })
-                        .sort((a, b) => a.text.localeCompare(b.text)),
-                    )
-                  }
-                  value={filterOption}
-                  onChange={(_, s) => setFilterOption(s.value as string)}
-                />
+                <DropdownButton
+                  className="ppc-dropdown-btn"
+                  title={selectedProfessorOptionText ?? 'Select Professor...'}
+                  variant={buttonVariant}
+                  onSelect={(value) => setFilterOption(value!)}
+                >
+                  {professorOptions.map((opt) => (
+                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
+                      {opt.text}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
               </div>
             )}
             {props.professor && (
               <div className="filter-dropdown">
-                <Dropdown
-                  placeholder="All Courses"
-                  fluid
-                  selection
-                  options={
-                    // include option for filter to be empty
-                    [{ text: 'All Courses', value: '' }].concat(
-                      // map professor's courses to dropdown options
-                      Object.keys(props.professor?.courses)
-                        .map((courseID) => {
-                          const name =
-                            props.professor?.courses[courseID].department +
-                            ' ' +
-                            props.professor?.courses[courseID].courseNumber +
-                            ` (${reviewFreq.get(courseID) || 0})`;
-                          return {
-                            text: name,
-                            value: courseID,
-                          };
-                        })
-                        .sort((a, b) => a.text.localeCompare(b.text)),
-                    )
-                  }
-                  value={filterOption}
-                  onChange={(_, s) => setFilterOption(s.value as string)}
-                />
+                <DropdownButton
+                  className="ppc-dropdown-btn"
+                  title={selectedCourseOptionText ?? 'Select Course...'}
+                  variant={buttonVariant}
+                  onSelect={(value) => setFilterOption(value!)}
+                >
+                  {courseOptions.map((opt) => (
+                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
+                      {opt.text}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
               </div>
             )}
             <div className="verified-only-checkbox">

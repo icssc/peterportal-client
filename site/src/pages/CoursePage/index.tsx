@@ -2,7 +2,6 @@ import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
 import Twemoji from 'react-twemoji';
-import { Divider } from 'semantic-ui-react';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
@@ -62,7 +61,7 @@ const CoursePage: FC = () => {
               <div>
                 <h2>📊 Grade Distribution</h2>
               </div>
-              <Divider />
+              <br />
               <GradeDist course={courseGQLData} />
             </div>
 
@@ -70,7 +69,7 @@ const CoursePage: FC = () => {
               <div>
                 <h2>🌲 Prerequisite Tree</h2>
               </div>
-              <Divider />
+              <br />
               <PrereqTree key={courseGQLData.id} {...courseGQLData} />
             </div>
 
@@ -78,7 +77,7 @@ const CoursePage: FC = () => {
               <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
-              <Divider />
+              <br />
               <Schedule
                 key={courseGQLData.id}
                 courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
@@ -90,7 +89,7 @@ const CoursePage: FC = () => {
               <div>
                 <h2>💬 Reviews</h2>
               </div>
-              <Divider />
+              <br />
               <Review key={courseGQLData.id} course={courseGQLData} />
             </div>
           </div>
