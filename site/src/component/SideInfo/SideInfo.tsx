@@ -188,7 +188,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         </div>
       </div>
 
-      {props.terms?.length && <RecentOfferings terms={props.terms} />}
+      {props.terms?.length ? <RecentOfferings terms={props.terms} /> : null}
 
       <div className="side-info-ratings">
         <h2>Average Rating</h2>
