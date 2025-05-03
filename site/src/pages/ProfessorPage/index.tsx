@@ -56,6 +56,14 @@ const ProfessorPage: FC = () => {
           <article className="professor-page-body">
             <div className="result-page-section">
               <div>
+                <h2>📊 Grade Distribution</h2>
+              </div>
+              <br />
+              <GradeDist professor={professorGQLData} />
+            </div>
+
+            <div className="result-page-section">
+              <div>
                 <h2>🗓️ Schedule of Classes</h2>
               </div>
               <br />
@@ -63,14 +71,6 @@ const ProfessorPage: FC = () => {
                 professorIDs={professorGQLData.shortenedNames}
                 termsOffered={unionTerms(professorGQLData.courses)}
               />
-            </div>
-
-            <div className="result-page-section">
-              <div>
-                <h2>📊 Grade Distribution</h2>
-              </div>
-              <br />
-              <GradeDist professor={professorGQLData} />
             </div>
 
             <div className="result-page-section">
