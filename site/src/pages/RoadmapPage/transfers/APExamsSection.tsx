@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setAPExams, addUserAPExam, removeUserAPExam } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { APExams } from '@peterportal/types';
+import './APExamsSection.scss';
 
 type APExam = APExams[number];
 
@@ -28,25 +29,44 @@ interface APCreditMenuTileProps {
   userUnits: number;
 }
 
+type CoursesGrantedTree = string | { AND: CoursesGrantedTree[] } | { OR: CoursesGrantedTree[] };
+
+function formatCourses(tree: CoursesGrantedTree): string {
+  if (typeof tree === 'string') return tree;
+
+  const isAnd = 'AND' in tree;
+  const children = isAnd ? tree.AND : (tree as { OR: CoursesGrantedTree[] }).OR;
+  const connector = isAnd ? ', ' : ' or ';
+
+  const formatted = children.map(formatCourses);
+
+  return formatted.join(connector);
+}
+
 const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
-  /** @todo style this according to the Figma, add options & optgroup titled 'Score' */
   return (
-    <select value={score ?? ''} onInput={(event) => setScore(parseInt((event.target as HTMLInputElement).value))}>
-      <optgroup label="Score">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-      </optgroup>
-    </select>
+    <div className="select">
+      <select
+        value={score ?? ''}
+        onInput={(event) => setScore(parseInt((event.target as HTMLInputElement).value))}
+        className="select-box"
+      >
+        <optgroup label="Score">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </optgroup>
+      </select>
+    </div>
   );
 };
 
 const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, userUnits }) => {
-  // For each saved AP Exam, create a menu tile
   const [score, setScore] = useState<number>(userScore);
   const [units, setUnits] = useState<number>(userUnits);
+  const APExams = useAppSelector((state) => state.transferCredits.APExams);
   const dispatch = useAppDispatch();
 
   const selectBox = <ScoreSelection score={score} setScore={setScore} />;
@@ -74,9 +94,22 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
     dispatch(removeUserAPExam(examName));
   }, [dispatch, examName]);
 
+  const exam = APExams.find((exam) => exam.fullName === examName);
+  let message = '';
+
+  for (const reward of exam?.rewards ?? []) {
+    if (reward.acceptableScores.includes(score)) {
+      const { coursesGranted } = reward;
+      const formatted = formatCourses(coursesGranted as CoursesGrantedTree);
+      if (formatted) {
+        message += `${message ? '\n' : ''}${formatted}`;
+      }
+    }
+  }
+
   return (
     <MenuTile title={examName} headerItems={selectBox} units={units} setUnits={setUnits} deleteFn={deleteFn}>
-      <p>A list of courses cleared by this exam</p>
+      <p>Clears {message || 'no courses'}</p>
     </MenuTile>
   );
 };
@@ -89,10 +122,12 @@ const APExamsSection: FC = () => {
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
   const [currentExam, setCurrentExam] = useState<string | null>(null);
   const [currentScore, setCurrentScore] = useState<number | null>(null);
+  const [examsLoading, setExamsLoading] = useState(false);
 
   // Save initial list of all AP Exams
   const saveAllAPExams = useCallback(
     (APExams: APExam[]) => {
+      setExamsLoading(false);
       dispatch(setAPExams(APExams));
     },
     [dispatch],
@@ -112,9 +147,9 @@ const APExamsSection: FC = () => {
 
   // Save AP Exams for user
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !examsLoading) return;
     trpc.transferCredits.saveSelectedAPExams.mutate({ apExams: userAPExams });
-  }, [userAPExams, isLoggedIn]);
+  }, [userAPExams, isLoggedIn, examsLoading]);
 
   // Save AP Exam to store
   useEffect(() => {
@@ -132,6 +167,7 @@ const APExamsSection: FC = () => {
       for (const exam of savedExams) {
         dispatch(addUserAPExam(exam));
       }
+      setExamsLoading(true);
     });
   }, [dispatch]);
 
@@ -145,13 +181,11 @@ const APExamsSection: FC = () => {
       <SectionDescription>
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
-      {/** @todo map each user AP Exam to one of these tiles */}
       {userAPExams.map((exam) => (
         <APCreditMenuTile key={exam.examName} examName={exam.examName} userScore={exam.score} userUnits={exam.units} />
       ))}
-      {/** @todo add a button to add a new AP Exam */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ flex: '1' }}>
+      <div className="input">
+        <div className="exam-input">
           <Select
             value={APSelectOptions.find((opt) => opt.label === currentExam) ?? null}
             options={APSelectOptions}
@@ -161,7 +195,7 @@ const APExamsSection: FC = () => {
             theme={(t) => comboboxTheme(t, isDark)}
           />
         </div>
-        <div style={{ flex: '0.5' }}>
+        <div className="score-input">
           <Select
             value={currentScore ? { value: currentScore, label: currentScore.toString() } : null}
             options={[

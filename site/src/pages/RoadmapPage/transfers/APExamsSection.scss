@@ -1,0 +1,25 @@
+.input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .exam-input {
+    flex: 2;
+  }
+
+  .score-input {
+    flex: 1;
+  }
+}
+
+.select {
+  display: inline-block;
+  .select-box {
+    background-color: var(--blue-primary);
+    color: white;
+    border-radius: 32px;
+    border-color: var(--blue-primary);
+    height: 20px;
+    width: 30px;
+  }
+}
