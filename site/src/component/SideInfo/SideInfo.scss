@@ -3,7 +3,6 @@
 .side-info {
   width: 100%;
   height: fit-content;
-  max-height: 85vh;
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
   position: sticky;
@@ -41,6 +40,11 @@
     display: flex;
     align-items: center;
     margin-bottom: 8px;
+
+    // Force adaptive width to work
+    h2 {
+      width: 100vw;
+    }
   }
 
   .emoji {
