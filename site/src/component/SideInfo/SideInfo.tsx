@@ -179,7 +179,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         <h3>{props.title}</h3>
 
         <p className="description">{props.description}</p>
-        <div>
+        <div className="tags">
           {props.tags.map((tag, i) => (
             <Badge pill variant="info" key={`side-info-badge-${i}`}>
               {tag}

@@ -50,6 +50,15 @@
   .emoji {
     font-size: 24px;
   }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .tags .badge-pill {
+    margin: 0;
+  }
 }
 
 .side-info-ratings .side-info-buttons {

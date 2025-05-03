@@ -419,8 +419,7 @@ button.unstyled {
       max-width: none;
     }
     .side-content-wrapper {
-      padding-inline: 32px;
-      padding-bottom: 0;
+      padding: 16px;
     }
     .side-info,
     .result-page-section {
@@ -430,7 +429,11 @@ button.unstyled {
     }
     .course-page-body,
     .professor-page-body {
-      padding-inline: 32px;
+      padding: 0 16px 16px;
+    }
+
+    .result-page-section {
+      margin: 0 0 16px;
     }
   }
 }
