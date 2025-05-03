@@ -115,9 +115,31 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     </OverlayTrigger>
   );
 
+  const tags: string[] = review.tags?.slice() ?? [];
+  if (review.textbook) tags.unshift('Requires textbook');
+  if (review.attendance) tags.unshift('Mandatory attendance');
+
   return (
     <div className="subreview">
       <div className="subreview-header">
+        <h3 className="subreview-identifier">
+          {professor && (
+            <Link to={{ pathname: `/course/${review.courseId}` }}>
+              {professor.courses[review.courseId]?.department + ' ' + professor.courses[review.courseId]?.courseNumber}
+            </Link>
+          )}
+          {course && (
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>
+              {course.instructors[review.professorId]?.name}
+            </Link>
+          )}
+          {!course && !professor && (
+            <div>
+              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
+              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
+            </div>
+          )}
+        </h3>
         {review.authored && (
           <div className="edit-buttons">
             <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
@@ -142,24 +164,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </Modal>
           </div>
         )}
-        <h3 className="subreview-identifier">
-          {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
-              {professor.courses[review.courseId]?.department + ' ' + professor.courses[review.courseId]?.courseNumber}
-            </Link>
-          )}
-          {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
-              {course.instructors[review.professorId]?.name}
-            </Link>
-          )}
-          {!course && !professor && (
-            <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
-            </div>
-          )}
-        </h3>
       </div>
 
       <div className="subreview-content">
@@ -177,63 +181,48 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           <div className="subreview-details">
             <div className="subreview-detail">
               <p>
-                Attendance: <b>{review.attendance ? 'Mandatory' : 'Not Mandatory'} </b>
-              </p>
-              <p>
-                Would Take Again: <b>{review.takeAgain ? 'Yes' : 'No'}</b>
-              </p>
-              <p>
-                Textbook: <b>{review.textbook ? 'Yes' : 'No'}</b>
-              </p>
-            </div>
-            <div className="subreview-detail">
-              <p>
-                Posted:{' '}
-                <b>
-                  {new Date(review.createdAt).toLocaleString('default', {
+                <b>Posted on:</b>
+                {' ' +
+                  new Date(review.createdAt).toLocaleString('default', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                   })}
-                </b>
+                {review.updatedAt && (
+                  <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
+                )}
               </p>
-              {review.updatedAt && (
-                <p>
-                  <>
-                    Updated:{' '}
-                    <b>
-                      {new Date(review.updatedAt).toLocaleString('default', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </b>
-                  </>
-                </p>
-              )}
+              <div className="subreview-author">
+                <b>Posted by:</b>
+                <p className="subreview-author-name">{review.userDisplay}</p>
+                {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
+                {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
+              </div>
               <p>
-                Quarter: <b>{review.quarter}</b>
+                <b>Quarter:</b> {review.quarter}
+              </p>
+            </div>
+            <div className="subreview-detail">
+              <p>
+                <b>Grade:</b> {review.gradeReceived}
               </p>
               <p>
-                Grade: <b>{review.gradeReceived}</b>
+                <b>Would Take Again:</b> {review.takeAgain ? 'Yes' : 'No'}
               </p>
             </div>
           </div>
-          <div className="subreview-author">
-            <p className="subreview-author-name">Posted by {review.userDisplay}</p>
-            {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
-            {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
-          </div>
-          <p>{review.content}</p>
+          <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
       </div>
-      <div className="subreview-tags">
-        {review.tags?.map((tag) => (
-          <Badge pill className="subreview-tag" key={tag}>
-            {tag}
-          </Badge>
-        ))}
-      </div>
+      {tags.length > 0 && (
+        <div className="subreview-tags">
+          {tags.map((tag) => (
+            <Badge pill className="subreview-tag" key={tag}>
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
       <div className="subreview-footer" id={review.id.toString()}>
         <div className="subreview-voting">
           <p className="subreview-voting-question">Helpful?</p>
