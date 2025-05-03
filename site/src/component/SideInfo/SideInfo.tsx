@@ -257,7 +257,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       {hasReviews && (
         <div className="side-info-featured">
           <h2>{props.searchType == 'course' ? 'Instructors' : 'Courses'}</h2>
-          <div className="flex">
+          <div className="featured-items">
             {highestReview && (
               <FeaturedInfo
                 searchType={props.searchType}

@@ -85,7 +85,7 @@
   }
 }
 
-.side-info-featured .flex {
+.side-info-featured .featured-items {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -93,6 +93,10 @@
   @media (max-width: 1300px) {
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  p {
+    margin: 0;
   }
 }
 

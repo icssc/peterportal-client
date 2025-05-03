@@ -260,6 +260,20 @@ button {
   border-color: var(--overlay2);
 }
 
+.ppc-table {
+  thead tr {
+    background-color: var(--overlay2);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--overlay2);
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: var(--overlay3);
+  }
+}
+
 .form-check-input {
   --bs-form-check-bg: var(--overlay1);
   -webkit-appearance: none;
@@ -425,4 +439,9 @@ button.unstyled {
   margin-right: 10px;
   font-size: 12px;
   background-color: var(--blue-primary);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow: auto;
 }

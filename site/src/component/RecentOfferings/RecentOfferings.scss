@@ -23,16 +23,4 @@
   :is(th, td):not(:first-child) {
     text-align: center;
   }
-
-  thead tr {
-    background-color: var(--overlay2);
-  }
-
-  tbody tr:nth-child(even) {
-    background-color: var(--overlay2);
-  }
-
-  tbody tr:nth-child(odd) {
-    background-color: var(--overlay3);
-  }
 }
