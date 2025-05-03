@@ -39,9 +39,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     postReport(report);
   };
 
-  const resetForm = () => {
-    setReason('');
-  };
+  const resetForm = () => setReason('');
 
   return (
     <Modal show={props.showForm} onShow={resetForm} onHide={props.closeForm} centered className="ppc-modal report-form">
