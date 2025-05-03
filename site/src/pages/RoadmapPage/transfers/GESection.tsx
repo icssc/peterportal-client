@@ -1,6 +1,20 @@
 import './GESection.scss';
 import { FC, FormEvent, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
+import MenuTile from './MenuTile';
+
+const GETitles = [
+  'I. Lower-Division Writing',
+  'I. Upper-Division Writing',
+  'II. Science and Technology',
+  'III. Social and Behavioral Sciences',
+  'IV. Arts and Humanities',
+  'Va. Quantitative Literacy',
+  'Vb. Formal Reasoning',
+  'VI. Language Other Than English',
+  'VII. Multicultural Studies',
+  'VIII. International/Global Issues',
+];
 
 interface GEInputProps {
   value: number;
@@ -35,10 +49,7 @@ const GETile: FC<GETileProps> = ({ title }) => {
   const [units, setUnits] = useState<number>(0);
 
   return (
-    <div className="menu-tile">
-      <div className="tile-info">
-        <p className="name">{title}</p>
-      </div>
+    <MenuTile title={title}>
       <div className="ge-inputs">
         <div className="ge-input-container">
           <p>Number of Courses:</p>
@@ -49,23 +60,11 @@ const GETile: FC<GETileProps> = ({ title }) => {
           <GEInput value={units} setValue={setUnits} />
         </div>
       </div>
-    </div>
+    </MenuTile>
   );
 };
 
 const GESection: FC = () => {
-  const GETitles = [
-    'I. Lower-Division Writing',
-    'I. Upper-Division Writing',
-    'II. Science and Technology',
-    'III. Social and Behavioral Sciences',
-    'IV. Arts and Humanities',
-    'Va. Quantitative Literacy',
-    'Vb. Formal Reasoning',
-    'VI. Language Other Than English',
-    'VII. Multicultural Studies',
-    'VIII. International/Global Issues',
-  ];
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>GE Section Description</SectionDescription>
