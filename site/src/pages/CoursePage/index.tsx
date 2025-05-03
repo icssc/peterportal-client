@@ -58,26 +58,17 @@ const CoursePage: FC = () => {
         <Twemoji options={{ className: 'twemoji' }}>
           <div className="course-page-body">
             <div className="result-page-section">
-              <div>
-                <h2>📊 Grade Distribution</h2>
-              </div>
-              <br />
+              <h2>📊 Grade Distribution</h2>
               <GradeDist course={courseGQLData} />
             </div>
 
             <div className="result-page-section">
-              <div>
-                <h2>🌲 Prerequisite Tree</h2>
-              </div>
-              <br />
+              <h2>🌲 Prerequisite Tree</h2>
               <PrereqTree key={courseGQLData.id} {...courseGQLData} />
             </div>
 
             <div className="result-page-section">
-              <div>
-                <h2>🗓️ Schedule of Classes</h2>
-              </div>
-              <br />
+              <h2>🗓️ Schedule of Classes</h2>
               <Schedule
                 key={courseGQLData.id}
                 courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
@@ -86,10 +77,7 @@ const CoursePage: FC = () => {
             </div>
 
             <div className="result-page-section">
-              <div>
-                <h2>💬 Reviews</h2>
-              </div>
-              <br />
+              <h2>💬 Reviews</h2>
               <Review key={courseGQLData.id} course={courseGQLData} />
             </div>
           </div>
