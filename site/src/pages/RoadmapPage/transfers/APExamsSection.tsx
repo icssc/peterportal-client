@@ -8,10 +8,8 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setAPExams, addUserAPExam, removeUserAPExam } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import { APExams } from '@peterportal/types';
+import { APExam } from '@peterportal/types';
 import './APExamsSection.scss';
-
-type APExam = APExams[number];
 
 interface ScoreSelectionProps {
   score: number;

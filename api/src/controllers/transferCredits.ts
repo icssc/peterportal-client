@@ -4,15 +4,13 @@ import { z } from 'zod';
 import { db } from '../db';
 import { transferredApExam } from '../db/schema';
 import { eq } from 'drizzle-orm';
-import { APExams } from '@peterportal/types';
+import { APExam } from '@peterportal/types';
 
 interface userAPExam {
   examName: string;
   score: number;
   units: number;
 }
-
-type APExam = APExams[number];
 
 const zodAPExamSchema = z.object({
   apExams: z.array(
@@ -24,22 +22,18 @@ const zodAPExamSchema = z.object({
   ),
 });
 
-const getAPExams = async (): Promise<APExam[]> => {
-  const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
-    headers: ANTEATER_API_REQUEST_HEADERS,
-  })
-    .then((res) => res.json())
-    .then((res) => (res.data ? (res.data as APExam[]) : []));
-  return response;
-};
-
 /** @todo complete all routes. We will remove comments after all individual PRs are merged to avoid merge conflicts */
 const transferCreditsRouter = router({
   /** @todo add user procedure to get transferred courses below this comment. */
   /** @todo add user procedure to get transferred AP Exams below this comment. */
 
-  getAPExamInfo: publicProcedure.query(async () => {
-    return getAPExams();
+  getAPExamInfo: publicProcedure.query(async (): Promise<APExam[]> => {
+    const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
+      headers: ANTEATER_API_REQUEST_HEADERS,
+    })
+      .then((res) => res.json())
+      .then((res) => (res.data ? (res.data as APExam[]) : []));
+    return response;
   }),
   getSavedAPExams: publicProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
     const userId = ctx.session.userId;

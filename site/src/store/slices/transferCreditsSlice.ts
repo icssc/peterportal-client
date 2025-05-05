@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { APExams } from '@peterportal/types';
-
-type APExam = APExams[number];
+import { APExam } from '@peterportal/types';
 
 interface userAPExam {
   examName: string;
