@@ -3,20 +3,17 @@ import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
 
-/** @todo retrieve all uncategorized transfer credits */
-
 interface UncategorizedCreditsEntry {
   name: string | null;
   units: number | null;
 }
 
 const UncategorizedMenuTile: FC<UncategorizedCreditsEntry> = ({ name, units }) => {
-  const deleteFn = () => {};
+  const deleteFn = () => {
+    trpc.transferCredits.removeUncategorizedCourse.mutate({ name, units });
+  };
 
-  /** @todo router to remove individual transfer courses */
-  // delete something where ctx user and name and units
-
-  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn}></MenuTile>;
+  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} />;
 };
 
 const UncategorizedCreditsSection: FC = () => {
