@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import SubReview from './SubReview';
-import ReviewForm from '../ReviewForm/ReviewForm';
+import ReviewForm from '../NewReviewForm/ReviewForm';
+// import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
@@ -14,6 +15,7 @@ import { ReviewData } from '@peterportal/types';
 export interface ReviewProps {
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  terms?: string[];
 }
 
 enum SortingOption {

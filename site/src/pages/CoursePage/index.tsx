@@ -92,7 +92,7 @@ const CoursePage: FC = () => {
                 <h2>💬 Reviews</h2>
               </div>
               <Divider />
-              <Review key={courseGQLData.id} course={courseGQLData} />
+              <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
             </div>
           </div>
         </Twemoji>

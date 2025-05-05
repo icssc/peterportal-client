@@ -1,0 +1,25 @@
+@use '../../globals';
+
+.review-form-modal {
+  .modal-dialog {
+    width: 346px;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    overflow-y: auto;
+  }
+
+  .modal-content {
+    // max-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    font-weight: bold;
+  }
+  .form-check-input {
+    border: 1px solid rgba(136, 136, 136, 0.4);
+  }
+  // max-height: calc(100% - 64px);
+}
