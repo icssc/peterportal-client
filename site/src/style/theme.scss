@@ -36,10 +36,6 @@
   color: var(--text);
 }
 
-.form-control::selection {
-  color: var(--text-dark);
-}
-
 [data-theme='dark'] {
   .list-group-item,
   .modal-content,
