@@ -6,8 +6,12 @@ interface RecentOfferingsProps {
   terms: string[];
 }
 
-function parseOfferings(terms: string[]): { [academicYear: string]: boolean[] } {
-  const offerings: { [academicYear: string]: boolean[] } = {};
+interface Offerings {
+  [academicYear: string]: boolean[];
+}
+
+function parseOfferings(terms: string[]): Offerings {
+  const offerings: Offerings = {};
 
   for (const term of terms) {
     const [yearStr, quarter] = term.split(' ');
@@ -20,7 +24,7 @@ function parseOfferings(terms: string[]): { [academicYear: string]: boolean[] } 
     else if (quarter.startsWith('Summer')) quarterIndex = 3;
     else continue;
 
-    // if the course is not described as a "Fall" course, it should be listed as starting in the previous academic year
+    // If the course is not described as a "Fall" course, it should be listed as starting in the previous academic year
     // e.g. "Winter 2023" should be in "2022-2023", but "Fall 2023" should be in "2023-2024"
     const startYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
@@ -30,13 +34,17 @@ function parseOfferings(terms: string[]): { [academicYear: string]: boolean[] } 
     offerings[startYear][quarterIndex] = true;
   }
 
-  return offerings;
+  // Sort offerings by academic year in descending order
+  const sortedOfferings: Offerings = Object.fromEntries(
+    Object.entries(offerings).sort(([yearA], [yearB]) => yearB.localeCompare(yearA)),
+  );
+
+  return sortedOfferings;
 }
 
 const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
-  //show in order of fall, winter, spring, summer
+  // Show in order of Fall, Winter, Spring, Summer
   const termsInOrder = props.terms.slice().reverse();
-
   const offerings = parseOfferings(termsInOrder);
 
   return (
