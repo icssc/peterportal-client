@@ -3,27 +3,32 @@ import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
 
-interface UncategorizedCreditsEntry {
+interface UncategorizedCourseEntry {
   name: string | null;
   units: number | null;
 }
 
-const UncategorizedMenuTile: FC<UncategorizedCreditsEntry> = ({ name, units }) => {
+const UncategorizedMenuTile: FC<UncategorizedCourseEntry> = ({ name, units }) => {
   const deleteFn = () => {
     trpc.transferCredits.removeUncategorizedCourse.mutate({ name, units });
+    // something redux filter here
   };
 
   return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} />;
 };
 
 const UncategorizedCreditsSection: FC = () => {
-  const [courses, setCourses] = useState<UncategorizedCreditsEntry[]>([]);
+  const [courses, setCourses] = useState<UncategorizedCourseEntry[]>([]);
 
   useEffect(() => {
     trpc.transferCredits.getUncategorizedTransfers.query().then((response) => {
       setCourses(response);
     });
   }, []);
+
+  if (courses.length === 0) {
+    return null;
+  }
 
   return (
     <MenuSection title="Other Transferred Credits">

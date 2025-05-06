@@ -1,7 +1,7 @@
 import { router, userProcedure } from '../helpers/trpc';
 import { db } from '../db';
 import { transferredMisc } from '../db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 
 /** @todo complete all routes. We will remove comments after all individual PRs are merged to avoid merge conflicts */
@@ -25,10 +25,14 @@ const transferCreditsRouter = router({
 
       if (input.name != null) {
         conditions.push(eq(transferredMisc.courseName, input.name));
+      } else {
+        conditions.push(isNull(transferredMisc.courseName));
       }
 
       if (input.units != null) {
         conditions.push(eq(transferredMisc.units, input.units));
+      } else {
+        conditions.push(isNull(transferredMisc.units));
       }
 
       await db.delete(transferredMisc).where(and(...conditions));
