@@ -1,7 +1,9 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
+import { removeUncategorizedCourse, setUncategorizedCourses } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface UncategorizedCourseEntry {
   name: string | null;
@@ -9,20 +11,23 @@ interface UncategorizedCourseEntry {
 }
 
 const UncategorizedMenuTile: FC<UncategorizedCourseEntry> = ({ name, units }) => {
+  const dispatch = useAppDispatch();
+
   const deleteFn = () => {
     trpc.transferCredits.removeUncategorizedCourse.mutate({ name, units });
-    // something redux filter here
+    dispatch(removeUncategorizedCourse({ name, units }));
   };
 
   return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} />;
 };
 
 const UncategorizedCreditsSection: FC = () => {
-  const [courses, setCourses] = useState<UncategorizedCourseEntry[]>([]);
+  const courses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     trpc.transferCredits.getUncategorizedTransfers.query().then((response) => {
-      setCourses(response);
+      dispatch(setUncategorizedCourses(response));
     });
   }, []);
 

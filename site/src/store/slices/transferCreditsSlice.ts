@@ -15,9 +15,9 @@ export const transferCreditsSlice = createSlice({
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
       state.showTransfersMenu = action.payload;
     },
-    // getUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry>) => {
-    //   state.uncategorizedCourses =
-    // },
+    setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
+      state.uncategorizedCourses = action.payload;
+    },
     removeUncategorizedCourse: (state, action: PayloadAction<UncategorizedCourseEntry>) => {
       state.uncategorizedCourses = state.uncategorizedCourses.filter(
         (course) => course.name !== action.payload.name || course.units !== action.payload.units,
@@ -26,6 +26,7 @@ export const transferCreditsSlice = createSlice({
   },
 });
 
-export const { setShowTransfersMenu } = transferCreditsSlice.actions;
+export const { setShowTransfersMenu, setUncategorizedCourses, removeUncategorizedCourse } =
+  transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;
