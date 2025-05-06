@@ -3,7 +3,7 @@
 
 .sidebar {
   position: fixed;
-  width: 300px;
+  width: globals.$sidebar-width-open;
   height: 100vh;
   top: 0;
   z-index: 400;
@@ -106,7 +106,7 @@
     }
   }
 
-  left: -300px;
+  left: 0 - globals.$sidebar-width-open;
   transition: left 0.5s;
   &.enter-active,
   &.enter-done {
@@ -129,7 +129,7 @@
 
 .sidebar.mini {
   position: static;
-  width: 72px;
+  width: globals.$sidebar-width-closed;
   padding-block: 16px;
 
   .sidebar-links {
