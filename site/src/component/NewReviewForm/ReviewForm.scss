@@ -10,7 +10,6 @@
   }
 
   .modal-content {
-    // max-height: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -21,5 +20,24 @@
   .form-check-input {
     border: 1px solid rgba(136, 136, 136, 0.4);
   }
-  // max-height: calc(100% - 64px);
+
+  .grade-difficulty-section {
+    display: flex;
+    gap: 16px;
+  }
+
+  .ppc-combobox {
+    .ppc-combobox__menu {
+      margin-top: 0;
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    .ppc-combobox__menu-list {
+      padding: 0;
+    }
+  }
+
+  .anonymous-checkbox {
+    margin-top: 16px;
+  }
 }

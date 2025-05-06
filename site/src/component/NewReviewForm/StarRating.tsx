@@ -32,7 +32,11 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           style={{ cursor: 'pointer' }}
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
         >
-          {(hovered || rating) >= val ? <StarFill size={32} /> : <Star size={32} />}
+          {val <= (hovered || rating) ? (
+            <StarFill size={32} style={{ color: hovered ? 'var(--gray)' : undefined }} />
+          ) : (
+            <Star size={32} />
+          )}
         </span>
       ))}
     </div>

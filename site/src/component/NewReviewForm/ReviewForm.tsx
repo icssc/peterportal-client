@@ -1,8 +1,6 @@
 import React, { FC, useState, useContext } from 'react';
 import './ReviewForm.scss';
 import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
@@ -51,9 +49,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [yearTaken] = useState(yearTakenDefault); //setYearTaken
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
-  const [content, setContent] = useState(reviewToEdit?.content ?? '');
+  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 0);
-  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
@@ -108,7 +106,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       anonymous: anonymous,
       content: content,
       rating: rating,
-      difficulty,
+      difficulty: difficulty!,
       gradeReceived: gradeReceived!,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
@@ -144,7 +142,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         style={{ width: '100%' }}
       >
         <option disabled={true} value="">
-          Professor
+          Select one of the following...
         </option>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
@@ -189,7 +187,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               value={quarterTaken}
             >
               <option disabled={true} value="">
-                Quarter
+                Select one of the following...
               </option>
               {termsProp?.map((term) => (
                 <option key={term} value={term}>
@@ -201,51 +199,47 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           {professorSelect}
 
-          <Row>
-            <Col xs={4}>
-              <Form.Group className="grade-form-section">
-                <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="grade"
-                  id="grade"
-                  defaultValue=""
-                  required
-                  onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
-                  value={gradeReceived}
-                >
-                  <option disabled={true} value="">
-                    Grade
-                  </option>
-                  {grades.map((grade) => (
-                    <option key={grade}>{grade}</option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-            </Col>
+          <div className="grade-difficulty-section">
+            <Form.Group className="grade-form-section">
+              <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
+              <Form.Control
+                as="select"
+                name="grade"
+                id="grade"
+                defaultValue=""
+                required
+                onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
+                value={gradeReceived}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {grades.map((grade) => (
+                  <option key={grade}>{grade}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
 
-            <Col xs={4}>
-              <Form.Group className="difficulty-form-section">
-                <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="difficulty"
-                  id="difficulty"
-                  defaultValue=""
-                  required
-                  onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))} // check this
-                  value={difficulty}
-                >
-                  <option disabled={true} value="">
-                    Difficulty
-                  </option>
-                  {[1, 2, 3, 4, 5].map((difficulty) => (
-                    <option key={difficulty}>{difficulty}</option>
-                  ))}
-                </Form.Control>
-              </Form.Group>
-            </Col>
-          </Row>
+            <Form.Group className="difficulty-form-section">
+              <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
+              <Form.Control
+                as="select"
+                name="difficulty"
+                id="difficulty"
+                defaultValue=""
+                required
+                onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))} // check this
+                value={difficulty}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {[1, 2, 3, 4, 5].map((difficulty) => (
+                  <option key={difficulty}>{difficulty}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </div>
 
           <Form.Group>
             <Form.Label className="ppc-modal-form-label">Rating</Form.Label>
@@ -291,6 +285,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
               placeholder="Select up to 3 tags"
               closeMenuOnSelect={false}
               theme={(t) => comboboxTheme(t, darkMode)}
+              className="ppc-combobox"
+              classNamePrefix="ppc-combobox"
             />
           </Form.Group>
 
@@ -323,6 +319,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 setAnonymous(e.target.checked);
               }}
               checked={anonymous}
+              className="anonymous-checkbox"
             />
           </Form.Group>
 
