@@ -29,7 +29,7 @@ const UncategorizedCreditsSection: FC = () => {
     trpc.transferCredits.getUncategorizedTransfers.query().then((response) => {
       dispatch(setUncategorizedCourses(response));
     });
-  }, [dispatch, trpc.transferCredits.getUncategorizedTransfers]);
+  }, [dispatch]);
 
   if (courses.length === 0) {
     return null;
