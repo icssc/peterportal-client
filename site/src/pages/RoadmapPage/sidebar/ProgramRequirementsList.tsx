@@ -7,6 +7,7 @@ import {
   CompletedCourseSet,
   flattenSingletonGroups,
   LOADING_COURSE_PLACEHOLDER,
+  saveMarkerCompletion,
   useCompletionCheck,
 } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
@@ -28,6 +29,7 @@ import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface CourseTileProps {
   courseID: string;
@@ -236,9 +238,11 @@ interface MarkerRequirementProps {
 }
 const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
   const complete = useAppSelector((state) => state.courseRequirements.completedMarkers[data.label]) ?? false;
+  const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
   const setComplete = (complete: boolean) => {
+    saveMarkerCompletion(data.label, complete, isLoggedIn);
     return dispatch(setMarkerComplete({ markerName: data.label, complete }));
   };
 

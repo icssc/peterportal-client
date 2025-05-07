@@ -2,6 +2,7 @@ import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } f
 import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
+import trpc from '../trpc';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -204,5 +205,32 @@ export function useCompletionCheck(completed: CompletedCourseSet, requirement: P
       return checkUnitCompletion(completed, parsedRequirement);
     case 'Marker':
       return { completed: 0, done: completedMarkers[parsedRequirement.label], required: 0 };
+  }
+}
+
+export async function loadMarkerCompletion(isLoggedIn: boolean): Promise<string[]> {
+  if (isLoggedIn) {
+    const response = await trpc.courseRequirements.getCompletedMarkers.query();
+    return response.map((r) => r.markerName);
+  } else {
+    let completedMarkers: string[] = [];
+    try {
+      completedMarkers = JSON.parse(localStorage.roadmap__savedMarkers);
+    } catch {
+      /* ignore */
+    }
+    return completedMarkers;
+  }
+}
+
+export async function saveMarkerCompletion(markerName: string, complete: boolean, isLoggedIn: boolean): Promise<void> {
+  if (isLoggedIn) {
+    const operationName = complete ? 'addCompletedMarker' : 'removeCompletedMarker';
+    const operation = trpc.courseRequirements[operationName];
+    await operation.mutate(markerName);
+  } else {
+    const completedMarkers = new Set(await loadMarkerCompletion(false));
+    completedMarkers[complete ? 'add' : 'delete'](markerName);
+    localStorage.roadmap__savedMarkers = JSON.stringify([...completedMarkers]);
   }
 }

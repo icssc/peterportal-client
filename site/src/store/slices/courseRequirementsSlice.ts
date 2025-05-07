@@ -89,9 +89,11 @@ const courseRequirementsSlice = createSlice({
     },
     setMarkerComplete: (state, action: PayloadAction<{ markerName: string; complete: boolean }>) => {
       state.completedMarkers[action.payload.markerName] = action.payload.complete;
-      // const complete = action.payload.complete
-      // if (complete) state.completedMarkers[action.payload.storeKey] = true;
-      // else delete state.completedMarkers[action.payload.storeKey];
+    },
+    initializeCompletedMarkers: (state, action: PayloadAction<string[]>) => {
+      action.payload.forEach((markerName) => {
+        state.completedMarkers[markerName] = true;
+      });
     },
     setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
       if (action.payload.expanded) {
@@ -116,6 +118,7 @@ export const {
   setMinorRequirements,
   setGERequirements,
   setMarkerComplete,
+  initializeCompletedMarkers,
   setGroupExpanded,
 } = courseRequirementsSlice.actions;
 
