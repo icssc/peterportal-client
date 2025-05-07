@@ -171,8 +171,8 @@ const removeAllSpaces = (transferName: string) => {
 };
 
 /** Try to match a transfer name with an existing validated UCI course; undefined if no match */
-const tryMatchCourse = (transferName: string, validCourses: { [courseId: string]: boolean }): string | undefined => {
-  if (removeAllSpaces(transferName) in validCourses) {
+const tryMatchCourse = (transferName: string, validCourses: Set<string>): string | undefined => {
+  if (validCourses.has(removeAllSpaces(transferName))) {
     return transferName; // transferName has necessary spaces
   } else {
     return undefined;
@@ -185,9 +185,9 @@ const handleApCalcAB = (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
   toInsertAp: TransferredApExamRow[],
-  usersWithABSubscore: { [userId: number]: boolean },
+  usersWithABSubscore: Set<number>,
 ): boolean => {
-  if (transfer.userId in usersWithABSubscore) {
+  if (usersWithABSubscore.has(transfer.userId)) {
     // Okay to proceed normally because we know the user has an explicit AB subscore
     return true;
   } else if (transfer.count == 1) {
@@ -217,7 +217,7 @@ const organizeApExam = (
   transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toInsertAp: TransferredApExamRow[],
-  usersWithABSubscore: { [userId: number]: boolean },
+  usersWithABSubscore: Set<number>,
   allAps: ApExamBasicInfo[],
 ): boolean => {
   const bestMatch = tryMatchAp(transferName, allAps);
@@ -253,7 +253,7 @@ const organizeCourse = async (
   transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toInsertCourse: TransferredCourseRow[],
-  validCourses: { [courseId: string]: boolean },
+  validCourses: Set<string>,
 ): Promise<boolean> => {
   const bestMatch = tryMatchCourse(transferName, validCourses);
   if (!bestMatch) {
@@ -320,41 +320,40 @@ const organize = async () => {
     ) as TransferredMiscSelectedRow[];
 
   // Get all the users who explicitly have an AB subscore
-  const usersWithABSubscore: { [userId: number]: boolean } = {};
+  const usersWithABSubscore = new Set<number>();
   for (const transfer of transfers) {
     const bestMatch = tryMatchAp(transfer.courseName, allAps);
     if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) {
-      usersWithABSubscore[transfer.userId] = true;
+      usersWithABSubscore.add(transfer.userId);
     }
   }
 
   // Validate all the relevant courses from the API beforehand
-  const coursesToValidate: { [courseId: string]: boolean } = {};
+  const coursesToValidate = new Set<string>();
   for (const transfer of transfers) {
     const transferName = transfer.courseName.trim();
     if (transferName.startsWith('AP ')) {
       continue;
     }
     // This is potentially a course
-    coursesToValidate[removeAllSpaces(transferName)] = true;
+    coursesToValidate.add(removeAllSpaces(transferName));
   }
   console.log('Validating courses from the API (batch)');
-  const validCourses: { [courseId: string]: boolean } = {};
+  const validCourses = new Set<string>();
   const batchSize = 10;
-  for (let i = 0; i < Object.keys(coursesToValidate).length; i += batchSize) {
+  const coursesToValidateArr = Array.from(coursesToValidate);
+  for (let i = 0; i < coursesToValidateArr.length; i += batchSize) {
     console.log(`- Validating ${i}..${i + batchSize}`);
-    const resp = await getAPICoursesByIdBatch(Object.keys(coursesToValidate).slice(i, i + batchSize));
+    const resp = await getAPICoursesByIdBatch(coursesToValidateArr.slice(i, i + batchSize));
     if (!resp) {
       console.log('x ERROR: API response not ok');
       continue;
     }
     for (const r of resp) {
-      validCourses[r.id] = true;
+      validCourses.add(r.id);
     }
   }
-  console.log(
-    `Out of ${Object.keys(coursesToValidate).length} unique courses to validate, ${Object.keys(validCourses).length} are valid`,
-  );
+  console.log(`Out of ${coursesToValidate.size} unique courses to validate, ${validCourses.size} are valid`);
 
   // Build several large queries
   const toDelete: (SQL<unknown> | undefined)[] = [sql`FALSE`]; // Start with false to ensure nothing is deleted by default
