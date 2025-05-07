@@ -51,7 +51,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
     <div className="recent-offerings">
       <h2>Recent Offerings</h2>
 
-      <table className="recent-offerings-table">
+      <table className="ppc-table recent-offerings-table">
         <thead>
           <tr>
             <th>Academic Year</th>
