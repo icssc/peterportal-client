@@ -54,7 +54,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const quarters = [...new Set(termsProp?.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
-  const [course] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? ''); //setCourse
+  const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 0);
@@ -82,6 +82,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
+
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
     if (editing) {
       try {
@@ -182,6 +183,42 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Form.Group>
   );
 
+  // select course if in professor context
+  const courseSelect = professorProp && (
+    <Form.Group>
+      <Form.Label>Course Taken</Form.Label>
+      <Form.Control
+        as="select"
+        name="course"
+        id="course"
+        defaultValue=""
+        required
+        onChange={(e) => setCourse(e.target.value)}
+        value={course}
+      >
+        <option disabled={true} value="">
+          Select one of the following...
+        </option>
+        {Object.keys(professorProp?.courses).map((courseID) => {
+          const name =
+            professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
+          const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
+          return (
+            <option
+              key={courseID}
+              value={courseID}
+              title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
+              disabled={alreadyReviewed}
+            >
+              {name}
+            </option>
+          );
+        })}
+      </Form.Control>
+      <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback>
+    </Form.Group>
+  );
+
   const tagOptions = tags.map((tag) => ({ label: tag, value: tag }));
   {
     /* refactor this */
@@ -240,6 +277,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </div>
 
           {professorSelect}
+          {courseSelect}
 
           <div className="grade-difficulty-row">
             <Form.Group>
