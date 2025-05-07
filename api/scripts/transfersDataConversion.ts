@@ -322,7 +322,7 @@ const organize = async () => {
   }
 
   // Build several large queries
-  const toDelete: (SQL<unknown> | undefined)[] = []; // `or()` should still be valid if we pass nothing into it
+  const toDelete: (SQL<unknown> | undefined)[] = [sql`FALSE`]; // Start with false to ensure nothing is deleted by default
   const toInsertAp: TransferredApExamRow[] = [];
   const toInsertCourse: TransferredCourseRow[] = [];
   const toReinsertMisc: TransferredMiscRow[] = [];
