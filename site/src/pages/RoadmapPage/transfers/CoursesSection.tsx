@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
@@ -6,11 +6,14 @@ import { comboboxTheme } from '../../../helpers/courseRequirements';
 import ThemeContext from '../../../style/theme-context';
 import AsyncSelect from 'react-select/async';
 import { CourseAAPIResponse } from '@peterportal/types';
-
-interface TransferredCourse {
-  courseName: string;
-  units: number;
-}
+import {
+  addTransferredCourse,
+  removeTransferredCourse,
+  setTransferredCourses,
+  TransferredCourse,
+  updateTransferredCourse,
+} from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface CourseSelectOption {
   value: TransferredCourse;
@@ -19,24 +22,29 @@ interface CourseSelectOption {
 
 interface CourseCreditMenuTileProps {
   course: TransferredCourse;
-  setCourses: React.Dispatch<React.SetStateAction<TransferredCourse[]>>;
 }
-const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course, setCourses }) => {
-  const [units, setUnits] = useState<number>(course.units);
+const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course }) => {
+  //const [units, setUnits] = useState<number>(course.units);
+  const dispatch = useAppDispatch();
 
   const deleteFn = () => {
     trpc.transferCredits.removeTransferredCourse.mutate(course.courseName);
-    setCourses((courses) => courses.filter((c) => c.courseName !== course.courseName));
+    dispatch(removeTransferredCourse(course.courseName));
+  };
+  const setUnits = (value: number) => {
+    const updatedCourse: TransferredCourse = { courseName: course.courseName, units: value };
+    trpc.transferCredits.updateTransferredCourse.mutate(updatedCourse);
+    dispatch(updateTransferredCourse(updatedCourse));
   };
 
-  return <MenuTile title={course.courseName} units={units} setUnits={setUnits} deleteFn={deleteFn} />;
+  return <MenuTile title={course.courseName} units={course.units} setUnits={setUnits} deleteFn={deleteFn} />;
 };
 
 const CoursesSection: FC = () => {
-  const [courses, setCourses] = useState<TransferredCourse[]>([]);
+  const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
   const [timeout, setTimeout] = useState<number | null>(null);
   const [abortFn, setAbortFn] = useState<() => void>();
-
+  const dispatch = useAppDispatch();
   const isDark = useContext(ThemeContext).darkMode;
 
   const cancelIncompleteSearch = () => {
@@ -67,13 +75,15 @@ const CoursesSection: FC = () => {
   };
 
   const addCourse = (course: TransferredCourse) => {
-    setCourses([...courses, course]);
+    dispatch(addTransferredCourse(course));
     trpc.transferCredits.addTransferredCourse.mutate(course);
   };
 
   useEffect(() => {
-    trpc.transferCredits.getTransferredCourses.query().then(setCourses);
-  }, []);
+    trpc.transferCredits.getTransferredCourses.query().then((result) => {
+      dispatch(setTransferredCourses(result));
+    });
+  }, [dispatch]);
 
   return (
     <MenuSection title="Courses You've Transferred">
@@ -90,7 +100,7 @@ const CoursesSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <CourseCreditMenuTile key={course.courseName} course={course} setCourses={setCourses} />
+        <CourseCreditMenuTile key={course.courseName} course={course} />
       ))}
 
       <AsyncSelect

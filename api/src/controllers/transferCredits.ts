@@ -17,17 +17,25 @@ const transferCreditsRouter = router({
   addTransferredCourse: userProcedure
     .input(z.object({ courseName: z.string(), units: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      // query database with input and context to add a row
       await db
         .insert(transferredCourse)
         .values({ courseName: input.courseName, units: input.units, userId: ctx.session.userId! });
     }),
   removeTransferredCourse: userProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
-    // query database with input and context to delete a row
     await db
       .delete(transferredCourse)
       .where(and(eq(transferredCourse.userId, ctx.session.userId!), eq(transferredCourse.courseName, input)));
   }),
+  updateTransferredCourse: userProcedure
+    .input(z.object({ courseName: z.string(), units: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      await db
+        .update(transferredCourse)
+        .set({ units: input.units })
+        .where(
+          and(eq(transferredCourse.userId, ctx.session.userId!), eq(transferredCourse.courseName, input.courseName)),
+        );
+    }),
   /** @todo add user procedure to get transferred AP Exams below this comment. */
   /** @todo add user procedure to get transferred GE credits below this comment. */
   /** @todo add user procedure to get transferred untransferred credits below this comment. */
