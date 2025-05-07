@@ -21,9 +21,21 @@
     border: 1px solid rgba(136, 136, 136, 0.4);
   }
 
-  .grade-difficulty-section {
+  .grade-difficulty-row {
     display: flex;
     gap: 16px;
+  }
+
+  .quarter-year-row {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: none;
+
+    > .form-group {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
   .ppc-combobox {

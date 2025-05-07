@@ -1,4 +1,4 @@
-import React, { FC, useState, useContext } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -24,6 +24,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import StarRating from './StarRating';
 import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -43,26 +44,44 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
 }) => {
   const dispatch = useAppDispatch();
+  const { darkMode } = useContext(ThemeContext);
+  const reviews = useAppSelector((state) => state.review.reviews);
+  const isLoggedIn = useIsLoggedIn();
+
+  const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
+  const years = [...new Set(termsProp?.map((t) => t.split(' ')[0]))];
+  const [yearTaken, setYearTaken] = useState(yearTakenDefault);
+  const quarters = [...new Set(termsProp?.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+  const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? ''); //setCourse
-  const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [yearTaken] = useState(yearTakenDefault); //setYearTaken
-  const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 0);
-  const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
-  const [submitted, setSubmitted] = useState(false);
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
-  const { darkMode } = useContext(ThemeContext);
-  const reviews = useAppSelector((state) => state.review.reviews);
+  const [submitted, setSubmitted] = useState(false);
+  useEffect(() => {
+    if (show) {
+      // form opened
+      // if not logged in, close the form
+      if (!isLoggedIn) {
+        spawnToast('You must be logged in to add a review!', true);
+        closeForm();
+      }
 
+      setValidated(false);
+      setSubmitted(false);
+    }
+    // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
     if (editing) {
       try {
@@ -175,32 +194,55 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </Modal.Header>
       <Modal.Body>
         <Form noValidate validated={validated} onSubmit={submitForm} className="ppc-modal-form">
-          <Form.Group>
-            <Form.Label className="ppc-modal-form-label">Term Taken</Form.Label>
-            <Form.Control
-              as="select"
-              name="term" /* should this be changed? quarter? */
-              id="term"
-              defaultValue=""
-              required
-              onChange={(e) => setQuarterTaken(e.target.value)}
-              value={quarterTaken}
-            >
-              <option disabled={true} value="">
-                Select one of the following...
-              </option>
-              {termsProp?.map((term) => (
-                <option key={term} value={term}>
-                  {term}
+          <div className="quarter-year-row">
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
+              <Form.Control
+                as="select"
+                name="quarter"
+                id="quarter"
+                defaultValue=""
+                required
+                onChange={(e) => setQuarterTaken(e.target.value)}
+                value={quarterTaken}
+              >
+                <option disabled={true} value="">
+                  Select
                 </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
+                {quarters?.map((term) => (
+                  <option key={term} value={term}>
+                    {term}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Year</Form.Label>
+              <Form.Control
+                as="select"
+                name="year"
+                id="year"
+                defaultValue=""
+                required
+                onChange={(e) => setYearTaken(e.target.value)}
+                value={yearTaken}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {years?.map((term) => (
+                  <option key={term} value={term}>
+                    {term}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </div>
 
           {professorSelect}
 
-          <div className="grade-difficulty-section">
-            <Form.Group className="grade-form-section">
+          <div className="grade-difficulty-row">
+            <Form.Group>
               <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
               <Form.Control
                 as="select"
@@ -220,7 +262,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               </Form.Control>
             </Form.Group>
 
-            <Form.Group className="difficulty-form-section">
+            <Form.Group>
               <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
               <Form.Control
                 as="select"
@@ -246,9 +288,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <StarRating rating={rating} setRating={setRating} />
           </Form.Group>
 
-          <Form.Group className="course-details-checks">
+          <Form.Group>
             <Form.Label className="ppc-modal-form-label">Course Details</Form.Label>
-
             <Form.Check
               type="checkbox"
               id="takeAgain"
@@ -272,7 +313,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <Form.Group className="tags">
+          <Form.Group>
             <Form.Label className="ppc-modal-form-label">Tags</Form.Label>
             <Select
               isMulti
