@@ -108,10 +108,10 @@ const apMatchQuality = (normalizedName: string, substitutedName: string, ap: ApE
   const normalizedApCat = normalizeTransferName(ap.catalogueName);
   if (normalizedApFull == normalizedName) return 4;
   if (normalizedApCat == normalizedName) return 4;
-  if (normalizedApFull.startsWith(normalizedName)) return 3;
-  if (normalizedApCat.startsWith(normalizedName)) return 3;
-  if (normalizedApFull == substitutedName) return 2;
-  if (normalizedApCat == substitutedName) return 2;
+  if (normalizedApFull == substitutedName) return 3;
+  if (normalizedApCat == substitutedName) return 3;
+  if (normalizedApFull.startsWith(normalizedName)) return 2;
+  if (normalizedApCat.startsWith(normalizedName)) return 2;
   if (normalizedApFull.startsWith(substitutedName)) return 1;
   if (normalizedApCat.startsWith(substitutedName)) return 1;
   return 0;
