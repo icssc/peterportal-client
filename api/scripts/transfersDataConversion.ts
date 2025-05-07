@@ -84,7 +84,7 @@ const normalizeTransferName = (transferName: string | undefined) => {
 
 /**
   Substitute words from a normalized transfer name to look closer to an AP exam
-  Note: order DOES matter
+  Note: order of the substitutions array DOES matter
 */
 const apSubstitutions = (normalizedName: string, substitutions: { from: string; to: string }[]) => {
   let res = normalizedName;
@@ -204,7 +204,7 @@ const handleApCalcAB = (
       userId: transfer.userId,
       examName: AP_CALC_AB_SUBSCORE,
       score: null,
-      units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0
+      units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0 units
     });
     return true;
   }
