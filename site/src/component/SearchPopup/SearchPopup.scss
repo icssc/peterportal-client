@@ -2,7 +2,6 @@
 
 [data-theme='dark'] {
   .search-popup {
-    .dropdown,
     .dropdown .menu {
       background-color: var(--overlay3);
       border-color: var(--overlay2);
@@ -30,7 +29,7 @@
   height: 100%;
   text-align: center;
   color: #9c9fac;
-  font-size: 1.5em;
+  font-size: 20px;
 }
 
 .search-popup {

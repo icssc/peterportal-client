@@ -18,6 +18,8 @@
     box-shadow: none;
     justify-content: center;
     font-weight: bold;
+    font-size: 14px;
+    padding: 6px 12px;
 
     &:not([disabled]):not(.disabled):is(:focus, :active) {
       box-shadow: none;
