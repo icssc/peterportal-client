@@ -72,6 +72,28 @@ const getAPICoursesByIdBatch = async (courseIds: string[]): Promise<CourseAAPIRe
   return response;
 };
 
+/**
+  Efficiently validate a large amount of courses from the API
+  Returns a set of all the valid course IDs
+*/
+const validateCoursesAPI = async (coursesToValidate: Set<string>): Promise<Set<string>> => {
+  const batchSize = 10;
+  const coursesToValidateArr = Array.from(coursesToValidate);
+  const validCourses = new Set<string>();
+  for (let i = 0; i < coursesToValidateArr.length; i += batchSize) {
+    console.log(`- Validating ${i}..${i + batchSize}`);
+    const resp = await getAPICoursesByIdBatch(coursesToValidateArr.slice(i, i + batchSize));
+    if (!resp) {
+      console.log('x ERROR: API response not ok');
+      continue;
+    }
+    for (const r of resp) {
+      validCourses.add(r.id);
+    }
+  }
+  return validCourses;
+};
+
 /** Normalize a transfer name by converting it to lowercase
   then removing punctuation and trailing/leading whitespace;
   if undefined, return an empty string
@@ -335,24 +357,10 @@ const organize = async () => {
     if (transferName.startsWith('AP ')) {
       continue;
     }
-    // This is potentially a course
     coursesToValidate.add(removeAllSpaces(transferName));
   }
   console.log('Validating courses from the API (batch)');
-  const validCourses = new Set<string>();
-  const batchSize = 10;
-  const coursesToValidateArr = Array.from(coursesToValidate);
-  for (let i = 0; i < coursesToValidateArr.length; i += batchSize) {
-    console.log(`- Validating ${i}..${i + batchSize}`);
-    const resp = await getAPICoursesByIdBatch(coursesToValidateArr.slice(i, i + batchSize));
-    if (!resp) {
-      console.log('x ERROR: API response not ok');
-      continue;
-    }
-    for (const r of resp) {
-      validCourses.add(r.id);
-    }
-  }
+  const validCourses = await validateCoursesAPI(coursesToValidate);
   console.log(`Out of ${coursesToValidate.size} unique courses to validate, ${validCourses.size} are valid`);
 
   // Build several large queries
