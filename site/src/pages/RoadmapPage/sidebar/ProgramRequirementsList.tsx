@@ -1,12 +1,13 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
-  checkCompletion,
+  coerceEmptyRequirement,
   collapseSingletonRequirements,
   COMPLETE_ALL_TEXT,
   CompletedCourseSet,
   flattenSingletonGroups,
   LOADING_COURSE_PLACEHOLDER,
+  useCompletionCheck,
 } from '../../../helpers/courseRequirements';
 import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
@@ -24,7 +25,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement } from '@peterportal/types';
-import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
+import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 
@@ -34,7 +35,6 @@ interface CourseTileProps {
   dragTimestamp?: number;
   taken?: boolean;
 }
-
 const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken }) => {
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
@@ -140,11 +140,9 @@ interface CourseRequirementProps {
   takenCourseIDs: CompletedCourseSet;
   storeKey: string;
 }
-
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
-
-  const complete = checkCompletion(takenCourseIDs, data).done;
+  const complete = useCompletionCheck(takenCourseIDs, data).done;
 
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -178,9 +176,8 @@ interface GroupedCourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
 }
-
 const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
-  const complete = checkCompletion(takenCourseIDs, data).done;
+  const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
 
   return (
@@ -201,11 +198,9 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const dispatch = useAppDispatch();
-
-  const complete = checkCompletion(takenCourseIDs, data).done;
-
+  const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+  const dispatch = useAppDispatch();
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
@@ -235,6 +230,36 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   );
 };
 
+interface MarkerRequirementProps {
+  data: ProgramRequirement<'Marker'>;
+  storeKey: string;
+}
+const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
+  const complete = useAppSelector((state) => state.courseRequirements.completedMarkers[data.label]) ?? false;
+  const dispatch = useAppDispatch();
+
+  const setComplete = (complete: boolean) => {
+    return dispatch(setMarkerComplete({ markerName: data.label, complete }));
+  };
+
+  const className = `marker-requirement${complete ? ' complete' : ''}`;
+
+  return (
+    <div className={className}>
+      <label>
+        <input
+          type="checkbox"
+          name={'marker-' + storeKey}
+          className="form-check-input"
+          checked={complete}
+          onChange={(e) => setComplete(e.target.checked)}
+        />
+        <b>{data.label}</b>
+      </label>
+    </div>
+  );
+};
+
 interface ProgramRequirementDisplayProps {
   requirement: ProgramRequirement;
   nested?: boolean;
@@ -247,17 +272,20 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
   takenCourseIDs,
   storeKey,
 }) => {
-  switch (requirement.requirementType) {
+  const parsedRequirement = coerceEmptyRequirement(requirement);
+  switch (parsedRequirement.requirementType) {
     case 'Unit':
     case 'Course': {
       return nested ? (
-        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
+        <GroupedCourseRequirement data={parsedRequirement} takenCourseIDs={takenCourseIDs} />
       ) : (
-        <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
+        <CourseRequirement data={parsedRequirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
       );
     }
     case 'Group':
-      return <GroupRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
+      return <GroupRequirement data={parsedRequirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
+    case 'Marker':
+      return <MarkerRequirement data={parsedRequirement} storeKey={storeKey} />;
   }
 };
 
@@ -265,7 +293,6 @@ interface RequireCourseListProps {
   requirements: ProgramRequirement[];
   storeKeyPrefix: string;
 }
-
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);

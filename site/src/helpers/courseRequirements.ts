@@ -1,6 +1,7 @@
 import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
+import { useAppSelector } from '../store/hooks';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -111,9 +112,7 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
 export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
   const res = requirements.flatMap((r) => {
     if (r.requirementType !== 'Group') return r;
-    /** @todo after markers are implemented, delete this. */
-    const nonMarkers = r.requirements.filter((s) => s.requirementType !== 'Marker');
-    if (r.requirementCount !== nonMarkers.length) return r;
+    if (r.requirementCount !== r.requirements.length) return r;
     return flattenSingletonGroups(r.requirements);
   });
   return res;
@@ -152,11 +151,30 @@ function checkGroupCompletion(
   return { required, completed: completedGroups, done: completedGroups >= required };
 }
 
+function useGroupCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
+  const useIsDone = (req: ProgramRequirement) => useCompletionCheck(completed, req).done;
+  if (requirement.requirementType !== 'Group') return { required: 0, completed: 0, done: false };
+
+  const completedGroups = requirement.requirements.filter(useIsDone).length;
+  const required = requirement.requirementCount;
+  return { required, completed: completedGroups, done: completedGroups >= required };
+}
+
 function checkUnitCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement<'Unit'>): CompletionStatus {
   const required = requirement.unitCount;
   const completedCourses = requirement.courses.filter((c) => c in completed);
   const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
   return { required, completed: completedUnits, done: completedUnits >= required };
+}
+
+export function coerceEmptyRequirement(requirement: ProgramRequirement): ProgramRequirement {
+  if (requirement.requirementType === 'Course' && !requirement.courses.length) {
+    // Some course requirements don't provide a list of courses from the API. For these cases,
+    // treat them as a Marker so the user can manually mark as complete.
+    return { requirementType: 'Marker', label: requirement.label };
+  } else {
+    return requirement;
+  }
 }
 
 export function checkCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
@@ -169,5 +187,22 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
       return checkUnitCompletion(completed, requirement);
     case 'Marker':
       return { completed: 0, done: false, required: 0 };
+  }
+}
+
+export function useCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
+  const completedMarkers = useAppSelector((state) => state.courseRequirements.completedMarkers);
+  const parsedRequirement = coerceEmptyRequirement(requirement);
+  const groupComplete = useGroupCompletionCheck(completed, parsedRequirement);
+
+  switch (parsedRequirement.requirementType) {
+    case 'Group':
+      return groupComplete;
+    case 'Course':
+      return checkCourseListCompletion(completed, parsedRequirement);
+    case 'Unit':
+      return checkUnitCompletion(completed, parsedRequirement);
+    case 'Marker':
+      return { completed: 0, done: completedMarkers[parsedRequirement.label], required: 0 };
   }
 }
