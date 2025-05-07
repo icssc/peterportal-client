@@ -7,6 +7,7 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
+  setMajorSpecs,
   setRequirements,
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
@@ -37,12 +38,12 @@ interface MajorCourseListProps {
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
-  const [specOptions, setSpecOptions] = useState<{ value: MajorSpecialization; label: string }[]>([]);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [open, setOpen] = useState(true);
 
-  const { major, specialization } = majorWithSpec;
+  const { major, selectedSpec: specialization, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
+  const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
 
   const dispatch = useAppDispatch();
 
@@ -52,12 +53,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       const specs = await getMajorSpecializations(major.id);
       specs.forEach((s) => (s.name = normalizeMajorName(s)));
       specs.sort((a, b) => a.name.localeCompare(b.name));
-      const options = specs.map((s) => ({ value: s, label: s.name }));
-      setSpecOptions(options);
+      dispatch(setMajorSpecs({ majorId: major.id, specializations: specs }));
     } finally {
       setSpecsLoading(false);
     }
-  }, [major.id]);
+  }, [dispatch, major.id]);
 
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string | null) => {
@@ -126,7 +126,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const renderRequirements = () => {
     if (resultsLoading) return <RequirementsLoadingIcon />;
-    if (hasSpecs && !majorWithSpec.specialization) {
+    if (hasSpecs && !majorWithSpec.selectedSpec) {
       return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
     }
     return (
@@ -148,9 +148,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
           {hasSpecs && (
             <Select
               options={specOptions}
-              value={
-                specOptions.find((s) => s.value.id === (majorWithSpec.specialization?.id ?? selectedSpecId)) ?? null
-              }
+              value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
               isDisabled={specsLoading}
               isLoading={specsLoading}
               onChange={handleSpecializationChange}

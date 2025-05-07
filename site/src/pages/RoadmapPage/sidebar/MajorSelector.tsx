@@ -62,7 +62,7 @@ const MajorSelector: FC = () => {
       if (!activePlanID || !isLoggedIn) return;
       const pairs: MajorSpecializationPair[] = majorsToSave.map((m) => ({
         majorId: m.major.id,
-        specializationId: m.specialization?.id,
+        specializationId: m.selectedSpec?.id,
       }));
       updateSelectedMajorAndSpecialization(activePlanID, pairs);
     },
@@ -83,7 +83,7 @@ const MajorSelector: FC = () => {
 
       const updatedMajors = newMajors.map((major) => ({
         major,
-        specialization: selectedMajors.find((m) => m.major.id === major.id)?.specialization || null,
+        specialization: selectedMajors.find((m) => m.major.id === major.id)?.selectedSpec || null,
         requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
       }));
       saveMajors(updatedMajors);
@@ -93,7 +93,9 @@ const MajorSelector: FC = () => {
 
   const handleSpecializationChange = useCallback(
     async (majorId: string, specialization: MajorSpecialization | null) => {
-      const updatedMajors = selectedMajors.map((m) => (m.major.id === majorId ? { ...m, specialization } : m));
+      const updatedMajors = selectedMajors.map((m) =>
+        m.major.id === majorId ? { ...m, selectedSpec: specialization } : m,
+      );
       setDefaultPairs(
         defaultPairs.map((p) => (p.majorId === majorId ? { ...p, specializationId: specialization?.id } : p)),
       );
