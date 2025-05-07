@@ -59,13 +59,16 @@ const getAPIApExams = async (): Promise<ApExamBasicInfo[]> => {
   return response;
 };
 
-/** Get a course based on its ID, or undefined if it does not exist */
-const getAPICourseById = async (courseId: string): Promise<CourseAAPIResponse | undefined> => {
-  const response = await fetch(`${process.env.PUBLIC_API_URL}courses/${encodeURIComponent(courseId)}`, {
+/** Get courses based on their IDs, or undefined if there was an error, in a batch */
+const getAPICoursesByIdBatch = async (courseIds: string[]): Promise<CourseAAPIResponse[] | undefined> => {
+  // toString() converts the array into comma-separated values, as expected by the API
+  const apiUrl = `${process.env.PUBLIC_API_URL}courses/batch?ids=${encodeURIComponent(courseIds.toString())}`;
+
+  const response = await fetch(apiUrl, {
     headers: ANTEATER_API_REQUEST_HEADERS,
   })
     .then((res) => res.json())
-    .then((res) => (res.ok ? (res.data as CourseAAPIResponse) : undefined));
+    .then((res) => (res.ok ? (res.data as CourseAAPIResponse[]) : undefined));
   return response;
 };
 
@@ -167,14 +170,12 @@ const removeAllSpaces = (transferName: string) => {
   return transferName.replace(/\s/g, '');
 };
 
-/** Try to match a transfer name with an existing UCI course; undefined if no match */
-const tryMatchCourse = async (transferName: string): Promise<string | undefined> => {
-  const res = await getAPICourseById(removeAllSpaces(transferName));
-  if (!res) {
-    return undefined;
+/** Try to match a transfer name with an existing validated UCI course; undefined if no match */
+const tryMatchCourse = (transferName: string, validCourses: { [courseId: string]: boolean }): string | undefined => {
+  if (removeAllSpaces(transferName) in validCourses) {
+    return transferName; // transferName has necessary spaces
   } else {
-    // Matched properly, but the resulting ID will not have proper spaces, so return original
-    return transferName;
+    return undefined;
   }
 };
 
@@ -252,8 +253,9 @@ const organizeCourse = async (
   transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toInsertCourse: TransferredCourseRow[],
+  validCourses: { [courseId: string]: boolean },
 ): Promise<boolean> => {
-  const bestMatch = await tryMatchCourse(transferName);
+  const bestMatch = tryMatchCourse(transferName, validCourses);
   if (!bestMatch) {
     // Could not match; leave it here
     console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any course`);
@@ -300,26 +302,59 @@ const organize = async () => {
   for (const ap of allAps) {
     console.log(`  - '${ap.fullName}' (cat: '${ap.catalogueName}')`);
   }
-  const transfers = await db
-    .select({
-      userId: transferredMisc.userId,
-      courseName: transferredMisc.courseName,
-      totalUnits: sql<number>`coalesce(sum(${transferredMisc.units}), 0)`.mapWith(Number),
-      count: count(transferredMisc.userId),
-    })
-    .from(transferredMisc)
-    .groupBy(transferredMisc.userId, transferredMisc.courseName);
-  //.limit(40); // For testing, we will only look at a few entries
+  // Obtain all relevant transfers (invalid ones that cannot be categorized are filtered out here)
+  const transfers: TransferredMiscSelectedRow[] = (
+    await db
+      .select({
+        userId: transferredMisc.userId,
+        courseName: transferredMisc.courseName,
+        totalUnits: sql<number>`coalesce(sum(${transferredMisc.units}), 0)`.mapWith(Number),
+        count: count(transferredMisc.userId),
+      })
+      .from(transferredMisc)
+      .groupBy(transferredMisc.userId, transferredMisc.courseName)
+  )
+    //.limit(40) // For testing, only look at a few entries
+    .filter(
+      (transfer) => transfer.courseName != null && transfer.userId != null && transfer.count != 0,
+    ) as TransferredMiscSelectedRow[];
+
+  // Get all the users who explicitly have an AB subscore
   const usersWithABSubscore: { [userId: number]: boolean } = {};
   for (const transfer of transfers) {
-    if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
-      continue;
-    }
     const bestMatch = tryMatchAp(transfer.courseName, allAps);
     if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) {
       usersWithABSubscore[transfer.userId] = true;
     }
   }
+
+  // Validate all the relevant courses from the API beforehand
+  const coursesToValidate: { [courseId: string]: boolean } = {};
+  for (const transfer of transfers) {
+    const transferName = transfer.courseName.trim();
+    if (transferName.startsWith('AP ')) {
+      continue;
+    }
+    // This is potentially a course
+    coursesToValidate[removeAllSpaces(transferName)] = true;
+  }
+  console.log('Validating courses from the API (batch)');
+  const validCourses: { [courseId: string]: boolean } = {};
+  const batchSize = 10;
+  for (let i = 0; i < Object.keys(coursesToValidate).length; i += batchSize) {
+    console.log(`- Validating ${i}..${i + batchSize}`);
+    const resp = await getAPICoursesByIdBatch(Object.keys(coursesToValidate).slice(i, i + batchSize));
+    if (!resp) {
+      console.log('x ERROR: API response not ok');
+      continue;
+    }
+    for (const r of resp) {
+      validCourses[r.id] = true;
+    }
+  }
+  console.log(
+    `Out of ${Object.keys(coursesToValidate).length} unique courses to validate, ${Object.keys(validCourses).length} are valid`,
+  );
 
   // Build several large queries
   const toDelete: (SQL<unknown> | undefined)[] = [sql`FALSE`]; // Start with false to ensure nothing is deleted by default
@@ -327,9 +362,6 @@ const organize = async () => {
   const toInsertCourse: TransferredCourseRow[] = [];
   const toReinsertMisc: TransferredMiscRow[] = [];
   for (const transfer of transfers) {
-    if (transfer.courseName == null || transfer.userId == null || transfer.count == 0) {
-      continue;
-    }
     const transferName = transfer.courseName.trim();
     if (transferName.startsWith('AP ')) {
       const reorganized = organizeApExam(
@@ -349,6 +381,7 @@ const organize = async () => {
         transferName,
         toDelete,
         toInsertCourse,
+        validCourses,
       );
       if (!reorganized) {
         organizeMisc(transfer as TransferredMiscSelectedRow, transferName, toDelete, toReinsertMisc);
