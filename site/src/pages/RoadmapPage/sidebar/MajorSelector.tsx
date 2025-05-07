@@ -83,7 +83,8 @@ const MajorSelector: FC = () => {
 
       const updatedMajors = newMajors.map((major) => ({
         major,
-        specialization: selectedMajors.find((m) => m.major.id === major.id)?.selectedSpec || null,
+        selectedSpec: selectedMajors.find((m) => m.major.id === major.id)?.selectedSpec || null,
+        specializations: selectedMajors.find((m) => m.major.id === major.id)?.specializations || [],
         requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
       }));
       saveMajors(updatedMajors);

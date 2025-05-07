@@ -41,7 +41,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const [resultsLoading, setResultsLoading] = useState(false);
   const [open, setOpen] = useState(true);
 
-  const { major, selectedSpec: specialization, specializations } = majorWithSpec;
+  const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
 
@@ -79,14 +79,14 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       if (majorWithSpec.requirements.length > 0) return;
       else return await fetchRequirements(major.id, null);
     }
-    if (!selectedSpecId && !specialization?.id) return;
-    if (selectedSpecId === specialization?.id) return;
+    if (!selectedSpecId && !selectedSpec?.id) return;
+    if (selectedSpecId === selectedSpec?.id) return;
 
     const specs = await getMajorSpecializations(major.id);
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
-      await fetchRequirements(major.id, specialization?.id);
+      await fetchRequirements(major.id, selectedSpec?.id);
     }
   }, [
     dispatch,
@@ -95,7 +95,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     major.id,
     majorWithSpec.requirements.length,
     selectedSpecId,
-    specialization?.id,
+    selectedSpec?.id,
   ]);
 
   // Initial Loader
