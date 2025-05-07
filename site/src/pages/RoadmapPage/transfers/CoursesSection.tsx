@@ -24,7 +24,6 @@ interface CourseCreditMenuTileProps {
   course: TransferredCourse;
 }
 const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course }) => {
-  //const [units, setUnits] = useState<number>(course.units);
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
