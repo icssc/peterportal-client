@@ -63,7 +63,13 @@
   }
 
   .badge-pill {
+    padding: 6px 10px;
+    margin: 4px;
     cursor: pointer;
+    background-color: var(--mid-gray);
+    &.badge-success {
+      background-color: var(--blue-primary);
+    }
   }
 }
 .review-form-section {

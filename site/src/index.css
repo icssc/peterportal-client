@@ -28,6 +28,7 @@ code {
   --green-secondary: #87c587;
   --yellow-secondary: #f5d77f;
   --orange-secondary: #ecad6d;
+  --red-primary: #ce0000;
   --red-secondary: #e7966d;
 
   --mid-gray: #8d8d8d;
@@ -41,7 +42,9 @@ code {
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
+
   --green-secondary: #295629;
+  --red-primary: #ff3333;
 }
 
 .hide {
