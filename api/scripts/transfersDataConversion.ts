@@ -78,7 +78,7 @@ const normalizeTransferName = (transferName: string | undefined) => {
   return transferName
     .toLowerCase()
     .replace(/[.,/#!$%^*;:{}=\-_`~()]/g, '')
-    .replace('&', 'and')
+    .replace(/&/g, 'and')
     .trim();
 };
 
