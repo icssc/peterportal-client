@@ -6,7 +6,7 @@ export interface TransferredCourse {
   units: number;
 }
 
-interface UserAPExam {
+export interface UserAPExam {
   examName: string;
   score: number;
   units: number;

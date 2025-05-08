@@ -12,6 +12,7 @@ import {
   removeUserAPExam,
   updateUserExam,
   setUserAPExams,
+  UserAPExam,
 } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { APExam } from '@peterportal/types';
@@ -25,12 +26,6 @@ interface ScoreSelectionProps {
 interface APExamOption {
   value: APExam;
   label: string;
-}
-
-interface APCreditMenuTileProps {
-  examName: string;
-  userScore: number;
-  userUnits: number;
 }
 
 type CoursesGrantedTree = string | { AND: CoursesGrantedTree[] } | { OR: CoursesGrantedTree[] };
@@ -67,9 +62,8 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, userUnits }) => {
-  const units = userUnits;
-  const score = userScore;
+const APCreditMenuTile: FC<{ userExamInfo: UserAPExam }> = ({ userExamInfo }) => {
+  const { examName, score, units } = userExamInfo;
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
@@ -90,10 +84,10 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
   }, [dispatch, examName]);
 
-  const exam = apExamInfo.find((exam) => exam.fullName === examName);
+  const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
   let message = '';
 
-  for (const reward of exam?.rewards ?? []) {
+  for (const reward of apiExamInfo?.rewards ?? []) {
     if (!reward.acceptableScores.includes(score)) continue;
     const { coursesGranted } = reward;
     const formatted = formatCourses(coursesGranted as CoursesGrantedTree);
@@ -176,7 +170,7 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile key={exam.examName} examName={exam.examName} userScore={exam.score} userUnits={exam.units} />
+        <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
       ))}
       <div className="input">
         <div className="exam-input">
