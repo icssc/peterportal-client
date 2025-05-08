@@ -9,6 +9,10 @@
   p:last-child {
     margin-bottom: 4px;
   }
+
+  .requirement-label {
+    margin-bottom: 4px;
+  }
 }
 
 .group-requirement {
@@ -38,8 +42,12 @@
     flex-shrink: 0;
   }
 
+  .course-requirement {
+    margin-top: 8px;
+  }
+
   > .course-requirement > p {
-    margin-block: 12px 4px;
+    margin-block: 4px;
   }
   > .group-header > p {
     margin-bottom: 12px;
@@ -54,8 +62,9 @@
       text-decoration-thickness: 2px;
     }
 
-    .group-requirement:not(.completed) {
+    :is(.group-requirement, .marker-requirement, .course-requirement):not(.completed) {
       border-color: var(--mid-gray);
+      color: var(--mid-gray);
       .group-header {
         color: var(--mid-gray);
       }
@@ -85,7 +94,7 @@
   > label {
     display: flex;
     gap: 6px;
-    margin-bottom: 4px;
+    margin-block: 4px 8px;
   }
 
   input[type='checkbox'] {
@@ -95,7 +104,7 @@
     flex-shrink: 0;
   }
 
-  &.complete {
+  &.completed {
     color: var(--green-primary);
   }
 }

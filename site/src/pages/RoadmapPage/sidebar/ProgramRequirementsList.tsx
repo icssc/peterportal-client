@@ -1,11 +1,9 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
-  coerceEmptyRequirement,
-  collapseSingletonRequirements,
   COMPLETE_ALL_TEXT,
   CompletedCourseSet,
-  flattenSingletonGroups,
+  formatRequirements,
   LOADING_COURSE_PLACEHOLDER,
   saveMarkerCompletion,
   useCompletionCheck,
@@ -165,7 +163,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
       {open && showLabel && (
-        <p>
+        <p className="requirement-label">
           <b>Complete {label} of the following:</b>
         </p>
       )}
@@ -185,7 +183,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
   return (
     <>
       <div className={className}>
-        <p>
+        <p className="requirement-label">
           <b>{data.label}</b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
@@ -214,7 +212,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
       {open && (
-        <p>
+        <p className="requirement-label">
           Complete <b>{data.requirementCount}</b> of the following series:
         </p>
       )}
@@ -246,7 +244,7 @@ const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
     return dispatch(setMarkerComplete({ markerName: data.label, complete }));
   };
 
-  const className = `marker-requirement${complete ? ' complete' : ''}`;
+  const className = `marker-requirement${complete ? ' completed' : ''}`;
 
   return (
     <div className={className}>
@@ -276,20 +274,19 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
   takenCourseIDs,
   storeKey,
 }) => {
-  const parsedRequirement = coerceEmptyRequirement(requirement);
-  switch (parsedRequirement.requirementType) {
+  switch (requirement.requirementType) {
     case 'Unit':
     case 'Course': {
       return nested ? (
-        <GroupedCourseRequirement data={parsedRequirement} takenCourseIDs={takenCourseIDs} />
+        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
       ) : (
-        <CourseRequirement data={parsedRequirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
+        <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
       );
     }
     case 'Group':
-      return <GroupRequirement data={parsedRequirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
+      return <GroupRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
     case 'Marker':
-      return <MarkerRequirement data={parsedRequirement} storeKey={storeKey} />;
+      return <MarkerRequirement data={requirement} storeKey={storeKey} />;
   }
 };
 
@@ -298,7 +295,7 @@ interface RequireCourseListProps {
   storeKeyPrefix: string;
 }
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
-  const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
+  const formattedRequirements = formatRequirements(requirements);
   const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
@@ -319,7 +316,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
   return (
     <div className="program-requirements">
       {/* key is ok because we don't reorder these */}
-      {collapsedRequirements.map((r, i) => (
+      {formattedRequirements.map((r, i) => (
         <ProgramRequirementDisplay
           requirement={r}
           key={i}

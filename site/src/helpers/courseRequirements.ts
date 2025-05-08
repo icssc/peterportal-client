@@ -119,6 +119,56 @@ export function flattenSingletonGroups(requirements: ProgramRequirement[]): Prog
   return res;
 }
 
+/**
+ * Sorts Group Requirements such that Markers appear first. This is so the user can see alternatives to
+ * completing entire course lists without having to scroll past the course lists first
+ * @param requirements The program requirements list
+ */
+export function sortGroupRequirementsByType(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  // console.log(requirements)
+  return requirements
+    .map((r) => {
+      if (r.requirementType !== 'Group') return r;
+      return { ...r, requirements: sortGroupRequirementsByType(r.requirements) };
+    })
+    .sort((a, b) => {
+      const aIsMarker = a.requirementType === 'Marker';
+      const bIsMarker = b.requirementType === 'Marker';
+      return Number(bIsMarker) - Number(aIsMarker);
+    });
+}
+
+export function coerceEmptyRequirement(requirement: ProgramRequirement): ProgramRequirement {
+  if (requirement.requirementType === 'Course' && !requirement.courses.length) {
+    // Some course requirements don't provide a list of courses from the API. For these cases,
+    // treat them as a Marker so the user can manually mark as complete.
+    return { requirementType: 'Marker', label: requirement.label };
+  } else {
+    return requirement;
+  }
+}
+
+function coerceEmptyRequirements(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  return requirements.map((r) => {
+    if (r.requirementType !== 'Group') return coerceEmptyRequirement(r);
+    requirements = coerceEmptyRequirements(r.requirements);
+    return { ...r, requirements };
+  });
+}
+
+export function formatRequirements(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  const pipeline = [
+    collapseSingletonRequirements,
+    flattenSingletonGroups,
+    coerceEmptyRequirements,
+    sortGroupRequirementsByType,
+  ];
+  for (const transform of pipeline) {
+    requirements = transform(requirements);
+  }
+  return requirements;
+}
+
 export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorSpecialization) {
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
@@ -168,16 +218,6 @@ function checkUnitCompletion(completed: CompletedCourseSet, requirement: Program
   return { required, completed: completedUnits, done: completedUnits >= required };
 }
 
-export function coerceEmptyRequirement(requirement: ProgramRequirement): ProgramRequirement {
-  if (requirement.requirementType === 'Course' && !requirement.courses.length) {
-    // Some course requirements don't provide a list of courses from the API. For these cases,
-    // treat them as a Marker so the user can manually mark as complete.
-    return { requirementType: 'Marker', label: requirement.label };
-  } else {
-    return requirement;
-  }
-}
-
 export function checkCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
   switch (requirement.requirementType) {
     case 'Group':
@@ -193,18 +233,17 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
 
 export function useCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
   const completedMarkers = useAppSelector((state) => state.courseRequirements.completedMarkers);
-  const parsedRequirement = coerceEmptyRequirement(requirement);
-  const groupComplete = useGroupCompletionCheck(completed, parsedRequirement);
+  const groupComplete = useGroupCompletionCheck(completed, requirement);
 
-  switch (parsedRequirement.requirementType) {
+  switch (requirement.requirementType) {
     case 'Group':
       return groupComplete;
     case 'Course':
-      return checkCourseListCompletion(completed, parsedRequirement);
+      return checkCourseListCompletion(completed, requirement);
     case 'Unit':
-      return checkUnitCompletion(completed, parsedRequirement);
+      return checkUnitCompletion(completed, requirement);
     case 'Marker':
-      return { completed: 0, done: completedMarkers[parsedRequirement.label], required: 0 };
+      return { completed: 0, done: completedMarkers[requirement.label], required: 0 };
   }
 }
 
