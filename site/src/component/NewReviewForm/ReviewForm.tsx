@@ -413,7 +413,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Modal>
   );
 
-  return submitted ? <ThankYouMessage message="Your review has been submitted successfully." /> : reviewForm;
+  const thankYouModal = (
+    <Modal show={submitted} onHide={closeForm} centered animation={false} className=" thank-you-modal">
+      <ThankYouMessage message="Your review has been submitted successfully." />
+    </Modal>
+  );
+
+  return submitted ? thankYouModal : reviewForm;
 };
 
 export default ReviewForm;
