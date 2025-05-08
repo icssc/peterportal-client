@@ -15,9 +15,9 @@ export const transferCreditsSlice = createSlice({
       state.transferredGEs = action.payload;
     },
     setTransferredGE: (state, action: PayloadAction<TransferredGE>) => {
-      const transferredGEs: TransferredGE[] = state.transferredGEs.filter((ge) => ge.geName !== action.payload.geName);
-      transferredGEs.push(action.payload);
-      state.transferredGEs = transferredGEs;
+      state.transferredGEs = state.transferredGEs.map((ge) => {
+        return ge.geName === action.payload.geName ? action.payload : ge;
+      });
     },
   },
 });

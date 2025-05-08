@@ -22,20 +22,36 @@ const GE_TITLE_MAP: Record<GEName, GETitle> = {
 };
 
 interface GEInputProps {
-  value: number;
+  defaultValue: number;
   handleUpdate: (value: number) => void;
+  inputType: 'int' | 'float';
 }
 
-const GEInput: FC<GEInputProps> = ({ value, handleUpdate }) => {
+const GEInput: FC<GEInputProps> = ({ defaultValue, handleUpdate, inputType }) => {
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['e', 'E', '-', '+'].includes(e.key) || (inputType === 'int' && e.key === '.')) {
+      e.preventDefault();
+    }
+  };
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value);
-    if (isNaN(newValue)) {
-      e.target.value = value.toString();
+    if (e.target.value === '') {
+      e.target.value = defaultValue.toString();
       return;
     }
-    handleUpdate(newValue);
+    handleUpdate(Number(e.target.value));
   };
-  return <input className="ge-input" type="number" min="0" step="1" defaultValue={value} onBlur={onBlur} />;
+  return (
+    <input
+      className="ge-input"
+      type="number"
+      min="0"
+      step={inputType === 'int' ? '1' : 'any'}
+      inputMode={inputType === 'int' ? 'numeric' : 'decimal'}
+      defaultValue={defaultValue}
+      onKeyDown={onKeyDown}
+      onBlur={onBlur}
+    />
+  );
 };
 
 interface GEMenuTileProps {
@@ -81,11 +97,11 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
       <div className="ge-inputs">
         <div className="ge-input-container">
           <p>Number of Courses:</p>
-          <GEInput value={numberOfCourses} handleUpdate={updateNumberOfCourses} />
+          <GEInput defaultValue={numberOfCourses} handleUpdate={updateNumberOfCourses} inputType="int" />
         </div>
         <div className="ge-input-container">
           <p>Units Transferred:</p>
-          <GEInput value={units} handleUpdate={updateUnits} />
+          <GEInput defaultValue={units} handleUpdate={updateUnits} inputType="float" />
         </div>
       </div>
     </MenuTile>
