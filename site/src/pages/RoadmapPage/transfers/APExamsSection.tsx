@@ -94,13 +94,11 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
   let message = '';
 
   for (const reward of exam?.rewards ?? []) {
-    if (reward.acceptableScores.includes(score)) {
-      const { coursesGranted } = reward;
-      const formatted = formatCourses(coursesGranted as CoursesGrantedTree);
-      if (formatted) {
-        message += `${message ? '\n' : ''}${formatted}`;
-      }
-    }
+    if (!reward.acceptableScores.includes(score)) continue;
+    const { coursesGranted } = reward;
+    const formatted = formatCourses(coursesGranted as CoursesGrantedTree);
+    if (formatted) message += `${message ? '\n' : ''}${formatted}`;
+    break;
   }
 
   return (
@@ -116,8 +114,8 @@ const APExamsSection: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const [currentExam, setCurrentExam] = useState<string | null>(null);
-  const [currentScore, setCurrentScore] = useState<number | null>(null);
+  const [examName, setExamName] = useState<string | null>(null);
+  const [score, setScore] = useState<number | null>(null);
   const [examsLoading, setExamsLoading] = useState(false);
 
   // Save initial list of all AP Exams
@@ -143,16 +141,18 @@ const APExamsSection: FC = () => {
 
   // Save AP Exam to store
   useEffect(() => {
-    if (!isLoggedIn || !currentExam || !currentScore) return;
-    const foundUnits = apExamInfo.find((exam) => exam.fullName === currentExam)?.rewards[0].unitsGranted ?? 0;
-    if (!userAPExams.find((exam) => exam.examName === currentExam)) {
-      dispatch(addUserAPExam({ examName: currentExam, score: currentScore, units: foundUnits }));
-      trpc.transferCredits.addUserAPExam.mutate({ examName: currentExam, score: currentScore, units: foundUnits });
+    if (!isLoggedIn || !examName || !score) return;
+    const examInfo = apExamInfo.find((exam) => exam.fullName === examName);
+    const units = examInfo?.rewards?.find((r) => r.acceptableScores.includes(score))?.unitsGranted ?? 0;
+
+    if (!userAPExams.find((exam) => exam.examName === examName)) {
+      dispatch(addUserAPExam({ examName, score, units }));
+      trpc.transferCredits.addUserAPExam.mutate({ examName, score, units });
     }
     // Remove exam from select options
-    setCurrentExam(null);
-    setCurrentScore(null);
-  }, [dispatch, currentExam, currentScore, apExamInfo, userAPExams, isLoggedIn, examsLoading]);
+    setExamName(null);
+    setScore(null);
+  }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn, examsLoading]);
 
   // Fetch saved AP exams and save to store
   useEffect(() => {
@@ -181,17 +181,17 @@ const APExamsSection: FC = () => {
       <div className="input">
         <div className="exam-input">
           <Select
-            value={apSelectOptions.find((opt) => opt.label === currentExam) ?? null}
+            value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
             options={apSelectOptions}
             isSearchable
-            onChange={(selectedOption) => setCurrentExam(selectedOption?.label || null)}
+            onChange={(selectedOption) => setExamName(selectedOption?.label || null)}
             placeholder="Add an AP Exam..."
             theme={(t) => comboboxTheme(t, isDark)}
           />
         </div>
         <div className="score-input">
           <Select
-            value={currentScore ? { value: currentScore, label: currentScore.toString() } : null}
+            value={score ? { value: score, label: score.toString() } : null}
             options={[
               { value: 1, label: '1' },
               { value: 2, label: '2' },
@@ -199,7 +199,7 @@ const APExamsSection: FC = () => {
               { value: 4, label: '4' },
               { value: 5, label: '5' },
             ]}
-            onChange={(selectedOption) => setCurrentScore(selectedOption?.value || null)}
+            onChange={(selectedOption) => setScore(selectedOption?.value || null)}
             placeholder="Score"
             theme={(t) => comboboxTheme(t, isDark)}
           />

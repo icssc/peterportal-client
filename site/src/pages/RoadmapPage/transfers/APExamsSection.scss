@@ -4,11 +4,7 @@
   gap: 1rem;
 
   .exam-input {
-    flex: 2;
-  }
-
-  .score-input {
-    flex: 1;
+    width: 216px;
   }
 }
 
@@ -16,11 +12,11 @@
   display: inline-block;
 
   .select-box {
+    border: 1px solid var(--blue-primary);
     background-color: var(--blue-primary);
     color: white;
     border-radius: 32px;
-    border-color: var(--blue-primary);
     height: 20px;
-    width: 30px;
+    padding-block: 0;
   }
 }
