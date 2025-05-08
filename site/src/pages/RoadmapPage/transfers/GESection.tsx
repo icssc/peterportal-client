@@ -21,15 +21,6 @@ const GE_TITLE_MAP: Record<GEName, GETitle> = {
   'GE-8': 'GE VIII: International/Global Issues',
 };
 
-/*
-
-Questions:
-- Are the GE input values going to be updated based on other categories? E.g. if a user gets one GE course from an AP exam, will that course be shown in the corresponding GE in the GE menu?
-- Do I need to use the useIsLoggedIn() hook?
-- Should TransferredGE[] be a map instead of an array?
-
-*/
-
 interface GEInputProps {
   value: number;
   handleUpdate: (value: number) => void;
