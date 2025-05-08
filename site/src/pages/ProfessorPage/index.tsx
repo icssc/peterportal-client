@@ -12,7 +12,8 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, unionTerms } from '../../helpers/util';
+import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 
 const ProfessorPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,7 +81,7 @@ const ProfessorPage: FC = () => {
                 <h2>💬 Reviews</h2>
               </div>
               <Divider />
-              <Review professor={professorGQLData} />
+              <Review professor={professorGQLData} terms={sortTerms(getProfessorTerms(professorGQLData))} />
             </div>
           </article>
         </div>

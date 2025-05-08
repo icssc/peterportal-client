@@ -7,7 +7,6 @@ import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
-import ThankYouMessage from '../ThankYouMessage/ThankYouMessage';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -66,7 +65,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  // const [submitted, setSubmitted] = useState(false);
+
   useEffect(() => {
     if (show) {
       // form opened
@@ -77,17 +77,37 @@ const ReviewForm: FC<ReviewFormProps> = ({
       }
 
       setValidated(false);
-      setSubmitted(false);
+      // setSubmitted(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
+  const resetForm = () => {
+    setYearTaken(yearTakenDefault);
+    setQuarterTaken(quarterTakenDefault);
+    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
+    setGradeReceived(reviewToEdit?.gradeReceived);
+    setDifficulty(reviewToEdit?.difficulty);
+    setRating(reviewToEdit?.rating ?? 3);
+    setTakeAgain(reviewToEdit?.takeAgain ?? false);
+    setTextbook(reviewToEdit?.textbook ?? false);
+    setAttendance(reviewToEdit?.attendance ?? false);
+    setSelectedTags(reviewToEdit?.tags ?? []);
+    setContent(reviewToEdit?.content ?? '');
+    setCaptchaToken('');
+    setAnonymous(reviewToEdit?.userDisplay === anonymousName);
+    setValidated(false);
+  };
+
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
     if (editing) {
       try {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
-        setSubmitted(true);
+        resetForm();
+        closeForm();
+        spawnToast('Your review has been edited successfully!');
         dispatch(editReview(review as EditReviewSubmission));
       } catch (e) {
         spawnToast((e as Error).message, true);
@@ -95,7 +115,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
     } else {
       try {
         const res = await trpc.reviews.add.mutate(review);
-        setSubmitted(true);
+        resetForm();
+        closeForm();
+        spawnToast('Your review has been submitted successfully!');
         dispatch(addReview(res));
       } catch (e) {
         spawnToast((e as Error).message, true);
@@ -110,9 +132,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.preventDefault();
     event.stopPropagation();
 
-    setValidated(true);
+    // busy prop
+    // Editing header
 
-    if (!valid) return;
+    if (!valid) {
+      setValidated(true);
+      return;
+    }
 
     // for new reviews: check if CAPTCHA is completed
     if (!editing && !captchaToken) {
@@ -231,29 +257,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </Modal.Header>
       <Modal.Body>
         <Form noValidate validated={validated} onSubmit={submitForm} className="ppc-modal-form">
-          <div className="quarter-year-row">
-            <Form.Group>
-              <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
-              <Form.Control
-                as="select"
-                name="quarter"
-                id="quarter"
-                defaultValue=""
-                required
-                onChange={(e) => setQuarterTaken(e.target.value)}
-                value={quarterTaken}
-              >
-                <option disabled={true} value="">
-                  Select
-                </option>
-                {quarters?.map((term) => (
-                  <option key={term} value={term}>
-                    {term}
-                  </option>
-                ))}
-              </Form.Control>
-              <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
-            </Form.Group>
+          <div className="year-quarter-row">
             <Form.Group>
               <Form.Label className="ppc-modal-form-label">Year</Form.Label>
               <Form.Control
@@ -275,6 +279,28 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 ))}
               </Form.Control>
               <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
+              <Form.Control
+                as="select"
+                name="quarter"
+                id="quarter"
+                defaultValue=""
+                required
+                onChange={(e) => setQuarterTaken(e.target.value)}
+                value={quarterTaken}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {quarters?.map((term) => (
+                  <option key={term} value={term}>
+                    {term}
+                  </option>
+                ))}
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
             </Form.Group>
           </div>
 
@@ -413,13 +439,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Modal>
   );
 
-  const thankYouModal = (
-    <Modal show={submitted} onHide={closeForm} centered animation={false} className=" thank-you-modal">
-      <ThankYouMessage message="Your review has been submitted successfully." />
-    </Modal>
-  );
-
-  return submitted ? thankYouModal : reviewForm;
+  return reviewForm;
 };
 
 export default ReviewForm;
