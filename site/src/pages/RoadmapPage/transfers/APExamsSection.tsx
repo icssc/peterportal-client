@@ -11,6 +11,7 @@ import {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
+  setUserAPExams,
 } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { APExam } from '@peterportal/types';
@@ -67,8 +68,6 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
 };
 
 const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, userUnits }) => {
-  // const [score, setScore] = useState<number>(userScore);
-  // const [units, setUnits] = useState<number>(userUnits);
   const units = userUnits;
   const score = userScore;
   const updateScore = (value: number) => handleUpdate(value, units);
@@ -77,13 +76,11 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
   const dispatch = useAppDispatch();
 
   const selectBox = <ScoreSelection score={score} setScore={updateScore} />;
-  // remove setScore, setUnits, create new helper functions and directly call handleChange within
 
   const handleUpdate = useCallback(
     async (newScore: number, newUnits: number) => {
       dispatch(updateUserExam({ examName, score: newScore, units: newUnits }));
       trpc.transferCredits.updateUserAPExam.mutate({ examName, score: newScore, units: newUnits });
-      // call new route to save one ap, also create new reducer to update a single exam
     },
     [dispatch, examName],
   );
@@ -91,7 +88,6 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
   const deleteFn = useCallback(() => {
     dispatch(removeUserAPExam(examName));
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
-    // put exam back in select options
   }, [dispatch, examName]);
 
   const exam = apExamInfo.find((exam) => exam.fullName === examName);
@@ -115,7 +111,7 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ examName, userScore, user
 };
 
 const APExamsSection: FC = () => {
-  const isLoggedIn = useIsLoggedIn;
+  const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
   const isDark = useContext(ThemeContext).darkMode;
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
@@ -145,16 +141,13 @@ const APExamsSection: FC = () => {
     });
   }, [dispatch, apExamInfo.length, saveAllAPExams]);
 
-  // Save AP Exams for user
-
   // Save AP Exam to store
   useEffect(() => {
-    if (!currentExam || !currentScore) return;
-    if (!isLoggedIn || !examsLoading) return;
+    if (!isLoggedIn || !currentExam || !currentScore) return;
     const foundUnits = apExamInfo.find((exam) => exam.fullName === currentExam)?.rewards[0].unitsGranted ?? 0;
-    if (!userAPExams.includes({ examName: currentExam, score: currentScore, units: foundUnits })) {
+    if (!userAPExams.find((exam) => exam.examName === currentExam)) {
       dispatch(addUserAPExam({ examName: currentExam, score: currentScore, units: foundUnits }));
-      trpc.transferCredits.saveAPExam.mutate({ examName: currentExam, score: currentScore, units: foundUnits });
+      trpc.transferCredits.addUserAPExam.mutate({ examName: currentExam, score: currentScore, units: foundUnits });
     }
     // Remove exam from select options
     setCurrentExam(null);
@@ -164,17 +157,18 @@ const APExamsSection: FC = () => {
   // Fetch saved AP exams and save to store
   useEffect(() => {
     trpc.transferCredits.getSavedAPExams.query().then((savedExams) => {
-      for (const exam of savedExams) {
-        dispatch(addUserAPExam(exam));
-      }
-      setExamsLoading(true);
+      dispatch(setUserAPExams(savedExams));
     });
   }, [dispatch]);
 
-  const APSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
+  const baseSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
     value: exam,
     label: exam.fullName,
   }));
+
+  const apSelectOptions = baseSelectOptions.filter((exam) => {
+    return !userAPExams.some((userExam) => userExam.examName === exam.label);
+  });
 
   return (
     <MenuSection title="AP Exam Credits">
@@ -187,8 +181,8 @@ const APExamsSection: FC = () => {
       <div className="input">
         <div className="exam-input">
           <Select
-            value={APSelectOptions.find((opt) => opt.label === currentExam) ?? null}
-            options={APSelectOptions}
+            value={apSelectOptions.find((opt) => opt.label === currentExam) ?? null}
+            options={apSelectOptions}
             isSearchable
             onChange={(selectedOption) => setCurrentExam(selectedOption?.label || null)}
             placeholder="Add an AP Exam..."

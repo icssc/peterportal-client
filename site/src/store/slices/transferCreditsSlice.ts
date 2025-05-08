@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { APExam } from '@peterportal/types';
 
-interface userAPExam {
+interface UserAPExam {
   examName: string;
   score: number;
   units: number;
@@ -12,7 +12,7 @@ export const transferCreditsSlice = createSlice({
   initialState: {
     showTransfersMenu: false,
     apExamInfo: [] as APExam[],
-    userAPExams: [] as userAPExam[],
+    userAPExams: [] as UserAPExam[],
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
@@ -21,15 +21,16 @@ export const transferCreditsSlice = createSlice({
     setAPExams: (state, action: PayloadAction<APExam[]>) => {
       state.apExamInfo = action.payload;
     },
-    addUserAPExam: (state, action: PayloadAction<userAPExam>) => {
-      if (!state.userAPExams.find((exam) => exam.examName === action.payload.examName)) {
-        state.userAPExams.push(action.payload);
-      }
+    setUserAPExams: (state, action: PayloadAction<UserAPExam[]>) => {
+      state.userAPExams = action.payload;
+    },
+    addUserAPExam: (state, action: PayloadAction<UserAPExam>) => {
+      state.userAPExams.push(action.payload);
     },
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
     },
-    updateUserExam: (state, action: PayloadAction<userAPExam>) => {
+    updateUserExam: (state, action: PayloadAction<UserAPExam>) => {
       const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
       if (e) {
         e.score = action.payload.score;
@@ -39,7 +40,7 @@ export const transferCreditsSlice = createSlice({
   },
 });
 
-export const { setShowTransfersMenu, setAPExams, addUserAPExam, removeUserAPExam, updateUserExam } =
+export const { setShowTransfersMenu, setAPExams, setUserAPExams, addUserAPExam, removeUserAPExam, updateUserExam } =
   transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;

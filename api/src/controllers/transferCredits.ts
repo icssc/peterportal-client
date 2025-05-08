@@ -22,7 +22,6 @@ const zodAPExamSchema = z.object({
 const transferCreditsRouter = router({
   /** @todo add user procedure to get transferred courses below this comment. */
   /** @todo add user procedure to get transferred AP Exams below this comment. */
-
   getAPExamInfo: publicProcedure.query(async (): Promise<APExam[]> => {
     const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
       headers: ANTEATER_API_REQUEST_HEADERS,
@@ -31,9 +30,7 @@ const transferCreditsRouter = router({
       .then((res) => (res.data ? (res.data as APExam[]) : []));
     return response;
   }),
-  // only update one row at a time
   getSavedAPExams: publicProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
-    /** you should return the data as-is, then handle the null case from the frontend within an individual APExamTile */
     const userId = ctx.session.userId;
     if (!userId) return [];
 
@@ -47,22 +44,15 @@ const transferCreditsRouter = router({
       units: exam.units,
     })) as userAPExam[];
   }),
-  saveAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+  addUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
 
-    const rowToInsert = {
-      userId,
-      examName,
-      score: score ?? null,
-      units,
-    };
-    await db.insert(transferredApExam).values(rowToInsert);
+    await db.insert(transferredApExam).values({ userId, examName, score: score ?? null, units });
   }),
   deleteUserAPExam: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
     const examName = input;
     const userId = ctx.session.userId!;
-    // await db.delete(transferredApExam).where(eq(transferredApExam.userId, userId));
 
     await db
       .delete(transferredApExam)
@@ -71,7 +61,6 @@ const transferCreditsRouter = router({
   updateUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
-    // await db.delete(transferredApExam).where(eq(transferredApExam.userId, userId));
 
     await db
       .update(transferredApExam)
