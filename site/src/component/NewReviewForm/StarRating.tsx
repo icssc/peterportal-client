@@ -28,8 +28,8 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           onKeyDown={(e) => handleKeyDown(e, val)}
           tabIndex={0}
           role="radio"
-          aria-checked={rating === val}
           style={{ cursor: 'pointer' }}
+          aria-checked={rating === val}
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
         >
           {val <= (hovered || rating) ? (

@@ -1,12 +1,6 @@
 @use '../../globals';
 
 .review-form-modal {
-  .editing-notice {
-    margin-top: -16px;
-    font-size: 12px;
-    font-style: italic;
-  }
-
   .modal-dialog {
     width: 346px;
     display: flex;
@@ -15,14 +9,16 @@
     overflow-y: auto;
   }
 
-  .modal-content {
-    display: flex;
-    flex-direction: column;
-  }
-
   .modal-header {
     font-weight: bold;
   }
+
+  .editing-notice {
+    margin-top: -16px;
+    font-size: 12px;
+    font-style: italic;
+  }
+
   .form-check-input {
     border: 1px solid rgba(136, 136, 136, 0.4);
   }
@@ -35,12 +31,9 @@
   .year-quarter-row {
     display: flex;
     gap: 16px;
-    width: 100%;
-    max-width: none;
 
     > .form-group {
       flex: 1;
-      min-width: 0;
     }
   }
 
@@ -60,11 +53,7 @@
   }
 }
 
-.thank-you-modal .modal-content {
-  padding: 3rem;
-}
-
-// fix for recaptcha border bug
+// monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
   height: 76px;

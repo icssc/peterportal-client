@@ -30,7 +30,6 @@ interface ReviewFormProps extends ReviewProps {
   show: boolean;
   editing?: boolean;
   reviewToEdit?: ReviewData;
-  // terms?: string[];
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({
@@ -60,13 +59,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tagsOpen, setTagsOpen] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -129,10 +128,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.preventDefault();
     event.stopPropagation();
 
-    // busy prop
-    // Editing header
-
-    if (!valid) {
+    // prevents bootstrap form checking on valid forms
+    if (!valid) { 
       setValidated(true);
       return;
     }
@@ -142,6 +139,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       spawnToast('Please complete the CAPTCHA', true);
       return;
     }
+
     const review = {
       id: reviewToEdit?.id,
       professorId: professor,
@@ -168,9 +166,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
     return reviews.some(
       (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
     );
-  };
+  }; 
 
-  // select professor if in course context
+  // if in course context, select a professor 
   const professorSelect = courseProp && (
     <Form.Group>
       <Form.Label>Professor</Form.Label>
@@ -182,7 +180,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         required
         onChange={(e) => setProfessor(e.target.value)}
         value={professor}
-        style={{ width: '100%' }}
       >
         <option disabled={true} value="">
           Select one of the following...
@@ -206,7 +203,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Form.Group>
   );
 
-  // select course if in professor context
+  // if in professor context, select a course
   const courseSelect = professorProp && (
     <Form.Group>
       <Form.Label>Course Taken</Form.Label>
@@ -241,11 +238,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback>
     </Form.Group>
   );
-
-  const tagOptions = tags.map((tag) => ({ label: tag, value: tag }));
-  {
-    /* refactor this */
-  }
 
   const name = courseProp ? `${courseProp.department} ${courseProp.courseNumber}` : professorProp?.name;
 
@@ -345,6 +337,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   <option key={difficulty}>{difficulty}</option>
                 ))}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing difficulty</Form.Control.Feedback>
             </Form.Group>
           </div>
 
@@ -382,7 +375,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <Form.Label className="ppc-modal-form-label">Tags</Form.Label>
             <Select
               isMulti
-              options={tagOptions}
+              options={tags.map((tag) => ({ label: tag, value: tag }))}
               onChange={(selected) => {
                 const newTags = selected.map((opt) => opt.value);
                 setSelectedTags(newTags);
