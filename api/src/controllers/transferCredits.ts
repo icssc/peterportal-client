@@ -13,13 +13,9 @@ interface userAPExam {
 }
 
 const zodAPExamSchema = z.object({
-  apExams: z.array(
-    z.object({
-      examName: z.string(),
-      score: z.number(),
-      units: z.number(),
-    }),
-  ),
+  examName: z.string(),
+  score: z.number(),
+  units: z.number(),
 });
 
 /** @todo complete all routes. We will remove comments after all individual PRs are merged to avoid merge conflicts */
@@ -35,7 +31,9 @@ const transferCreditsRouter = router({
       .then((res) => (res.data ? (res.data as APExam[]) : []));
     return response;
   }),
+  // only update one row at a time
   getSavedAPExams: publicProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
+    /** you should return the data as-is, then handle the null case from the frontend within an individual APExamTile */
     const userId = ctx.session.userId;
     if (!userId) return [];
 
@@ -49,18 +47,36 @@ const transferCreditsRouter = router({
       units: exam.units,
     })) as userAPExam[];
   }),
-  saveSelectedAPExams: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
-    const { apExams } = input;
+  saveAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+    const { examName, score, units } = input;
     const userId = ctx.session.userId!;
-    await db.delete(transferredApExam).where(eq(transferredApExam.userId, userId));
 
-    const rowsToInsert = apExams.map((exam) => ({
+    const rowToInsert = {
       userId,
-      examName: exam.examName,
-      score: exam.score,
-      units: exam.units,
-    }));
-    if (rowsToInsert.length) await db.insert(transferredApExam).values(rowsToInsert);
+      examName,
+      score: score ?? null,
+      units,
+    };
+    await db.insert(transferredApExam).values(rowToInsert);
+  }),
+  deleteUserAPExam: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+    const examName = input;
+    const userId = ctx.session.userId!;
+    // await db.delete(transferredApExam).where(eq(transferredApExam.userId, userId));
+
+    await db
+      .delete(transferredApExam)
+      .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
+  }),
+  updateUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+    const { examName, score, units } = input;
+    const userId = ctx.session.userId!;
+    // await db.delete(transferredApExam).where(eq(transferredApExam.userId, userId));
+
+    await db
+      .update(transferredApExam)
+      .set({ score: score, units: units })
+      .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
   /** @todo add user procedure to get transferred GE credits below this comment. */
   /** @todo add user procedure to get transferred untransferred credits below this comment. */

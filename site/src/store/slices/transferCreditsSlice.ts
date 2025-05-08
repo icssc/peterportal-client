@@ -11,7 +11,7 @@ export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
-    APExams: [] as APExam[],
+    apExamInfo: [] as APExam[],
     userAPExams: [] as userAPExam[],
   },
   reducers: {
@@ -19,7 +19,7 @@ export const transferCreditsSlice = createSlice({
       state.showTransfersMenu = action.payload;
     },
     setAPExams: (state, action: PayloadAction<APExam[]>) => {
-      state.APExams = action.payload;
+      state.apExamInfo = action.payload;
     },
     addUserAPExam: (state, action: PayloadAction<userAPExam>) => {
       if (!state.userAPExams.find((exam) => exam.examName === action.payload.examName)) {
@@ -29,9 +29,17 @@ export const transferCreditsSlice = createSlice({
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
     },
+    updateUserExam: (state, action: PayloadAction<userAPExam>) => {
+      const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
+      if (e) {
+        e.score = action.payload.score;
+        e.units = action.payload.units;
+      }
+    },
   },
 });
 
-export const { setShowTransfersMenu, setAPExams, addUserAPExam, removeUserAPExam } = transferCreditsSlice.actions;
+export const { setShowTransfersMenu, setAPExams, addUserAPExam, removeUserAPExam, updateUserExam } =
+  transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;
