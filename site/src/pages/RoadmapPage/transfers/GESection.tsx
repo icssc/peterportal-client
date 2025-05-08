@@ -22,22 +22,20 @@ const GE_TITLE_MAP: Record<GEName, GETitle> = {
 };
 
 interface GEInputProps {
-  defaultValue: number;
-  handleUpdate: (value: number) => void;
-  inputType: 'int' | 'float';
+  value: number;
+  handleUpdate: (newValue: number) => void;
+  valueType: 'numberOfCourses' | 'units';
 }
 
-const GEInput: FC<GEInputProps> = ({ defaultValue, handleUpdate, inputType }) => {
+const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (['e', 'E', '-', '+'].includes(e.key) || (inputType === 'int' && e.key === '.')) {
+    if (['e', 'E', '-', '+'].includes(e.key) || (valueType === 'numberOfCourses' && e.key === '.')) {
       e.preventDefault();
     }
   };
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.value === '') {
-      e.target.value = defaultValue.toString();
-      return;
-    }
+    if (e.target.value === value.toString()) return;
+    if (e.target.value === '') e.target.value = '0';
     handleUpdate(Number(e.target.value));
   };
   return (
@@ -45,9 +43,9 @@ const GEInput: FC<GEInputProps> = ({ defaultValue, handleUpdate, inputType }) =>
       className="ge-input"
       type="number"
       min="0"
-      step={inputType === 'int' ? '1' : 'any'}
-      inputMode={inputType === 'int' ? 'numeric' : 'decimal'}
-      defaultValue={defaultValue}
+      step={valueType === 'numberOfCourses' ? '1' : 'any'}
+      inputMode={valueType === 'numberOfCourses' ? 'numeric' : 'decimal'}
+      defaultValue={value}
       onKeyDown={onKeyDown}
       onBlur={onBlur}
     />
@@ -60,36 +58,27 @@ interface GEMenuTileProps {
 
 const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
   const dispatch = useAppDispatch();
-  const transferredGEs = useAppSelector((state) => state.transferCredits.transferredGEs);
-  const [numberOfCourses, setNumberOfCourses] = useState<number>(0);
-  const [units, setUnits] = useState<number>(0);
 
-  useEffect(() => {
-    const geData = transferredGEs.find((ge) => ge.geName === geName);
-    setNumberOfCourses(geData ? geData.numberOfCourses : 0);
-    setUnits(geData ? geData.units : 0);
-  }, [geName, transferredGEs]);
+  const currentGE = useAppSelector((state) =>
+    state.transferCredits.transferredGEs.find((ge) => ge.geName === geName),
+  ) || { geName, numberOfCourses: 0, units: 0 };
 
-  const updateGE = (newNumberOfCourses: number, newUnits: number) => {
-    const GE: TransferredGE = {
-      geName: geName,
-      numberOfCourses: newNumberOfCourses,
-      units: newUnits,
+  const updateNumberOfCourses = (newValue: number) => {
+    const updatedGE: TransferredGE = {
+      ...currentGE,
+      numberOfCourses: newValue,
     };
-    dispatch(setTransferredGE(GE));
-    trpc.transferCredits.setTransferredGE.mutate({ GE });
+    dispatch(setTransferredGE(updatedGE));
+    trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
   };
 
-  const updateNumberOfCourses = (newNumberOfCourses: number) => {
-    if (newNumberOfCourses === numberOfCourses) return;
-    setNumberOfCourses(newNumberOfCourses);
-    updateGE(newNumberOfCourses, units);
-  };
-
-  const updateUnits = (newUnits: number) => {
-    if (newUnits === units) return;
-    setUnits(newUnits);
-    updateGE(numberOfCourses, newUnits);
+  const updateUnits = (newValue: number) => {
+    const updatedGE: TransferredGE = {
+      ...currentGE,
+      units: newValue,
+    };
+    dispatch(setTransferredGE(updatedGE));
+    trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
   };
 
   return (
@@ -97,11 +86,11 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
       <div className="ge-inputs">
         <div className="ge-input-container">
           <p>Number of Courses:</p>
-          <GEInput defaultValue={numberOfCourses} handleUpdate={updateNumberOfCourses} inputType="int" />
+          <GEInput value={currentGE.numberOfCourses} handleUpdate={updateNumberOfCourses} valueType="numberOfCourses" />
         </div>
         <div className="ge-input-container">
           <p>Units Transferred:</p>
-          <GEInput defaultValue={units} handleUpdate={updateUnits} inputType="float" />
+          <GEInput value={currentGE.units} handleUpdate={updateUnits} valueType="units" />
         </div>
       </div>
     </MenuTile>
@@ -110,19 +99,35 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 
 const GESection: FC = () => {
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    trpc.transferCredits.getTransferredGEs.query().then((transferredGEs) => {
-      dispatch(setAllTransferredGEs(transferredGEs));
-    });
+    const fetchTransferredGEs = async () => {
+      try {
+        const transferredGEs = await trpc.transferCredits.getTransferredGEs.query();
+        dispatch(setAllTransferredGEs(transferredGEs));
+        setIsError(false);
+      } catch (error) {
+        console.error('Failed to fetch GE credits:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTransferredGEs();
   }, [dispatch]);
 
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>GE Section Description</SectionDescription>
-      {ALL_GE_NAMES.map((geName) => (
-        <GEMenuTile key={geName} geName={geName} />
-      ))}
+      {isError ? (
+        <p>Error loading GE credits.</p>
+      ) : isLoading ? (
+        <p>Loading GE credits...</p>
+      ) : (
+        ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />)
+      )}
     </MenuSection>
   );
 };
