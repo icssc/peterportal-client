@@ -65,6 +65,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -100,26 +101,23 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
-    if (editing) {
-      try {
+    setIsSubmitting(true);
+    try {
+      if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
-        resetForm();
-        closeForm();
-        spawnToast('Your review has been edited successfully!');
         dispatch(editReview(review as EditReviewSubmission));
-      } catch (e) {
-        spawnToast((e as Error).message, true);
-      }
-    } else {
-      try {
+        spawnToast('Your review has been edited successfully!');
+      } else {
         const res = await trpc.reviews.add.mutate(review);
-        resetForm();
-        closeForm();
-        spawnToast('Your review has been submitted successfully!');
         dispatch(addReview(res));
-      } catch (e) {
-        spawnToast((e as Error).message, true);
+        spawnToast('Your review has been submitted successfully!');
       }
+      resetForm();
+      closeForm();
+    } catch (e) {
+      spawnToast((e as Error).message, true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -430,8 +428,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <Button type="submit" variant="primary">
-            Submit Review
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Review'}
           </Button>
         </Form>
       </Modal.Body>
