@@ -57,7 +57,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
-  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 0);
+  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
@@ -252,6 +252,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   </option>
                 ))}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
               <Form.Label className="ppc-modal-form-label">Year</Form.Label>
@@ -273,6 +274,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   </option>
                 ))}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
             </Form.Group>
           </div>
 
@@ -298,6 +300,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   <option key={grade}>{grade}</option>
                 ))}
               </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group>
