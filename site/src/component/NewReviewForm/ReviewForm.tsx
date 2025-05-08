@@ -66,6 +66,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -385,7 +386,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
               onChange={(selected) => {
                 const newTags = selected.map((opt) => opt.value);
                 setSelectedTags(newTags);
+                if (newTags.length > 3) {
+                  setTagsOpen(false);
+                }
               }}
+              onMenuOpen={() => setTagsOpen(true)}
+              onMenuClose={() => setTagsOpen(false)}
+              menuIsOpen={selectedTags.length < 3 && tagsOpen}
               isOptionDisabled={() => selectedTags.length >= 3}
               placeholder="Select up to 3 tags"
               closeMenuOnSelect={false}

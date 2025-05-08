@@ -63,3 +63,10 @@
 .thank-you-modal .modal-content {
   padding: 3rem;
 }
+
+// fix for recaptcha border bug
+.g-recaptcha {
+  overflow: hidden;
+  height: 76px;
+  border-radius: 4px;
+}
