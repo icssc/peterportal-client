@@ -5,11 +5,17 @@ export interface TransferredCourse {
   units: number;
 }
 
+interface UncategorizedCourseEntry {
+  name: string | null;
+  units: number | null;
+}
+
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
     transferredCourses: [] as TransferredCourse[],
+    uncategorizedCourses: [] as UncategorizedCourseEntry[],
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
@@ -30,6 +36,14 @@ export const transferCreditsSlice = createSlice({
     setTransferredCourses: (state, action: PayloadAction<TransferredCourse[]>) => {
       state.transferredCourses = action.payload;
     },
+    setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
+      state.uncategorizedCourses = action.payload;
+    },
+    removeUncategorizedCourse: (state, action: PayloadAction<UncategorizedCourseEntry>) => {
+      state.uncategorizedCourses = state.uncategorizedCourses.filter(
+        (course) => course.name !== action.payload.name || course.units !== action.payload.units,
+      );
+    },
   },
 });
 
@@ -39,6 +53,8 @@ export const {
   removeTransferredCourse,
   updateTransferredCourse,
   setTransferredCourses,
+  setUncategorizedCourses,
+  removeUncategorizedCourse,
 } = transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;
