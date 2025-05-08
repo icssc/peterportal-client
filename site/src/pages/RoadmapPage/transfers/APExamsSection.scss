@@ -1,0 +1,22 @@
+.input {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .exam-input {
+    width: 216px;
+  }
+}
+
+.select {
+  display: inline-block;
+
+  .select-box {
+    border: 1px solid var(--blue-primary);
+    background-color: var(--blue-primary);
+    color: white;
+    border-radius: 32px;
+    height: 20px;
+    padding-block: 0;
+  }
+}

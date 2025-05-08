@@ -1,7 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { APExam } from '@peterportal/types';
 
 export interface TransferredCourse {
   courseName: string;
+  units: number;
+}
+
+export interface UserAPExam {
+  examName: string;
+  score: number;
   units: number;
 }
 
@@ -15,6 +22,8 @@ export const transferCreditsSlice = createSlice({
   initialState: {
     showTransfersMenu: false,
     transferredCourses: [] as TransferredCourse[],
+    apExamInfo: [] as APExam[],
+    userAPExams: [] as UserAPExam[],
     uncategorizedCourses: [] as UncategorizedCourseEntry[],
   },
   reducers: {
@@ -36,6 +45,25 @@ export const transferCreditsSlice = createSlice({
     setTransferredCourses: (state, action: PayloadAction<TransferredCourse[]>) => {
       state.transferredCourses = action.payload;
     },
+    setAPExams: (state, action: PayloadAction<APExam[]>) => {
+      state.apExamInfo = action.payload;
+    },
+    setUserAPExams: (state, action: PayloadAction<UserAPExam[]>) => {
+      state.userAPExams = action.payload;
+    },
+    addUserAPExam: (state, action: PayloadAction<UserAPExam>) => {
+      state.userAPExams.push(action.payload);
+    },
+    removeUserAPExam: (state, action: PayloadAction<string>) => {
+      state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
+    },
+    updateUserExam: (state, action: PayloadAction<UserAPExam>) => {
+      const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
+      if (e) {
+        e.score = action.payload.score;
+        e.units = action.payload.units;
+      }
+    },
     setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
       state.uncategorizedCourses = action.payload;
     },
@@ -53,6 +81,11 @@ export const {
   removeTransferredCourse,
   updateTransferredCourse,
   setTransferredCourses,
+  setAPExams,
+  setUserAPExams,
+  addUserAPExam,
+  removeUserAPExam,
+  updateUserExam,
   setUncategorizedCourses,
   removeUncategorizedCourse,
 } = transferCreditsSlice.actions;
