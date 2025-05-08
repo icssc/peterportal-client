@@ -65,7 +65,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
-  // const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (show) {
@@ -77,7 +76,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       }
 
       setValidated(false);
-      // setSubmitted(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -250,12 +248,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
     /* refactor this */
   }
 
+  const name = courseProp ? `${courseProp.department} ${courseProp.courseNumber}` : professorProp?.name;
+
   const reviewForm = (
     <Modal show={show} onHide={closeForm} centered animation={false} className="ppc-modal review-form-modal">
-      <Modal.Header closeButton>
-        Review {courseProp ? courseProp?.department + ' ' + courseProp?.courseNumber : professorProp?.name}
-      </Modal.Header>
+      <Modal.Header closeButton>{editing ? `Edit Review for ${name}` : `Review ${name}`}</Modal.Header>
       <Modal.Body>
+        {editing && <p className="editing-notice">You are editing your review.</p>}
         <Form noValidate validated={validated} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group>

@@ -1,6 +1,12 @@
 @use '../../globals';
 
 .review-form-modal {
+  .editing-notice {
+    margin-top: -16px;
+    font-size: 12px;
+    font-style: italic;
+  }
+
   .modal-dialog {
     width: 346px;
     display: flex;

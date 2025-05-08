@@ -266,7 +266,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           closeForm={closeReviewForm}
           show={showReviewForm}
           editing
-          terms={sortTerms(course!.terms) || sortTerms(getProfessorTerms(professor!))} // how do I note ! here?
+          terms={sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []))}
         />
       </div>
     </div>
