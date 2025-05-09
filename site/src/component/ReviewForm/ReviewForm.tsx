@@ -423,6 +423,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <Select
               isMulti
               options={tags.map((tag) => ({ label: tag, value: tag }))}
+              value={selectedTags.map((tag) => ({ label: tag, value: tag }))}
               onChange={(selected) => {
                 const newTags = selected.map((opt) => opt.value);
                 setSelectedTags(newTags);
