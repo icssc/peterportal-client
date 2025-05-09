@@ -149,13 +149,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
         dispatch(addReview(res));
         spawnToast('Your review has been submitted successfully!');
       }
-      resetForm();
-      closeForm();
     } catch (e) {
       spawnToast((e as Error).message, true);
     } finally {
       setIsSubmitting(false);
     }
+
+    if (!editing) resetForm();
+    closeForm();
   };
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
@@ -187,9 +188,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
       gradeReceived: gradeReceived!,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
-      takeAgain,
-      textbook,
-      attendance,
+      takeAgain: takeAgain,
+      textbook: textbook,
+      attendance: attendance,
       tags: selectedTags,
       updatedAt: editing ? new Date().toISOString() : undefined,
       captchaToken,
