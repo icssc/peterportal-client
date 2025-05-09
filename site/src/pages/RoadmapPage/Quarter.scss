@@ -104,6 +104,16 @@
   }
 }
 
+@media only screen and (max-width: 800px) {
+  .quarter {
+    .quarter-course-list {
+      &:empty::before {
+        content: 'No Courses Yet!';
+      }
+    }
+  }
+}
+
 // Although :has is not super widely supported, this style is not critical to page functionality.
 // It should be fine to make it work for just browsers that do support it.
 body:has(> #profile-popover) {
