@@ -76,6 +76,11 @@
 }
 
 .course-delete-icon {
+  color: var(--blue-primary);
+  transition-duration: 0.2s;
+}
+
+.course-delete-icon:hover {
   color: var(--red-primary);
 }
 
