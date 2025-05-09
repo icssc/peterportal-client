@@ -11,7 +11,7 @@ import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
-import ReviewForm from '../NewReviewForm/ReviewForm';
+import ReviewForm from '../ReviewForm/ReviewForm';
 // import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';

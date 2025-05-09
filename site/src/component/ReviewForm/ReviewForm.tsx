@@ -1,20 +1,12 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Form from 'react-bootstrap/Form';
-import Badge from 'react-bootstrap/Badge';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import RangeSlider from 'react-bootstrap-range-slider';
 import Modal from 'react-bootstrap/Modal';
-import ReCAPTCHA from 'react-google-recaptcha';
+import Button from 'react-bootstrap/Button';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
-import { quarters } from '@peterportal/types';
-import trpc from '../../trpc';
-import ThankYouMessage from '../ThankYouMessage/ThankYouMessage';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -26,8 +18,14 @@ import {
   tags,
 } from '@peterportal/types';
 import spawnToast from '../../helpers/toastify';
+import trpc from '../../trpc';
+import ReCAPTCHA from 'react-google-recaptcha';
+import StarRating from './StarRating';
+import Select from 'react-select';
+import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { ExclamationTriangleFill } from 'react-bootstrap-icons';
+import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
+import { searchAPIResult, sortTerms } from '../../helpers/util';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -43,28 +41,69 @@ const ReviewForm: FC<ReviewFormProps> = ({
   reviewToEdit,
   professor: professorProp,
   course: courseProp,
+  terms: termsProp,
 }) => {
   const dispatch = useAppDispatch();
+  const { darkMode } = useContext(ThemeContext);
+  const reviews = useAppSelector((state) => state.review.reviews);
+  const isLoggedIn = useIsLoggedIn();
+  const [terms, setTerms] = useState<string[]>(termsProp ?? []);
+  const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
+  const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
+  const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
+  const [yearTaken, setYearTaken] = useState(yearTakenDefault);
+  const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
+  const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
-  const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
-  const [content, setContent] = useState(reviewToEdit?.content ?? '');
-  const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
-  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
+  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
+  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const isLoggedIn = useIsLoggedIn();
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
-  const [validated, setValidated] = useState(false);
-  const { darkMode } = useContext(ThemeContext);
-  const reviews = useAppSelector((state) => state.review.reviews);
+  const [showFormErrors, setShowFormErrors] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
+  useEffect(() => {
+    if (!professorProp && reviewToEdit) {
+      searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
+        if (professor) {
+          const profTerms = sortTerms(getProfessorTerms(professor));
+          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+          const newQuarters = [
+            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
+          ];
+
+          setTerms(profTerms);
+          setYears(newYears);
+          setQuarters(newQuarters);
+          setYearTaken(yearTakenDefault);
+          setQuarterTaken(quarterTakenDefault);
+          setProfessorName(professor.name);
+        }
+      });
+    }
+  }, [courseProp, professorProp, reviewToEdit]);
+
+  // when a year or quarter is selected, update the valid quarters accordingly
+  useEffect(() => {
+    if (yearTaken) {
+      const newQuarters = getQuarters(terms, yearTaken);
+      setQuarters(newQuarters);
+
+      if (!newQuarters.includes(quarterTaken)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [yearTaken, terms]);
+
   useEffect(() => {
     if (show) {
       // form opened
@@ -74,30 +113,48 @@ const ReviewForm: FC<ReviewFormProps> = ({
         closeForm();
       }
 
-      setValidated(false);
-      setSubmitted(false);
+      setShowFormErrors(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
+  const resetForm = () => {
+    setYearTaken(yearTakenDefault);
+    setQuarterTaken(quarterTakenDefault);
+    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
+    setGradeReceived(reviewToEdit?.gradeReceived);
+    setDifficulty(reviewToEdit?.difficulty);
+    setRating(reviewToEdit?.rating ?? 3);
+    setTakeAgain(reviewToEdit?.takeAgain ?? false);
+    setTextbook(reviewToEdit?.textbook ?? false);
+    setAttendance(reviewToEdit?.attendance ?? false);
+    setSelectedTags(reviewToEdit?.tags ?? []);
+    setContent(reviewToEdit?.content ?? '');
+    setCaptchaToken('');
+    setAnonymous(reviewToEdit?.userDisplay === anonymousName);
+    setShowFormErrors(false);
+  };
+
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
-    if (editing) {
-      try {
+    setIsSubmitting(true);
+    try {
+      if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
-        setSubmitted(true);
         dispatch(editReview(review as EditReviewSubmission));
-      } catch (e) {
-        spawnToast((e as Error).message, true);
-      }
-    } else {
-      try {
+        spawnToast('Your review has been edited successfully!');
+      } else {
         const res = await trpc.reviews.add.mutate(review);
-        setSubmitted(true);
         dispatch(addReview(res));
-      } catch (e) {
-        spawnToast((e as Error).message, true);
+        spawnToast('Your review has been submitted successfully!');
       }
+      resetForm();
+      closeForm();
+    } catch (e) {
+      spawnToast((e as Error).message, true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -108,26 +165,25 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.preventDefault();
     event.stopPropagation();
 
-    // validated
-    setValidated(true);
-
-    // do not proceed if not valid
     if (!valid) {
+      setShowFormErrors(true);
       return;
     }
-    // check if CAPTCHA is completed for new reviews (captcha omitted for editing)
+
+    // for new reviews: check if CAPTCHA is completed
     if (!editing && !captchaToken) {
       spawnToast('Please complete the CAPTCHA', true);
       return;
     }
+
     const review = {
       id: reviewToEdit?.id,
       professorId: professor,
       courseId: course,
       anonymous: anonymous,
       content: content,
-      rating: quality,
-      difficulty,
+      rating: rating,
+      difficulty: difficulty!,
       gradeReceived: gradeReceived!,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
@@ -142,46 +198,27 @@ const ReviewForm: FC<ReviewFormProps> = ({
     postReview(review);
   };
 
-  const selectTag = (tag: ReviewTags) => {
-    // remove tag
-    if (selectedTags.includes(tag)) {
-      const newSelectedTags = [...selectedTags];
-      newSelectedTags.splice(newSelectedTags.indexOf(tag), 1);
-      setSelectedTags(newSelectedTags);
-    }
-    // add tag if not over limit
-    else {
-      if (selectedTags.length < 3) {
-        const newSelectedTags = [...selectedTags];
-        newSelectedTags.push(tag);
-        setSelectedTags(newSelectedTags);
-      } else {
-        spawnToast('Cannot select more than 3 tags', true);
-      }
-    }
-  };
-
   const alreadyReviewedCourseProf = (courseId: string, professorId: string) => {
     return reviews.some(
       (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
     );
   };
 
-  // select instructor if in course context
-  const instructorSelect = courseProp && (
+  // if in course context, select a professor
+  const professorSelect = courseProp && (
     <Form.Group>
-      <Form.Label>Taken With</Form.Label>
+      <Form.Label>Professor</Form.Label>
       <Form.Control
         as="select"
-        name="instructor"
-        id="instructor"
+        name="professor"
+        id="professor"
         defaultValue=""
         required
         onChange={(e) => setProfessor(e.target.value)}
         value={professor}
       >
         <option disabled={true} value="">
-          Instructor
+          Select one of the following...
         </option>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
@@ -198,12 +235,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Form.Control>
-      <Form.Control.Feedback type="invalid">Missing instructor</Form.Control.Feedback>
+      <Form.Control.Feedback type="invalid">Missing professor</Form.Control.Feedback>
     </Form.Group>
   );
-  // select course if in professor context
+
+  // if in professor context, select a course
   const courseSelect = professorProp && (
-    <Form.Group controlId="course">
+    <Form.Group>
       <Form.Label>Course Taken</Form.Label>
       <Form.Control
         as="select"
@@ -215,7 +253,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         value={course}
       >
         <option disabled={true} value="">
-          Course
+          Select one of the following...
         </option>
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
@@ -237,269 +275,213 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Form.Group>
   );
 
-  function editReviewHeading() {
+  function getReviewHeadingName() {
     if (!courseProp && !professorProp) {
-      return `Edit your review for ${reviewToEdit?.courseId} ${reviewToEdit?.professorId}`;
+      return `${reviewToEdit?.courseId}`;
     } else if (courseProp) {
-      return `Edit your review for ${courseProp?.department} ${courseProp?.courseNumber}`;
+      return `${courseProp?.department} ${courseProp?.courseNumber}`;
     } else {
-      return `Edit your review for ${professorProp?.name}`;
+      return `${professorProp?.name}`;
     }
   }
 
   const reviewForm = (
-    <Form noValidate validated={validated} onSubmit={submitForm}>
-      <Row className="review-form-ratings">
-        <Col>
-          <Row>
-            <Col>
-              {editing ? (
-                <h1>{editReviewHeading()}</h1>
-              ) : (
-                <h1>
-                  It's your turn to review{' '}
-                  {courseProp ? courseProp?.department + ' ' + courseProp?.courseNumber : professorProp?.name}
-                </h1>
-              )}
-            </Col>
-          </Row>
-          <Row className="mt-4" lg={2} md={1}>
-            <Col>
-              <div className="review-form-section review-form-row review-form-taken">
-                {instructorSelect}
-                {courseSelect}
-                <Form.Group>
-                  <Form.Label>Grade</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="grade"
-                    id="grade"
-                    defaultValue=""
-                    required
-                    onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
-                    value={gradeReceived}
-                  >
-                    <option disabled={true} value="">
-                      Grade
-                    </option>
-                    {grades.map((grade) => (
-                      <option key={grade}>{grade}</option>
-                    ))}
-                  </Form.Control>
-                  <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback>
-                </Form.Group>
-              </div>
-            </Col>
-            <Col>
-              <Form.Group className="review-form-section">
-                <Form.Label>Taken During</Form.Label>
-                <div className="review-form-row">
-                  <Form.Group className="mr-3">
-                    <Form.Control
-                      as="select"
-                      name="quarter"
-                      id="quarter"
-                      defaultValue=""
-                      required
-                      onChange={(e) => setQuarterTaken(e.target.value)}
-                      value={quarterTaken}
-                    >
-                      <option disabled={true} value="">
-                        Quarter
-                      </option>
-                      {quarters.map((quarter) => (
-                        <option key={quarter}>{quarter}</option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group>
-                    <Form.Control
-                      as="select"
-                      name="year"
-                      id="year"
-                      defaultValue=""
-                      required
-                      onChange={(e) => setYearTaken(e.target.value)}
-                      value={yearTaken}
-                    >
-                      <option disabled={true} value="">
-                        Year
-                      </option>
-                      {Array.from(new Array(10), (_, i) => new Date().getFullYear() - i).map((year) => (
-                        <option key={year}>{year}</option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
-                  </Form.Group>
-                </div>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="mt-4">
-            <Col>
-              <Form.Group className="review-form-section">
-                <Form.Label>Rate the {courseProp ? 'Course' : 'Professor'}</Form.Label>
-                <RangeSlider
-                  min={1}
-                  max={5}
-                  tooltip="on"
-                  value={quality}
-                  onChange={(e: React.FormEvent<HTMLInputElement>) => setQuality(parseInt(e.currentTarget.value))}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="mt-4">
-            <Col>
-              <Form.Group className="review-form-section">
-                <Form.Label>Level of Difficulty</Form.Label>
-                <RangeSlider
-                  min={1}
-                  max={5}
-                  tooltip="on"
-                  value={difficulty}
-                  onChange={(e: React.FormEvent<HTMLInputElement>) => setDifficulty(parseInt(e.currentTarget.value))}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="mt-4">
-            <Col>
-              <Form.Group className="review-form-section review-form-switches">
-                <Row>
-                  <Col>
-                    <Form.Check
-                      inline
-                      type="switch"
-                      id="takeAgain"
-                      label="Would Take Again"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
-                      checked={takeAgain}
-                    />
-                    <Form.Check
-                      inline
-                      type="switch"
-                      id="textbook"
-                      label="Use Textbook"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
-                      checked={textbook}
-                    />
-                    <Form.Check
-                      inline
-                      type="switch"
-                      id="attendance"
-                      label="Mandatory Attendance"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
-                      checked={attendance}
-                    />
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Col>
-          </Row>
-        </Col>
-        <Col>
-          <Row>
-            <Col>
-              <Form.Group className="review-form-section">
-                <Form.Label>Select up to 3 tags</Form.Label>
-                <div>
-                  {tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      pill
-                      variant={selectedTags.includes(tag) ? 'success' : 'info'}
-                      onClick={() => {
-                        selectTag(tag);
-                      }}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Form.Group className="review-form-section">
-                <Form.Label>Tell us more about this {courseProp ? 'course' : 'professor'}</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  placeholder="Here's your chance to be more specific..."
-                  style={{ height: '15vh', width: '100%' }}
-                  onChange={(e) => setContent(e.target.value)}
-                  value={content}
-                  maxLength={500}
-                />
-                <div className="char-limit">
-                  <p className="chars">{content.length}/500</p>
-                </div>
-                <Form.Text>
-                  <ExclamationTriangleFill />
-                  <span className="profanity-warning">
-                    {' '}
-                    Refrain from using profanity, name-calling, or derogatory terms. Thank you for your contribution!
-                  </span>
-                </Form.Text>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Form.Group className="review-form-section">
-                <Row>
-                  <Col>
-                    <Form.Check
-                      inline
-                      type="switch"
-                      id="anonymous"
-                      label="Post as Anonymous"
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setAnonymous(e.target.checked);
-                      }}
-                      checked={anonymous}
-                    />
-                  </Col>
-                </Row>
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col className={editing ? 'mb-3' : 'mb-3 review-form-captcha-submit'}>
-              {!editing && (
-                <div className="g-recaptcha">
-                  <ReCAPTCHA
-                    className="d-inline"
-                    sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4"
-                    theme={darkMode ? 'dark' : 'light'}
-                    onChange={(token) => setCaptchaToken(token ?? '')}
-                  />
-                </div>
-              )}
-              <div className="review-form-submit-cancel-buttons">
-                <Button className="py-2 px-4" variant="outline-secondary" onClick={closeForm}>
-                  Cancel
-                </Button>
-                <Button className="py-2 px-4" type="submit" variant="secondary">
-                  Submit
-                </Button>
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Form>
-  );
+    <Modal show={show} onHide={closeForm} centered animation={false} className="ppc-modal review-form-modal">
+      <Modal.Header closeButton>
+        {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
+      </Modal.Header>
+      <Modal.Body>
+        {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
+        <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
+          <div className="year-quarter-row">
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Year</Form.Label>
+              <Form.Control
+                as="select"
+                name="year"
+                id="year"
+                defaultValue=""
+                required
+                onChange={(e) => setYearTaken(e.target.value)}
+                value={yearTaken}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {years?.map((term) => (
+                  <option key={term} value={term}>
+                    {term}
+                  </option>
+                ))}
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
+              <Form.Control
+                as="select"
+                name="quarter"
+                id="quarter"
+                defaultValue=""
+                required
+                onChange={(e) => setQuarterTaken(e.target.value)}
+                value={quarterTaken}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {quarters?.map((term) => (
+                  <option key={term} value={term}>
+                    {term}
+                  </option>
+                ))}
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback>
+            </Form.Group>
+          </div>
 
-  return (
-    <Modal show={show} onHide={closeForm} centered animation={false}>
-      <div className="review-form">
-        {submitted ? <ThankYouMessage message="Your form has been submitted successfully." /> : reviewForm}
-      </div>
+          {professorSelect}
+          {courseSelect}
+
+          <div className="grade-difficulty-row">
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
+              <Form.Control
+                as="select"
+                name="grade"
+                id="grade"
+                defaultValue=""
+                required
+                onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
+                value={gradeReceived}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {grades.map((grade) => (
+                  <option key={grade}>{grade}</option>
+                ))}
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
+              <Form.Control
+                as="select"
+                name="difficulty"
+                id="difficulty"
+                defaultValue=""
+                required
+                onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))} // check this
+                value={difficulty}
+              >
+                <option disabled={true} value="">
+                  Select
+                </option>
+                {[1, 2, 3, 4, 5].map((difficulty) => (
+                  <option key={difficulty}>{difficulty}</option>
+                ))}
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">Missing difficulty</Form.Control.Feedback>
+            </Form.Group>
+          </div>
+
+          <Form.Group>
+            <Form.Label className="ppc-modal-form-label">Rating</Form.Label>
+            <StarRating rating={rating} setRating={setRating} />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label className="ppc-modal-form-label">Course Details</Form.Label>
+            <Form.Check
+              type="checkbox"
+              id="takeAgain"
+              label="Would Take Again"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTakeAgain(e.target.checked)}
+              checked={takeAgain}
+            />
+            <Form.Check
+              type="checkbox"
+              id="textbook"
+              label="Requires Textbook"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextbook(e.target.checked)}
+              checked={textbook}
+            />
+            <Form.Check
+              type="checkbox"
+              id="attendance"
+              label="Mandatory Attendance"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAttendance(e.target.checked)}
+              checked={attendance}
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label className="ppc-modal-form-label">Tags</Form.Label>
+            <Select
+              isMulti
+              options={tags.map((tag) => ({ label: tag, value: tag }))}
+              onChange={(selected) => {
+                const newTags = selected.map((opt) => opt.value);
+                setSelectedTags(newTags);
+                if (newTags.length > 3) {
+                  setTagsOpen(false);
+                }
+              }}
+              onMenuOpen={() => setTagsOpen(true)}
+              onMenuClose={() => setTagsOpen(false)}
+              menuIsOpen={selectedTags.length < 3 && tagsOpen}
+              isOptionDisabled={() => selectedTags.length >= 3}
+              placeholder="Select up to 3 tags"
+              closeMenuOnSelect={false}
+              theme={(t) => comboboxTheme(t, darkMode)}
+              className="ppc-combobox"
+              classNamePrefix="ppc-combobox"
+            />
+          </Form.Group>
+
+          <Form.Group className="additional-details">
+            <Form.Label className="ppc-modal-form-label">Additional Details (optional)</Form.Label>
+            <Form.Control
+              as="textarea"
+              placeholder="The course was pretty good."
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+              maxLength={500}
+            />
+          </Form.Group>
+
+          <div className="g-recaptcha">
+            <ReCAPTCHA
+              sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4" //
+              theme={darkMode ? 'dark' : 'light'}
+              onChange={(token) => setCaptchaToken(token ?? '')}
+            />
+          </div>
+
+          <Form.Group>
+            <Form.Check
+              type="checkbox"
+              id="anonymous"
+              label="Post as Anonymous"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setAnonymous(e.target.checked);
+              }}
+              checked={anonymous}
+              className="anonymous-checkbox"
+            />
+          </Form.Group>
+
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+          </Button>
+        </Form>
+      </Modal.Body>
     </Modal>
   );
+
+  return reviewForm;
 };
 
 export default ReviewForm;
