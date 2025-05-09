@@ -24,7 +24,7 @@ import StarRating from './StarRating';
 import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { getProfessorTerms } from '../../helpers/reviews';
+import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 
 interface ReviewFormProps extends ReviewProps {
@@ -50,11 +50,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
   const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [years, setYears] = useState<string[]>(termsProp ? [...new Set(termsProp.map((t) => t.split(' ')[0]))] : []);
+  const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarters, setQuarters] = useState<string[]>(
-    termsProp ? [...new Set(termsProp.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))] : [],
-  );
+  const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -97,14 +95,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // when a year or quarter is selected, update the valid quarters accordingly
   useEffect(() => {
     if (yearTaken) {
-      const newQuarters = [...new Set(terms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+      const newQuarters = getQuarters(terms, yearTaken);
       setQuarters(newQuarters);
 
       if (!newQuarters.includes(quarterTaken)) {
         setQuarterTaken('');
       }
     }
-  }, [quarterTaken, terms]);
+  }, [yearTaken, terms]);
 
   useEffect(() => {
     if (show) {
