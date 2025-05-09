@@ -1,5 +1,5 @@
 import { db } from '.././src/db';
-import { transferredMisc } from '.././src/db/schema';
+import { transferredMisc, transferredApExam, transferredCourse } from '.././src/db/schema';
 import { ANTEATER_API_REQUEST_HEADERS } from '.././src/helpers/headers';
 import dotenv from 'dotenv-flow';
 import { count, and, eq, or, SQL, sql } from 'drizzle-orm';
@@ -430,6 +430,10 @@ const organize = async () => {
 
   // Finally, execute the actual queries (uncomment when ready to perform the changes)
   // ORDER MATTERS for transferredMisc
+
+  console.log(transferredCourse);
+  console.log(transferredApExam);
+  console.log(transferredMisc);
 
   /*
   console.log('Starting transaction...');
