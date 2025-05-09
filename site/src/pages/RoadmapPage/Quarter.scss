@@ -108,7 +108,7 @@
   .quarter {
     .quarter-course-list {
       &:empty::before {
-        content: 'No Courses Yet!';
+        content: '';
       }
     }
   }
