@@ -2,7 +2,7 @@
 
 ## About
 
-PeterPortal is a web application aimed at aiding UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources in the application to improve the user experience when planning course schedules.
+PeterPortal is a web application designed to aid UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources in the application to improve the user experience when planning course schedules.
 
 Features include:
 
@@ -119,7 +119,7 @@ We consolidate our data directly from official UCI sources such as: UCI Catalogu
 
 ## Other Disclaimer
 
-✅ Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we recieve from UCI. Please take this into consideration while using the Website.
+✅ Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we receive from UCI. Please take this into consideration while using the Website.
 
 ## Terms & Conditions
 
