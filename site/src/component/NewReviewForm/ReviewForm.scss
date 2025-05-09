@@ -48,9 +48,19 @@
     }
   }
 
+  .additional-details {
+    height: 90px;
+  }
+
   .anonymous-checkbox {
     margin-top: 16px;
   }
+}
+
+.review-star-rating {
+  display: flex;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
 // monkey patch for recaptcha border bug

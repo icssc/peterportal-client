@@ -14,7 +14,6 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
   return (
     <div
       className="review-star-rating"
-      style={{ display: 'flex', gap: '0.5rem' }}
       onMouseLeave={() => setHovered(0)}
       role="radiogroup"
       aria-label="Star rating"
@@ -28,7 +27,6 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           onKeyDown={(e) => handleKeyDown(e, val)}
           tabIndex={0}
           role="radio"
-          style={{ cursor: 'pointer' }}
           aria-checked={rating === val}
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
         >

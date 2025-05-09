@@ -24,6 +24,8 @@ import StarRating from './StarRating';
 import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { getProfessorTerms } from '../../helpers/reviews';
+import { searchAPIResult, sortTerms } from '../../helpers/util';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -46,10 +48,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const reviews = useAppSelector((state) => state.review.reviews);
   const isLoggedIn = useIsLoggedIn();
 
+  const [terms, setTerms] = useState<string[]>(termsProp ?? []);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const years = [...new Set(termsProp?.map((t) => t.split(' ')[0]))];
+
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const quarters = [...new Set(termsProp?.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -66,6 +69,31 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [validated, setValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [years, setYears] = useState<string[]>(termsProp ? [...new Set(terms.map((t) => t.split(' ')[0]))] : []);
+  const [quarters, setQuarters] = useState<string[]>(
+    termsProp ? [...new Set(terms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))] : [],
+  );
+
+  useEffect(() => {
+    if (!courseProp && !professorProp && reviewToEdit) {
+      searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
+        if (professor) {
+          const profTerms = sortTerms(getProfessorTerms(professor));
+          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+          const newQuarters = [
+            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
+          ];
+
+          setTerms(profTerms);
+          setYears(newYears);
+          setQuarters(newQuarters);
+          setYearTaken(yearTakenDefault);
+          setQuarterTaken(quarterTakenDefault);
+        }
+      });
+    }
+  }, [courseProp, professorProp, reviewToEdit]);
 
   useEffect(() => {
     if (show) {
@@ -129,7 +157,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.stopPropagation();
 
     // prevents bootstrap form checking on valid forms
-    if (!valid) { 
+    if (!valid) {
       setValidated(true);
       return;
     }
@@ -166,9 +194,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
     return reviews.some(
       (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
     );
-  }; 
+  };
 
-  // if in course context, select a professor 
+  // if in course context, select a professor
   const professorSelect = courseProp && (
     <Form.Group>
       <Form.Label>Professor</Form.Label>
@@ -239,13 +267,25 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Form.Group>
   );
 
-  const name = courseProp ? `${courseProp.department} ${courseProp.courseNumber}` : professorProp?.name;
+  function getReviewHeading() {
+    if (!courseProp && !professorProp) {
+      return `${reviewToEdit?.courseId}`;
+    } else if (courseProp) {
+      return `${courseProp?.department} ${courseProp?.courseNumber}`;
+    } else {
+      return `${professorProp?.name}`;
+    }
+  }
 
   const reviewForm = (
     <Modal show={show} onHide={closeForm} centered animation={false} className="ppc-modal review-form-modal">
-      <Modal.Header closeButton>{editing ? `Edit Review for ${name}` : `Review ${name}`}</Modal.Header>
+      <Modal.Header closeButton>
+        {editing ? `Edit Review for ${getReviewHeading()}` : `Review ${getReviewHeading()}`}
+      </Modal.Header>
       <Modal.Body>
-        {editing && <p className="editing-notice">You are editing your review.</p>}
+        {editing && (
+          <p className="editing-notice">{`You are editing your review for ${reviewToEdit?.courseId} ${reviewToEdit?.professorId}.`}</p>
+        )}
         <Form noValidate validated={validated} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group>
@@ -395,7 +435,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <Form.Group>
+          <Form.Group className="additional-details">
             <Form.Label className="ppc-modal-form-label">Additional Details (optional)</Form.Label>
             <Form.Control
               as="textarea"
@@ -403,7 +443,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
               onChange={(e) => setContent(e.target.value)}
               value={content}
               maxLength={500}
-              style={{ height: '90px' }}
             />
           </Form.Group>
 
