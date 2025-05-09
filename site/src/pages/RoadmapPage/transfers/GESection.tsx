@@ -29,7 +29,24 @@ interface GEInputProps {
 
 const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (['e', 'E', '-', '+'].includes(e.key) || (valueType === 'numberOfCourses' && e.key === '.')) {
+    const allowedKeys = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      valueType === 'units' ? '.' : '',
+      'Backspace',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+    ];
+    if (!allowedKeys.includes(e.key)) {
       e.preventDefault();
     }
   };
@@ -120,7 +137,9 @@ const GESection: FC = () => {
 
   return (
     <MenuSection title="General Education Credits">
-      <SectionDescription>GE Section Description</SectionDescription>
+      <SectionDescription>
+        Enter the GE credits that you've received in each category from other colleges/universities.
+      </SectionDescription>
       {isError ? (
         <p>Error loading GE credits.</p>
       ) : isLoading ? (
