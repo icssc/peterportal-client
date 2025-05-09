@@ -5,7 +5,8 @@ export type RequirementsTabName = 'Major' | 'Minor' | 'GE' | 'Search';
 
 export interface MajorWithSpecialization {
   major: MajorProgram;
-  specialization: MajorSpecialization | null;
+  selectedSpec: MajorSpecialization | null;
+  specializations: MajorSpecialization[];
   requirements: ProgramRequirement[];
 }
 
@@ -40,7 +41,8 @@ const courseRequirementsSlice = createSlice({
       if (!state.selectedMajors.find((m) => m.major.id === action.payload.id)) {
         state.selectedMajors.push({
           major: action.payload,
-          specialization: null,
+          selectedSpec: null,
+          specializations: [],
           requirements: [],
         });
       }
@@ -54,7 +56,13 @@ const courseRequirementsSlice = createSlice({
     ) => {
       const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
       if (major) {
-        major.specialization = action.payload.specialization;
+        major.selectedSpec = action.payload.specialization;
+      }
+    },
+    setMajorSpecs: (state, action: PayloadAction<{ majorId: string; specializations: MajorSpecialization[] }>) => {
+      const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
+      if (major) {
+        major.specializations = action.payload.specializations;
       }
     },
     setRequirements: (state, action: PayloadAction<{ majorId: string; requirements: ProgramRequirement[] }>) => {
@@ -102,6 +110,7 @@ export const {
   addMajor,
   removeMajor,
   setSpecialization,
+  setMajorSpecs,
   setRequirements,
   setMinorList,
   addMinor,
