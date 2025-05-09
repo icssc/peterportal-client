@@ -47,12 +47,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const { darkMode } = useContext(ThemeContext);
   const reviews = useAppSelector((state) => state.review.reviews);
   const isLoggedIn = useIsLoggedIn();
-
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
+  const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-
+  const [years, setYears] = useState<string[]>(termsProp ? [...new Set(termsProp.map((t) => t.split(' ')[0]))] : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-
+  const [quarters, setQuarters] = useState<string[]>(
+    termsProp ? [...new Set(termsProp.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))] : [],
+  );
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -67,16 +69,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
-  const [validated, setValidated] = useState(false);
+  const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [years, setYears] = useState<string[]>(termsProp ? [...new Set(terms.map((t) => t.split(' ')[0]))] : []);
-  const [quarters, setQuarters] = useState<string[]>(
-    termsProp ? [...new Set(terms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))] : [],
-  );
-
+  // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
-    if (!courseProp && !professorProp && reviewToEdit) {
+    if (!professorProp && reviewToEdit) {
       searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
         if (professor) {
           const profTerms = sortTerms(getProfessorTerms(professor));
@@ -90,10 +88,23 @@ const ReviewForm: FC<ReviewFormProps> = ({
           setQuarters(newQuarters);
           setYearTaken(yearTakenDefault);
           setQuarterTaken(quarterTakenDefault);
+          setProfessorName(professor.name);
         }
       });
     }
   }, [courseProp, professorProp, reviewToEdit]);
+
+  // when a year or quarter is selected, update the valid quarters accordingly
+  useEffect(() => {
+    if (yearTaken) {
+      const newQuarters = [...new Set(terms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+      setQuarters(newQuarters);
+
+      if (!newQuarters.includes(quarterTaken)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [quarterTaken, terms]);
 
   useEffect(() => {
     if (show) {
@@ -104,7 +115,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         closeForm();
       }
 
-      setValidated(false);
+      setShowFormErrors(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +136,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setContent(reviewToEdit?.content ?? '');
     setCaptchaToken('');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
-    setValidated(false);
+    setShowFormErrors(false);
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
@@ -156,9 +167,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.preventDefault();
     event.stopPropagation();
 
-    // prevents bootstrap form checking on valid forms
     if (!valid) {
-      setValidated(true);
+      setShowFormErrors(true);
       return;
     }
 
@@ -267,7 +277,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </Form.Group>
   );
 
-  function getReviewHeading() {
+  function getReviewHeadingName() {
     if (!courseProp && !professorProp) {
       return `${reviewToEdit?.courseId}`;
     } else if (courseProp) {
@@ -280,13 +290,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const reviewForm = (
     <Modal show={show} onHide={closeForm} centered animation={false} className="ppc-modal review-form-modal">
       <Modal.Header closeButton>
-        {editing ? `Edit Review for ${getReviewHeading()}` : `Review ${getReviewHeading()}`}
+        {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
       </Modal.Header>
       <Modal.Body>
-        {editing && (
-          <p className="editing-notice">{`You are editing your review for ${reviewToEdit?.courseId} ${reviewToEdit?.professorId}.`}</p>
-        )}
-        <Form noValidate validated={validated} onSubmit={submitForm} className="ppc-modal-form">
+        {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
+        <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group>
               <Form.Label className="ppc-modal-form-label">Year</Form.Label>
