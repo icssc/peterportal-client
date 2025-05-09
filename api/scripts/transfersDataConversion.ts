@@ -431,9 +431,9 @@ const organize = async () => {
   // Finally, execute the actual queries (uncomment when ready to perform the changes)
   // ORDER MATTERS for transferredMisc
 
-  console.log(transferredCourse);
-  console.log(transferredApExam);
-  console.log(transferredMisc);
+  console.log(transferredCourse && 'loaded');
+  console.log(transferredApExam && 'loaded');
+  console.log(transferredMisc && 'loaded');
 
   /*
   console.log('Starting transaction...');
