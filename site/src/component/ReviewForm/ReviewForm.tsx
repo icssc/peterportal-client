@@ -442,7 +442,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </Form.Group>
 
           <Form.Group className="additional-details">
-            <Form.Label className="ppc-modal-form-label">Additional Details (optional)</Form.Label>
+            <Form.Label className="ppc-modal-form-label">Additional Details</Form.Label>
             <Form.Control
               as="textarea"
               placeholder="The course was pretty good."

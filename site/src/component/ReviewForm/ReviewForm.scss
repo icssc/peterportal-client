@@ -2,7 +2,7 @@
 
 .review-form-modal {
   .modal-dialog {
-    width: 346px;
+    width: 350px;
     display: flex;
     flex-direction: column;
     margin: auto;
@@ -23,12 +23,8 @@
     border: 1px solid rgba(136, 136, 136, 0.4);
   }
 
+  .year-quarter-row,
   .grade-difficulty-row {
-    display: flex;
-    gap: 16px;
-  }
-
-  .year-quarter-row {
     display: flex;
     gap: 16px;
 
@@ -57,15 +53,10 @@
   }
 }
 
-.review-star-rating {
-  display: flex;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
   height: 76px;
   border-radius: 4px;
+  width: 302px;
 }
