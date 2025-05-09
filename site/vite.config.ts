@@ -21,7 +21,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           nivo: ['@nivo/core', '@nivo/bar', '@nivo/pie'],
-          miscComponentLibraries: ['semantic-ui-react', 'react-bootstrap', 'react-bootstrap-icons'],
+          miscComponentLibraries: ['react-bootstrap', 'react-bootstrap-icons'],
         },
       },
     },

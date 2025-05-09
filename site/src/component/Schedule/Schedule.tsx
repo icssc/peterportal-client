@@ -1,13 +1,12 @@
-import { FC, useState, useEffect, useCallback } from 'react';
-import './Schedule.css';
-import Table from 'react-bootstrap/Table';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import './Schedule.scss';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import Button from 'react-bootstrap/Button';
 
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import trpc from '../../trpc';
-import { Dropdown } from 'semantic-ui-react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface ScheduleProps {
   courseID?: string;
@@ -23,11 +22,24 @@ const mergeWebsocAPIResponses = (responses: WebsocAPIResponse[]) => ({
   schools: responses.flatMap((response) => response.schools),
 });
 
+function getMeetingsString(section: Section) {
+  const meetingStrings = section.meetings.map((meeting) => {
+    if (meeting.timeIsTBA) return 'TBA';
+    const { days, startTime, endTime } = meeting;
+    const start = hourMinuteTo12HourString(startTime!);
+    const end = hourMinuteTo12HourString(endTime!);
+    return `${days} \n${start}-\n${end}`;
+  });
+  if (meetingStrings.length === 1) return meetingStrings[0];
+  return meetingStrings.map((str) => str.replace(/\n/g, '')).join('\n');
+}
+
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const [currentQuarter, setCurrentQuarter] = useState<string>('');
   const [selectedQuarter, setSelectedQuarter] = useState<string>('');
+  const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get the current quarter used in websoc
@@ -77,57 +89,11 @@ const Schedule: FC<ScheduleProps> = (props) => {
     }
   }, [selectedQuarter, fetchScheduleDataFromAPI]);
 
-  const renderButton = (section: Section) => {
-    //Renders the button which displays the status of the course. e.g: 'OPEN', 'FULL', 'WAITLISTED'
-    if (section.status == 'OPEN') {
-      return (
-        <Button variant="light" size="lg" className="btn-status-button-open btn-status" disabled={true}>
-          {' '}
-          OPEN{' '}
-        </Button>
-      );
-    } else if (section.status == 'Waitl') {
-      return (
-        <Button variant="light" size="lg" className="btn-status-button-waitl btn-status" disabled={true}>
-          {' '}
-          WAITLIST{' '}
-        </Button>
-      );
-    } else {
-      return (
-        <Button variant="light" size="lg" className="btn-status-button-full btn-status" disabled={true}>
-          {' '}
-          FULL{' '}
-        </Button>
-      );
-    }
-  };
-
-  const renderProgressBar = (section: Section) => {
-    //This function returns the progress Bar for the enrollment into the class.
-    const percentage = (Number(section.numCurrentlyEnrolled.totalEnrolled) * 100) / Number(section.maxCapacity);
-    if (section.status == 'OPEN') {
-      return (
-        <div className="progress-bar">
-          <ProgressBar variant="success" now={percentage} />
-        </div>
-      );
-    } else if (section.status == 'Waitl') {
-      return (
-        <div className="progress-bar">
-          <ProgressBar variant="warning" now={percentage} />
-        </div>
-      );
-    } else {
-      return (
-        <div className="progress-bar">
-          <ProgressBar variant="danger" now={percentage} />
-        </div>
-      );
-    }
-  };
-
   const renderData = (courseID: string, section: Section, index: number) => {
+    if (!section.status) section.status = 'FULL';
+    const currentlyEnrolled = parseInt(section.numCurrentlyEnrolled.totalEnrolled);
+    const enrollmentPercent = (currentlyEnrolled * 100) / parseInt(section.maxCapacity);
+
     //This function returns the data for a dynamic table after accessing the API
     return (
       <tr key={index}>
@@ -138,35 +104,30 @@ const Schedule: FC<ScheduleProps> = (props) => {
         </td>
         <td className="data-col">{section.units}</td>
         <td className="data-col">{section.instructors.join('\n')}</td>
-        <td className="data-col">
-          {section.meetings
-            .map((meeting) =>
-              meeting.timeIsTBA
-                ? 'TBA'
-                : `${meeting.days} ${hourMinuteTo12HourString(meeting.startTime!)} - ${hourMinuteTo12HourString(
-                    meeting.endTime!,
-                  )}`,
-            )
-            .join('\n')}
-        </td>
+        <td className="data-col">{getMeetingsString(section)}</td>
         <td className="data-col">
           {section.meetings.map((meeting) => (meeting.timeIsTBA ? ['TBA'] : meeting.bldg)).join('\n')}
         </td>
 
         <td className="enrollment-col">
-          <span className="enrollment-info-text">
-            {Number(section.numCurrentlyEnrolled.totalEnrolled)} / {Number(section.maxCapacity)}
-          </span>
-          <span className="enrollment-percentage">
-            {((Number(section.numCurrentlyEnrolled.totalEnrolled) * 100) / Number(section.maxCapacity)) >> 0}%
-          </span>
-
-          {renderProgressBar(section)}
+          <div className="capacity-text">
+            <span className="enrollment-info-text">
+              {currentlyEnrolled}/{section.maxCapacity}
+            </span>
+            <span className="enrollment-percentage">{Math.round(enrollmentPercent)}%</span>
+          </div>
+          <div className="progress-bar">
+            <ProgressBar now={enrollmentPercent} data-status={section.status} />
+          </div>
         </td>
 
         <td className="data-col">{section.numOnWaitlist}</td>
         <td className="data-col">{section.restrictions}</td>
-        <td className="data-col">{renderButton(section)}</td>
+        <td className="data-col">
+          <div className="status-badge" data-status={section.status}>
+            {section.status}
+          </div>
+        </td>
       </tr>
     );
   };
@@ -181,45 +142,49 @@ const Schedule: FC<ScheduleProps> = (props) => {
       });
     });
 
+    const termOptions =
+      props.termsOffered?.map((term) => {
+        return { text: term, value: term };
+      }) ?? [];
+
     return (
       <div>
         {props.termsOffered ? (
-          <Dropdown
-            placeholder={currentQuarter}
-            scrolling
-            selection
-            options={[
-              ...props.termsOffered.map((term) => {
-                return {
-                  text: term,
-                  value: term,
-                };
-              }),
-            ]}
-            value={selectedQuarter}
-            onChange={(_, s) => setSelectedQuarter(s.value as string)}
-          />
+          <DropdownButton
+            className="ppc-dropdown-btn"
+            title={selectedQuarter ?? currentQuarter}
+            variant={darkMode ? 'dark' : 'light'}
+            onSelect={(value) => setSelectedQuarter(value!)}
+          >
+            {termOptions.map((opt) => (
+              <Dropdown.Item key={opt.value} eventKey={opt.value}>
+                {opt.text}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
-        <Table responsive borderless className="schedule-table">
-          <thead>
-            <tr>
-              {props.professorIDs?.length && <th> Course </th>}
-              <th> Code </th>
-              <th> Section </th>
-              <th> Units </th>
-              <th> Instructor </th>
-              <th> Time </th>
-              <th> Place </th>
-              <th className="enrollment-col"> Enrollment </th>
-              <th> WL </th>
-              <th> Rstr </th>
-              <th> Status </th>
-            </tr>
-          </thead>
-          <tbody>{sectionElements}</tbody>
-        </Table>
+        <div className="table-wrapper">
+          <table className="ppc-table schedule-table">
+            <thead>
+              <tr>
+                {props.professorIDs?.length && <th>Course</th>}
+                <th>Code</th>
+                <th>Section</th>
+                <th>Units</th>
+                <th>Instructor</th>
+                <th>Time</th>
+                <th>Place</th>
+                <th className="enrollment-col">Enrollment</th>
+                <th>WL</th>
+                <th>Rstr</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>{sectionElements}</tbody>
+          </table>
+        </div>
       </div>
     );
   }

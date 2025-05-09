@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icon } from 'semantic-ui-react';
 import './ThankYouMessage.scss';
+import { CheckCircleFill } from 'react-bootstrap-icons';
 
 interface ThankYouMessageProps {
   message: string;
@@ -9,7 +9,7 @@ interface ThankYouMessageProps {
 const ThankYouMessage: React.FC<ThankYouMessageProps> = ({ message }) => {
   return (
     <div className="thank-you-message">
-      <Icon name="check circle" size="huge" />
+      <CheckCircleFill width={64} height={64} />
       <h1>Thank You</h1>
       <p>{message}</p>
     </div>
