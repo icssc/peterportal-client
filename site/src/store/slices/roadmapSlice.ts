@@ -286,7 +286,7 @@ export const roadmapSlice = createSlice({
       // edit name
       state.plans[state.currentPlanIndex].content.yearPlans[yearIndex].name = newName;
     },
-    setActiveCourse: (state, action: PayloadAction<CourseGQLData>) => {
+    setActiveCourse: (state, action: PayloadAction<CourseGQLData | undefined>) => {
       state.activeCourse = action.payload;
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {

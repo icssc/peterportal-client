@@ -104,6 +104,26 @@
   }
 }
 
+@media only screen and (max-width: 800px) {
+  .quarter {
+    .quarter-course-list {
+      &:empty {
+        padding: 16px;
+        border: none;
+        margin-block: -16px;
+        pointer-events: none;
+        &::before {
+          content: '';
+        }
+        &.can-drop {
+          border: 1px dashed var(--blue-primary); //checking to see if it works. Will delete later
+          pointer-events: auto;
+        }
+      }
+    }
+  }
+}
+
 // Although :has is not super widely supported, this style is not critical to page functionality.
 // It should be fine to make it work for just browsers that do support it.
 body:has(> #profile-popover) {
