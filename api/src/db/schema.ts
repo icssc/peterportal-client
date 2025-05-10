@@ -210,3 +210,14 @@ export const transferredCourse = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.courseName] })],
 );
+
+export const completedMarkerRequirement = pgTable(
+  'completed_marker_requirement',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+    markerName: text('marker_name').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
+);

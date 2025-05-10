@@ -28,6 +28,7 @@ const courseRequirementsSlice = createSlice({
     selectedMinors: [] as MinorRequirements[],
     MinorRequirements: [] as ProgramRequirement[],
     geRequirements: [] as ProgramRequirement[],
+    completedMarkers: {} as Record<string, boolean>,
     expandedGroups: {} as ExpandedGroupsList,
   },
   reducers: {
@@ -94,6 +95,14 @@ const courseRequirementsSlice = createSlice({
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
     },
+    setMarkerComplete: (state, action: PayloadAction<{ markerName: string; complete: boolean }>) => {
+      state.completedMarkers[action.payload.markerName] = action.payload.complete;
+    },
+    initializeCompletedMarkers: (state, action: PayloadAction<string[]>) => {
+      action.payload.forEach((markerName) => {
+        state.completedMarkers[markerName] = true;
+      });
+    },
     setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
       if (action.payload.expanded) {
         state.expandedGroups[action.payload.storeKey] = true;
@@ -117,6 +126,8 @@ export const {
   removeMinor,
   setMinorRequirements,
   setGERequirements,
+  setMarkerComplete,
+  initializeCompletedMarkers,
   setGroupExpanded,
 } = courseRequirementsSlice.actions;
 

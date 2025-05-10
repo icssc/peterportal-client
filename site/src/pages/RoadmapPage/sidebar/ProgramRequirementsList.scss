@@ -5,6 +5,14 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  p:last-child {
+    margin-bottom: 4px;
+  }
+
+  .requirement-label {
+    margin-bottom: 4px;
+  }
 }
 
 .group-requirement {
@@ -34,8 +42,12 @@
     flex-shrink: 0;
   }
 
+  .course-requirement {
+    margin-top: 8px;
+  }
+
   > .course-requirement > p {
-    margin-block: 12px 4px;
+    margin-block: 4px;
   }
   > .group-header > p {
     margin-bottom: 12px;
@@ -50,8 +62,9 @@
       text-decoration-thickness: 2px;
     }
 
-    .group-requirement:not(.completed) {
+    :is(.group-requirement, .marker-requirement, .course-requirement):not(.completed) {
       border-color: var(--mid-gray);
+      color: var(--mid-gray);
       .group-header {
         color: var(--mid-gray);
       }
@@ -62,7 +75,8 @@
     color: var(--green-primary);
   }
 
-  > .group-requirement:not(:last-child) {
+  > .group-requirement:not(:last-child),
+  .course-requirement:not(:last-child) {
     margin-bottom: 16px;
   }
 }
@@ -72,6 +86,27 @@
   grid-auto-flow: row;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   gap: 8px;
+}
+
+.marker-requirement {
+  position: relative;
+
+  > label {
+    display: flex;
+    gap: 6px;
+    margin-block: 4px 8px;
+  }
+
+  input[type='checkbox'] {
+    position: relative;
+    border: 1px solid #8886;
+    margin: 4.5px 0 0;
+    flex-shrink: 0;
+  }
+
+  &.completed {
+    color: var(--green-primary);
+  }
 }
 
 .program-course-tile {
