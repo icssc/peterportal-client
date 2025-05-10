@@ -39,6 +39,9 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
       e.target.value = value.toString();
       return;
     }
+    // auto-formats, i.e. removes leading zeros
+    e.target.value = e.target.valueAsNumber.toString();
+    if (e.target.valueAsNumber === value) return;
     handleUpdate(e.target.valueAsNumber);
   };
 
@@ -67,22 +70,22 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
     state.transferCredits.transferredGEs.find((ge) => ge.geName === geName),
   ) || { geName, numberOfCourses: 0, units: 0 };
 
-  const updateNumberOfCourses = (newValue: number) => {
+  const updateGE = (newCourseCount: number, newUnitCount: number) => {
     const updatedGE: TransferredGE = {
-      ...currentGE,
-      numberOfCourses: newValue,
+      geName: currentGE.geName,
+      numberOfCourses: newCourseCount,
+      units: newUnitCount,
     };
     dispatch(setTransferredGE(updatedGE));
     trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
   };
 
+  const updateNumberOfCourses = (newValue: number) => {
+    updateGE(newValue, currentGE.units);
+  };
+
   const updateUnits = (newValue: number) => {
-    const updatedGE: TransferredGE = {
-      ...currentGE,
-      units: newValue,
-    };
-    dispatch(setTransferredGE(updatedGE));
-    trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
+    updateGE(currentGE.numberOfCourses, newValue);
   };
 
   return (
