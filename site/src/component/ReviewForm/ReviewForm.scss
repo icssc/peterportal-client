@@ -45,7 +45,9 @@
   }
 
   .additional-details {
-    height: 90px;
+    textarea {
+      height: 90px;
+    }
   }
 
   .anonymous-checkbox {
