@@ -1,7 +1,6 @@
 import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
-// import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';

@@ -374,7 +374,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 id="difficulty"
                 defaultValue=""
                 required
-                onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))} // check this
+                onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))}
                 value={difficulty}
               >
                 <option disabled={true} value="">

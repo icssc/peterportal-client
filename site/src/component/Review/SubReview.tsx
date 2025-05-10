@@ -12,7 +12,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Button, Modal } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
-// import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
