@@ -1,8 +1,9 @@
+import { z } from 'zod';
+import { TransferredGE } from '@peterportal/types';
 import { router, publicProcedure, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
-import { z } from 'zod';
 import { db } from '../db';
-import { transferredApExam } from '../db/schema';
+import { transferredApExam, transferredGe } from '../db/schema';
 import { APExam } from '@peterportal/types';
 import { and, eq, isNull } from 'drizzle-orm';
 import { transferredCourse } from '../db/schema';
@@ -99,6 +100,38 @@ const transferCreditsRouter = router({
       .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
   /** @todo add user procedure to get transferred GE credits below this comment. */
+  getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
+    const response = await db
+      .select({
+        geName: transferredGe.geName,
+        numberOfCourses: transferredGe.numberOfCourses,
+        units: transferredGe.units,
+      })
+      .from(transferredGe)
+      .where(eq(transferredGe.userId, ctx.session.userId!));
+    return response as TransferredGE[];
+  }),
+  setTransferredGE: userProcedure
+    .input(
+      z.object({
+        GE: z.object({
+          geName: z.string(),
+          numberOfCourses: z.number(),
+          units: z.number(),
+        }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { GE } = input as { GE: TransferredGE };
+      const userId = ctx.session.userId!;
+      await db
+        .insert(transferredGe)
+        .values({ userId, geName: GE.geName, numberOfCourses: GE.numberOfCourses, units: GE.units })
+        .onConflictDoUpdate({
+          target: [transferredGe.userId, transferredGe.geName],
+          set: { numberOfCourses: GE.numberOfCourses, units: GE.units },
+        });
+    }),
   /** @todo add user procedure to get transferred untransferred credits below this comment. */
   getUncategorizedTransfers: userProcedure.query(async ({ ctx }) => {
     const courses = await db

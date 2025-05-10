@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { APExam } from '@peterportal/types';
+import { APExam, TransferredGE } from '@peterportal/types';
 
 export interface TransferredCourse {
   courseName: string;
@@ -24,6 +24,7 @@ export const transferCreditsSlice = createSlice({
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as UserAPExam[],
+    transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as UncategorizedCourseEntry[],
   },
   reducers: {
@@ -64,6 +65,14 @@ export const transferCreditsSlice = createSlice({
         e.units = action.payload.units;
       }
     },
+    setAllTransferredGEs: (state, action: PayloadAction<TransferredGE[]>) => {
+      state.transferredGEs = action.payload;
+    },
+    setTransferredGE: (state, action: PayloadAction<TransferredGE>) => {
+      state.transferredGEs = state.transferredGEs.map((ge) => {
+        return ge.geName === action.payload.geName ? action.payload : ge;
+      });
+    },
     setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
       state.uncategorizedCourses = action.payload;
     },
@@ -86,6 +95,8 @@ export const {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
+  setAllTransferredGEs,
+  setTransferredGE,
   setUncategorizedCourses,
   removeUncategorizedCourse,
 } = transferCreditsSlice.actions;
