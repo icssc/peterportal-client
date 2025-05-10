@@ -13,6 +13,7 @@ import AllCourseSearch from './sidebar/AllCourseSearch';
 import MajorSelector from './sidebar/MajorSelector';
 import MinorSelector from './sidebar/MinorSelector';
 import GERequiredCourseList from './sidebar/GERequiredCourseList';
+import TransferCreditsMenu from './transfers/TransferCreditsMenu';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -59,6 +60,7 @@ const SearchSidebar = () => {
 
         <CloseRoadmapSearchButton />
       </div>
+      {!isMobile && <TransferCreditsMenu />}
     </>
   );
 };
