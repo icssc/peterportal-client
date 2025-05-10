@@ -1,5 +1,5 @@
 import './GESection.scss';
-import { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import { GEName, GETitle, TransferredGE } from '@peterportal/types';
@@ -28,33 +28,20 @@ interface GEInputProps {
 }
 
 const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = [
-      '0',
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      valueType === 'units' ? '.' : '',
-      'Backspace',
-      'Tab',
-      'ArrowLeft',
-      'ArrowRight',
-    ];
-    if (!allowedKeys.includes(e.key)) {
-      e.preventDefault();
-    }
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
   };
+
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.target.value === value.toString()) return;
-    if (e.target.value === '') e.target.value = '0';
-    handleUpdate(Number(e.target.value));
+    if (isNaN(e.target.valueAsNumber) || e.target.valueAsNumber < 0) {
+      // Revert change for invalid values
+      e.target.value = value.toString();
+      return;
+    }
+    handleUpdate(e.target.valueAsNumber);
   };
+
   return (
     <input
       className="ge-input"
@@ -63,7 +50,7 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
       step={valueType === 'numberOfCourses' ? '1' : 'any'}
       inputMode={valueType === 'numberOfCourses' ? 'numeric' : 'decimal'}
       defaultValue={value}
-      onKeyDown={onKeyDown}
+      onKeyDown={handleKeyDown}
       onBlur={onBlur}
     />
   );
