@@ -39,6 +39,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const isDragging = activeCourse !== undefined;
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
@@ -67,7 +69,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     },
     [dispatch, quarterIndex, yearIndex],
   );
-  const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
+  const removeCourse = (event: SortableEvent) => {
+    removeCourseAt(event.oldIndex!);
+    dispatch(setActiveCourse(undefined));
+  };
   const addCourse = async (event: SortableEvent) => {
     const movePayload = {
       from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
@@ -75,6 +80,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     };
     if (activeCourseLoading) setMoveCourseTrigger(movePayload);
     else dispatch(moveCourse(movePayload));
+    dispatch(setActiveCourse(undefined));
   };
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
@@ -83,6 +89,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
     };
     dispatch(moveCourse(movePayload));
+    dispatch(setActiveCourse(undefined));
   };
 
   useEffect(() => {
@@ -158,7 +165,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       </div>
       <ReactSortable
         list={coursesCopy}
-        className="quarter-course-list"
+        className={`quarter-course-list ${data.courses.length === 0 ? 'empty' : ''} ${isDragging ? 'can-drop' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
