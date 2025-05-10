@@ -5,7 +5,7 @@ import trpc from '../../../trpc';
 import { removeUncategorizedCourse, setUncategorizedCourses } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
-interface UncategorizedCourseEntry {
+export interface UncategorizedCourseEntry {
   name: string | null;
   units: number | null;
 }
