@@ -11,7 +11,6 @@ import {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
-  setUserAPExams,
   UserAPExam,
 } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -147,13 +146,6 @@ const APExamsSection: FC = () => {
     setExamName(null);
     setScore(null);
   }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn, examsLoading]);
-
-  // Fetch saved AP exams and save to store
-  useEffect(() => {
-    trpc.transferCredits.getSavedAPExams.query().then((savedExams) => {
-      dispatch(setUserAPExams(savedExams));
-    });
-  }, [dispatch]);
 
   const baseSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
     value: exam,

@@ -1,10 +1,10 @@
 import './GESection.scss';
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import { GEName, GETitle, TransferredGE } from '@peterportal/types';
 import trpc from '../../../trpc';
-import { setAllTransferredGEs, setTransferredGE } from '../../../store/slices/transferCreditsSlice';
+import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 const ALL_GE_NAMES: GEName[] = ['GE-1A', 'GE-1B', 'GE-2', 'GE-3', 'GE-4', 'GE-5A', 'GE-5B', 'GE-6', 'GE-7', 'GE-8'];
@@ -105,38 +105,14 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 };
 
 const GESection: FC = () => {
-  const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-
-  useEffect(() => {
-    const fetchTransferredGEs = async () => {
-      try {
-        const transferredGEs = await trpc.transferCredits.getTransferredGEs.query();
-        dispatch(setAllTransferredGEs(transferredGEs));
-        setIsError(false);
-      } catch (error) {
-        console.error('Failed to fetch GE credits:', error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchTransferredGEs();
-  }, [dispatch]);
-
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>
         Enter the GE credits that you've received in each category from other colleges/universities.
       </SectionDescription>
-      {isError ? (
-        <p>Error loading GE credits.</p>
-      ) : isLoading ? (
-        <p>Loading GE credits...</p>
-      ) : (
-        ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />)
-      )}
+      {ALL_GE_NAMES.map((geName) => (
+        <GEMenuTile key={geName} geName={geName} />
+      ))}
     </MenuSection>
   );
 };

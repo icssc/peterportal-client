@@ -10,6 +10,7 @@ import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
+import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
@@ -34,6 +35,7 @@ export const ToggleTransfersButton: FC = () => {
 const TransferCreditsMenu: FC = () => {
   const isMobile = useIsMobile();
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  useLoadTransferredCredits();
 
   const dispatch = useAppDispatch();
 

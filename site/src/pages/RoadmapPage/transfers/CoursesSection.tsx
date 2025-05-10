@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
@@ -9,7 +9,6 @@ import { CourseAAPIResponse } from '@peterportal/types';
 import {
   addTransferredCourse,
   removeTransferredCourse,
-  setTransferredCourses,
   TransferredCourse,
   updateTransferredCourse,
 } from '../../../store/slices/transferCreditsSlice';
@@ -78,12 +77,6 @@ const CoursesSection: FC = () => {
     dispatch(addTransferredCourse(course));
     trpc.transferCredits.addTransferredCourse.mutate(course);
   };
-
-  useEffect(() => {
-    trpc.transferCredits.getTransferredCourses.query().then((result) => {
-      dispatch(setTransferredCourses(result));
-    });
-  }, [dispatch]);
 
   return (
     <MenuSection title="Courses You've Transferred">
