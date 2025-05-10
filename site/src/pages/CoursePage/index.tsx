@@ -72,7 +72,7 @@ const CoursePage: FC = () => {
         </ResultPageSection>
 
         <ResultPageSection title="💬 Reviews">
-          <Review key={courseGQLData.id} course={courseGQLData} />
+          <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
         </ResultPageSection>
       </ResultPageContent>
     );

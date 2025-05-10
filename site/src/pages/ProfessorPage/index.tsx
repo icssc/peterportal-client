@@ -9,7 +9,8 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, unionTerms } from '../../helpers/util';
+import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 const ProfessorPage: FC = () => {
@@ -64,7 +65,7 @@ const ProfessorPage: FC = () => {
         </ResultPageSection>
 
         <ResultPageSection title="💬 Reviews">
-          <Review professor={professorGQLData} />
+          <Review professor={professorGQLData} terms={sortTerms(getProfessorTerms(professorGQLData))} />
         </ResultPageSection>
       </ResultPageContent>
     );

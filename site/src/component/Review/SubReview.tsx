@@ -16,6 +16,8 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
+import { sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -256,6 +258,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           closeForm={closeReviewForm}
           show={showReviewForm}
           editing
+          terms={sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []))}
         />
       </div>
     </div>
