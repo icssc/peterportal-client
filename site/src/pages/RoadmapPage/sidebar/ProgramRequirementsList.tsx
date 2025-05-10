@@ -268,7 +268,7 @@ interface RequireCourseListProps {
 
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
-  const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const yearPlans = roadmapPlans[roadmapPlanIndex].content.yearPlans;
@@ -277,7 +277,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
     .map((course) => [course.id, course.minUnits]);
-  const transferCourseMap = roadmapTransfers.map((t) => [t.name.replace(/\s/g, ''), t.units ?? 0]);
+  const transferCourseMap = transferredCourses.map((t) => [t.courseName.replace(/\s/g, ''), t.units ?? 0]);
 
   const takenCourseSet: CompletedCourseSet = Object.assign(
     {},
