@@ -121,6 +121,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
+  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+
   return (
     <div className="subreview">
       <div className="subreview-header">
@@ -258,7 +260,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           closeForm={closeReviewForm}
           show={showReviewForm}
           editing
-          terms={sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []))}
+          terms={sortedTerms}
         />
       </div>
     </div>
