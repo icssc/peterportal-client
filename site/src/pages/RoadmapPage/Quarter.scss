@@ -105,20 +105,17 @@
 }
 
 @media only screen and (max-width: 800px) {
-  .quarter {
-    .quarter-course-list {
-      &:empty {
-        padding: 16px;
-        border: none;
-        margin-block: -16px;
-        pointer-events: none;
-        &::before {
-          content: '';
-        }
-        &.can-drop {
-          pointer-events: auto;
-        }
-      }
+  .quarter .quarter-course-list:empty {
+    padding: 16px;
+    border: none;
+    margin-block: -16px;
+    pointer-events: none;
+    &::before {
+      content: '';
+    }
+    &.dropzone-active {
+      border: 5px dashed var(--blue-primary); //checking to see if it works. Will delete later
+      pointer-events: auto;
     }
   }
 }

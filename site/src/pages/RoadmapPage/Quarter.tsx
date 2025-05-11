@@ -161,7 +161,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       </div>
       <ReactSortable
         list={coursesCopy}
-        className={`quarter-course-list ${data.courses.length === 0 ? 'empty' : ''} ${isDragging ? 'can-drop' : ''}`}
+        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
