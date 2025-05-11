@@ -147,11 +147,15 @@ button {
     border: none;
     background-color: var(--overlay2);
     padding: 4px 8px 8px;
+    max-height: 100%;
+    overflow: auto;
+    margin-block: 32px;
   }
   .modal-dialog {
     max-width: 400px;
     margin: auto;
     width: calc(100% - 32px);
+    max-height: 100%;
   }
   .modal-footer {
     border-top: none;

@@ -287,7 +287,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }
 
   const reviewForm = (
-    <Modal show={show} onHide={closeForm} centered animation={false} className="ppc-modal review-form-modal">
+    <Modal show={show} onHide={closeForm} centered className="ppc-modal review-form-modal">
       <Modal.Header closeButton>
         {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
       </Modal.Header>
