@@ -38,10 +38,6 @@
   }
 }
 
-.invalid-shadow {
-  box-shadow: 0px 0px 4px var(--red-primary);
-}
-
 .invalid-name {
   color: var(--red-primary);
 }
@@ -78,12 +74,11 @@
 .course-delete-icon {
   color: var(--blue-primary);
   transition-duration: 0.2s;
-}
 
-.course-delete-icon:hover {
-  color: var(--red-primary);
+  &:hover {
+    color: var(--red-primary);
+  }
 }
-
 .course-footer {
   height: auto;
   display: flex;

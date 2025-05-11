@@ -97,7 +97,7 @@ const Course: FC<CourseProps> = (props) => {
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className={`course ${requiredCourses ? 'invalid-shadow' : ''}`} {...tappableCourseProps}>
+    <div className="course" {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'invalid-name' : ''}`}>
