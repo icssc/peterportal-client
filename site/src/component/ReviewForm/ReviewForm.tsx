@@ -454,13 +454,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <div className="g-recaptcha">
-            <ReCAPTCHA
-              sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4" //
-              theme={darkMode ? 'dark' : 'light'}
-              onChange={(token) => setCaptchaToken(token ?? '')}
-            />
-          </div>
+          {!editing && (
+            <div className="g-recaptcha">
+              <ReCAPTCHA
+                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4" //
+                theme={darkMode ? 'dark' : 'light'}
+                onChange={(token) => setCaptchaToken(token ?? '')}
+              />
+            </div>
+          )}
 
           <Form.Group>
             <Form.Check
