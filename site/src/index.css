@@ -44,8 +44,9 @@ code {
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
-  --green-secondary: #295629;
+
   --red-primary: #ff3333;
+  --green-secondary: #295629;
 }
 
 .hide {
