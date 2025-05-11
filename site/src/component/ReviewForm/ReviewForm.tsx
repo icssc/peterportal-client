@@ -90,7 +90,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         }
       });
     }
-  }, [courseProp, professorProp, reviewToEdit]);
+  }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
 
   // when a year or quarter is selected, update the valid quarters accordingly
   useEffect(() => {
@@ -102,7 +102,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         setQuarterTaken('');
       }
     }
-  }, [yearTaken, terms]);
+  }, [yearTaken, terms, quarterTaken]);
 
   useEffect(() => {
     if (show) {
