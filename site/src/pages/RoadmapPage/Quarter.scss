@@ -116,7 +116,6 @@
           content: '';
         }
         &.can-drop {
-          border: 1px dashed var(--blue-primary); //checking to see if it works. Will delete later
           pointer-events: auto;
         }
       }

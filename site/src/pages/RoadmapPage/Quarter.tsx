@@ -69,10 +69,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     },
     [dispatch, quarterIndex, yearIndex],
   );
-  const removeCourse = (event: SortableEvent) => {
-    removeCourseAt(event.oldIndex!);
-    dispatch(setActiveCourse(undefined));
-  };
+  const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
   const addCourse = async (event: SortableEvent) => {
     const movePayload = {
       from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
@@ -89,7 +86,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
     };
     dispatch(moveCourse(movePayload));
-    dispatch(setActiveCourse(undefined));
   };
 
   useEffect(() => {
@@ -170,6 +166,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         onAdd={addCourse}
         onRemove={removeCourse}
         onSort={sortCourse}
+        onEnd={() => dispatch(setActiveCourse(undefined))}
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
