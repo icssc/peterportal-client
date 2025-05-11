@@ -1,6 +1,13 @@
 @use '../../../globals.scss';
 @use 'sass:color';
 
+@mixin highlight-group() {
+  background: var(--overlay2);
+  margin: 4px -2px 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
 .program-requirements {
   display: flex;
   flex-direction: column;
@@ -69,6 +76,10 @@
         color: var(--mid-gray);
       }
     }
+
+    :not(.completed) > .group-courses {
+      opacity: 0.8;
+    }
   }
 
   .course-requirement.completed {
@@ -91,21 +102,36 @@
 .marker-requirement {
   position: relative;
 
+  @include highlight-group();
+
   > label {
     display: flex;
-    gap: 6px;
-    margin-block: 4px 8px;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 2px;
   }
 
   input[type='checkbox'] {
     position: relative;
     border: 1px solid #8886;
-    margin: 4.5px 0 0;
+    margin: 0;
     flex-shrink: 0;
   }
 
   &.completed {
     color: var(--green-primary);
+  }
+
+  ~ .group-requirement {
+    margin-inline: -2px;
+  }
+
+  ~ .course-requirement {
+    @include highlight-group();
+    .requirement-label {
+      margin-block: 2px 6px;
+    }
   }
 }
 

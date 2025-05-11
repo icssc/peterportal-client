@@ -249,6 +249,7 @@ const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
   return (
     <div className={className}>
       <label>
+        <b>{data.label}</b>
         <input
           type="checkbox"
           name={'marker-' + storeKey}
@@ -256,7 +257,6 @@ const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
           checked={complete}
           onChange={(e) => setComplete(e.target.checked)}
         />
-        <b>{data.label}</b>
       </label>
     </div>
   );
