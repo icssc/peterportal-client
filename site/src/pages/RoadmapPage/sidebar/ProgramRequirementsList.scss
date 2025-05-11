@@ -125,6 +125,9 @@
 
   ~ .group-requirement {
     margin-inline: -2px;
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
   }
 
   ~ .course-requirement {
