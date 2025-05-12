@@ -36,10 +36,10 @@
   .info-wrapper {
     display: flex;
   }
-}
 
-.invalid {
-  box-shadow: 0px 0px 4px orange;
+  .missing-prereq {
+    color: var(--red-primary);
+  }
 }
 
 .course-card-top {
@@ -72,7 +72,12 @@
 }
 
 .course-delete-icon {
-  color: red;
+  color: var(--blue-primary);
+  transition-duration: 0.2s;
+
+  &:hover {
+    color: var(--red-primary);
+  }
 }
 
 .course-footer {
@@ -115,11 +120,6 @@
     .name {
       font-size: $header-font-size;
       margin: 0;
-
-      color: var(--blue-primary);
-    }
-    .warning-container svg {
-      color: #ce0000;
     }
     .title {
       font-size: 12px;
