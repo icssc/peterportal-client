@@ -313,6 +313,63 @@ const organizeMisc = (
   console.log(`- COMBINED:      '${transferName}' (above): duplicates will be combined into one entry`);
 };
 
+/**
+  Merge APs that are duplicated for individual users before inserting into the db
+  Produced by different original transfers that have been resolved into the same result
+*/
+const mergeDuplicateApResults = (toInsertAp: TransferredApExamRow[]) => {
+  const uniqueToInsertAp = new Map<string, { score: number | null; units: number }>();
+  for (const ap of toInsertAp) {
+    const key = JSON.stringify({ userId: ap.userId, examName: ap.examName });
+    if (uniqueToInsertAp.has(key)) {
+      uniqueToInsertAp.set(key, {
+        score: uniqueToInsertAp.get(key)!.score,
+        units: uniqueToInsertAp.get(key)!.units + ap.units,
+      });
+    } else {
+      uniqueToInsertAp.set(key, { score: ap.score, units: ap.units });
+    }
+  }
+  const mergedToInsertAp: TransferredApExamRow[] = [];
+  uniqueToInsertAp.forEach((val, key) => {
+    mergedToInsertAp.push({
+      userId: JSON.parse(key).userId,
+      examName: JSON.parse(key).examName,
+      score: val.score,
+      units: val.units,
+    });
+  });
+  return mergedToInsertAp;
+};
+
+/**
+  Merge courses that are duplicated for individual users before inserting into the db
+  Produced by different original transfers that have been resolved into the same result
+  E.g. if a user has "MATH 2A" and "MATH2A " -> there will be two instances of "MATH 2A"
+*/
+const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => {
+  const uniqueToInsertCourse = new Map<string, { units: number }>();
+  for (const course of toInsertCourse) {
+    const key = JSON.stringify({ userId: course.userId, courseName: course.courseName });
+    if (uniqueToInsertCourse.has(key)) {
+      uniqueToInsertCourse.set(key, {
+        units: uniqueToInsertCourse.get(key)!.units + course.units,
+      });
+    } else {
+      uniqueToInsertCourse.set(key, { units: course.units });
+    }
+  }
+  const mergedToInsertCourse: TransferredCourseRow[] = [];
+  uniqueToInsertCourse.forEach((val, key) => {
+    mergedToInsertCourse.push({
+      userId: JSON.parse(key).userId,
+      courseName: JSON.parse(key).courseName,
+      units: val.units,
+    });
+  });
+  return mergedToInsertCourse;
+};
+
 /** Organize the data in the database */
 const organize = async () => {
   const allAps = await getAPIApExams();
@@ -392,6 +449,10 @@ const organize = async () => {
     }
   }
 
+  // Merge any duplicates among the AP and course queries to ensure no conflicts in the new data
+  const mergedToInsertAp = mergeDuplicateApResults(toInsertAp);
+  const mergedToInsertCourse = mergeDuplicateCourseResults(toInsertCourse);
+
   // Delete and insert everything using the large queries
 
   // First, logging/debugging
@@ -409,9 +470,9 @@ const organize = async () => {
   console.log('- Delete parameters');
   fs.writeFileSync('transfersDataConversion_DeleteParameters.log', JSON.stringify(delQuery.params, null, 4));
   console.log('- To insert into transferred AP exam table');
-  fs.writeFileSync('transfersDataConversion_InsertApExam.log', JSON.stringify(toInsertAp, null, 4));
+  fs.writeFileSync('transfersDataConversion_InsertApExam.log', JSON.stringify(mergedToInsertAp, null, 4));
   console.log('- To insert into transferred course table');
-  fs.writeFileSync('transfersDataConversion_InsertCourse.log', JSON.stringify(toInsertCourse, null, 4));
+  fs.writeFileSync('transfersDataConversion_InsertCourse.log', JSON.stringify(mergedToInsertCourse, null, 4));
   console.log('- To reinsert into transferred misc table');
   fs.writeFileSync('transfersDataConversion_ReinsertMisc.log', JSON.stringify(toReinsertMisc, null, 4));
   console.log('Finished logging');
@@ -419,8 +480,8 @@ const organize = async () => {
   // Debug print (comment out if dealing with a lot of data, use the log files instead)
   /*console.log('Would execute: ' + delQuery.sql + ',\n params: ' + delQuery.params);
   console.log();
-  console.log('Would insert into transferredApExam: ' + JSON.stringify(toInsertAp, null, 4));
-  console.log('Would insert into transferredCourse: ' + JSON.stringify(toInsertCourse, null, 4));
+  console.log('Would insert into transferredApExam: ' + JSON.stringify(mergedToInsertAp, null, 4));
+  console.log('Would insert into transferredCourse: ' + JSON.stringify(mergedToInsertCourse, null, 4));
   console.log('Would delete from transferredMisc as specified above');
   console.log('Would insert into transferredMisc: ' + JSON.stringify(toReinsertMisc, null, 4));*/
 
@@ -431,21 +492,21 @@ const organize = async () => {
   console.log(transferredApExam && 'loaded');
   console.log(transferredMisc && 'loaded');
 
-  console.log('Starting transaction...');
+  // console.log('Starting transaction...');
   // await db.transaction(async (tx) => {
-  //   if (toInsertAp.length) {
+  //   if (mergedToInsertAp.length) {
   //     await tx
   //       .insert(transferredApExam)
-  //       .values(toInsertAp)
+  //       .values(mergedToInsertAp)
   //       .onConflictDoUpdate({
   //         target: [transferredApExam.userId, transferredApExam.examName],
   //         set: { units: sql`EXCLUDED.units + ${transferredApExam.units}` }
   //       });
   //   }
-  //   if (toInsertCourse.length) {
+  //   if (mergedToInsertCourse.length) {
   //     await tx
   //       .insert(transferredCourse)
-  //       .values(toInsertCourse)
+  //       .values(mergedToInsertCourse)
   //       .onConflictDoUpdate({
   //         target: [transferredCourse.userId, transferredCourse.courseName],
   //         set: { units: sql`EXCLUDED.units + ${transferredCourse.units}` }
@@ -454,7 +515,7 @@ const organize = async () => {
   //   await tx.delete(transferredMisc).where(or(...toDelete));
   //   if (toReinsertMisc.length) await tx.insert(transferredMisc).values(toReinsertMisc)
   // });
-  console.log('Finished transaction');
+  // console.log('Finished transaction');
 };
 
 organize();
