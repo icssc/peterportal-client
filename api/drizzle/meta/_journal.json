@@ -71,6 +71,13 @@
       "when": 1744827972593,
       "tag": "0009_parched_madame_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1746659501656,
+      "tag": "0010_pink_ares",
+      "breakpoints": true
     }
   ]
 }

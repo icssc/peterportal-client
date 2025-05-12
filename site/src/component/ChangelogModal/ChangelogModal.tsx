@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/degree-reqs-wide.png';
+import changelogImage from '../../asset/checkable-markers.webp';
 
-const DESCRIPTION = 'You can now view completion of major, minor, and GE requirements on your roadmap!';
-const LAST_UPDATED = '2/25/2025';
+const DESCRIPTION = 'You can now mark degree requirements as being satisfied by external credits!';
+const LAST_UPDATED = '5/11/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
