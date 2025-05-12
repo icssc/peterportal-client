@@ -27,6 +27,7 @@ import { ProgramRequirement, TypedProgramRequirement } from '@peterportal/types'
 import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
+import { useTransferredCredits } from '../../../hooks/transferCredits';
 
 interface CourseTileProps {
   courseID: string;
@@ -268,7 +269,7 @@ interface RequireCourseListProps {
 
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const collapsedRequirements = flattenSingletonGroups(collapseSingletonRequirements(requirements));
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const transferredCourses = useTransferredCredits().courses;
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const yearPlans = roadmapPlans[roadmapPlanIndex].content.yearPlans;

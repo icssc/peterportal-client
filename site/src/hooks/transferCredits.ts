@@ -8,14 +8,47 @@ import {
   setUncategorizedCourses,
   setUserAPExams,
   setUserDataLoaded,
+  TransferredCourse,
 } from '../store/slices/transferCreditsSlice';
+import { components } from '@peterportal/types/src/generated/anteater-api-types';
+
+/** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
+type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
+function naiveCountedCourses(courses: CourseTreeItem): string[] {
+  if (typeof courses === 'string') return [courses];
+  if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(naiveCountedCourses);
+  return naiveCountedCourses(courses.OR[0]);
+}
 
 export function useTransferredCredits() {
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
-  const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
   const apTransfers = useAppSelector((state) => state.transferCredits.userAPExams);
   const ge = useAppSelector((state) => state.transferCredits.transferredGEs);
   const other = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+
+  /** @todo add some way to specify the source of a course */
+  // i.e. transferType: 'AP' | 'Course'. We could also return two arrays, but it may be more ideal
+  // from a dev perspective to have a "single array of truth" rather than opening the door to making
+  // mistakes later when counting credits because we chose the wrong courses array
+
+  const courses: TransferredCourse[] = useMemo(() => {
+    // Recomputes this value only when APs or Transferred Courses update
+    const rewardedCourses = apTransfers.flatMap((transfer) => {
+      const info = apExamInfo.find((ap) => ap.fullName === transfer.examName);
+      if (!info) return [];
+      const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
+      if (!reward) return [];
+
+      const courseNames = naiveCountedCourses(reward.coursesGranted);
+      /** @todo debug print statement – remove once a user can choose which 'OR' reward they want */
+      // console.log(info.catalogueName ?? info.fullName, '=>', courseNames)
+
+      return courseNames.map((courseName) => ({ courseName, units: 0 }));
+    });
+
+    return [...new Set(transferredCourses.concat(rewardedCourses))];
+  }, [apExamInfo, apTransfers, transferredCourses]);
 
   // Returns memoized result for efficiency and so we can use the entire return value
   // as a dependency array item. Without memoization, that would not be possible, as
