@@ -97,10 +97,12 @@ const Course: FC<CourseProps> = (props) => {
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
+    <div className="course" {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
+            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          </span>
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>

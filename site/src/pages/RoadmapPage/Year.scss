@@ -192,12 +192,9 @@
   border-radius: 1.25rem;
 }
 
-#clear-btn {
-  color: red;
-}
-
+#clear-btn,
 #remove-btn {
-  color: red;
+  color: var(--red-primary);
 }
 
 @media only screen and (max-width: 400px) {
