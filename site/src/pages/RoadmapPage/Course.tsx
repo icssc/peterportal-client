@@ -100,7 +100,7 @@ const Course: FC<CourseProps> = (props) => {
     <div className="course" {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <span className={`${requiredCourses ? 'invalid-name' : ''}`}>
+          <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
           <span className="units">

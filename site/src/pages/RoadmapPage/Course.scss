@@ -36,10 +36,10 @@
   .info-wrapper {
     display: flex;
   }
-}
 
-.invalid-name {
-  color: var(--red-primary);
+  .missing-prereq {
+    color: var(--red-primary);
+  }
 }
 
 .course-card-top {
@@ -79,6 +79,7 @@
     color: var(--red-primary);
   }
 }
+
 .course-footer {
   height: auto;
   display: flex;
