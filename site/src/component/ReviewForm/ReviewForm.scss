@@ -53,12 +53,12 @@
   .anonymous-checkbox {
     margin-top: 16px;
   }
-}
 
-// monkey patch for recaptcha border bug
-.g-recaptcha {
-  overflow: hidden;
-  height: 76px;
-  border-radius: 4px;
-  width: 302px;
+  // monkey patch for recaptcha border bug
+  .g-recaptcha {
+    overflow: hidden;
+    width: 302px;
+    height: 76px;
+    border-radius: 4px;
+  }
 }
