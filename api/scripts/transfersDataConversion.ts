@@ -76,10 +76,10 @@ const getAPICoursesByIdBatch = async (courseIds: string[]): Promise<CourseAAPIRe
   Efficiently validate a large amount of courses from the API
   Returns a set of all the valid course IDs
 */
-const validateCoursesAPI = async (coursesToValidate: Set<string>): Promise<Set<string>> => {
+const validateCoursesAPI = async (coursesToValidate: Set<string>): Promise<Record<string, string>> => {
   const batchSize = 10;
   const coursesToValidateArr = Array.from(coursesToValidate);
-  const validCourses = new Set<string>();
+  const validCourses = {};
   for (let i = 0; i < coursesToValidateArr.length; i += batchSize) {
     console.log(`- Validating ${i}..${i + batchSize}`);
     const resp = await getAPICoursesByIdBatch(coursesToValidateArr.slice(i, i + batchSize));
@@ -88,7 +88,7 @@ const validateCoursesAPI = async (coursesToValidate: Set<string>): Promise<Set<s
       continue;
     }
     for (const r of resp) {
-      validCourses.add(r.id);
+      validCourses[r.id] = r.department + ' ' + r.courseNumber;
     }
   }
   return validCourses;
@@ -193,12 +193,8 @@ const removeAllSpaces = (transferName: string) => {
 };
 
 /** Try to match a transfer name with an existing validated UCI course; undefined if no match */
-const tryMatchCourse = (transferName: string, validCourses: Set<string>): string | undefined => {
-  if (validCourses.has(removeAllSpaces(transferName))) {
-    return transferName; // transferName has necessary spaces
-  } else {
-    return undefined;
-  }
+const tryMatchCourse = (transferName: string, validCourses: Record<string, string>): string | undefined => {
+  return validCourses[removeAllSpaces(transferName)];
 };
 
 /** Handle some special cases for AP Calc AB, which could have a subscore,
@@ -275,7 +271,7 @@ const organizeCourse = async (
   transferName: string,
   toDelete: (SQL<unknown> | undefined)[],
   toInsertCourse: TransferredCourseRow[],
-  validCourses: Set<string>,
+  validCourses: Record<string, string>,
 ): Promise<boolean> => {
   const bestMatch = tryMatchCourse(transferName, validCourses);
   if (!bestMatch) {
@@ -435,16 +431,30 @@ const organize = async () => {
   console.log(transferredApExam && 'loaded');
   console.log(transferredMisc && 'loaded');
 
-  /*
   console.log('Starting transaction...');
   // await db.transaction(async (tx) => {
-  //   await tx.insert(transferredApExam).values(toInsertAp);
-  //   await tx.insert(transferredCourse).values(toInsertCourse);
+  //   if (toInsertAp.length) {
+  //     await tx
+  //       .insert(transferredApExam)
+  //       .values(toInsertAp)
+  //       .onConflictDoUpdate({
+  //         target: [transferredApExam.userId, transferredApExam.examName],
+  //         set: { units: sql`EXCLUDED.units + ${transferredApExam.units}` }
+  //       });
+  //   }
+  //   if (toInsertCourse.length) {
+  //     await tx
+  //       .insert(transferredCourse)
+  //       .values(toInsertCourse)
+  //       .onConflictDoUpdate({
+  //         target: [transferredCourse.userId, transferredCourse.courseName],
+  //         set: { units: sql`EXCLUDED.units + ${transferredCourse.units}` }
+  //       });
+  //   }
   //   await tx.delete(transferredMisc).where(or(...toDelete));
-  //   await tx.insert(transferredMisc).values(toReinsertMisc);
+  //   if (toReinsertMisc.length) await tx.insert(transferredMisc).values(toReinsertMisc)
   // });
   console.log('Finished transaction');
-  */
 };
 
 organize();
