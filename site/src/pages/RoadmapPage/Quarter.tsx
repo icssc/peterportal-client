@@ -39,6 +39,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const isDragging = activeCourse !== undefined;
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
@@ -75,6 +77,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     };
     if (activeCourseLoading) setMoveCourseTrigger(movePayload);
     else dispatch(moveCourse(movePayload));
+    dispatch(setActiveCourse(undefined));
   };
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
@@ -158,11 +161,12 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       </div>
       <ReactSortable
         list={coursesCopy}
-        className="quarter-course-list"
+        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
         onSort={sortCourse}
+        onEnd={() => dispatch(setActiveCourse(undefined))}
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
