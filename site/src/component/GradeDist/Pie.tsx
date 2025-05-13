@@ -50,7 +50,8 @@ export default class Pie extends React.Component<PieProps> {
       if (
         (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
         (data.instructors.includes(this.props.professor ?? '') ||
-          data.department + ' ' + data.courseNumber === this.props.course)
+          data.department + ' ' + data.courseNumber === this.props.course ||
+          this.props.professor == 'All Instructors')
       ) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
