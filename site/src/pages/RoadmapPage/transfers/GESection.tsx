@@ -2,24 +2,11 @@ import './GESection.scss';
 import React, { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-import { GEName, GETitle, TransferredGE } from '@peterportal/types';
+import { GEName, TransferredGE } from '@peterportal/types';
 import trpc from '../../../trpc';
 import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-
-const ALL_GE_NAMES: GEName[] = ['GE-1A', 'GE-1B', 'GE-2', 'GE-3', 'GE-4', 'GE-5A', 'GE-5B', 'GE-6', 'GE-7', 'GE-8'];
-const GE_TITLE_MAP: Record<GEName, GETitle> = {
-  'GE-1A': 'GE Ia: Lower Division Writing',
-  'GE-1B': 'GE Ib: Upper Division Writing',
-  'GE-2': 'GE II: Science and Technology',
-  'GE-3': 'GE III: Social & Behavioral Sciences',
-  'GE-4': 'GE IV: Arts and Humanities',
-  'GE-5A': 'GE Va: Quantitative Literacy',
-  'GE-5B': 'GE Vb: Formal Reasoning',
-  'GE-6': 'GE VI: Language Other Than English',
-  'GE-7': 'GE VII: Multicultural Studies',
-  'GE-8': 'GE VIII: International/Global Issues',
-};
+import { ALL_GE_NAMES, GE_TITLE_MAP } from '../../../helpers/courseRequirements';
 
 interface GEInputProps {
   value: number;
