@@ -1,9 +1,11 @@
 $mobile-cutoff: 800px;
+$sidebar-width-open: 300px;
+$sidebar-width-closed: 72px;
 
 $roadmap-sidebar-width: 368px;
 
 @mixin card-padding {
-  padding: 32px 36px;
+  padding: 24px 28px;
   @media (max-width: $mobile-cutoff) {
     padding: 16px 20px;
   }

@@ -31,6 +31,14 @@ function createLambdaFunction() {
     NODE_ENV: process.env.NODE_ENV ?? 'staging',
     ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
     EXTERNAL_USER_READ_SECRET: process.env.EXTERNAL_USER_READ_SECRET!,
+    OTEL_EXPORTER_OTLP_HEADERS: process.env.OTEL_EXPORTER_OTLP_HEADERS!,
+    // hardcoded OTEL options
+    ...($app.stage === 'prod' && {
+      AWS_LAMBDA_EXEC_WRAPPER: '/opt/otel-handler',
+      NODE_OPTIONS: '--require @opentelemetry/auto-instrumentations-node/register',
+      OTEL_SERVICE_NAME: 'peterportal-backend',
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'https://ingress.us-west-2.aws.dash0.com',
+    }),
   };
 
   return new sst.aws.Function('PeterPortal Backend', {
@@ -42,6 +50,10 @@ function createLambdaFunction() {
     },
     environment,
     url: true,
+    layers: ['arn:aws:lambda:us-west-1:184161586896:layer:opentelemetry-nodejs-0_13_0:1'],
+    nodejs: {
+      install: ['@opentelemetry/auto-instrumentations-node'],
+    },
   });
 }
 
@@ -119,6 +131,10 @@ function createStaticSite(
           },
         ];
       },
+    },
+    environment: {
+      VITE_PUBLIC_POSTHOG_KEY: process.env.VITE_PUBLIC_POSTHOG_KEY!,
+      VITE_PUBLIC_POSTHOG_HOST: process.env.VITE_PUBLIC_POSTHOG_HOST!,
     },
   });
 }

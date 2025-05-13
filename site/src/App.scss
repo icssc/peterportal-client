@@ -137,6 +137,10 @@ button {
       border-right-color: var(--overlay1);
     }
   }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .bs-popover-left {
@@ -173,11 +177,15 @@ button {
     border: none;
     background-color: var(--overlay2);
     padding: 4px 8px 8px;
+    max-height: 100%;
+    overflow: auto;
+    margin-block: 32px;
   }
   .modal-dialog {
     max-width: 400px;
     margin: auto;
     width: calc(100% - 32px);
+    max-height: 100%;
   }
   .modal-footer {
     border-top: none;
@@ -185,7 +193,7 @@ button {
   }
   h2 {
     margin-bottom: 0;
-    font-size: 1.8rem;
+    font-size: 25px;
     font-weight: 600;
   }
   button.close {
@@ -222,6 +230,10 @@ button {
     }
   }
 
+  .form-control {
+    padding: 5px 10px;
+  }
+
   a {
     color: #1b76b4;
   }
@@ -246,6 +258,53 @@ button {
 
 .ppc-modal-form-label {
   font-weight: bold;
+}
+
+.ppc-dropdown-btn {
+  width: 192px;
+  min-width: fit-content;
+
+  button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--overlay3);
+    border-color: var(--overlay2);
+  }
+  .dropdown-menu {
+    width: 100%;
+    max-height: 200px;
+    overflow: auto;
+    min-width: fit-content;
+  }
+
+  .dropdown-item {
+    padding: 4px 12px;
+  }
+
+  .dropdown-item:active {
+    background-color: var(--overlay2);
+    color: inherit;
+  }
+}
+[data-theme='light'] .ppc-dropdown-btn button {
+  background-color: var(--overlay2);
+  border-color: var(--overlay2);
+}
+
+.ppc-table {
+  thead tr {
+    background-color: var(--overlay2);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--overlay2);
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: var(--overlay3);
+  }
 }
 
 .form-check-input {
@@ -304,4 +363,24 @@ button.unstyled {
   display: flex;
   align-items: center;
   padding: 0;
+}
+
+.badge-pill {
+  padding: 6px 10px;
+  margin-right: 10px;
+  font-size: 12px;
+  background-color: var(--blue-primary);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow: auto;
+}
+
+// monkey patch for recaptcha border bug
+.g-recaptcha {
+  overflow: hidden;
+  width: 302px;
+  height: 76px;
+  border-radius: 4px;
 }

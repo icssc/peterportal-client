@@ -3,25 +3,26 @@
   flex-direction: column;
 }
 .add-review-button {
-  padding: 10px 25px;
+  padding: 6px 16px;
   font-weight: bold;
-  margin: 1rem auto 0 auto;
-  font-size: 1.25rem;
+  margin: 8px auto 0;
   background-color: var(--blue-primary);
-  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 // sort and filter reviews
 .sort-filter-menu {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 .sort-dropdown,
 .filter-dropdown {
   max-width: 15rem;
-  width: 100%;
 }
 .verified-only-checkbox {
   display: flex;
@@ -52,15 +53,23 @@
   gap: 1rem;
   background-color: var(--overlay2);
   border-radius: var(--border-radius);
-  padding: 2rem;
+  padding: 16px 20px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 14px;
+
+  .subreview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
 }
 
 // subreview header (class/professor name & edit buttons)
 .subreview-identifier {
   font-weight: bold;
-  font-size: xx-large;
+  font-size: 20px;
   margin: 0;
   a {
     color: var(--text);
@@ -71,7 +80,7 @@
   display: flex;
   flex-direction: row;
   float: right;
-  gap: 0.75rem;
+  gap: 8px;
 }
 
 // content of review
@@ -89,23 +98,22 @@
 }
 .rating {
   border-radius: var(--border-radius);
-  width: 7rem;
-  height: 7rem;
+  width: 72px;
+  height: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   color: white;
 }
 .rating-label {
   line-height: 1rem;
-  font-size: 1rem;
+  font-size: 11px;
   font-weight: bold;
 }
 .rating-value {
-  line-height: 3rem;
-  font-size: 3rem;
+  line-height: 33px;
+  font-size: 36px;
 }
 // color scheme for numerical ratings
 // reversed for difficulty so 1 => r5, etc.
@@ -130,23 +138,41 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 16px;
+
+  .review-content {
+    // font alignment
+    margin: -3px 0 3px;
+  }
 }
 .subreview-details {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  padding-block: 2.5px;
 }
 .subreview-detail {
   border-radius: var(--border-radius);
-  background-color: var(--overlay3);
-  width: 100%;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
+  width: fit-content;
+  justify-content: flex-start;
+  gap: 2px;
+
   p {
     margin: 0;
+  }
+
+  span.edit-time {
+    color: var(--mid-gray);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 500px) {
+    min-width: 170px;
+    &:first-child {
+      min-width: 340px;
+    }
   }
 }
 .subreview-author {
@@ -155,7 +181,8 @@
   flex-direction: row;
   justify-content: left;
   align-items: center;
-  color: var(--mid-gray);
+  gap: 0 4px;
+  flex-wrap: wrap;
 }
 .subreview-author-name {
   margin: 0;
@@ -164,7 +191,7 @@
 .subreview-author-author {
   margin: 0;
   display: flex;
-  margin-left: 0.5rem;
+  margin-left: 2px;
 }
 
 // tags
@@ -173,12 +200,13 @@
   flex-direction: row;
   justify-content: left;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 8px;
 }
 .subreview-tag {
-  padding: 1rem;
+  padding: 6px 12px;
   background-color: var(--blue-primary);
   color: white;
+  margin: 0;
 }
 // footer
 .subreview-footer {
@@ -248,9 +276,6 @@
   }
   .subreview-ratings {
     flex-direction: row;
-  }
-  .rating {
-    width: 15rem;
   }
   .subreview-details {
     flex-direction: column;

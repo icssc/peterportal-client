@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import './style/theme.scss';

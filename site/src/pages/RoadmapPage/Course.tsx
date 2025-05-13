@@ -4,14 +4,13 @@ import { Button } from 'react-bootstrap';
 import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import { useIsMobile, pluralize } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
   <>
@@ -32,75 +31,32 @@ interface CourseNameAndInfoProps {
 }
 export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
-  const { id, department, courseNumber } =
-    typeof data === 'string' ? { id: data, department: data, courseNumber: '' } : data;
+  const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
-  const [showInfoPopover, setShowInfoPopover] = useState(false);
   const [allowTouchClick, setAllowTouchClick] = useState(false);
-  const [showPopoverTimeout, setShowPopoverTimeout] = useState(0);
-  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
+
+  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
   let courseID = department + ' ' + courseNumber;
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
-
-  const POPOVER_DELAY = 80;
-  const TOUCH_DELAY = 120;
-
-  const showPopover = () => {
-    setShowInfoPopover(true);
-    popupListener?.(true);
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(0);
-    setTimeout(() => setAllowTouchClick(true), TOUCH_DELAY);
-  };
-  const hidePopover = () => {
-    setShowInfoPopover(false);
-    setAllowTouchClick(false);
-    popupListener?.(false);
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(0);
-  };
-
-  const handleMouseMove = () => {
-    if (!showPopoverTimeout) return;
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
-  };
-
-  const handleHoverTitle = () => {
-    if (document.querySelector('.course.sortable-fallback')) return;
-    if (isMobile && showSearch) return;
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
-  };
-  const handleUnhoverTitle = (event: React.MouseEvent) => {
-    try {
-      const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
-      if (!inTooltip) hidePopover();
-    } catch {
-      hidePopover();
-    }
-  };
 
   const handleLinkClick = (event: React.MouseEvent) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popover = (
-    <Popover className="ppc-popover" id={'course-popover-' + id} onMouseLeave={hidePopover}>
-      <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />
-    </Popover>
-  );
+  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
 
   return (
-    <OverlayTrigger
-      show={showInfoPopover}
+    <PPCOverlayTrigger
+      popoverContent={popoverContent}
       placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
-      overlay={popover}
+      popupListener={popupListener}
+      setAllowSecondaryTap={setAllowTouchClick}
+      disabled={isMobile && showSearch}
     >
-      <span onMouseEnter={handleHoverTitle} onMouseLeave={handleUnhoverTitle} onMouseMove={handleMouseMove}>
+      <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </a>
@@ -110,7 +66,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </OverlayTrigger>
+    </PPCOverlayTrigger>
   );
 };
 
@@ -141,10 +97,12 @@ const Course: FC<CourseProps> = (props) => {
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
+    <div className="course" {...tappableCourseProps}>
       <div className="course-card-top">
         <div className="course-and-info">
-          <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
+            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          </span>
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
