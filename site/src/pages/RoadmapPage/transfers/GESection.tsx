@@ -34,7 +34,8 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
 
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.target.value === value.toString()) return;
-    if (isNaN(e.target.valueAsNumber) || e.target.valueAsNumber < 0) {
+    const invalidDecimal = valueType === 'numberOfCourses' && !Number.isInteger(e.target.valueAsNumber);
+    if (isNaN(e.target.valueAsNumber) || e.target.valueAsNumber < 0 || invalidDecimal) {
       // Revert change for invalid values
       e.target.value = value.toString();
       return;

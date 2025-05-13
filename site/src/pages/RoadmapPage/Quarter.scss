@@ -24,6 +24,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  font-size: 14px;
 
   .quarter-header {
     display: flex;
@@ -86,9 +87,6 @@
       box-shadow: none;
       border: 1px solid #268cd366;
       border-radius: 0;
-      &.invalid .course-and-info {
-        color: orange;
-      }
       .quarter-indicator-container {
         display: none;
       }
@@ -137,5 +135,5 @@ body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
 .red-menu-btn:hover,
 .red-menu-btn:focus,
 .popover-body .quarter-menu-btn.red-menu-btn:active {
-  color: red;
+  color: var(--red-primary);
 }

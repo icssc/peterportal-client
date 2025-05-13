@@ -79,4 +79,8 @@
   .units-display {
     white-space: nowrap;
   }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }

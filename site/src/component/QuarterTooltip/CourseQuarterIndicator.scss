@@ -53,6 +53,11 @@
     height: 200px;
     width: 300px;
   }
+  .chart {
+    width: 250px;
+    justify-self: center;
+    margin: auto;
+  }
 }
 
 .roadmap-page .quarter-indicator-container {
@@ -71,4 +76,18 @@
       justify-content: start;
     }
   }
+}
+
+.quarter-tooltip,
+.ppc-popover {
+  height: fit-content;
+  border: none;
+}
+.no-offerings {
+  background-color: grey;
+  text-align: center;
+  line-height: 35px;
+  border-radius: 50px;
+  height: 35px;
+  width: 35px;
 }

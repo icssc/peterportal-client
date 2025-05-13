@@ -34,6 +34,7 @@
   display: flex;
   justify-content: space-between;
   border-radius: var(--border-radius);
+  align-items: center;
 }
 
 .caret-icon {
@@ -116,23 +117,24 @@
   align-items: center;
 }
 
-#year-number,
-#course-count,
-#unit-count {
+.year-number,
+.course-count,
+.unit-count {
   font-weight: bold;
 }
 
-#year-stats {
+.year-stats {
   color: var(--mid-gray);
 }
 
-#year-title {
+.year-title {
   color: var(--text);
   font-size: 1.2rem;
   text-align: left;
+  font-size: 18px;
 }
 
-#year-accordion-icon {
+.year-accordion-icon {
   display: inline;
   padding-right: 1rem;
 }
@@ -151,6 +153,7 @@
 
 .year-accordion-title {
   width: 100%;
+  font-size: 14px;
 }
 
 .year-edit-btn {
@@ -158,6 +161,11 @@
   border: none;
   margin-right: 1.25rem;
   padding-bottom: 0.5rem;
+  margin-right: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+  height: 24px;
 }
 
 .year-settings-btn {
@@ -184,12 +192,9 @@
   border-radius: 1.25rem;
 }
 
-#clear-btn {
-  color: red;
-}
-
+#clear-btn,
 #remove-btn {
-  color: red;
+  color: var(--red-primary);
 }
 
 @media only screen and (max-width: 400px) {

@@ -167,6 +167,8 @@ const APExamsSection: FC = () => {
       <div className="input">
         <div className="exam-input">
           <Select
+            className="ppc-combobox"
+            classNamePrefix="ppc-combobox"
             value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
             options={apSelectOptions}
             isSearchable
@@ -177,6 +179,8 @@ const APExamsSection: FC = () => {
         </div>
         <div className="score-input">
           <Select
+            className="ppc-combobox"
+            classNamePrefix="ppc-combobox"
             value={score ? { value: score, label: score.toString() } : null}
             options={[
               { value: 1, label: '1' },

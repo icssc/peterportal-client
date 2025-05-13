@@ -101,20 +101,20 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           }}
         >
           <span className="year-accordion-title">
-            <span id="year-title">
+            <span className="year-title">
               {showContent ? <CaretDownFill className="caret-icon" /> : <CaretRightFill className="caret-icon" />}
               {data.name ? (
-                <span id="year-number">{data.name} </span>
+                <span className="year-number">{data.name} </span>
               ) : (
-                <span id="year-number">Year {yearIndex + 1} </span>
+                <span className="year-number">Year {yearIndex + 1} </span>
               )}
-              <span id="year-range">
+              <span className="year-range">
                 ({data.startYear} - {data.startYear + 1})
               </span>
             </span>
-            <span id="year-stats">
-              <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
-              <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
+            <span className="year-stats">
+              <span className="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+              <span className="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
             </span>
           </span>
         </Button>

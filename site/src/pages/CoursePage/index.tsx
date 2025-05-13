@@ -1,8 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingPage from '../LoadingPage';
-import Twemoji from 'react-twemoji';
-import { Divider } from 'semantic-ui-react';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
@@ -14,7 +12,7 @@ import Error from '../../component/Error/Error';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
-import './CoursePage.scss';
+import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 const CoursePage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,59 +42,39 @@ const CoursePage: FC = () => {
   else if (!courseGQLData) {
     return <LoadingPage />;
   } else {
+    const sideInfo = (
+      <SideInfo
+        searchType="course"
+        name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+        title={courseGQLData.title}
+        description={courseGQLData.description}
+        tags={getCourseTags(courseGQLData)}
+        course={courseGQLData}
+        terms={courseGQLData.terms}
+      />
+    );
     return (
-      <div className="content-wrapper course-page">
-        <div>
-          <SideInfo
-            searchType="course"
-            name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-            title={courseGQLData.title}
-            description={courseGQLData.description}
-            tags={getCourseTags(courseGQLData)}
-            course={courseGQLData}
-            terms={courseGQLData.terms}
+      <ResultPageContent sideInfo={sideInfo}>
+        <ResultPageSection title="📊 Grade Distribution">
+          <GradeDist course={courseGQLData} />
+        </ResultPageSection>
+
+        <ResultPageSection title="🌲 Prerequisite Tree">
+          <PrereqTree key={courseGQLData.id} {...courseGQLData} />
+        </ResultPageSection>
+
+        <ResultPageSection title="🗓️ Schedule of Classes">
+          <Schedule
+            key={courseGQLData.id}
+            courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+            termsOffered={sortTerms(courseGQLData.terms)}
           />
-        </div>
-        <Twemoji options={{ className: 'twemoji' }}>
-          <div className="course-page-body">
-            <div className="course-page-section">
-              <div>
-                <h2>🌲 Prerequisite Tree</h2>
-              </div>
-              <Divider />
-              <PrereqTree key={courseGQLData.id} {...courseGQLData} />
-            </div>
+        </ResultPageSection>
 
-            <div className="course-page-section">
-              <div>
-                <h2>🗓️ Schedule of Classes</h2>
-              </div>
-              <Divider />
-              <Schedule
-                key={courseGQLData.id}
-                courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-                termsOffered={sortTerms(courseGQLData.terms)}
-              />
-            </div>
-
-            <div className="course-page-section">
-              <div>
-                <h2>📊 Grade Distribution</h2>
-              </div>
-              <Divider />
-              <GradeDist course={courseGQLData} />
-            </div>
-
-            <div className="course-page-section">
-              <div>
-                <h2>💬 Reviews</h2>
-              </div>
-              <Divider />
-              <Review key={courseGQLData.id} course={courseGQLData} />
-            </div>
-          </div>
-        </Twemoji>
-      </div>
+        <ResultPageSection title="💬 Reviews">
+          <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
+        </ResultPageSection>
+      </ResultPageContent>
     );
   }
 };

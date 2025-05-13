@@ -1,12 +1,8 @@
-import {
-  MajorProgram,
-  MajorSpecialization,
-  MinorProgram,
-  ProgramRequirement,
-  TypedProgramRequirement,
-} from '@peterportal/types';
+import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
+import { useAppSelector } from '../store/hooks';
+import trpc from '../trpc';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -73,7 +69,7 @@ export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
  * @param requirements The raw course requirements, as returned from the API
  */
 export function collapseSingletonRequirements(requirements: ProgramRequirement[]) {
-  let builtGroup: TypedProgramRequirement<'Group'> | null = null;
+  let builtGroup: ProgramRequirement<'Group'> | null = null;
 
   const computedRequirements: ProgramRequirement[] = [];
 
@@ -81,11 +77,11 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
     if (builtGroup?.requirements?.length === 1) {
       computedRequirements.push(builtGroup.requirements[0]);
     } else if (builtGroup) {
-      const courseReqs: TypedProgramRequirement<'Course'> = {
+      const courseReqs: ProgramRequirement<'Course'> = {
         requirementType: 'Course',
         label: builtGroup.label,
         courseCount: builtGroup.requirementCount,
-        courses: (builtGroup.requirements as TypedProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
+        courses: (builtGroup.requirements as ProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
       };
       computedRequirements.push(courseReqs);
     }
@@ -117,12 +113,60 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
 export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
   const res = requirements.flatMap((r) => {
     if (r.requirementType !== 'Group') return r;
-    /** @todo after markers are implemented, delete this. */
-    const nonMarkers = r.requirements.filter((s) => s.requirementType !== 'Marker');
-    if (r.requirementCount !== nonMarkers.length) return r;
+    if (r.requirementCount !== r.requirements.length) return r;
     return flattenSingletonGroups(r.requirements);
   });
   return res;
+}
+
+/**
+ * Sorts Group Requirements such that Markers appear first. This is so the user can see alternatives to
+ * completing entire course lists without having to scroll past the course lists first
+ * @param requirements The program requirements list
+ */
+export function sortGroupRequirementsByType(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  // console.log(requirements)
+  return requirements
+    .map((r) => {
+      if (r.requirementType !== 'Group') return r;
+      return { ...r, requirements: sortGroupRequirementsByType(r.requirements) };
+    })
+    .sort((a, b) => {
+      const aIsMarker = a.requirementType === 'Marker';
+      const bIsMarker = b.requirementType === 'Marker';
+      return Number(bIsMarker) - Number(aIsMarker);
+    });
+}
+
+export function coerceEmptyRequirement(requirement: ProgramRequirement): ProgramRequirement {
+  if (requirement.requirementType === 'Course' && !requirement.courses.length) {
+    // Some course requirements don't provide a list of courses from the API. For these cases,
+    // treat them as a Marker so the user can manually mark as complete.
+    return { requirementType: 'Marker', label: requirement.label };
+  } else {
+    return requirement;
+  }
+}
+
+function coerceEmptyRequirements(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  return requirements.map((r) => {
+    if (r.requirementType !== 'Group') return coerceEmptyRequirement(r);
+    requirements = coerceEmptyRequirements(r.requirements);
+    return { ...r, requirements };
+  });
+}
+
+export function formatRequirements(requirements: ProgramRequirement[]): ProgramRequirement[] {
+  const pipeline = [
+    collapseSingletonRequirements,
+    flattenSingletonGroups,
+    coerceEmptyRequirements,
+    sortGroupRequirementsByType,
+  ];
+  for (const transform of pipeline) {
+    requirements = transform(requirements);
+  }
+  return requirements;
 }
 
 export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorSpecialization) {
@@ -141,7 +185,7 @@ export interface CompletionStatus {
 
 function checkCourseListCompletion(
   completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Course'>,
+  requirement: ProgramRequirement<'Course'>,
 ): CompletionStatus {
   const completedCount = requirement.courses.filter((c) => c in completed).length;
   const required = requirement.courseCount;
@@ -150,7 +194,7 @@ function checkCourseListCompletion(
 
 function checkGroupCompletion(
   completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Group'>,
+  requirement: ProgramRequirement<'Group'>,
 ): CompletionStatus {
   const checkIsDone = (req: ProgramRequirement) => checkCompletion(completed, req).done;
   const completedGroups = requirement.requirements.filter(checkIsDone).length;
@@ -158,10 +202,16 @@ function checkGroupCompletion(
   return { required, completed: completedGroups, done: completedGroups >= required };
 }
 
-function checkUnitCompletion(
-  completed: CompletedCourseSet,
-  requirement: TypedProgramRequirement<'Unit'>,
-): CompletionStatus {
+function useGroupCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
+  const useIsDone = (req: ProgramRequirement) => useCompletionCheck(completed, req).done;
+  if (requirement.requirementType !== 'Group') return { required: 0, completed: 0, done: false };
+
+  const completedGroups = requirement.requirements.filter(useIsDone).length;
+  const required = requirement.requirementCount;
+  return { required, completed: completedGroups, done: completedGroups >= required };
+}
+
+function checkUnitCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement<'Unit'>): CompletionStatus {
   const required = requirement.unitCount;
   const completedCourses = requirement.courses.filter((c) => c in completed);
   const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
@@ -178,5 +228,48 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
       return checkUnitCompletion(completed, requirement);
     case 'Marker':
       return { completed: 0, done: false, required: 0 };
+  }
+}
+
+export function useCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
+  const completedMarkers = useAppSelector((state) => state.courseRequirements.completedMarkers);
+  const groupComplete = useGroupCompletionCheck(completed, requirement);
+
+  switch (requirement.requirementType) {
+    case 'Group':
+      return groupComplete;
+    case 'Course':
+      return checkCourseListCompletion(completed, requirement);
+    case 'Unit':
+      return checkUnitCompletion(completed, requirement);
+    case 'Marker':
+      return { completed: 0, done: completedMarkers[requirement.label], required: 0 };
+  }
+}
+
+export async function loadMarkerCompletion(isLoggedIn: boolean): Promise<string[]> {
+  if (isLoggedIn) {
+    const response = await trpc.courseRequirements.getCompletedMarkers.query();
+    return response.map((r) => r.markerName);
+  } else {
+    let completedMarkers: string[] = [];
+    try {
+      completedMarkers = JSON.parse(localStorage.roadmap__savedMarkers);
+    } catch {
+      /* ignore */
+    }
+    return completedMarkers;
+  }
+}
+
+export async function saveMarkerCompletion(markerName: string, complete: boolean, isLoggedIn: boolean): Promise<void> {
+  if (isLoggedIn) {
+    const operationName = complete ? 'addCompletedMarker' : 'removeCompletedMarker';
+    const operation = trpc.courseRequirements[operationName];
+    await operation.mutate(markerName);
+  } else {
+    const completedMarkers = new Set(await loadMarkerCompletion(false));
+    completedMarkers[complete ? 'add' : 'delete'](markerName);
+    localStorage.roadmap__savedMarkers = JSON.stringify([...completedMarkers]);
   }
 }
