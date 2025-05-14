@@ -38,4 +38,11 @@ export const savedRoadmap = z.object({
   planners: z.array(savedPlannerData),
   transfers: z.array(transferData),
 });
+
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
+
+export interface LegacyRoadmap {
+  planner: SavedPlannerYearData[];
+  transfers: TransferData[];
+  timestamp?: string;
+}

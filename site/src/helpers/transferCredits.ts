@@ -1,6 +1,7 @@
 import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
 import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
 import { APExam, TransferredGE } from '@peterportal/types';
+import trpc from '../trpc';
 
 /**
  * Gets a list of names of courses and AP Exams from transferred credits. Courses and AP Exams
@@ -57,4 +58,53 @@ export function getTotalUnitsFromTransfers(
   });
 
   return total;
+}
+
+export enum LocalTransferSaveKey {
+  Course = 'transferredCourses',
+  AP = 'transferredAPs',
+  GE = 'transferredGEs',
+  Uncategorized = 'uncategorizedTransfers',
+}
+
+async function loadTransferData<T>(
+  trpcRouteName: keyof (typeof trpc)['transferCredits'],
+  isLoggedIn: boolean,
+  localKey: LocalTransferSaveKey,
+): Promise<T[]> {
+  if (isLoggedIn) {
+    // Fetch from tRPC if logged in
+    type OperationType = { query: () => Promise<T[]> };
+    return await (trpc.transferCredits[trpcRouteName] as OperationType).query();
+  } else {
+    // Get array from local storage if logged out
+    let localArray: T[] = [];
+    try {
+      localArray = JSON.parse(localStorage['roadmap__' + localKey]);
+    } catch {
+      /* ignore */
+    }
+    return localArray;
+  }
+}
+
+export function loadTransferredCourses(isLoggedIn: boolean): Promise<TransferredCourse[]> {
+  return loadTransferData<TransferredCourse>('getTransferredCourses', isLoggedIn, LocalTransferSaveKey.Course);
+}
+export function loadTransferredAPs(isLoggedIn: boolean): Promise<UserAPExam[]> {
+  return loadTransferData<UserAPExam>('getSavedAPExams', isLoggedIn, LocalTransferSaveKey.AP);
+}
+export function loadTransferredGEs(isLoggedIn: boolean): Promise<TransferredGE[]> {
+  return loadTransferData<TransferredGE>('getTransferredGEs', isLoggedIn, LocalTransferSaveKey.GE);
+}
+export function loadTransferredOther(isLoggedIn: boolean): Promise<UncategorizedCourseEntry[]> {
+  return loadTransferData<UncategorizedCourseEntry>(
+    'getUncategorizedTransfers',
+    isLoggedIn,
+    LocalTransferSaveKey.Uncategorized,
+  );
+}
+
+export function saveLocalTransfers<T>(localKey: LocalTransferSaveKey, data: T[]): void {
+  localStorage['roadmap__' + localKey] = JSON.stringify(data);
 }

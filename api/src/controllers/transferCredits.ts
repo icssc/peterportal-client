@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TransferredGE } from '@peterportal/types';
-import { router, publicProcedure, userProcedure } from '../helpers/trpc';
+import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
 import { transferredApExam, transferredGe } from '../db/schema';
@@ -21,9 +21,7 @@ const zodAPExamSchema = z.object({
   units: z.number(),
 });
 
-/** @todo complete all routes. We will remove comments after all individual PRs are merged to avoid merge conflicts */
 const transferCreditsRouter = router({
-  /** @todo add user procedure to get transferred courses below this comment. */
   getTransferredCourses: userProcedure.query(async ({ ctx }) => {
     const response = await db
       .select({ courseName: transferredCourse.courseName, units: transferredCourse.units })
@@ -53,7 +51,6 @@ const transferCreditsRouter = router({
           and(eq(transferredCourse.userId, ctx.session.userId!), eq(transferredCourse.courseName, input.courseName)),
         );
     }),
-  /** @todo add user procedure to get transferred AP Exams below this comment. */
   getAPExamInfo: publicProcedure.query(async (): Promise<APExam[]> => {
     const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
       headers: ANTEATER_API_REQUEST_HEADERS,
@@ -62,7 +59,7 @@ const transferCreditsRouter = router({
       .then((res) => (res.data ? (res.data as APExam[]) : []));
     return response;
   }),
-  getSavedAPExams: publicProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
+  getSavedAPExams: userProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
@@ -76,13 +73,13 @@ const transferCreditsRouter = router({
       units: exam.units,
     })) as userAPExam[];
   }),
-  addUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+  addUserAPExam: userProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
 
     await db.insert(transferredApExam).values({ userId, examName, score: score ?? null, units });
   }),
-  deleteUserAPExam: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+  deleteUserAPExam: userProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
     const examName = input;
     const userId = ctx.session.userId!;
 
@@ -90,7 +87,7 @@ const transferCreditsRouter = router({
       .delete(transferredApExam)
       .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
-  updateUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+  updateUserAPExam: userProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
 
@@ -99,7 +96,6 @@ const transferCreditsRouter = router({
       .set({ score: score, units: units })
       .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
-  /** @todo add user procedure to get transferred GE credits below this comment. */
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db
       .select({
@@ -132,7 +128,6 @@ const transferCreditsRouter = router({
           set: { numberOfCourses: GE.numberOfCourses, units: GE.units },
         });
     }),
-  /** @todo add user procedure to get transferred untransferred credits below this comment. */
   getUncategorizedTransfers: userProcedure.query(async ({ ctx }) => {
     const courses = await db
       .select({ name: transferredMisc.courseName, units: transferredMisc.units })
@@ -140,7 +135,6 @@ const transferCreditsRouter = router({
       .where(eq(transferredMisc.userId, ctx.session.userId!));
     return courses;
   }),
-
   removeUncategorizedCourse: userProcedure
     .input(z.object({ name: z.string().nullable(), units: z.number().nullable() }))
     .mutation(async ({ ctx, input }) => {

@@ -1,4 +1,5 @@
 import {
+  LegacyRoadmap,
   Prerequisite,
   PrerequisiteTree,
   QuarterName,
@@ -7,7 +8,6 @@ import {
   SavedPlannerQuarterData,
   SavedPlannerYearData,
   SavedRoadmap,
-  TransferData,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -170,12 +170,6 @@ export const loadRoadmap = async (
   const planners = await expandAllPlanners(roadmap.planners);
   loadHandler(planners, roadmap, isLocalNewer);
 };
-
-interface LegacyRoadmap {
-  planner: SavedPlannerYearData[];
-  transfers: TransferData[];
-  timestamp?: string;
-}
 
 export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
   if ('planners' in roadmap) {
