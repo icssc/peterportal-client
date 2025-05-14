@@ -164,7 +164,7 @@ const APExamsSection: FC = () => {
       {userAPExams.map((exam) => (
         <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
       ))}
-      <div className="input">
+      <div className="ap-import-row">
         <div className="exam-input">
           <Select
             className="ppc-combobox"

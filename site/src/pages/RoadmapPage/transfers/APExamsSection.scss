@@ -1,10 +1,14 @@
-.input {
+.ap-import-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 12px;
 
   .exam-input {
     width: 216px;
+  }
+
+  .score-input {
+    width: 100px;
   }
 }
 
