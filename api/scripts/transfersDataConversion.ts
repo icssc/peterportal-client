@@ -492,30 +492,30 @@ const organize = async () => {
   console.log(transferredApExam && 'loaded');
   console.log(transferredMisc && 'loaded');
 
-  // console.log('Starting transaction...');
-  // await db.transaction(async (tx) => {
-  //   if (mergedToInsertAp.length) {
-  //     await tx
-  //       .insert(transferredApExam)
-  //       .values(mergedToInsertAp)
-  //       .onConflictDoUpdate({
-  //         target: [transferredApExam.userId, transferredApExam.examName],
-  //         set: { units: sql`EXCLUDED.units + ${transferredApExam.units}` }
-  //       });
-  //   }
-  //   if (mergedToInsertCourse.length) {
-  //     await tx
-  //       .insert(transferredCourse)
-  //       .values(mergedToInsertCourse)
-  //       .onConflictDoUpdate({
-  //         target: [transferredCourse.userId, transferredCourse.courseName],
-  //         set: { units: sql`EXCLUDED.units + ${transferredCourse.units}` }
-  //       });
-  //   }
-  //   await tx.delete(transferredMisc).where(or(...toDelete));
-  //   if (toReinsertMisc.length) await tx.insert(transferredMisc).values(toReinsertMisc)
-  // });
-  // console.log('Finished transaction');
+  console.log('Starting transaction...');
+  await db.transaction(async (tx) => {
+    if (mergedToInsertAp.length) {
+      await tx
+        .insert(transferredApExam)
+        .values(mergedToInsertAp)
+        .onConflictDoUpdate({
+          target: [transferredApExam.userId, transferredApExam.examName],
+          set: { units: sql`EXCLUDED.units + ${transferredApExam.units}` },
+        });
+    }
+    if (mergedToInsertCourse.length) {
+      await tx
+        .insert(transferredCourse)
+        .values(mergedToInsertCourse)
+        .onConflictDoUpdate({
+          target: [transferredCourse.userId, transferredCourse.courseName],
+          set: { units: sql`EXCLUDED.units + ${transferredCourse.units}` },
+        });
+    }
+    await tx.delete(transferredMisc).where(or(...toDelete));
+    if (toReinsertMisc.length) await tx.insert(transferredMisc).values(toReinsertMisc);
+  });
+  console.log('Finished transaction');
 };
 
 organize();
