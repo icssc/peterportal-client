@@ -73,9 +73,9 @@ export const transferCreditsSlice = createSlice({
       state.transferredGEs = action.payload;
     },
     setTransferredGE: (state, action: PayloadAction<TransferredGE>) => {
-      state.transferredGEs = state.transferredGEs.map((ge) => {
-        return ge.geName === action.payload.geName ? action.payload : ge;
-      });
+      const foundGE = state.transferredGEs.find((ge) => ge.geName === action.payload.geName);
+      if (foundGE) Object.assign(foundGE, action.payload);
+      else state.transferredGEs.push(action.payload);
     },
     setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
       state.uncategorizedCourses = action.payload;

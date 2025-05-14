@@ -7,6 +7,7 @@ import trpc from '../../../trpc';
 import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { ALL_GE_NAMES, GE_TITLE_MAP } from '../../../helpers/courseRequirements';
+import { Spinner } from 'react-bootstrap';
 
 interface GEInputProps {
   value: number;
@@ -93,14 +94,19 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 };
 
 const GESection: FC = () => {
+  const doneLoading = useAppSelector((state) => state.transferCredits.userDataLoaded);
+  const loader = (
+    <div className="loader-container">
+      <Spinner animation="border" />
+    </div>
+  );
+
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>
         Enter the GE credits that you've received in each category from other colleges/universities.
       </SectionDescription>
-      {ALL_GE_NAMES.map((geName) => (
-        <GEMenuTile key={geName} geName={geName} />
-      ))}
+      {doneLoading ? ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />) : loader}
     </MenuSection>
   );
 };
