@@ -23,7 +23,6 @@ export function getNamesOfTransfers(
   });
 
   courses.forEach((course) => {
-    course.courseName; // courseName currently doesn't have spaces, will need to fix that
     transferNames.push(course.courseName);
   });
 

@@ -72,8 +72,6 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
 
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
-// /** A RegEx for GE labels that specify the number of required courses */
-// const GE_NUMBERED_LABEL_REGEX = /^\d courses? category [iv]+$/i
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
