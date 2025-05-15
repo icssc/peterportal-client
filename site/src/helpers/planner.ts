@@ -207,9 +207,10 @@ type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
 type plannerCallback = (missing: Set<string>, invalidCourses: InvalidCourseData[]) => void;
 
-export const validatePlanner = (transfers: TransferData[], currentPlanData: PlannerData, handler: plannerCallback) => {
+export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData, handler: plannerCallback) => {
   // store courses that have been taken
-  const taken: Set<string> = new Set(transfers.map((transfer) => transfer.name));
+  // Transferred courses use ID (no spaces), AP Exams use Catalogue Name
+  const taken: Set<string> = new Set(transferNames);
   const invalidCourses: InvalidCourseData[] = [];
   const missing = new Set<string>();
   currentPlanData.forEach((year, yi) => {

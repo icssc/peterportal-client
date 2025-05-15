@@ -11,7 +11,6 @@ import {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
-  setUserAPExams,
   UserAPExam,
 } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -148,13 +147,6 @@ const APExamsSection: FC = () => {
     setScore(null);
   }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn, examsLoading]);
 
-  // Fetch saved AP exams and save to store
-  useEffect(() => {
-    trpc.transferCredits.getSavedAPExams.query().then((savedExams) => {
-      dispatch(setUserAPExams(savedExams));
-    });
-  }, [dispatch]);
-
   const baseSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
     value: exam,
     label: exam.fullName,
@@ -172,7 +164,7 @@ const APExamsSection: FC = () => {
       {userAPExams.map((exam) => (
         <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
       ))}
-      <div className="input">
+      <div className="ap-import-row">
         <div className="exam-input">
           <Select
             className="ppc-combobox"

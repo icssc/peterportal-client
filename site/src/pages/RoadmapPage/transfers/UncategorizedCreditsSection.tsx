@@ -1,11 +1,11 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
-import { removeUncategorizedCourse, setUncategorizedCourses } from '../../../store/slices/transferCreditsSlice';
+import { removeUncategorizedCourse } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
-interface UncategorizedCourseEntry {
+export interface UncategorizedCourseEntry {
   name: string | null;
   units: number | null;
 }
@@ -23,13 +23,6 @@ const UncategorizedMenuTile: FC<UncategorizedCourseEntry> = ({ name, units }) =>
 
 const UncategorizedCreditsSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    trpc.transferCredits.getUncategorizedTransfers.query().then((response) => {
-      dispatch(setUncategorizedCourses(response));
-    });
-  }, [dispatch]);
 
   if (courses.length === 0) {
     return null;

@@ -39,11 +39,3 @@ export const savedRoadmap = z.object({
   transfers: z.array(transferData),
 });
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
-
-// Structure stored in mongo for accounts
-export const mongoRoadmap = z.object({
-  roadmap: savedRoadmap,
-  userId: z.number(),
-  coursebag: z.array(z.string()),
-});
-export type MongoRoadmap = z.infer<typeof mongoRoadmap>;

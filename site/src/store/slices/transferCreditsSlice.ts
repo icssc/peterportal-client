@@ -21,6 +21,7 @@ export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
+    userDataLoaded: false,
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as UserAPExam[],
@@ -30,6 +31,9 @@ export const transferCreditsSlice = createSlice({
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
       state.showTransfersMenu = action.payload;
+    },
+    setUserDataLoaded: (state, action: PayloadAction<boolean>) => {
+      state.userDataLoaded = action.payload;
     },
     addTransferredCourse: (state, action: PayloadAction<TransferredCourse>) => {
       state.transferredCourses.push(action.payload);
@@ -69,9 +73,9 @@ export const transferCreditsSlice = createSlice({
       state.transferredGEs = action.payload;
     },
     setTransferredGE: (state, action: PayloadAction<TransferredGE>) => {
-      state.transferredGEs = state.transferredGEs.map((ge) => {
-        return ge.geName === action.payload.geName ? action.payload : ge;
-      });
+      const foundGE = state.transferredGEs.find((ge) => ge.geName === action.payload.geName);
+      if (foundGE) Object.assign(foundGE, action.payload);
+      else state.transferredGEs.push(action.payload);
     },
     setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
       state.uncategorizedCourses = action.payload;
@@ -86,6 +90,7 @@ export const transferCreditsSlice = createSlice({
 
 export const {
   setShowTransfersMenu,
+  setUserDataLoaded,
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,

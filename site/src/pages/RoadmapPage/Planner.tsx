@@ -24,6 +24,8 @@ import { Button, Modal } from 'react-bootstrap';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { getNamesOfTransfers, getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
+import { useTransferredCredits } from '../../hooks/transferCredits';
 
 const Planner: FC = () => {
   const dispatch = useAppDispatch();
@@ -31,12 +33,14 @@ const Planner: FC = () => {
   const isFirstRenderer = useFirstRender();
   const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
-  const transfers = useAppSelector((state) => state.roadmap.transfers);
+  const transferred = useTransferredCredits();
+  const legacyTransfers = useAppSelector((state) => state.roadmap.transfers);
+
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
-    transfers: transfers,
+    transfers: legacyTransfers,
   });
 
   const handleLoadLocal = async () => {
@@ -56,7 +60,7 @@ const Planner: FC = () => {
     const roadmap: SavedRoadmap = {
       timestamp: new Date().toISOString(),
       planners: collapseAllPlanners(planner?.length ? planner : allPlanData),
-      transfers: transfers,
+      transfers: legacyTransfers,
     };
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
@@ -91,13 +95,8 @@ const Planner: FC = () => {
       });
     });
     // add in transfer courses
-    transfers.forEach((transfer) => {
-      // only count if has both name and units
-      if (transfer.units && transfer.name) {
-        unitCount += transfer.units;
-        courseCount += 1;
-      }
-    });
+    courseCount += transferred.courses.length;
+    unitCount += getTotalUnitsFromTransfers(transferred.courses, transferred.ap, transferred.ge, transferred.other);
     return { unitCount, courseCount };
   };
 
@@ -120,7 +119,8 @@ const Planner: FC = () => {
         }
       });
     } else {
-      validatePlanner(transfers, currentPlanData, (missing, invalid) => {
+      const transferNames = getNamesOfTransfers(transferred.courses, transferred.ap, transferred.apInfo);
+      validatePlanner(transferNames, currentPlanData, (missing, invalid) => {
         // set missing courses
         setMissingPrerequisites(missing);
         // set the invalid courses
@@ -136,7 +136,7 @@ const Planner: FC = () => {
       localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content })); // remove id attribute
       dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
     }
-  }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transfers]);
+  }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transferred]);
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
