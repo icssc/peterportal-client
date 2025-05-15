@@ -199,7 +199,7 @@ export const selectedApReward = pgTable(
     foreignKey({
       columns: [table.userId, table.examName],
       foreignColumns: [transferredApExam.userId, transferredApExam.examName],
-    }),
+    }).onDelete('cascade'),
     primaryKey({ columns: [table.userId, table.examName, table.path] }),
   ],
 );
