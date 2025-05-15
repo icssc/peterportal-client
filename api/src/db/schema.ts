@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -183,6 +184,23 @@ export const transferredApExam = pgTable(
   (table) => [
     check('score_in_range', sql`${table.score} IS NULL OR (${table.score} >= 1 AND ${table.score} <= 5)`),
     primaryKey({ columns: [table.userId, table.examName] }),
+  ],
+);
+
+export const selectedApReward = pgTable(
+  'transferred_ap_exam_reward_selection',
+  {
+    userId: integer('user_id').notNull(),
+    examName: text('exam_name').notNull(),
+    path: text('path').notNull(),
+    selectedIndex: integer('selected_index').notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId, table.examName],
+      foreignColumns: [transferredApExam.userId, transferredApExam.examName],
+    }),
+    primaryKey({ columns: [table.userId, table.examName, table.path] }),
   ],
 );
 
