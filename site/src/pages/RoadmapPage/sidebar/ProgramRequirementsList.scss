@@ -149,6 +149,7 @@
   font-size: 13px;
   border-radius: 4px;
   cursor: grab;
+  position: relative;
 
   a {
     color: inherit;
@@ -163,6 +164,19 @@
     text-decoration-thickness: 2px;
     opacity: 0.75;
   }
+}
+
+.source-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+  color: white;
+  font-size: 8px;
+
+  background-color: var(--blue-primary);
+  padding: 1px 4px;
+  border-radius: 4px;
 }
 
 body[data-theme='dark'] {

@@ -30,13 +30,28 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
+interface CompletedCourseSetWithType {
+  [k: string]: {
+    units: number;
+    transferType: 'AP' | 'Course';
+  };
+}
+
 interface CourseTileProps {
   courseID: string;
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
   taken?: boolean;
+  transferredByAP?: boolean;
+  transferredByCourse?: boolean;
 }
-const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken }) => {
+const CourseTile: FC<CourseTileProps> = ({
+  courseID,
+  dragTimestamp = 0,
+  taken,
+  transferredByAP,
+  transferredByCourse,
+}) => {
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -90,13 +105,20 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, dragTimestamp = 0, taken })
 
   return (
     <div className={className} {...tappableCourseProps} style={{ fontSize }}>
+      {transferredByAP && <div className="source-overlay">AP</div>}
+      {transferredByCourse && <div className="source-overlay">Course</div>}
       <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && <Spinner animation="border" />}
     </div>
   );
 };
 
-const CourseList: FC<{ courses: string[]; takenCourseIDs: CompletedCourseSet }> = ({ courses, takenCourseIDs }) => {
+interface CourseListProps {
+  courses: string[];
+  takenCourseIDs: CompletedCourseSet;
+  transferredCourseIDs: CompletedCourseSetWithType;
+}
+const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs, transferredCourseIDs }) => {
   const isMobile = useIsMobile();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
 
@@ -115,7 +137,14 @@ const CourseList: FC<{ courses: string[]; takenCourseIDs: CompletedCourseSet }> 
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >
       {courses.map((c, i) => (
-        <CourseTile courseID={c} key={c} dragTimestamp={timestamps[i]} taken={c in takenCourseIDs} />
+        <CourseTile
+          courseID={c}
+          key={c}
+          dragTimestamp={timestamps[i]}
+          taken={c in takenCourseIDs}
+          transferredByAP={c in transferredCourseIDs && transferredCourseIDs[c].transferType === 'AP'}
+          transferredByCourse={c in transferredCourseIDs && transferredCourseIDs[c].transferType === 'Course'}
+        />
       ))}
     </ReactSortable>
   );
@@ -139,9 +168,10 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
 interface CourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
+  transferredCourseIDs: CompletedCourseSetWithType;
   storeKey: string;
 }
-const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, transferredCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
 
@@ -168,7 +198,13 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
           <b>Complete {label} of the following:</b>
         </p>
       )}
-      {open && <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />}
+      {open && (
+        <CourseList
+          courses={data.courses}
+          takenCourseIDs={takenCourseIDs}
+          transferredCourseIDs={transferredCourseIDs}
+        />
+      )}
     </div>
   );
 };
@@ -176,8 +212,13 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
 interface GroupedCourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
+  transferredCourseIDs: CompletedCourseSetWithType;
 }
-const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
+const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({
+  data,
+  takenCourseIDs,
+  transferredCourseIDs,
+}) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
 
@@ -187,7 +228,11 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
         <p className="requirement-label">
           <b>{data.label}</b>
         </p>
-        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+        <CourseList
+          courses={data.courses}
+          takenCourseIDs={takenCourseIDs}
+          transferredCourseIDs={transferredCourseIDs}
+        />
       </div>
     </>
   );
@@ -196,9 +241,10 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
 interface GroupRequirementProps {
   data: ProgramRequirement<'Group'>;
   takenCourseIDs: CompletedCourseSet;
+  transferredCourseIDs: CompletedCourseSetWithType;
   storeKey: string;
 }
-const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, transferredCourseIDs, storeKey }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
@@ -225,6 +271,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             requirement={r}
             nested
             takenCourseIDs={takenCourseIDs}
+            transferredCourseIDs={transferredCourseIDs}
           />
         ))}
     </div>
@@ -267,25 +314,43 @@ interface ProgramRequirementDisplayProps {
   requirement: ProgramRequirement;
   nested?: boolean;
   takenCourseIDs: CompletedCourseSet;
+  transferredCourseIDs: CompletedCourseSetWithType;
   storeKey: string;
 }
 const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
   requirement,
   nested,
   takenCourseIDs,
+  transferredCourseIDs,
   storeKey,
 }) => {
   switch (requirement.requirementType) {
     case 'Unit':
     case 'Course': {
       return nested ? (
-        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
+        <GroupedCourseRequirement
+          data={requirement}
+          takenCourseIDs={takenCourseIDs}
+          transferredCourseIDs={transferredCourseIDs}
+        />
       ) : (
-        <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
+        <CourseRequirement
+          data={requirement}
+          storeKey={storeKey}
+          takenCourseIDs={takenCourseIDs}
+          transferredCourseIDs={transferredCourseIDs}
+        />
       );
     }
     case 'Group':
-      return <GroupRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />;
+      return (
+        <GroupRequirement
+          data={requirement}
+          storeKey={storeKey}
+          takenCourseIDs={takenCourseIDs}
+          transferredCourseIDs={transferredCourseIDs}
+        />
+      );
     case 'Marker':
       return <MarkerRequirement data={requirement} storeKey={storeKey} />;
   }
@@ -307,12 +372,17 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
     .flatMap((quarter) => quarter.courses)
     .map((course) => [course.id, course.minUnits]);
   const transferCourseMap = transferredCourses.map((t) => [t.courseName.replace(/\s/g, ''), t.units ?? 0]);
+  const transferCourseMapWithType = transferredCourses.map((t) => [
+    t.courseName.replace(/\s/g, ''),
+    { units: t.units ?? 0, transferType: t.transferType },
+  ]);
 
   const takenCourseSet: CompletedCourseSet = Object.assign(
     {},
     Object.fromEntries(roadmapCourseMap),
     Object.fromEntries(transferCourseMap),
   );
+  const transferredCourseSet: CompletedCourseSetWithType = Object.fromEntries(transferCourseMapWithType);
 
   return (
     <div className="program-requirements">
@@ -323,6 +393,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
           key={i}
           storeKey={`${storeKeyPrefix}-${i}`}
           takenCourseIDs={takenCourseSet}
+          transferredCourseIDs={transferredCourseSet}
         />
       ))}
     </div>
