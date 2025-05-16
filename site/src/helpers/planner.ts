@@ -8,6 +8,7 @@ import {
   SavedPlannerQuarterData,
   SavedPlannerYearData,
   SavedRoadmap,
+  TransferData,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -20,6 +21,10 @@ import {
   PlannerYearData,
 } from '../types/types';
 import trpc from '../trpc';
+import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
+import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
+import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
+import spawnToast from './toastify';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -140,9 +145,10 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-export const loadRoadmap = async (
+/* export const loadRoadmap = async (
   isLoggedIn: boolean,
   loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
+  saveTransferDispatch?: TempDispatchType
 ) => {
   let roadmap: SavedRoadmap = null!;
   const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
@@ -158,7 +164,7 @@ export const loadRoadmap = async (
   let isLocalNewer = false;
 
   if (!roadmap && localRoadmap) {
-    roadmap = convertLegacyLocalRoadmap(localRoadmap);
+    roadmap = convertLegacyLocalRoadmap(localRoadmap, saveTransferDispatch);
   } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
     isLocalNewer = true;
   } else if (!roadmap && !localRoadmap) {
@@ -169,9 +175,31 @@ export const loadRoadmap = async (
   // expand planner and set the state
   const planners = await expandAllPlanners(roadmap.planners);
   loadHandler(planners, roadmap, isLocalNewer);
+}; */
+
+function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
+  let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
+  try {
+    localRoadmap = JSON.parse(localStorage.roadmap);
+  } catch {
+    /* ignore */
+  }
+  const EMPTY_ROADMAP_STR = JSON.stringify({
+    planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
+    transfers: [],
+  } as Omit<SavedRoadmap, 'timestamp'>);
+
+  return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
+}
+
+export const loadRoadmapV2 = async (isLoggedIn: boolean) => {
+  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
+  const localRoadmap = loadLocalRoadmap() as SavedRoadmap;
+  return { accountRoadmap, localRoadmap };
 };
 
-export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+// Adding Multiplan
+function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
   if ('planners' in roadmap) {
     // if already in multiplanner format, everything is good
     return roadmap;
@@ -190,6 +218,64 @@ export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap)
   }
 }
 
+// Upgrading Transfers
+async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: TransferData[]) {
+  // Avoid issues with double first render
+  if (!transfers.length || localStorage.roadmap__versionKey === '3') return false; // nothing to convert
+
+  localStorage.roadmap__versionKey = '3';
+  const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
+  const { courses, ap, other } = response;
+
+  const scoredAPs = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+  const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+
+  saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
+  saveLocalTransfers<UserAPExam>(LocalTransferSaveKey.AP, scoredAPs);
+  saveLocalTransfers<UncategorizedCourseEntry>(LocalTransferSaveKey.Uncategorized, formattedOther);
+
+  // immediately update localStorage to not have transfers, now that we've converted them
+  localStorage.setItem('roadmap', JSON.stringify(roadmapToSave));
+  return true;
+}
+
+/**
+ * Updates the format of transferred credits in localStorage before data is used by other parts of the app
+ * @param roadmap The roadmap whose transfers to upgrade
+ */
+async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
+  const legacyTransfers = roadmap.transfers;
+  const updatedRoadmap = { ...roadmap, transfers: [] };
+  const complete = await saveUpgradedTransfers(updatedRoadmap, legacyTransfers);
+  return complete ? updatedRoadmap : roadmap;
+}
+
+// Upgrading Entire Roadmap
+/**
+ * Function to upgrade a local roadmap. Gets called BEFORE user data is loaded
+ */
+export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
+  const localRoadmap = loadLocalRoadmap();
+  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
+  const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
+  return roadmapWithoutLegacyTransfers;
+}
+
+export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };
+  localStorage.setItem('roadmap', JSON.stringify(roadmap));
+
+  const showMessage = showToasts ? spawnToast : (str: string) => str;
+
+  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Login to save it to your account.';
+  if (!isLoggedIn) return showMessage(SAVED_LOCALLY_MESSAGE);
+
+  await trpc.roadmaps.save
+    .mutate(roadmap)
+    .then(() => showMessage('Roadmap saved to your account!'))
+    .catch(() => showMessage(SAVED_LOCALLY_MESSAGE));
+};
+
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
   return yearPlans.map((year) => ({
     ...year,
@@ -202,6 +288,11 @@ type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 type plannerCallback = (missing: Set<string>, invalidCourses: InvalidCourseData[]) => void;
 
 export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData, handler: plannerCallback) => {
+  const { missing, invalidCourses } = validatePlannerV2(transferNames, currentPlanData);
+  handler(missing, invalidCourses);
+};
+
+export const validatePlannerV2 = (transferNames: string[], currentPlanData: PlannerData) => {
   // store courses that have been taken
   // Transferred courses use ID (no spaces), AP Exams use Catalogue Name
   const taken: Set<string> = new Set(transferNames);
@@ -238,7 +329,7 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
     });
   });
 
-  handler(missing, invalidCourses);
+  return { missing, invalidCourses };
 };
 
 export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {

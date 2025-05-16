@@ -7,7 +7,7 @@ import {
   setTransferredCourses,
   setUncategorizedCourses,
   setUserAPExams,
-  setUserDataLoaded,
+  setDataLoadState,
   TransferredCourse,
   UserAPExam,
 } from '../store/slices/transferCreditsSlice';
@@ -74,7 +74,8 @@ export function useTransferredCredits() {
 
 export function useLoadTransferredCredits() {
   const isLoggedIn = useIsLoggedIn();
-  const userDataLoaded = useAppSelector((state) => state.transferCredits.userDataLoaded);
+  const dataLoadingState = useAppSelector((state) => state.transferCredits.dataLoadState);
+  const userDataLoaded = dataLoadingState === 'done';
 
   // Use raw data rather than useClearedCourses() because we want just the
   // user's input (not implicit courses) to be saved
@@ -86,7 +87,7 @@ export function useLoadTransferredCredits() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (userDataLoaded) return;
+    if (dataLoadingState !== 'loading') return;
 
     const loadAPInfo = trpc.transferCredits.getAPExamInfo.query().then((exams) => {
       const parsedExams = exams.map((exam) => ({
@@ -102,8 +103,8 @@ export function useLoadTransferredCredits() {
     const loadOther = loadTransferredOther(isLoggedIn).then((res) => dispatch(setUncategorizedCourses(res)));
 
     // Load in parallel
-    Promise.all([loadAPInfo, loadCourses, loadAPs, loadGEs, loadOther]).then(() => dispatch(setUserDataLoaded(true)));
-  }, [dispatch, isLoggedIn, userDataLoaded]);
+    Promise.all([loadAPInfo, loadCourses, loadAPs, loadGEs, loadOther]).then(() => dispatch(setDataLoadState('done')));
+  }, [dispatch, isLoggedIn, dataLoadingState]);
 
   const { Course: CourseKey, AP: APKey, GE: GEKey, Uncategorized: OtherKey } = LocalTransferSaveKey;
 
