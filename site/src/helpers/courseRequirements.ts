@@ -160,7 +160,6 @@ export function flattenSingletonGroups(requirements: ProgramRequirement[]): Prog
  * @param requirements The program requirements list
  */
 export function sortGroupRequirementsByType(requirements: ProgramRequirement[]): ProgramRequirement[] {
-  // console.log(requirements)
   return requirements
     .map((r) => {
       if (r.requirementType !== 'Group') return r;

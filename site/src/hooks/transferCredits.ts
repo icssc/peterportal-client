@@ -7,10 +7,22 @@ import {
   setTransferredCourses,
   setUncategorizedCourses,
   setUserAPExams,
-  setUserDataLoaded,
+  setDataLoadState,
   TransferredCourse,
+  UserAPExam,
 } from '../store/slices/transferCreditsSlice';
 import { components } from '@peterportal/types/src/generated/anteater-api-types';
+import {
+  loadTransferredAPs,
+  loadTransferredCourses,
+  loadTransferredGEs,
+  loadTransferredOther,
+  LocalTransferSaveKey,
+  saveLocalTransfers,
+} from '../helpers/transferCredits';
+import { useIsLoggedIn } from './isLoggedIn';
+import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
+import { TransferredGE } from '@peterportal/types';
 
 /** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
@@ -61,16 +73,23 @@ export function useTransferredCredits() {
 }
 
 export function useLoadTransferredCredits() {
-  const userDataLoaded = useAppSelector((state) => state.transferCredits.userDataLoaded);
+  const isLoggedIn = useIsLoggedIn();
+  const dataLoadingState = useAppSelector((state) => state.transferCredits.dataLoadState);
+  const userDataLoaded = dataLoadingState === 'done';
+
+  // Use raw data rather than useClearedCourses() because we want just the
+  // user's input (not implicit courses) to be saved
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const transferredAPs = useAppSelector((state) => state.transferCredits.userAPExams);
+  const transferredGEs = useAppSelector((state) => state.transferCredits.transferredGEs);
+  const transferredOther = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (userDataLoaded) return;
+    if (dataLoadingState !== 'loading') return;
 
-    const { getTransferredCourses, getSavedAPExams, getTransferredGEs, getUncategorizedTransfers, getAPExamInfo } =
-      trpc.transferCredits;
-
-    const loadAPInfo = getAPExamInfo.query().then((exams) => {
+    const loadAPInfo = trpc.transferCredits.getAPExamInfo.query().then((exams) => {
       const parsedExams = exams.map((exam) => ({
         ...exam,
         catalogueName: (exam.catalogueName as string) ?? null,
@@ -78,12 +97,35 @@ export function useLoadTransferredCredits() {
       dispatch(setAPExams(parsedExams));
     });
 
-    const loadCourses = getTransferredCourses.query().then((res) => dispatch(setTransferredCourses(res)));
-    const loadAPs = getSavedAPExams.query().then((res) => dispatch(setUserAPExams(res)));
-    const loadGEs = getTransferredGEs.query().then((res) => dispatch(setAllTransferredGEs(res)));
-    const loadOther = getUncategorizedTransfers.query().then((res) => dispatch(setUncategorizedCourses(res)));
+    const loadCourses = loadTransferredCourses(isLoggedIn).then((res) => dispatch(setTransferredCourses(res)));
+    const loadAPs = loadTransferredAPs(isLoggedIn).then((res) => dispatch(setUserAPExams(res)));
+    const loadGEs = loadTransferredGEs(isLoggedIn).then((res) => dispatch(setAllTransferredGEs(res)));
+    const loadOther = loadTransferredOther(isLoggedIn).then((res) => dispatch(setUncategorizedCourses(res)));
 
     // Load in parallel
-    Promise.all([loadAPInfo, loadCourses, loadAPs, loadGEs, loadOther]).then(() => dispatch(setUserDataLoaded(true)));
-  }, [dispatch, userDataLoaded]);
+    Promise.all([loadAPInfo, loadCourses, loadAPs, loadGEs, loadOther]).then(() => dispatch(setDataLoadState('done')));
+  }, [dispatch, isLoggedIn, dataLoadingState]);
+
+  const { Course: CourseKey, AP: APKey, GE: GEKey, Uncategorized: OtherKey } = LocalTransferSaveKey;
+
+  // Save to localStorage whenever any transferred credit data changes
+  useEffect(() => {
+    if (isLoggedIn || !userDataLoaded) return;
+    saveLocalTransfers<TransferredCourse>(CourseKey, transferredCourses);
+  }, [isLoggedIn, CourseKey, transferredCourses, userDataLoaded]);
+
+  useEffect(() => {
+    if (isLoggedIn || !userDataLoaded) return;
+    saveLocalTransfers<UserAPExam>(APKey, transferredAPs);
+  }, [isLoggedIn, APKey, transferredAPs, userDataLoaded]);
+
+  useEffect(() => {
+    if (isLoggedIn || !userDataLoaded) return;
+    saveLocalTransfers<TransferredGE>(GEKey, transferredGEs);
+  }, [isLoggedIn, GEKey, transferredGEs, userDataLoaded]);
+
+  useEffect(() => {
+    if (isLoggedIn || !userDataLoaded) return;
+    saveLocalTransfers<UncategorizedCourseEntry>(OtherKey, transferredOther);
+  }, [isLoggedIn, OtherKey, transferredOther, userDataLoaded]);
 }

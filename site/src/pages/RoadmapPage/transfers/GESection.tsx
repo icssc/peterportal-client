@@ -94,7 +94,7 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 };
 
 const GESection: FC = () => {
-  const doneLoading = useAppSelector((state) => state.transferCredits.userDataLoaded);
+  const doneLoading = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
   const loader = (
     <div className="loader-container">
       <Spinner animation="border" />

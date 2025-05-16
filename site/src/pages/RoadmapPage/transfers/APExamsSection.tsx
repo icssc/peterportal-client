@@ -7,7 +7,6 @@ import { comboboxTheme } from '../../../helpers/courseRequirements';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
-  setAPExams,
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
@@ -65,7 +64,9 @@ const APCreditMenuTile: FC<{ userExamInfo: UserAPExam }> = ({ userExamInfo }) =>
   const { examName, score, units } = userExamInfo;
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
+
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
+  const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
   const selectBox = <ScoreSelection score={score} setScore={updateScore} />;
@@ -73,15 +74,17 @@ const APCreditMenuTile: FC<{ userExamInfo: UserAPExam }> = ({ userExamInfo }) =>
   const handleUpdate = useCallback(
     async (newScore: number, newUnits: number) => {
       dispatch(updateUserExam({ examName, score: newScore, units: newUnits }));
+      if (!isLoggedIn) return;
       trpc.transferCredits.updateUserAPExam.mutate({ examName, score: newScore, units: newUnits });
     },
-    [dispatch, examName],
+    [dispatch, examName, isLoggedIn],
   );
 
   const deleteFn = useCallback(() => {
     dispatch(removeUserAPExam(examName));
+    if (!isLoggedIn) return;
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
-  }, [dispatch, examName]);
+  }, [dispatch, examName, isLoggedIn]);
 
   const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
   let message = '';
@@ -109,43 +112,21 @@ const APExamsSection: FC = () => {
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
-  const [examsLoading, setExamsLoading] = useState(false);
-
-  // Save initial list of all AP Exams
-  const saveAllAPExams = useCallback(
-    (apExamInfo: APExam[]) => {
-      setExamsLoading(false);
-      dispatch(setAPExams(apExamInfo));
-    },
-    [dispatch],
-  );
-
-  // First render, fetch all AP Exams
-  useEffect(() => {
-    if (apExamInfo.length) return;
-    trpc.transferCredits.getAPExamInfo.query().then((allExams) => {
-      const processedExams = allExams.map((exam) => ({
-        ...exam,
-        catalogueName: exam.catalogueName ?? null,
-      }));
-      saveAllAPExams(processedExams);
-    });
-  }, [dispatch, apExamInfo.length, saveAllAPExams]);
 
   // Save AP Exam to store
   useEffect(() => {
-    if (!isLoggedIn || !examName || !score) return;
+    if (!examName || !score) return;
     const examInfo = apExamInfo.find((exam) => exam.fullName === examName);
     const units = examInfo?.rewards?.find((r) => r.acceptableScores.includes(score))?.unitsGranted ?? 0;
 
     if (!userAPExams.find((exam) => exam.examName === examName)) {
       dispatch(addUserAPExam({ examName, score, units }));
-      trpc.transferCredits.addUserAPExam.mutate({ examName, score, units });
+      if (isLoggedIn) trpc.transferCredits.addUserAPExam.mutate({ examName, score, units });
     }
     // Remove exam from select options
     setExamName(null);
     setScore(null);
-  }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn, examsLoading]);
+  }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn]);
 
   const baseSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
     value: exam,

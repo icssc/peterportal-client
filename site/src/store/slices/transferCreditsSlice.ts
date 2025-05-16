@@ -17,11 +17,13 @@ interface UncategorizedCourseEntry {
   units: number | null;
 }
 
+type DataLoadingState = 'waiting' | 'loading' | 'done';
+
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
-    userDataLoaded: false,
+    dataLoadState: 'waiting' as DataLoadingState,
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as UserAPExam[],
@@ -32,8 +34,8 @@ export const transferCreditsSlice = createSlice({
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
       state.showTransfersMenu = action.payload;
     },
-    setUserDataLoaded: (state, action: PayloadAction<boolean>) => {
-      state.userDataLoaded = action.payload;
+    setDataLoadState: (state, action: PayloadAction<DataLoadingState>) => {
+      state.dataLoadState = action.payload;
     },
     addTransferredCourse: (state, action: PayloadAction<TransferredCourse>) => {
       state.transferredCourses.push(action.payload);
@@ -90,7 +92,7 @@ export const transferCreditsSlice = createSlice({
 
 export const {
   setShowTransfersMenu,
-  setUserDataLoaded,
+  setDataLoadState,
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,

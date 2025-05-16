@@ -1,142 +1,44 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import './Planner.scss';
 import Header from './Header';
 import AddYearPopup from './AddYearPopup';
 import Year from './Year';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import {
-  selectYearPlans,
-  setInvalidCourses,
-  setTransfers,
-  setUnsavedChanges,
-  selectAllPlans,
-  setAllPlans,
-  defaultPlan,
-  RoadmapPlan,
-} from '../../store/slices/roadmapSlice';
-import { useFirstRender } from '../../hooks/firstRenderer';
-import { SavedRoadmap } from '@peterportal/types';
-import { convertLegacyLocalRoadmap, defaultYear, expandAllPlanners } from '../../helpers/planner';
+import { useAppSelector } from '../../store/hooks';
+import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
-import { collapseAllPlanners, loadRoadmap, validatePlanner } from '../../helpers/planner';
-import { Button, Modal } from 'react-bootstrap';
-import trpc from '../../trpc';
-import spawnToast from '../../helpers/toastify';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { getNamesOfTransfers, getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
+import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
 import { useTransferredCredits } from '../../hooks/transferCredits';
+import PlannerLoader from './planner/PlannerLoader';
+import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
-  const dispatch = useAppDispatch();
-  const isLoggedIn = useIsLoggedIn();
-  const isFirstRenderer = useFirstRender();
-  const currentPlanData = useAppSelector(selectYearPlans);
   const allPlanData = useAppSelector(selectAllPlans);
+  const currentPlanData = useAppSelector(selectYearPlans);
   const transferred = useTransferredCredits();
-  const legacyTransfers = useAppSelector((state) => state.roadmap.transfers);
+  const isLoggedIn = useIsLoggedIn();
 
-  const [showSyncModal, setShowSyncModal] = useState(false);
-  const [missingPrerequisites, setMissingPrerequisites] = useState(new Set<string>());
-  const roadmapStr = JSON.stringify({
-    planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
-    transfers: legacyTransfers,
-  });
-
-  const handleLoadLocal = async () => {
-    let roadmap: SavedRoadmap = null!;
-    const roadmapItem = localStorage.getItem('roadmap');
-    if (roadmapItem) {
-      roadmap = convertLegacyLocalRoadmap(JSON.parse(roadmapItem));
-    }
-
-    const planner = await expandAllPlanners(roadmap.planners);
-    dispatch(setAllPlans(planner));
-    dispatch(setTransfers(roadmap.transfers));
-    setShowSyncModal(false);
-  };
-
-  const saveRoadmap = async (planner?: RoadmapPlan[]) => {
-    const roadmap: SavedRoadmap = {
-      timestamp: new Date().toISOString(),
-      planners: collapseAllPlanners(planner?.length ? planner : allPlanData),
-      transfers: legacyTransfers,
-    };
-    localStorage.setItem('roadmap', JSON.stringify(roadmap));
-
-    // mark changes as saved to bypass alert on page leave
-    dispatch(setUnsavedChanges(false));
-
-    // if logged in, save data to account
-    if (isLoggedIn) {
-      await trpc.roadmaps.save
-        .mutate(roadmap)
-        .then(() => {
-          spawnToast(`Roadmap saved to your account!`);
-        })
-        .catch(() => {
-          spawnToast('Roadmap saved locally! Login to save it to your account.');
-        });
-    } else {
-      spawnToast('Roadmap saved locally! Login to save it to your account.');
-    }
+  const handleSave = async (plans?: RoadmapPlan[]) => {
+    const collapsed = collapseAllPlanners(plans?.length ? plans : allPlanData);
+    saveRoadmap(isLoggedIn, collapsed, true);
   };
 
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
     let courseCount = 0;
     // sum up all courses
-    currentPlanData.forEach((year) => {
-      year.quarters.forEach((quarter) => {
-        quarter.courses.forEach((course) => {
-          unitCount += course.minUnits;
-          courseCount += 1;
-        });
-      });
+    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
+    courses.forEach((course) => {
+      unitCount += course.minUnits;
+      courseCount++;
     });
+
     // add in transfer courses
     courseCount += transferred.courses.length;
     unitCount += getTotalUnitsFromTransfers(transferred.courses, transferred.ap, transferred.ge, transferred.other);
     return { unitCount, courseCount };
   };
-
-  useEffect(() => {
-    // stringify current roadmap
-
-    // stringified value of an empty roadmap
-    const emptyRoadmap = JSON.stringify({
-      planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
-      transfers: [],
-    } as Omit<SavedRoadmap, 'timestamp'>);
-
-    // if first render and current roadmap is empty, load from local storage
-    if (isFirstRenderer && roadmapStr === emptyRoadmap) {
-      loadRoadmap(isLoggedIn, (planners, roadmap, isLocalNewer) => {
-        dispatch(setAllPlans(planners));
-        dispatch(setTransfers(roadmap.transfers));
-        if (isLocalNewer) {
-          setShowSyncModal(true);
-        }
-      });
-    } else {
-      const transferNames = getNamesOfTransfers(transferred.courses, transferred.ap, transferred.apInfo);
-      validatePlanner(transferNames, currentPlanData, (missing, invalid) => {
-        // set missing courses
-        setMissingPrerequisites(missing);
-        // set the invalid courses
-        dispatch(setInvalidCourses(invalid));
-      });
-
-      // check current roadmap against last-saved roadmap in local storage
-      // if they are different, mark changes as unsaved to enable alert on page leave
-      const localRoadmap: SavedRoadmap = convertLegacyLocalRoadmap(
-        JSON.parse(localStorage.getItem('roadmap') ?? emptyRoadmap),
-      );
-      delete localRoadmap.timestamp;
-      localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content })); // remove id attribute
-      dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
-    }
-  }, [isLoggedIn, currentPlanData, dispatch, isFirstRenderer, roadmapStr, transferred]);
 
   const { unitCount, courseCount } = calculatePlannerOverviewStats();
 
@@ -145,37 +47,12 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <Modal
-        show={showSyncModal}
-        onHide={() => {
-          setShowSyncModal(false);
-        }}
-        className="ppc-modal"
-        centered
-      >
-        <Modal.Header closeButton>
-          <h2>Roadmap Out of Sync</h2>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
-            load your roadmap from?
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleLoadLocal}>
-            This Device
-          </Button>
-          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-            My Account
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <PlannerLoader />
       <Header
         courseCount={courseCount}
         unitCount={unitCount}
-        saveRoadmap={saveRoadmap}
-        missingPrerequisites={missingPrerequisites}
+        saveRoadmap={handleSave}
+        missingPrerequisites={new Set()}
       />
       <section className="years" data-max-quarter-count={maxQuarterCount}>
         {currentPlanData.map((year, yearIndex) => {
@@ -192,7 +69,7 @@ const Planner: FC = () => {
           }
         />
         <ImportTranscriptPopup />
-        <ImportZot4PlanPopup saveRoadmap={saveRoadmap} />
+        <ImportZot4PlanPopup saveRoadmap={handleSave} />
       </div>
     </div>
   );
