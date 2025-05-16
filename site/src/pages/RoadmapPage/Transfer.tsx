@@ -1,3 +1,4 @@
+/** @deprecated This is the Legacy Transfers Menu component. It will be removed once the new menu shows missing prerequisites */
 import { FC, useState, useEffect } from 'react';
 import './Transfer.scss';
 import Button from 'react-bootstrap/Button';
@@ -63,6 +64,7 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
   );
 };
 
+/** @deprecated */
 const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   const dispatch = useAppDispatch();
   const transfers = useAppSelector((state) => state.roadmap.transfers);
