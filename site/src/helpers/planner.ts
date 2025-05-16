@@ -186,12 +186,20 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
   }
 }
 
+enum RoadmapVersionKey {
+  SinglePlanner = '1',
+  MultiPlanner = '2',
+  RedesignedTransfers = '3',
+}
+
 // Upgrading Transfers
 async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: TransferData[]) {
   // Avoid issues with double first render
-  if (!transfers.length || localStorage.roadmap__versionKey === '3') return false; // nothing to convert
+  if (!transfers.length || localStorage.roadmap__versionKey === RoadmapVersionKey.RedesignedTransfers) {
+    return false; // nothing to convert
+  }
 
-  localStorage.roadmap__versionKey = '3';
+  localStorage.roadmap__versionKey = RoadmapVersionKey.RedesignedTransfers;
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
   const { courses, ap, other } = response;
 
@@ -235,7 +243,7 @@ export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerDat
 
   const showMessage = showToasts ? spawnToast : (str: string) => str;
 
-  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Login to save it to your account.';
+  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Log in to save it to your account.';
   if (!isLoggedIn) return showMessage(SAVED_LOCALLY_MESSAGE);
 
   await trpc.roadmaps.save
