@@ -8,7 +8,6 @@ import {
   setUncategorizedCourses,
   setUserAPExams,
   setUserDataLoaded,
-  TransferredCourse,
 } from '../store/slices/transferCreditsSlice';
 import { components } from '@peterportal/types/src/generated/anteater-api-types';
 
@@ -18,6 +17,12 @@ function naiveCountedCourses(courses: CourseTreeItem): string[] {
   if (typeof courses === 'string') return [courses];
   if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(naiveCountedCourses);
   return naiveCountedCourses(courses.OR[0]);
+}
+
+interface TransferredCourseWithType {
+  courseName: string;
+  units: number;
+  transferType: 'AP' | 'Course';
 }
 
 export function useTransferredCredits() {
@@ -32,9 +37,9 @@ export function useTransferredCredits() {
   // from a dev perspective to have a "single array of truth" rather than opening the door to making
   // mistakes later when counting credits because we chose the wrong courses array
 
-  const courses: TransferredCourse[] = useMemo(() => {
+  const courses = useMemo(() => {
     // Recomputes this value only when APs or Transferred Courses update
-    const rewardedCourses = apTransfers.flatMap((transfer) => {
+    const rewardedCourses: TransferredCourseWithType[] = apTransfers.flatMap((transfer) => {
       const info = apExamInfo.find((ap) => ap.fullName === transfer.examName);
       if (!info) return [];
       const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
@@ -44,10 +49,16 @@ export function useTransferredCredits() {
       /** @todo debug print statement – remove once a user can choose which 'OR' reward they want */
       // console.log(info.catalogueName ?? info.fullName, '=>', courseNames)
 
-      return courseNames.map((courseName) => ({ courseName, units: 0 }));
+      return courseNames.map((courseName) => ({ courseName, units: 0, transferType: 'AP' }));
     });
 
-    return [...new Set(transferredCourses.concat(rewardedCourses))];
+    const transferredCoursesWithType: TransferredCourseWithType[] = transferredCourses.map((course) => ({
+      courseName: course.courseName,
+      units: course.units,
+      transferType: 'Course',
+    }));
+
+    return [...new Set(transferredCoursesWithType.concat(rewardedCourses))];
   }, [apExamInfo, apTransfers, transferredCourses]);
 
   // Returns memoized result for efficiency and so we can use the entire return value
