@@ -145,38 +145,6 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-/* export const loadRoadmap = async (
-  isLoggedIn: boolean,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
-  saveTransferDispatch?: TempDispatchType
-) => {
-  let roadmap: SavedRoadmap = null!;
-  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
-  if (isLoggedIn) {
-    // get data from account
-    const res = await trpc.roadmaps.get.query();
-    // if a roadmap is found
-    if (res) {
-      roadmap = res;
-    }
-  }
-
-  let isLocalNewer = false;
-
-  if (!roadmap && localRoadmap) {
-    roadmap = convertLegacyLocalRoadmap(localRoadmap, saveTransferDispatch);
-  } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
-    isLocalNewer = true;
-  } else if (!roadmap && !localRoadmap) {
-    // no saved planner
-    return;
-  }
-
-  // expand planner and set the state
-  const planners = await expandAllPlanners(roadmap.planners);
-  loadHandler(planners, roadmap, isLocalNewer);
-}; */
-
 function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
   let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
   try {
@@ -192,7 +160,7 @@ function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
   return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
 }
 
-export const loadRoadmapV2 = async (isLoggedIn: boolean) => {
+export const loadRoadmap = async (isLoggedIn: boolean) => {
   const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
   const localRoadmap = loadLocalRoadmap() as SavedRoadmap;
   return { accountRoadmap, localRoadmap };

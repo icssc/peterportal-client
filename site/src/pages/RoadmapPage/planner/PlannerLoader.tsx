@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import {
   collapseAllPlanners,
   expandAllPlanners,
-  loadRoadmapV2,
+  loadRoadmap,
   saveRoadmap,
   upgradeLocalRoadmap,
   validatePlannerV2,
@@ -56,15 +56,13 @@ const PlannerLoader: FC = () => {
 
   // hook to upgrade BEFORE loading the roadmap
   useEffect(() => {
-    if (formatUpgraded) {
-      dispatch(setDataLoadState('loading'));
-      return;
-    }
+    if (formatUpgraded) return;
 
     upgradeLocalRoadmap().then(async (roadmap: SavedRoadmap) => {
       // has legacy transfers => operation was not completed (because another upgrade is in progress)
       if (roadmap.transfers.length) return;
       setFormatUpgraded(true);
+      dispatch(setDataLoadState('loading'));
     });
   }, [dispatch, isLoggedIn, formatUpgraded]);
 
@@ -101,7 +99,7 @@ const PlannerLoader: FC = () => {
     // don't load if format is not up to date or transfers are not loaded
     if (!formatUpgraded || !userTransfersLoaded) return;
 
-    loadRoadmapV2(isLoggedIn).then(async ({ accountRoadmap, localRoadmap }) => {
+    loadRoadmap(isLoggedIn).then(async ({ accountRoadmap, localRoadmap }) => {
       await populateExistingRoadmap(accountRoadmap ?? localRoadmap);
       if (!isLoggedIn) return;
       const isLocalNewer = new Date(localRoadmap.timestamp ?? 0) > new Date(accountRoadmap?.timestamp ?? 0);
@@ -126,7 +124,7 @@ const PlannerLoader: FC = () => {
 
   // check roadmapStr (current planner) against localStorage planner
   useEffect(() => {
-    loadRoadmapV2(false).then(({ localRoadmap }) => {
+    loadRoadmap(false).then(({ localRoadmap }) => {
       // Remove timestamp and Plan IDs when comparing content
       delete localRoadmap.timestamp;
       localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content }));
@@ -135,7 +133,7 @@ const PlannerLoader: FC = () => {
   }, [dispatch, roadmapStr]);
 
   const overrideAccountRoadmap = async () => {
-    const { localRoadmap } = await loadRoadmapV2(false);
+    const { localRoadmap } = await loadRoadmap(false);
 
     // Update the account roadmap using local data
     await saveRoadmapAndUpsertTransfers(localRoadmap.planners);
