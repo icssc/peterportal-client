@@ -178,7 +178,6 @@ const tryMatchCourse = (transferName: string, validCourses: Record<string, strin
   returning whether it's okay to proceed to add "AP Calculus AB" */
 const handleApCalcAB = (
   transfer: TransferredMiscSelectedRow,
-  transferName: string,
   toInsertAp: TransferredApExamRow[],
   hasSubscore: boolean,
 ): boolean => {
@@ -222,7 +221,7 @@ export const organizeApExam = (
 
   // Handle special case for subscore
   if (bestMatch.fullName == AP_CALC_AB) {
-    const proceedToAdd = handleApCalcAB(transfer, transferName, toInsertAp, hasSubscore);
+    const proceedToAdd = handleApCalcAB(transfer, toInsertAp, hasSubscore);
     if (!proceedToAdd) return false;
   }
 
@@ -262,11 +261,7 @@ const organizeCourse = async (
 };
 
 /** Handle organizing a misc transfer, only to deal with duplicate rows */
-const organizeMisc = (
-  transfer: TransferredMiscSelectedRow,
-  transferName: string,
-  toInsertMisc: TransferredMiscRow[],
-) => {
+const organizeMisc = (transfer: TransferredMiscSelectedRow, toInsertMisc: TransferredMiscRow[]) => {
   if (!transfer.courseName) return;
   // Delete this then re-add only one copy
   toInsertMisc.push({ courseName: transfer.courseName, units: transfer.totalUnits });
@@ -394,7 +389,7 @@ export const organizeLegacyTransfers = async (rows: TransferData[]) => {
         allAps,
       );
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, transferName, toInsertMisc);
+        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
       }
     } else {
       const reorganized = await organizeCourse(
@@ -404,7 +399,7 @@ export const organizeLegacyTransfers = async (rows: TransferData[]) => {
         validCourses,
       );
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, transferName, toInsertMisc);
+        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
       }
     }
   }
