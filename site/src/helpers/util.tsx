@@ -144,3 +144,7 @@ export function deepCopy<T>(obj: T): T {
 export function pluralize(count: number, pluralText: string = 's', singularText: string = '') {
   return count === 1 ? singularText : pluralText;
 }
+
+export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
+  return `${course.department} ${course.courseNumber}`;
+}

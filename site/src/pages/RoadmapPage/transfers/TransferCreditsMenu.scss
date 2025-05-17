@@ -1,0 +1,47 @@
+@use '../../../globals.scss';
+@use '../SearchSidebar.scss';
+
+.transfers-menu {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: calc(100% - 72px);
+
+  &.mobile {
+    @include globals.bottom-overlay(400);
+  }
+
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  &.enter,
+  &.enter-done {
+    transform: unset;
+  }
+
+  h3 {
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+
+  .ppc-combobox__menu {
+    font-size: 14px;
+  }
+
+  .loader-container {
+    display: flex;
+    margin: 8px;
+    justify-content: center;
+  }
+}
+
+.toggle-transfers-button {
+  @include globals.bottom-button();
+  position: absolute;
+  left: unset;
+  right: 0;
+  z-index: 400;
+  width: globals.$roadmap-sidebar-width;
+  &.mobile {
+    width: 100%;
+  }
+}

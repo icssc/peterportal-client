@@ -44,11 +44,12 @@
     gap: 8px 12px;
   }
 
+  button {
+    white-space: nowrap;
+  }
+
   .planner-right {
     @media (min-width: 860px) {
-      button {
-        white-space: nowrap;
-      }
     }
     .btn-group {
       flex-wrap: wrap;
