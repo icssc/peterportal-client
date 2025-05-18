@@ -12,3 +12,9 @@ export interface TransferredGE {
   numberOfCourses: number;
   units: number;
 }
+
+export interface UserAPExam {
+  examName: string;
+  score: number;
+  units: number;
+}

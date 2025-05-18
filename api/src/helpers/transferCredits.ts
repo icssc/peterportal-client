@@ -205,7 +205,7 @@ const handleApCalcAB = (
 };
 
 /** Handle organizing an AP exam, returning whether it was successfully categorized */
-export const organizeApExam = (
+const organizeApExam = (
   transfer: TransferredMiscSelectedRow,
   transferName: string,
   toInsertAp: TransferredApExamRow[],

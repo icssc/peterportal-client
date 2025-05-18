@@ -9,7 +9,6 @@ import {
   setUserAPExams,
   setDataLoadState,
   TransferredCourse,
-  UserAPExam,
 } from '../store/slices/transferCreditsSlice';
 import { components } from '@peterportal/types/src/generated/anteater-api-types';
 import {
@@ -22,7 +21,7 @@ import {
 } from '../helpers/transferCredits';
 import { useIsLoggedIn } from './isLoggedIn';
 import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
-import { TransferredGE } from '@peterportal/types';
+import { TransferredGE, UserAPExam } from '@peterportal/types';
 
 /** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;

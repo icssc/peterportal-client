@@ -1,14 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { APExam, TransferredGE } from '@peterportal/types';
+import { APExam, TransferredGE, UserAPExam } from '@peterportal/types';
 
 export interface TransferredCourse {
   courseName: string;
-  units: number;
-}
-
-export interface UserAPExam {
-  examName: string;
-  score: number;
   units: number;
 }
 

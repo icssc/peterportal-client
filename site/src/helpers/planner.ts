@@ -9,6 +9,7 @@ import {
   SavedPlannerYearData,
   SavedRoadmap,
   TransferData,
+  UserAPExam,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -21,7 +22,7 @@ import {
   PlannerYearData,
 } from '../types/types';
 import trpc from '../trpc';
-import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
+import { TransferredCourse } from '../store/slices/transferCreditsSlice';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
 import spawnToast from './toastify';
