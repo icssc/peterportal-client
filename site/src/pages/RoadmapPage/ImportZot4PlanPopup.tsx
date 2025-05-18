@@ -30,16 +30,16 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     try {
-      const [savedRoadmap, z4pApExams] = await trpc.zot4PlanImport.getScheduleFormatted.query({
+      const { savedRoadmap, apExams: z4pApExams } = await trpc.zot4PlanImport.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
       });
 
       // Combine existing AP exams with AP exams from Zot4Plan; ignore duplicates
-      const combinedExams = [
-        ...apExams,
-        ...z4pApExams.filter((z4pExam) => !apExams.some((existingExam) => existingExam.examName === z4pExam.examName)),
-      ];
+      const newExams = z4pApExams.filter(
+        (imported) => !apExams.some((existing) => existing.examName === imported.examName),
+      );
+      const combinedExams = apExams.concat(newExams);
       dispatch(setUserAPExams(combinedExams));
 
       // Add new AP exam rows

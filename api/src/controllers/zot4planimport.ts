@@ -204,7 +204,7 @@ const zot4PlanImportRouter = router({
       );
       const apExams = await getApExamsFromZot4Plan(originalScheduleRaw);
       await db.insert(zot4PlanImports).values({ scheduleId: input.scheduleName, userId: ctx.session.userId });
-      return [savedRoadmap, apExams] as [SavedRoadmap, userAPExam[]];
+      return { savedRoadmap, apExams };
     }),
 });
 
