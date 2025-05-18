@@ -3,11 +3,18 @@ Server helpers for Transfer Credits - based on the transfer data migration scrip
 The script itself is not modified so that it can be self-contained
 */
 
-import { CourseAAPIResponse, TransferData } from '@peterportal/types';
+import { CourseAAPIResponse } from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from './headers';
 
 const AP_CALC_AB_SUBSCORE = 'AP Calculus BC, Calculus AB subscore';
 const AP_CALC_AB = 'AP Calculus AB';
+
+/** An extended version of TransferData that optionally allows for a score */
+type ExtendedTransferDataRaw = {
+  name: string;
+  units?: number | null | undefined;
+  score?: number;
+};
 
 type ApExamBasicInfo = {
   fullName: string; // E.g. "AP Microeconomics"
@@ -19,10 +26,11 @@ type TransferredMiscRow = {
   units: number | null;
 };
 
-type TransferredMiscSelectedRow = {
+type GroupedUncategorizedTransfer = {
   courseName: string;
   totalUnits: number;
   count: number;
+  score?: number;
 };
 
 type TransferredApExamRow = {
@@ -179,7 +187,7 @@ const tryMatchCourse = (transferName: string, validCourses: Record<string, strin
 /** Handle some special cases for AP Calc AB, which could have a subscore,
   returning whether it's okay to proceed to add "AP Calculus AB" */
 const handleApCalcAB = (
-  transfer: TransferredMiscSelectedRow,
+  transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
   hasSubscore: boolean,
 ): boolean => {
@@ -195,7 +203,7 @@ const handleApCalcAB = (
     // Insert the BC subscore here, then proceed normally so that AB is also inserted
     toInsertAp.push({
       examName: AP_CALC_AB_SUBSCORE,
-      score: null,
+      score: transfer.score ?? null,
       units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0 units
     });
     return true;
@@ -204,7 +212,7 @@ const handleApCalcAB = (
 
 /** Handle organizing an AP exam, returning whether it was successfully categorized */
 const organizeApExam = (
-  transfer: TransferredMiscSelectedRow,
+  transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
   hasSubscore: boolean,
   allAps: ApExamBasicInfo[],
@@ -224,7 +232,7 @@ const organizeApExam = (
   // Move this transfer item to the APs table with the name of the best match
   toInsertAp.push({
     examName: bestMatch.fullName,
-    score: null,
+    score: transfer.score ?? null,
     units: transfer.totalUnits,
   });
   return true;
@@ -232,7 +240,7 @@ const organizeApExam = (
 
 /** Handle organizing a course, returning whether it was successfully categorized */
 const organizeCourse = async (
-  transfer: TransferredMiscSelectedRow,
+  transfer: GroupedUncategorizedTransfer,
   toInsertCourse: TransferredCourseRow[],
   validCourses: Record<string, string>,
 ): Promise<boolean> => {
@@ -251,7 +259,7 @@ const organizeCourse = async (
 };
 
 /** Handle organizing a misc transfer, only to deal with duplicate rows */
-const organizeMisc = (transfer: TransferredMiscSelectedRow, toInsertMisc: TransferredMiscRow[]) => {
+const organizeMisc = (transfer: GroupedUncategorizedTransfer, toInsertMisc: TransferredMiscRow[]) => {
   if (!transfer.courseName) return;
   // Delete this then re-add only one copy
   toInsertMisc.push({ courseName: transfer.courseName, units: transfer.totalUnits });
@@ -313,11 +321,11 @@ const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => 
 };
 
 /** Organize the data in the database */
-export const organizeLegacyTransfers = async (rows: TransferData[]) => {
+export const organizeLegacyTransfers = async (rows: ExtendedTransferDataRaw[]) => {
   const allAps = await getAPIApExams();
 
   // Determine the unique transfers
-  const lookup: Record<string, Omit<TransferredMiscSelectedRow, 'courseName'>> = {};
+  const lookup: Record<string, Omit<GroupedUncategorizedTransfer, 'courseName'>> = {};
 
   rows.forEach((row) => {
     const existing = lookup[row.name];
@@ -325,18 +333,18 @@ export const organizeLegacyTransfers = async (rows: TransferData[]) => {
       existing.count++;
       existing.totalUnits += row.units ?? 0;
     } else {
-      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1 };
+      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1, score: row.score };
     }
   });
-  const uniqueRows: TransferredMiscSelectedRow[] = Object.entries(lookup).map(([courseName, data]) => ({
+  const uniqueRows: GroupedUncategorizedTransfer[] = Object.entries(lookup).map(([courseName, data]) => ({
     courseName,
     ...data,
   }));
 
   // Obtain/clean up all relevant transfers (invalid ones that cannot be categorized are filtered out here)
-  const transfers: TransferredMiscSelectedRow[] = uniqueRows
+  const transfers: GroupedUncategorizedTransfer[] = uniqueRows
     .filter((transfer) => transfer.courseName != null && transfer.count != 0)
-    .map((transfer) => ({ ...transfer, courseName: transfer.courseName.trim() })) as TransferredMiscSelectedRow[];
+    .map((transfer) => ({ ...transfer, courseName: transfer.courseName.trim() })) as GroupedUncategorizedTransfer[];
 
   // Get all the users who explicitly have an AB subscore
   let hasSubscore = false;
@@ -361,14 +369,14 @@ export const organizeLegacyTransfers = async (rows: TransferData[]) => {
   const toInsertMisc: TransferredMiscRow[] = [];
   for (const transfer of transfers) {
     if (transfer.courseName.startsWith('AP ')) {
-      const reorganized = organizeApExam(transfer as TransferredMiscSelectedRow, toInsertAp, hasSubscore, allAps);
+      const reorganized = organizeApExam(transfer as GroupedUncategorizedTransfer, toInsertAp, hasSubscore, allAps);
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
+        organizeMisc(transfer as GroupedUncategorizedTransfer, toInsertMisc);
       }
     } else {
-      const reorganized = await organizeCourse(transfer as TransferredMiscSelectedRow, toInsertCourse, validCourses);
+      const reorganized = await organizeCourse(transfer as GroupedUncategorizedTransfer, toInsertCourse, validCourses);
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
+        organizeMisc(transfer as GroupedUncategorizedTransfer, toInsertMisc);
       }
     }
   }
