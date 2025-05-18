@@ -11,6 +11,7 @@ import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 interface ImportZot4PlanPopupProps {
   saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
@@ -18,6 +19,7 @@ interface ImportZot4PlanPopupProps {
 const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
+  const isLoggedIn = useIsLoggedIn();
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
   const [studentYear, setStudentYear] = useState('1');
@@ -41,12 +43,14 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
       dispatch(setUserAPExams(combinedExams));
 
       // Add new AP exam rows
-      await trpc.transferCredits.overrideAllTransfers.mutate({
-        courses: [],
-        ap: combinedExams,
-        ge: [],
-        other: [],
-      });
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: [],
+          ap: combinedExams,
+          ge: [],
+          other: [],
+        });
+      }
 
       // Expand the result
       const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
