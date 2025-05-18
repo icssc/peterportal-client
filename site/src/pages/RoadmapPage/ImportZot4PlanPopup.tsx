@@ -28,7 +28,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     try {
-      const [savedRoadmap, z4pApExams] = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+      const [savedRoadmap, z4pApExams] = await trpc.zot4PlanImport.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
       });
