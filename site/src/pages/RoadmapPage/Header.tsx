@@ -1,11 +1,8 @@
-import React, { FC, useState } from 'react';
-import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
-import { ArrowLeftRight, List, Save } from 'react-bootstrap-icons';
-import { useIsDesktop, useIsMobile, pluralize } from '../../helpers/util';
-import { useAppDispatch } from '../../store/hooks';
-import { setShowTransfer } from '../../store/slices/roadmapSlice';
+import { FC } from 'react';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import { Save } from 'react-bootstrap-icons';
+import { pluralize } from '../../helpers/util';
 import './Header.scss';
-import Transfer from './Transfer';
 import RoadmapMultiplan from './RoadmapMultiplan';
 
 interface HeaderProps {
@@ -15,46 +12,9 @@ interface HeaderProps {
   saveRoadmap: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingPrerequisites }) => {
-  const dispatch = useAppDispatch();
-  const [target, setTarget] = useState<HTMLElement | null>(null);
-  const [showMenu, setShowMenu] = useState(false);
-
-  const isMobile = useIsMobile();
-  const isDesktop = useIsDesktop();
-
-  const buttons = (
-    <>
-      <Button
-        variant={isMobile ? 'primary' : 'light'}
-        className={isMobile ? 'my-1' : 'header-btn'}
-        onClick={() => {
-          setShowMenu(false);
-          dispatch(setShowTransfer(true));
-        }}
-      >
-        Transfer Credits
-        <ArrowLeftRight className="header-icon" />
-      </Button>
-      <Button
-        variant={isMobile ? 'primary' : 'light'}
-        className={isMobile ? 'my-1' : 'header-btn'}
-        onClick={saveRoadmap}
-      >
-        Save
-        <Save className="header-icon" />
-      </Button>
-    </>
-  );
-
-  const onMenuClick = (event: React.MouseEvent) => {
-    setShowMenu(!showMenu);
-    setTarget(event.target as HTMLElement);
-  };
-
+const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
   return (
     <div className="header">
-      <Transfer missingPrereqNames={missingPrerequisites} />
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
@@ -63,19 +23,12 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingP
         </span>
       </div>
       <div className="planner-right">
-        {isMobile && (
-          <>
-            <List className="mx-3" onClick={onMenuClick} />
-            <Overlay show={showMenu} target={target} placement="left">
-              <Popover id="roadmap-header-buttons">
-                <Popover.Content>
-                  <div className="d-flex flex-column">{buttons}</div>
-                </Popover.Content>
-              </Popover>
-            </Overlay>
-          </>
-        )}
-        {isDesktop && <ButtonGroup>{buttons}</ButtonGroup>}
+        <ButtonGroup>
+          <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
+            Save
+            <Save className="header-icon" />
+          </Button>
+        </ButtonGroup>
       </div>
     </div>
   );

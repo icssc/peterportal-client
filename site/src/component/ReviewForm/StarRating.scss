@@ -1,0 +1,9 @@
+.review-star-rating {
+  display: flex;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  .filled-stars {
+    color: var(--blue-primary);
+  }
+}

@@ -6,6 +6,7 @@ import uiReducer from './slices/uiSlice';
 import popupReducer from './slices/popupSlice';
 import roadmapReducer from './slices/roadmapSlice';
 import searchReducer from './slices/searchSlice';
+import transferCreditsReducer from './slices/transferCreditsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     popup: popupReducer,
     roadmap: roadmapReducer,
     search: searchReducer,
+    transferCredits: transferCreditsReducer,
   },
 });
 
