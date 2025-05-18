@@ -110,7 +110,7 @@ const getStartYear = (studentYear: string): number => {
  * Convert the years of a Zot4Plan schedule into the saved roadmap planner format
  */
 const convertIntoSavedPlanner = (
-  originalSchedule: Zot4PlanSchedule,
+  originalScheduleYears: Zot4PlanYears,
   scheduleName: string,
   startYear: number,
 ): SavedPlannerData => {
@@ -120,8 +120,8 @@ const convertIntoSavedPlanner = (
   };
 
   // Add courses
-  for (let i = 0; i < originalSchedule.years.length; i++) {
-    const year = originalSchedule.years[i];
+  for (let i = 0; i < originalScheduleYears.length; i++) {
+    const year = originalScheduleYears[i];
     const quartersList: SavedPlannerQuarterData[] = [];
     for (let j = 0; j < year.length; j++) {
       const quarter = year[j];
@@ -178,7 +178,7 @@ const convertIntoSavedRoadmap = (
   startYear: number,
 ): SavedRoadmap => {
   // Convert the individual components
-  const convertedPlanner = convertIntoSavedPlanner(originalSchedule, scheduleName, startYear);
+  const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear);
   const res: SavedRoadmap = {
     planners: [convertedPlanner],
     transfers: [],
