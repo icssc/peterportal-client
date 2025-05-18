@@ -8,6 +8,14 @@ import { publicProcedure, router } from '../helpers/trpc';
 import { zot4PlanImports } from '../db/schema';
 import { TRPCError } from '@trpc/server';
 import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
+import { tryMatchAp, getAPIApExams } from '../helpers/transferCredits';
+
+interface userAPExam {
+  // be somewhere else?
+  examName: string;
+  score: number;
+  units: number;
+}
 
 type Zot4PlanYears = string[][][];
 
@@ -102,7 +110,7 @@ const getStartYear = (studentYear: string): number => {
  * Convert the years of a Zot4Plan schedule into the saved roadmap planner format
  */
 const convertIntoSavedPlanner = (
-  originalScheduleYears: Zot4PlanYears,
+  originalSchedule: Zot4PlanSchedule,
   scheduleName: string,
   startYear: number,
 ): SavedPlannerData => {
@@ -112,8 +120,8 @@ const convertIntoSavedPlanner = (
   };
 
   // Add courses
-  for (let i = 0; i < originalScheduleYears.length; i++) {
-    const year = originalScheduleYears[i];
+  for (let i = 0; i < originalSchedule.years.length; i++) {
+    const year = originalSchedule.years[i];
     const quartersList: SavedPlannerQuarterData[] = [];
     for (let j = 0; j < year.length; j++) {
       const quarter = year[j];
@@ -142,6 +150,25 @@ const convertIntoSavedPlanner = (
   return converted;
 };
 
+const getApExamsFromZot4Plan = async (originalSchedule: Zot4PlanSchedule): Promise<userAPExam[]> => {
+  const apExams: userAPExam[] = [];
+  const allAps = await getAPIApExams();
+
+  originalSchedule['apExam'].forEach((exam) => {
+    const bestMatchedExamName = tryMatchAp(exam.name, allAps)?.fullName ?? exam.name;
+    const score = exam.score;
+    const units = exam.units;
+
+    apExams.push({
+      examName: bestMatchedExamName,
+      score,
+      units,
+    });
+  });
+
+  return apExams;
+};
+
 /**
  * Convert a Zot4Plan schedule into the saved roadmap format
  */
@@ -151,7 +178,7 @@ const convertIntoSavedRoadmap = (
   startYear: number,
 ): SavedRoadmap => {
   // Convert the individual components
-  const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear);
+  const convertedPlanner = convertIntoSavedPlanner(originalSchedule, scheduleName, startYear);
   const res: SavedRoadmap = {
     planners: [convertedPlanner],
     transfers: [],
@@ -168,9 +195,14 @@ const zot4PlanImportRouter = router({
     .input(z.object({ scheduleName: z.string(), studentYear: z.string() }))
     .query(async ({ input, ctx }) => {
       const originalScheduleRaw = await getFromZot4Plan(input.scheduleName);
-      const res = convertIntoSavedRoadmap(originalScheduleRaw, input.scheduleName, getStartYear(input.studentYear));
+      const savedRoadmap = convertIntoSavedRoadmap(
+        originalScheduleRaw,
+        input.scheduleName,
+        getStartYear(input.studentYear),
+      );
+      const apExams = await getApExamsFromZot4Plan(originalScheduleRaw);
       await db.insert(zot4PlanImports).values({ scheduleId: input.scheduleName, userId: ctx.session.userId });
-      return res;
+      return [savedRoadmap, apExams] as [SavedRoadmap, userAPExam[]];
     }),
 });
 

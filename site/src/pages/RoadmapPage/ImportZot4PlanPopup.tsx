@@ -9,6 +9,8 @@ import trpc from '../../trpc.ts';
 import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
 
 interface ImportZot4PlanPopupProps {
   saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
@@ -21,16 +23,36 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const [studentYear, setStudentYear] = useState('1');
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
+  const apExams = useTransferredCredits().ap;
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     try {
-      const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+      const [savedRoadmap, z4pApExams] = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
       });
+
+      // temporary array - combine old aps with new ones, ignore new duplicates
+
+      const combinedExams = [
+        ...apExams,
+        ...z4pApExams.filter((e) => !apExams.some((old) => old.examName === e.examName)),
+      ]; // ???
+
+      console.log('combinedExams', combinedExams);
+
+      dispatch(setUserAPExams(combinedExams));
+
+      await trpc.transferCredits.overrideAllTransfers.mutate({
+        courses: [],
+        ap: combinedExams,
+        ge: [],
+        other: [],
+      });
+
       // Expand the result
-      const expandedPlanners = await expandAllPlanners(result.planners);
+      const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
       // Check for validity: length and invalid course names
       if (expandedPlanners.length < 1) {
         spawnToast('The schedule "' + schedName + '" could not be imported', true);

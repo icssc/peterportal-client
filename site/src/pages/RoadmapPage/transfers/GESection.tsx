@@ -85,7 +85,7 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
           <GEInput value={currentGE.numberOfCourses} handleUpdate={updateNumberOfCourses} valueType="numberOfCourses" />
         </div>
         <div className="ge-input-container">
-          <p>Units Transferred:</p>
+          <p>Units Taken:</p>
           <GEInput value={currentGE.units} handleUpdate={updateUnits} valueType="units" />
         </div>
       </div>
