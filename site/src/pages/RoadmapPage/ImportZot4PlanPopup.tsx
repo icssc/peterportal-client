@@ -33,15 +33,14 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         studentYear: currYear,
       });
 
-      // temporary array - combine old aps with new ones, ignore new duplicates
-
+      // Combine existing AP exams with AP exams from Zot4Plan; ignore duplicates
       const combinedExams = [
         ...apExams,
-        ...z4pApExams.filter((e) => !apExams.some((old) => old.examName === e.examName)),
-      ]; // ???
-
+        ...z4pApExams.filter((z4pExam) => !apExams.some((existingExam) => existingExam.examName === z4pExam.examName)),
+      ];
       dispatch(setUserAPExams(combinedExams));
 
+      // Add new AP exam rows
       await trpc.transferCredits.overrideAllTransfers.mutate({
         courses: [],
         ap: combinedExams,

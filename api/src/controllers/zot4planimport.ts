@@ -11,7 +11,6 @@ import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } 
 import { tryMatchAp, getAPIApExams } from '../helpers/transferCredits';
 
 interface userAPExam {
-  // be somewhere else?
   examName: string;
   score: number;
   units: number;
@@ -150,14 +149,17 @@ const convertIntoSavedPlanner = (
   return converted;
 };
 
+/**
+ * Fetches all AP exams from the Zot4Plan schedule and match their names to PeterPortal AP Exam names
+ */
 const getApExamsFromZot4Plan = async (originalSchedule: Zot4PlanSchedule): Promise<userAPExam[]> => {
   const apExams: userAPExam[] = [];
   const allAps = await getAPIApExams();
 
-  originalSchedule['apExam'].forEach((exam) => {
-    const bestMatchedExamName = tryMatchAp(exam.name, allAps)?.fullName ?? exam.name;
-    const score = exam.score;
-    const units = exam.units;
+  originalSchedule['apExam'].forEach((z4pExam) => {
+    const bestMatchedExamName = tryMatchAp(z4pExam.name, allAps)?.fullName ?? z4pExam.name;
+    const score = z4pExam.score;
+    const units = z4pExam.units;
 
     apExams.push({
       examName: bestMatchedExamName,
