@@ -37,6 +37,7 @@ const roadmapsRouter = router({
   save: userProcedure.input(savedRoadmap).mutation(async ({ input, ctx }) => {
     const { planners, transfers, timestamp } = input;
     const userId = ctx.session.userId!;
+
     const plannerUpdates = planners
       .filter((planner) => planner.id !== undefined)
       .map((plannerData) =>

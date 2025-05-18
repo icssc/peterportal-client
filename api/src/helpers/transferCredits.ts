@@ -7,7 +7,7 @@ const AP_CALC_AB_SUBSCORE = 'AP Calculus BC, Calculus AB subscore';
 const AP_CALC_AB = 'AP Calculus AB';
 // Copied from Transfer Data Conversion Script so that it can be self-contained
 
-export type ApExamBasicInfo = {
+type ApExamBasicInfo = {
   fullName: string; // E.g. "AP Microeconomics"
   catalogueName: string | undefined; // E.g. "AP ECONOMICS:MICRO"
 };

@@ -40,8 +40,6 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         ...z4pApExams.filter((e) => !apExams.some((old) => old.examName === e.examName)),
       ]; // ???
 
-      console.log('combinedExams', combinedExams);
-
       dispatch(setUserAPExams(combinedExams));
 
       await trpc.transferCredits.overrideAllTransfers.mutate({
