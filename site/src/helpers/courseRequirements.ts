@@ -11,6 +11,7 @@ import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { useTransferredCredits } from '../hooks/transferCredits';
+import { TransferredCourse } from '../store/slices/transferCreditsSlice';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -207,9 +208,12 @@ export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorS
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
 
-export type CompletedCourseSet = {
-  [k: string]: number; // course id => units
-};
+export interface CompletedCourseSet {
+  [k: string]: {
+    units: number;
+    transferType?: TransferredCourse['transferType'];
+  };
+}
 
 export interface CompletionStatus {
   required: number;
@@ -282,7 +286,7 @@ function useGroupCompletionCheck(completed: CompletedCourseSet, requirement: Pro
 function checkUnitCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement<'Unit'>): CompletionStatus {
   const required = requirement.unitCount;
   const completedCourses = requirement.courses.filter((c) => c in completed);
-  const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
+  const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b.units, 0);
   return { required, completed: completedUnits, done: completedUnits >= required };
 }
 

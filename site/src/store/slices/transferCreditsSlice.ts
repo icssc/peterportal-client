@@ -4,6 +4,7 @@ import { APExam, TransferredGE } from '@peterportal/types';
 export interface TransferredCourse {
   courseName: string;
   units: number;
+  transferType?: 'AP' | 'Course';
 }
 
 export interface UserAPExam {
