@@ -3,18 +3,11 @@ Server helpers for Transfer Credits - based on the transfer data migration scrip
 The script itself is not modified so that it can be self-contained
 */
 
-import { CourseAAPIResponse } from '@peterportal/types';
+import { CourseAAPIResponse, ExtendedTransferData } from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from './headers';
 
 const AP_CALC_AB_SUBSCORE = 'AP Calculus BC, Calculus AB subscore';
 const AP_CALC_AB = 'AP Calculus AB';
-
-/** An extended version of TransferData that optionally allows for a score */
-type ExtendedTransferDataRaw = {
-  name: string;
-  units?: number | null | undefined;
-  score?: number;
-};
 
 type ApExamBasicInfo = {
   fullName: string; // E.g. "AP Microeconomics"
@@ -321,7 +314,7 @@ const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => 
 };
 
 /** Organize the data in the database */
-export const organizeLegacyTransfers = async (rows: ExtendedTransferDataRaw[]) => {
+export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
   const allAps = await getAPIApExams();
 
   // Determine the unique transfers
@@ -333,7 +326,7 @@ export const organizeLegacyTransfers = async (rows: ExtendedTransferDataRaw[]) =
       existing.count++;
       existing.totalUnits += row.units ?? 0;
     } else {
-      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1, score: row.score };
+      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1, score: row.score ?? undefined };
     }
   });
   const uniqueRows: GroupedUncategorizedTransfer[] = Object.entries(lookup).map(([courseName, data]) => ({

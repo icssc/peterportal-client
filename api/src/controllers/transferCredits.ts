@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { transferData, TransferredGE } from '@peterportal/types';
+import { extendedTransferData, TransferredGE } from '@peterportal/types';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
@@ -155,7 +155,7 @@ const transferCreditsRouter = router({
 
     await db.delete(transferredMisc).where(and(...conditions));
   }),
-  convertUserLegacyTransfers: publicProcedure.input(z.array(transferData)).query(async ({ input }) => {
+  convertUserLegacyTransfers: publicProcedure.input(z.array(extendedTransferData)).query(async ({ input }) => {
     return await organizeLegacyTransfers(input);
   }),
   overrideAllTransfers: userProcedure

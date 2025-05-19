@@ -2,15 +2,19 @@ import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
+import { setYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
-import { QuarterName } from '@peterportal/types';
+import { QuarterName, UserAPExam } from '@peterportal/types';
 import { normalizeQuarterName } from '../../helpers/planner';
+import { LocalTransferSaveKey, saveLocalTransfers } from '../../helpers/transferCredits';
+import { TransferredCourse } from '../../store/slices/transferCreditsSlice';
+import { UncategorizedCourseEntry } from '../../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
+import trpc from '../../trpc';
 
 interface TransferUnitDetails {
   date: string;
@@ -145,6 +149,12 @@ async function processTranscript(file: Blob) {
   return { transfers, years };
 }
 
+async function organizeTransfers(transfers: TransferUnitDetails[]) {
+  const mapped = transfers.map((transfer) => ({ name: transfer.name, units: transfer.units, score: transfer.score }));
+  const response = await trpc.transferCredits.convertUserLegacyTransfers.query(mapped);
+  return response;
+}
+
 const ImportTranscriptPopup: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
@@ -157,7 +167,16 @@ const ImportTranscriptPopup: FC = () => {
     setBusy(true);
     try {
       const { transfers, years } = await processTranscript(file);
-      dispatch(setTransfers(transfers)); // these types are compatible
+      const { courses, ap, other } = await organizeTransfers(transfers);
+
+      // This section is repeated from planner, maybe refactor in the future
+      const scoredAPs = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+
+      saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
+      saveLocalTransfers<UserAPExam>(LocalTransferSaveKey.AP, scoredAPs);
+      saveLocalTransfers<UncategorizedCourseEntry>(LocalTransferSaveKey.Uncategorized, formattedOther);
+
       dispatch(setYearPlans(Object.values(years)));
       setShowModal(false);
       setFile(null);
