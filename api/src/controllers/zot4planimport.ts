@@ -150,25 +150,25 @@ const convertIntoSavedPlanner = (
 };
 
 /**
- * Fetches all AP exams from the Zot4Plan schedule and match their names to PeterPortal AP Exam names
+ * Fetches all AP exams from the Zot4Plan schedule, matching their names to PeterPortal AP Exam names; filter out duplicates
  */
 const getApExamsFromZot4Plan = async (originalSchedule: Zot4PlanSchedule): Promise<userAPExam[]> => {
-  const apExams: userAPExam[] = [];
   const allAps = await getAPIApExams();
+  const examMap = new Map<string, userAPExam>();
 
-  originalSchedule['apExam'].forEach((z4pExam) => {
+  originalSchedule.apExam.forEach((z4pExam) => {
     const bestMatchedExamName = tryMatchAp(z4pExam.name, allAps)?.fullName ?? z4pExam.name;
     const score = z4pExam.score;
     const units = z4pExam.units;
 
-    apExams.push({
+    examMap.set(bestMatchedExamName, {
       examName: bestMatchedExamName,
       score,
       units,
     });
   });
 
-  return apExams;
+  return Array.from(examMap.values());
 };
 
 /**
