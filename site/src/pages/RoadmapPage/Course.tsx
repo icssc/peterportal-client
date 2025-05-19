@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import './Course.scss';
 import { Button } from 'react-bootstrap';
-import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import { useIsMobile, pluralize } from '../../helpers/util';
@@ -11,6 +10,12 @@ import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
+
+import { IconButton } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
   <>
@@ -62,7 +67,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         </a>
         {requiredCourses && (
           <span className="warning-container">
-            <ExclamationTriangle />
+            <WarningAmberIcon />
           </span>
         )}
       </span>
@@ -117,7 +122,7 @@ const Course: FC<CourseProps> = (props) => {
                 onClick={onDelete}
                 aria-label="delete"
               >
-                <Trash className="course-delete-icon" />
+                <DeleteOutlineIcon className="course-delete-icon" />
               </Button>
             )}
           </ThemeContext.Consumer>
@@ -127,8 +132,16 @@ const Course: FC<CourseProps> = (props) => {
       </div>
       <div className="title">{title}</div>
       <div className="course-footer">
-        {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
-        {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
+        {onAddToBag && !isInBag && (
+          <IconButton onClick={onAddToBag}>
+            <AddShoppingCartIcon />
+          </IconButton>
+        )}
+        {isInBag && (
+          <IconButton onClick={removeFromBag}>
+            <ShoppingCartIcon />
+          </IconButton>
+        )}
       </div>
     </div>
   );

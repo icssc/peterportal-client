@@ -1,9 +1,10 @@
 import { FC } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { Save } from 'react-bootstrap-icons';
 import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
+
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 interface HeaderProps {
   courseCount: number;
@@ -26,7 +27,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
         <ButtonGroup>
           <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
             Save
-            <Save className="header-icon" />
+            <SaveAltIcon />
           </Button>
         </ButtonGroup>
       </div>

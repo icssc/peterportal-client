@@ -10,7 +10,8 @@ import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import ThemeContext from '../../style/theme-context';
-import { PlusLg } from 'react-bootstrap-icons';
+
+import AddIcon from '@mui/icons-material/Add';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -214,7 +215,7 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           )}
           <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
-            <PlusLg /> Add Review
+            <AddIcon /> Add Review
           </Button>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />

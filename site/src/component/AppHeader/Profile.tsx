@@ -3,9 +3,16 @@ import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import './Profile.scss';
 import { NavLink } from 'react-router-dom';
-import { ArrowLeftCircleFill, BoxArrowInRight, BoxArrowRight, Laptop, Moon, Sticky, Sun } from 'react-bootstrap-icons';
 import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LaptopIcon from '@mui/icons-material/Laptop';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -53,21 +60,21 @@ const Profile = () => {
               onClick={() => setShow(false)}
             >
               <div>
-                <Sticky />
+                <StickyNote2Icon />
               </div>
               Your Reviews
             </NavLink>
           </li>
           <li>
             <button className="theme-button profile-popover__link" onClick={() => setTab('theme')}>
-              <div>{usingSystemTheme ? <Laptop /> : darkMode ? <Moon /> : <Sun />}</div>
+              <div>{usingSystemTheme ? <LaptopIcon /> : darkMode ? <DarkModeIcon /> : <LightModeIcon />}</div>
               Theme
             </button>
           </li>
           <li>
             <a href={'/api/users/auth/logout'} className="profile-popover__link">
               <div>
-                <BoxArrowRight />
+                <LogoutIcon />
               </div>
               Log Out
             </a>
@@ -81,7 +88,7 @@ const Profile = () => {
     <>
       <div className="profile-popover__header">
         <button onClick={() => setTab('default')}>
-          <ArrowLeftCircleFill /> <span>Back</span>
+          <ArrowCircleLeftIcon /> <span>Back</span>
         </button>
       </div>
       <div className="profile-popover__links">
@@ -92,7 +99,7 @@ const Profile = () => {
               onClick={() => setTheme('light')}
             >
               <div>
-                <Sun />
+                <LightModeIcon />
               </div>
               Light
             </button>
@@ -103,7 +110,7 @@ const Profile = () => {
               onClick={() => setTheme('dark')}
             >
               <div>
-                <Moon />
+                <DarkModeIcon />
               </div>
               Dark
             </button>
@@ -114,7 +121,7 @@ const Profile = () => {
               onClick={() => setTheme('system')}
             >
               <div>
-                <Laptop />
+                <LaptopIcon />
               </div>
               System
             </button>
@@ -164,7 +171,7 @@ const Profile = () => {
         <a href={`/api/users/auth/google`}>
           <Button variant={darkMode ? 'dark' : 'light'}>
             <span>
-              <BoxArrowInRight />{' '}
+              <ExitToAppIcon />{' '}
             </span>
             Log In
           </Button>

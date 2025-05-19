@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
@@ -11,6 +10,8 @@ import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 import { normalizeQuarterName } from '../../helpers/planner';
+
+import DescriptionIcon from '@mui/icons-material/Description';
 
 interface TransferUnitDetails {
   date: string;
@@ -214,7 +215,7 @@ const ImportTranscriptPopup: FC = () => {
         className="ppc-btn add-transcript-btn"
         onClick={() => setShowModal(true)}
       >
-        <FileEarmarkText className="add-transcript-icon" />
+        <DescriptionIcon />
         <div>Import Transcript</div>
       </Button>
     </>
