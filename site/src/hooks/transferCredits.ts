@@ -32,6 +32,10 @@ function naiveCountedCourses(courses: CourseTreeItem): string[] {
   return naiveCountedCourses(courses.OR[0]);
 }
 
+export interface TransferredCourseWithType extends TransferredCourse {
+  transferType?: 'AP' | 'Course';
+}
+
 export function useTransferredCredits() {
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
@@ -41,7 +45,7 @@ export function useTransferredCredits() {
 
   const courses = useMemo(() => {
     // Recomputes this value only when APs or Transferred Courses update
-    const rewardedCourses: TransferredCourse[] = apTransfers.flatMap((transfer) => {
+    const rewardedCourses: TransferredCourseWithType[] = apTransfers.flatMap((transfer) => {
       const info = apExamInfo.find((ap) => ap.fullName === transfer.examName);
       if (!info) return [];
       const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
@@ -54,8 +58,8 @@ export function useTransferredCredits() {
       return courseNames.map((courseName) => ({ courseName, units: 0, transferType: 'AP' }));
     });
 
-    const clearedCourses: TransferredCourse[] = transferredCourses
-      .map((course) => ({ ...course, transferType: 'Course' }) as TransferredCourse)
+    const clearedCourses: TransferredCourseWithType[] = transferredCourses
+      .map((course) => ({ ...course, transferType: 'Course' }) as TransferredCourseWithType)
       .concat(rewardedCourses);
     return [...new Set(clearedCourses)];
   }, [apExamInfo, apTransfers, transferredCourses]);

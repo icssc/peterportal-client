@@ -10,8 +10,7 @@ import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
-import { useTransferredCredits } from '../hooks/transferCredits';
-import { TransferredCourse } from '../store/slices/transferCreditsSlice';
+import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -211,7 +210,7 @@ export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorS
 export interface CompletedCourseSet {
   [k: string]: {
     units: number;
-    transferType?: TransferredCourse['transferType'];
+    transferType?: TransferredCourseWithType['transferType'];
   };
 }
 

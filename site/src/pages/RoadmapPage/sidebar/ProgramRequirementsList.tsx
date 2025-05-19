@@ -25,15 +25,14 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Spinner } from 'react-bootstrap';
 import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
-import { TransferredCourse } from '../../../store/slices/transferCreditsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
-import { useTransferredCredits } from '../../../hooks/transferCredits';
+import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface CourseTileProps {
   courseID: string;
-  completedBy: TransferredCourse['transferType'] | 'roadmap' | null;
+  completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
 }
