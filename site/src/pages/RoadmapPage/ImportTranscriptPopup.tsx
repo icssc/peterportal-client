@@ -9,11 +9,15 @@ import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
-import { QuarterName, UserAPExam } from '@peterportal/types';
+import { QuarterName } from '@peterportal/types';
 import { normalizeQuarterName } from '../../helpers/planner';
-import { LocalTransferSaveKey, saveLocalTransfers } from '../../helpers/transferCredits';
-import { TransferredCourse } from '../../store/slices/transferCreditsSlice';
-import { UncategorizedCourseEntry } from '../../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
+import {
+  setUserAPExams,
+  setTransferredCourses,
+  setUncategorizedCourses,
+} from '../../store/slices/transferCreditsSlice';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
 
 interface TransferUnitDetails {
@@ -160,6 +164,11 @@ const ImportTranscriptPopup: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState<Blob | null>(null);
   const [busy, setBusy] = useState(false);
+  const isLoggedIn = useIsLoggedIn();
+
+  const currentAps = useTransferredCredits().ap;
+  const currentCourses = useTransferredCredits().courses;
+  const currentOther = useTransferredCredits().other;
 
   const dispatch = useAppDispatch();
   const importHandler = async () => {
@@ -169,14 +178,43 @@ const ImportTranscriptPopup: FC = () => {
       const { transfers, years } = await processTranscript(file);
       const { courses, ap, other } = await organizeTransfers(transfers);
 
-      // This section is repeated from planner, maybe refactor in the future
-      const scoredAPs = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      // Merge the new AP exams, courses, and other transfers into current transfers
+      // via a process similar to the updated Zot4Plan imports
+      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      const newAps = scoredAps.filter(
+        (imported) => !currentAps.some((existing) => existing.examName == imported.examName),
+      );
+      const mergedAps = currentAps.concat(newAps);
+
+      const newCourses = courses.filter(
+        (imported) => !currentCourses.some((existing) => existing.courseName == imported.courseName),
+      );
+      const mergedCourses = currentCourses.concat(newCourses);
+
       const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+      const newOther = formattedOther.filter(
+        (imported) => !currentOther.some((existing) => existing.name == imported.name),
+      );
+      const mergedOther = currentOther.concat(newOther);
 
-      saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
-      saveLocalTransfers<UserAPExam>(LocalTransferSaveKey.AP, scoredAPs);
-      saveLocalTransfers<UncategorizedCourseEntry>(LocalTransferSaveKey.Uncategorized, formattedOther);
+      // Override local transfers with the merged results
+      // TODO: confirm these are upserted
+      dispatch(setTransferredCourses(mergedCourses));
+      dispatch(setUserAPExams(mergedAps));
+      dispatch(setUncategorizedCourses(mergedOther));
 
+      // Add the new rows in the database if logged in
+      // TODO: confirm the logic here works fine (overrideAll might be changed to not upsert in the future)
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: mergedCourses,
+          ap: mergedAps,
+          ge: [],
+          other: mergedOther,
+        });
+      }
+
+      // Finally, set the actual plan
       dispatch(setYearPlans(Object.values(years)));
       setShowModal(false);
       setFile(null);
