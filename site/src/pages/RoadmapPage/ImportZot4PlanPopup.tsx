@@ -35,12 +35,12 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         studentYear: currYear,
       });
 
-      /* Combine existing added AP exams with AP exams from Zot4Plan
-       * If any new exams are matched with existing added exams, the new exam will be used
-       */
-      const combinedExams = Array.from(
-        new Map([...apExams, ...z4pApExams].map((exam) => [exam.examName, exam])).values(),
+      // Combine added AP exams with AP exams from Zot4Plan; ignore any exams that were already added
+      const newExams = z4pApExams.filter(
+        (imported) => !apExams.some((existing) => existing.examName === imported.examName),
       );
+
+      const combinedExams = apExams.concat(newExams);
       dispatch(setUserAPExams(combinedExams));
 
       // Add new AP exam rows
