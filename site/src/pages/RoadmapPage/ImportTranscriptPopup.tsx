@@ -3,7 +3,7 @@ import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { setYearPlans } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
@@ -167,7 +167,9 @@ const ImportTranscriptPopup: FC = () => {
   const isLoggedIn = useIsLoggedIn();
 
   const currentAps = useTransferredCredits().ap;
-  const currentCourses = useTransferredCredits().courses;
+  // App selector instead of useTransferredCredits.courses here because
+  // useTransferredCredits.courses also includes all courses that have been cleared
+  const currentCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
   const currentOther = useTransferredCredits().other;
 
   const dispatch = useAppDispatch();
@@ -198,7 +200,6 @@ const ImportTranscriptPopup: FC = () => {
       const mergedOther = currentOther.concat(newOther);
 
       // Override local transfers with the merged results
-      // TODO: confirm these are upserted
       dispatch(setTransferredCourses(mergedCourses));
       dispatch(setUserAPExams(mergedAps));
       dispatch(setUncategorizedCourses(mergedOther));
@@ -215,6 +216,7 @@ const ImportTranscriptPopup: FC = () => {
       }
 
       // Finally, set the actual plan
+      // This does not save automatically (the user has to save it manually)
       dispatch(setYearPlans(Object.values(years)));
       setShowModal(false);
       setFile(null);
