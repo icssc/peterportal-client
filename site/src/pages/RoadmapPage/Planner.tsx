@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import './Planner.scss';
 import Header from './Header';
-import AddYearPopup from './AddYearPopup';
 import Year from './Year';
 import { useAppSelector } from '../../store/hooks';
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
@@ -60,14 +59,6 @@ const Planner: FC = () => {
         })}
       </section>
       <div className="action-row">
-        <AddYearPopup
-          placeholderName={'Year ' + (currentPlanData.length + 1)}
-          placeholderYear={
-            currentPlanData.length === 0
-              ? new Date().getFullYear()
-              : currentPlanData[currentPlanData.length - 1].startYear + 1
-          }
-        />
         <ImportTranscriptPopup />
         <ImportZot4PlanPopup saveRoadmap={handleSave} />
       </div>
