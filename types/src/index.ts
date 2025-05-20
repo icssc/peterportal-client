@@ -10,3 +10,4 @@ export * from './term';
 export * from './user';
 export * from './websoc';
 export * from './week';
+export * from './transferCredits';

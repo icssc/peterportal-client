@@ -15,6 +15,7 @@ import { PlusLg } from 'react-bootstrap-icons';
 export interface ReviewProps {
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  terms?: string[];
 }
 
 enum SortingOption {

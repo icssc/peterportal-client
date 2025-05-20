@@ -35,6 +35,36 @@ button {
 .side-panel {
   background-color: var(--overlay1);
   height: 100%;
+  overflow: auto;
+  width: globals.$roadmap-sidebar-width;
+
+  background-color: var(--overlay1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 16px 20px 56px;
+
+  .search-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &.mobile {
+    border-radius: 8px 8px 0 0;
+  }
+
+  button.fixed {
+    @include globals.bottom-button();
+    z-index: 1;
+  }
+
+  .ppc-combobox__clear-indicator {
+    display: none;
+  }
 }
 
 .ppc-btn {
@@ -147,11 +177,15 @@ button {
     border: none;
     background-color: var(--overlay2);
     padding: 4px 8px 8px;
+    max-height: 100%;
+    overflow: auto;
+    margin-block: 32px;
   }
   .modal-dialog {
     max-width: 400px;
     margin: auto;
     width: calc(100% - 32px);
+    max-height: 100%;
   }
   .modal-footer {
     border-top: none;
@@ -341,4 +375,12 @@ button.unstyled {
 .table-wrapper {
   width: 100%;
   overflow: auto;
+}
+
+// monkey patch for recaptcha border bug
+.g-recaptcha {
+  overflow: hidden;
+  width: 302px;
+  height: 76px;
+  border-radius: 4px;
 }
