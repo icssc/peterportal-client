@@ -186,9 +186,9 @@ const tryMatchCourse = (transferName: string, validCourses: Record<string, strin
 const handleApCalcAB = (
   transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
-  hasSubscore: boolean,
+  hasABSubscore: boolean,
 ): boolean => {
-  if (hasSubscore) {
+  if (hasABSubscore) {
     // Okay to proceed normally because we know the user has an explicit AB subscore
     return true;
   } else if (transfer.count == 1) {
@@ -211,7 +211,7 @@ const handleApCalcAB = (
 const organizeApExam = (
   transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
-  hasSubscore: boolean,
+  hasABSubscore: boolean,
   allAps: ApExamBasicInfo[],
 ): boolean => {
   const bestMatch = tryMatchAp(transfer.courseName, allAps);
@@ -219,7 +219,7 @@ const organizeApExam = (
 
   // Handle special case for subscore
   if (bestMatch.fullName == AP_CALC_AB) {
-    const proceedToAdd = handleApCalcAB(transfer, toInsertAp, hasSubscore);
+    const proceedToAdd = handleApCalcAB(transfer, toInsertAp, hasABSubscore);
     if (!proceedToAdd) return false;
   }
 
@@ -310,11 +310,8 @@ const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => 
   return mergedToInsertCourse;
 };
 
-/** Organize a list of legacy transfers (optionally with scores) into courses, APs, and other */
-export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
-  const allAps = await getAPIApExams();
-
-  // Determine the unique transfers
+/** Combine the units of the unique transfers out of given transfer data */
+const groupTransfersByName = (rows: ExtendedTransferData[]) => {
   const lookup: Record<string, Omit<GroupedUncategorizedTransfer, 'courseName'>> = {};
 
   rows.forEach((row) => {
@@ -330,20 +327,27 @@ export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
     courseName,
     ...data,
   }));
+  return uniqueRows;
+};
 
-  // Obtain/clean up all relevant transfers (invalid ones that cannot be categorized are filtered out here)
-  const transfers: GroupedUncategorizedTransfer[] = uniqueRows
+/** Filter out null/nonexistent transfers and trim spaces */
+const cleanUpGroupedTransfers = (rows: GroupedUncategorizedTransfer[]) => {
+  return rows
     .filter((transfer) => transfer.courseName != null && transfer.count != 0)
     .map((transfer) => ({ ...transfer, courseName: transfer.courseName.trim() })) as GroupedUncategorizedTransfer[];
+};
 
-  // Get all the users who explicitly have an AB subscore
-  let hasSubscore = false;
+/** Check whether any of the transfers is explicitly a Calc AB subscore */
+const checkABSubscore = (transfers: GroupedUncategorizedTransfer[], allAps: ApExamBasicInfo[]) => {
   for (const transfer of transfers) {
     const bestMatch = tryMatchAp(transfer.courseName, allAps);
-    if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) hasSubscore = true;
+    if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) return true;
   }
+  return false;
+};
 
-  // Validate all the relevant courses from the API beforehand
+/** Create a list of the valid transfer course names from the API */
+const getValidCourseNames = async (transfers: GroupedUncategorizedTransfer[]) => {
   const coursesToValidate = new Set<string>();
   for (const transfer of transfers) {
     if (transfer.courseName.startsWith('AP ')) {
@@ -351,22 +355,32 @@ export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
     }
     coursesToValidate.add(removeAllSpaces(transfer.courseName));
   }
-  const validCourses = await validateCoursesAPI(coursesToValidate);
+  return await validateCoursesAPI(coursesToValidate);
+};
 
-  // Build several large arrays for insertion
+/** Organize a list of legacy transfers (optionally with scores) into courses, APs, and other */
+export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
+  // Obtain necessary information and preprocess data
+  const allAps = await getAPIApExams();
+  const uniqueRows = groupTransfersByName(rows);
+  const transfers = cleanUpGroupedTransfers(uniqueRows);
+  const hasABSubscore = checkABSubscore(transfers, allAps);
+  const validCourses = await getValidCourseNames(transfers);
+
+  // Build several large arrays to categorize the transfers
   const toInsertAp: TransferredApExamRow[] = [];
   const toInsertCourse: TransferredCourseRow[] = [];
   const toInsertMisc: TransferredMiscRow[] = [];
   for (const transfer of transfers) {
     if (transfer.courseName.startsWith('AP ')) {
-      const reorganized = organizeApExam(transfer as GroupedUncategorizedTransfer, toInsertAp, hasSubscore, allAps);
+      const reorganized = organizeApExam(transfer, toInsertAp, hasABSubscore, allAps);
       if (!reorganized) {
-        organizeMisc(transfer as GroupedUncategorizedTransfer, toInsertMisc);
+        organizeMisc(transfer, toInsertMisc);
       }
     } else {
-      const reorganized = await organizeCourse(transfer as GroupedUncategorizedTransfer, toInsertCourse, validCourses);
+      const reorganized = await organizeCourse(transfer, toInsertCourse, validCourses);
       if (!reorganized) {
-        organizeMisc(transfer as GroupedUncategorizedTransfer, toInsertMisc);
+        organizeMisc(transfer, toInsertMisc);
       }
     }
   }
