@@ -2,18 +2,16 @@ import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { CloudArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, RoadmapPlan, addRoadmapPlan } from '../../store/slices/roadmapSlice';
+import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
-import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
+import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 
-interface ImportZot4PlanPopupProps {
-  saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
-}
-const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
+const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
@@ -21,6 +19,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const [studentYear, setStudentYear] = useState('1');
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
+  const isLoggedIn = useIsLoggedIn();
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
@@ -52,7 +51,9 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
       const updatedPlans = [...allPlanData, expandedPlanners[0]];
       dispatch(addRoadmapPlan(expandedPlanners[0]));
       dispatch(setPlanIndex(updatedPlans.length - 1));
-      await saveRoadmap(updatedPlans);
+
+      const collapsed = collapseAllPlanners(updatedPlans);
+      await saveRoadmap(isLoggedIn, collapsed, true);
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
@@ -72,7 +73,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal">
         <Modal.Header closeButton>
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
@@ -131,13 +132,9 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button
-        variant={darkMode ? 'dark' : 'light'}
-        className="ppc-btn import-schedule-btn"
-        onClick={() => setShowModal(true)}
-      >
-        <CloudArrowDown className="import-schedule-icon" />
-        <div>Import Zot4Plan Schedule</div>
+      <Button variant={darkMode ? 'dar k' : 'light'} onClick={() => setShowModal(true)}>
+        <CloudArrowDown className="import-schedule-icon" width="20" height="20" />
+        <span>Zot4Plan Schedule</span>
       </Button>
     </>
   );

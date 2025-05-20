@@ -168,7 +168,12 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        className="ppc-modal multiplan-modal transcript-form"
+      >
         <Modal.Header closeButton>
           <h2>Import from Transcript</h2>
         </Modal.Header>
@@ -209,13 +214,9 @@ const ImportTranscriptPopup: FC = () => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button
-        variant={darkMode ? 'dark' : 'light'}
-        className="ppc-btn add-transcript-btn"
-        onClick={() => setShowModal(true)}
-      >
-        <FileEarmarkText className="add-transcript-icon" />
-        <div>Import Transcript</div>
+      <Button variant={darkMode ? 'dark' : 'light'} onClick={() => setShowModal(true)}>
+        <FileEarmarkText width="20" height="20" />
+        <span>Student Transcript</span>
       </Button>
     </>
   );

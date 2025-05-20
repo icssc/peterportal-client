@@ -4,8 +4,6 @@ import Header from './Header';
 import Year from './Year';
 import { useAppSelector } from '../../store/hooks';
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
-import ImportTranscriptPopup from './ImportTranscriptPopup';
-import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import PlannerLoader from './planner/PlannerLoader';
@@ -58,10 +56,6 @@ const Planner: FC = () => {
           return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
         })}
       </section>
-      <div className="action-row">
-        <ImportTranscriptPopup />
-        <ImportZot4PlanPopup saveRoadmap={handleSave} />
-      </div>
     </div>
   );
 };
