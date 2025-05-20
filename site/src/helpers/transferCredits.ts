@@ -1,6 +1,6 @@
 import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
-import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
-import { APExam, TransferredGE } from '@peterportal/types';
+import { TransferredCourse } from '../store/slices/transferCreditsSlice';
+import { APExam, TransferredGE, UserAPExam } from '@peterportal/types';
 import trpc from '../trpc';
 
 /**
