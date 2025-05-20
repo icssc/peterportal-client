@@ -16,7 +16,7 @@ import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MapIcon from '@mui/icons-material/Map';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -125,7 +125,7 @@ const SideBar = () => {
           <div className="button-container">
             <img alt="PeterPortal" src={Logo} height="32" />
             <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
-              <CancelIcon />
+              <CloseIcon />
             </button>
           </div>
 

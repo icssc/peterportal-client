@@ -138,7 +138,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         className="ppc-btn import-schedule-btn"
         onClick={() => setShowModal(true)}
       >
-        <CloudDownloadIcon className="import-schedule-icon" />
+        <CloudDownloadIcon style={{ fontSize: 20, marginRight: '5px' }} />
         <div>Import Zot4Plan Schedule</div>
       </Button>
     </>

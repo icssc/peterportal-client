@@ -70,7 +70,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
               <tr key={year}>
                 <td>{year}</td>
                 {quarters.map((offered, index) => (
-                  <td key={index}>{offered ? <CheckIcon /> : null}</td>
+                  <td key={index}>{offered ? <CheckIcon style={{ fontSize: 20 }} /> : null}</td>
                 ))}
               </tr>
             ))}

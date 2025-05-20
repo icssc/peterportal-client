@@ -58,7 +58,7 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
   return (
     <div className="course-info-warning">
       <div className="warning-primary">
-        <WarningAmberIcon />
+        <WarningAmberIcon style={{ fontSize: 20 }} />
         Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
       </div>
       <div className="warning-hint-italics">
