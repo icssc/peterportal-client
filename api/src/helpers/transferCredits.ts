@@ -19,6 +19,10 @@ type TransferredMiscRow = {
   units: number | null;
 };
 
+/**
+  To deal with duplicates, uncategorized transfers with the same name
+  are grouped together and their count is stored
+*/
 type GroupedUncategorizedTransfer = {
   courseName: string;
   totalUnits: number;
@@ -211,10 +215,7 @@ const organizeApExam = (
   allAps: ApExamBasicInfo[],
 ): boolean => {
   const bestMatch = tryMatchAp(transfer.courseName, allAps);
-  if (!bestMatch) {
-    // Could not match; leave it here
-    return false;
-  }
+  if (!bestMatch) return false;
 
   // Handle special case for subscore
   if (bestMatch.fullName == AP_CALC_AB) {
@@ -222,7 +223,7 @@ const organizeApExam = (
     if (!proceedToAdd) return false;
   }
 
-  // Move this transfer item to the APs table with the name of the best match
+  // Categorize this transfer item as an AP with the name of the best match
   toInsertAp.push({
     examName: bestMatch.fullName,
     score: transfer.score ?? null,
@@ -238,12 +239,9 @@ const organizeCourse = async (
   validCourses: Record<string, string>,
 ): Promise<boolean> => {
   const bestMatch = tryMatchCourse(transfer.courseName, validCourses);
-  if (!bestMatch) {
-    // Could not match; leave it here
-    return false;
-  }
+  if (!bestMatch) return false;
 
-  // Move this transfer item to the transferred courses table with the name of the best match
+  // Categorize this transfer item as a course
   toInsertCourse.push({
     courseName: bestMatch,
     units: transfer.totalUnits,
@@ -254,12 +252,11 @@ const organizeCourse = async (
 /** Handle organizing a misc transfer, only to deal with duplicate rows */
 const organizeMisc = (transfer: GroupedUncategorizedTransfer, toInsertMisc: TransferredMiscRow[]) => {
   if (!transfer.courseName) return;
-  // Delete this then re-add only one copy
   toInsertMisc.push({ courseName: transfer.courseName, units: transfer.totalUnits });
 };
 
 /**
-  Merge APs that are duplicated for individual users before inserting into the db
+  Merge any resulting duplicate APs
   Produced by different original transfers that have been resolved into the same result
 */
 const mergeDuplicateApResults = (toInsertAp: TransferredApExamRow[]) => {
@@ -287,7 +284,7 @@ const mergeDuplicateApResults = (toInsertAp: TransferredApExamRow[]) => {
 };
 
 /**
-  Merge courses that are duplicated for individual users before inserting into the db
+  Merge any resulting duplicate courses
   Produced by different original transfers that have been resolved into the same result
   E.g. if a user has "MATH 2A" and "MATH2A " -> there will be two instances of "MATH 2A"
 */
@@ -313,7 +310,7 @@ const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => 
   return mergedToInsertCourse;
 };
 
-/** Organize the data in the database */
+/** Organize a list of legacy transfers (optionally with scores) into courses, APs, and other */
 export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
   const allAps = await getAPIApExams();
 
