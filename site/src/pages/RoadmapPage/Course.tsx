@@ -14,8 +14,8 @@ import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
   <>
@@ -134,12 +134,12 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-footer">
         {onAddToBag && !isInBag && (
           <IconButton onClick={onAddToBag}>
-            <BookmarkAddIcon />
+            <AddShoppingCartIcon />
           </IconButton>
         )}
         {isInBag && (
           <IconButton onClick={removeFromBag}>
-            <BookmarkIcon />
+            <ShoppingCartIcon />
           </IconButton>
         )}
       </div>

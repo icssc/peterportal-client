@@ -11,9 +11,9 @@ import { getCourseTags, useIsMobile } from '../../helpers/util';
 import { useCoursebag } from '../../hooks/coursebag';
 interface CourseHitItemProps extends CourseGQLData {}
 
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { IconButton } from '@mui/material';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
@@ -81,12 +81,12 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           <div>
             {onAddToBag && !isInBag && (
               <IconButton onClick={(e) => onAddToBag(e)}>
-                <AddShoppingCartIcon />
+                <BookmarkAddIcon />
               </IconButton>
             )}
             {isInBag && (
               <IconButton onClick={(e) => removeFromBag(e)}>
-                <ShoppingCartIcon />
+                <BookmarkIcon />
               </IconButton>
             )}
           </div>
