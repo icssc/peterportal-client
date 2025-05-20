@@ -111,7 +111,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
               />
               {scheduleName.length > 0 && scheduleName.length < 8 && (
                 <span className="import-schedule-warning">
-                  <WarningAmberIcon className="import-schedule-warning-icon" />
+                  <WarningAmberIcon style={{ fontSize: 20 }} />
                   No Zot4Plan schedule name contains less than 8 characters
                 </span>
               )}

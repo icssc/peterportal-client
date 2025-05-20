@@ -14,7 +14,7 @@ import UIOverlay from '../UIOverlay/UIOverlay';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import MapIcon from '@mui/icons-material/Map';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -73,7 +73,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <MapIcon />
+              <MapOutlinedIcon />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
@@ -101,7 +101,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <WarningAmberIcon />
+                  <WarningAmberIcon style={{ fontSize: 20 }} />
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>

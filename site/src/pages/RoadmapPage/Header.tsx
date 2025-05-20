@@ -4,7 +4,7 @@ import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import SaveIcon from '@mui/icons-material/Save';
 
 interface HeaderProps {
   courseCount: number;
@@ -27,7 +27,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
         <ButtonGroup>
           <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
             Save
-            <SaveAltIcon style={{ marginLeft: '5px' }} />
+            <SaveIcon style={{ marginLeft: '5px' }} />
           </Button>
         </ButtonGroup>
       </div>

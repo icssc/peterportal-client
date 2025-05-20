@@ -12,7 +12,7 @@ import { useCoursebag } from '../../hooks/coursebag';
 interface CourseHitItemProps extends CourseGQLData {}
 
 import { IconButton } from '@mui/material';
-import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
@@ -81,7 +81,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           <div>
             {onAddToBag && !isInBag && (
               <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
-                <BookmarkAddIcon />
+                <BookmarkBorderIcon />
               </IconButton>
             )}
             {isInBag && (
