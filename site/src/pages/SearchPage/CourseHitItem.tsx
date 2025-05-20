@@ -80,12 +80,12 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           </div>
           <div>
             {onAddToBag && !isInBag && (
-              <IconButton onClick={(e) => onAddToBag(e)}>
+              <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
                 <BookmarkAddIcon />
               </IconButton>
             )}
             {isInBag && (
-              <IconButton onClick={(e) => removeFromBag(e)}>
+              <IconButton onClick={(e) => removeFromBag(e)} size={'small'}>
                 <BookmarkIcon />
               </IconButton>
             )}
