@@ -7,14 +7,8 @@ import { db } from '../db';
 import { publicProcedure, router } from '../helpers/trpc';
 import { zot4PlanImports } from '../db/schema';
 import { TRPCError } from '@trpc/server';
-import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName } from '@peterportal/types';
+import { SavedRoadmap, SavedPlannerData, SavedPlannerQuarterData, QuarterName, UserAPExam } from '@peterportal/types';
 import { tryMatchAp, getAPIApExams } from '../helpers/transferCredits';
-
-interface userAPExam {
-  examName: string;
-  score: number;
-  units: number;
-}
 
 type Zot4PlanYears = string[][][];
 
@@ -152,9 +146,9 @@ const convertIntoSavedPlanner = (
 /**
  * Fetches all AP exams from the Zot4Plan schedule, matching their names to PeterPortal AP Exam names; filter out duplicates
  */
-const getApExamsFromZot4Plan = async (originalSchedule: Zot4PlanSchedule): Promise<userAPExam[]> => {
+const getApExamsFromZot4Plan = async (originalSchedule: Zot4PlanSchedule): Promise<UserAPExam[]> => {
   const allAps = await getAPIApExams();
-  const examMap = new Map<string, userAPExam>();
+  const examMap = new Map<string, UserAPExam>();
 
   originalSchedule.apExam.forEach((z4pExam) => {
     const bestMatchedExamName = tryMatchAp(z4pExam.name, allAps)?.fullName ?? z4pExam.name;
