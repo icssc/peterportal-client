@@ -32,7 +32,7 @@ const AddYearPopup: FC = () => {
         key={'add-year-' + placeholderYear}
       />
       <Button variant="light" className="header-btn ppc-btn" onClick={() => setShowModal(true)}>
-        <Plus className="add-year-icon" />
+        <Plus className="add-year-icon header-icon" />
         <span>Add Year</span>
       </Button>
     </>

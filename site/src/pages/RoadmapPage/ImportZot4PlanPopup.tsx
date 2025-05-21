@@ -81,14 +81,13 @@ const ImportZot4PlanPopup: FC = () => {
           <Form className="ppc-modal-form">
             <Form.Group>
               <p>
-                If you use{' '}
+                To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
                   Zot4Plan
-                </a>
-                , you can add all your classes from that schedule to a new roadmap in PeterPortal. Your schedule in
-                Zot4Plan and your current roadmaps will not be modified.
+                </a>{' '}
+                classes into a new roadmap, enter the exact name that you used to save your Zot4Plan schedule (as shown
+                below).
               </p>
-              <p>Please enter the exact name that you use to save and load your Zot4Plan schedule, as shown here:</p>
               <img
                 className="w-100"
                 src={helpImage}

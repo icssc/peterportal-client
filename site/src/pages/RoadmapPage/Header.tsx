@@ -26,7 +26,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
           <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
@@ -34,12 +34,12 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
         <ButtonGroup>
           <AddYearPopup />
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
-            Transfer Credits
             <ArrowLeftRight className="header-icon" />
+            Transfer Credits
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
-            Save
             <Save className="header-icon" />
+            Save
           </Button>
         </ButtonGroup>
       </div>
