@@ -51,18 +51,18 @@ const Planner: FC = () => {
   return (
     <div className="planner">
       <PlannerLoader />
+      <Header
+        courseCount={courseCount}
+        unitCount={unitCount}
+        saveRoadmap={handleSave}
+        missingPrerequisites={new Set()}
+      />
       {roadmapLoading ? (
         <div className="loading-spinner">
           <Spinner animation="border" />
         </div>
       ) : (
         <>
-          <Header
-            courseCount={courseCount}
-            unitCount={unitCount}
-            saveRoadmap={handleSave}
-            missingPrerequisites={new Set()}
-          />
           <section className="years" data-max-quarter-count={maxQuarterCount}>
             {currentPlanData.map((year, yearIndex) => {
               return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
