@@ -8,6 +8,9 @@ import trpc from '../../trpc.ts';
 import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -18,21 +21,42 @@ interface ImportZot4PlanPopupProps {
 const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
+  const isLoggedIn = useIsLoggedIn();
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
   const [studentYear, setStudentYear] = useState('1');
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
+  const apExams = useTransferredCredits().ap;
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     try {
-      const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+      const { savedRoadmap, apExams: z4pApExams } = await trpc.zot4PlanImport.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
       });
+
+      // Combine added AP exams with AP exams from Zot4Plan; ignore any exams that were already added
+      const newExams = z4pApExams.filter(
+        (imported) => !apExams.some((existing) => existing.examName === imported.examName),
+      );
+
+      const combinedExams = apExams.concat(newExams);
+      dispatch(setUserAPExams(combinedExams));
+
+      // Add new AP exam rows
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: [],
+          ap: combinedExams,
+          ge: [],
+          other: [],
+        });
+      }
+
       // Expand the result
-      const expandedPlanners = await expandAllPlanners(result.planners);
+      const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
       // Check for validity: length and invalid course names
       if (expandedPlanners.length < 1) {
         spawnToast('The schedule "' + schedName + '" could not be imported', true);
