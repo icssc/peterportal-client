@@ -34,9 +34,9 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
         >
           {val <= (hovered || rating) ? (
-            <StarIcon style={{ opacity: hovered ? 0.8 : 1, scale: 1.6 }} />
+            <StarIcon className="review-star-rating" style={{ opacity: hovered ? 0.8 : 1 }} />
           ) : (
-            <StarBorderIcon style={{ scale: 1.6 }} />
+            <StarBorderIcon className="review-star-rating filled-stars" />
           )}
         </span>
       ))}

@@ -215,7 +215,7 @@ const ImportTranscriptPopup: FC = () => {
         className="ppc-btn add-transcript-btn"
         onClick={() => setShowModal(true)}
       >
-        <DescriptionIcon style={{ fontSize: 20, marginRight: '5px' }} />
+        <DescriptionIcon className="add-transcript-icon" />
         <div>Import Transcript</div>
       </Button>
     </>

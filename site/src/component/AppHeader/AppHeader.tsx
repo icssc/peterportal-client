@@ -75,7 +75,7 @@ const AppHeader: FC = () => {
         <div className="navbar-left">
           {/* Hamburger Menu */}
           <button className="navbar-menu" onClick={toggleMenu}>
-            <MenuIcon style={{ fontSize: 36 }} />
+            <MenuIcon className="navbar-menu-icon" />
           </button>
         </div>
 

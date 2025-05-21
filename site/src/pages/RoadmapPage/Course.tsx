@@ -67,7 +67,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         </a>
         {requiredCourses && (
           <span className="warning-container">
-            <WarningAmberIcon style={{ fontSize: 20 }} />
+            <WarningAmberIcon className="course-warn-icon" />
           </span>
         )}
       </span>

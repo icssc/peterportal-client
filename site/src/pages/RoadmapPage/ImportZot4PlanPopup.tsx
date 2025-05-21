@@ -111,7 +111,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
               />
               {scheduleName.length > 0 && scheduleName.length < 8 && (
                 <span className="import-schedule-warning">
-                  <WarningAmberIcon style={{ fontSize: 20 }} />
+                  <WarningAmberIcon className="import-schedule-icon" />
                   No Zot4Plan schedule name contains less than 8 characters
                 </span>
               )}
@@ -138,7 +138,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         className="ppc-btn import-schedule-btn"
         onClick={() => setShowModal(true)}
       >
-        <CloudDownloadIcon style={{ fontSize: 20, marginRight: '5px' }} />
+        <CloudDownloadIcon className="import-button-icon" />
         <div>Import Zot4Plan Schedule</div>
       </Button>
     </>

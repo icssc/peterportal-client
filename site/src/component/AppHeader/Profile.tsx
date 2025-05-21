@@ -171,7 +171,7 @@ const Profile = () => {
         <a href={`/api/users/auth/google`}>
           <Button variant={darkMode ? 'dark' : 'light'}>
             <span>
-              <ExitToAppIcon style={{ fontSize: 20 }} />{' '}
+              <ExitToAppIcon className="exit-icon" />
             </span>
             Log In
           </Button>

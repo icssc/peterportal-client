@@ -27,7 +27,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
         <ButtonGroup>
           <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
             Save
-            <SaveIcon style={{ marginLeft: '5px' }} />
+            <SaveIcon className="header-icon" />
           </Button>
         </ButtonGroup>
       </div>

@@ -11,7 +11,7 @@ import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import UIOverlay from '../UIOverlay/UIOverlay';
 
-import ListAltIcon from '@mui/icons-material/ListAlt';
+import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
 import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
@@ -47,7 +47,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <ListAltIcon />
+              <ListAltRoundedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Course Catalog</span>
             <span>Courses</span>
@@ -60,7 +60,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <PeopleOutlineIcon />
+              <PeopleOutlineIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
@@ -73,7 +73,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <MapOutlinedIcon />
+              <MapOutlinedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
@@ -88,7 +88,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <DomainVerificationIcon />
+                  <DomainVerificationIcon className="sidebar-icon" />
                 </div>
                 <span className="full-name">Verify Reviews</span>
                 <span>Verification</span>
@@ -101,7 +101,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <WarningAmberIcon style={{ fontSize: 20 }} />
+                  <WarningAmberIcon className="sidebar-icon" />
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>
