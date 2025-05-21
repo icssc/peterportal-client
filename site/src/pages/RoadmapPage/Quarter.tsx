@@ -77,7 +77,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     };
     if (activeCourseLoading) setMoveCourseTrigger(movePayload);
     else dispatch(moveCourse(movePayload));
-    dispatch(setActiveCourse(undefined));
   };
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
@@ -98,6 +97,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     removeCourseAt(moveCourseTrigger.to.courseIndex);
     setMoveCourseTrigger(null);
     dispatch(moveCourse(moveCourseTrigger));
+    dispatch(setActiveCourse(undefined));
   }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
 
   const popover = (
