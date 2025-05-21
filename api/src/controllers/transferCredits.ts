@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { extendedTransferData, TransferredGE } from '@peterportal/types';
+import { extendedTransferData, TransferredGE, UserAPExam } from '@peterportal/types';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
@@ -9,12 +9,6 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import { transferredCourse } from '../db/schema';
 import { transferredMisc } from '../db/schema';
 import { organizeLegacyTransfers } from '../helpers/transferCredits';
-
-interface userAPExam {
-  examName: string;
-  score: number;
-  units: number;
-}
 
 const zodCourseTransferSchema = z.object({
   courseName: z.string(),
@@ -72,7 +66,7 @@ const transferCreditsRouter = router({
       .then((res) => (res.data ? (res.data as APExam[]) : []));
     return response;
   }),
-  getSavedAPExams: userProcedure.query(async ({ ctx }): Promise<userAPExam[]> => {
+  getSavedAPExams: userProcedure.query(async ({ ctx }): Promise<UserAPExam[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
@@ -84,7 +78,7 @@ const transferCreditsRouter = router({
       examName: exam.examName,
       score: exam.score ?? 0,
       units: exam.units,
-    })) as userAPExam[];
+    })) as UserAPExam[];
   }),
   addUserAPExam: userProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;

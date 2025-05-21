@@ -18,3 +18,13 @@ export interface UserAPExam {
   score: number;
   units: number;
 }
+
+export interface TransferredCourse {
+  courseName: string;
+  units: number;
+}
+
+export interface TransferredUncategorized {
+  name: string | null;
+  units: number | null;
+}

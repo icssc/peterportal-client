@@ -8,7 +8,6 @@ import {
   setUncategorizedCourses,
   setUserAPExams,
   setDataLoadState,
-  TransferredCourse,
 } from '../store/slices/transferCreditsSlice';
 import { components } from '@peterportal/types/src/generated/anteater-api-types';
 import {
@@ -20,8 +19,7 @@ import {
   saveLocalTransfers,
 } from '../helpers/transferCredits';
 import { useIsLoggedIn } from './isLoggedIn';
-import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
-import { TransferredGE, UserAPExam } from '@peterportal/types';
+import { TransferredGE, TransferredCourse, TransferredUncategorized, UserAPExam } from '@peterportal/types';
 
 /** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
@@ -125,6 +123,6 @@ export function useLoadTransferredCredits() {
 
   useEffect(() => {
     if (isLoggedIn || !userDataLoaded) return;
-    saveLocalTransfers<UncategorizedCourseEntry>(OtherKey, transferredOther);
+    saveLocalTransfers<TransferredUncategorized>(OtherKey, transferredOther);
   }, [isLoggedIn, OtherKey, transferredOther, userDataLoaded]);
 }

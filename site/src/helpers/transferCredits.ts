@@ -1,6 +1,4 @@
-import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
-import { TransferredCourse } from '../store/slices/transferCreditsSlice';
-import { APExam, TransferredGE, UserAPExam } from '@peterportal/types';
+import { APExam, TransferredGE, TransferredCourse, TransferredUncategorized, UserAPExam } from '@peterportal/types';
 import trpc from '../trpc';
 
 /**
@@ -40,7 +38,7 @@ export function getTotalUnitsFromTransfers(
   courses: TransferredCourse[],
   apExams: UserAPExam[],
   geTransfers: TransferredGE[],
-  otherTransfers: UncategorizedCourseEntry[],
+  otherTransfers: TransferredUncategorized[],
 ) {
   let total = 0;
 
@@ -97,8 +95,8 @@ export function loadTransferredAPs(isLoggedIn: boolean): Promise<UserAPExam[]> {
 export function loadTransferredGEs(isLoggedIn: boolean): Promise<TransferredGE[]> {
   return loadTransferData<TransferredGE>('getTransferredGEs', isLoggedIn, LocalTransferSaveKey.GE);
 }
-export function loadTransferredOther(isLoggedIn: boolean): Promise<UncategorizedCourseEntry[]> {
-  return loadTransferData<UncategorizedCourseEntry>(
+export function loadTransferredOther(isLoggedIn: boolean): Promise<TransferredUncategorized[]> {
+  return loadTransferData<TransferredUncategorized>(
     'getUncategorizedTransfers',
     isLoggedIn,
     LocalTransferSaveKey.Uncategorized,
