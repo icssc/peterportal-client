@@ -13,9 +13,12 @@ import PlannerLoader from './planner/PlannerLoader';
 import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
+import { Spinner } from 'react-bootstrap';
+
 const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const currentPlanData = useAppSelector(selectYearPlans);
+  const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
   const transferred = useTransferredCredits();
   const isLoggedIn = useIsLoggedIn();
 
@@ -48,29 +51,37 @@ const Planner: FC = () => {
   return (
     <div className="planner">
       <PlannerLoader />
-      <Header
-        courseCount={courseCount}
-        unitCount={unitCount}
-        saveRoadmap={handleSave}
-        missingPrerequisites={new Set()}
-      />
-      <section className="years" data-max-quarter-count={maxQuarterCount}>
-        {currentPlanData.map((year, yearIndex) => {
-          return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-        })}
-      </section>
-      <div className="action-row">
-        <AddYearPopup
-          placeholderName={'Year ' + (currentPlanData.length + 1)}
-          placeholderYear={
-            currentPlanData.length === 0
-              ? new Date().getFullYear()
-              : currentPlanData[currentPlanData.length - 1].startYear + 1
-          }
-        />
-        <ImportTranscriptPopup />
-        <ImportZot4PlanPopup saveRoadmap={handleSave} />
-      </div>
+      {roadmapLoading ? (
+        <div className="loading-spinner">
+          <Spinner animation="border" />
+        </div>
+      ) : (
+        <>
+          <Header
+            courseCount={courseCount}
+            unitCount={unitCount}
+            saveRoadmap={handleSave}
+            missingPrerequisites={new Set()}
+          />
+          <section className="years" data-max-quarter-count={maxQuarterCount}>
+            {currentPlanData.map((year, yearIndex) => {
+              return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+            })}
+          </section>
+          <div className="action-row">
+            <AddYearPopup
+              placeholderName={'Year ' + (currentPlanData.length + 1)}
+              placeholderYear={
+                currentPlanData.length === 0
+                  ? new Date().getFullYear()
+                  : currentPlanData[currentPlanData.length - 1].startYear + 1
+              }
+            />
+            <ImportTranscriptPopup />
+            <ImportZot4PlanPopup saveRoadmap={handleSave} />
+          </div>
+        </>
+      )}
     </div>
   );
 };
