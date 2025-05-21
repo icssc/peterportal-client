@@ -30,6 +30,20 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
+interface SourceOverlayProps {
+  completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
+}
+const SourceOverlay: FC<SourceOverlayProps> = ({ completedBy }) => {
+  if (!completedBy || completedBy === 'roadmap') return null;
+  const title = `Cleared by ${completedBy === 'AP' ? 'an AP Exam' : 'a transferred course'}`;
+  const icon = completedBy === 'AP' ? 'AP' : 'Course'; // TODO: replace 'Course' with MUI icon
+  return (
+    <p className="source-overlay" title={title}>
+      {icon}
+    </p>
+  );
+};
+
 interface CourseTileProps {
   courseID: string;
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -88,20 +102,9 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
     fontSize = computedSize + 'px';
   }
 
-  const sourceOverlay =
-    completedBy === 'AP' ? (
-      <p className="source-overlay" title={`${courseID} is cleared by an AP exam`}>
-        AP
-      </p>
-    ) : completedBy === 'Course' ? (
-      <p className="source-overlay" title={`${courseID} is cleared by a transferred course`}>
-        Course {/* to do: replace with MUI icon */}
-      </p>
-    ) : null;
-
   return (
     <div className={className} {...tappableCourseProps} style={{ fontSize }}>
-      {sourceOverlay}
+      <SourceOverlay completedBy={completedBy} />
       <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && <Spinner animation="border" />}
     </div>
