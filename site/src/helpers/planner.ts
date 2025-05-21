@@ -9,7 +9,7 @@ import {
   SavedPlannerYearData,
   SavedRoadmap,
   TransferData,
-  UserAPExam,
+  TransferredAPExam,
   TransferredCourse,
   TransferredUncategorized,
 } from '@peterportal/types';
@@ -208,7 +208,7 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Tra
   const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
 
   saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
-  saveLocalTransfers<UserAPExam>(LocalTransferSaveKey.AP, scoredAPs);
+  saveLocalTransfers<TransferredAPExam>(LocalTransferSaveKey.AP, scoredAPs);
   saveLocalTransfers<TransferredUncategorized>(LocalTransferSaveKey.Uncategorized, formattedOther);
 
   // immediately update localStorage to not have transfers, now that we've converted them

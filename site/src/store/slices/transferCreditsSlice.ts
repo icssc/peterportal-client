@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { APExam, TransferredGE, TransferredCourse, UserAPExam, TransferredUncategorized } from '@peterportal/types';
+import {
+  APExam,
+  TransferredGE,
+  TransferredCourse,
+  TransferredAPExam,
+  TransferredUncategorized,
+} from '@peterportal/types';
 
 type DataLoadingState = 'waiting' | 'loading' | 'done';
 
@@ -10,7 +16,7 @@ export const transferCreditsSlice = createSlice({
     dataLoadState: 'waiting' as DataLoadingState,
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
-    userAPExams: [] as UserAPExam[],
+    userAPExams: [] as TransferredAPExam[],
     transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as TransferredUncategorized[],
   },
@@ -39,16 +45,16 @@ export const transferCreditsSlice = createSlice({
     setAPExams: (state, action: PayloadAction<APExam[]>) => {
       state.apExamInfo = action.payload;
     },
-    setUserAPExams: (state, action: PayloadAction<UserAPExam[]>) => {
+    setUserAPExams: (state, action: PayloadAction<TransferredAPExam[]>) => {
       state.userAPExams = action.payload;
     },
-    addUserAPExam: (state, action: PayloadAction<UserAPExam>) => {
+    addUserAPExam: (state, action: PayloadAction<TransferredAPExam>) => {
       state.userAPExams.push(action.payload);
     },
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
     },
-    updateUserExam: (state, action: PayloadAction<UserAPExam>) => {
+    updateUserExam: (state, action: PayloadAction<TransferredAPExam>) => {
       const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
       if (e) {
         e.score = action.payload.score;

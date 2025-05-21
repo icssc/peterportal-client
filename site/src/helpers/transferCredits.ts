@@ -1,4 +1,10 @@
-import { APExam, TransferredGE, TransferredCourse, TransferredUncategorized, UserAPExam } from '@peterportal/types';
+import {
+  APExam,
+  TransferredGE,
+  TransferredCourse,
+  TransferredUncategorized,
+  TransferredAPExam,
+} from '@peterportal/types';
 import trpc from '../trpc';
 
 /**
@@ -10,7 +16,7 @@ import trpc from '../trpc';
  */
 export function getNamesOfTransfers(
   courses: TransferredCourse[],
-  apExams: UserAPExam[],
+  apExams: TransferredAPExam[],
   apExamInfo: APExam[],
 ): string[] {
   // a prerequisite examName may be "AP COMP SCI A", "AP CALCULUS BC" (catalogue name?????)
@@ -36,7 +42,7 @@ export function getNamesOfTransfers(
  */
 export function getTotalUnitsFromTransfers(
   courses: TransferredCourse[],
-  apExams: UserAPExam[],
+  apExams: TransferredAPExam[],
   geTransfers: TransferredGE[],
   otherTransfers: TransferredUncategorized[],
 ) {
@@ -89,8 +95,8 @@ async function loadTransferData<T>(
 export function loadTransferredCourses(isLoggedIn: boolean): Promise<TransferredCourse[]> {
   return loadTransferData<TransferredCourse>('getTransferredCourses', isLoggedIn, LocalTransferSaveKey.Course);
 }
-export function loadTransferredAPs(isLoggedIn: boolean): Promise<UserAPExam[]> {
-  return loadTransferData<UserAPExam>('getSavedAPExams', isLoggedIn, LocalTransferSaveKey.AP);
+export function loadTransferredAPs(isLoggedIn: boolean): Promise<TransferredAPExam[]> {
+  return loadTransferData<TransferredAPExam>('getSavedAPExams', isLoggedIn, LocalTransferSaveKey.AP);
 }
 export function loadTransferredGEs(isLoggedIn: boolean): Promise<TransferredGE[]> {
   return loadTransferData<TransferredGE>('getTransferredGEs', isLoggedIn, LocalTransferSaveKey.GE);

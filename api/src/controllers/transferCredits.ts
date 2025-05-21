@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { extendedTransferData, TransferredGE, UserAPExam } from '@peterportal/types';
+import {
+  extendedTransferData,
+  zodTransferredCourse,
+  zodTransferredGE,
+  TransferredGE,
+  zodTransferredAPExam,
+  TransferredAPExam,
+  zodTransferredUncategorized,
+} from '@peterportal/types';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
@@ -10,28 +18,6 @@ import { transferredCourse } from '../db/schema';
 import { transferredMisc } from '../db/schema';
 import { organizeLegacyTransfers } from '../helpers/transferCredits';
 
-const zodCourseTransferSchema = z.object({
-  courseName: z.string(),
-  units: z.number(),
-});
-
-const zodAPExamSchema = z.object({
-  examName: z.string(),
-  score: z.number(),
-  units: z.number(),
-});
-
-const zodGETransferSchema = z.object({
-  geName: z.string(),
-  numberOfCourses: z.number(),
-  units: z.number(),
-});
-
-const zodUncategorizedTransferSchema = z.object({
-  name: z.string().nullable(),
-  units: z.number().nullable(),
-});
-
 const transferCreditsRouter = router({
   getTransferredCourses: userProcedure.query(async ({ ctx }) => {
     const response = await db
@@ -40,7 +26,7 @@ const transferCreditsRouter = router({
       .where(eq(transferredCourse.userId, ctx.session.userId!));
     return response;
   }),
-  addTransferredCourse: userProcedure.input(zodCourseTransferSchema).mutation(async ({ ctx, input }) => {
+  addTransferredCourse: userProcedure.input(zodTransferredCourse).mutation(async ({ ctx, input }) => {
     await db
       .insert(transferredCourse)
       .values({ courseName: input.courseName, units: input.units, userId: ctx.session.userId! });
@@ -50,7 +36,7 @@ const transferCreditsRouter = router({
       .delete(transferredCourse)
       .where(and(eq(transferredCourse.userId, ctx.session.userId!), eq(transferredCourse.courseName, input)));
   }),
-  updateTransferredCourse: userProcedure.input(zodCourseTransferSchema).mutation(async ({ ctx, input }) => {
+  updateTransferredCourse: userProcedure.input(zodTransferredCourse).mutation(async ({ ctx, input }) => {
     await db
       .update(transferredCourse)
       .set({ units: input.units })
@@ -66,7 +52,7 @@ const transferCreditsRouter = router({
       .then((res) => (res.data ? (res.data as APExam[]) : []));
     return response;
   }),
-  getSavedAPExams: userProcedure.query(async ({ ctx }): Promise<UserAPExam[]> => {
+  getSavedAPExams: userProcedure.query(async ({ ctx }): Promise<TransferredAPExam[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
@@ -78,9 +64,9 @@ const transferCreditsRouter = router({
       examName: exam.examName,
       score: exam.score ?? 0,
       units: exam.units,
-    })) as UserAPExam[];
+    })) as TransferredAPExam[];
   }),
-  addUserAPExam: userProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+  addUserAPExam: userProcedure.input(zodTransferredAPExam).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
 
@@ -94,7 +80,7 @@ const transferCreditsRouter = router({
       .delete(transferredApExam)
       .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
-  updateUserAPExam: userProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
+  updateUserAPExam: userProcedure.input(zodTransferredAPExam).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
 
@@ -114,7 +100,7 @@ const transferCreditsRouter = router({
       .where(eq(transferredGe.userId, ctx.session.userId!));
     return response as TransferredGE[];
   }),
-  setTransferredGE: userProcedure.input(z.object({ GE: zodGETransferSchema })).mutation(async ({ input, ctx }) => {
+  setTransferredGE: userProcedure.input(z.object({ GE: zodTransferredGE })).mutation(async ({ input, ctx }) => {
     const { GE } = input as { GE: TransferredGE };
     const userId = ctx.session.userId!;
     await db
@@ -132,7 +118,7 @@ const transferCreditsRouter = router({
       .where(eq(transferredMisc.userId, ctx.session.userId!));
     return courses;
   }),
-  removeUncategorizedCourse: userProcedure.input(zodUncategorizedTransferSchema).mutation(async ({ ctx, input }) => {
+  removeUncategorizedCourse: userProcedure.input(zodTransferredUncategorized).mutation(async ({ ctx, input }) => {
     const conditions = [eq(transferredMisc.userId, ctx.session.userId!)];
 
     if (input.name != null) {
@@ -155,10 +141,10 @@ const transferCreditsRouter = router({
   overrideAllTransfers: userProcedure
     .input(
       z.object({
-        courses: z.array(zodCourseTransferSchema),
-        ap: z.array(zodAPExamSchema),
-        ge: z.array(zodGETransferSchema),
-        other: z.array(zodUncategorizedTransferSchema),
+        courses: z.array(zodTransferredCourse),
+        ap: z.array(zodTransferredAPExam),
+        ge: z.array(zodTransferredGE),
+        other: z.array(zodTransferredUncategorized),
       }),
     )
     .mutation(async ({ ctx, input }) => {
