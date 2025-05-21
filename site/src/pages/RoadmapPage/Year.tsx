@@ -1,7 +1,6 @@
 import { FC, useContext, useRef, useState } from 'react';
 import './Year.scss';
 import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
-import { CaretRightFill, CaretDownFill, ThreeDots } from 'react-bootstrap-icons';
 import Quarter from './Quarter';
 import { useAppDispatch } from '../../store/hooks';
 import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } from '../../store/slices/roadmapSlice';
@@ -10,6 +9,10 @@ import { pluralize } from '../../helpers/util';
 import { PlannerYearData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import YearModal from './YearModal';
+
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 interface YearProps {
   yearIndex: number;
@@ -102,7 +105,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         >
           <span className="year-accordion-title">
             <span className="year-title">
-              {showContent ? <CaretDownFill className="caret-icon" /> : <CaretRightFill className="caret-icon" />}
+              {showContent ? <ArrowDropDownIcon className="caret-icon" /> : <ArrowRightIcon className="caret-icon" />}
               {data.name ? (
                 <span className="year-number">{data.name} </span>
               ) : (
@@ -130,7 +133,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         >
           {({ ref, ...triggerHandler }) => (
             <button ref={ref} {...triggerHandler} className="year-edit-btn">
-              <ThreeDots />
+              <MoreHorizIcon />
             </button>
           )}
         </OverlayTrigger>

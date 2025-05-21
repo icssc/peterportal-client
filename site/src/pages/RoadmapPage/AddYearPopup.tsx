@@ -1,11 +1,12 @@
 import { FC, useState } from 'react';
 import './AddYearPopup.scss';
-import { Plus } from 'react-bootstrap-icons';
 import { Button } from 'react-bootstrap';
 import YearModal from './YearModal';
 import { addYear } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { PlannerYearData } from '../../types/types';
+
+import AddIcon from '@mui/icons-material/Add';
 
 interface AddYearPopupProps {
   placeholderName: string;
@@ -32,7 +33,7 @@ const AddYearPopup: FC<AddYearPopupProps> = ({ placeholderName, placeholderYear 
         key={'add-year-' + placeholderYear}
       />
       <Button variant="primary" className="ppc-btn" onClick={() => setShowModal(true)}>
-        <Plus className="add-year-icon" />
+        <AddIcon className="add-year-icon" />
         <div>Add Year</div>
       </Button>
     </>

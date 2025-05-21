@@ -3,7 +3,6 @@ import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
-import { X } from 'react-bootstrap-icons';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import { pluralize } from '../../helpers/util';
@@ -14,6 +13,9 @@ import {
   PrerequisiteText,
   PreviousOfferingsRow,
 } from '../../component/CourseInfo/CourseInfo';
+
+import CloseIcon from '@mui/icons-material/Close';
+
 interface AddCoursePopupProps {}
 
 const AddCoursePopup: FC<AddCoursePopupProps> = () => {
@@ -69,7 +71,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
           <button onClick={closePopup} className="close-button unstyled">
-            <X width={32} height={32} />
+            <CloseIcon />
           </button>
         </Modal.Header>
         <Modal.Body>

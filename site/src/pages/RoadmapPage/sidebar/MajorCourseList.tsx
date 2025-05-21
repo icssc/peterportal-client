@@ -1,7 +1,6 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
-import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -15,6 +14,9 @@ import { MajorSpecialization } from '@peterportal/types';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -140,7 +142,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+        {open ? <ExpandMoreIcon /> : <ChevronRightIcon />}
         <h4 className="major-name">{major.name}</h4>
       </button>
       {open && (

@@ -1,7 +1,10 @@
-import { CheckLg, PencilSquare, Trash } from 'react-bootstrap-icons';
 import { pluralize } from '../../../helpers/util';
 import './MenuTile.scss';
 import { FC, FormEvent, ReactNode, useState } from 'react';
+
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 interface UnitsContainerProps {
   units: number;
@@ -18,7 +21,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
         </p>
         {setUnits && (
           <button onClick={() => setEditing(true)}>
-            <PencilSquare />
+            <EditDocumentIcon />
           </button>
         )}
       </>
@@ -48,7 +51,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
       />
       {/* eslint-enable jsx-a11y/no-autofocus */}
       <button type="submit">
-        <CheckLg />
+        <CheckCircleIcon />
       </button>
     </form>
   );
@@ -75,7 +78,7 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
         {deleteFn && (
           <button className="delete-btn" onClick={deleteFn}>
-            <Trash />
+            <DeleteOutlineIcon />
           </button>
         )}
       </div>

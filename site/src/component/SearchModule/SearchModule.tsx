@@ -2,7 +2,6 @@ import { useState, useEffect, FC, useCallback, useRef } from 'react';
 import './SearchModule.scss';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Search } from 'react-bootstrap-icons';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
@@ -11,6 +10,8 @@ import { setShowCourseBag } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
 import { setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
+
+import SearchIcon from '@mui/icons-material/Search';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -106,7 +107,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           />
           <InputGroup.Append>
             <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
-              <Search />
+              <SearchIcon />
             </button>
           </InputGroup.Append>
         </InputGroup>

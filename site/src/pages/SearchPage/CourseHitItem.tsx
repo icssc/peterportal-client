@@ -8,9 +8,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
-import { BagFill, BagPlus } from 'react-bootstrap-icons';
 import { useCoursebag } from '../../hooks/coursebag';
 interface CourseHitItemProps extends CourseGQLData {}
+
+import { IconButton } from '@mui/material';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
@@ -40,7 +43,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     }
   };
 
-  const onAddToBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const onAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!props) return;
     if (props.id === undefined) return;
@@ -48,7 +51,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     addCourseToBag(props);
   };
 
-  const removeFromBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const removeFromBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     removeCourseFromBag(props);
   };
@@ -76,8 +79,16 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
             ))}
           </div>
           <div>
-            {onAddToBag && !isInBag && <BagPlus onClick={(e) => onAddToBag(e)} size={24}></BagPlus>}
-            {isInBag && <BagFill size={24} onClick={(e) => removeFromBag(e)}></BagFill>}
+            {onAddToBag && !isInBag && (
+              <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
+                <BookmarkBorderIcon />
+              </IconButton>
+            )}
+            {isInBag && (
+              <IconButton onClick={(e) => removeFromBag(e)} size={'small'}>
+                <BookmarkIcon />
+              </IconButton>
+            )}
           </div>
         </div>
       </div>

@@ -8,7 +8,6 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
 } from '../../../helpers/courseRequirements';
-import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
 import trpc from '../../../trpc';
@@ -29,6 +28,9 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface CourseTileProps {
   courseID: string;
@@ -130,7 +132,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
     <button className={className} onClick={() => setOpen(!open)}>
-      {open ? <CaretDownFill /> : <CaretRightFill />}
+      {open ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
       <b>{title}</b>
     </button>
   );

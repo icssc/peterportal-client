@@ -1,11 +1,13 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
+
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function getCoursesForMinor(programId: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
@@ -53,7 +55,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+        {open ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
         <h4 className="major-name">{minorReqs.minor.name}</h4>
       </button>
       {open && <>{renderRequirements()}</>}
