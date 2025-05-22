@@ -2,15 +2,22 @@ import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
+import {
+  addRoadmapPlan,
+  RoadmapPlan,
+  selectAllPlans,
+  setPlanIndex,
+  setTransfers,
+  setYearPlans,
+} from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
-import { normalizeQuarterName } from '../../helpers/planner';
+import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
 
 interface TransferUnitDetails {
   date: string;
@@ -148,7 +155,9 @@ async function processTranscript(file: Blob) {
 const ImportTranscriptPopup: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
+  const allPlanData = useAppSelector(selectAllPlans);
   const [file, setFile] = useState<Blob | null>(null);
+  const [filePath, setFilePath] = useState('');
   const [busy, setBusy] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -159,6 +168,15 @@ const ImportTranscriptPopup: FC = () => {
       const { transfers, years } = await processTranscript(file);
       dispatch(setTransfers(transfers)); // these types are compatible
       dispatch(setYearPlans(Object.values(years)));
+
+      const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
+      const newPlan: RoadmapPlan = {
+        name: makeUniquePlanName(filename, allPlanData),
+        content: { yearPlans: Object.values(years), invalidCourses: [] },
+      };
+      dispatch(addRoadmapPlan(newPlan));
+      dispatch(setPlanIndex(allPlanData.length));
+
       setShowModal(false);
       setFile(null);
     } finally {
@@ -168,16 +186,18 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        className="ppc-modal multiplan-modal transcript-form"
+      >
         <Modal.Header closeButton>
           <h2>Import from Transcript</h2>
         </Modal.Header>
         <Modal.Body>
           <Form className="ppc-modal-form">
             <Form.Group>
-              <p>
-                <b>Warning:</b> This will overwrite your current planner data.
-              </p>
               Please upload an HTML copy of your unofficial transcript. To obtain this:
               <ol>
                 <li>
@@ -200,6 +220,7 @@ const ImportTranscriptPopup: FC = () => {
                 onInput={(e: React.FormEvent<HTMLInputElement>) => {
                   const input = e.target as HTMLInputElement;
                   setFile(input.files![0]);
+                  setFilePath(input.value);
                 }}
               ></Form.Control>
             </Form.Group>
@@ -209,13 +230,9 @@ const ImportTranscriptPopup: FC = () => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button
-        variant={darkMode ? 'dark' : 'light'}
-        className="ppc-btn add-transcript-btn"
-        onClick={() => setShowModal(true)}
-      >
-        <FileEarmarkText className="add-transcript-icon" />
-        <div>Import Transcript</div>
+      <Button variant={darkMode ? 'dark' : 'light'} onClick={() => setShowModal(true)}>
+        <FileEarmarkText width="20" height="20" />
+        <span>Student Transcript</span>
       </Button>
     </>
   );
