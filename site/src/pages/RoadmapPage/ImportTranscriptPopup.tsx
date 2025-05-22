@@ -108,6 +108,25 @@ function toPlannerQuarter(
   };
 }
 
+function filterOutInvalidCourses(quarters: TranscriptQuarter[], courses: BatchCourseData) {
+  const validatedQuarters: TranscriptQuarter[] = [];
+  const invalidCourseIDs: string[] = [];
+
+  for (const q of quarters) {
+    const validatedQuarter: TranscriptQuarter = { ...q, courses: [] };
+    for (const c of q.courses) {
+      if (toCourseID(c) in courses) {
+        validatedQuarter.courses.push(c);
+      } else {
+        invalidCourseIDs.push(toCourseID(c));
+      }
+    }
+    validatedQuarters.push(validatedQuarter);
+  }
+
+  return { validatedQuarters, invalidCourseIDs };
+}
+
 function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterData }[]) {
   const years = qtrs.reduce(
     (years, q) => {
@@ -144,13 +163,18 @@ async function processTranscript(file: Blob) {
 
   const courses = await transcriptCourseDetails(quarters);
 
+  const { validatedQuarters, invalidCourseIDs } = filterOutInvalidCourses(quarters, courses);
+
   // Create the planner quarter format (with course details) by using the
   // course lookup and the grouped quarters in the transcript
-  const plannerQuarters = quarters.map((q) => toPlannerQuarter(q, courses));
+  const plannerQuarters = validatedQuarters.map((q) => toPlannerQuarter(q, courses));
   plannerQuarters.sort((a, b) => a.startYear - b.startYear);
 
   const years = groupIntoYears(plannerQuarters);
-  return { transfers, years };
+
+  console.log(JSON.stringify(years, null, 4));
+  console.log(JSON.stringify(invalidCourseIDs, null, 4));
+  return { transfers, years, invalidCourseIDs };
 }
 
 async function organizeTransfers(transfers: TransferUnitDetails[]) {
@@ -177,7 +201,7 @@ const ImportTranscriptPopup: FC = () => {
     if (!file) return;
     setBusy(true);
     try {
-      const { transfers, years } = await processTranscript(file);
+      const { transfers, years, invalidCourseIDs } = await processTranscript(file);
       const { courses, ap, other } = await organizeTransfers(transfers);
 
       // Merge the new AP exams, courses, and other transfers into current transfers
@@ -198,11 +222,15 @@ const ImportTranscriptPopup: FC = () => {
         (imported) => !currentOther.some((existing) => existing.name == imported.name),
       );
       const mergedOther = currentOther.concat(newOther);
+      const newOtherFromCourses = invalidCourseIDs
+        .map((courseID) => ({ name: courseID, units: 0 }))
+        .filter((otherCourse) => !mergedOther.some((existing) => existing.name == otherCourse.name));
+      const mergedOtherFinal = mergedOther.concat(newOtherFromCourses);
 
       // Override local transfers with the merged results
       dispatch(setTransferredCourses(mergedCourses));
       dispatch(setUserAPExams(mergedAps));
-      dispatch(setUncategorizedCourses(mergedOther));
+      dispatch(setUncategorizedCourses(mergedOtherFinal));
 
       // Add the new rows in the database if logged in
       // TODO: confirm the logic here works fine (overrideAll might be changed to not upsert in the future)
@@ -211,7 +239,7 @@ const ImportTranscriptPopup: FC = () => {
           courses: mergedCourses,
           ap: mergedAps,
           ge: [],
-          other: mergedOther,
+          other: mergedOtherFinal,
         });
       }
 
