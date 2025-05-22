@@ -172,8 +172,6 @@ async function processTranscript(file: Blob) {
 
   const years = groupIntoYears(plannerQuarters);
 
-  console.log(JSON.stringify(years, null, 4));
-  console.log(JSON.stringify(invalidCourseIDs, null, 4));
   return { transfers, years, invalidCourseIDs };
 }
 
