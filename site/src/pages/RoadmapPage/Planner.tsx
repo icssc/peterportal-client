@@ -1,19 +1,15 @@
 import { FC } from 'react';
 import './Planner.scss';
+import PlannerLoader from './planner/PlannerLoader';
 import Header from './Header';
-import AddYearPopup from './AddYearPopup';
 import Year from './Year';
+import { Spinner } from 'react-bootstrap';
 import { useAppSelector } from '../../store/hooks';
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
-import ImportTranscriptPopup from './ImportTranscriptPopup';
-import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
-import { useTransferredCredits } from '../../hooks/transferCredits';
-import PlannerLoader from './planner/PlannerLoader';
 import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
+import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-
-import { Spinner } from 'react-bootstrap';
 
 const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
@@ -62,27 +58,14 @@ const Planner: FC = () => {
           <Spinner animation="border" />
         </div>
       ) : (
-        <>
-          <section className="years" data-max-quarter-count={maxQuarterCount}>
-            {currentPlanData.map((year, yearIndex) => {
-              return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-            })}
-          </section>
-          <div className="action-row">
-            <AddYearPopup
-              placeholderName={'Year ' + (currentPlanData.length + 1)}
-              placeholderYear={
-                currentPlanData.length === 0
-                  ? new Date().getFullYear()
-                  : currentPlanData[currentPlanData.length - 1].startYear + 1
-              }
-            />
-            <ImportTranscriptPopup />
-            <ImportZot4PlanPopup saveRoadmap={handleSave} />
-          </div>
-        </>
+        <section className="years" data-max-quarter-count={maxQuarterCount}>
+          {currentPlanData.map((year, yearIndex) => {
+            return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+          })}
+        </section>
       )}
     </div>
   );
 };
+
 export default Planner;

@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef } from 'react';
 import './TransferCreditsMenu.scss';
-import { ArrowLeftRight } from 'react-bootstrap-icons';
 import { CSSTransition } from 'react-transition-group';
 import { useIsMobile } from '../../../helpers/util';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
@@ -21,13 +20,7 @@ export const ToggleTransfersButton: FC = () => {
 
   return (
     <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>
-      {show ? (
-        <>Done Editing Credits</>
-      ) : (
-        <>
-          Transfer Credits <ArrowLeftRight />
-        </>
-      )}
+      Done Editing Credits
     </button>
   );
 };
@@ -65,9 +58,9 @@ const TransferCreditsMenu: FC = () => {
           <APExamsSection />
           <GESection />
           <UncategorizedCreditsSection />
+          <ToggleTransfersButton />
         </div>
       </CSSTransition>
-      <ToggleTransfersButton />
     </>
   );
 };
