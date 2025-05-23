@@ -39,7 +39,7 @@ const removeAllSpaces = (transferName: string) => {
 };
 
 /** Get all AP exams */
-const getAPIApExams = async (): Promise<ApExamBasicInfo[]> => {
+export const getAPIApExams = async (): Promise<ApExamBasicInfo[]> => {
   const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
     headers: ANTEATER_API_REQUEST_HEADERS,
   })
@@ -124,7 +124,7 @@ const apMatchQuality = (normalizedName: string, substitutedName: string, ap: ApE
 };
 
 /** Try to find the best match for a transfer name out of all the AP exams; undefined if no match */
-const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
+export const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
   const normalizedName = normalizeTransferName(transferName);
   // Some hardcoded exceptions (specifically for matching the full name rather than cat name, order matters)
   const substitutedName = apSubstitutions(normalizedName, [

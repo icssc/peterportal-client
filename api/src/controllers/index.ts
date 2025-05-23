@@ -28,7 +28,7 @@ export const appRouter = router({
   schedule: scheduleRouter,
   transferCredits: transferCreditsRouter,
   users: usersRouter,
-  zot4PlanImportRouter: zot4PlanImportRouter,
+  zot4PlanImport: zot4PlanImportRouter,
 });
 
 // Export only the type of a router!

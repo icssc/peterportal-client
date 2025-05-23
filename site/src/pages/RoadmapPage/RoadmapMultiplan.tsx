@@ -15,6 +15,8 @@ import { Button, Dropdown, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import ThemeContext from '../../style/theme-context';
+import ImportTranscriptPopup from './ImportTranscriptPopup';
+import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
   index: number;
@@ -65,6 +67,8 @@ const RoadmapMultiplan: FC = () => {
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
   const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
+
+  const buttonVariant = darkMode ? 'dark' : 'light';
 
   // name: name of the plan, content: stores the content of plan
   // const { name, content } = allPlans.plans[currentPlanIndex];
@@ -144,12 +148,18 @@ const RoadmapMultiplan: FC = () => {
               deleteHandler={() => setDelIdx(index)}
             />
           ))}
+          <div className="separator-label">
+            Add or Import Roadmap
+            <hr />
+          </div>
           <div className="select-item add-item">
-            <Dropdown.Item onClick={() => setIsOpen(true)}>
-              <Button variant={darkMode ? 'dark' : 'light'}>
-                <Icon.PlusLg width="16" height="16" />
-                New Roadmap
+            <Dropdown.Item>
+              <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
+                <Icon.PlusLg width="20" height="20" />
+                <span>Blank Roadmap</span>
               </Button>
+              <ImportTranscriptPopup />
+              <ImportZot4PlanPopup />
             </Dropdown.Item>
           </div>
         </Dropdown.Menu>
