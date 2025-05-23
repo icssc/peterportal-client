@@ -166,7 +166,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         onAdd={addCourse}
         onRemove={removeCourse}
         onSort={sortCourse}
-        onEnd={() => dispatch(setActiveCourse(undefined))}
+        onEnd={() => {
+          if (!activeCourseLoading) {
+            dispatch(setActiveCourse(undefined));
+          }
+        }}
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
