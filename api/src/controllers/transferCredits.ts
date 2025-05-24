@@ -100,15 +100,15 @@ const transferCreditsRouter = router({
       .where(eq(transferredGe.userId, ctx.session.userId!));
     return response as TransferredGE[];
   }),
-  setTransferredGE: userProcedure.input(z.object({ GE: zodTransferredGE })).mutation(async ({ input, ctx }) => {
-    const { GE } = input as { GE: TransferredGE };
+  setTransferredGE: userProcedure.input(zodTransferredGE).mutation(async ({ input, ctx }) => {
+    const { geName, numberOfCourses, units } = input;
     const userId = ctx.session.userId!;
     await db
       .insert(transferredGe)
-      .values({ userId, geName: GE.geName, numberOfCourses: GE.numberOfCourses, units: GE.units })
+      .values({ userId, geName, numberOfCourses, units })
       .onConflictDoUpdate({
         target: [transferredGe.userId, transferredGe.geName],
-        set: { numberOfCourses: GE.numberOfCourses, units: GE.units },
+        set: { numberOfCourses, units },
       });
   }),
   getUncategorizedTransfers: userProcedure.query(async ({ ctx }) => {

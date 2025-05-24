@@ -66,7 +66,7 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
       units: newUnitCount,
     };
     dispatch(setTransferredGE(updatedGE));
-    trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
+    trpc.transferCredits.setTransferredGE.mutate(updatedGE);
   };
 
   const updateNumberOfCourses = (newValue: number) => {
