@@ -9,6 +9,9 @@ import {
   SavedPlannerYearData,
   SavedRoadmap,
   TransferData,
+  TransferredAPExam,
+  TransferredCourse,
+  TransferredUncategorized,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -21,9 +24,7 @@ import {
   PlannerYearData,
 } from '../types/types';
 import trpc from '../trpc';
-import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
-import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
 import spawnToast from './toastify';
 
 export function defaultYear() {
@@ -207,8 +208,8 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Tra
   const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
 
   saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
-  saveLocalTransfers<UserAPExam>(LocalTransferSaveKey.AP, scoredAPs);
-  saveLocalTransfers<UncategorizedCourseEntry>(LocalTransferSaveKey.Uncategorized, formattedOther);
+  saveLocalTransfers<TransferredAPExam>(LocalTransferSaveKey.AP, scoredAPs);
+  saveLocalTransfers<TransferredUncategorized>(LocalTransferSaveKey.Uncategorized, formattedOther);
 
   // immediately update localStorage to not have transfers, now that we've converted them
   localStorage.setItem('roadmap', JSON.stringify(roadmapToSave));
