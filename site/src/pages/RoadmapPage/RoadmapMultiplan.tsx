@@ -153,14 +153,12 @@ const RoadmapMultiplan: FC = () => {
             <hr />
           </div>
           <div className="select-item add-item">
-            <Dropdown.Item>
-              <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
-                <Icon.PlusLg width="20" height="20" />
-                <span>Blank Roadmap</span>
-              </Button>
-              <ImportTranscriptPopup />
-              <ImportZot4PlanPopup />
-            </Dropdown.Item>
+            <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
+              <Icon.PlusLg width="20" height="20" />
+              <span>Blank Roadmap</span>
+            </Button>
+            <ImportTranscriptPopup />
+            <ImportZot4PlanPopup />
           </div>
         </Dropdown.Menu>
       </Dropdown>

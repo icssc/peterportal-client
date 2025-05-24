@@ -73,6 +73,8 @@ interface RoadmapSliceState {
   showTransfer: boolean;
   // Store transfer course data
   transfers: TransferData[];
+  // Whether or not the roadmap is loading
+  roadmapLoading: boolean;
 }
 
 // define initial empty plans
@@ -87,6 +89,7 @@ const initialSliceState: RoadmapSliceState = {
   transfers: [],
   showCourseBag: true,
   activeCourseLoading: false,
+  roadmapLoading: false,
 };
 /** added for multiple planner */
 
@@ -362,6 +365,9 @@ export const roadmapSlice = createSlice({
         window.removeEventListener('beforeunload', alertUnsaved);
       }
     },
+    setRoadmapLoading: (state, action: PayloadAction<boolean>) => {
+      state.roadmapLoading = action.payload;
+    },
   },
 });
 
@@ -396,6 +402,7 @@ export const {
   setPlanName,
   setUnsavedChanges,
   setShowCourseBag,
+  setRoadmapLoading,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
