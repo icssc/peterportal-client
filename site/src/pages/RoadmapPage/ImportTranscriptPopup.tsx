@@ -2,13 +2,7 @@ import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import {
-  addRoadmapPlan,
-  RoadmapPlan,
-  selectAllPlans,
-  setPlanIndex,
-  setYearPlans,
-} from '../../store/slices/roadmapSlice';
+import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
@@ -239,7 +233,6 @@ const ImportTranscriptPopup: FC = () => {
       dispatch(setUncategorizedCourses(mergedOtherFinal));
 
       // Add the new rows in the database if logged in
-      // TODO: confirm the logic here works fine (overrideAll might be changed to not upsert in the future)
       if (isLoggedIn) {
         await trpc.transferCredits.overrideAllTransfers.mutate({
           courses: mergedCourses,
@@ -248,9 +241,6 @@ const ImportTranscriptPopup: FC = () => {
           other: mergedOtherFinal,
         });
       }
-
-      // Finally, set the actual plan
-      dispatch(setYearPlans(Object.values(years)));
 
       const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
       const newPlan: RoadmapPlan = {
