@@ -16,6 +16,7 @@ import {
   setAllPlans,
   setInvalidCourses,
   setUnsavedChanges,
+  setRoadmapLoading,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
@@ -66,11 +67,16 @@ const PlannerLoader: FC = () => {
     });
   }, [dispatch, isLoggedIn, formatUpgraded]);
 
+  useEffect(() => {
+    dispatch(setRoadmapLoading(true));
+  }, [dispatch]);
+
   // Defaults to account if it exists because local can override it in a different helper
   const populateExistingRoadmap = useCallback(
     async (roadmap: SavedRoadmap) => {
       const planners = await expandAllPlanners(roadmap.planners);
       dispatch(setAllPlans(planners));
+      dispatch(setRoadmapLoading(false));
     },
     [dispatch],
   );
