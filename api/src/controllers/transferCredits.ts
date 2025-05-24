@@ -78,7 +78,7 @@ const transferCreditsRouter = router({
 
     await db
       .delete(transferredApExam)
-      .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
+      .where(and(eq(transferredApExam.userId, userId), eq(transferredApExam.examName, examName)));
   }),
   updateUserAPExam: userProcedure.input(zodTransferredAPExam).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
@@ -87,7 +87,7 @@ const transferCreditsRouter = router({
     await db
       .update(transferredApExam)
       .set({ score: score, units: units })
-      .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
+      .where(and(eq(transferredApExam.userId, userId), eq(transferredApExam.examName, examName)));
   }),
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db

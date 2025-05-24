@@ -106,6 +106,7 @@ const CoursesSection: FC = () => {
         onChange={(option) => addCourse(option!.value)}
         noOptionsMessage={({ inputValue }) => (inputValue ? 'No courses found' : null)}
         value={null}
+        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
       />
     </MenuSection>
   );
