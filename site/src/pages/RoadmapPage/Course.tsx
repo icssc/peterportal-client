@@ -4,13 +4,14 @@ import { Button } from 'react-bootstrap';
 import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, pluralize } from '../../helpers/util';
+import { useIsMobile } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
+import CourseUnits from './CourseUnits';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
   <>
@@ -103,9 +104,10 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          <span className="units">
+          <CourseUnits minUnits={minUnits} maxUnits={maxUnits} />
+          {/* <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-          </span>
+          </span> */}
         </div>
         <div className="spacer"></div>
         {onDelete ? (

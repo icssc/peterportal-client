@@ -7,7 +7,7 @@ interface UnitsContainerProps {
   units: number;
   setUnits?: (value: number) => void;
 }
-const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
+export const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
   const [editing, setEditing] = useState(false);
 
   if (!editing || !setUnits) {

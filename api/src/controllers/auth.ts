@@ -39,7 +39,7 @@ async function successLogin(req: Request, res: Response) {
  * Initiate authentication with Google
  */
 router.get('/google', function (req, res) {
-  req.session.returnTo = req.headers.referer;
+  req.session.returnTo = 'http://localhost:5173'; //req.headers.referer;
   passport.authenticate('google', {
     scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'],
     state: req.headers.host,

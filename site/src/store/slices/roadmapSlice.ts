@@ -73,6 +73,9 @@ interface RoadmapSliceState {
   showTransfer: boolean;
   // Store transfer course data
   transfers: TransferData[];
+
+  //TODO:
+  // courseVariableUnits: ????
 }
 
 // define initial empty plans
@@ -87,6 +90,8 @@ const initialSliceState: RoadmapSliceState = {
   transfers: [],
   showCourseBag: true,
   activeCourseLoading: false,
+  // TODO:
+  // courseVariableUnits: ??
 };
 /** added for multiple planner */
 
@@ -362,6 +367,10 @@ export const roadmapSlice = createSlice({
         window.removeEventListener('beforeunload', alertUnsaved);
       }
     },
+    // TODO:
+    // setCourseVariableUnits: (state, action: PayloadAction) {
+
+    // }
   },
 });
 

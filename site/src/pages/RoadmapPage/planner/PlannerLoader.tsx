@@ -132,6 +132,12 @@ const PlannerLoader: FC = () => {
     });
   }, [dispatch, roadmapStr]);
 
+  // TODO: updateVariableCredits
+  // useEffect(() => {
+  //     if (isLoggedIn || !userDataLoaded) return;
+  //     saveLocalTransfers<UncategorizedCourseEntry>(OtherKey, transferredOther);
+  //   }, [isLoggedIn, OtherKey, transferredOther, userDataLoaded]);
+
   const overrideAccountRoadmap = async () => {
     const { localRoadmap } = await loadRoadmap(false);
 
