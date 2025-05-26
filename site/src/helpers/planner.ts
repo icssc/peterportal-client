@@ -270,19 +270,13 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
   const missing = new Set<string>();
   currentPlanData.forEach((year, yearIndex) => {
     year.quarters.forEach((quarter, quarterIndex) => {
-      const taking: Set<string> = new Set(
-        quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
-      );
+      const taking: Set<string> = new Set(quarter.courses.map((c) => c.department + ' ' + c.courseNumber));
       quarter.courses.forEach((course, courseIndex) => {
-        // if has prerequisite
         if (!course.prerequisiteTree) return;
 
-        const incomplete = validatePrerequisites({
-          taken,
-          prerequisite: course.prerequisiteTree,
-          taking,
-          corequisite: course.corequisites,
-        });
+        const { prerequisiteTree: prerequisite, corequisites: corequisite } = course;
+
+        const incomplete = validatePrerequisites({ taken, prerequisite, taking, corequisite });
         if (incomplete.size === 0) return;
 
         // prerequisite not fulfilled, has some required classes to take
