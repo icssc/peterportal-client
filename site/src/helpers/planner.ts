@@ -262,14 +262,7 @@ function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
 
 type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
-type plannerCallback = (missing: Set<string>, invalidCourses: InvalidCourseData[]) => void;
-
-export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData, handler: plannerCallback) => {
-  const { missing, invalidCourses } = validatePlannerV2(transferNames, currentPlanData);
-  handler(missing, invalidCourses);
-};
-
-export const validatePlannerV2 = (transferNames: string[], currentPlanData: PlannerData) => {
+export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData) => {
   // store courses that have been taken
   // Transferred courses use ID (no spaces), AP Exams use Catalogue Name
   const taken: Set<string> = new Set(transferNames);

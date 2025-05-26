@@ -6,7 +6,7 @@ import {
   loadRoadmap,
   saveRoadmap,
   upgradeLocalRoadmap,
-  validatePlannerV2,
+  validatePlanner,
 } from '../../../helpers/planner';
 import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -124,7 +124,7 @@ const PlannerLoader: FC = () => {
   // Validate Courses on change
   useEffect(() => {
     const transferNames = getNamesOfTransfers(transferred.courses, transferred.ap, transferred.apInfo);
-    const { invalidCourses } = validatePlannerV2(transferNames, currentPlanData);
+    const { invalidCourses } = validatePlanner(transferNames, currentPlanData);
     dispatch(setInvalidCourses(invalidCourses));
   }, [dispatch, currentPlanData, transferred]);
 
