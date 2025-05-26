@@ -34,9 +34,6 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
       </div>
       <div className="planner-right">
         <ButtonGroup>
-          {/* <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
-            Save
-            <SaveIcon className="header-icon" /> */}
           <AddYearPopup />
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
             <SwapHorizOutlinedIcon className="header-icon" />
