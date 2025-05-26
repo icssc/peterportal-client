@@ -2,14 +2,7 @@ import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
 import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import {
-  addRoadmapPlan,
-  RoadmapPlan,
-  selectAllPlans,
-  setPlanIndex,
-  setTransfers,
-  setYearPlans,
-} from '../../store/slices/roadmapSlice';
+import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
@@ -18,6 +11,14 @@ import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
+import {
+  setUserAPExams,
+  setTransferredCourses,
+  setUncategorizedCourses,
+} from '../../store/slices/transferCreditsSlice';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import trpc from '../../trpc';
 
 interface TransferUnitDetails {
   date: string;
@@ -107,6 +108,25 @@ function toPlannerQuarter(
   };
 }
 
+function filterOutInvalidCourses(quarters: TranscriptQuarter[], courses: BatchCourseData) {
+  const validatedQuarters: TranscriptQuarter[] = [];
+  const invalidCourseIDs: string[] = [];
+
+  for (const q of quarters) {
+    const validatedQuarter: TranscriptQuarter = { ...q, courses: [] };
+    for (const c of q.courses) {
+      if (toCourseID(c) in courses) {
+        validatedQuarter.courses.push(c);
+      } else {
+        invalidCourseIDs.push(toCourseID(c));
+      }
+    }
+    validatedQuarters.push(validatedQuarter);
+  }
+
+  return { validatedQuarters, invalidCourseIDs };
+}
+
 function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterData }[]) {
   const years = qtrs.reduce(
     (years, q) => {
@@ -143,13 +163,22 @@ async function processTranscript(file: Blob) {
 
   const courses = await transcriptCourseDetails(quarters);
 
+  const { validatedQuarters, invalidCourseIDs } = filterOutInvalidCourses(quarters, courses);
+
   // Create the planner quarter format (with course details) by using the
   // course lookup and the grouped quarters in the transcript
-  const plannerQuarters = quarters.map((q) => toPlannerQuarter(q, courses));
+  const plannerQuarters = validatedQuarters.map((q) => toPlannerQuarter(q, courses));
   plannerQuarters.sort((a, b) => a.startYear - b.startYear);
 
   const years = groupIntoYears(plannerQuarters);
-  return { transfers, years };
+
+  return { transfers, years, invalidCourseIDs };
+}
+
+async function organizeTransfers(transfers: TransferUnitDetails[]) {
+  const mapped = transfers.map((transfer) => ({ name: transfer.name, units: transfer.units, score: transfer.score }));
+  const response = await trpc.transferCredits.convertUserLegacyTransfers.query(mapped);
+  return response;
 }
 
 const ImportTranscriptPopup: FC = () => {
@@ -159,15 +188,59 @@ const ImportTranscriptPopup: FC = () => {
   const [file, setFile] = useState<Blob | null>(null);
   const [filePath, setFilePath] = useState('');
   const [busy, setBusy] = useState(false);
+  const isLoggedIn = useIsLoggedIn();
+
+  const currentAps = useTransferredCredits().ap;
+  // App selector instead of useTransferredCredits.courses here because
+  // useTransferredCredits.courses also includes all courses that have been cleared
+  const currentCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const currentOther = useTransferredCredits().other;
 
   const dispatch = useAppDispatch();
   const importHandler = async () => {
     if (!file) return;
     setBusy(true);
     try {
-      const { transfers, years } = await processTranscript(file);
-      dispatch(setTransfers(transfers)); // these types are compatible
-      dispatch(setYearPlans(Object.values(years)));
+      const { transfers, years, invalidCourseIDs } = await processTranscript(file);
+      const { courses, ap, other } = await organizeTransfers(transfers);
+
+      // Merge the new AP exams, courses, and other transfers into current transfers
+      // via a process similar to the updated Zot4Plan imports
+      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      const newAps = scoredAps.filter(
+        (imported) => !currentAps.some((existing) => existing.examName == imported.examName),
+      );
+      const mergedAps = currentAps.concat(newAps);
+
+      const newCourses = courses.filter(
+        (imported) => !currentCourses.some((existing) => existing.courseName == imported.courseName),
+      );
+      const mergedCourses = currentCourses.concat(newCourses);
+
+      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+      const newOther = formattedOther.filter(
+        (imported) => !currentOther.some((existing) => existing.name == imported.name),
+      );
+      const mergedOther = currentOther.concat(newOther);
+      const newOtherFromCourses = invalidCourseIDs
+        .map((courseID) => ({ name: courseID, units: 0 }))
+        .filter((otherCourse) => !mergedOther.some((existing) => existing.name == otherCourse.name));
+      const mergedOtherFinal = mergedOther.concat(newOtherFromCourses);
+
+      // Override local transfers with the merged results
+      dispatch(setTransferredCourses(mergedCourses));
+      dispatch(setUserAPExams(mergedAps));
+      dispatch(setUncategorizedCourses(mergedOtherFinal));
+
+      // Add the new rows in the database if logged in
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: mergedCourses,
+          ap: mergedAps,
+          ge: [],
+          other: mergedOtherFinal,
+        });
+      }
 
       const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
       const newPlan: RoadmapPlan = {

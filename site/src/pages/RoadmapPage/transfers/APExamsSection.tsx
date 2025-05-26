@@ -6,14 +6,9 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import {
-  addUserAPExam,
-  removeUserAPExam,
-  updateUserExam,
-  UserAPExam,
-} from '../../../store/slices/transferCreditsSlice';
+import { addUserAPExam, removeUserAPExam, updateUserExam } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import { APExam } from '@peterportal/types';
+import { APExam, TransferredAPExam } from '@peterportal/types';
 import './APExamsSection.scss';
 
 interface ScoreSelectionProps {
@@ -60,7 +55,7 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<{ userExamInfo: UserAPExam }> = ({ userExamInfo }) => {
+const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInfo }) => {
   const { examName, score, units } = userExamInfo;
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
