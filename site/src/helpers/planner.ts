@@ -268,32 +268,32 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
   const taken: Set<string> = new Set(transferNames);
   const invalidCourses: InvalidCourseData[] = [];
   const missing = new Set<string>();
-  currentPlanData.forEach((year, yi) => {
-    year.quarters.forEach((quarter, qi) => {
+  currentPlanData.forEach((year, yearIndex) => {
+    year.quarters.forEach((quarter, quarterIndex) => {
       const taking: Set<string> = new Set(
         quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
       );
-      quarter.courses.forEach((course, ci) => {
+      quarter.courses.forEach((course, courseIndex) => {
         // if has prerequisite
-        if (course.prerequisiteTree) {
-          const required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
-          // prerequisite not fulfilled, has some required classes to take
-          if (required.size > 0) {
-            invalidCourses.push({
-              location: {
-                yearIndex: yi,
-                quarterIndex: qi,
-                courseIndex: ci,
-              },
-              required: Array.from(required),
-            });
+        if (!course.prerequisiteTree) return;
 
-            required.forEach((course) => {
-              missing.add(course);
-            });
-          }
-        }
+        const incomplete = validatePrerequisites({
+          taken,
+          prerequisite: course.prerequisiteTree,
+          taking,
+          corequisite: course.corequisites,
+        });
+        if (incomplete.size === 0) return;
+
+        // prerequisite not fulfilled, has some required classes to take
+        invalidCourses.push({
+          location: { yearIndex, quarterIndex, courseIndex },
+          required: Array.from(incomplete),
+        });
+
+        incomplete.forEach((course) => missing.add(course));
       });
+
       // after the quarter is over, add the courses into taken
       taking.forEach((course) => taken.add(course));
     });
@@ -310,61 +310,77 @@ export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
   );
 };
 
-// returns set of courses that need to be taken to fulfill requirements
-export const validateCourse = (
-  taken: Set<string>,
-  prerequisite: PrerequisiteNode,
-  taking: Set<string>,
-  corequisite: string,
-): Set<string> => {
-  // base case just a course
-  if ('prereqType' in prerequisite) {
-    const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
-    // already taken prerequisite or is currently taking the corequisite
-    if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
-      return new Set();
-    }
-    // need to take this prerequisite still
-    else {
-      return new Set([id]);
-    }
+interface ValidationInput<PreqrequisiteType> {
+  /** The set of courses already taken */
+  taken: Set<string>;
+  /** The specific prerequisite being checked */
+  prerequisite: PreqrequisiteType;
+  /** The set of courses being taken in the same quarter */
+  taking: Set<string>;
+  /** The corequisite text of the course, typically a single course name */
+  corequisite: string;
+}
+
+const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
+  const { prerequisite, taken, taking, corequisite } = input;
+  const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
+
+  const previouslyComplete = taken.has(id);
+  const takingCorequisite = corequisite.trim() === id && taking.has(id);
+
+  if (previouslyComplete || takingCorequisite) return new Set<string>();
+  return new Set([id]);
+};
+
+const validateAndPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
+  const required: Set<string> = new Set();
+  if (!prerequisite.AND) throw new Error('Expected AND prerequisite');
+
+  prerequisite.AND.forEach((nested) => {
+    const missing = validatePrerequisites({ prerequisite: nested, ...input });
+    missing.forEach((course) => required.add(course));
+  });
+
+  return required;
+};
+
+const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
+  const required: Set<string> = new Set();
+  if (!prerequisite.OR) throw new Error('Expected OR prerequisite');
+
+  for (const nested of prerequisite.OR) {
+    const missing = validatePrerequisites({ prerequisite: nested, ...input });
+    if (missing.size === 0) return new Set<string>(); // one is complete; return early
+    missing.forEach((course) => required.add(course));
   }
-  // has nested prerequisites
-  else {
-    // needs to satisfy all nested
-    if (prerequisite.AND) {
-      const required: Set<string> = new Set();
-      prerequisite.AND.forEach((nested) => {
-        // combine all the courses that are required
-        validateCourse(taken, nested, taking, corequisite).forEach((course) => required.add(course));
-      });
-      return required;
-    }
-    // only need to satisfy one nested
-    else if (prerequisite.OR) {
-      const required: Set<string> = new Set();
-      let satisfied = false;
-      prerequisite.OR.forEach((nested) => {
-        // combine all the courses that are required
-        const courses = validateCourse(taken, nested, taking, corequisite);
-        // if one is satisfied, no other courses are required
-        if (courses.size == 0) {
-          satisfied = true;
-          return;
-        }
-        courses.forEach((course) => required.add(course));
-      });
-      return satisfied ? new Set() : required;
-    } else {
-      // should never reach here
-      return new Set();
-    }
-  }
+
+  return required;
+};
+
+/**
+ * Returns the set of prerequisites and corequisites of a course that need to be taken but are missing
+ * @returns A set of all the prerequisites and corequisites that are missing
+ */
+const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
+  // base case is just a course
+  if ('prereqType' in prerequisite) return validateCoursePrerequisite({ prerequisite, ...input });
+
+  if (prerequisite.AND) return validateAndPrerequisite({ prerequisite, ...input });
+  if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
+
+  // should never reach here
+  console.error('unrecognized prerequisite structure');
+  return new Set();
 };
 
 export const getMissingPrerequisites = (clearedCourses: Set<string>, course: CourseGQLData) => {
-  const missingPrerequisites = Array.from(
-    validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
-  );
+  const input = {
+    prerequisite: course.prerequisiteTree,
+    taken: clearedCourses,
+    taking: new Set<string>(),
+    corequisite: course.corequisites,
+  };
+
+  const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
