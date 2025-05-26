@@ -17,6 +17,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -124,9 +125,9 @@ const SideBar = () => {
           {/* Close Button */}
           <div className="button-container">
             <img alt="PeterPortal" src={Logo} height="32" />
-            <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
+            <IconButton onClick={closeSidebar} className="sidebar-close">
               <CloseIcon />
-            </button>
+            </IconButton>
           </div>
 
           {links}

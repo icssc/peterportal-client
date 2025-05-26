@@ -12,7 +12,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LaptopIcon from '@mui/icons-material/Laptop';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import StickyNote2Icon from '@mui/icons-material/StickyNote2';
+import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -60,7 +60,7 @@ const Profile = () => {
               onClick={() => setShow(false)}
             >
               <div>
-                <StickyNote2Icon />
+                <StickyNote2OutlinedIcon />
               </div>
               Your Reviews
             </NavLink>

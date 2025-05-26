@@ -1,7 +1,14 @@
 .review-star-rating {
-  scale: 1.6;
+  .MuiSvgIcon-root {
+    font-size: 44px;
+    cursor: pointer;
+  }
 
-  .filled-stars {
+  .filled-star {
     color: var(--blue-primary);
+  }
+
+  .tentative {
+    opacity: 0.6;
   }
 }

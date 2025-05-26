@@ -32,11 +32,12 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           role="radio"
           aria-checked={rating === val}
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
+          title={(hovered === rating ? 'Your current rating is' : 'Change rating to') + ` ${val} stars`}
         >
           {val <= (hovered || rating) ? (
-            <StarIcon className="review-star-rating" style={{ opacity: hovered ? 0.8 : 1 }} />
+            <StarIcon className={`filled-star ${hovered && hovered !== rating ? 'tentative' : ''}`} />
           ) : (
-            <StarBorderIcon className="review-star-rating filled-stars" />
+            <StarBorderIcon />
           )}
         </span>
       ))}

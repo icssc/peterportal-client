@@ -2,9 +2,10 @@ import { pluralize } from '../../../helpers/util';
 import './MenuTile.scss';
 import { FC, FormEvent, ReactNode, useState } from 'react';
 
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import EditDocumentIcon from '@mui/icons-material/EditDocument';
+import CheckIcon from '@mui/icons-material/Check';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { IconButton } from '@mui/material';
 
 interface UnitsContainerProps {
   units: number;
@@ -20,9 +21,9 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
           {units} {pluralize(units, 'units', 'unit')}
         </p>
         {setUnits && (
-          <button onClick={() => setEditing(true)}>
-            <EditDocumentIcon />
-          </button>
+          <IconButton onClick={() => setEditing(true)}>
+            <ModeEditIcon />
+          </IconButton>
         )}
       </>
     );
@@ -50,9 +51,9 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
         autoFocus
       />
       {/* eslint-enable jsx-a11y/no-autofocus */}
-      <button type="submit">
-        <CheckCircleIcon />
-      </button>
+      <IconButton type="submit">
+        <CheckIcon />
+      </IconButton>
     </form>
   );
 };
@@ -77,9 +78,9 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         <hr />
         {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
         {deleteFn && (
-          <button className="delete-btn" onClick={deleteFn}>
+          <IconButton className="delete-btn" onClick={deleteFn}>
             <DeleteOutlineIcon />
-          </button>
+          </IconButton>
         )}
       </div>
       {children}
