@@ -49,29 +49,6 @@ export const defaultPlan: RoadmapPlan = {
   content: initialPlanState,
 };
 
-// have an array of RoadmapPlan; use index to access them later
-interface RoadmapSliceState {
-  plans: RoadmapPlan[];
-  currentPlanIndex: number;
-  /** Whether to alert the user of unsaved changes before leaving */
-  unsavedChanges: boolean;
-  /** Selected quarter and year for adding a course on mobile */
-  currentYearAndQuarter: { year: number; quarter: number } | null;
-  showCourseBag: boolean;
-  /** Whether to show the search bar on mobile */
-  showSearch: boolean;
-  /** Whether to show the add course modal on mobile */
-  showAddCourse: boolean;
-  /** Store the course data of the active dragging item */
-  activeCourse?: CourseGQLData;
-  /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
-  activeCourseLoading: boolean;
-  /** Store missing prerequisites for courses when adding on mobile */
-  activeMissingPrerequisites?: string[];
-  /** Whether the roadmap is loading */
-  roadmapLoading: boolean;
-}
-
 /** added for multiple planner */
 
 // Payload to pass in to move a course
@@ -108,20 +85,27 @@ const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
 export const roadmapSlice = createSlice({
   name: 'roadmap',
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState: {
     plans: [defaultPlan],
     currentPlanIndex: 0,
+    /** Whether to alert the user of unsaved changes before leaving */
     unsavedChanges: false,
-    currentYearAndQuarter: null,
+    /** Selected quarter and year for adding a course on mobile */
+    currentYearAndQuarter: null as { year: number; quarter: number } | null,
+    /** Whether to show the search bar on mobile */
     showSearch: false,
+    /** Whether to show the add course modal on mobile */
     showAddCourse: false,
-    showTransfer: false,
-    transfers: [],
     showCourseBag: true,
+    /** Store the course data of the active dragging item */
+    activeCourse: undefined as CourseGQLData | undefined,
+    /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
     activeCourseLoading: false,
+    /** Store missing prerequisites for courses when adding on mobile */
+    activeMissingPrerequisites: undefined as string[] | undefined,
+    /** Whether the roadmap is loading */
     roadmapLoading: false,
-  } as RoadmapSliceState,
+  },
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
@@ -304,7 +288,7 @@ export const roadmapSlice = createSlice({
       state.showAddCourse = action.payload;
     },
     /** added for multiple plans */
-    setRoadmapPlan: (state, action: PayloadAction<RoadmapSliceState>) => {
+    setRoadmapPlan: (state, action: PayloadAction<{ plans: RoadmapPlan[] }>) => {
       state.plans = action.payload.plans;
     },
     addRoadmapPlan: (state, action: PayloadAction<RoadmapPlan>) => {
