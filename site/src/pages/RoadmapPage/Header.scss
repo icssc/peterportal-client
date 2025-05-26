@@ -50,21 +50,25 @@
 
   button {
     white-space: nowrap;
+    padding-inline: 8px;
     @media (max-width: 900px) {
       font-size: 13px;
       margin: 0;
-      padding: 6px 4px;
+      padding: 6px;
+
+      .MuiSvgIcon-root {
+        font-size: 18px;
+        margin-right: 4px;
+      }
     }
   }
 
   .planner-right {
     .btn-group {
-      // flex-wrap: wrap;
       justify-content: end;
     }
     .btn-group > button {
       flex-grow: 0;
-      padding-inline: 8px;
     }
   }
 }

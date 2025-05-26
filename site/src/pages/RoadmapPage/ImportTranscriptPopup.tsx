@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { FileEarmarkText } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -19,6 +18,8 @@ import {
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
+
+import DescriptionIcon from '@mui/icons-material/Description';
 
 interface TransferUnitDetails {
   date: string;
@@ -303,8 +304,8 @@ const ImportTranscriptPopup: FC = () => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button variant={darkMode ? 'dark' : 'light'} onClick={() => setShowModal(true)}>
-        <FileEarmarkText width="20" height="20" />
+      <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
+        <DescriptionIcon />
         <span>Student Transcript</span>
       </Button>
     </>
