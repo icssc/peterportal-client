@@ -11,8 +11,6 @@ import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
 import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
 
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
-
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
@@ -22,13 +20,7 @@ export const ToggleTransfersButton: FC = () => {
 
   return (
     <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>
-      {show ? (
-        <>Done Editing Credits</>
-      ) : (
-        <>
-          Transfer Credits <SwapHorizIcon />
-        </>
-      )}
+      Done Editing Credits
     </button>
   );
 };
@@ -66,9 +58,9 @@ const TransferCreditsMenu: FC = () => {
           <APExamsSection />
           <GESection />
           <UncategorizedCreditsSection />
+          <ToggleTransfersButton />
         </div>
       </CSSTransition>
-      <ToggleTransfersButton />
     </>
   );
 };

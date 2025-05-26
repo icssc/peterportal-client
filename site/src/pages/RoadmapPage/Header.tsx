@@ -3,8 +3,12 @@ import { Button, ButtonGroup } from 'react-bootstrap';
 import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
+import AddYearPopup from './AddYearPopup';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setShowTransfersMenu } from '../../store/slices/transferCreditsSlice';
 
 import SaveIcon from '@mui/icons-material/Save';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 
 interface HeaderProps {
   courseCount: number;
@@ -14,20 +18,33 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
+  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const dispatch = useAppDispatch();
+
+  const toggleTransfers = () => dispatch(setShowTransfersMenu(!show));
+
   return (
     <div className="header">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
           <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
       <div className="planner-right">
         <ButtonGroup>
-          <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
+          {/* <Button variant={'light'} className={'header-btn'} onClick={saveRoadmap}>
             Save
+            <SaveIcon className="header-icon" /> */}
+          <AddYearPopup />
+          <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
+            <SwapHorizOutlinedIcon className="header-icon" />
+            Transfer Credits
+          </Button>
+          <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
             <SaveIcon className="header-icon" />
+            Save
           </Button>
         </ButtonGroup>
       </div>

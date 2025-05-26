@@ -1,24 +1,21 @@
 import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, RoadmapPlan, addRoadmapPlan } from '../../store/slices/roadmapSlice';
+import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
-import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
+import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
-interface ImportZot4PlanPopupProps {
-  saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
-}
-const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
+const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const isLoggedIn = useIsLoggedIn();
@@ -78,7 +75,9 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
       const updatedPlans = [...allPlanData, expandedPlanners[0]];
       dispatch(addRoadmapPlan(expandedPlanners[0]));
       dispatch(setPlanIndex(updatedPlans.length - 1));
-      await saveRoadmap(updatedPlans);
+
+      const collapsed = collapseAllPlanners(updatedPlans);
+      await saveRoadmap(isLoggedIn, collapsed, true);
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
@@ -98,7 +97,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal">
         <Modal.Header closeButton>
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
@@ -106,14 +105,13 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
           <Form className="ppc-modal-form">
             <Form.Group>
               <p>
-                If you use{' '}
+                To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
                   Zot4Plan
-                </a>
-                , you can add all your classes from that schedule to a new roadmap in PeterPortal. Your schedule in
-                Zot4Plan and your current roadmaps will not be modified.
+                </a>{' '}
+                classes into a new roadmap, enter the exact name that you used to save your Zot4Plan schedule (as shown
+                below).
               </p>
-              <p>Please enter the exact name that you use to save and load your Zot4Plan schedule, as shown here:</p>
               <img
                 className="w-100"
                 src={helpImage}
@@ -163,7 +161,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
         onClick={() => setShowModal(true)}
       >
         <CloudDownloadIcon className="import-button-icon" />
-        <div>Import Zot4Plan Schedule</div>
+        <span>Zot4Plan Schedule</span>
       </Button>
     </>
   );
