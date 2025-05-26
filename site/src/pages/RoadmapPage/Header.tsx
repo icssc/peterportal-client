@@ -1,12 +1,14 @@
 import { FC } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import { ArrowLeftRight, Save } from 'react-bootstrap-icons';
 import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from './AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setShowTransfersMenu } from '../../store/slices/transferCreditsSlice';
+
+import SaveIcon from '@mui/icons-material/Save';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 
 interface HeaderProps {
   courseCount: number;
@@ -34,11 +36,11 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
         <ButtonGroup>
           <AddYearPopup />
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
-            <ArrowLeftRight className="header-icon" />
+            <SwapHorizOutlinedIcon className="header-icon" />
             Transfer Credits
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
-            <Save className="header-icon" />
+            <SaveIcon className="header-icon" />
             Save
           </Button>
         </ButtonGroup>

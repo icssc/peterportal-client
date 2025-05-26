@@ -4,13 +4,9 @@ import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
 import { removeUncategorizedCourse } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { TransferredUncategorized } from '@peterportal/types';
 
-export interface UncategorizedCourseEntry {
-  name: string | null;
-  units: number | null;
-}
-
-const UncategorizedMenuTile: FC<UncategorizedCourseEntry> = ({ name, units }) => {
+const UncategorizedMenuTile: FC<TransferredUncategorized> = ({ name, units }) => {
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
