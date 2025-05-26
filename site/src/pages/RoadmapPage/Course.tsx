@@ -1,12 +1,10 @@
 import React, { FC, useState } from 'react';
 import './Course.scss';
-import { Button } from 'react-bootstrap';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
 import { useIsMobile, pluralize } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
-import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
@@ -114,18 +112,9 @@ const Course: FC<CourseProps> = (props) => {
         </div>
         <div className="spacer"></div>
         {onDelete ? (
-          <ThemeContext.Consumer>
-            {({ darkMode }) => (
-              <Button
-                variant={darkMode ? 'dark' : 'light'}
-                className="course-delete-btn"
-                onClick={onDelete}
-                aria-label="delete"
-              >
-                <DeleteOutlineIcon className="course-delete-icon" />
-              </Button>
-            )}
-          </ThemeContext.Consumer>
+          <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
+            <DeleteOutlineIcon className="course-delete-icon" />
+          </IconButton>
         ) : (
           <CourseQuarterIndicator terms={terms} size="xs" />
         )}

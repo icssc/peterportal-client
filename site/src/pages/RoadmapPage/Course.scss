@@ -51,7 +51,7 @@
 .course-and-info {
   display: flex;
   gap: 6px;
-  margin-right: 4px;
+  margin-right: 2px;
   align-items: center;
   width: 100%;
   > .name {
@@ -59,24 +59,15 @@
   }
 }
 
-.course-delete-btn {
-  padding: 0px;
-  background-color: transparent;
-  font-weight: bold;
-  border: none;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.course-delete-icon {
+button.course-delete-btn {
   color: var(--blue-primary);
-  transition-duration: 0.2s;
+  width: 24px;
+  height: 24px;
+  margin: -8px 0;
+  margin-right: -4px;
 
-  &:hover {
-    color: var(--red-primary);
+  .MuiSvgIcon-root {
+    font-size: 20px;
   }
 }
 

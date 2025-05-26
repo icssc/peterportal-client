@@ -18,9 +18,9 @@ import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
 import EditIcon from '@mui/icons-material/Edit';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -52,7 +52,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
         <EditIcon />
       </Button>
       <Button variant={buttonVariant} onClick={duplicateHandler}>
-        <InsertDriveFileIcon />
+        <ContentCopyOutlinedIcon />
       </Button>
       <Button variant={buttonVariant} onClick={deleteHandler}>
         <DeleteIcon />
