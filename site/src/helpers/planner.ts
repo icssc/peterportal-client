@@ -8,7 +8,7 @@ import {
   SavedPlannerQuarterData,
   SavedPlannerYearData,
   SavedRoadmap,
-  TransferData,
+  LegacyTransfer,
   TransferredAPExam,
   TransferredCourse,
   TransferredUncategorized,
@@ -194,7 +194,7 @@ enum RoadmapVersionKey {
 }
 
 // Upgrading Transfers
-async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: TransferData[]) {
+async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
   // Avoid issues with double first render
   if (!transfers.length || localStorage.roadmap__versionKey === RoadmapVersionKey.RedesignedTransfers) {
     return false; // nothing to convert

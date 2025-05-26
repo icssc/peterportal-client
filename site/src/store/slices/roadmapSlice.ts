@@ -11,7 +11,6 @@ import {
   YearIdentifier,
 } from '../../types/types';
 import type { RootState } from '../store';
-import { TransferData } from '@peterportal/types';
 import spawnToast from '../../helpers/toastify';
 // Define a type for the slice state
 interface RoadmapPlanState {
@@ -54,43 +53,25 @@ export const defaultPlan: RoadmapPlan = {
 interface RoadmapSliceState {
   plans: RoadmapPlan[];
   currentPlanIndex: number;
-  // Whether or not to alert the user of unsaved changes before leaving
+  /** Whether to alert the user of unsaved changes before leaving */
   unsavedChanges: boolean;
-  // Selected quarter and year for adding a course on mobile
+  /** Selected quarter and year for adding a course on mobile */
   currentYearAndQuarter: { year: number; quarter: number } | null;
   showCourseBag: boolean;
-  // Whether or not to show the search bar on mobile
+  /** Whether to show the search bar on mobile */
   showSearch: boolean;
-  // Whether or not to show the add course modal on mobile
+  /** Whether to show the add course modal on mobile */
   showAddCourse: boolean;
-  // Store the course data of the active dragging item
+  /** Store the course data of the active dragging item */
   activeCourse?: CourseGQLData;
   /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
   activeCourseLoading: boolean;
   /** Store missing prerequisites for courses when adding on mobile */
   activeMissingPrerequisites?: string[];
-  // Whether or not to show the transfer modal
-  showTransfer: boolean;
-  // Store transfer course data
-  transfers: TransferData[];
-  // Whether or not the roadmap is loading
+  /** Whether the roadmap is loading */
   roadmapLoading: boolean;
 }
 
-// define initial empty plans
-const initialSliceState: RoadmapSliceState = {
-  plans: [defaultPlan],
-  currentPlanIndex: 0,
-  unsavedChanges: false,
-  currentYearAndQuarter: null,
-  showSearch: false,
-  showAddCourse: false,
-  showTransfer: false,
-  transfers: [],
-  showCourseBag: true,
-  activeCourseLoading: false,
-  roadmapLoading: false,
-};
 /** added for multiple planner */
 
 // Payload to pass in to move a course
@@ -122,19 +103,25 @@ interface AddQuarterPayload {
   quarterData: PlannerQuarterData;
 }
 
-// Payload to set the trasnfer data at a specific index
-interface SetTransferPayload {
-  index: number;
-  transfer: TransferData;
-}
-
 // onbeforeunload event listener
 const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   // `createSlice` will infer the state type from the `initialState` argument
-  initialState: initialSliceState,
+  initialState: {
+    plans: [defaultPlan],
+    currentPlanIndex: 0,
+    unsavedChanges: false,
+    currentYearAndQuarter: null,
+    showSearch: false,
+    showAddCourse: false,
+    showTransfer: false,
+    transfers: [],
+    showCourseBag: true,
+    activeCourseLoading: false,
+    roadmapLoading: false,
+  } as RoadmapSliceState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
@@ -307,21 +294,6 @@ export const roadmapSlice = createSlice({
     setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
       state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
     },
-    setShowTransfer: (state, action: PayloadAction<boolean>) => {
-      state.showTransfer = action.payload;
-    },
-    addTransfer: (state, action: PayloadAction<TransferData>) => {
-      state.transfers.push(action.payload);
-    },
-    setTransfer: (state, action: PayloadAction<SetTransferPayload>) => {
-      state.transfers[action.payload.index] = action.payload.transfer;
-    },
-    setTransfers: (state, action: PayloadAction<TransferData[]>) => {
-      state.transfers = action.payload;
-    },
-    deleteTransfer: (state, action: PayloadAction<number>) => {
-      state.transfers.splice(action.payload, 1);
-    },
     setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
       state.showSearch = action.payload.show;
       if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
@@ -388,11 +360,6 @@ export const {
   setYearPlans,
   setAllPlans,
   setInvalidCourses,
-  setShowTransfer,
-  addTransfer,
-  setTransfer,
-  setTransfers,
-  deleteTransfer,
   setShowSearch,
   setShowAddCourse,
   setRoadmapPlan,

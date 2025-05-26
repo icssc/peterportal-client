@@ -33,7 +33,6 @@ import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 const PlannerLoader: FC = () => {
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [formatUpgraded, setFormatUpgraded] = useState(false);
-  const legacyTransfers = useAppSelector((state) => state.roadmap.transfers);
   const userTransfersLoaded = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
   const transferred = useTransferredCredits();
   const allPlanData = useAppSelector(selectAllPlans);
@@ -44,7 +43,7 @@ const PlannerLoader: FC = () => {
 
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
-    transfers: legacyTransfers, // should be empty anyways once upgrade runs
+    transfers: [], // should be empty anyways once upgrade runs
   });
 
   const loadLocalTransfers = async () => {
