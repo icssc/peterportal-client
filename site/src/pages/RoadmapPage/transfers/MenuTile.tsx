@@ -6,6 +6,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/material';
+import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
 interface UnitsContainerProps {
   units: number;
@@ -66,11 +67,13 @@ export interface MenuTileProps {
   deleteFn?: () => void;
   /** Additional items to include alongsite the title */
   headerItems?: ReactNode;
+  unread?: boolean;
 }
 
-const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems }) => {
+const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems, unread }) => {
   return (
     <div className="menu-tile">
+      <UnreadDot show={unread ?? false} />
       <div className="tile-info">
         <div className="name">
           {title} {headerItems}

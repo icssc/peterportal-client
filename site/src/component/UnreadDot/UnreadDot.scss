@@ -1,0 +1,15 @@
+.unread-dot {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  background-color: var(--red);
+  width: 30px;
+  height: 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}

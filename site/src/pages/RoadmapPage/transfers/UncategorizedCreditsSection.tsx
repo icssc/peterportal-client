@@ -6,19 +6,33 @@ import { removeUncategorizedCourse } from '../../../store/slices/transferCredits
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { TransferredUncategorized } from '@peterportal/types';
 
-const UncategorizedMenuTile: FC<TransferredUncategorized> = ({ name, units }) => {
+const UncategorizedMenuTile: FC<{ uncategorizedInfo: TransferredUncategorized; unread: boolean }> = ({
+  uncategorizedInfo,
+  unread,
+}) => {
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
-    trpc.transferCredits.removeUncategorizedCourse.mutate({ name, units });
-    dispatch(removeUncategorizedCourse({ name, units }));
+    trpc.transferCredits.removeUncategorizedCourse.mutate({
+      name: uncategorizedInfo.name,
+      units: uncategorizedInfo.units,
+    });
+    dispatch(removeUncategorizedCourse({ name: uncategorizedInfo.name, units: uncategorizedInfo.units }));
   };
 
-  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} />;
+  return (
+    <MenuTile
+      title={uncategorizedInfo.name ?? ''}
+      units={uncategorizedInfo.units ?? 0}
+      deleteFn={deleteFn}
+      unread={unread}
+    />
+  );
 };
 
 const UncategorizedCreditsSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+  const unreadOther = useAppSelector((state) => state.transferCredits.unreadTransfers).otherNames;
 
   if (courses.length === 0) {
     return null;
@@ -32,7 +46,11 @@ const UncategorizedCreditsSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <UncategorizedMenuTile key={`${course.name}-${course.units}`} name={course.name} units={course.units} />
+        <UncategorizedMenuTile
+          key={`${course.name}-${course.units}`}
+          uncategorizedInfo={course}
+          unread={course.name ? unreadOther.includes(course.name) : false}
+        />
       ))}
     </MenuSection>
   );

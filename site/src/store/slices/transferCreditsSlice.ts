@@ -19,6 +19,11 @@ export const transferCreditsSlice = createSlice({
     userAPExams: [] as TransferredAPExam[],
     transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as TransferredUncategorized[],
+    unreadTransfers: {
+      apNames: [] as string[],
+      courseNames: [] as string[],
+      otherNames: [] as string[],
+    },
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
@@ -77,6 +82,11 @@ export const transferCreditsSlice = createSlice({
         (course) => course.name !== action.payload.name || course.units !== action.payload.units,
       );
     },
+    clearUnreadTransfers: (state) => {
+      state.unreadTransfers.apNames = [];
+      state.unreadTransfers.courseNames = [];
+      state.unreadTransfers.otherNames = [];
+    },
   },
 });
 
@@ -96,6 +106,7 @@ export const {
   setTransferredGE,
   setUncategorizedCourses,
   removeUncategorizedCourse,
+  clearUnreadTransfers,
 } = transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;

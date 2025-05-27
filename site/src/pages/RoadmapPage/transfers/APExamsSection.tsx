@@ -55,7 +55,7 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInfo }) => {
+const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam; unread: boolean }> = ({ userExamInfo, unread }) => {
   const { examName, score, units } = userExamInfo;
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
@@ -93,7 +93,14 @@ const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInf
   }
 
   return (
-    <MenuTile title={examName} headerItems={selectBox} units={units} setUnits={updateUnits} deleteFn={deleteFn}>
+    <MenuTile
+      title={examName}
+      headerItems={selectBox}
+      units={units}
+      setUnits={updateUnits}
+      deleteFn={deleteFn}
+      unread={unread}
+    >
       <p>{message ? 'Clears ' + message : 'This exam does not clear any courses'}</p>
     </MenuTile>
   );
@@ -105,6 +112,7 @@ const APExamsSection: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const unreadExams = useAppSelector((state) => state.transferCredits.unreadTransfers).apNames;
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 
@@ -138,7 +146,7 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
+        <APCreditMenuTile key={exam.examName} userExamInfo={exam} unread={unreadExams.includes(exam.examName)} />
       ))}
       <div className="ap-import-row">
         <div className="exam-input">

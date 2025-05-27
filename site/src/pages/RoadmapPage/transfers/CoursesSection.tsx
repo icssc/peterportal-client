@@ -21,8 +21,9 @@ interface CourseSelectOption {
 
 interface CourseCreditMenuTileProps {
   course: TransferredCourse;
+  unread: boolean;
 }
-const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course }) => {
+const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course, unread }) => {
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
@@ -35,11 +36,22 @@ const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course }) => {
     dispatch(updateTransferredCourse(updatedCourse));
   };
 
-  return <MenuTile title={course.courseName} units={course.units} setUnits={setUnits} deleteFn={deleteFn} />;
+  return (
+    <>
+      <MenuTile
+        title={course.courseName}
+        units={course.units}
+        setUnits={setUnits}
+        deleteFn={deleteFn}
+        unread={unread}
+      />
+    </>
+  );
 };
 
 const CoursesSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const unreadCourses = useAppSelector((state) => state.transferCredits.unreadTransfers).courseNames;
   const [timeout, setTimeout] = useState<number | null>(null);
   const [abortFn, setAbortFn] = useState<() => void>();
   const dispatch = useAppDispatch();
@@ -92,7 +104,11 @@ const CoursesSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <CourseCreditMenuTile key={course.courseName} course={course} />
+        <CourseCreditMenuTile
+          key={course.courseName}
+          course={course}
+          unread={unreadCourses.includes(course.courseName)}
+        />
       ))}
 
       <AsyncSelect

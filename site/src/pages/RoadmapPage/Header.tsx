@@ -5,7 +5,8 @@ import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from './AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setShowTransfersMenu } from '../../store/slices/transferCreditsSlice';
+import { setShowTransfersMenu, clearUnreadTransfers } from '../../store/slices/transferCreditsSlice';
+import UnreadDot from '../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
@@ -18,10 +19,23 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
 
-  const toggleTransfers = () => dispatch(setShowTransfersMenu(!show));
+  const toggleTransfers = () => {
+    if (showTransfers) {
+      // After closing the menu, clear all the unread markers
+      dispatch(clearUnreadTransfers());
+    }
+    dispatch(setShowTransfersMenu(!showTransfers));
+  };
+
+  const unreadTransfers = useAppSelector((state) => state.transferCredits.unreadTransfers);
+
+  const showUnreadTransfers =
+    unreadTransfers.apNames.length > 0 ||
+    unreadTransfers.courseNames.length > 0 ||
+    unreadTransfers.otherNames.length > 0;
 
   return (
     <div className="header">
@@ -38,6 +52,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
             <SwapHorizOutlinedIcon className="header-icon" />
             Transfer Credits
+            <UnreadDot show={showUnreadTransfers} />
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
             <SaveIcon className="header-icon" />
