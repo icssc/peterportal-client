@@ -10,7 +10,7 @@ import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
-import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { setUserAPExams, addUnreadTransferNames } from '../../store/slices/transferCreditsSlice';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -38,6 +38,9 @@ const ImportZot4PlanPopup: FC = () => {
       const newExams = z4pApExams.filter(
         (imported) => !apExams.some((existing) => existing.examName === imported.examName),
       );
+
+      // Mark new exams as unread
+      dispatch(addUnreadTransferNames({ ap: newExams.map((exam) => exam.examName), course: [], other: [] }));
 
       const combinedExams = apExams.concat(newExams);
       dispatch(setUserAPExams(combinedExams));

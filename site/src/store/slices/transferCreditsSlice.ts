@@ -87,6 +87,11 @@ export const transferCreditsSlice = createSlice({
       state.unreadTransfers.courseNames = [];
       state.unreadTransfers.otherNames = [];
     },
+    addUnreadTransferNames: (state, action: PayloadAction<{ ap: string[]; course: string[]; other: string[] }>) => {
+      state.unreadTransfers.apNames = state.unreadTransfers.apNames.concat(action.payload.ap);
+      state.unreadTransfers.courseNames = state.unreadTransfers.courseNames.concat(action.payload.course);
+      state.unreadTransfers.otherNames = state.unreadTransfers.otherNames.concat(action.payload.other);
+    },
   },
 });
 
@@ -107,6 +112,7 @@ export const {
   setUncategorizedCourses,
   removeUncategorizedCourse,
   clearUnreadTransfers,
+  addUnreadTransferNames,
 } = transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;

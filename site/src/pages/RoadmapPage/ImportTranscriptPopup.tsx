@@ -14,6 +14,7 @@ import {
   setUserAPExams,
   setTransferredCourses,
   setUncategorizedCourses,
+  addUnreadTransferNames,
 } from '../../store/slices/transferCreditsSlice';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -227,6 +228,18 @@ const ImportTranscriptPopup: FC = () => {
         .map((courseID) => ({ name: courseID, units: 0 }))
         .filter((otherCourse) => !mergedOther.some((existing) => existing.name == otherCourse.name));
       const mergedOtherFinal = mergedOther.concat(newOtherFromCourses);
+
+      // Mark new transfers as unread
+      dispatch(
+        addUnreadTransferNames({
+          ap: newAps.map((exam) => exam.examName),
+          course: newCourses.map((course) => course.courseName),
+          other: newOther
+            .concat(newOtherFromCourses)
+            .filter((other) => other.name)
+            .map((other) => other.name!),
+        }),
+      );
 
       // Override local transfers with the merged results
       dispatch(setTransferredCourses(mergedCourses));
