@@ -75,22 +75,24 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
   }
   // if value is an object, render the rest of the sub tree
   else {
-    const prereqTree = prerequisite as Record<string, PrerequisiteNode[]>;
+    const prereqTree = prerequisite as PrerequisiteTree;
+    const prereqTreeMap = prereqTree as Record<string, PrerequisiteTree[]>;
+    const prereqTreeType = Object.keys(prereqTree)[0] as 'AND' | 'OR' | 'NOT';
+    const prereqChildren = prereqTreeMap[prereqTreeType];
+
+    if (prereqTree.AND && prereqChildren.length === 1 && prereqChildren[0].OR) {
+      return <PrereqTreeNode prerequisiteNames={props.prerequisiteNames} prerequisiteJSON={prereqChildren[0]} />;
+    }
+
     return (
       <div style={{ margin: 'auto 0' }} className={'prerequisite-node'}>
         <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
           <span style={{ margin: 'auto' }}>
-            <div className={'prereq-branch'}>
-              {
-                Object.entries(phraseMapping).filter(([subtreeType]) =>
-                  Object.prototype.hasOwnProperty.call(prerequisite, subtreeType),
-                )[0][1]
-              }
-            </div>
+            <div className={'prereq-branch'}>{phraseMapping[prereqTreeType]}</div>
           </span>
           <div className="prereq-clump">
             <ul className="prereq-list">
-              {prereqTree[Object.keys(prerequisite)[0]].map((child, index) => (
+              {prereqChildren.map((child, index) => (
                 <PrereqTreeNode
                   key={`tree-${index}`}
                   prerequisiteNames={props.prerequisiteNames}
