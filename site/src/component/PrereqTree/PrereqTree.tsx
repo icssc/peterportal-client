@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import './PrereqTree.scss';
-import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
+import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
@@ -12,8 +12,6 @@ interface NodeProps {
   content: string;
   index?: number;
 }
-
-type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
 const phraseMapping = {
   AND: 'all of',
