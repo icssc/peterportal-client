@@ -10,13 +10,18 @@ import {
   setPlanName,
 } from '../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import * as Icon from 'react-bootstrap-icons';
 import { Button, Dropdown, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import ThemeContext from '../../style/theme-context';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
+
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
   index: number;
@@ -44,13 +49,13 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
         </Button>
       </Dropdown.Item>
       <Button variant={buttonVariant} onClick={editHandler}>
-        <Icon.PencilFill width="16" height="16" />
+        <EditIcon />
       </Button>
       <Button variant={buttonVariant} onClick={duplicateHandler}>
-        <Icon.Files width="16" height="16" />
+        <ContentCopyOutlinedIcon />
       </Button>
       <Button variant={buttonVariant} onClick={deleteHandler}>
-        <Icon.TrashFill width="16" height="16" />
+        <DeleteIcon />
       </Button>
     </div>
   );
@@ -153,14 +158,12 @@ const RoadmapMultiplan: FC = () => {
             <hr />
           </div>
           <div className="select-item add-item">
-            <Dropdown.Item>
-              <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
-                <Icon.PlusLg width="20" height="20" />
-                <span>Blank Roadmap</span>
-              </Button>
-              <ImportTranscriptPopup />
-              <ImportZot4PlanPopup />
-            </Dropdown.Item>
+            <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
+              <AddIcon />
+              <span>Blank Roadmap</span>
+            </Button>
+            <ImportTranscriptPopup />
+            <ImportZot4PlanPopup />
           </div>
         </Dropdown.Menu>
       </Dropdown>

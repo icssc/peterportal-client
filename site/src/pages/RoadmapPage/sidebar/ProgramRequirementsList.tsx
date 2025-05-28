@@ -8,7 +8,6 @@ import {
   useCompletionCheck,
   CompletedCourseSet,
 } from '../../../helpers/courseRequirements';
-import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
 import trpc from '../../../trpc';
@@ -29,6 +28,9 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -36,7 +38,7 @@ interface SourceOverlayProps {
 const SourceOverlay: FC<SourceOverlayProps> = ({ completedBy }) => {
   if (!completedBy || completedBy === 'roadmap') return null;
   const title = `Cleared by ${completedBy === 'AP' ? 'an AP Exam' : 'a transferred course'}`;
-  const icon = completedBy === 'AP' ? 'AP' : 'Course'; // TODO: replace 'Course' with MUI icon
+  const icon = completedBy === 'AP' ? 'AP' : <SwapHorizOutlinedIcon style={{ fontSize: 16 }} />;
   return (
     <p className="source-overlay" title={title}>
       {icon}
@@ -152,9 +154,10 @@ interface GroupHeaderProps {
 }
 const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
+  const icon = open ? <ArrowDropDownIcon /> : <ArrowRightIcon />;
   return (
     <button className={className} onClick={() => setOpen(!open)}>
-      {open ? <CaretDownFill /> : <CaretRightFill />}
+      {icon}
       <b>{title}</b>
     </button>
   );

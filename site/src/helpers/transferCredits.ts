@@ -1,6 +1,10 @@
-import { UncategorizedCourseEntry } from '../pages/RoadmapPage/transfers/UncategorizedCreditsSection';
-import { TransferredCourse, UserAPExam } from '../store/slices/transferCreditsSlice';
-import { APExam, TransferredGE } from '@peterportal/types';
+import {
+  APExam,
+  TransferredGE,
+  TransferredCourse,
+  TransferredUncategorized,
+  TransferredAPExam,
+} from '@peterportal/types';
 import trpc from '../trpc';
 
 /**
@@ -12,7 +16,7 @@ import trpc from '../trpc';
  */
 export function getNamesOfTransfers(
   courses: TransferredCourse[],
-  apExams: UserAPExam[],
+  apExams: TransferredAPExam[],
   apExamInfo: APExam[],
 ): string[] {
   // a prerequisite examName may be "AP COMP SCI A", "AP CALCULUS BC" (catalogue name?????)
@@ -38,9 +42,9 @@ export function getNamesOfTransfers(
  */
 export function getTotalUnitsFromTransfers(
   courses: TransferredCourse[],
-  apExams: UserAPExam[],
+  apExams: TransferredAPExam[],
   geTransfers: TransferredGE[],
-  otherTransfers: UncategorizedCourseEntry[],
+  otherTransfers: TransferredUncategorized[],
 ) {
   let total = 0;
 
@@ -91,14 +95,14 @@ async function loadTransferData<T>(
 export function loadTransferredCourses(isLoggedIn: boolean): Promise<TransferredCourse[]> {
   return loadTransferData<TransferredCourse>('getTransferredCourses', isLoggedIn, LocalTransferSaveKey.Course);
 }
-export function loadTransferredAPs(isLoggedIn: boolean): Promise<UserAPExam[]> {
-  return loadTransferData<UserAPExam>('getSavedAPExams', isLoggedIn, LocalTransferSaveKey.AP);
+export function loadTransferredAPs(isLoggedIn: boolean): Promise<TransferredAPExam[]> {
+  return loadTransferData<TransferredAPExam>('getSavedAPExams', isLoggedIn, LocalTransferSaveKey.AP);
 }
 export function loadTransferredGEs(isLoggedIn: boolean): Promise<TransferredGE[]> {
   return loadTransferData<TransferredGE>('getTransferredGEs', isLoggedIn, LocalTransferSaveKey.GE);
 }
-export function loadTransferredOther(isLoggedIn: boolean): Promise<UncategorizedCourseEntry[]> {
-  return loadTransferData<UncategorizedCourseEntry>(
+export function loadTransferredOther(isLoggedIn: boolean): Promise<TransferredUncategorized[]> {
+  return loadTransferData<TransferredUncategorized>(
     'getUncategorizedTransfers',
     isLoggedIn,
     LocalTransferSaveKey.Uncategorized,

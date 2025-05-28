@@ -1,6 +1,7 @@
 import React from 'react';
 import './ThankYouMessage.scss';
-import { CheckCircleFill } from 'react-bootstrap-icons';
+
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface ThankYouMessageProps {
   message: string;
@@ -9,7 +10,7 @@ interface ThankYouMessageProps {
 const ThankYouMessage: React.FC<ThankYouMessageProps> = ({ message }) => {
   return (
     <div className="thank-you-message">
-      <CheckCircleFill width={64} height={64} />
+      <CheckCircleIcon />
       <h1>Thank You</h1>
       <p>{message}</p>
     </div>
