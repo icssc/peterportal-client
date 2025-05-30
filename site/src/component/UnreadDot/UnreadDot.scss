@@ -1,10 +1,7 @@
-.unread-dot {
+.unread-pill,
+.unread-circle {
   position: absolute;
-  right: -5px;
-  top: -5px;
   background-color: var(--red);
-  width: 30px;
-  height: 12px;
   border-radius: 20px;
   font-size: 10px;
   color: white;
@@ -12,4 +9,18 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
+}
+
+.unread-pill {
+  right: -5px;
+  top: -5px;
+  width: 30px;
+  height: 12px;
+}
+
+.unread-circle {
+  left: 26px;
+  top: 1px;
+  width: 11px;
+  height: 11px;
 }

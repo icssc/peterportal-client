@@ -73,7 +73,7 @@ export interface MenuTileProps {
 const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems, unread }) => {
   return (
     <div className="menu-tile">
-      <UnreadDot show={unread ?? false} />
+      <UnreadDot show={unread ?? false} displayFullNewText={true} />
       <div className="tile-info">
         <div className="name">
           {title} {headerItems}

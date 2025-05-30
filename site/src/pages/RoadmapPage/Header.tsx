@@ -52,7 +52,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
             <SwapHorizOutlinedIcon className="header-icon" />
             Transfer Credits
-            <UnreadDot show={showUnreadTransfers} />
+            <UnreadDot show={showUnreadTransfers} displayFullNewText={false} />
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
             <SaveIcon className="header-icon" />
