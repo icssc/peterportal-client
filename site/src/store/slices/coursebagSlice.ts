@@ -12,7 +12,10 @@ export const coursebagSlice = createSlice({
       state.coursebag = action.payload;
     },
     addCourseToBagState: (state, action: PayloadAction<CourseGQLData>) => {
-      state.coursebag?.push(action.payload);
+      if (!state.coursebag) return;
+      const courseIndex = state.coursebag.findIndex((c) => c.id > action.payload.id);
+      const spliceIndex = courseIndex === -1 ? state.coursebag.length : courseIndex;
+      state.coursebag.splice(spliceIndex, 0, action.payload);
     },
     removeCourseFromBagState: (state, action: PayloadAction<CourseGQLData>) => {
       state.coursebag = state.coursebag?.filter((course) => course.id !== action.payload.id);
