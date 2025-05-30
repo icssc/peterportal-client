@@ -45,9 +45,10 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 
 // Bundle planner and transfer data in one object
 export const savedRoadmap = z.object({
-  timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
   transfers: z.array(transferData),
+  timestamp: z.string().optional(),
+  currentPlanIndex: z.number().optional(),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
@@ -56,4 +57,5 @@ export interface LegacyRoadmap {
   planner: SavedPlannerYearData[];
   transfers: TransferData[];
   timestamp?: string;
+  currentPlanIndex?: number;
 }

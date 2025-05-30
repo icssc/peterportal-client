@@ -156,7 +156,7 @@ function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
   const EMPTY_ROADMAP_STR = JSON.stringify({
     planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
     transfers: [],
-  } as Omit<SavedRoadmap, 'timestamp'>);
+  } as Omit<SavedRoadmap, 'timestamp' | 'currentPlanIndex'>);
 
   return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
 }
@@ -183,6 +183,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
       ],
       transfers: roadmap.transfers,
       timestamp: roadmap.timestamp,
+      currentPlanIndex: roadmap.currentPlanIndex,
     };
   }
 }
@@ -239,7 +240,7 @@ export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
 }
 
 export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };
+  const roadmap: SavedRoadmap = { planners, transfers: [], timestamp: new Date().toISOString(), currentPlanIndex: 0 };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
   const showMessage = showToasts ? spawnToast : (str: string) => str;
