@@ -74,7 +74,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
   // if value is an object, render the rest of the sub tree
   else {
     const prereqTree = prerequisite as PrerequisiteTree;
-    const prereqTreeType = Object.keys(prereqTree)[0] as 'AND' | 'OR' | 'NOT';
+    const prereqTreeType = Object.keys(prereqTree)[0] as keyof PrerequisiteTree;
     const prereqChildren = prereqTree[prereqTreeType] as PrerequisiteTree[];
 
     if (prereqTree.AND && prereqChildren.length === 1 && prereqChildren[0].OR) {
