@@ -38,7 +38,7 @@ interface SourceOverlayProps {
 const SourceOverlay: FC<SourceOverlayProps> = ({ completedBy }) => {
   if (!completedBy || completedBy === 'roadmap') return null;
   const title = `Cleared by ${completedBy === 'AP' ? 'an AP Exam' : 'a transferred course'}`;
-  const icon = completedBy === 'AP' ? 'AP' : <SwapHorizOutlinedIcon style={{ fontSize: 16 }} />;
+  const icon = completedBy === 'AP' ? 'AP' : <SwapHorizOutlinedIcon />;
   return (
     <p className="source-overlay" title={title}>
       {icon}

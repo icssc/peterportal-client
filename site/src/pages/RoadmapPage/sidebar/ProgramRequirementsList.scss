@@ -181,6 +181,10 @@
   align-items: center;
   font-size: 10px;
   cursor: help;
+
+  .MuiSvgIcon-root {
+    font-size: 16px;
+  }
 }
 
 body[data-theme='dark'] {
