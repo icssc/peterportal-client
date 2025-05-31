@@ -149,6 +149,7 @@
   font-size: 13px;
   border-radius: 4px;
   cursor: grab;
+  position: relative;
 
   a {
     color: inherit;
@@ -162,6 +163,27 @@
     text-decoration: line-through;
     text-decoration-thickness: 2px;
     opacity: 0.75;
+  }
+}
+
+.source-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: var(--text-secondary);
+  color: var(--gray-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  cursor: help;
+
+  .MuiSvgIcon-root {
+    font-size: 16px;
   }
 }
 

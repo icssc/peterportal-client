@@ -29,6 +29,10 @@ function naiveCountedCourses(courses: CourseTreeItem): string[] {
   return naiveCountedCourses(courses.OR[0]);
 }
 
+export interface TransferredCourseWithType extends TransferredCourse {
+  transferType?: 'AP' | 'Course';
+}
+
 export function useTransferredCredits() {
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
@@ -36,14 +40,9 @@ export function useTransferredCredits() {
   const ge = useAppSelector((state) => state.transferCredits.transferredGEs);
   const other = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
 
-  /** @todo add some way to specify the source of a course */
-  // i.e. transferType: 'AP' | 'Course'. We could also return two arrays, but it may be more ideal
-  // from a dev perspective to have a "single array of truth" rather than opening the door to making
-  // mistakes later when counting credits because we chose the wrong courses array
-
-  const courses: TransferredCourse[] = useMemo(() => {
+  const courses = useMemo(() => {
     // Recomputes this value only when APs or Transferred Courses update
-    const rewardedCourses = apTransfers.flatMap((transfer) => {
+    const rewardedCourses: TransferredCourseWithType[] = apTransfers.flatMap((transfer) => {
       const info = apExamInfo.find((ap) => ap.fullName === transfer.examName);
       if (!info) return [];
       const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
@@ -53,10 +52,13 @@ export function useTransferredCredits() {
       /** @todo debug print statement – remove once a user can choose which 'OR' reward they want */
       // console.log(info.catalogueName ?? info.fullName, '=>', courseNames)
 
-      return courseNames.map((courseName) => ({ courseName, units: 0 }));
+      return courseNames.map((courseName) => ({ courseName, units: 0, transferType: 'AP' }));
     });
 
-    return [...new Set(transferredCourses.concat(rewardedCourses))];
+    const clearedCourses: TransferredCourseWithType[] = transferredCourses
+      .map((course) => ({ ...course, transferType: 'Course' }) as TransferredCourseWithType)
+      .concat(rewardedCourses);
+    return [...new Set(clearedCourses)];
   }, [apExamInfo, apTransfers, transferredCourses]);
 
   // Returns memoized result for efficiency and so we can use the entire return value
