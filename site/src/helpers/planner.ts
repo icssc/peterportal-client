@@ -1,7 +1,6 @@
 import {
   LegacyRoadmap,
-  Prerequisite,
-  PrerequisiteTree,
+  PrerequisiteNode,
   QuarterName,
   quarters,
   SavedPlannerData,
@@ -259,8 +258,6 @@ function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
     quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
   }));
 }
-
-type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
 type plannerCallback = (missing: Set<string>, invalidCourses: InvalidCourseData[]) => void;
 
