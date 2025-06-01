@@ -8,7 +8,6 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
 } from '../../../helpers/courseRequirements';
-import { CaretDownFill, CaretRightFill } from 'react-bootstrap-icons';
 import { CourseNameAndInfo } from '../Course';
 import { CourseGQLData } from '../../../types/types';
 import trpc from '../../../trpc';
@@ -27,7 +26,11 @@ import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
+import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface CourseTileProps {
   courseID: string;
@@ -129,7 +132,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
     <button className={className} onClick={() => setOpen(!open)}>
-      {open ? <CaretDownFill /> : <CaretRightFill />}
+      {open ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
       <b>{title}</b>
     </button>
   );
@@ -296,7 +299,7 @@ interface RequireCourseListProps {
 }
 const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
   const formattedRequirements = formatRequirements(requirements);
-  const roadmapTransfers = useAppSelector((state) => state.roadmap.transfers);
+  const transferredCourses = useTransferredCredits().courses;
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const yearPlans = roadmapPlans[roadmapPlanIndex].content.yearPlans;
@@ -305,7 +308,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, sto
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
     .map((course) => [course.id, course.minUnits]);
-  const transferCourseMap = roadmapTransfers.map((t) => [t.name.replace(/\s/g, ''), t.units ?? 0]);
+  const transferCourseMap = transferredCourses.map((t) => [t.courseName.replace(/\s/g, ''), t.units ?? 0]);
 
   const takenCourseSet: CompletedCourseSet = Object.assign(
     {},

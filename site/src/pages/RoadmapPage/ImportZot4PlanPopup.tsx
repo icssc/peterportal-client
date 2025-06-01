@@ -1,36 +1,59 @@
 import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { CloudArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, RoadmapPlan, addRoadmapPlan } from '../../store/slices/roadmapSlice';
+import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
-import { expandAllPlanners, makeUniquePlanName } from '../../helpers/planner';
+import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
 
-interface ImportZot4PlanPopupProps {
-  saveRoadmap: (planner?: RoadmapPlan[]) => Promise<void>;
-}
-const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
+const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
+  const isLoggedIn = useIsLoggedIn();
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
   const [studentYear, setStudentYear] = useState('1');
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
+  const apExams = useTransferredCredits().ap;
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
     try {
-      const result = await trpc.zot4PlanImportRouter.getScheduleFormatted.query({
+      const { savedRoadmap, apExams: z4pApExams } = await trpc.zot4PlanImport.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
       });
+
+      // Combine added AP exams with AP exams from Zot4Plan; ignore any exams that were already added
+      const newExams = z4pApExams.filter(
+        (imported) => !apExams.some((existing) => existing.examName === imported.examName),
+      );
+
+      const combinedExams = apExams.concat(newExams);
+      dispatch(setUserAPExams(combinedExams));
+
+      // Add new AP exam rows
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: [],
+          ap: combinedExams,
+          ge: [],
+          other: [],
+        });
+      }
+
       // Expand the result
-      const expandedPlanners = await expandAllPlanners(result.planners);
+      const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
       // Check for validity: length and invalid course names
       if (expandedPlanners.length < 1) {
         spawnToast('The schedule "' + schedName + '" could not be imported', true);
@@ -52,7 +75,9 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
       const updatedPlans = [...allPlanData, expandedPlanners[0]];
       dispatch(addRoadmapPlan(expandedPlanners[0]));
       dispatch(setPlanIndex(updatedPlans.length - 1));
-      await saveRoadmap(updatedPlans);
+
+      const collapsed = collapseAllPlanners(updatedPlans);
+      await saveRoadmap(isLoggedIn, collapsed, true);
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
@@ -72,7 +97,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal">
         <Modal.Header closeButton>
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
@@ -80,14 +105,13 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
           <Form className="ppc-modal-form">
             <Form.Group>
               <p>
-                If you use{' '}
+                To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
                   Zot4Plan
-                </a>
-                , you can add all your classes from that schedule to a new roadmap in PeterPortal. Your schedule in
-                Zot4Plan and your current roadmaps will not be modified.
+                </a>{' '}
+                classes into a new roadmap, enter the exact name that you used to save your Zot4Plan schedule (as shown
+                below).
               </p>
-              <p>Please enter the exact name that you use to save and load your Zot4Plan schedule, as shown here:</p>
               <img
                 className="w-100"
                 src={helpImage}
@@ -109,7 +133,7 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
               />
               {scheduleName.length > 0 && scheduleName.length < 8 && (
                 <span className="import-schedule-warning">
-                  <ExclamationTriangle className="import-schedule-warning-icon" />
+                  <WarningAmberIcon className="import-schedule-icon" />
                   No Zot4Plan schedule name contains less than 8 characters
                 </span>
               )}
@@ -131,13 +155,9 @@ const ImportZot4PlanPopup: FC<ImportZot4PlanPopupProps> = ({ saveRoadmap }) => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button
-        variant={darkMode ? 'dark' : 'light'}
-        className="ppc-btn import-schedule-btn"
-        onClick={() => setShowModal(true)}
-      >
-        <CloudArrowDown className="import-schedule-icon" />
-        <div>Import Zot4Plan Schedule</div>
+      <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
+        <CloudDownloadIcon />
+        <span>Zot4Plan Schedule</span>
       </Button>
     </>
   );

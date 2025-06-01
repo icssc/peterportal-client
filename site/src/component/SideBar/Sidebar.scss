@@ -35,10 +35,7 @@
     }
   }
   .sidebar-close {
-    margin-left: auto;
-    border: none;
-    background: none;
-    padding: 0;
+    margin-inline: 0 -8px;
   }
 
   .sidebar-profile {
@@ -115,6 +112,10 @@
 
   .full-name + span {
     display: none;
+  }
+
+  .sidebar-icon {
+    font-size: 28px;
   }
 }
 

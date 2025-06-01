@@ -1,3 +1,4 @@
+/** @deprecated This is the Legacy Transfers Menu component. It will be removed once the new menu shows missing prerequisites */
 import { FC, useState, useEffect } from 'react';
 import './Transfer.scss';
 import Button from 'react-bootstrap/Button';
@@ -7,11 +8,14 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { PlusLg, Trash } from 'react-bootstrap-icons';
 
 import { setShowTransfer, deleteTransfer, setTransfer, addTransfer } from '../../store/slices/roadmapSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { TransferData } from '@peterportal/types';
+
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { IconButton } from '@mui/material';
 
 interface TransferEntryProps extends TransferData {
   index: number;
@@ -57,12 +61,15 @@ const TransferEntry: FC<TransferEntryProps> = (props) => {
         />
       </Col>
       <Col xs="1" md="1" className="entry-delete-icon">
-        <Trash onClick={() => dispatch(deleteTransfer(props.index))} />
+        <IconButton onClick={() => dispatch(deleteTransfer(props.index))}>
+          <DeleteOutlineIcon />
+        </IconButton>
       </Col>
     </Row>
   );
 };
 
+/** @deprecated */
 const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
   const dispatch = useAppDispatch();
   const transfers = useAppSelector((state) => state.roadmap.transfers);
@@ -113,7 +120,7 @@ const Transfer: FC<MissingCoursesProps> = ({ missingPrereqNames }) => {
           variant="none"
           onClick={() => dispatch(addTransfer({ name: '', units: undefined }))}
         >
-          <PlusLg /> Add Entry
+          <AddIcon /> Add Entry
         </Button>
       </Modal.Footer>
     </Modal>
