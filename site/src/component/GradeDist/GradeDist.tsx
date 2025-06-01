@@ -75,8 +75,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createProfEntries = useCallback(() => {
     const professors: Set<string> = new Set();
-    const allInstructors = { value: 'All Instructors', text: 'All Instructors' };
-    const result: Entry[] = [allInstructors];
+    const result: Entry[] = [{ value: 'All', text: 'All Instructors' }];
 
     gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
@@ -129,7 +128,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .filter((entry) => {
         if (
           props.course &&
-          currentProf === 'All Instructors' &&
+          currentProf === 'All' &&
           entry.department + ' ' + entry.courseNumber === props.course.department + ' ' + props.course.courseNumber
         ) {
           return true;

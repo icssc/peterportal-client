@@ -51,10 +51,10 @@ export default class Chart extends React.Component<ChartProps> {
 
     this.props.gradeData.forEach((data) => {
       if (
-        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
-        (data.instructors.includes(this.props.professor ?? '') ||
-          data.department + ' ' + data.courseNumber === this.props.course ||
-          this.props.professor == 'All Instructors')
+        ((data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
+          data.instructors.includes(this.props.professor ?? '')) ||
+        data.department + ' ' + data.courseNumber === this.props.course ||
+        this.props.professor == 'All'
       ) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
