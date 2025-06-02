@@ -12,6 +12,12 @@ export interface UserAPExam {
   units: number;
 }
 
+export interface SelectedApReward {
+  examName: string;
+  path: string;
+  selectedIndex: number;
+}
+
 interface UncategorizedCourseEntry {
   name: string | null;
   units: number | null;
@@ -24,6 +30,7 @@ export const transferCreditsSlice = createSlice({
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as UserAPExam[],
+    selectedApRewards: [] as SelectedApReward[],
     transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as UncategorizedCourseEntry[],
   },
@@ -57,12 +64,24 @@ export const transferCreditsSlice = createSlice({
     },
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
+      state.selectedApRewards = state.selectedApRewards.filter((reward) => reward.examName !== action.payload);
     },
     updateUserExam: (state, action: PayloadAction<UserAPExam>) => {
       const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
       if (e) {
         e.score = action.payload.score;
         e.units = action.payload.units;
+      }
+    },
+    setSelectedApRewards: (state, action: PayloadAction<SelectedApReward[]>) => {
+      state.selectedApRewards = action.payload;
+    },
+    updateSelectedApReward: (state, action: PayloadAction<SelectedApReward>) => {
+      const e = state.selectedApRewards.find(
+        (exam) => exam.examName === action.payload.examName && exam.path === action.payload.path,
+      );
+      if (e) {
+        e.selectedIndex = action.payload.selectedIndex;
       }
     },
     setAllTransferredGEs: (state, action: PayloadAction<TransferredGE[]>) => {
@@ -95,6 +114,8 @@ export const {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
+  setSelectedApRewards,
+  updateSelectedApReward,
   setAllTransferredGEs,
   setTransferredGE,
   setUncategorizedCourses,

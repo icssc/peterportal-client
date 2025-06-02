@@ -3,7 +3,7 @@ import { TransferredGE } from '@peterportal/types';
 import { router, publicProcedure, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
-import { transferredApExam, transferredGe } from '../db/schema';
+import { selectedApReward, transferredApExam, transferredGe } from '../db/schema';
 import { APExam } from '@peterportal/types';
 import { and, eq, isNull } from 'drizzle-orm';
 import { transferredCourse } from '../db/schema';
@@ -13,6 +13,12 @@ interface userAPExam {
   examName: string;
   score: number;
   units: number;
+}
+
+interface selectedReward {
+  examName: string;
+  path: string;
+  selectedIndex: number;
 }
 
 const zodAPExamSchema = z.object({
@@ -76,6 +82,23 @@ const transferCreditsRouter = router({
       units: exam.units,
     })) as userAPExam[];
   }),
+  getSelectedAPRewards: userProcedure.query(async ({ ctx }): Promise<selectedReward[]> => {
+    const userId = ctx.session.userId!;
+
+    const res = await db
+      .select({
+        examName: selectedApReward.examName,
+        path: selectedApReward.path,
+        selectedIndex: selectedApReward.selectedIndex,
+      })
+      .from(selectedApReward)
+      .where(eq(selectedApReward.userId, userId));
+    return res.map((reward) => ({
+      examName: reward.examName,
+      path: reward.path,
+      selectedIndex: reward.selectedIndex,
+    })) as selectedReward[];
+  }),
   addUserAPExam: publicProcedure.input(zodAPExamSchema).mutation(async ({ input, ctx }) => {
     const { examName, score, units } = input;
     const userId = ctx.session.userId!;
@@ -99,6 +122,25 @@ const transferCreditsRouter = router({
       .set({ score: score, units: units })
       .where(eq(transferredApExam.userId, userId) && eq(transferredApExam.examName, examName));
   }),
+  addSelectedAPReward: userProcedure
+    .input(z.object({ examName: z.string(), path: z.string(), selectedIndex: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const { examName, path, selectedIndex } = input;
+      const userId = ctx.session.userId!;
+
+      await db.insert(selectedApReward).values({ userId, examName, path, selectedIndex });
+    }),
+  updateSelectedAPReward: userProcedure
+    .input(z.object({ examName: z.string(), path: z.string(), selectedIndex: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const { examName, path, selectedIndex } = input;
+      const userId = ctx.session.userId!;
+
+      await db
+        .update(selectedApReward)
+        .set({ path, selectedIndex })
+        .where(and(eq(selectedApReward.userId, userId), eq(selectedApReward.examName, examName)));
+    }),
   /** @todo add user procedure to get transferred GE credits below this comment. */
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db
