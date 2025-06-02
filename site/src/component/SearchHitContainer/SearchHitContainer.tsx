@@ -6,7 +6,7 @@ import { useAppSelector } from '../../store/hooks';
 import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
 import noResultsImg from '../../asset/no-results-crop.webp';
-import { validateCourse } from '../../helpers/planner';
+import { getMissingPrerequisites } from '../../helpers/planner';
 import { Spinner } from 'react-bootstrap';
 import { useClearedCourses } from '../../hooks/planner';
 
@@ -28,12 +28,8 @@ const SearchResults = ({
 
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
-      const requiredCourses = Array.from(
-        validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
-      );
-      return (
-        <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />
-      );
+      const requiredCourses = getMissingPrerequisites(clearedCourses, course);
+      return <CourseHitItem key={course.id} index={i} {...course} requiredCourses={requiredCourses} />;
     });
   } else {
     return (results as ProfessorGQLData[]).map((professor, i) => (
