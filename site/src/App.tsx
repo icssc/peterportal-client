@@ -21,9 +21,9 @@ import ThemeContext from './style/theme-context';
 import trpc from './trpc';
 import { Theme } from '@peterportal/types';
 import { useAppDispatch } from './store/hooks';
-import { searchAPIResults } from './helpers/util';
-import { setCoursebag } from './store/slices/coursebagSlice';
 import { useIsLoggedIn } from './hooks/isLoggedIn';
+
+import { useCoursebag } from './hooks/coursebag';
 
 function isSystemDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -88,13 +88,7 @@ export default function App() {
     }
   };
 
-  const loadCoursebag = useCallback(async () => {
-    const courseIds = isLoggedIn
-      ? await trpc.savedCourses.get.query()
-      : JSON.parse(localStorage.getItem('coursebag') ?? '[]');
-    const coursebag = await searchAPIResults('courses', courseIds);
-    dispatch(setCoursebag(Object.values(coursebag)));
-  }, [dispatch, isLoggedIn]);
+  const { loadCoursebag } = useCoursebag();
 
   useEffect(() => {
     // if logged in, load user theme from db
@@ -114,9 +108,7 @@ export default function App() {
       <ThemeContext.Provider value={{ darkMode, usingSystemTheme, setTheme }}>
         <AppHeader />
         <div className="app-body">
-          <div className="app-sidebar">
-            <SideBar></SideBar>
-          </div>
+          <SideBar />
           <div className="app-content">
             <Routes>
               <Route path="/roadmap" element={<RoadmapPage />} />
@@ -129,7 +121,7 @@ export default function App() {
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </div>
-          <div className="changelog-modal">{<ChangelogModal />}</div>
+          <ChangelogModal />
         </div>
       </ThemeContext.Provider>
     </Router>
