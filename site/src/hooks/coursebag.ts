@@ -43,7 +43,7 @@ export function useCoursebag() {
     (course: CourseGQLData) => {
       coursebagIncludes(course) ? removeCourseFromBag(course) : addCourseToBag(course);
     },
-    [addCourseToBag, coursebagIncludes, removeCourseFromBag],
+    [addCourseToBag, removeCourseFromBag, coursebagIncludes],
   );
 
   return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, coursebagIncludes, toggleBookmark };
