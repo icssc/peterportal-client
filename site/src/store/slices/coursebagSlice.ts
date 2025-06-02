@@ -1,15 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { sortCoursebag } from '../../helpers/coursebag';
 import { RootState } from '../store';
-import type { Coursebag, CourseGQLData } from '../../types/types';
+import type { CourseGQLData } from '../../types/types';
 
-const initialState: { coursebag?: Coursebag } = {};
+const initialState: { coursebag?: CourseGQLData[] } = {};
 
 export const coursebagSlice = createSlice({
   name: 'coursebag',
   initialState,
   reducers: {
-    setCoursebag(state, action: PayloadAction<Coursebag>) {
-      state.coursebag = action.payload;
+    setCoursebag(state, action: PayloadAction<CourseGQLData[]>) {
+      state.coursebag = sortCoursebag(action.payload);
     },
     addCourseToBagState: (state, action: PayloadAction<CourseGQLData>) => {
       if (!state.coursebag) return;

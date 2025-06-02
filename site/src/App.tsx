@@ -21,6 +21,7 @@ import ThemeContext from './style/theme-context';
 import trpc from './trpc';
 import { Theme } from '@peterportal/types';
 import { useAppDispatch } from './store/hooks';
+import { sortCoursebag } from './helpers/coursebag';
 import { searchAPIResults } from './helpers/util';
 import { setCoursebag } from './store/slices/coursebagSlice';
 import { useIsLoggedIn } from './hooks/isLoggedIn';
@@ -93,9 +94,7 @@ export default function App() {
       ? await trpc.savedCourses.get.query()
       : JSON.parse(localStorage.getItem('coursebag') ?? '[]');
     const coursebagData = await searchAPIResults('courses', courseIds);
-    const coursebag = Object.values(coursebagData).sort(
-      (a, b) => a.department.localeCompare(b.department) || a.courseNumeric - b.courseNumeric,
-    );
+    const coursebag = sortCoursebag(Object.values(coursebagData));
     dispatch(setCoursebag(coursebag));
   }, [dispatch, isLoggedIn]);
 
