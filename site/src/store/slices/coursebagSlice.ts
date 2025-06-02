@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { sortCoursebag } from '../../helpers/coursebag';
+import { sortCoursebag, getCoursebagSortedIndex } from '../../helpers/coursebag';
 import { RootState } from '../store';
 import type { CourseGQLData } from '../../types/types';
 
@@ -14,11 +14,7 @@ export const coursebagSlice = createSlice({
     },
     addCourseToBagState: (state, action: PayloadAction<CourseGQLData>) => {
       if (!state.coursebag) return;
-      const courseIndex = state.coursebag.findIndex((course) =>
-        course.department !== action.payload.department
-          ? course.department > action.payload.department
-          : course.courseNumeric > action.payload.courseNumeric,
-      );
+      const courseIndex = getCoursebagSortedIndex(state.coursebag, action.payload);
       if (courseIndex === -1) state.coursebag.push(action.payload);
       else state.coursebag.splice(courseIndex, 0, action.payload);
     },
