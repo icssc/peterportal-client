@@ -9,7 +9,12 @@ interface UnreadDotProps {
 const UnreadDot: React.FC<UnreadDotProps> = ({ show, displayFullNewText }) => {
   if (!show) return null;
 
-  return <div className={`unread-${displayFullNewText ? 'pill' : 'circle'}`}>{displayFullNewText ? 'NEW' : null}</div>;
+  return (
+    <>
+      {!displayFullNewText && <div className="spacing"></div>}
+      <div className={`unread-${displayFullNewText ? 'pill' : 'circle'}`}>{displayFullNewText ? 'NEW' : null}</div>
+    </>
+  );
 };
 
 export default UnreadDot;

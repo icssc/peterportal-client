@@ -1,7 +1,7 @@
 .unread-pill,
 .unread-circle {
   position: absolute;
-  background-color: var(--red);
+  background-color: var(--red-primary);
   border-radius: 20px;
   font-size: 10px;
   color: white;
@@ -19,8 +19,12 @@
 }
 
 .unread-circle {
-  right: -3px;
-  top: 2px;
+  right: 3px;
+  top: 3px;
   width: 10px;
   height: 10px;
+}
+
+.spacing {
+  width: 6px;
 }
