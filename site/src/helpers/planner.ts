@@ -1,7 +1,6 @@
 import {
   LegacyRoadmap,
-  Prerequisite,
-  PrerequisiteTree,
+  PrerequisiteNode,
   QuarterName,
   quarters,
   SavedPlannerData,
@@ -12,6 +11,8 @@ import {
   TransferredAPExam,
   TransferredCourse,
   TransferredUncategorized,
+  Prerequisite,
+  PrerequisiteTree,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -259,8 +260,6 @@ function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
     quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
   }));
 }
-
-type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
 export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData) => {
   // store courses that have been taken
