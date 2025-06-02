@@ -9,12 +9,13 @@ import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
 import { useCoursebag } from '../../hooks/coursebag';
+interface CourseHitItemProps extends CourseGQLData {}
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-const CourseHitItem: FC<CourseGQLData> = (props) => {
+const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
@@ -74,9 +75,16 @@ const CourseHitItem: FC<CourseGQLData> = (props) => {
             ))}
           </div>
           <div>
-            <IconButton onClick={(e) => (isInBag ? removeFromBag(e) : onAddToBag(e))} size="small">
-              {isInBag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-            </IconButton>
+            {onAddToBag && !isInBag && (
+              <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
+                <BookmarkBorderIcon />
+              </IconButton>
+            )}
+            {isInBag && (
+              <IconButton onClick={(e) => removeFromBag(e)} size={'small'}>
+                <BookmarkIcon />
+              </IconButton>
+            )}
           </div>
         </div>
       </div>
