@@ -105,9 +105,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
   }
 };
 
-interface PrereqProps extends CourseGQLData {}
-
-const PrereqTree: FC<PrereqProps> = (props) => {
+const PrereqTree: FC<CourseGQLData> = (props) => {
   const hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
   const hasDependents = Object.keys(props.dependents).length !== 0;
 

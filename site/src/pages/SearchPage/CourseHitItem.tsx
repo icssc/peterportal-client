@@ -9,22 +9,19 @@ import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
 import { useCoursebag } from '../../hooks/coursebag';
-interface CourseHitItemProps extends CourseGQLData {}
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-const CourseHitItem: FC<CourseHitItemProps> = (props) => {
+const CourseHitItem: FC<CourseGQLData> = (props) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
-  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
-  const isInBag = coursebag.some((course) => course.id === props.id);
-
-  // data to be displayed in pills
-  const pillData = getCourseTags(props);
+  const { addCourseToBag, removeCourseFromBag, coursebagIncludes } = useCoursebag();
+  const isInBag = coursebagIncludes(props);
+  const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
     // set the popup course
@@ -45,9 +42,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
 
   const onAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!props) return;
-    if (props.id === undefined) return;
-    if (coursebag.some((course) => course.id === props.id)) return;
+    if (!props || props.id === undefined || coursebagIncludes(props)) return;
     addCourseToBag(props);
   };
 
@@ -79,16 +74,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
             ))}
           </div>
           <div>
-            {onAddToBag && !isInBag && (
-              <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
-                <BookmarkBorderIcon />
-              </IconButton>
-            )}
-            {isInBag && (
-              <IconButton onClick={(e) => removeFromBag(e)} size={'small'}>
-                <BookmarkIcon />
-              </IconButton>
-            )}
+            <IconButton onClick={(e) => (isInBag ? removeFromBag(e) : onAddToBag(e))} size="small">
+              {isInBag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            </IconButton>
           </div>
         </div>
       </div>

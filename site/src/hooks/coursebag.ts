@@ -11,9 +11,8 @@ export function useCoursebag() {
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
-    if (coursebag !== undefined) {
-      localStorage.setItem('coursebag', JSON.stringify(coursebag.map((course) => course.id)));
-    }
+    if (!coursebag) return;
+    localStorage.setItem('coursebag', JSON.stringify(coursebag.map((course) => course.id)));
   }, [coursebag]);
 
   const addCourseToBag = useCallback(
@@ -32,17 +31,20 @@ export function useCoursebag() {
     [dispatch, isLoggedIn],
   );
 
-  const toggleBookmark = useCallback(
-    (course: CourseGQLData) => {
-      const isBookmarked = coursebag!.some((c) => c.id === course.id);
-      if (isBookmarked) {
-        removeCourseFromBag(course);
-      } else {
-        addCourseToBag(course);
-      }
+  const coursebagIncludes = useCallback(
+    (course: CourseGQLData): boolean => {
+      if (!coursebag) return false;
+      return coursebag.some((c) => c.id === course.id);
     },
-    [addCourseToBag, coursebag, removeCourseFromBag],
+    [coursebag],
   );
 
-  return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, toggleBookmark };
+  const toggleBookmark = useCallback(
+    (course: CourseGQLData) => {
+      coursebagIncludes(course) ? removeCourseFromBag(course) : addCourseToBag(course);
+    },
+    [addCourseToBag, coursebagIncludes, removeCourseFromBag],
+  );
+
+  return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, coursebagIncludes, toggleBookmark };
 }

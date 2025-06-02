@@ -7,9 +7,7 @@ import { setProfessor } from '../../store/slices/popupSlice';
 import { ProfessorGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
 
-interface ProfessorHitItemProps extends ProfessorGQLData {}
-
-const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
+const ProfessorHitItem: FC<ProfessorGQLData> = (props: ProfessorGQLData) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isMobile = useIsMobile();

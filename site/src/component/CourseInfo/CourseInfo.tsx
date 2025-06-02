@@ -14,9 +14,8 @@ interface CourseProp {
 }
 
 export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
-  const { coursebag: bookmarks, toggleBookmark } = useCoursebag();
-  const isBookmarked = bookmarks.some((c) => c.id === course.id);
-
+  const { coursebagIncludes, toggleBookmark } = useCoursebag();
+  const isBookmarked = coursebagIncludes(course);
   return (
     <button className="unstyled" onClick={() => toggleBookmark(course)}>
       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
