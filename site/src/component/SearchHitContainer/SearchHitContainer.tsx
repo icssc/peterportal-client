@@ -3,7 +3,7 @@ import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
 
-import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
 import noResultsImg from '../../asset/no-results-crop.webp';
 import { getMissingPrerequisites } from '../../helpers/planner';
@@ -23,7 +23,7 @@ const SearchResults = ({
   results,
   CourseHitItem,
   ProfessorHitItem,
-}: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
+}: Required<SearchHitContainerProps> & { results: SearchResultData }) => {
   const clearedCourses = useClearedCourses();
 
   if (index === 'courses') {
