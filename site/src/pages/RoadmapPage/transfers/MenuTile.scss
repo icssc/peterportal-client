@@ -18,7 +18,7 @@
     }
   }
   .tile-info p {
-    margin: 0;
+    margin-block: 0;
   }
 
   .name {
@@ -41,23 +41,29 @@
     align-items: center;
     font-size: 13px;
   }
+
+  button.MuiIconButton-root {
+    color: inherit;
+    width: 24px;
+    height: 24px;
+    margin: -8px -4px;
+    .MuiSvgIcon-root {
+      font-size: 18px;
+    }
+  }
   button.delete-btn {
-    color: red;
-    @include globals.clickable();
+    margin-inline: -4px;
   }
 
   form {
     display: contents;
-  }
-  form button {
-    // specific to the check mark being undersized
-    transform: scale(1.2);
   }
   input {
     max-width: 44px;
     text-align: center;
     padding: 2px 4px;
     height: 20px;
+    margin-right: 2px;
   }
 
   // Hide the number adjustment arrows on number inputs for spacing reasons
@@ -78,6 +84,7 @@
 
   .units-display {
     white-space: nowrap;
+    margin-right: 2px;
   }
 
   p:last-child {

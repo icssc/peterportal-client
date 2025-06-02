@@ -1,6 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -20,6 +19,9 @@ import './Quarter.scss';
 import Course from './Course';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../helpers/sortable';
+
+import AddIcon from '@mui/icons-material/Add';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 interface QuarterProps {
   year: number;
@@ -154,7 +156,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         >
           {({ ref, ...triggerHandler }) => (
             <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
-              <ThreeDots />
+              <MoreHorizIcon />
             </button>
           )}
         </OverlayTrigger>
@@ -205,7 +207,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
               dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
             }}
           >
-            <Plus className="plus-icon" />
+            <AddIcon className="plus-icon" />
             <span>Add Course</span>
           </Button>
         </>

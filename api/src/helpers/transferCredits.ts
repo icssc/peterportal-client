@@ -1,11 +1,13 @@
-/** Server helpers for Transfer Credits - copied directly from migration script */
+/**
+Server helpers for Transfer Credits - based on the transfer data migration script
+The script itself is not modified so that it can be self-contained
+*/
 
-import { CourseAAPIResponse, TransferData } from '@peterportal/types';
+import { CourseAAPIResponse, ExtendedTransferData } from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from './headers';
 
 const AP_CALC_AB_SUBSCORE = 'AP Calculus BC, Calculus AB subscore';
 const AP_CALC_AB = 'AP Calculus AB';
-// Copied from Transfer Data Conversion Script so that it can be self-contained
 
 type ApExamBasicInfo = {
   fullName: string; // E.g. "AP Microeconomics"
@@ -17,10 +19,15 @@ type TransferredMiscRow = {
   units: number | null;
 };
 
-type TransferredMiscSelectedRow = {
+/**
+  To deal with duplicates, uncategorized transfers with the same name
+  are grouped together and their count is stored
+*/
+type GroupedUncategorizedTransfer = {
   courseName: string;
   totalUnits: number;
   count: number;
+  score?: number;
 };
 
 type TransferredApExamRow = {
@@ -39,7 +46,7 @@ const removeAllSpaces = (transferName: string) => {
 };
 
 /** Get all AP exams */
-const getAPIApExams = async (): Promise<ApExamBasicInfo[]> => {
+export const getAPIApExams = async (): Promise<ApExamBasicInfo[]> => {
   const response = await fetch(`${process.env.PUBLIC_API_URL}apExams`, {
     headers: ANTEATER_API_REQUEST_HEADERS,
   })
@@ -124,7 +131,7 @@ const apMatchQuality = (normalizedName: string, substitutedName: string, ap: ApE
 };
 
 /** Try to find the best match for a transfer name out of all the AP exams; undefined if no match */
-const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
+export const tryMatchAp = (transferName: string, allAps: ApExamBasicInfo[]): ApExamBasicInfo | undefined => {
   const normalizedName = normalizeTransferName(transferName);
   // Some hardcoded exceptions (specifically for matching the full name rather than cat name, order matters)
   const substitutedName = apSubstitutions(normalizedName, [
@@ -177,27 +184,23 @@ const tryMatchCourse = (transferName: string, validCourses: Record<string, strin
 /** Handle some special cases for AP Calc AB, which could have a subscore,
   returning whether it's okay to proceed to add "AP Calculus AB" */
 const handleApCalcAB = (
-  transfer: TransferredMiscSelectedRow,
+  transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
-  hasSubscore: boolean,
+  hasABSubscore: boolean,
 ): boolean => {
-  if (hasSubscore) {
+  if (hasABSubscore) {
     // Okay to proceed normally because we know the user has an explicit AB subscore
     return true;
   } else if (transfer.count == 1) {
     // Not okay because we don't know whether this is AB or the subscore
-    // console.log(
-    //   `x FAILED:  x${transfer.count}    '${transferName}'      has ambiguity: AP Calculus AB vs the BC Subscore`,
-    // );
     return false;
   } else {
     // The user has AP Calculus AB 2+ times and no AB subscore,
     // so we assume one of them is the BC subscore and the other isn't
     // Insert the BC subscore here, then proceed normally so that AB is also inserted
-    // console.log(`+ MATCHED:       '${transferName}' with the AP Calc AB Subscore on the BC test AS WELL AS:`);
     toInsertAp.push({
       examName: AP_CALC_AB_SUBSCORE,
-      score: null,
+      score: transfer.score ?? null,
       units: 0, // The units will be counted for the actual AB later, and the subscore will remain 0 units
     });
     return true;
@@ -205,71 +208,55 @@ const handleApCalcAB = (
 };
 
 /** Handle organizing an AP exam, returning whether it was successfully categorized */
-export const organizeApExam = (
-  transfer: TransferredMiscSelectedRow,
-  transferName: string,
+const organizeApExam = (
+  transfer: GroupedUncategorizedTransfer,
   toInsertAp: TransferredApExamRow[],
-  hasSubscore: boolean,
+  hasABSubscore: boolean,
   allAps: ApExamBasicInfo[],
 ): boolean => {
-  const bestMatch = tryMatchAp(transferName, allAps);
-  if (!bestMatch) {
-    // Could not match; leave it here
-    // console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any AP`);
-    return false;
-  }
+  const bestMatch = tryMatchAp(transfer.courseName, allAps);
+  if (!bestMatch) return false;
 
   // Handle special case for subscore
   if (bestMatch.fullName == AP_CALC_AB) {
-    const proceedToAdd = handleApCalcAB(transfer, toInsertAp, hasSubscore);
+    const proceedToAdd = handleApCalcAB(transfer, toInsertAp, hasABSubscore);
     if (!proceedToAdd) return false;
   }
 
-  // Move this transfer item to the APs table with the name of the best match
+  // Categorize this transfer item as an AP with the name of the best match
   toInsertAp.push({
     examName: bestMatch.fullName,
-    score: null,
+    score: transfer.score ?? null,
     units: transfer.totalUnits,
   });
-  // console.log(
-  //   `  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch.fullName}' ('${bestMatch.catalogueName}')`,
-  // );
   return true;
 };
 
 /** Handle organizing a course, returning whether it was successfully categorized */
 const organizeCourse = async (
-  transfer: TransferredMiscSelectedRow,
-  transferName: string,
+  transfer: GroupedUncategorizedTransfer,
   toInsertCourse: TransferredCourseRow[],
   validCourses: Record<string, string>,
 ): Promise<boolean> => {
-  const bestMatch = tryMatchCourse(transferName, validCourses);
-  if (!bestMatch) {
-    // Could not match; leave it here
-    // console.log(`x FAILED:  x${transfer.count}    '${transferName}'      could not be matched with any course`);
-    return false;
-  }
+  const bestMatch = tryMatchCourse(transfer.courseName, validCourses);
+  if (!bestMatch) return false;
 
-  // Move this transfer item to the transferred courses table with the name of the best match
+  // Categorize this transfer item as a course
   toInsertCourse.push({
     courseName: bestMatch,
     units: transfer.totalUnits,
   });
-  // console.log(`  MATCHED: x${transfer.count}    '${transferName}' with: '${bestMatch}'`);
   return true;
 };
 
 /** Handle organizing a misc transfer, only to deal with duplicate rows */
-const organizeMisc = (transfer: TransferredMiscSelectedRow, toInsertMisc: TransferredMiscRow[]) => {
+const organizeMisc = (transfer: GroupedUncategorizedTransfer, toInsertMisc: TransferredMiscRow[]) => {
   if (!transfer.courseName) return;
-  // Delete this then re-add only one copy
   toInsertMisc.push({ courseName: transfer.courseName, units: transfer.totalUnits });
-  // console.log(`- COMBINED:      '${transferName}' (above): duplicates will be combined into one entry`);
 };
 
 /**
-  Merge APs that are duplicated for individual users before inserting into the db
+  Merge any resulting duplicate APs
   Produced by different original transfers that have been resolved into the same result
 */
 const mergeDuplicateApResults = (toInsertAp: TransferredApExamRow[]) => {
@@ -297,7 +284,7 @@ const mergeDuplicateApResults = (toInsertAp: TransferredApExamRow[]) => {
 };
 
 /**
-  Merge courses that are duplicated for individual users before inserting into the db
+  Merge any resulting duplicate courses
   Produced by different original transfers that have been resolved into the same result
   E.g. if a user has "MATH 2A" and "MATH2A " -> there will be two instances of "MATH 2A"
 */
@@ -323,11 +310,9 @@ const mergeDuplicateCourseResults = (toInsertCourse: TransferredCourseRow[]) => 
   return mergedToInsertCourse;
 };
 
-/** Organize the data in the database */
-export const organizeLegacyTransfers = async (rows: TransferData[]) => {
-  const allAps = await getAPIApExams();
-  // console.log('DEBUG: ALL APS: ');
-  const lookup: Record<string, Omit<TransferredMiscSelectedRow, 'courseName'>> = {};
+/** Combine the units of the unique transfers out of given transfer data */
+const groupTransfersByName = (rows: ExtendedTransferData[]) => {
+  const lookup: Record<string, Omit<GroupedUncategorizedTransfer, 'courseName'>> = {};
 
   rows.forEach((row) => {
     const existing = lookup[row.name];
@@ -335,71 +320,67 @@ export const organizeLegacyTransfers = async (rows: TransferData[]) => {
       existing.count++;
       existing.totalUnits += row.units ?? 0;
     } else {
-      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1 };
+      lookup[row.name] = { totalUnits: row.units ?? 0, count: 1, score: row.score ?? undefined };
     }
   });
-
-  const uniqueRows: TransferredMiscSelectedRow[] = Object.entries(lookup).map(([courseName, data]) => ({
+  const uniqueRows: GroupedUncategorizedTransfer[] = Object.entries(lookup).map(([courseName, data]) => ({
     courseName,
     ...data,
   }));
+  return uniqueRows;
+};
 
-  // for (const ap of allAps) {
-  //   console.log(`  - '${ap.fullName}' (cat: '${ap.catalogueName}')`);
-  // }
-  // Obtain all relevant transfers (invalid ones that cannot be categorized are filtered out here)
-  const transfers: TransferredMiscSelectedRow[] = uniqueRows
-    //.limit(40) // For testing, only look at a few entries
-    .filter((transfer) => transfer.courseName != null && transfer.count != 0) as TransferredMiscSelectedRow[];
+/** Filter out null/nonexistent transfers and trim spaces */
+const cleanUpGroupedTransfers = (rows: GroupedUncategorizedTransfer[]) => {
+  return rows
+    .filter((transfer) => transfer.courseName != null && transfer.count != 0)
+    .map((transfer) => ({ ...transfer, courseName: transfer.courseName.trim() })) as GroupedUncategorizedTransfer[];
+};
 
-  // Get all the users who explicitly have an AB subscore
-  let hasSubscore = false;
+/** Check whether any of the transfers is explicitly a Calc AB subscore */
+const checkABSubscore = (transfers: GroupedUncategorizedTransfer[], allAps: ApExamBasicInfo[]) => {
   for (const transfer of transfers) {
     const bestMatch = tryMatchAp(transfer.courseName, allAps);
-    if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) hasSubscore = true;
+    if (bestMatch && bestMatch.fullName == AP_CALC_AB_SUBSCORE) return true;
   }
+  return false;
+};
 
-  // Validate all the relevant courses from the API beforehand
+/** Create a list of the valid transfer course names from the API */
+const getValidCourseNames = async (transfers: GroupedUncategorizedTransfer[]) => {
   const coursesToValidate = new Set<string>();
   for (const transfer of transfers) {
-    const transferName = transfer.courseName.trim();
-    if (transferName.startsWith('AP ')) {
+    if (transfer.courseName.startsWith('AP ')) {
       continue;
     }
-    coursesToValidate.add(removeAllSpaces(transferName));
+    coursesToValidate.add(removeAllSpaces(transfer.courseName));
   }
-  // console.log('Validating courses from the API (batch)');
-  const validCourses = await validateCoursesAPI(coursesToValidate);
-  // console.log(`Out of ${coursesToValidate.size} unique courses to validate, ${validCourses.size} are valid`);
+  return await validateCoursesAPI(coursesToValidate);
+};
 
-  // Build several large queries
-  // const toDelete: (SQL<unknown> | undefined)[] = [sql`FALSE`]; // Start with false to ensure nothing is deleted by default
+/** Organize a list of legacy transfers (optionally with scores) into courses, APs, and other */
+export const organizeLegacyTransfers = async (rows: ExtendedTransferData[]) => {
+  // Obtain necessary information and preprocess data
+  const allAps = await getAPIApExams();
+  const uniqueRows = groupTransfersByName(rows);
+  const transfers = cleanUpGroupedTransfers(uniqueRows);
+  const hasABSubscore = checkABSubscore(transfers, allAps);
+  const validCourses = await getValidCourseNames(transfers);
+
+  // Build several large arrays to categorize the transfers
   const toInsertAp: TransferredApExamRow[] = [];
   const toInsertCourse: TransferredCourseRow[] = [];
   const toInsertMisc: TransferredMiscRow[] = [];
-  // const toReinsertMisc: TransferredMiscRow[] = [];
   for (const transfer of transfers) {
-    const transferName = transfer.courseName.trim();
-    if (transferName.startsWith('AP ')) {
-      const reorganized = organizeApExam(
-        transfer as TransferredMiscSelectedRow,
-        transferName,
-        toInsertAp,
-        hasSubscore,
-        allAps,
-      );
+    if (transfer.courseName.startsWith('AP ')) {
+      const reorganized = organizeApExam(transfer, toInsertAp, hasABSubscore, allAps);
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
+        organizeMisc(transfer, toInsertMisc);
       }
     } else {
-      const reorganized = await organizeCourse(
-        transfer as TransferredMiscSelectedRow,
-        transferName,
-        toInsertCourse,
-        validCourses,
-      );
+      const reorganized = await organizeCourse(transfer, toInsertCourse, validCourses);
       if (!reorganized) {
-        organizeMisc(transfer as TransferredMiscSelectedRow, toInsertMisc);
+        organizeMisc(transfer, toInsertMisc);
       }
     }
   }

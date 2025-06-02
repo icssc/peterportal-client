@@ -2,11 +2,11 @@ import './GESection.scss';
 import React, { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-import { GEName, TransferredGE } from '@peterportal/types';
+import { GEName, TransferredGE, ALL_GE_NAMES } from '@peterportal/types';
 import trpc from '../../../trpc';
 import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { ALL_GE_NAMES, GE_TITLE_MAP } from '../../../helpers/courseRequirements';
+import { GE_TITLE_MAP } from '../../../helpers/courseRequirements';
 import { Spinner } from 'react-bootstrap';
 
 interface GEInputProps {
@@ -66,7 +66,7 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
       units: newUnitCount,
     };
     dispatch(setTransferredGE(updatedGE));
-    trpc.transferCredits.setTransferredGE.mutate({ GE: updatedGE });
+    trpc.transferCredits.setTransferredGE.mutate(updatedGE);
   };
 
   const updateNumberOfCourses = (newValue: number) => {

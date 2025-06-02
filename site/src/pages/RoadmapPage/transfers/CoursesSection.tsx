@@ -5,11 +5,10 @@ import trpc from '../../../trpc';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import ThemeContext from '../../../style/theme-context';
 import AsyncSelect from 'react-select/async';
-import { CourseAAPIResponse } from '@peterportal/types';
+import { TransferredCourse, CourseAAPIResponse } from '@peterportal/types';
 import {
   addTransferredCourse,
   removeTransferredCourse,
-  TransferredCourse,
   updateTransferredCourse,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -107,6 +106,7 @@ const CoursesSection: FC = () => {
         onChange={(option) => addCourse(option!.value)}
         noOptionsMessage={({ inputValue }) => (inputValue ? 'No courses found' : null)}
         value={null}
+        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
       />
     </MenuSection>
   );
