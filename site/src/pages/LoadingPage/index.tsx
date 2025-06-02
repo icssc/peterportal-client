@@ -1,10 +1,11 @@
 import { FC } from 'react';
+import { Spinner } from 'react-bootstrap';
 
 const LoadingPage: FC = () => {
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <h1>Loading data...</h1>
+      <div className="loader-container">
+        <Spinner animation="border" />
       </div>
     </div>
   );
