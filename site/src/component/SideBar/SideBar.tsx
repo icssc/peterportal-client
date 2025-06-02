@@ -115,7 +115,7 @@ const SideBar = () => {
   );
 
   return (
-    <>
+    <div>
       <div className="sidebar mini">{links}</div>
       <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
         <UIOverlay zIndex={399} onClick={closeSidebar}></UIOverlay>
@@ -135,7 +135,7 @@ const SideBar = () => {
           <Footer />
         </div>
       </CSSTransition>
-    </>
+    </div>
   );
 };
 
