@@ -1,9 +1,14 @@
 .review-star-rating {
-  display: flex;
-  gap: 0.5rem;
-  cursor: pointer;
+  .MuiSvgIcon-root {
+    font-size: 44px;
+    cursor: pointer;
+  }
 
-  .filled-stars {
+  .filled-star {
     color: var(--blue-primary);
+  }
+
+  .tentative {
+    opacity: 0.6;
   }
 }

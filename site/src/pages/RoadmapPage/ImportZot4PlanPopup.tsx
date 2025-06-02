@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { CloudArrowDown, ExclamationTriangle } from 'react-bootstrap-icons';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -12,6 +11,9 @@ import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
@@ -131,7 +133,7 @@ const ImportZot4PlanPopup: FC = () => {
               />
               {scheduleName.length > 0 && scheduleName.length < 8 && (
                 <span className="import-schedule-warning">
-                  <ExclamationTriangle className="import-schedule-warning-icon" />
+                  <WarningAmberIcon className="import-schedule-icon" />
                   No Zot4Plan schedule name contains less than 8 characters
                 </span>
               )}
@@ -153,8 +155,8 @@ const ImportZot4PlanPopup: FC = () => {
           </Button>
         </Modal.Body>
       </Modal>
-      <Button variant={darkMode ? 'dar k' : 'light'} onClick={() => setShowModal(true)}>
-        <CloudArrowDown className="import-schedule-icon" width="20" height="20" />
+      <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
+        <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>
     </>

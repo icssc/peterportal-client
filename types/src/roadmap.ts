@@ -32,6 +32,17 @@ export const transferData = z.object({
 });
 export type TransferData = z.infer<typeof transferData>;
 
+/*
+  An extended version of TransferData
+  that optionally allows for a score (for AP exams from Zot4Plan)
+*/
+export const extendedTransferData = z.object({
+  name: z.string(),
+  units: z.number().nullish(),
+  score: z.number().nullish(),
+});
+export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
+
 // Bundle planner and transfer data in one object
 export const savedRoadmap = z.object({
   timestamp: z.string().optional(),

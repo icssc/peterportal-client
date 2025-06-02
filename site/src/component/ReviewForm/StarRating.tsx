@@ -1,6 +1,8 @@
 import { useState, KeyboardEvent } from 'react';
-import { Star, StarFill } from 'react-bootstrap-icons';
 import './StarRating.scss';
+
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: number) => void }) => {
   const [hovered, setHovered] = useState<number>(0);
@@ -30,11 +32,12 @@ const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: numb
           role="radio"
           aria-checked={rating === val}
           aria-label={`${val} star${val !== 1 ? 's' : ''}`}
+          title={(hovered === rating ? 'Your current rating is' : 'Change rating to') + ` ${val} stars`}
         >
           {val <= (hovered || rating) ? (
-            <StarFill size={32} className="filled-stars" style={{ opacity: hovered ? 0.8 : 1 }} />
+            <StarIcon className={`filled-star ${hovered && hovered !== rating ? 'tentative' : ''}`} />
           ) : (
-            <Star size={32} />
+            <StarBorderIcon />
           )}
         </span>
       ))}
