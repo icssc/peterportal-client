@@ -55,3 +55,10 @@ export function useCoursebag() {
 
   return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, toggleBookmark, loadCoursebag };
 }
+
+export function useLoadCoursebag() {
+  const { loadCoursebag } = useCoursebag();
+  useEffect(() => {
+    loadCoursebag();
+  }, [loadCoursebag]);
+}

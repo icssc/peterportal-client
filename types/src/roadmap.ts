@@ -26,11 +26,11 @@ export const savedPlannerData = z.object({
 export type SavedPlannerData = z.infer<typeof savedPlannerData>;
 
 // Specify name of transfer course and how many units its worth
-export const transferData = z.object({
+export const legacyTransfer = z.object({
   name: z.string(),
   units: z.number().nullish(),
 });
-export type TransferData = z.infer<typeof transferData>;
+export type LegacyTransfer = z.infer<typeof legacyTransfer>;
 
 /*
   An extended version of TransferData
@@ -47,13 +47,13 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 export const savedRoadmap = z.object({
   timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
-  transfers: z.array(transferData),
+  transfers: z.array(legacyTransfer),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
 
 export interface LegacyRoadmap {
   planner: SavedPlannerYearData[];
-  transfers: TransferData[];
+  transfers: LegacyTransfer[];
   timestamp?: string;
 }
