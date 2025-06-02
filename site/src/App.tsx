@@ -18,6 +18,7 @@ import SideBar from './component/SideBar/SideBar';
 
 import trpc from './trpc';
 import { useAppDispatch } from './store/hooks';
+import { sortCoursebag } from './helpers/coursebag';
 import { searchAPIResults } from './helpers/util';
 import { setCoursebag } from './store/slices/coursebagSlice';
 import { useIsLoggedIn } from './hooks/isLoggedIn';
@@ -31,8 +32,9 @@ export default function App() {
     const courseIds = isLoggedIn
       ? await trpc.savedCourses.get.query()
       : JSON.parse(localStorage.getItem('coursebag') ?? '[]');
-    const coursebag = await searchAPIResults('courses', courseIds);
-    dispatch(setCoursebag(Object.values(coursebag)));
+    const coursebagData = await searchAPIResults('courses', courseIds);
+    const coursebag = sortCoursebag(Object.values(coursebagData));
+    dispatch(setCoursebag(coursebag));
   }, [dispatch, isLoggedIn]);
 
   useEffect(() => {
