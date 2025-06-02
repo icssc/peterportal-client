@@ -13,9 +13,13 @@ export const coursebagSlice = createSlice({
     },
     addCourseToBagState: (state, action: PayloadAction<CourseGQLData>) => {
       if (!state.coursebag) return;
-      const courseIndex = state.coursebag.findIndex((c) => c.id > action.payload.id);
-      const spliceIndex = courseIndex === -1 ? state.coursebag.length : courseIndex;
-      state.coursebag.splice(spliceIndex, 0, action.payload);
+      const courseIndex = state.coursebag.findIndex((course) =>
+        course.department !== action.payload.department
+          ? course.department > action.payload.department
+          : course.courseNumeric > action.payload.courseNumeric,
+      );
+      if (courseIndex === -1) state.coursebag.push(action.payload);
+      else state.coursebag.splice(courseIndex, 0, action.payload);
     },
     removeCourseFromBagState: (state, action: PayloadAction<CourseGQLData>) => {
       state.coursebag = state.coursebag?.filter((course) => course.id !== action.payload.id);

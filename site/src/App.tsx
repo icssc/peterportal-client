@@ -92,8 +92,11 @@ export default function App() {
     const courseIds = isLoggedIn
       ? await trpc.savedCourses.get.query()
       : JSON.parse(localStorage.getItem('coursebag') ?? '[]');
-    const coursebag = await searchAPIResults('courses', courseIds);
-    dispatch(setCoursebag(Object.values(coursebag)));
+    const coursebagData = await searchAPIResults('courses', courseIds);
+    const coursebag = Object.values(coursebagData).sort(
+      (a, b) => a.department.localeCompare(b.department) || a.courseNumeric - b.courseNumeric,
+    );
+    dispatch(setCoursebag(coursebag));
   }, [dispatch, isLoggedIn]);
 
   useEffect(() => {
