@@ -39,12 +39,18 @@ export function useCoursebag() {
     [coursebag],
   );
 
-  const toggleBookmark = useCallback(
+  const toggleCourseInCoursebag = useCallback(
     (course: CourseGQLData) => {
       coursebagIncludes(course) ? removeCourseFromBag(course) : addCourseToBag(course);
     },
     [addCourseToBag, removeCourseFromBag, coursebagIncludes],
   );
 
-  return { coursebag: coursebag ?? [], addCourseToBag, removeCourseFromBag, coursebagIncludes, toggleBookmark };
+  return {
+    coursebag: coursebag ?? [],
+    addCourseToBag,
+    removeCourseFromBag,
+    coursebagIncludes,
+    toggleCourseInCoursebag,
+  };
 }

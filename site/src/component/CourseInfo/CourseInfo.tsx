@@ -13,12 +13,12 @@ interface CourseProp {
   course: CourseGQLData;
 }
 
-export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
-  const { coursebagIncludes, toggleBookmark } = useCoursebag();
-  const isBookmarked = coursebagIncludes(course);
+export const CoursebagButton: FC<CourseProp> = ({ course }) => {
+  const { coursebagIncludes, toggleCourseInCoursebag } = useCoursebag();
+  const courseInCoursebag = coursebagIncludes(course);
   return (
-    <button className="unstyled" onClick={() => toggleBookmark(course)}>
-      {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+    <button className="unstyled" onClick={() => toggleCourseInCoursebag(course)}>
+      {courseInCoursebag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </button>
   );
 };

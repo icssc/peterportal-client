@@ -7,7 +7,7 @@ import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
 import { pluralize } from '../../helpers/util';
 import {
-  CourseBookmarkButton,
+  CoursebagButton,
   CourseDescription,
   IncompletePrerequisiteText,
   PrerequisiteText,
@@ -68,7 +68,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           <span className="unit-count">
             ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
           </span>
-          <CourseBookmarkButton course={activeCourse} />
+          <CoursebagButton course={activeCourse} />
           <div className="spacer"></div>
           <button onClick={closePopup} className="close-button unstyled">
             <CloseIcon />
