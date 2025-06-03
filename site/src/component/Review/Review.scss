@@ -63,6 +63,15 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
+    height: 24px;
+  }
+
+  .edit-buttons {
+    display: flex;
+    flex-direction: row;
+    float: right;
+    gap: 4px;
+    margin-right: -8px;
   }
 }
 
@@ -75,12 +84,6 @@
     color: var(--text);
   }
   word-break: break-word;
-}
-.edit-buttons {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  gap: 8px;
 }
 
 // content of review
