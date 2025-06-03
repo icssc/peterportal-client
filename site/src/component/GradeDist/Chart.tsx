@@ -2,10 +2,9 @@ import React from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
-import { type Theme } from '@nivo/core';
 import { GradesRaw } from '@peterportal/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -18,23 +17,6 @@ export default class Chart extends React.Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
-
-  getTheme = (darkMode: boolean): Theme => {
-    return {
-      axis: {
-        ticks: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-        legend: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-      },
-    };
-  };
 
   /*
    * Create an array of objects to feed into the chart.
@@ -70,43 +52,43 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'A',
         label: 'A',
         A: gradeACount,
-        color: GradeColors.A,
+        color: getCssVariable('--gradedist-a'),
       },
       {
         id: 'B',
         label: 'B',
         B: gradeBCount,
-        color: GradeColors.B,
+        color: getCssVariable('--gradedist-b'),
       },
       {
         id: 'C',
         label: 'C',
         C: gradeCCount,
-        color: GradeColors.C,
+        color: getCssVariable('--gradedist-c'),
       },
       {
         id: 'D',
         label: 'D',
         D: gradeDCount,
-        color: GradeColors.D,
+        color: getCssVariable('--gradedist-d'),
       },
       {
         id: 'F',
         label: 'F',
         F: gradeFCount,
-        color: GradeColors.F,
+        color: getCssVariable('--gradedist-f'),
       },
       {
         id: 'P',
         label: 'P',
         P: gradePCount,
-        color: GradeColors.P,
+        color: getCssVariable('--gradedist-p'),
       },
       {
         id: 'NP',
         label: 'NP',
         NP: gradeNPCount,
-        color: GradeColors.NP,
+        color: getCssVariable('--gradedist-np'),
       },
     ];
   };
@@ -119,13 +101,7 @@ export default class Chart extends React.Component<ChartProps> {
    * @return a JSX block styling the chart
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.label}: {props.data[props.label]}
-        </strong>
-      </div>
-    );
+    return <ChartTooltip label={props.label} value={props.data[props.label]} />;
   };
 
   /*
@@ -170,8 +146,8 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={Object.values(GradeColors)}
-              theme={this.getTheme(darkMode)}
+              colors={data.map((datum) => String(datum.color))}
+              theme={getTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
             />

@@ -36,6 +36,19 @@ code {
   --gray-blue: #f5f6fc;
   --ring-road-white: #ffffff;
 
+  --gradedist-a: #60a3d1;
+  --gradedist-b: #81c284;
+  --gradedist-c: var(--yellow-secondary);
+  --gradedist-d: var(--orange-secondary);
+  --gradedist-f: var(--red-secondary);
+  --gradedist-p: #4ab486;
+  --gradedist-np: #e36436;
+
+  --fall-color: var(--red-secondary);
+  --winter-color: var(--gradedist-a);
+  --spring-color: #ffc7df;
+  --summer-color: var(--gradedist-c);
+
   --border-radius: 8px;
 }
 
@@ -43,7 +56,6 @@ code {
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
-
   --red-primary: #ff3333;
   --green-secondary: #295629;
 }

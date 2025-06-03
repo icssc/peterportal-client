@@ -2,8 +2,8 @@ import React from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getCssVariable } from '../../helpers/styling.ts';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
@@ -87,13 +87,13 @@ export default class Pie extends React.Component<PieProps> {
           id: 'P',
           label: 'P',
           value: gradePCount,
-          color: GradeColors.P,
+          color: getCssVariable('--gradedist-p'),
         },
         {
           id: 'NP',
           label: 'NP',
           value: gradeNPCount,
-          color: GradeColors.NP,
+          color: getCssVariable('--gradedist-np'),
         },
       ];
       return data;
@@ -104,43 +104,43 @@ export default class Pie extends React.Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: GradeColors.A,
+        color: getCssVariable('--gradedist-a'),
       },
       {
         id: 'B',
         label: 'B',
         value: gradeBCount,
-        color: GradeColors.B,
+        color: getCssVariable('--gradedist-b'),
       },
       {
         id: 'C',
         label: 'C',
         value: gradeCCount,
-        color: GradeColors.C,
+        color: getCssVariable('--gradedist-c'),
       },
       {
         id: 'D',
         label: 'D',
         value: gradeDCount,
-        color: GradeColors.D,
+        color: getCssVariable('--gradedist-d'),
       },
       {
         id: 'F',
         label: 'F',
         value: gradeFCount,
-        color: GradeColors.F,
+        color: getCssVariable('--gradedist-f'),
       },
       {
         id: 'P',
         label: 'P',
         value: gradePCount,
-        color: GradeColors.P,
+        color: getCssVariable('--gradedist-p'),
       },
       {
         id: 'NP',
         label: 'NP',
         value: gradeNPCount,
-        color: GradeColors.NP,
+        color: getCssVariable('--gradedist-np'),
       },
     ];
     return data.filter((slice) => slice.value !== 0);
@@ -153,20 +153,15 @@ export default class Pie extends React.Component<PieProps> {
   }
 
   styleTooltip = (props: PieTooltipProps<Slice>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
-        </strong>
-      </div>
-    );
+    return <ChartTooltip label={props.datum.id} value={((props.datum.value / this.total) * 100).toFixed(2) + '%'} />;
   };
 
   render() {
+    const data = this.getClassData();
     return (
       <div style={{ width: '100%', position: 'relative' }}>
         <ResponsivePie<Slice>
-          data={this.getClassData()}
+          data={data}
           margin={{
             top: 50,
             bottom: 50,
@@ -177,7 +172,7 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={Object.values(GradeColors)}
+          colors={data.map((datum) => datum.color)}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
