@@ -14,6 +14,7 @@ import {
   PreviousOfferingsRow,
 } from '../../component/CourseInfo/CourseInfo';
 
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface AddCoursePopupProps {}
@@ -70,9 +71,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           </span>
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
-          <button onClick={closePopup} className="close-button unstyled">
+          <IconButton onClick={closePopup} className="close-button unstyled">
             <CloseIcon />
-          </button>
+          </IconButton>
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />

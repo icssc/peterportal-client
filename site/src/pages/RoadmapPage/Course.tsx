@@ -15,15 +15,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
-  <>
-    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-    <br />
-    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-    clear the prerequisite(s).
-  </>
-);
-
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
   popupListener?: (open: boolean) => void;
