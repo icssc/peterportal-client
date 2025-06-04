@@ -1,19 +1,18 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import ThemeContext from '../../../style/theme-context';
 import AsyncSelect from 'react-select/async';
-import { CourseAAPIResponse } from '@peterportal/types';
+import { TransferredCourse, CourseAAPIResponse } from '@peterportal/types';
 import {
   addTransferredCourse,
   removeTransferredCourse,
-  setTransferredCourses,
-  TransferredCourse,
   updateTransferredCourse,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { getCourseIdWithSpaces } from '../../../helpers/util';
 
 interface CourseSelectOption {
   value: TransferredCourse;
@@ -55,8 +54,8 @@ const CoursesSection: FC = () => {
     const response = await trpc.search.get.query({ query, skip: 0, take: 10, resultType: 'course' });
     const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
     const options: CourseSelectOption[] = courses.map((c) => ({
-      value: { courseName: c.id, units: c.maxUnits },
-      label: c.id,
+      value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
+      label: `${getCourseIdWithSpaces(c)}: ${c.title}`,
     }));
     return options;
   };
@@ -78,17 +77,11 @@ const CoursesSection: FC = () => {
     trpc.transferCredits.addTransferredCourse.mutate(course);
   };
 
-  useEffect(() => {
-    trpc.transferCredits.getTransferredCourses.query().then((result) => {
-      dispatch(setTransferredCourses(result));
-    });
-  }, [dispatch]);
-
   return (
     <MenuSection title="Courses You've Transferred">
       <SectionDescription>
         Enter courses you&rsquo;ve claimed credit for through a{' '}
-        <a href="https://testingcenter.uci.edu/programs/placement-testing/" target="_blank" rel="noreferrer">
+        <a href="https://testingcenter.uci.edu/" target="_blank" rel="noreferrer">
           credit by exam
         </a>{' '}
         or{' '}
@@ -113,6 +106,7 @@ const CoursesSection: FC = () => {
         onChange={(option) => addCourse(option!.value)}
         noOptionsMessage={({ inputValue }) => (inputValue ? 'No courses found' : null)}
         value={null}
+        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
       />
     </MenuSection>
   );

@@ -1,6 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { Plus, ThreeDots } from 'react-bootstrap-icons';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -21,6 +20,9 @@ import Course from './Course';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../helpers/sortable';
 
+import AddIcon from '@mui/icons-material/Add';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
 interface QuarterProps {
   year: number;
   yearIndex: number;
@@ -39,6 +41,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const isDragging = activeCourse !== undefined;
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
@@ -95,6 +99,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     removeCourseAt(moveCourseTrigger.to.courseIndex);
     setMoveCourseTrigger(null);
     dispatch(moveCourse(moveCourseTrigger));
+    dispatch(setActiveCourse(undefined));
   }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
 
   const popover = (
@@ -151,18 +156,23 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         >
           {({ ref, ...triggerHandler }) => (
             <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
-              <ThreeDots />
+              <MoreHorizIcon />
             </button>
           )}
         </OverlayTrigger>
       </div>
       <ReactSortable
         list={coursesCopy}
-        className="quarter-course-list"
+        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
         onSort={sortCourse}
+        onEnd={() => {
+          if (!activeCourseLoading) {
+            dispatch(setActiveCourse(undefined));
+          }
+        }}
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
@@ -197,7 +207,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
               dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
             }}
           >
-            <Plus className="plus-icon" />
+            <AddIcon className="plus-icon" />
             <span>Add Course</span>
           </Button>
         </>

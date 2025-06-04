@@ -3,11 +3,12 @@ import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
 
-import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
 import noResultsImg from '../../asset/no-results-crop.webp';
-import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
+import { getMissingPrerequisites } from '../../helpers/planner';
 import { Spinner } from 'react-bootstrap';
+import { useClearedCourses } from '../../hooks/planner';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
 // investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
@@ -22,24 +23,13 @@ const SearchResults = ({
   results,
   CourseHitItem,
   ProfessorHitItem,
-}: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
-  const roadmap = useAppSelector((state) => state.roadmap);
-  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
-  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
+}: Required<SearchHitContainerProps> & { results: SearchResultData }) => {
+  const clearedCourses = useClearedCourses();
 
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
-      const requiredCourses = Array.from(
-        validateCourse(
-          new Set([...allExistingCourses, ...transfers]),
-          course.prerequisiteTree,
-          new Set(),
-          course.corequisites,
-        ),
-      );
-      return (
-        <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />
-      );
+      const requiredCourses = getMissingPrerequisites(clearedCourses, course);
+      return <CourseHitItem key={course.id} index={i} {...course} requiredCourses={requiredCourses} />;
     });
   } else {
     return (results as ProfessorGQLData[]).map((professor, i) => (

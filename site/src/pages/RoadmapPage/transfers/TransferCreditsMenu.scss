@@ -30,10 +30,9 @@
 
 .toggle-transfers-button {
   @include globals.bottom-button();
-  position: absolute;
+  position: fixed;
   left: unset;
   right: 0;
-  z-index: 400;
   width: globals.$roadmap-sidebar-width;
   &.mobile {
     width: 100%;

@@ -1,42 +1,31 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { APExam, TransferredGE } from '@peterportal/types';
+import {
+  APExam,
+  TransferredGE,
+  TransferredCourse,
+  TransferredAPExam,
+  TransferredUncategorized,
+} from '@peterportal/types';
 
-export interface TransferredCourse {
-  courseName: string;
-  units: number;
-}
-
-export interface UserAPExam {
-  examName: string;
-  score: number;
-  units: number;
-}
-
-export interface SelectedApReward {
-  examName: string;
-  path: string;
-  selectedIndex: number;
-}
-
-interface UncategorizedCourseEntry {
-  name: string | null;
-  units: number | null;
-}
+type DataLoadingState = 'waiting' | 'loading' | 'done';
 
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
+    dataLoadState: 'waiting' as DataLoadingState,
     transferredCourses: [] as TransferredCourse[],
     apExamInfo: [] as APExam[],
-    userAPExams: [] as UserAPExam[],
-    selectedApRewards: [] as SelectedApReward[],
+    userAPExams: [] as TransferredAPExam[],
     transferredGEs: [] as TransferredGE[],
-    uncategorizedCourses: [] as UncategorizedCourseEntry[],
+    uncategorizedCourses: [] as TransferredUncategorized[],
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
       state.showTransfersMenu = action.payload;
+    },
+    setDataLoadState: (state, action: PayloadAction<DataLoadingState>) => {
+      state.dataLoadState = action.payload;
     },
     addTransferredCourse: (state, action: PayloadAction<TransferredCourse>) => {
       state.transferredCourses.push(action.payload);
@@ -56,46 +45,34 @@ export const transferCreditsSlice = createSlice({
     setAPExams: (state, action: PayloadAction<APExam[]>) => {
       state.apExamInfo = action.payload;
     },
-    setUserAPExams: (state, action: PayloadAction<UserAPExam[]>) => {
+    setUserAPExams: (state, action: PayloadAction<TransferredAPExam[]>) => {
       state.userAPExams = action.payload;
     },
-    addUserAPExam: (state, action: PayloadAction<UserAPExam>) => {
+    addUserAPExam: (state, action: PayloadAction<TransferredAPExam>) => {
       state.userAPExams.push(action.payload);
     },
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
-      state.selectedApRewards = state.selectedApRewards.filter((reward) => reward.examName !== action.payload);
     },
-    updateUserExam: (state, action: PayloadAction<UserAPExam>) => {
+    updateUserExam: (state, action: PayloadAction<TransferredAPExam>) => {
       const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
       if (e) {
         e.score = action.payload.score;
         e.units = action.payload.units;
       }
     },
-    setSelectedApRewards: (state, action: PayloadAction<SelectedApReward[]>) => {
-      state.selectedApRewards = action.payload;
-    },
-    updateSelectedApReward: (state, action: PayloadAction<SelectedApReward>) => {
-      const e = state.selectedApRewards.find(
-        (exam) => exam.examName === action.payload.examName && exam.path === action.payload.path,
-      );
-      if (e) {
-        e.selectedIndex = action.payload.selectedIndex;
-      }
-    },
     setAllTransferredGEs: (state, action: PayloadAction<TransferredGE[]>) => {
       state.transferredGEs = action.payload;
     },
     setTransferredGE: (state, action: PayloadAction<TransferredGE>) => {
-      state.transferredGEs = state.transferredGEs.map((ge) => {
-        return ge.geName === action.payload.geName ? action.payload : ge;
-      });
+      const foundGE = state.transferredGEs.find((ge) => ge.geName === action.payload.geName);
+      if (foundGE) Object.assign(foundGE, action.payload);
+      else state.transferredGEs.push(action.payload);
     },
-    setUncategorizedCourses: (state, action: PayloadAction<UncategorizedCourseEntry[]>) => {
+    setUncategorizedCourses: (state, action: PayloadAction<TransferredUncategorized[]>) => {
       state.uncategorizedCourses = action.payload;
     },
-    removeUncategorizedCourse: (state, action: PayloadAction<UncategorizedCourseEntry>) => {
+    removeUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
       state.uncategorizedCourses = state.uncategorizedCourses.filter(
         (course) => course.name !== action.payload.name || course.units !== action.payload.units,
       );
@@ -105,6 +82,7 @@ export const transferCreditsSlice = createSlice({
 
 export const {
   setShowTransfersMenu,
+  setDataLoadState,
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,
@@ -114,8 +92,6 @@ export const {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
-  setSelectedApRewards,
-  updateSelectedApReward,
   setAllTransferredGEs,
   setTransferredGE,
   setUncategorizedCourses,

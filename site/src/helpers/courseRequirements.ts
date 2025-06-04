@@ -1,8 +1,16 @@
-import { MajorProgram, MajorSpecialization, MinorProgram, ProgramRequirement } from '@peterportal/types';
+import {
+  GEName,
+  GETitle,
+  MajorProgram,
+  MajorSpecialization,
+  MinorProgram,
+  ProgramRequirement,
+} from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
 import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
+import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -37,6 +45,21 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   prerequisites: {},
   dependents: {},
 };
+export const GE_TITLE_MAP: Record<GEName, GETitle> = {
+  'GE-1A': 'GE Ia: Lower Division Writing',
+  'GE-1B': 'GE Ib: Upper Division Writing',
+  'GE-2': 'GE II: Science and Technology',
+  'GE-3': 'GE III: Social & Behavioral Sciences',
+  'GE-4': 'GE IV: Arts and Humanities',
+  'GE-5A': 'GE Va: Quantitative Literacy',
+  'GE-5B': 'GE Vb: Formal Reasoning',
+  'GE-6': 'GE VI: Language Other Than English',
+  'GE-7': 'GE VII: Multicultural Studies',
+  'GE-8': 'GE VIII: International/Global Issues',
+};
+
+/** A RegEx for GE labels in Degree Requirements */
+const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
@@ -125,7 +148,6 @@ export function flattenSingletonGroups(requirements: ProgramRequirement[]): Prog
  * @param requirements The program requirements list
  */
 export function sortGroupRequirementsByType(requirements: ProgramRequirement[]): ProgramRequirement[] {
-  // console.log(requirements)
   return requirements
     .map((r) => {
       if (r.requirementType !== 'Group') return r;
@@ -173,14 +195,33 @@ export function normalizeMajorName(program: MajorProgram | MinorProgram | MajorS
   return program.name.replace(/^(p[.\s]?h[.\s]?d[.\s]?|m[.\s]?a[.\s]?|major) in\s?/i, '');
 }
 
-export type CompletedCourseSet = {
-  [k: string]: number; // course id => units
-};
+export interface CompletedCourseSet {
+  [k: string]: {
+    units: number;
+    transferType?: TransferredCourseWithType['transferType'];
+  };
+}
 
 export interface CompletionStatus {
   required: number;
   completed: number;
   done: boolean;
+}
+
+function getMatchingGECategory(label: string) {
+  const labelMatch = label.match(GE_LABEL_REGEX);
+  if (!labelMatch) return null;
+
+  // Refer to the RegEx constant to see what these match. There will either be an identifier OR number + title
+  const [categoryIdentifier, categoryNumber, categoryTitle] = labelMatch.slice(1);
+
+  const categoryEntries = Object.entries(GE_TITLE_MAP);
+  const filterFunction = categoryIdentifier
+    ? (title: GETitle) => title.startsWith(`GE ${categoryIdentifier}: `)
+    : (title: GETitle) => title === `GE ${categoryNumber}: ${categoryTitle}`;
+
+  // key of the matching entry, if it exists
+  return categoryEntries.find((ent: [string, GETitle]) => filterFunction(ent[1]))?.[0] ?? null;
 }
 
 function checkCourseListCompletion(
@@ -189,6 +230,24 @@ function checkCourseListCompletion(
 ): CompletionStatus {
   const completedCount = requirement.courses.filter((c) => c in completed).length;
   const required = requirement.courseCount;
+
+  return { required, completed: completedCount, done: completedCount >= required };
+}
+
+function useCourseListCompletionCheck(
+  completed: CompletedCourseSet,
+  requirement: ProgramRequirement,
+): CompletionStatus {
+  const geCredits = useTransferredCredits().ge;
+  if (requirement.requirementType !== 'Course') return { required: 0, completed: 0, done: false };
+
+  const required = requirement.courseCount;
+  const applicableGE = getMatchingGECategory(requirement.label.trim());
+  const transferCompleted = geCredits.find((ge) => ge.geName === applicableGE)?.numberOfCourses ?? 0;
+  const roadmapCompleted = requirement.courses.filter((c) => c in completed).length;
+
+  const completedCount = roadmapCompleted + transferCompleted;
+
   return { required, completed: completedCount, done: completedCount >= required };
 }
 
@@ -214,7 +273,7 @@ function useGroupCompletionCheck(completed: CompletedCourseSet, requirement: Pro
 function checkUnitCompletion(completed: CompletedCourseSet, requirement: ProgramRequirement<'Unit'>): CompletionStatus {
   const required = requirement.unitCount;
   const completedCourses = requirement.courses.filter((c) => c in completed);
-  const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b, 0);
+  const completedUnits = completedCourses.map((c) => completed[c]).reduce((a, b) => a + b.units, 0);
   return { required, completed: completedUnits, done: completedUnits >= required };
 }
 
@@ -234,12 +293,13 @@ export function checkCompletion(completed: CompletedCourseSet, requirement: Prog
 export function useCompletionCheck(completed: CompletedCourseSet, requirement: ProgramRequirement): CompletionStatus {
   const completedMarkers = useAppSelector((state) => state.courseRequirements.completedMarkers);
   const groupComplete = useGroupCompletionCheck(completed, requirement);
+  const courseComplete = useCourseListCompletionCheck(completed, requirement);
 
   switch (requirement.requirementType) {
     case 'Group':
       return groupComplete;
     case 'Course':
-      return checkCourseListCompletion(completed, requirement);
+      return courseComplete;
     case 'Unit':
       return checkUnitCompletion(completed, requirement);
     case 'Marker':

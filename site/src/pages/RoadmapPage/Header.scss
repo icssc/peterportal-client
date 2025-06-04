@@ -1,8 +1,11 @@
+@use '../../globals.scss';
+
 .header {
   border-radius: var(--border-radius);
   color: var(--ring-road-white);
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
   padding: 8px;
   position: sticky;
@@ -42,19 +45,29 @@
     padding: 8px;
     align-items: center;
     gap: 8px 12px;
+    z-index: 2;
+  }
+
+  button {
+    white-space: nowrap;
+    padding-inline: 8px;
+    @media (max-width: 900px) {
+      font-size: 13px;
+      margin: 0;
+      padding: 6px;
+
+      .MuiSvgIcon-root {
+        font-size: 18px;
+        margin-right: 4px;
+      }
+    }
   }
 
   .planner-right {
-    @media (min-width: 860px) {
-      button {
-        white-space: nowrap;
-      }
-    }
     .btn-group {
-      flex-wrap: wrap;
       justify-content: end;
     }
-    .btn-group button {
+    .btn-group > button {
       flex-grow: 0;
     }
   }
@@ -85,17 +98,15 @@
 }
 
 .header-icon {
-  margin-left: 10px;
+  margin-right: 6px;
+  padding-inline: 1px;
+  margin-top: 1px;
 }
 
 @media only screen and (max-width: 400px) {
   .header {
     #title {
       font-size: 1em;
-    }
-
-    #planner-stats {
-      font-size: 0.7em;
     }
 
     .add-course {

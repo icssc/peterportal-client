@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef } from 'react';
 import './TransferCreditsMenu.scss';
-import { ArrowLeftRight } from 'react-bootstrap-icons';
 import { CSSTransition } from 'react-transition-group';
 import { useIsMobile } from '../../../helpers/util';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
@@ -10,6 +9,7 @@ import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
+import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
@@ -20,13 +20,7 @@ export const ToggleTransfersButton: FC = () => {
 
   return (
     <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>
-      {show ? (
-        <>Done Editing Credits</>
-      ) : (
-        <>
-          Transfer Credits <ArrowLeftRight />
-        </>
-      )}
+      Done Editing Credits
     </button>
   );
 };
@@ -34,6 +28,7 @@ export const ToggleTransfersButton: FC = () => {
 const TransferCreditsMenu: FC = () => {
   const isMobile = useIsMobile();
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  useLoadTransferredCredits();
 
   const dispatch = useAppDispatch();
 
@@ -63,9 +58,9 @@ const TransferCreditsMenu: FC = () => {
           <APExamsSection />
           <GESection />
           <UncategorizedCreditsSection />
+          <ToggleTransfersButton />
         </div>
       </CSSTransition>
-      <ToggleTransfersButton />
     </>
   );
 };

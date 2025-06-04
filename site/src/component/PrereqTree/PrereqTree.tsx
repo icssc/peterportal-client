@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import './PrereqTree.scss';
-import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
+import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
@@ -12,8 +12,6 @@ interface NodeProps {
   content: string;
   index?: number;
 }
-
-type PrerequisiteNode = Prerequisite | PrerequisiteTree;
 
 const phraseMapping = {
   AND: 'all of',
@@ -56,7 +54,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
   if (isValueNode) {
     const prereq = prerequisite as Prerequisite;
     return (
-      <li key={props.index} className={'prerequisite-node'}>
+      <li key={props.index} className="prerequisite-node">
         <Node
           label={
             prereq.prereqType === 'course'
@@ -68,29 +66,30 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
               prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : (prereq.examName ?? '')
             ]?.title ?? ''
           }
-          node={'prerequisite-node'}
+          node="prerequisite-node"
         />
       </li>
     );
   }
   // if value is an object, render the rest of the sub tree
   else {
-    const prereqTree = prerequisite as Record<string, PrerequisiteNode[]>;
+    const prereqTree = prerequisite as PrerequisiteTree;
+    const prereqTreeType = Object.keys(prereqTree)[0] as keyof PrerequisiteTree;
+    const prereqChildren = prereqTree[prereqTreeType] as PrerequisiteTree[];
+
+    if (prereqTree.AND && prereqChildren.length === 1 && prereqChildren[0].OR) {
+      return <PrereqTreeNode prerequisiteNames={props.prerequisiteNames} prerequisiteJSON={prereqChildren[0]} />;
+    }
+
     return (
-      <div style={{ margin: 'auto 0' }} className={'prerequisite-node'}>
+      <div style={{ margin: 'auto 0' }} className="prerequisite-node">
         <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
           <span style={{ margin: 'auto' }}>
-            <div className={'prereq-branch'}>
-              {
-                Object.entries(phraseMapping).filter(([subtreeType]) =>
-                  Object.prototype.hasOwnProperty.call(prerequisite, subtreeType),
-                )[0][1]
-              }
-            </div>
+            <div className="prereq-branch">{phraseMapping[prereqTreeType]}</div>
           </span>
           <div className="prereq-clump">
             <ul className="prereq-list">
-              {prereqTree[Object.keys(prerequisite)[0]].map((child, index) => (
+              {prereqChildren.map((child, index) => (
                 <PrereqTreeNode
                   key={`tree-${index}`}
                   prerequisiteNames={props.prerequisiteNames}
@@ -137,11 +136,11 @@ const PrereqTree: FC<PrereqProps> = (props) => {
               <ul style={{ padding: '0', display: 'flex' }}>
                 <div className="dependent-list-branch">
                   {Object.values(props.dependents).map((dependent, index) => (
-                    <li key={`dependent-node-${index}`} className={'dependent-node'}>
+                    <li key={`dependent-node-${index}`} className="dependent-node">
                       <Node
                         label={`${dependent.department} ${dependent.courseNumber}`}
                         content={dependent.title}
-                        node={'dependent-node'}
+                        node="dependent-node"
                       />
                     </li>
                   ))}
@@ -163,7 +162,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
           {/* Display the class id */}
-          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} node={'course-node'} />
+          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} node="course-node" />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
