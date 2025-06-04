@@ -47,7 +47,3 @@ body[data-theme='dark'] {
   --red-primary: #ff3333;
   --green-secondary: #295629;
 }
-
-.hide {
-  display: none;
-}
