@@ -19,8 +19,6 @@ export const getTheme = (darkMode: boolean): Theme => {
 
 export const getCssVariable = (name: string): string => {
   const bodyStyles = getComputedStyle(document.body);
-  const rootStyles = getComputedStyle(document.documentElement);
   const valueFromBody = bodyStyles.getPropertyValue(name).trim();
-  const valueFromRoot = rootStyles.getPropertyValue(name).trim();
-  return valueFromBody || valueFromRoot || '#ffffff';
+  return valueFromBody || '#ffffff';
 };

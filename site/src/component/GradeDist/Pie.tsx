@@ -81,55 +81,7 @@ export default class Pie extends React.Component<PieProps> {
     this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1);
     this.gpaToGradeConverter(this.averageGPA);
 
-    if (this.totalPNP == this.total) {
-      const data: Slice[] = [
-        {
-          id: 'P',
-          label: 'P',
-          value: gradePCount,
-          color: getCssVariable('--gradedist-p'),
-        },
-        {
-          id: 'NP',
-          label: 'NP',
-          value: gradeNPCount,
-          color: getCssVariable('--gradedist-np'),
-        },
-      ];
-      return data;
-    }
-
-    const data: Slice[] = [
-      {
-        id: 'A',
-        label: 'A',
-        value: gradeACount,
-        color: getCssVariable('--gradedist-a'),
-      },
-      {
-        id: 'B',
-        label: 'B',
-        value: gradeBCount,
-        color: getCssVariable('--gradedist-b'),
-      },
-      {
-        id: 'C',
-        label: 'C',
-        value: gradeCCount,
-        color: getCssVariable('--gradedist-c'),
-      },
-      {
-        id: 'D',
-        label: 'D',
-        value: gradeDCount,
-        color: getCssVariable('--gradedist-d'),
-      },
-      {
-        id: 'F',
-        label: 'F',
-        value: gradeFCount,
-        color: getCssVariable('--gradedist-f'),
-      },
+    const PNPdata: Slice[] = [
       {
         id: 'P',
         label: 'P',
@@ -143,7 +95,45 @@ export default class Pie extends React.Component<PieProps> {
         color: getCssVariable('--gradedist-np'),
       },
     ];
-    return data.filter((slice) => slice.value !== 0);
+
+    if (this.totalPNP == this.total) {
+      return PNPdata;
+    }
+
+    const gradeData: Slice[] = [
+      {
+        id: 'A',
+        label: 'A',
+        value: gradeACount,
+        color: getCssVariable('--blue-secondary-light'),
+      },
+      {
+        id: 'B',
+        label: 'B',
+        value: gradeBCount,
+        color: getCssVariable('--green-secondary-light'),
+      },
+      {
+        id: 'C',
+        label: 'C',
+        value: gradeCCount,
+        color: getCssVariable('--yellow-secondary-light'),
+      },
+      {
+        id: 'D',
+        label: 'D',
+        value: gradeDCount,
+        color: getCssVariable('--orange-secondary-light'),
+      },
+      {
+        id: 'F',
+        label: 'F',
+        value: gradeFCount,
+        color: getCssVariable('--red-secondary-light'),
+      },
+    ];
+
+    return gradeData.concat(PNPdata).filter((slice) => slice.value !== 0);
   };
 
   gpaToGradeConverter(gpa: string) {

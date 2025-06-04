@@ -38,25 +38,25 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'fall',
         label: 'Fall',
         fall: termCounts.Fall,
-        color: getCssVariable('--fall-color'),
+        color: getCssVariable('--red-secondary-light'),
       },
       {
         id: 'winter',
         label: 'Winter',
         winter: termCounts.Winter,
-        color: getCssVariable('--winter-color'),
+        color: getCssVariable('--blue-secondary-light'),
       },
       {
         id: 'spring',
         label: 'Spring',
         spring: termCounts.Spring,
-        color: getCssVariable('--spring-color'),
+        color: getCssVariable('--green-secondary-light'),
       },
       {
         id: 'summer',
         label: 'Summer',
         summer: summerYears.size,
-        color: getCssVariable('--summer-color'),
+        color: getCssVariable('--yellow-secondary-light'),
       },
     ];
   };

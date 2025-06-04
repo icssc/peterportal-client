@@ -62,7 +62,7 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
 
                   {termsInOrder.includes(`${prevYear} Spring`) && (
                     <div>
-                      <span className={emojiSize}>🌸</span>
+                      <span className={emojiSize}>🌱</span>
                       <span className="emoji-label">Spring {prevYear}</span>
                     </div>
                   )}
@@ -123,7 +123,7 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
 
               {termsInOrder.includes(`${prevYear} Spring`) && (
                 <span>
-                  <span className={emojiSize}>🌸</span>
+                  <span className={emojiSize}>🌱</span>
                 </span>
               )}
 
