@@ -37,7 +37,7 @@ const AllCourseSearch: FC = () => {
       {searchInProgress ? (
         <LoadingSpinner />
       ) : shownCourses.length === 0 ? (
-        <NoResults notSearching={showCourseBag} notSearchingText="No courses saved. Try searching for something!" />
+        <NoResults notSearching={showCourseBag} placeholderText="No courses saved. Try searching for something!" />
       ) : (
         <ReactSortable
           {...courseSearchSortable}
