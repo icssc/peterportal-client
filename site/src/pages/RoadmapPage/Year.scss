@@ -15,33 +15,89 @@
   }
 }
 
-.year {
-  $padding-x: 20px;
-  padding: 16px $padding-x;
-  align-items: center;
-  background-color: var(--overlay1);
-  border-radius: var(--border-radius);
-  border-collapse: separate;
-  display: inline-block;
-  width: 100%;
-  position: relative;
-  hr {
-    margin-inline: -$padding-x;
+div.year {
+  border-radius: 8px;
+  container: roadmap-year / inline-size;
+
+  @mixin year-subtext() {
+    font-size: 16px;
+    color: var(--mid-gray);
+    @container roadmap-year (max-width: 512px) {
+      margin-top: 4px;
+      font-size: 14px;
+    }
+  }
+
+  .year-header {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+
+    button {
+      margin: -2px;
+    }
+
+    button .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-right: -4px;
+      height: 20px;
+    }
+
+    .year-range {
+      @include year-subtext();
+    }
+
+    .year-number,
+    .course-count,
+    .unit-count {
+      font-weight: bold;
+    }
+
+    .year-title {
+      color: var(--text);
+      text-align: left;
+      font-size: 18px;
+    }
+  }
+
+  .year-stats {
+    margin-block: 0;
+    margin-inline: auto 8px;
+    @include year-subtext();
+  }
+
+  @container roadmap-year (max-width: 512px) {
+    .year-header {
+      padding: 12px 16px;
+      display: grid;
+      grid-template-areas: 'A B' 'A C';
+    }
+
+    .year-title {
+      display: flex;
+      flex-direction: column;
+      grid-area: A;
+    }
+
+    .year-stats {
+      grid-area: C;
+      margin-right: 0;
+    }
+
+    .action-row {
+      grid-area: B;
+    }
   }
 }
 
-.yearTitleBar {
-  display: flex;
-  justify-content: space-between;
-  border-radius: var(--border-radius);
-  align-items: center;
-}
-
-.caret-icon {
-  margin-right: 10px;
-}
-
 .year-accordion-content {
+  padding-inline: 16px;
   border-radius: var(--border-radius);
   display: grid;
   --min-quarter-width: 250px;
@@ -107,108 +163,5 @@
 @media only screen and (min-width: 2532px) {
   .years[data-max-quarter-count='6'] .year-accordion-content {
     --min-quarter-width: 258px;
-  }
-}
-
-.year-accordion-title {
-  display: flex;
-  justify-content: space-between;
-  font-weight: normal;
-  align-items: center;
-}
-
-.year-number,
-.course-count,
-.unit-count {
-  font-weight: bold;
-}
-
-.year-stats {
-  color: var(--mid-gray);
-}
-
-.year-title {
-  color: var(--text);
-  font-size: 1.2rem;
-  text-align: left;
-  font-size: 18px;
-}
-
-.year-accordion-icon {
-  display: inline;
-  padding-right: 1rem;
-}
-
-.year-accordion {
-  width: 95%;
-  padding: 0;
-}
-
-.year-accordion:hover,
-.year-accordion:active,
-.year-accordion:focus {
-  text-decoration: none;
-  box-shadow: none;
-}
-
-.year-accordion-title {
-  width: 100%;
-  font-size: 14px;
-}
-
-.year-edit-btn {
-  background: none;
-  border: none;
-  margin-right: 1.25rem;
-  padding-bottom: 0.5rem;
-  margin-right: 0;
-  padding-bottom: 0;
-  display: flex;
-  align-items: center;
-  height: 24px;
-}
-
-.year-settings-btn {
-  display: block;
-  width: 100%;
-  text-align: start;
-  border: 0px;
-  background: transparent;
-  padding: 0;
-}
-
-.year-settings-popover {
-  z-index: 1;
-}
-
-.edit-year-form-label {
-  font-weight: bold;
-}
-
-.edit-year-popup-btn {
-  text-transform: uppercase;
-  background-color: var(--blue-primary);
-  color: var(--ring-road-white);
-  border-radius: 1.25rem;
-}
-
-#clear-btn,
-#remove-btn {
-  color: var(--red-primary);
-}
-
-@media only screen and (max-width: 400px) {
-  .year-accordion-title {
-    flex-direction: column;
-  }
-
-  .edit-btn {
-    margin-right: 10px;
-  }
-}
-
-@media only screen and (max-width: globals.$mobile-cutoff) {
-  .year-accordion-content {
-    flex-direction: column;
   }
 }
