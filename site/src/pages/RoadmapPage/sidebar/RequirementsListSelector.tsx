@@ -20,7 +20,7 @@ const ListSelector: FC<ListSelectorProps> = ({ text }) => {
 
   return (
     <Button variant={variant} className="ppc-btn" onClick={selectTab}>
-      <span>{text}</span>
+      {text}
     </Button>
   );
 };

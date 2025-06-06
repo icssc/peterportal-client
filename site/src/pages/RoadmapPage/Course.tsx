@@ -48,7 +48,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
       setAllowSecondaryTap={setAllowTouchClick}
       disabled={isMobile && showSearch}
     >
-      <span>
+      <>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </a>
@@ -57,7 +57,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
             <WarningAmberIcon className="course-warn-icon" />
           </span>
         )}
-      </span>
+      </>
     </PPCOverlayTrigger>
   );
 };

@@ -200,7 +200,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             }}
           >
             <AddIcon className="plus-icon" />
-            <span>Add Course</span>
+            Add Course
           </Button>
         </>
       )}
