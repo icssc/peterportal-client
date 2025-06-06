@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters } from '@peterportal/types';
+import { quarters, TransferredUncategorized, TransferredAPExam, TransferredCourse } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
@@ -14,7 +14,7 @@ import {
   setUserAPExams,
   setTransferredCourses,
   setUncategorizedCourses,
-  addUnreadTransferNames,
+  TransferWithUnread,
 } from '../../store/slices/transferCreditsSlice';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -206,21 +206,34 @@ const ImportTranscriptPopup: FC = () => {
       const { transfers, years, invalidCourseIDs } = await processTranscript(file);
       const { courses, ap, other } = await organizeTransfers(transfers);
 
+      // Format the results
+      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+
+      // Mark all new transfers as unread
+      const coursesUnread: TransferWithUnread<TransferredCourse>[] = courses.map((course) => ({
+        unread: true,
+        ...course,
+      }));
+      const apUnread: TransferWithUnread<TransferredAPExam>[] = scoredAps.map((exam) => ({ unread: true, ...exam }));
+      const otherUnread: TransferWithUnread<TransferredUncategorized>[] = formattedOther.map((course) => ({
+        unread: true,
+        ...course,
+      }));
+
       // Merge the new AP exams, courses, and other transfers into current transfers
       // via a process similar to the updated Zot4Plan imports
-      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
-      const newAps = scoredAps.filter(
+      const newAps = apUnread.filter(
         (imported) => !currentAps.some((existing) => existing.examName == imported.examName),
       );
       const mergedAps = currentAps.concat(newAps);
 
-      const newCourses = courses.filter(
+      const newCourses = coursesUnread.filter(
         (imported) => !currentCourses.some((existing) => existing.courseName == imported.courseName),
       );
       const mergedCourses = currentCourses.concat(newCourses);
 
-      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
-      const newOther = formattedOther.filter(
+      const newOther = otherUnread.filter(
         (imported) => !currentOther.some((existing) => existing.name == imported.name),
       );
       const mergedOther = currentOther.concat(newOther);
@@ -228,18 +241,6 @@ const ImportTranscriptPopup: FC = () => {
         .map((courseID) => ({ name: courseID, units: 0 }))
         .filter((otherCourse) => !mergedOther.some((existing) => existing.name == otherCourse.name));
       const mergedOtherFinal = mergedOther.concat(newOtherFromCourses);
-
-      // Mark new transfers as unread
-      dispatch(
-        addUnreadTransferNames({
-          ap: newAps.map((exam) => exam.examName),
-          course: newCourses.map((course) => course.courseName),
-          other: newOther
-            .concat(newOtherFromCourses)
-            .filter((other) => other.name)
-            .map((other) => other.name!),
-        }),
-      );
 
       // Override local transfers with the merged results
       dispatch(setTransferredCourses(mergedCourses));

@@ -9,21 +9,18 @@ import {
 
 type DataLoadingState = 'waiting' | 'loading' | 'done';
 
+export type TransferWithUnread<T> = T & { unread?: true };
+
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
     dataLoadState: 'waiting' as DataLoadingState,
-    transferredCourses: [] as TransferredCourse[],
+    transferredCourses: [] as TransferWithUnread<TransferredCourse>[],
     apExamInfo: [] as APExam[],
-    userAPExams: [] as TransferredAPExam[],
-    transferredGEs: [] as TransferredGE[],
-    uncategorizedCourses: [] as TransferredUncategorized[],
-    unreadTransfers: {
-      apNames: [] as string[],
-      courseNames: [] as string[],
-      otherNames: [] as string[],
-    },
+    userAPExams: [] as TransferWithUnread<TransferredAPExam>[],
+    transferredGEs: [] as TransferWithUnread<TransferredGE>[],
+    uncategorizedCourses: [] as TransferWithUnread<TransferredUncategorized>[],
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
@@ -32,25 +29,25 @@ export const transferCreditsSlice = createSlice({
     setDataLoadState: (state, action: PayloadAction<DataLoadingState>) => {
       state.dataLoadState = action.payload;
     },
-    addTransferredCourse: (state, action: PayloadAction<TransferredCourse>) => {
+    addTransferredCourse: (state, action: PayloadAction<TransferWithUnread<TransferredCourse>>) => {
       state.transferredCourses.push(action.payload);
     },
     removeTransferredCourse: (state, action: PayloadAction<string>) => {
       state.transferredCourses = state.transferredCourses.filter((course) => course.courseName !== action.payload);
     },
-    updateTransferredCourse: (state, action: PayloadAction<TransferredCourse>) => {
+    updateTransferredCourse: (state, action: PayloadAction<TransferWithUnread<TransferredCourse>>) => {
       const course = state.transferredCourses.find((course) => course.courseName === action.payload.courseName);
       if (course) {
         course.units = action.payload.units;
       }
     },
-    setTransferredCourses: (state, action: PayloadAction<TransferredCourse[]>) => {
+    setTransferredCourses: (state, action: PayloadAction<TransferWithUnread<TransferredCourse>[]>) => {
       state.transferredCourses = action.payload;
     },
-    setAPExams: (state, action: PayloadAction<APExam[]>) => {
+    setAPExams: (state, action: PayloadAction<TransferWithUnread<APExam>[]>) => {
       state.apExamInfo = action.payload;
     },
-    setUserAPExams: (state, action: PayloadAction<TransferredAPExam[]>) => {
+    setUserAPExams: (state, action: PayloadAction<TransferWithUnread<TransferredAPExam>[]>) => {
       state.userAPExams = action.payload;
     },
     addUserAPExam: (state, action: PayloadAction<TransferredAPExam>) => {
@@ -83,14 +80,18 @@ export const transferCreditsSlice = createSlice({
       );
     },
     clearUnreadTransfers: (state) => {
-      state.unreadTransfers.apNames = [];
-      state.unreadTransfers.courseNames = [];
-      state.unreadTransfers.otherNames = [];
-    },
-    addUnreadTransferNames: (state, action: PayloadAction<{ ap: string[]; course: string[]; other: string[] }>) => {
-      state.unreadTransfers.apNames = state.unreadTransfers.apNames.concat(action.payload.ap);
-      state.unreadTransfers.courseNames = state.unreadTransfers.courseNames.concat(action.payload.course);
-      state.unreadTransfers.otherNames = state.unreadTransfers.otherNames.concat(action.payload.other);
+      for (const ge of state.transferredGEs) {
+        delete ge.unread;
+      }
+      for (const course of state.transferredCourses) {
+        delete course.unread;
+      }
+      for (const ap of state.userAPExams) {
+        delete ap.unread;
+      }
+      for (const other of state.uncategorizedCourses) {
+        delete other.unread;
+      }
     },
   },
 });
@@ -112,7 +113,6 @@ export const {
   setUncategorizedCourses,
   removeUncategorizedCourse,
   clearUnreadTransfers,
-  addUnreadTransferNames,
 } = transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;

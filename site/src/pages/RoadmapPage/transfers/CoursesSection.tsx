@@ -10,6 +10,7 @@ import {
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,
+  TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { getCourseIdWithSpaces } from '../../../helpers/util';
@@ -19,39 +20,28 @@ interface CourseSelectOption {
   label: string;
 }
 
-interface CourseCreditMenuTileProps {
-  course: TransferredCourse;
-  unread: boolean;
-}
-const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course, unread }) => {
+const CourseCreditMenuTile: FC<TransferWithUnread<TransferredCourse>> = ({ courseName, units, unread }) => {
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
-    trpc.transferCredits.removeTransferredCourse.mutate(course.courseName);
-    dispatch(removeTransferredCourse(course.courseName));
+    trpc.transferCredits.removeTransferredCourse.mutate(courseName);
+    dispatch(removeTransferredCourse(courseName));
   };
   const setUnits = (value: number) => {
-    const updatedCourse: TransferredCourse = { courseName: course.courseName, units: value };
+    const updatedCourse: TransferredCourse = { courseName, units: value };
     trpc.transferCredits.updateTransferredCourse.mutate(updatedCourse);
     dispatch(updateTransferredCourse(updatedCourse));
   };
 
   return (
     <>
-      <MenuTile
-        title={course.courseName}
-        units={course.units}
-        setUnits={setUnits}
-        deleteFn={deleteFn}
-        unread={unread}
-      />
+      <MenuTile title={courseName} units={units} setUnits={setUnits} deleteFn={deleteFn} unread={unread} />
     </>
   );
 };
 
 const CoursesSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const unreadCourses = useAppSelector((state) => state.transferCredits.unreadTransfers).courseNames;
   const [timeout, setTimeout] = useState<number | null>(null);
   const [abortFn, setAbortFn] = useState<() => void>();
   const dispatch = useAppDispatch();
@@ -106,8 +96,9 @@ const CoursesSection: FC = () => {
       {courses.map((course) => (
         <CourseCreditMenuTile
           key={course.courseName}
-          course={course}
-          unread={unreadCourses.includes(course.courseName)}
+          courseName={course.courseName}
+          units={course.units}
+          unread={course.unread}
         />
       ))}
 

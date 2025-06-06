@@ -6,7 +6,12 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addUserAPExam, removeUserAPExam, updateUserExam } from '../../../store/slices/transferCreditsSlice';
+import {
+  addUserAPExam,
+  removeUserAPExam,
+  updateUserExam,
+  TransferWithUnread,
+} from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { APExam, TransferredAPExam } from '@peterportal/types';
 import './APExamsSection.scss';
@@ -55,8 +60,7 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam; unread: boolean }> = ({ userExamInfo, unread }) => {
-  const { examName, score, units } = userExamInfo;
+const APCreditMenuTile: FC<TransferWithUnread<TransferredAPExam>> = ({ examName, score, units, unread }) => {
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
 
@@ -112,7 +116,6 @@ const APExamsSection: FC = () => {
   const isDark = useContext(ThemeContext).darkMode;
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const unreadExams = useAppSelector((state) => state.transferCredits.unreadTransfers).apNames;
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 
@@ -146,7 +149,13 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile key={exam.examName} userExamInfo={exam} unread={unreadExams.includes(exam.examName)} />
+        <APCreditMenuTile
+          key={exam.examName}
+          examName={exam.examName}
+          score={exam.score}
+          units={exam.units}
+          unread={exam.unread}
+        />
       ))}
       <div className="ap-import-row">
         <div className="exam-input">

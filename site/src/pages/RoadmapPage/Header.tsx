@@ -30,12 +30,14 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     dispatch(setShowTransfersMenu(!showTransfers));
   };
 
-  const unreadTransfers = useAppSelector((state) => state.transferCredits.unreadTransfers);
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
 
-  const showUnreadTransfers =
-    unreadTransfers.apNames.length > 0 ||
-    unreadTransfers.courseNames.length > 0 ||
-    unreadTransfers.otherNames.length > 0;
+  const hasUnreadTransfers =
+    transferredCourses.some((course) => course.unread) ||
+    userAPExams.some((ap) => ap.unread) ||
+    uncategorizedCourses.some((course) => course.unread);
 
   return (
     <div className="header">
@@ -52,7 +54,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
             <SwapHorizOutlinedIcon className="header-icon" />
             Transfer Credits
-            <UnreadDot show={showUnreadTransfers} displayFullNewText={false} />
+            <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
             <SaveIcon className="header-icon" />
