@@ -11,7 +11,7 @@ import {
   PrerequisiteText,
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
@@ -22,11 +22,7 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
-  let content = (
-    <div className="center">
-      <Spinner animation="border" />
-    </div>
-  );
+  let content = <LoadingSpinner />;
 
   const clearedCourses = useClearedCourses();
   if (typeof course !== 'string') {

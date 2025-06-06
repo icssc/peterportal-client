@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import LoadingPage from '../LoadingPage';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
@@ -40,7 +40,7 @@ const CoursePage: FC = () => {
   }
   // loading results
   else if (!courseGQLData) {
-    return <LoadingPage />;
+    return <LoadingSpinner />;
   } else {
     const sideInfo = (
       <SideInfo

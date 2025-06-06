@@ -9,7 +9,7 @@ import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import noResultsImg from '../../../asset/no-results-crop.webp';
 import { useClearedCourses } from '../../../hooks/planner';
 
@@ -19,7 +19,7 @@ interface SearchPlaceholderProps {
 }
 
 const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <Spinner animation="border" role="status" />;
+  if (searchInProgress) return <LoadingSpinner />;
 
   const placeholderText = showCourseBag
     ? 'No courses saved. Try searching for something!'
