@@ -1,10 +1,10 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
 import { GradesRaw } from '@peterportal/types';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
-import { getTheme, getCssVariable } from '../../helpers/styling.ts';
+import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -13,7 +13,7 @@ interface ChartProps {
   course?: string;
 }
 
-export default class Chart extends React.Component<ChartProps> {
+export default class Chart extends Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
@@ -109,10 +109,10 @@ export default class Chart extends React.Component<ChartProps> {
    * @return a JSX block rendering the chart
    */
   render() {
-    const data = this.getClassData();
+    const gradeDistribution = this.getClassData();
 
     // greatestCount calculates the upper bound of the graph (i.e. the greatest number of students in a single grade)
-    const greatestCount = data.reduce(
+    const greatestCount = gradeDistribution.reduce(
       (max, grade) => ((grade[grade.id] as number) > max ? (grade[grade.id] as number) : max),
       0,
     );
@@ -127,7 +127,7 @@ export default class Chart extends React.Component<ChartProps> {
         <ThemeContext.Consumer>
           {({ darkMode }) => (
             <ResponsiveBar
-              data={data}
+              data={gradeDistribution}
               keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
               indexBy="label"
               margin={{
@@ -146,8 +146,8 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={data.map((datum) => String(datum.color))}
-              theme={getTheme(darkMode)}
+              colors={gradeDistribution.map((grade) => String(grade.color))}
+              theme={getChartTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
             />

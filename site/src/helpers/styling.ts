@@ -14,7 +14,7 @@ export const tooltipStyle: Theme = {
   },
 };
 
-export const getTheme = (darkMode: boolean): Theme => {
+export const getChartTheme = (darkMode: boolean): Theme => {
   return {
     axis: {
       ticks: {
@@ -34,5 +34,5 @@ export const getTheme = (darkMode: boolean): Theme => {
 export const getCssVariable = (name: string): string => {
   const bodyStyles = getComputedStyle(document.body);
   const valueFromBody = bodyStyles.getPropertyValue(name).trim();
-  return valueFromBody || '#ffffff';
+  return valueFromBody;
 };

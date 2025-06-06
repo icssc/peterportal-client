@@ -58,7 +58,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
             <th>Academic Year</th>
             <th>🍂</th>
             <th>❄️</th>
-            <th>🌱</th>
+            <th>🌸</th>
             <th>☀️</th>
           </tr>
         </thead>

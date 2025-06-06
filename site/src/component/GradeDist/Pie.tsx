@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
@@ -22,7 +22,7 @@ interface PieProps {
   course?: string;
 }
 
-export default class Pie extends React.Component<PieProps> {
+export default class Pie extends Component<PieProps> {
   total = 0;
   totalPNP = 0;
   averageGPA = '';
@@ -147,11 +147,11 @@ export default class Pie extends React.Component<PieProps> {
   };
 
   render() {
-    const data = this.getClassData();
+    const gradeDistribution = this.getClassData();
     return (
       <div style={{ width: '100%', position: 'relative' }}>
         <ResponsivePie<Slice>
-          data={data}
+          data={gradeDistribution}
           margin={{
             top: 50,
             bottom: 50,
@@ -162,7 +162,7 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={data.map((datum) => datum.color)}
+          colors={gradeDistribution.map((grade) => grade.color)}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}

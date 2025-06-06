@@ -1,15 +1,15 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
-import { getTheme, getCssVariable } from '../../helpers/styling.ts';
+import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   terms: string[];
 }
 
-export default class Chart extends React.Component<ChartProps> {
+export default class Chart extends Component<ChartProps> {
   /*
    * Create an array of objects to feed into the chart.
    * @return an array of JSON objects detailing the grades for each class
@@ -50,7 +50,7 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'spring',
         label: 'Spring',
         spring: termCounts.Spring,
-        color: getCssVariable('--green-secondary-light'),
+        color: getCssVariable('--spring-quarter'),
       },
       {
         id: 'summer',
@@ -77,10 +77,10 @@ export default class Chart extends React.Component<ChartProps> {
    * @return a JSX block rendering the chart
    */
   render() {
-    const data = this.getTermData();
+    const termCounts = this.getTermData();
 
     // greatestCount calculates the upper bound of the graph (i.e. the greatest number of students in a single grade)
-    const greatestCount = data.reduce(
+    const greatestCount = termCounts.reduce(
       (max, term) => ((term[term.id] as number) > max ? (term[term.id] as number) : max),
       0,
     );
@@ -98,9 +98,9 @@ export default class Chart extends React.Component<ChartProps> {
         <ThemeContext.Consumer>
           {({ darkMode }) => (
             <ResponsiveBar
-              data={data}
-              keys={data.map((datum) => String(datum.id))}
-              colors={data.map((datum) => String(datum.color))}
+              data={termCounts}
+              keys={termCounts.map((term) => String(term.id))}
+              colors={termCounts.map((term) => String(term.color))}
               margin={{
                 top: 25,
                 right: marginX,
@@ -120,7 +120,7 @@ export default class Chart extends React.Component<ChartProps> {
                 tickValues: Array.from({ length: greatestCount / tickSize }, (_, i) => i * tickSize + tickSize),
               }}
               enableLabel={false}
-              theme={getTheme(darkMode)}
+              theme={getChartTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
             />
