@@ -4,7 +4,6 @@
 
   .popover-name {
     font-weight: bold;
-    color: var(--text-dark);
     font-size: 16px;
     height: 21px;
     margin-top: -2px;
@@ -61,12 +60,6 @@
     font-size: 12px;
     font-style: italic;
     color: var(--mid-gray);
-  }
-
-  .center {
-    display: flex;
-    justify-content: center;
-    margin: 8px auto;
   }
 
   .quarter-offerings-section {

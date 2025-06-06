@@ -1,6 +1,6 @@
 import { pluralize } from '../../../helpers/util';
 import './MenuTile.scss';
-import { FC, FormEvent, ReactNode, useState } from 'react';
+import { FC, useState } from 'react';
 
 import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -29,7 +29,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
     );
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const unitsValue = parseFloat(formData.get('units') as string);
@@ -59,13 +59,13 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
 };
 
 export interface MenuTileProps {
-  children?: ReactNode;
+  children?: React.ReactNode;
   title: string;
   units?: number;
   setUnits?: (value: number) => void;
   deleteFn?: () => void;
   /** Additional items to include alongsite the title */
-  headerItems?: ReactNode;
+  headerItems?: React.ReactNode;
 }
 
 const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems }) => {

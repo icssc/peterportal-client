@@ -39,33 +39,33 @@ const CoursePopup: FC = () => {
     }
   }, [course]);
 
-  if (course) {
-    // include prerequisite and restriction panels
-    const infos = [
-      {
-        title: 'Prerequisite',
-        content: course.prerequisiteText,
-      },
-      {
-        title: 'Restrictions',
-        content: course.restriction,
-      },
-    ];
-
-    return (
-      <SearchPopup
-        name={course.id}
-        id={course.id}
-        title={course.title}
-        infos={infos}
-        scores={scores}
-        searchType="course"
-        course={course}
-      />
-    );
-  } else {
+  if (!course) {
     return <SearchPopup name="" id="" infos={[]} scores={[]} searchType="course" title="" />;
   }
+
+  // include prerequisite and restriction panels
+  const infos = [
+    {
+      title: 'Prerequisite',
+      content: course.prerequisiteText,
+    },
+    {
+      title: 'Restrictions',
+      content: course.restriction,
+    },
+  ];
+
+  return (
+    <SearchPopup
+      name={course.id}
+      id={course.id}
+      title={course.title}
+      infos={infos}
+      scores={scores}
+      searchType="course"
+      course={course}
+    />
+  );
 };
 
 export default CoursePopup;

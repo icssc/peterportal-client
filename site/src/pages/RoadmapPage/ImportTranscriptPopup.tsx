@@ -6,9 +6,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters } from '@peterportal/types';
+import { quarters, QuarterName } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
-import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
 import {
   setUserAPExams,
@@ -296,7 +295,7 @@ const ImportTranscriptPopup: FC = () => {
                   setFile(input.files![0]);
                   setFilePath(input.value);
                 }}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button variant="primary" disabled={!file || busy} onClick={importHandler}>
@@ -306,7 +305,7 @@ const ImportTranscriptPopup: FC = () => {
       </Modal>
       <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
         <DescriptionIcon />
-        <span>Student Transcript</span>
+        <span className="add-item-label">Student Transcript</span>
       </Button>
     </>
   );

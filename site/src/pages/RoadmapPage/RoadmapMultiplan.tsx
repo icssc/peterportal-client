@@ -136,9 +136,7 @@ const RoadmapMultiplan: FC = () => {
           setShowDropdown(s || inMenu || inDialog);
         }}
       >
-        <Dropdown.Toggle onClick={() => setShowDropdown(!showDropdown)}>
-          <span>{name}</span>
-        </Dropdown.Toggle>
+        <Dropdown.Toggle onClick={() => setShowDropdown(!showDropdown)}>{name}</Dropdown.Toggle>
         <Dropdown.Menu>
           {allPlans.plans.map((plan, index) => (
             <RoadmapSelectableItem
@@ -160,7 +158,7 @@ const RoadmapMultiplan: FC = () => {
           <div className="select-item add-item">
             <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
               <AddIcon />
-              <span>Blank Roadmap</span>
+              <span className="add-item-label">Blank Roadmap</span>
             </Button>
             <ImportTranscriptPopup />
             <ImportZot4PlanPopup />
@@ -201,7 +199,7 @@ const RoadmapMultiplan: FC = () => {
                 }}
                 maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button
@@ -244,7 +242,7 @@ const RoadmapMultiplan: FC = () => {
                 }}
                 maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button

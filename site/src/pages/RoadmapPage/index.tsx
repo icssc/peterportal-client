@@ -13,18 +13,16 @@ const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
 
   return (
-    <>
-      <div className="roadmap-page">
-        <AddCoursePopup />
-        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
-          <Planner />
-        </div>
-        <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit>
-          <SearchSidebar />
-        </CSSTransition>
-        {isMobile && <TransferCreditsMenu />}
+    <div className="roadmap-page">
+      <AddCoursePopup />
+      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+        <Planner />
       </div>
-    </>
+      <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit>
+        <SearchSidebar />
+      </CSSTransition>
+      {isMobile && <TransferCreditsMenu />}
+    </div>
   );
 };
 

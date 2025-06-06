@@ -1,5 +1,7 @@
 import { FC } from 'react';
 import { Pagination } from 'react-bootstrap';
+import './SearchPagination.scss';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setPageNumber } from '../../store/slices/searchSlice';
 import { SearchIndex } from '../../types/types';
@@ -34,17 +36,19 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
     );
   }
 
+  // hide if there is no page or only one page
+  if (numPages <= 1) return null;
+
+  // last button intentionally left out since first 5 pages are fuzzy searched initially (we don't know what the last page # is)
   return (
-    // hide if there is no page or only one page
-    // last button intentionally left out since first 5 pages are fuzzy searched initially (we don't know what the last page # is)
-    numPages <= 1 ? null : (
+    <div className="search-pagination">
       <Pagination>
         <Pagination.First onClick={() => clickPageNumber(0)} disabled={activePage === 0} />
         <Pagination.Prev onClick={() => clickPageNumber(activePage - 1)} disabled={activePage === 0} />
         {items}
         <Pagination.Next onClick={() => clickPageNumber(activePage + 1)} disabled={activePage === numPages - 1} />
       </Pagination>
-    )
+    </div>
   );
 };
 

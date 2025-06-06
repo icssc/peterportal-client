@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
@@ -14,7 +14,7 @@ interface ChartProps {
   course?: string;
 }
 
-export default class Chart extends React.Component<ChartProps> {
+export default class Chart extends Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */

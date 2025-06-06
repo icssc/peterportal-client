@@ -1,10 +1,10 @@
 /** temporary file/patch for overlay trigger to make it so user can mouse into it wihtout it closing */
 
-import { FC, ReactNode, useState } from 'react';
+import { FC, useState } from 'react';
 import { OverlayTrigger, OverlayTriggerProps, Popover } from 'react-bootstrap';
 
 interface PPCOverlayTriggerProps extends Omit<OverlayTriggerProps, 'overlay'> {
-  popoverContent: ReactNode;
+  popoverContent: React.ReactNode;
   children: React.ReactElement;
   popupListener?: (open: boolean) => void;
   setAllowSecondaryTap?: (allow: boolean) => void;

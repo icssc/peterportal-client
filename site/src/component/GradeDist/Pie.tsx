@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
@@ -22,7 +22,7 @@ interface PieProps {
   course?: string;
 }
 
-export default class Pie extends React.Component<PieProps> {
+export default class Pie extends Component<PieProps> {
   total = 0;
   totalPNP = 0;
   averageGPA = '';

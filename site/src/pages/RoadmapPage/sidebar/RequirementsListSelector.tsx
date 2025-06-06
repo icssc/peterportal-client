@@ -1,6 +1,7 @@
 import './RequirementsListSelector.scss';
 import { FC, useContext } from 'react';
 import { Button } from 'react-bootstrap';
+
 import ThemeContext from '../../../style/theme-context';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
@@ -19,7 +20,7 @@ const ListSelector: FC<ListSelectorProps> = ({ text }) => {
 
   return (
     <Button variant={variant} className="ppc-btn" onClick={selectTab}>
-      <span>{text}</span>
+      {text}
     </Button>
   );
 };

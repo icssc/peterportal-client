@@ -23,7 +23,7 @@ const CloseRoadmapSearchButton = () => {
   const dispatch = useAppDispatch();
   const { year, quarter } = useNamedAcademicTerm();
 
-  if (!isMobile) return <></>;
+  if (!isMobile) return null;
 
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
 
@@ -59,17 +59,19 @@ const SearchSidebar = () => {
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
+  const courseListComponentMap = {
+    Major: <MajorSelector />,
+    Minor: <MinorSelector />,
+    GE: <GERequiredCourseList />,
+    Search: <AllCourseSearch />,
+  };
+
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
       <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
-
-        {selectedCourseList === 'Major' && <MajorSelector />}
-        {selectedCourseList === 'Minor' && <MinorSelector />}
-        {selectedCourseList === 'GE' && <GERequiredCourseList />}
-        {selectedCourseList === 'Search' && <AllCourseSearch />}
-
+        {courseListComponentMap[selectedCourseList]}
         <CloseRoadmapSearchButton />
       </div>
       {!isMobile && <TransferCreditsMenu />}

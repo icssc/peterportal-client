@@ -4,14 +4,14 @@ import './Reports.scss';
 import trpc from '../../trpc';
 import { ReportData } from '@peterportal/types';
 
+interface ReviewDisplay {
+  reviewId: number;
+  reports: ReportData[];
+}
+
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
-
-  interface ReviewDisplay {
-    reviewId: number;
-    reports: ReportData[];
-  }
 
   const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
@@ -58,28 +58,30 @@ const Reports: FC = () => {
 
   if (!loaded) {
     return <p>Loading...</p>;
-  } else if (data.length === 0) {
-    return <p>No reports to display at the moment.</p>;
-  } else {
-    return (
-      <div className="content-wrapper reports-container">
-        <h1>User Review Reports</h1>
-        <p>Denying a review's reports will discard the reports and preserve the review.</p>
-        <p>Accepting a review's reports will discard the reports and the review.</p>
-        {data.map((review) => {
-          return (
-            <ReportGroup
-              key={review.reviewId}
-              reviewId={review.reviewId}
-              reports={review.reports}
-              onAccept={() => acceptReports(review.reviewId)}
-              onDeny={() => denyReports(review.reviewId)}
-            />
-          );
-        })}
-      </div>
-    );
   }
+
+  if (data.length === 0) {
+    return <p>No reports to display at the moment.</p>;
+  }
+
+  return (
+    <div className="content-wrapper reports-container">
+      <h1>User Review Reports</h1>
+      <p>Denying a review's reports will discard the reports and preserve the review.</p>
+      <p>Accepting a review's reports will discard the reports and the review.</p>
+      {data.map((review) => {
+        return (
+          <ReportGroup
+            key={review.reviewId}
+            reviewId={review.reviewId}
+            reports={review.reports}
+            onAccept={() => acceptReports(review.reviewId)}
+            onDeny={() => denyReports(review.reviewId)}
+          />
+        );
+      })}
+    </div>
+  );
 };
 
 export default Reports;

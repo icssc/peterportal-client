@@ -71,16 +71,6 @@ button.course-delete-btn {
   }
 }
 
-.course-footer {
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  margin-top: auto;
-  width: 100%;
-}
-
 .course.sortable-fallback {
   height: fit-content !important;
   animation: course-fade-in 0.2s forwards;
@@ -133,9 +123,7 @@ button.course-delete-btn {
       display: flex;
     }
   }
-  .course :is(.course-footer) {
-    display: none;
-  }
+
   .course :is(.course-and-info) {
     display: contents;
   }

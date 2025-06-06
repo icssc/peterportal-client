@@ -5,7 +5,7 @@ import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/
 import './AddCoursePopup.scss';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import { pluralize } from '../../helpers/util';
+import { getUnitText } from '../../helpers/util';
 import {
   CourseBookmarkButton,
   CourseDescription,
@@ -16,25 +16,25 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 
-interface AddCoursePopupProps {}
+interface AddCoursePopupContentProps {
+  closePopup: () => void;
+}
 
-const AddCoursePopup: FC<AddCoursePopupProps> = () => {
-  const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
-  const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
+const AddCoursePopupContent: FC<AddCoursePopupContentProps> = ({ closePopup }) => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
-  const term = useNamedAcademicTerm();
+  const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
 
   const dispatch = useAppDispatch();
+  const term = useNamedAcademicTerm();
 
-  const quarter = currentYearAndQuarter?.quarter ?? -1;
-  const year = currentYearAndQuarter?.year ?? -1;
-
-  const closePopup = () => dispatch(setShowAddCourse(false));
-  const contentClassName = 'ppc-modal add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
-  const overlay = <UIOverlay onClick={closePopup} zIndex={499} />;
+  if (!activeCourse) return null;
 
   const addToRoadmap = () => {
+    const year = currentYearAndQuarter?.year ?? -1;
+    const quarter = currentYearAndQuarter?.quarter ?? -1;
+
     dispatch(
       moveCourse({
         from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
@@ -44,50 +44,49 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
 
     // hide the search bar to view the roadmap
     dispatch(setShowSearch({ show: false }));
-
     closePopup();
   };
 
-  if (!activeCourse)
-    return (
-      <>
-        <div className={contentClassName}></div>
-        {overlay}
-      </>
-    );
+  const { department, courseNumber } = activeCourse;
+  const unitText = getUnitText(activeCourse);
 
-  const { minUnits, maxUnits, department, courseNumber } = activeCourse;
+  return (
+    <div className={`ppc-modal add-course-modal ${showAddCourse ? 'enter' : 'exit'}`}>
+      <Modal.Header>
+        <h2>
+          {department} {courseNumber}
+        </h2>
+        <span className="unit-count">{unitText}</span>
+        <CourseBookmarkButton course={activeCourse} />
+        <span className="spacer" />
+        <button onClick={closePopup} className="close-button">
+          <CloseIcon />
+        </button>
+      </Modal.Header>
+      <Modal.Body>
+        <CourseDescription course={activeCourse} />
+        {activeMissingPrerequisites ? (
+          <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
+        ) : (
+          <PrerequisiteText course={activeCourse} />
+        )}
+        <PreviousOfferingsRow course={activeCourse} />
+      </Modal.Body>
+      <button className="fixed" onClick={addToRoadmap}>
+        Add to {term.quarter} {term.year}
+      </button>
+    </div>
+  );
+};
+
+const AddCoursePopup: FC = () => {
+  const dispatch = useAppDispatch();
+  const closePopup = () => dispatch(setShowAddCourse(false));
 
   return (
     <>
-      <div className={contentClassName}>
-        <Modal.Header>
-          <h2>
-            {department} {courseNumber}
-          </h2>
-          <span className="unit-count">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
-          </span>
-          <CourseBookmarkButton course={activeCourse} />
-          <div className="spacer"></div>
-          <button onClick={closePopup} className="close-button unstyled">
-            <CloseIcon />
-          </button>
-        </Modal.Header>
-        <Modal.Body>
-          <CourseDescription course={activeCourse} />
-          {activeMissingPrerequisites ? (
-            <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
-          ) : (
-            <PrerequisiteText course={activeCourse} />
-          )}
-          <PreviousOfferingsRow course={activeCourse} />
-        </Modal.Body>
-        <button className="fixed" onClick={addToRoadmap}>
-          Add to {term.quarter} {term.year}
-        </button>
-      </div>
-      {overlay}
+      <AddCoursePopupContent closePopup={closePopup} />
+      <UIOverlay onClick={closePopup} zIndex={499} />
     </>
   );
 };

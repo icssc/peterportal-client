@@ -196,15 +196,13 @@ body[data-theme='dark'] {
 .program-course-tile.mobile {
   position: relative;
   cursor: pointer;
+
   a {
     pointer-events: none;
   }
 
-  div.spinner-border {
+  .spinner {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
     scale: 0.67;
     color: white;
   }

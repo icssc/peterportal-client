@@ -5,6 +5,7 @@ import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
+import IconButton from '@mui/material/IconButton';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -17,10 +18,11 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
   const { coursebag: bookmarks, toggleBookmark } = useCoursebag();
   const isBookmarked = bookmarks.some((c) => c.id === course.id);
 
+  // TODO: note to self - this isn't finalized, I still need to fix IconButton so that it's unstyled
   return (
-    <button className="unstyled" onClick={() => toggleBookmark(course)}>
+    <IconButton onClick={() => toggleBookmark(course)}>
       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </button>
+    </IconButton>
   );
 };
 
@@ -33,8 +35,7 @@ export const CourseDescription: FC<CourseProp> = ({ course }) => {
 };
 
 export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
-  if (!course.prerequisiteText) return <></>;
-
+  if (!course.prerequisiteText) return null;
   return (
     <p>
       <b>Prerequisites:</b> {course.prerequisiteText}
@@ -43,8 +44,7 @@ export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
 };
 
 export const CorequisiteText: FC<CourseProp> = ({ course }) => {
-  if (!course.corequisites) return <></>;
-
+  if (!course.corequisites) return null;
   return (
     <p>
       <b>Corequisites:</b> {course.corequisites}
@@ -53,7 +53,7 @@ export const CorequisiteText: FC<CourseProp> = ({ course }) => {
 };
 
 export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => {
-  if (!requiredCourses?.length) return;
+  if (!requiredCourses?.length) return null;
 
   return (
     <div className="course-info-warning">

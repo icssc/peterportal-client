@@ -2,7 +2,7 @@ import { FC } from 'react';
 import './CoursePopover.scss';
 import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
-import { pluralize } from '../../helpers/util';
+import { getUnitText } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
@@ -11,7 +11,7 @@ import {
   PrerequisiteText,
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
@@ -21,39 +21,41 @@ interface CoursePopoverProps {
   interactive?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
-  let content = (
-    <div className="center">
-      <Spinner animation="border" />
-    </div>
-  );
-
+const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses, interactive }) => {
   const clearedCourses = useClearedCourses();
-  if (typeof course !== 'string') {
-    requiredCourses = getMissingPrerequisites(clearedCourses, course);
 
-    const { department, courseNumber, minUnits, maxUnits } = course;
-    content = (
-      <>
-        <div className="popover-name">
-          {department + ' ' + courseNumber + ' '}
-          <span className="popover-units">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
-          </span>
-
-          <div className="spacer"></div>
-          {interactive && <CourseBookmarkButton course={course} />}
-        </div>
-        <br />
-        <CourseDescription course={course} />
-        <PrerequisiteText course={course} />
-        <CorequisiteText course={course} />
-        <IncompletePrerequisiteText requiredCourses={requiredCourses} />
-        <PreviousOfferingsRow course={course} />
-      </>
-    );
+  if (typeof course === 'string') {
+    return <LoadingSpinner />;
   }
-  return <Popover.Content className="course-popover">{content}</Popover.Content>;
+
+  const { department, courseNumber } = course;
+  requiredCourses = getMissingPrerequisites(clearedCourses, course);
+  const unitText = getUnitText(course);
+
+  return (
+    <>
+      <div className="popover-name">
+        {`${department} ${courseNumber} `}
+        <span className="popover-units">({unitText})</span>
+        <span className="spacer" />
+        {interactive && <CourseBookmarkButton course={course} />}
+      </div>
+      <br />
+      <CourseDescription course={course} />
+      <PrerequisiteText course={course} />
+      <CorequisiteText course={course} />
+      <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+      <PreviousOfferingsRow course={course} />
+    </>
+  );
+};
+
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, interactive = true }) => {
+  return (
+    <Popover.Content className="course-popover">
+      <CoursePopoverContent course={course} interactive={interactive} requiredCourses={requiredCourses} />
+    </Popover.Content>
+  );
 };
 
 export default CoursePopover;

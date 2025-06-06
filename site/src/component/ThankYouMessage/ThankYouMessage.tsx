@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import './ThankYouMessage.scss';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -7,7 +7,7 @@ interface ThankYouMessageProps {
   message: string;
 }
 
-const ThankYouMessage: React.FC<ThankYouMessageProps> = ({ message }) => {
+const ThankYouMessage: FC<ThankYouMessageProps> = ({ message }) => {
   return (
     <div className="thank-you-message">
       <CheckCircleIcon />
