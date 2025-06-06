@@ -8,6 +8,8 @@ export type Prerequisite = components['schemas']['prereq'];
 
 export type PrerequisiteTree = components['schemas']['prereqTree'];
 
+export type PrerequisiteNode = Prerequisite | PrerequisiteTree;
+
 export type CoursePreview = CourseAAPIResponse['prerequisites'][number];
 
 export type CoursePreviewWithTerms = ProfessorAAPIResponse['courses'][number];

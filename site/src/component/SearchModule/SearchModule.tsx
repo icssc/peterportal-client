@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
+import { SearchIndex, SearchResultData } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowCourseBag } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
@@ -45,7 +45,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           dispatch(
             setResults({
               index,
-              results: results.map((x) => transformGQLData(index, x.result)) as CourseGQLData[] | ProfessorGQLData[],
+              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
               count,
             }),
           );

@@ -1,5 +1,5 @@
 import { router, userProcedure } from '../helpers/trpc';
-import { SavedPlannerData, savedRoadmap, SavedRoadmap, TransferData } from '@peterportal/types';
+import { SavedPlannerData, savedRoadmap, SavedRoadmap } from '@peterportal/types';
 import { db } from '../db';
 import { planner, transferredMisc, user } from '../db/schema';
 import { and, asc, eq, inArray, not } from 'drizzle-orm';
@@ -9,31 +9,28 @@ const roadmapsRouter = router({
    * Get a user's roadmaps
    */
   get: userProcedure.query(async ({ ctx }) => {
-    const [planners, transfers, users] = await Promise.all([
+    const [planners, users] = await Promise.all([
       db
         .select({ id: planner.id, name: planner.name, content: planner.years })
         .from(planner)
         .where(eq(planner.userId, ctx.session.userId!))
         .orderBy(asc(planner.id)),
       db
-        .select({ name: transferredMisc.courseName, units: transferredMisc.units })
-        .from(transferredMisc)
-        .where(eq(transferredMisc.userId, ctx.session.userId!)),
-      db
         .select({ timestamp: user.lastRoadmapEditAt, currentPlanIndex: user.currentPlanIndex })
         .from(user)
         .where(eq(user.id, ctx.session.userId!)),
     ]);
+
     if (planners.length === 0) {
       return undefined;
     }
-    const roadmap: SavedRoadmap = {
+
+    return {
       planners: planners as SavedPlannerData[],
-      transfers: transfers as TransferData[],
+      transfers: [],
       timestamp: users[0].timestamp?.toISOString(),
       currentPlanIndex: users[0].currentPlanIndex ?? undefined,
-    };
-    return roadmap;
+    } as SavedRoadmap;
   }),
   /**
    * Save a user's roadmap

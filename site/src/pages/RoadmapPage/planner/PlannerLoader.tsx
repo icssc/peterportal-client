@@ -6,7 +6,7 @@ import {
   loadRoadmap,
   saveRoadmap,
   upgradeLocalRoadmap,
-  validatePlannerV2,
+  validatePlanner,
 } from '../../../helpers/planner';
 import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -34,7 +34,6 @@ import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 const PlannerLoader: FC = () => {
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [formatUpgraded, setFormatUpgraded] = useState(false);
-  const legacyTransfers = useAppSelector((state) => state.roadmap.transfers);
   const userTransfersLoaded = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
   const transferred = useTransferredCredits();
   const allPlanData = useAppSelector(selectAllPlans);
@@ -45,7 +44,7 @@ const PlannerLoader: FC = () => {
 
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
-    transfers: legacyTransfers, // should be empty anyways once upgrade runs
+    transfers: [], // should be empty anyways once upgrade runs
   });
 
   const loadLocalTransfers = async () => {
@@ -126,7 +125,7 @@ const PlannerLoader: FC = () => {
   // Validate Courses on change
   useEffect(() => {
     const transferNames = getNamesOfTransfers(transferred.courses, transferred.ap, transferred.apInfo);
-    const { invalidCourses } = validatePlannerV2(transferNames, currentPlanData);
+    const { invalidCourses } = validatePlanner(transferNames, currentPlanData);
     dispatch(setInvalidCourses(invalidCourses));
   }, [dispatch, currentPlanData, transferred]);
 

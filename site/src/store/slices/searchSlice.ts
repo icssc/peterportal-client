@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
+import { SearchIndex, SearchResultData } from '../../types/types';
 
 interface SearchData {
   query: string;
   lastQuery: string;
   pageNumber: number;
-  results: CourseGQLData[] | ProfessorGQLData[];
+  results: SearchResultData;
   count: number;
   searchInProgress: boolean;
 }
