@@ -1,42 +1,30 @@
-import './MajorCourseList.scss';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
+
+import './MajorCourseList.scss';
 import ProgramRequirementsList from './ProgramRequirementsList';
+import { MajorSpecialization } from '@peterportal/types';
+
+import trpc from '../../../trpc';
 import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import {
   MajorWithSpecialization,
   setMajorSpecs,
   setRequirements,
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
-import { MajorSpecialization } from '@peterportal/types';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
+import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
-function getMajorSpecializations(majorId: string) {
-  return trpc.programs.getSpecializations.query({ major: majorId });
-}
-
-function getCoursesForMajor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId });
-}
-
-function getCoursesForSpecialization(programId?: string | null) {
-  if (!programId) return [];
-  return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
-}
 
 interface MajorCourseListProps {
   majorWithSpec: MajorWithSpecialization;
   onSpecializationChange: (majorId: string, spec: MajorSpecialization | null) => void;
   selectedSpecId?: string;
 }
-
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
@@ -52,7 +40,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const loadSpecs = useCallback(async () => {
     setSpecsLoading(true);
     try {
-      const specs = await getMajorSpecializations(major.id);
+      const specs = await trpc.programs.getSpecializations.query({ major: major.id });
       specs.forEach((s) => (s.name = normalizeMajorName(s)));
       specs.sort((a, b) => a.name.localeCompare(b.name));
       dispatch(setMajorSpecs({ majorId: major.id, specializations: specs }));
@@ -64,10 +52,15 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string | null) => {
       setResultsLoading(true);
-
       try {
-        const requirements = await getCoursesForMajor(majorId);
-        requirements.push(...(await getCoursesForSpecialization(specId)));
+        const requirements = await trpc.programs.getRequiredCourses.query({ type: 'major', programId: majorId });
+        if (specId) {
+          const specRequirements = await trpc.programs.getRequiredCourses.query({
+            type: 'specialization',
+            programId: specId,
+          });
+          requirements.push(...specRequirements);
+        }
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -78,13 +71,16 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const loadSpecRequirements = useCallback(async () => {
     if (!hasSpecs) {
-      if (majorWithSpec.requirements.length > 0) return;
-      else return await fetchRequirements(major.id, null);
+      if (majorWithSpec.requirements.length === 0) {
+        await fetchRequirements(major.id, null);
+      }
+      return;
     }
+
     if (!selectedSpecId && !selectedSpec?.id) return;
     if (selectedSpecId === selectedSpec?.id) return;
 
-    const specs = await getMajorSpecializations(major.id);
+    const specs = await trpc.programs.getSpecializations.query({ major: major.id });
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
@@ -103,18 +99,17 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   // Initial Loader
   useEffect(() => {
     if (specOptions.length) return;
-    if (hasSpecs && !specOptions.length) {
-      loadSpecs().then(loadSpecRequirements);
-    } else {
-      loadSpecRequirements();
-    }
+    const loadSpecsAndSpecRequirements = async () => {
+      if (hasSpecs) await loadSpecs();
+      await loadSpecRequirements();
+    };
+    loadSpecsAndSpecRequirements();
   }, [hasSpecs, loadSpecRequirements, specOptions.length, loadSpecs]);
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
       const updatedSpec = data?.value || null;
       if (updatedSpec?.id === selectedSpecId) return;
-
       setResultsLoading(true);
       onSpecializationChange(major.id, data?.value ?? null);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));

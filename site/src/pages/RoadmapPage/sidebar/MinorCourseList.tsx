@@ -1,56 +1,42 @@
+import { FC, useState, useEffect, useCallback } from 'react';
 import './MajorCourseList.scss';
-import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+
 import trpc from '../../../trpc';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch } from '../../../store/hooks';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-function getCoursesForMinor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
-}
-
 interface MinorCourseListProps {
   minorReqs: MinorRequirements;
 }
-
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const [resultsLoading, setResultsLoading] = useState(false);
   const [open, setOpen] = useState(true);
-
   const dispatch = useAppDispatch();
 
   const fetchRequirements = useCallback(
     async (minorId: string) => {
+      if (minorReqs.requirements && minorReqs.requirements.length !== 0) return;
       setResultsLoading(true);
-
       try {
-        const requirements = await getCoursesForMinor(minorId);
+        const requirements = await trpc.programs.getRequiredCourses.query({ type: 'minor', programId: minorId });
         dispatch(setMinorRequirements({ minorId, requirements }));
       } finally {
         setResultsLoading(false);
       }
     },
-    [dispatch],
+    [dispatch, minorReqs.requirements],
   );
 
   useEffect(() => {
-    if (!minorReqs.requirements || minorReqs.requirements.length === 0) {
-      fetchRequirements(minorReqs.minor.id);
-    }
-  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements]);
+    fetchRequirements(minorReqs.minor.id);
+  }, [fetchRequirements, minorReqs.minor.id]);
 
   const toggleExpand = () => setOpen(!open);
-
-  const renderRequirements = () => {
-    if (resultsLoading) return <LoadingSpinner />;
-    return (
-      <ProgramRequirementsList requirements={minorReqs.requirements} storeKeyPrefix={`minor-${minorReqs.minor.id}`} />
-    );
-  };
 
   return (
     <div className="major-section">
@@ -58,7 +44,15 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         {open ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
         <h4 className="major-name">{minorReqs.minor.name}</h4>
       </button>
-      {open && <>{renderRequirements()}</>}
+      {open &&
+        (resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={minorReqs.requirements}
+            storeKeyPrefix={`minor-${minorReqs.minor.id}`}
+          />
+        ))}
     </div>
   );
 };
