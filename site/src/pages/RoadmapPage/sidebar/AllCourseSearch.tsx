@@ -1,42 +1,25 @@
 import { FC } from 'react';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
+
+import Course from '../Course';
 import SearchModule from '../../../component/SearchModule/SearchModule';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import NoResults from '../../../component/NoResults/NoResults';
+
+import { CourseGQLData } from '../../../types/types';
+import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useCoursebag } from '../../../hooks/coursebag';
-import { CourseGQLData } from '../../../types/types';
-import { deepCopy, useIsMobile } from '../../../helpers/util';
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { setActiveCourse } from '../../../store/slices/roadmapSlice';
+import { useClearedCourses } from '../../../hooks/planner';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
-import Course from '../Course';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import noResultsImg from '../../../asset/no-results-crop.webp';
-import { useClearedCourses } from '../../../hooks/planner';
-
-interface SearchPlaceholderProps {
-  searchInProgress: boolean;
-  showCourseBag: boolean;
-}
-
-const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <LoadingSpinner />;
-
-  const placeholderText = showCourseBag
-    ? 'No courses saved. Try searching for something!'
-    : "Sorry, we couldn't find any results for that search!";
-
-  return (
-    <div className="no-results">
-      <img src={noResultsImg} alt="No results found" />
-      {placeholderText}
-    </div>
-  );
-};
+import { deepCopy, useIsMobile } from '../../../helpers/util';
 
 const AllCourseSearch: FC = () => {
   const { showCourseBag } = useAppSelector((state) => state.roadmap);
   const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
   const { coursebag } = useCoursebag();
+  const clearedCourses = useClearedCourses();
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
@@ -47,17 +30,14 @@ const AllCourseSearch: FC = () => {
     dispatch(setActiveCourse(course));
   };
 
-  const clearedCourses = useClearedCourses();
-
   return (
     <>
-      <div className="search-sidebar-search-module">
-        <SearchModule index="courses" />
-      </div>
+      <SearchModule index="courses" />
       <h3 className="coursebag-title">{showCourseBag ? 'Saved Courses' : 'Search Results'}</h3>
-
-      {!searchInProgress && shownCourses.length === 0 ? (
-        <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
+      {searchInProgress ? (
+        <LoadingSpinner />
+      ) : shownCourses.length === 0 ? (
+        <NoResults notSearching={showCourseBag} notSearchingText="No courses saved. Try searching for something!" />
       ) : (
         <ReactSortable
           {...courseSearchSortable}
