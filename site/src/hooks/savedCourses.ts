@@ -57,7 +57,7 @@ export function useSavedCourses() {
   };
 }
 
-export async function getSavedCourses(isLoggedIn: boolean) {
+async function getSavedCourses(isLoggedIn: boolean) {
   if (isLoggedIn) {
     return await trpc.savedCourses.get.query();
   }
