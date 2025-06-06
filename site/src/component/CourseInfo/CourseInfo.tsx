@@ -5,6 +5,7 @@ import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
+import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -18,9 +19,9 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
   const isBookmarked = bookmarks.some((c) => c.id === course.id);
 
   return (
-    <button className="unstyled" onClick={() => toggleBookmark(course)}>
+    <IconButton onClick={() => toggleBookmark(course)}>
       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </button>
+    </IconButton>
   );
 };
 
