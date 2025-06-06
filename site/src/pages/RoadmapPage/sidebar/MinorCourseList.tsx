@@ -13,6 +13,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 interface MinorCourseListProps {
   minorReqs: MinorRequirements;
 }
+
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const [resultsLoading, setResultsLoading] = useState(false);
   const [open, setOpen] = useState(true);

@@ -1,15 +1,17 @@
 import { FC } from 'react';
-import './HitItem.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setProfessor } from '../../store/slices/popupSlice';
+import './HitItem.scss';
 
 import { ProfessorGQLData } from '../../types/types';
+import { setProfessor } from '../../store/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useIsMobile } from '../../helpers/util';
 
-interface ProfessorHitItemProps extends ProfessorGQLData {}
+interface ProfessorHitItemProps {
+  professor: ProfessorGQLData;
+}
 
-const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
+const ProfessorHitItem: FC<ProfessorHitItemProps> = ({ professor }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -17,12 +19,10 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
 
   const onClickName = () => {
     // set the professor popup
-    dispatch(setProfessor(props));
-
-    // if click on a professor that is already in popup
-    // or if on mobile
-    if ((activeProfessor && props.ucinetid == activeProfessor.ucinetid) || isMobile) {
-      navigate(`/professor/${props.ucinetid}`);
+    dispatch(setProfessor(professor));
+    // if click on a professor that is already in popup or if on mobile
+    if ((activeProfessor && professor.ucinetid == activeProfessor.ucinetid) || isMobile) {
+      navigate(`/professor/${professor.ucinetid}`);
     }
   };
 
@@ -32,7 +32,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
   };
 
-  const initialsText = props.name
+  const initialsText = professor.name
     .split(' ')
     .map((x: string) => x[0])
     .join('');
@@ -45,17 +45,17 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           {initialsText}
         </div>
         <div>
-          <p className="hit-name">{props.name}</p>
+          <p className="hit-name">{professor.name}</p>
           <p className="hit-subtitle">
-            {props.department}&nbsp;• {props.title}
+            {professor.department}&nbsp;• {professor.title}
           </p>
         </div>
       </div>
-      {Object.keys(props.courses).length > 0 && (
+      {Object.keys(professor.courses).length > 0 && (
         <div>
           <p>
             <b>Recently taught: </b>
-            {Object.keys(props.courses).map((item: string, index: number) => {
+            {Object.keys(professor.courses).map((item: string, index: number) => {
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}

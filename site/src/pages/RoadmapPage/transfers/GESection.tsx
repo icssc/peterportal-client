@@ -1,13 +1,15 @@
-import './GESection.scss';
 import React, { FC } from 'react';
+import './GESection.scss';
+
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import { GEName, TransferredGE, ALL_GE_NAMES } from '@peterportal/types';
+
 import trpc from '../../../trpc';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { GE_TITLE_MAP } from '../../../helpers/courseRequirements';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 
 interface GEInputProps {
   value: number;
@@ -94,14 +96,14 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 };
 
 const GESection: FC = () => {
-  const doneLoading = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
+  const loading = useAppSelector((state) => state.transferCredits.dataLoadState !== 'done');
 
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>
         Enter the GE credits that you've received in each category from other colleges/universities.
       </SectionDescription>
-      {doneLoading ? ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />) : <LoadingSpinner />}
+      {loading ? <LoadingSpinner /> : ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />)}
     </MenuSection>
   );
 };

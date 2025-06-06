@@ -1,12 +1,5 @@
-import './SearchSidebar.scss';
-
-import { useIsMobile } from '../../helpers/util';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { useEffect, useRef } from 'react';
-import UIOverlay from '../../component/UIOverlay/UIOverlay';
-
-import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
+import './SearchSidebar.scss';
 
 import RequirementsListSelector from './sidebar/RequirementsListSelector';
 import AllCourseSearch from './sidebar/AllCourseSearch';
@@ -14,18 +7,23 @@ import MajorSelector from './sidebar/MajorSelector';
 import MinorSelector from './sidebar/MinorSelector';
 import GERequiredCourseList from './sidebar/GERequiredCourseList';
 import TransferCreditsMenu from './transfers/TransferCreditsMenu';
-import { loadMarkerCompletion } from '../../helpers/courseRequirements';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+
+import UIOverlay from '../../component/UIOverlay/UIOverlay';
+import { setShowSearch } from '../../store/slices/roadmapSlice';
 import { initializeCompletedMarkers } from '../../store/slices/courseRequirementsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
+import { loadMarkerCompletion } from '../../helpers/courseRequirements';
+import { useIsMobile } from '../../helpers/util';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
   const { year, quarter } = useNamedAcademicTerm();
+  const closeSearch = () => dispatch(setShowSearch({ show: false }));
 
   if (!isMobile) return null;
-
-  const closeSearch = () => dispatch(setShowSearch({ show: false }));
 
   return (
     <button className="fixed" onClick={closeSearch}>

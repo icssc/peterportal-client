@@ -6,6 +6,12 @@ import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 
+const phraseMapping = {
+  AND: 'all of',
+  OR: 'one of',
+  NOT: 'none of',
+};
+
 interface NodeProps {
   node: string;
   label: string;
@@ -13,11 +19,6 @@ interface NodeProps {
   index?: number;
 }
 
-const phraseMapping = {
-  AND: 'all of',
-  OR: 'one of',
-  NOT: 'none of',
-};
 const Node: FC<NodeProps> = (props) => {
   const popover = (
     <Popover id="tree-node-popover" className="tree-node-popover" placement="bottom">
@@ -71,53 +72,57 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
       </li>
     );
   }
+
   // if value is an object, render the rest of the sub tree
-  else {
-    const prereqTree = prerequisite as PrerequisiteTree;
-    const prereqTreeType = Object.keys(prereqTree)[0] as keyof PrerequisiteTree;
-    const prereqChildren = prereqTree[prereqTreeType] as PrerequisiteTree[];
+  const prereqTree = prerequisite as PrerequisiteTree;
+  const prereqTreeType = Object.keys(prereqTree)[0] as keyof PrerequisiteTree;
+  const prereqChildren = prereqTree[prereqTreeType] as PrerequisiteTree[];
 
-    if (prereqTree.AND && prereqChildren.length === 1 && prereqChildren[0].OR) {
-      return <PrereqTreeNode prerequisiteNames={props.prerequisiteNames} prerequisiteJSON={prereqChildren[0]} />;
-    }
+  if (prereqTree.AND && prereqChildren.length === 1 && prereqChildren[0].OR) {
+    return <PrereqTreeNode prerequisiteNames={props.prerequisiteNames} prerequisiteJSON={prereqChildren[0]} />;
+  }
 
-    return (
-      <div style={{ margin: 'auto 0' }} className="prerequisite-node">
-        <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
-          <span style={{ margin: 'auto' }}>
-            <div className="prereq-branch">{phraseMapping[prereqTreeType]}</div>
-          </span>
-          <div className="prereq-clump">
-            <ul className="prereq-list">
-              {prereqChildren.map((child, index) => (
-                <PrereqTreeNode
-                  key={`tree-${index}`}
-                  prerequisiteNames={props.prerequisiteNames}
-                  index={index}
-                  prerequisiteJSON={child}
-                />
-              ))}
-            </ul>
-          </div>
+  return (
+    <div style={{ margin: 'auto 0' }} className="prerequisite-node">
+      <div style={{ display: 'inline-flex', flexDirection: 'row', padding: '0.5rem 0' }}>
+        <span style={{ margin: 'auto' }}>
+          <div className="prereq-branch">{phraseMapping[prereqTreeType]}</div>
+        </span>
+        <div className="prereq-clump">
+          <ul className="prereq-list">
+            {prereqChildren.map((child, index) => (
+              <PrereqTreeNode
+                key={`tree-${index}`}
+                prerequisiteNames={props.prerequisiteNames}
+                index={index}
+                prerequisiteJSON={child}
+              />
+            ))}
+          </ul>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 };
 
-interface PrereqProps extends CourseGQLData {}
+interface PrereqTreeProps {
+  course: CourseGQLData;
+}
 
-const PrereqTree: FC<PrereqProps> = (props) => {
-  const hasPrereqs = JSON.stringify(props.prerequisiteTree) !== '{}';
-  const hasDependents = Object.keys(props.dependents).length !== 0;
+const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
+  const hasPrereqs = JSON.stringify(course.prerequisiteTree) !== '{}';
+  const hasDependents = Object.keys(course.dependents).length !== 0;
 
-  if (props.id === undefined) return <></>;
-  else if (!hasPrereqs && !hasDependents)
+  if (course.id === undefined) return null;
+
+  if (!hasPrereqs && !hasDependents) {
     return (
       <div className="prereq-text-box">
         <p>No Prerequisites or Dependents!</p>
       </div>
     );
+  }
+
   return (
     <div>
       <div className="prereq">
@@ -135,7 +140,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             <>
               <ul style={{ padding: '0', display: 'flex' }}>
                 <div className="dependent-list-branch">
-                  {Object.values(props.dependents).map((dependent, index) => (
+                  {Object.values(course.dependents).map((dependent, index) => (
                     <li key={`dependent-node-${index}`} className="dependent-node">
                       <Node
                         label={`${dependent.department} ${dependent.courseNumber}`}
@@ -162,12 +167,12 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           </div>} */}
 
           {/* Display the class id */}
-          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} node="course-node" />
+          <Node label={`${course.department} ${course.courseNumber}`} content={course.title} node="course-node" />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
             <div style={{ display: 'flex' }}>
-              <PrereqTreeNode prerequisiteNames={props.prerequisites} prerequisiteJSON={props.prerequisiteTree} />
+              <PrereqTreeNode prerequisiteNames={course.prerequisites} prerequisiteJSON={course.prerequisiteTree} />
             </div>
           )}
 
@@ -177,7 +182,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             </p>
           </div>} */}
         </div>
-        {props.prerequisiteText !== '' && (
+        {course.prerequisiteText !== '' && (
           <div
             className="prereq-text-box"
             style={{
@@ -187,7 +192,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
           >
             <p>
               <b>Prerequisite: </b>
-              {props.prerequisiteText}
+              {course.prerequisiteText}
             </p>
           </div>
         )}

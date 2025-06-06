@@ -37,35 +37,35 @@ const ProfessorPopup: FC = () => {
     }
   }, [professor]);
 
-  if (professor) {
-    // include basic info and featured review panels
-    const infos = [
-      {
-        title: 'Basic Info',
-        content: `Email: ${professor.ucinetid}@uci.edu`,
-      },
-      {
-        title: `Featured Review`,
-        content: featured
-          ? `For ${featured.courseId}: ${(featured.content ?? '').length > 0 ? featured.content : 'Rating of ' + featured.rating + '/5'}`
-          : 'No Reviews Yet!',
-      },
-    ];
-
-    return (
-      <SearchPopup
-        name={professor.name}
-        id={professor.ucinetid}
-        title={professor.title}
-        infos={infos}
-        scores={scores}
-        searchType="professor"
-        professor={professor}
-      />
-    );
-  } else {
+  if (!professor) {
     return <SearchPopup name="" id="" infos={[]} scores={[]} searchType="professor" title="" />;
   }
+
+  // include basic info and featured review panels
+  const infos = [
+    {
+      title: 'Basic Info',
+      content: `Email: ${professor.ucinetid}@uci.edu`,
+    },
+    {
+      title: `Featured Review`,
+      content: featured
+        ? `For ${featured.courseId}: ${(featured.content ?? '').length > 0 ? featured.content : 'Rating of ' + featured.rating + '/5'}`
+        : 'No Reviews Yet!',
+    },
+  ];
+
+  return (
+    <SearchPopup
+      name={professor.name}
+      id={professor.ucinetid}
+      title={professor.title}
+      infos={infos}
+      scores={scores}
+      searchType="professor"
+      professor={professor}
+    />
+  );
 };
 
 export default ProfessorPopup;

@@ -1,54 +1,49 @@
 import { useEffect, FC, useRef } from 'react';
 import './SearchHitContainer.scss';
 
-import { useAppSelector } from '../../store/hooks';
-
-import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
-import NoResults from '../NoResults/NoResults';
-import { getMissingPrerequisites } from '../../helpers/planner';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { useClearedCourses } from '../../hooks/planner';
+import NoResults from '../NoResults/NoResults';
 
-// TODO: CourseHitItem and ProfessorHitem should not need index
-// investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
-interface SearchHitContainerProps {
+import { SearchIndex, SearchResultData, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import CourseHitItem from '../../pages/SearchPage/CourseHitItem';
+import ProfessorHitItem from '../../pages/SearchPage/ProfessorHitItem';
+
+import { useAppSelector } from '../../store/hooks';
+import { useClearedCourses } from '../../hooks/planner';
+import { getMissingPrerequisites } from '../../helpers/planner';
+
+interface SearchResultsProps {
   index: SearchIndex;
-  CourseHitItem: FC<CourseGQLData & { index: number; requiredCourses?: string[] }>;
-  ProfessorHitItem?: FC<ProfessorGQLData & { index: number }>;
+  results: SearchResultData;
 }
 
-const SearchResults = ({
-  index,
-  results,
-  CourseHitItem,
-  ProfessorHitItem,
-}: Required<SearchHitContainerProps> & { results: SearchResultData }) => {
+const SearchResults: FC<SearchResultsProps> = ({ index, results }) => {
   const clearedCourses = useClearedCourses();
 
   if (index === 'courses') {
-    return (results as CourseGQLData[]).map((course, i) => {
+    return (results as CourseGQLData[]).map((course) => {
       const requiredCourses = getMissingPrerequisites(clearedCourses, course);
-      return <CourseHitItem key={course.id} index={i} {...course} requiredCourses={requiredCourses} />;
+      return <CourseHitItem key={course.id} course={course} requiredCourses={requiredCourses} />;
     });
-  } else {
-    return (results as ProfessorGQLData[]).map((professor, i) => (
-      <ProfessorHitItem key={professor.ucinetid} index={i} {...professor} />
-    ));
   }
+
+  return (results as ProfessorGQLData[]).map((professor) => (
+    <ProfessorHitItem key={professor.ucinetid} professor={professor} />
+  ));
 };
 
-const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
+interface SearchHitContainerProps {
+  index: SearchIndex;
+}
+
+const SearchHitContainer: FC<SearchHitContainerProps> = ({ index }) => {
   const { query, results, searchInProgress } = useAppSelector((state) => state.search[index]);
   const containerDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     containerDivRef.current!.scrollTop = 0;
   }, [results]);
-
-  if (index == 'professors' && !ProfessorHitItem) {
-    throw 'Professor Component not provided';
-  }
 
   return (
     <div ref={containerDivRef} className="search-hit-container">
@@ -63,15 +58,8 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
         />
       ) : (
         <>
-          <SearchResults
-            index={index}
-            results={results}
-            CourseHitItem={CourseHitItem}
-            ProfessorHitItem={ProfessorHitItem!}
-          />
-          <div className="search-pagination">
-            <SearchPagination index={index} />
-          </div>
+          <SearchResults index={index} results={results} />
+          <SearchPagination index={index} />
         </>
       )}
     </div>

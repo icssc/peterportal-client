@@ -1,39 +1,39 @@
 import { FC } from 'react';
-import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge';
+import './HitItem.scss';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setCourse } from '../../store/slices/popupSlice';
+import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags, useIsMobile } from '../../helpers/util';
+import { setCourse } from '../../store/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useCoursebag } from '../../hooks/coursebag';
-interface CourseHitItemProps extends CourseGQLData {}
+import { getCourseTags, useIsMobile } from '../../helpers/util';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-const CourseHitItem: FC<CourseHitItemProps> = (props) => {
+interface CourseHitItemProps {
+  course: CourseGQLData;
+  requiredCourses?: string[] | undefined;
+}
+
+const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
   const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
-  const isInBag = coursebag.some((course) => course.id === props.id);
-
-  // data to be displayed in pills
-  const pillData = getCourseTags(props);
+  const isInBag = coursebag.some((c) => c.id === course.id);
+  const pillData = getCourseTags(course);
 
   const onClickName = () => {
     // set the popup course
-    dispatch(setCourse(props));
-
-    // if click on a course that is already in popup
-    // or if on mobile
-    if ((activeCourse && props.id == activeCourse.id) || isMobile) {
-      navigate(`/course/${props.id}`);
+    dispatch(setCourse(course));
+    // if click on a course that is already in popup or if on mobile
+    if ((activeCourse && course.id == activeCourse.id) || isMobile) {
+      navigate(`/course/${course.id}`);
     }
   };
 
@@ -45,15 +45,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
 
   const onAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!props) return;
-    if (props.id === undefined) return;
-    if (coursebag.some((course) => course.id === props.id)) return;
-    addCourseToBag(props);
+    if (!course || course.id === undefined || coursebag.some((c) => c.id === course.id)) return;
+    addCourseToBag(course);
   };
 
   const removeFromBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    removeCourseFromBag(props);
+    removeCourseFromBag(course);
   };
 
   return (
@@ -61,35 +59,26 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
       <div className="course-hit-id">
         <div>
           <p className="hit-name">
-            {props.department} {props.courseNumber} • {props.title}
+            {course.department} {course.courseNumber} • {course.title}
           </p>
-          <CourseQuarterIndicator terms={props.terms} size="sm" />
+          <CourseQuarterIndicator terms={course.terms} size="sm" />
         </div>
-        <p className="hit-subtitle">{props.school}</p>
+        <p className="hit-subtitle">{course.school}</p>
       </div>
 
       <div>
-        <p className="description">{props.description}</p>
+        <p className="description">{course.description}</p>
         <div className="hit-lower">
-          <div className="hit-badges">
+          <div>
             {pillData.map((pill, i) => (
               <Badge key={`course-hit-item-pill-${i}`} pill className="badge" variant="info">
                 {pill}
               </Badge>
             ))}
           </div>
-          <div>
-            {onAddToBag && !isInBag && (
-              <IconButton onClick={(e) => onAddToBag(e)} size={'small'}>
-                <BookmarkBorderIcon />
-              </IconButton>
-            )}
-            {isInBag && (
-              <IconButton onClick={(e) => removeFromBag(e)} size={'small'}>
-                <BookmarkIcon />
-              </IconButton>
-            )}
-          </div>
+          <IconButton onClick={(e) => (isInBag ? removeFromBag(e) : onAddToBag(e))} size="small">
+            {isInBag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
         </div>
       </div>
     </div>
