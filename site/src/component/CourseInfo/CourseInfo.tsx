@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { CourseGQLData } from '../../types/types';
-import { useCoursebag } from '../../hooks/coursebag';
+import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
@@ -13,12 +13,12 @@ interface CourseProp {
   course: CourseGQLData;
 }
 
-export const CoursebagButton: FC<CourseProp> = ({ course }) => {
-  const { coursebagIncludes, toggleCourseInCoursebag } = useCoursebag();
-  const courseInCoursebag = coursebagIncludes(course);
+export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
+  const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(course);
   return (
-    <button className="unstyled" onClick={() => toggleCourseInCoursebag(course)}>
-      {courseInCoursebag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+    <button className="unstyled" onClick={() => toggleSavedCourse(course)}>
+      {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </button>
   );
 };

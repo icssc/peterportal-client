@@ -5,7 +5,7 @@ import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
-  CoursebagButton,
+  CourseBookmarkButton,
   CourseDescription,
   IncompletePrerequisiteText,
   PrerequisiteText,
@@ -42,7 +42,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
           </span>
 
           <div className="spacer"></div>
-          {interactive && <CoursebagButton course={course} />}
+          {interactive && <CourseBookmarkButton course={course} />}
         </div>
         <br />
         <CourseDescription course={course} />
