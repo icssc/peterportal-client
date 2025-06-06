@@ -1,17 +1,15 @@
-import { FC, useEffect, useRef } from 'react';
+import { useEffect, FC, useRef } from 'react';
 import './SearchHitContainer.scss';
 
+import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import NoResults from '../NoResults/NoResults';
-
-import { SearchIndex, SearchResultData, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import CourseHitItem from '../../pages/SearchPage/CourseHitItem';
 import ProfessorHitItem from '../../pages/SearchPage/ProfessorHitItem';
-
+import { getMissingPrerequisites } from '../../helpers/planner';
 import { useAppSelector } from '../../store/hooks';
 import { useClearedCourses } from '../../hooks/planner';
-import { getMissingPrerequisites } from '../../helpers/planner';
 
 interface SearchResultsProps {
   index: SearchIndex;

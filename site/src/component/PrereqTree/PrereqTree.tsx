@@ -1,10 +1,10 @@
 import { FC } from 'react';
+import './PrereqTree.scss';
+import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
+
+import { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
-import './PrereqTree.scss';
-
-import type { CourseGQLData, CourseLookup } from '../../types/types';
-import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 const phraseMapping = {
   AND: 'all of',

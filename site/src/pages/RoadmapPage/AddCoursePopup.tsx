@@ -1,7 +1,11 @@
 import { FC } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
-
+import UIOverlay from '../../component/UIOverlay/UIOverlay';
+import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
+import { getUnitText } from '../../helpers/util';
 import {
   CourseBookmarkButton,
   CourseDescription,
@@ -9,12 +13,6 @@ import {
   PrerequisiteText,
   PreviousOfferingsRow,
 } from '../../component/CourseInfo/CourseInfo';
-import UIOverlay from '../../component/UIOverlay/UIOverlay';
-
-import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/roadmapSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import { getUnitText } from '../../helpers/util';
 
 import CloseIcon from '@mui/icons-material/Close';
 

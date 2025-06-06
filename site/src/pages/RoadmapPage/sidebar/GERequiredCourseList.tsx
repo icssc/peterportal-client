@@ -1,6 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-
 import trpc from '../../../trpc';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';

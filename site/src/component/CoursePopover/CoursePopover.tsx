@@ -1,7 +1,8 @@
 import { FC } from 'react';
-import Popover from 'react-bootstrap/Popover';
 import './CoursePopover.scss';
-
+import Popover from 'react-bootstrap/Popover';
+import { CourseGQLData } from '../../types/types';
+import { getUnitText } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
@@ -11,11 +12,8 @@ import {
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-
-import { CourseGQLData } from '../../types/types';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
-import { getUnitText } from '../../helpers/util';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;

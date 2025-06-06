@@ -1,27 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-
-import trpc from '../../../trpc';
-import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
-import {
-  selectAllPlans,
-  selectYearPlans,
-  setAllPlans,
-  setInvalidCourses,
-  setUnsavedChanges,
-  setRoadmapLoading,
-} from '../../../store/slices/roadmapSlice';
-import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { useTransferredCredits } from '../../../hooks/transferCredits';
-import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import {
-  getNamesOfTransfers,
-  loadTransferredAPs,
-  loadTransferredCourses,
-  loadTransferredGEs,
-  loadTransferredOther,
-} from '../../../helpers/transferCredits';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -30,6 +8,27 @@ import {
   upgradeLocalRoadmap,
   validatePlanner,
 } from '../../../helpers/planner';
+import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import {
+  selectAllPlans,
+  selectYearPlans,
+  setAllPlans,
+  setInvalidCourses,
+  setUnsavedChanges,
+  setRoadmapLoading,
+} from '../../../store/slices/roadmapSlice';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import {
+  getNamesOfTransfers,
+  loadTransferredAPs,
+  loadTransferredCourses,
+  loadTransferredGEs,
+  loadTransferredOther,
+} from '../../../helpers/transferCredits';
+import { useTransferredCredits } from '../../../hooks/transferCredits';
+import trpc from '../../../trpc';
+import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 
 const PlannerLoader: FC = () => {
   const [showSyncModal, setShowSyncModal] = useState(false);

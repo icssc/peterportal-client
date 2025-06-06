@@ -1,6 +1,6 @@
 // Grabbed from https://stackoverflow.com/questions/53253940/make-react-useeffect-hook-not-run-on-initial-render
 
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 export function useFirstRender() {
   const firstRender = useRef(true);

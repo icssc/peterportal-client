@@ -1,12 +1,10 @@
 import { FC, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import './AddYearPopup.scss';
-
+import { Button } from 'react-bootstrap';
 import YearModal from './YearModal';
-import { PlannerYearData } from '../../types/types';
 import { addYear, selectYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-
+import { PlannerYearData } from '../../types/types';
 import AddIcon from '@mui/icons-material/Add';
 
 const AddYearPopup: FC = () => {

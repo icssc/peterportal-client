@@ -1,6 +1,3 @@
-import { Theme } from 'react-select';
-import trpc from '../trpc';
-import { CourseGQLData } from '../types/types';
 import {
   GEName,
   GETitle,
@@ -9,11 +6,13 @@ import {
   MinorProgram,
   ProgramRequirement,
 } from '@peterportal/types';
+import { CourseGQLData } from '../types/types';
+import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
+import trpc from '../trpc';
 import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
-
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   id: 'Loading...',
   department: 'Loading...',
@@ -46,7 +45,6 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   prerequisites: {},
   dependents: {},
 };
-
 export const GE_TITLE_MAP: Record<GEName, GETitle> = {
   'GE-1A': 'GE Ia: Lower Division Writing',
   'GE-1B': 'GE Ib: Upper Division Writing',

@@ -1,17 +1,17 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
-import { setCourse } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
 
 const CoursePage: FC = () => {

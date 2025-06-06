@@ -1,26 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import './ProgramRequirementsList.scss';
-
-import { CourseNameAndInfo } from '../Course';
-import { ProgramRequirement } from '@peterportal/types';
-import { CourseGQLData } from '../../../types/types';
-import trpc from '../../../trpc';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-
-import {
-  setActiveCourse,
-  setActiveCourseLoading,
-  setActiveMissingPrerequisites,
-  setShowAddCourse,
-} from '../../../store/slices/roadmapSlice';
-import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-
-import { useClearedCourses } from '../../../hooks/planner';
-import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
-import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import {
   COMPLETE_ALL_TEXT,
   formatRequirements,
@@ -29,10 +8,26 @@ import {
   useCompletionCheck,
   CompletedCourseSet,
 } from '../../../helpers/courseRequirements';
-import { getMissingPrerequisites } from '../../../helpers/planner';
+import { CourseNameAndInfo } from '../Course';
+import { CourseGQLData } from '../../../types/types';
+import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { useIsMobile } from '../../../helpers/util';
-
+import {
+  setActiveCourse,
+  setActiveCourseLoading,
+  setActiveMissingPrerequisites,
+  setShowAddCourse,
+} from '../../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import { ProgramRequirement } from '@peterportal/types';
+import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
+import { getMissingPrerequisites } from '../../../helpers/planner';
+import { useClearedCourses } from '../../../hooks/planner';
+import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';

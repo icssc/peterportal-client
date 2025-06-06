@@ -2,9 +2,9 @@ import { FC } from 'react';
 import { Pagination } from 'react-bootstrap';
 import './SearchPagination.scss';
 
-import { SearchIndex } from '../../types/types';
-import { setPageNumber } from '../../store/slices/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setPageNumber } from '../../store/slices/searchSlice';
+import { SearchIndex } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
 interface SearchPaginationProps {

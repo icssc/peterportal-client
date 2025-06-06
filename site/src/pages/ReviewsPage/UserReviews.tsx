@@ -1,10 +1,9 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import './UserReviews.scss';
-
-import trpc from '../../trpc';
 import SubReview from '../../component/Review/SubReview';
-import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import './UserReviews.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import trpc from '../../trpc';
 
 const UserReviews: FC = () => {
   const reviews = useAppSelector(selectReviews);

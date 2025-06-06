@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import './Reports.scss';
 import ReportGroup from './ReportGroup';
+import './Reports.scss';
 import trpc from '../../trpc';
 import { ReportData } from '@peterportal/types';
 
@@ -15,6 +15,7 @@ const Reports: FC = () => {
 
   const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
+
     const reportsDisplay: ReviewDisplay[] = [];
 
     reports.forEach((report) => {

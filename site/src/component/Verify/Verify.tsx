@@ -1,9 +1,8 @@
 import { FC, useCallback, useEffect, useState } from 'react';
+import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import './Verify.scss';
-
 import trpc from '../../trpc';
-import SubReview from '../../component/Review/SubReview';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 

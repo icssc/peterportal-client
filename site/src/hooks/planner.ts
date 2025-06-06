@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
+import { getAllCoursesFromPlan } from '../helpers/planner';
 import { useAppSelector } from '../store/hooks';
 import { useTransferredCredits } from './transferCredits';
 import { getNamesOfTransfers } from '../helpers/transferCredits';
-import { getAllCoursesFromPlan } from '../helpers/planner';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();

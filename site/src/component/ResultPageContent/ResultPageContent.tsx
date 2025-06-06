@@ -1,6 +1,6 @@
+import './ResultPageContent.scss';
 import { FC } from 'react';
 import Twemoji from 'react-twemoji';
-import './ResultPageContent.scss';
 
 interface ResultPageSectionProps {
   title: string;

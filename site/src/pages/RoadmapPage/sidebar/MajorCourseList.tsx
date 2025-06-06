@@ -1,22 +1,19 @@
-import { FC, useCallback, useEffect, useState, useContext } from 'react';
-import Select from 'react-select';
 import './MajorCourseList.scss';
-
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import Select from 'react-select';
 import ProgramRequirementsList from './ProgramRequirementsList';
-
-import trpc from '../../../trpc';
 import ThemeContext from '../../../style/theme-context';
-import { MajorSpecialization } from '@peterportal/types';
-
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setMajorSpecs,
   setRequirements,
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
+import { MajorSpecialization } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
-import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -26,6 +23,7 @@ interface MajorCourseListProps {
   onSpecializationChange: (majorId: string, spec: MajorSpecialization | null) => void;
   selectedSpecId?: string;
 }
+
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);

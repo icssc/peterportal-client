@@ -1,12 +1,12 @@
-import { FC, useCallback, useEffect, useState, useContext } from 'react';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import { FC, useState, useEffect, useCallback, useContext } from 'react';
 import './Schedule.scss';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
-import trpc from '../../trpc';
-import ThemeContext from '../../style/theme-context';
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
+import trpc from '../../trpc';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
 
 interface ScheduleProps {
   courseID?: string;

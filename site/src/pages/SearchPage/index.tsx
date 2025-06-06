@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import 'react-multi-carousel/lib/styles.css';
 import './SearchPage.scss';
+import 'react-multi-carousel/lib/styles.css';
 
 import CoursePopup from './CoursePopup';
 import ProfessorPopup from './ProfessorPopup';

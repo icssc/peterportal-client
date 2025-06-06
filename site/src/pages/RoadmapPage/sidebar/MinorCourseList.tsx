@@ -1,10 +1,9 @@
-import { FC, useCallback, useEffect, useState } from 'react';
 import './MajorCourseList.scss';
+import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-
-import trpc from '../../../trpc';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -17,6 +16,7 @@ interface MinorCourseListProps {
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const [resultsLoading, setResultsLoading] = useState(false);
   const [open, setOpen] = useState(true);
+
   const dispatch = useAppDispatch();
 
   const fetchRequirements = useCallback(

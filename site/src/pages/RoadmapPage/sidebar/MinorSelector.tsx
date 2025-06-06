@@ -1,16 +1,13 @@
-import { FC, useCallback, useEffect, useState, useContext, useRef } from 'react';
+import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
-
-import MinorCourseList from './MinorCourseList';
-
 import trpc from '../../../trpc';
-import ThemeContext from '../../../style/theme-context';
-import { MinorProgram } from '@peterportal/types';
-
+import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import ThemeContext from '../../../style/theme-context';
+import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
+import MinorCourseList from './MinorCourseList';
 
 function updateSelectedMinors(plannerId: number, minorIds: string[]) {
   if (!plannerId) return;

@@ -1,12 +1,7 @@
-import { FC, useCallback, useEffect, useState, useContext, useRef } from 'react';
+import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
 import Select from 'react-select';
-
-import MajorCourseList from './MajorCourseList';
-
 import trpc from '../../../trpc';
-import ThemeContext from '../../../style/theme-context';
-import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
-
+import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
 import {
   addMajor,
   removeMajor,
@@ -14,8 +9,10 @@ import {
   MajorWithSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import ThemeContext from '../../../style/theme-context';
+import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
+import MajorCourseList from './MajorCourseList';
 
 function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpecializationPair[]) {
   if (!plannerId) return;

@@ -1,12 +1,11 @@
-import { FC, useState } from 'react';
-import './MenuTile.scss';
-
 import { pluralize } from '../../../helpers/util';
+import './MenuTile.scss';
+import { FC, useState } from 'react';
 
-import { IconButton } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { IconButton } from '@mui/material';
 
 interface UnitsContainerProps {
   units: number;

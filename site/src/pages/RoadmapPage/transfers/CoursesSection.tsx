@@ -1,19 +1,17 @@
-import { FC, useState, useContext } from 'react';
-import AsyncSelect from 'react-select/async';
-
+import { FC, useContext, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-
 import trpc from '../../../trpc';
-import { TransferredCourse, CourseAAPIResponse } from '@peterportal/types';
+import { comboboxTheme } from '../../../helpers/courseRequirements';
 import ThemeContext from '../../../style/theme-context';
+import AsyncSelect from 'react-select/async';
+import { TransferredCourse, CourseAAPIResponse } from '@peterportal/types';
 import {
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { comboboxTheme } from '../../../helpers/courseRequirements';
 import { getCourseIdWithSpaces } from '../../../helpers/util';
 
 interface CourseSelectOption {

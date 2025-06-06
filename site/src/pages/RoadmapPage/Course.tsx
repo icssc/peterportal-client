@@ -1,14 +1,13 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import './Course.scss';
-
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
+import { useIsMobile, getUnitText } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useIsMobile, getUnitText } from '../../helpers/util';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -16,9 +15,9 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
-  requiredCourses?: string[];
   popupListener?: (open: boolean) => void;
   openPopoverLeft?: boolean;
+  requiredCourses?: string[];
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
 }
@@ -39,7 +38,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} interactive={true} />;
+  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
 
   return (
     <PPCOverlayTrigger

@@ -1,18 +1,18 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { getProfessorTerms } from '../../helpers/reviews';
 import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 
 const ProfessorPage: FC = () => {
   const { id } = useParams<{ id: string }>();

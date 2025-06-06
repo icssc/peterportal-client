@@ -1,14 +1,14 @@
 import { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Badge from 'react-bootstrap/Badge';
 import './HitItem.scss';
-
+import { useNavigate } from 'react-router-dom';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import { CourseGQLData } from '../../types/types';
-import { setCourse } from '../../store/slices/popupSlice';
+import Badge from 'react-bootstrap/Badge';
+
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useCoursebag } from '../../hooks/coursebag';
+import { setCourse } from '../../store/slices/popupSlice';
+import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
+import { useCoursebag } from '../../hooks/coursebag';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -16,7 +16,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 interface CourseHitItemProps {
   course: CourseGQLData;
-  requiredCourses?: string[]; // Why is this not used, but is passed as a prop in SearchHitContainer?
+  requiredCourses?: string[] | undefined; // Why is this not used, but is passed as a prop in SearchHitContainer?
 }
 
 const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {

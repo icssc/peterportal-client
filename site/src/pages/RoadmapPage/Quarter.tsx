@@ -1,11 +1,8 @@
-import { FC, useCallback, useEffect, useState, useContext, useRef } from 'react';
+import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import './Quarter.scss';
-
-import Course from './Course';
-import ThemeContext from '../../style/theme-context';
-import { PlannerQuarterData } from '../../types/types';
+import { quarterDisplayNames } from '../../helpers/planner';
+import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   clearQuarter,
   deleteCourse,
@@ -15,10 +12,13 @@ import {
   setActiveCourse,
   setShowSearch,
 } from '../../store/slices/roadmapSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { quarterDisplayNames } from '../../helpers/planner';
+import ThemeContext from '../../style/theme-context';
+import { PlannerQuarterData } from '../../types/types';
+import './Quarter.scss';
+
+import Course from './Course';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../helpers/sortable';
-import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -32,21 +32,19 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
-
+  const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector(
     (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
   );
-  const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
-  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-
-  const [showQuarterMenu, setShowQuarterMenu] = useState(false);
-  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
-  const { darkMode } = useContext(ThemeContext);
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-
-  const quarterTitle = quarterDisplayNames[data.name];
+  const [showQuarterMenu, setShowQuarterMenu] = useState(false);
+  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
+  const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const isDragging = activeCourse !== undefined;
+
+  const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
   const unitCount = data.courses.reduce((sum, course) => sum + course.minUnits, 0);
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)

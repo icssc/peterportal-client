@@ -1,11 +1,9 @@
 import { FC } from 'react';
-import './CourseInfo.scss';
-
-import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
-
 import { CourseGQLData } from '../../types/types';
 import { useCoursebag } from '../../hooks/coursebag';
 import { pluralize } from '../../helpers/util';
+import './CourseInfo.scss';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';

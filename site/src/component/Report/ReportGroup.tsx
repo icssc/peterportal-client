@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import './ReportGroup.scss';
 import SubReport from './SubReport';
-import trpc from '../../trpc';
+import './ReportGroup.scss';
 import { ReportData, ReviewData } from '@peterportal/types';
+import trpc from '../../trpc';
 
 interface ReportGroupProps {
   reviewId: number;

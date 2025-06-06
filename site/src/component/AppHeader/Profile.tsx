@@ -1,10 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import './Profile.scss';
-
+import { NavLink } from 'react-router-dom';
 import trpc from '../../trpc';
-import ThemeContext from '../../style/theme-context';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
@@ -15,10 +14,12 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 
+type ProfileMenuTab = 'default' | 'theme';
+
 const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
   const [show, setShow] = useState(false);
-  const [tab, setTab] = useState<'default' | 'theme'>('default');
+  const [tab, setTab] = useState<ProfileMenuTab>('default');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

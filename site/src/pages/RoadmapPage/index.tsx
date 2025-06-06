@@ -1,14 +1,12 @@
 import { FC } from 'react';
-import { CSSTransition } from 'react-transition-group';
 import './index.scss';
-
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
-import AddCoursePopup from './AddCoursePopup';
-import TransferCreditsMenu from './transfers/TransferCreditsMenu';
-
 import { useAppSelector } from '../../store/hooks';
+import AddCoursePopup from './AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
+import { CSSTransition } from 'react-transition-group';
+import TransferCreditsMenu from './transfers/TransferCreditsMenu';
 
 const RoadmapPage: FC = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);

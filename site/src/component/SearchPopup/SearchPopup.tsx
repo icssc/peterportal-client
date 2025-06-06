@@ -1,15 +1,14 @@
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
-import Carousel from 'react-multi-carousel';
-import Button from 'react-bootstrap/Button';
 import './SearchPopup.scss';
-
 import GradeDist from '../GradeDist/GradeDist';
+import Button from 'react-bootstrap/Button';
+import Carousel from 'react-multi-carousel';
 import searching from '../../asset/searching.webp';
 
-import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
-import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector } from '../../store/hooks';
+import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
+import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
+import { Link } from 'react-router-dom';
 
 interface InfoData {
   title: string;

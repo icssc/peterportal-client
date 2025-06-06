@@ -1,25 +1,22 @@
-import { FC, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Modal } from 'react-bootstrap';
+import { FC, useContext, useState } from 'react';
+import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import './Review.scss';
-
-import ReportForm from '../ReportForm/ReportForm';
-import ReviewForm from '../ReviewForm/ReviewForm';
-
-import trpc from '../../trpc';
-import ThemeContext from '../../style/theme-context';
+import { Link } from 'react-router-dom';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { ReviewData } from '@peterportal/types';
-
+import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { Button, Modal } from 'react-bootstrap';
+import ThemeContext from '../../style/theme-context';
+import ReviewForm from '../ReviewForm/ReviewForm';
+import trpc from '../../trpc';
+import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { getProfessorTerms } from '../../helpers/reviews';
 import { sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';

@@ -1,5 +1,3 @@
-import { useMediaQuery } from 'react-responsive';
-import trpc from '../trpc';
 import {
   SearchIndex,
   CourseGQLData,
@@ -9,6 +7,8 @@ import {
   SearchType,
   CourseWithTermsLookup,
 } from '../types/types';
+import { useMediaQuery } from 'react-responsive';
+import trpc from '../trpc';
 import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
 
 export function getCourseTags(course: CourseGQLData) {

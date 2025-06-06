@@ -14,6 +14,8 @@ import {
   Prerequisite,
   PrerequisiteTree,
 } from '@peterportal/types';
+import { searchAPIResults } from './util';
+import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
   CourseGQLData,
@@ -22,13 +24,9 @@ import {
   PlannerQuarterData,
   PlannerYearData,
 } from '../types/types';
-
 import trpc from '../trpc';
-import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
-
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import spawnToast from './toastify';
-import { searchAPIResults } from './util';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -359,6 +357,7 @@ const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<Prer
 const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
   // base case is just a course
   if ('prereqType' in prerequisite) return validateCoursePrerequisite({ prerequisite, ...input });
+
   if (prerequisite.AND) return validateAndPrerequisite({ prerequisite, ...input });
   if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
 
@@ -374,6 +373,7 @@ export const getMissingPrerequisites = (clearedCourses: Set<string>, course: Cou
     taking: new Set<string>(),
     corequisite: course.corequisites,
   };
+
   const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };

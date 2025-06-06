@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import trpc from '../trpc';
-import { CourseGQLData } from '../types/types';
-import { addCourseToBagState, removeCourseFromBagState } from '../store/slices/coursebagSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addCourseToBagState, removeCourseFromBagState } from '../store/slices/coursebagSlice';
+import trpc from '../trpc';
 import { useIsLoggedIn } from './isLoggedIn';
+import { CourseGQLData } from '../types/types';
 
 export function useCoursebag() {
   const coursebag = useAppSelector((state) => state.coursebag.coursebag);
