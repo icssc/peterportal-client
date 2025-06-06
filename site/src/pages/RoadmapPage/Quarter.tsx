@@ -1,5 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Button as Button2, OverlayTrigger, Popover } from 'react-bootstrap';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -20,17 +20,17 @@ import Course from './Course';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../helpers/sortable';
 
-import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import { Button, Card } from '@mui/material';
 
 interface QuarterProps {
-  year: number;
   yearIndex: number;
   quarterIndex: number;
   data: PlannerQuarterData;
 }
 
-const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
+const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector(
@@ -106,7 +106,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`} className="quarter-menu-popover">
       <Popover.Content>
         <div>
-          <Button
+          <Button2
             variant={buttonVariant}
             className="quarter-menu-btn red-menu-btn"
             onClick={() => {
@@ -115,8 +115,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             }}
           >
             Clear
-          </Button>
-          <Button
+          </Button2>
+          <Button2
             variant={buttonVariant}
             className="quarter-menu-btn red-menu-btn"
             onClick={() => {
@@ -125,7 +125,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
             }}
           >
             Delete
-          </Button>
+          </Button2>
         </div>
       </Popover.Content>
     </Popover>
@@ -137,14 +137,24 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   };
 
   return (
-    <div className="quarter" ref={quarterContainerRef}>
+    <Card className="quarter" ref={quarterContainerRef} variant="outlined">
       <div className="quarter-header">
-        <h2 className="quarter-title">
-          {quarterTitle} {year}
-        </h2>
+        <h2 className="quarter-title">{quarterTitle.replace('10 Week', '10wk')}</h2>
         <div className="quarter-units">
           {unitCount} unit{pluralize(unitCount)}
         </div>
+        {isMobile && (
+          <Button
+            startIcon={<PlaylistAddIcon />}
+            onClick={() => dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }))}
+            size="small"
+            variant="contained"
+            color="inherit"
+            disableElevation
+          >
+            Add Course
+          </Button>
+        )}
         <OverlayTrigger
           trigger="click"
           overlay={popover}
@@ -198,9 +208,9 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         })}
       </ReactSortable>
 
-      {isMobile && (
+      {/* {isMobile && (
         <>
-          <Button
+          <Button2
             variant={buttonVariant}
             className="quarter-add-course"
             onClick={() => {
@@ -209,10 +219,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           >
             <AddIcon className="plus-icon" />
             <span>Add Course</span>
-          </Button>
+          </Button2>
         </>
-      )}
-    </div>
+      )} */}
+    </Card>
   );
 };
 

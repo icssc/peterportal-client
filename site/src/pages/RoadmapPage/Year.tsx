@@ -169,19 +169,18 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       <DeleteYearModal show={showDeleteYear} setShow={setShowDeleteYear} yearName={data.name} yearIndex={yearIndex} />
       <Collapse in={showContent} timeout="auto" unmountOnExit>
         <Divider />
-        <div className="year-accordion-content">
+        <Card className="quarter-list" variant="outlined">
           {data.quarters.map((quarter, quarterIndex) => {
             return (
               <Quarter
                 key={`year-quarter-${quarterIndex}`}
-                year={data.startYear + (quarterIndex == 0 ? 0 : 1)}
                 yearIndex={yearIndex}
                 quarterIndex={quarterIndex}
                 data={quarter}
               />
             );
           })}
-        </div>
+        </Card>
       </Collapse>
     </Card>
   );

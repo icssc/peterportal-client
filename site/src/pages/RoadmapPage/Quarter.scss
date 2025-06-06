@@ -14,10 +14,9 @@
   }
 }
 
-.quarter {
+div.quarter {
   background-color: var(--overlay1);
-  border-radius: 10px;
-  box-shadow: 0px 0px 4px var(--blue-primary);
+  border-radius: 0;
   flex: 1 1 30%;
   min-width: 250px;
   position: relative;
@@ -25,18 +24,24 @@
   display: flex;
   flex-direction: column;
   font-size: 14px;
+  margin: -1px -0.75px;
 
   .quarter-header {
+    background-color: #8881; //var(--overlay2);
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border-primary);
+    margin-bottom: -2px;
+    z-index: 1;
 
     .quarter-title {
       color: #202e47;
       font-weight: bold;
       font-size: 18px;
-      padding: 10px 0 10px 12px;
       margin: 0;
       margin-right: auto;
     }
@@ -47,6 +52,22 @@
       margin-right: 8px;
       padding: 0;
       width: 20px;
+      display: none;
+    }
+
+    button {
+      height: 24px;
+      font-size: 11px;
+      font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 600;
+
+      .MuiButton-icon {
+        margin-right: 4px;
+      }
+
+      &.MuiButton-root:hover {
+        --variant-containedBg: #e8e8e8;
+      }
     }
   }
 
@@ -65,13 +86,12 @@
   }
 
   .quarter-course-list {
-    border: 1px solid #268cd366;
-    border-inline-width: 0;
     margin-bottom: -2px;
     height: 100%;
+    overflow: hidden;
 
     &:empty {
-      padding: 12px 32px 20px;
+      padding: 20px 32px;
       border: none;
       display: flex;
       justify-content: center;
@@ -85,13 +105,20 @@
 
     .course {
       box-shadow: none;
-      border: 1px solid #268cd366;
+      border: 1px solid var(--border-secondary);
       border-radius: 0;
+      margin-block: -0.5px;
       .quarter-indicator-container {
         display: none;
       }
       &.sortable-ghost {
         opacity: 0.35;
+      }
+      .title {
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
@@ -103,7 +130,7 @@
 }
 
 @media only screen and (max-width: 800px) {
-  .quarter .quarter-course-list:empty {
+  div.quarter .quarter-course-list:empty {
     padding: 16px;
     border: none;
     margin-block: -16px;
