@@ -1,8 +1,9 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
 import Button from 'react-bootstrap/Button';
 import './Verify.scss';
+
 import trpc from '../../trpc';
+import SubReview from '../../component/Review/SubReview';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
@@ -34,31 +35,33 @@ const Verify: FC = () => {
 
   if (!loaded) {
     return <p>Loading...</p>;
-  } else if (reviews.length === 0) {
-    return <p>No reviews to display at the moment.</p>;
-  } else {
-    return (
-      <div className="content-wrapper verify-container">
-        <h1>Unverified Reviews</h1>
-        <p>Verifying a review will display the review on top of unverified reviews.</p>
-        <p>Deleting a review will remove it permanently.</p>
-        {reviews.map((review, i) => (
-          <div key={`verify-${i}`} className="verify">
-            <br />
-            <SubReview review={review}></SubReview>
-            <div className="verify-footer">
-              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>
-                Delete
-              </Button>
-              <Button variant="success" onClick={() => verifyReview(review.id)}>
-                Verify
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
   }
+
+  if (reviews.length === 0) {
+    return <p>No reviews to display at the moment.</p>;
+  }
+
+  return (
+    <div className="content-wrapper verify-container">
+      <h1>Unverified Reviews</h1>
+      <p>Verifying a review will display the review on top of unverified reviews.</p>
+      <p>Deleting a review will remove it permanently.</p>
+      {reviews.map((review, i) => (
+        <div key={`verify-${i}`} className="verify">
+          <br />
+          <SubReview review={review}></SubReview>
+          <div className="verify-footer">
+            <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>
+              Delete
+            </Button>
+            <Button variant="success" onClick={() => verifyReview(review.id)}>
+              Verify
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default Verify;

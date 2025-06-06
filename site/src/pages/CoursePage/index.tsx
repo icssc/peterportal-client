@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
@@ -38,45 +38,47 @@ const CoursePage: FC = () => {
   if (error) {
     return <Error message={error} />;
   }
+
   // loading results
-  else if (!courseGQLData) {
+  if (!courseGQLData) {
     return <LoadingSpinner />;
-  } else {
-    const sideInfo = (
-      <SideInfo
-        searchType="course"
-        name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-        title={courseGQLData.title}
-        description={courseGQLData.description}
-        tags={getCourseTags(courseGQLData)}
-        course={courseGQLData}
-        terms={courseGQLData.terms}
-      />
-    );
-    return (
-      <ResultPageContent sideInfo={sideInfo}>
-        <ResultPageSection title="📊 Grade Distribution">
-          <GradeDist course={courseGQLData} />
-        </ResultPageSection>
-
-        <ResultPageSection title="🌲 Prerequisite Tree">
-          <PrereqTree key={courseGQLData.id} {...courseGQLData} />
-        </ResultPageSection>
-
-        <ResultPageSection title="🗓️ Schedule of Classes">
-          <Schedule
-            key={courseGQLData.id}
-            courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-            termsOffered={sortTerms(courseGQLData.terms)}
-          />
-        </ResultPageSection>
-
-        <ResultPageSection title="💬 Reviews">
-          <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
-        </ResultPageSection>
-      </ResultPageContent>
-    );
   }
+
+  const sideInfo = (
+    <SideInfo
+      searchType="course"
+      name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+      title={courseGQLData.title}
+      description={courseGQLData.description}
+      tags={getCourseTags(courseGQLData)}
+      course={courseGQLData}
+      terms={courseGQLData.terms}
+    />
+  );
+
+  return (
+    <ResultPageContent sideInfo={sideInfo}>
+      <ResultPageSection title="📊 Grade Distribution">
+        <GradeDist course={courseGQLData} />
+      </ResultPageSection>
+
+      <ResultPageSection title="🌲 Prerequisite Tree">
+        <PrereqTree key={courseGQLData.id} course={courseGQLData} />
+      </ResultPageSection>
+
+      <ResultPageSection title="🗓️ Schedule of Classes">
+        <Schedule
+          key={courseGQLData.id}
+          courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+          termsOffered={sortTerms(courseGQLData.terms)}
+        />
+      </ResultPageSection>
+
+      <ResultPageSection title="💬 Reviews">
+        <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
+      </ResultPageSection>
+    </ResultPageContent>
+  );
 };
 
 export default CoursePage;

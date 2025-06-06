@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import './MajorCourseList.scss';
 import ProgramRequirementsList from './ProgramRequirementsList';
 

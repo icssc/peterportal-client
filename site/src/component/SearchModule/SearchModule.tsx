@@ -1,14 +1,14 @@
-import { useState, useEffect, FC, useCallback, useRef } from 'react';
-import './SearchModule.scss';
+import { FC, useCallback, useEffect, useState, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import './SearchModule.scss';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import trpc from '../../trpc';
 import { SearchIndex, SearchResultData } from '../../types/types';
-import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowCourseBag } from '../../store/slices/roadmapSlice';
-import trpc from '../../trpc.ts';
 import { setQuery, setResults } from '../../store/slices/searchSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { transformGQLData } from '../../helpers/util';
 
 import SearchIcon from '@mui/icons-material/Search';

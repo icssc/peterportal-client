@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
-import ThemeContext from '../../style/theme-context';
-import { Theme } from '@peterportal/types';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
+import { Theme } from '@peterportal/types';
+import ThemeContext from '../../style/theme-context';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 function isSystemDark() {

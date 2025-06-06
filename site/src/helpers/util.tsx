@@ -1,3 +1,5 @@
+import { useMediaQuery } from 'react-responsive';
+import trpc from '../trpc';
 import {
   SearchIndex,
   CourseGQLData,
@@ -7,16 +9,13 @@ import {
   SearchType,
   CourseWithTermsLookup,
 } from '../types/types';
-import { useMediaQuery } from 'react-responsive';
-import trpc from '../trpc';
 import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
   const tags: string[] = [];
   // units
-  const { minUnits, maxUnits } = course;
-  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`);
+  tags.push(getUnitText(course));
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {
@@ -143,6 +142,12 @@ export function deepCopy<T>(obj: T): T {
 
 export function pluralize(count: number, pluralText: string = 's', singularText: string = '') {
   return count === 1 ? singularText : pluralText;
+}
+
+export function getUnitText(course: CourseGQLData) {
+  const { minUnits, maxUnits } = course;
+  const numUnits = minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`;
+  return `${numUnits} unit${pluralize(maxUnits)}`;
 }
 
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {

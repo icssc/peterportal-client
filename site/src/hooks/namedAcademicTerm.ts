@@ -1,5 +1,5 @@
-import { quarterDisplayNames } from '../helpers/planner';
 import { useAppSelector } from '../store/hooks';
+import { quarterDisplayNames } from '../helpers/planner';
 
 export const useNamedAcademicTerm = () => {
   const planner = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans);

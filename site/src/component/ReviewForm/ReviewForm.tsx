@@ -1,11 +1,15 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
-import './ReviewForm.scss';
+import { FC, useEffect, useState, useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { addReview, editReview } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import ReCAPTCHA from 'react-google-recaptcha';
+import Select from 'react-select';
+import './ReviewForm.scss';
+
+import StarRating from './StarRating';
 import { ReviewProps } from '../Review/Review';
+
+import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
 import {
   anonymousName,
@@ -17,14 +21,13 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import spawnToast from '../../helpers/toastify';
-import trpc from '../../trpc';
-import ReCAPTCHA from 'react-google-recaptcha';
-import StarRating from './StarRating';
-import Select from 'react-select';
-import { comboboxTheme } from '../../helpers/courseRequirements';
+
+import { addReview, editReview } from '../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { comboboxTheme } from '../../helpers/courseRequirements';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
+import spawnToast from '../../helpers/toastify';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 
 interface ReviewFormProps extends ReviewProps {

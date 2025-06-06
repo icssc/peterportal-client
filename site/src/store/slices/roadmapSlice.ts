@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { defaultYear } from '../../helpers/planner';
+import type { RootState } from '../store';
 import {
   CourseGQLData,
   CourseIdentifier,
@@ -10,9 +10,10 @@ import {
   QuarterIdentifier,
   YearIdentifier,
 } from '../../types/types';
-import type { RootState } from '../store';
-import spawnToast from '../../helpers/toastify';
 import { quarters } from '@peterportal/types';
+import spawnToast from '../../helpers/toastify';
+import { defaultYear } from '../../helpers/planner';
+
 // Define a type for the slice state
 interface RoadmapPlanState {
   // Store planner data

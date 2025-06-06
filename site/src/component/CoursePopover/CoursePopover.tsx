@@ -15,7 +15,7 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { CourseGQLData } from '../../types/types';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
-import { pluralize } from '../../helpers/util';
+import { getUnitText } from '../../helpers/util';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
@@ -30,16 +30,15 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
     return <LoadingSpinner />;
   }
 
-  const { department, courseNumber, minUnits, maxUnits } = course;
+  const { department, courseNumber } = course;
   requiredCourses = getMissingPrerequisites(clearedCourses, course);
-  const units = minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`;
-  const unitsText = `${units} ${pluralize(maxUnits, 'units', 'unit')}`;
+  const unitText = getUnitText(course);
 
   return (
     <>
       <div className="popover-name">
         {`${department} ${courseNumber} `}
-        <span className="popover-units">({unitsText})</span>
+        <span className="popover-units">({unitText})</span>
         <div className="spacer"></div>
         {interactive && <CourseBookmarkButton course={course} />}
       </div>

@@ -1,15 +1,17 @@
 import { FC } from 'react';
 import './Planner.scss';
+
 import PlannerLoader from './planner/PlannerLoader';
 import Header from './Header';
 import Year from './Year';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import { useAppSelector } from '../../store/hooks';
+
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
-import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
-import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
+import { useAppSelector } from '../../store/hooks';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
+import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
 
 const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);

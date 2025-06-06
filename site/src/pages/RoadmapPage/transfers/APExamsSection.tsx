@@ -1,15 +1,18 @@
-import { FC, useState, useContext, useEffect, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState, useContext } from 'react';
+import Select from 'react-select';
+import './APExamsSection.scss';
+
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-import Select from 'react-select';
-import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme } from '../../../helpers/courseRequirements';
+
 import trpc from '../../../trpc';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addUserAPExam, removeUserAPExam, updateUserExam } from '../../../store/slices/transferCreditsSlice';
-import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import ThemeContext from '../../../style/theme-context';
 import { APExam, TransferredAPExam } from '@peterportal/types';
-import './APExamsSection.scss';
+
+import { addUserAPExam, removeUserAPExam, updateUserExam } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import { comboboxTheme } from '../../../helpers/courseRequirements';
 
 interface ScoreSelectionProps {
   score: number;

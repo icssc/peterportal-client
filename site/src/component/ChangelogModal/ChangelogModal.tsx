@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
+import './ChangelogModal.scss';
 import changelogImage from '../../asset/transfer-credits.webp';
 
 const DESCRIPTION = 'Transferred courses are now easier to add, and AP Exams now clear prerequisites!';

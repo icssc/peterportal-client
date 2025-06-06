@@ -1,3 +1,4 @@
+import trpc from '../trpc';
 import {
   APExam,
   TransferredGE,
@@ -5,7 +6,6 @@ import {
   TransferredUncategorized,
   TransferredAPExam,
 } from '@peterportal/types';
-import trpc from '../trpc';
 
 /**
  * Gets a list of names of courses and AP Exams from transferred credits. Courses and AP Exams

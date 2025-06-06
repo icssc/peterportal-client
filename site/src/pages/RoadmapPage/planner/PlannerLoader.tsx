@@ -1,15 +1,8 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import {
-  collapseAllPlanners,
-  expandAllPlanners,
-  loadRoadmap,
-  saveRoadmap,
-  upgradeLocalRoadmap,
-  validatePlanner,
-} from '../../../helpers/planner';
+
+import trpc from '../../../trpc';
 import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   selectAllPlans,
   selectYearPlans,
@@ -18,6 +11,9 @@ import {
   setUnsavedChanges,
   setRoadmapLoading,
 } from '../../../store/slices/roadmapSlice';
+import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
   getNamesOfTransfers,
@@ -26,9 +22,14 @@ import {
   loadTransferredGEs,
   loadTransferredOther,
 } from '../../../helpers/transferCredits';
-import { useTransferredCredits } from '../../../hooks/transferCredits';
-import trpc from '../../../trpc';
-import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
+import {
+  collapseAllPlanners,
+  expandAllPlanners,
+  loadRoadmap,
+  saveRoadmap,
+  upgradeLocalRoadmap,
+  validatePlanner,
+} from '../../../helpers/planner';
 
 const PlannerLoader: FC = () => {
   const [showSyncModal, setShowSyncModal] = useState(false);

@@ -1,6 +1,9 @@
 import { useEffect, useMemo } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+
 import trpc from '../trpc';
+import { TransferredGE, TransferredCourse, TransferredUncategorized, TransferredAPExam } from '@peterportal/types';
+import { components } from '@peterportal/types/src/generated/anteater-api-types';
+
 import {
   setAllTransferredGEs,
   setAPExams,
@@ -9,7 +12,8 @@ import {
   setUserAPExams,
   setDataLoadState,
 } from '../store/slices/transferCreditsSlice';
-import { components } from '@peterportal/types/src/generated/anteater-api-types';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useIsLoggedIn } from './isLoggedIn';
 import {
   loadTransferredAPs,
   loadTransferredCourses,
@@ -18,8 +22,6 @@ import {
   LocalTransferSaveKey,
   saveLocalTransfers,
 } from '../helpers/transferCredits';
-import { useIsLoggedIn } from './isLoggedIn';
-import { TransferredGE, TransferredCourse, TransferredUncategorized, TransferredAPExam } from '@peterportal/types';
 
 /** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;

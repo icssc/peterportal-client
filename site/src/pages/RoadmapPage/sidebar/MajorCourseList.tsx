@@ -1,12 +1,13 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState, useContext } from 'react';
 import Select from 'react-select';
-
 import './MajorCourseList.scss';
+
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { MajorSpecialization } from '@peterportal/types';
 
 import trpc from '../../../trpc';
 import ThemeContext from '../../../style/theme-context';
+import { MajorSpecialization } from '@peterportal/types';
+
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import {
   MajorWithSpecialization,

@@ -1,21 +1,22 @@
 import { FC, useEffect, useRef } from 'react';
-import './TransferCreditsMenu.scss';
 import { CSSTransition } from 'react-transition-group';
-import { useIsMobile } from '../../../helpers/util';
-import UIOverlay from '../../../component/UIOverlay/UIOverlay';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import './TransferCreditsMenu.scss';
+
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
+import UIOverlay from '../../../component/UIOverlay/UIOverlay';
+
+import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
+import { useIsMobile } from '../../../helpers/util';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
-
   const toggleMenu = () => dispatch(setShowTransfersMenu(!show));
 
   return (

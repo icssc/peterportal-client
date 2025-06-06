@@ -16,7 +16,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 interface CourseHitItemProps {
   course: CourseGQLData;
-  requiredCourses?: string[] | undefined;
+  requiredCourses?: string[]; // Why is this not used, but is passed as a prop in SearchHitContainer?
 }
 
 const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {

@@ -1,16 +1,18 @@
-import { FC, useContext, useState } from 'react';
-import './ImportZot4PlanPopup.scss';
+import { FC, useState, useContext } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import './ImportZot4PlanPopup.scss';
+
+import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
-import trpc from '../../trpc.ts';
-import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
-import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
+
+import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
-import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
+import spawnToast from '../../helpers/toastify';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';

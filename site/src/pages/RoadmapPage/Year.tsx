@@ -1,14 +1,15 @@
-import { FC, useContext, useRef, useState } from 'react';
-import './Year.scss';
+import { FC, useState, useRef, useContext } from 'react';
 import { Button, Popover, OverlayTrigger } from 'react-bootstrap';
-import Quarter from './Quarter';
-import { useAppDispatch } from '../../store/hooks';
-import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } from '../../store/slices/roadmapSlice';
-import { pluralize } from '../../helpers/util';
+import './Year.scss';
 
-import { PlannerYearData } from '../../types/types';
-import ThemeContext from '../../style/theme-context';
+import Quarter from './Quarter';
 import YearModal from './YearModal';
+
+import ThemeContext from '../../style/theme-context';
+import { PlannerYearData } from '../../types/types';
+import { addQuarter, editYear, editName, deleteYear, clearYear, deleteQuarter } from '../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { pluralize } from '../../helpers/util';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';

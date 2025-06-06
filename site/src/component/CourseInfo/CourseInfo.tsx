@@ -1,9 +1,11 @@
 import { FC } from 'react';
+import './CourseInfo.scss';
+
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
+
 import { CourseGQLData } from '../../types/types';
 import { useCoursebag } from '../../hooks/coursebag';
 import { pluralize } from '../../helpers/util';
-import './CourseInfo.scss';
-import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -33,8 +35,7 @@ export const CourseDescription: FC<CourseProp> = ({ course }) => {
 };
 
 export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
-  if (!course.prerequisiteText) return <></>;
-
+  if (!course.prerequisiteText) return null;
   return (
     <p>
       <b>Prerequisites:</b> {course.prerequisiteText}
@@ -43,8 +44,7 @@ export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
 };
 
 export const CorequisiteText: FC<CourseProp> = ({ course }) => {
-  if (!course.corequisites) return <></>;
-
+  if (!course.corequisites) return null;
   return (
     <p>
       <b>Corequisites:</b> {course.corequisites}
@@ -53,7 +53,7 @@ export const CorequisiteText: FC<CourseProp> = ({ course }) => {
 };
 
 export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => {
-  if (!requiredCourses?.length) return;
+  if (!requiredCourses?.length) return null;
 
   return (
     <div className="course-info-warning">

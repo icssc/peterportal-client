@@ -50,11 +50,11 @@ const AllCourseSearch: FC = () => {
             const missingPrerequisites = getMissingPrerequisites(clearedCourses, course);
             return (
               <Course
-                data={course}
                 key={i}
-                addMode={isMobile ? 'tap' : 'drag'}
-                openPopoverLeft={true}
+                course={course}
                 requiredCourses={missingPrerequisites}
+                openPopoverLeft={true}
+                addMode={isMobile ? 'tap' : 'drag'}
               />
             );
           })}

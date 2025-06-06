@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
@@ -10,7 +10,7 @@ interface ChartProps {
   terms: string[];
 }
 
-export default class Chart extends React.Component<ChartProps> {
+export default class Chart extends Component<ChartProps> {
   getTheme = (darkMode: boolean): Theme => {
     return {
       axis: {

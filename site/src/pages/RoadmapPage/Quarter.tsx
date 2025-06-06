@@ -1,8 +1,11 @@
-import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useState, useContext, useRef } from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { quarterDisplayNames } from '../../helpers/planner';
-import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
+import './Quarter.scss';
+
+import Course from './Course';
+import ThemeContext from '../../style/theme-context';
+import { PlannerQuarterData } from '../../types/types';
 import {
   clearQuarter,
   deleteCourse,
@@ -12,13 +15,10 @@ import {
   setActiveCourse,
   setShowSearch,
 } from '../../store/slices/roadmapSlice';
-import ThemeContext from '../../style/theme-context';
-import { PlannerQuarterData } from '../../types/types';
-import './Quarter.scss';
-
-import Course from './Course';
-import { ReactSortable, SortableEvent } from 'react-sortablejs';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { quarterDisplayNames } from '../../helpers/planner';
 import { quarterSortable } from '../../helpers/sortable';
+import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -32,38 +32,28 @@ interface QuarterProps {
 
 const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
-  const quarterTitle = quarterDisplayNames[data.name];
+
   const invalidCourses = useAppSelector(
     (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
   );
-  const quarterContainerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const [showQuarterMenu, setShowQuarterMenu] = useState(false);
-  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-  const isDragging = activeCourse !== undefined;
 
+  const [showQuarterMenu, setShowQuarterMenu] = useState(false);
+  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const { darkMode } = useContext(ThemeContext);
+  const quarterContainerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
+  const quarterTitle = quarterDisplayNames[data.name];
+  const isDragging = activeCourse !== undefined;
   const buttonVariant = darkMode ? 'dark' : 'light';
+  const unitCount = data.courses.reduce((sum, course) => sum + course.minUnits, 0);
+  const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
   const handleQuarterMenuClick = () => {
     setShowQuarterMenu(!showQuarterMenu);
   };
-
-  const calculateQuarterStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
-    data.courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount += 1;
-    });
-    return [unitCount, courseCount];
-  };
-
-  const unitCount = calculateQuarterStats()[0];
-
-  const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
   const removeCourseAt = useCallback(
     (index: number) => {
@@ -71,7 +61,9 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     },
     [dispatch, quarterIndex, yearIndex],
   );
+
   const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
+
   const addCourse = async (event: SortableEvent) => {
     const movePayload = {
       from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
@@ -80,6 +72,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     if (activeCourseLoading) setMoveCourseTrigger(movePayload);
     else dispatch(moveCourse(movePayload));
   };
+
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
     const movePayload = {
@@ -87,6 +80,11 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
     };
     dispatch(moveCourse(movePayload));
+  };
+
+  const setDraggedItem = (event: SortableEvent) => {
+    const course = data.courses[event.oldIndex!];
+    dispatch(setActiveCourse(course));
   };
 
   useEffect(() => {
@@ -131,11 +129,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     </Popover>
   );
 
-  const setDraggedItem = (event: SortableEvent) => {
-    const course = data.courses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
-  };
-
   return (
     <div className="quarter" ref={quarterContainerRef}>
       <div className="quarter-header">
@@ -176,7 +169,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
-          let requiredCourses: string[] = null!;
+          let requiredCourses: string[] | undefined = undefined;
+
           // if this is an invalid course, set the required courses
           invalidCourses.forEach((ic) => {
             const loc = ic.location;
@@ -186,12 +180,12 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           });
 
           return (
-            // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
             <Course
               key={index}
-              data={course}
+              course={course}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
+              // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
               addMode="drag"
             />
           );

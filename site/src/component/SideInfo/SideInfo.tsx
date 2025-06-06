@@ -1,16 +1,16 @@
 import { FC, useEffect, useState } from 'react';
-import './SideInfo.scss';
+import { Link } from 'react-router-dom';
 import Badge from 'react-bootstrap/Badge';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Link } from 'react-router-dom';
-import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
+import './SideInfo.scss';
 
-import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 import RecentOfferings from '../RecentOfferings/RecentOfferings';
+import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
+import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
 interface FeaturedInfoData {
   searchType: SearchType;

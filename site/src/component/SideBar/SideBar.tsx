@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
 
-import { useAppDispatch, useAppSelector } from '../..//store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
-import trpc from '../../trpc';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import UIOverlay from '../UIOverlay/UIOverlay';
+import Logo from '../../asset/peterportal-banner-logo.svg';
 
+import trpc from '../../trpc';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+
+import { IconButton } from '@mui/material';
 import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
 import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton } from '@mui/material';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { sortCoursebag, getCoursebagSortedIndex } from '../../helpers/coursebag';
 import { RootState } from '../store';
 import type { CourseGQLData } from '../../types/types';
+import { sortCoursebag, getCoursebagSortedIndex } from '../../helpers/coursebag';
 
 const initialState: { coursebag?: CourseGQLData[] } = {};
 

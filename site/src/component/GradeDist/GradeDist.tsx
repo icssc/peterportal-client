@@ -1,13 +1,14 @@
-import { FC, useState, useEffect, useCallback, useContext } from 'react';
-import Chart from './Chart';
-import Pie from './Pie';
+import { FC, useCallback, useEffect, useState, useContext } from 'react';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './GradeDist.scss';
 
+import Chart from './Chart';
+import Pie from './Pie';
+
+import trpc from '../../trpc';
+import ThemeContext from '../../style/theme-context';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
-import trpc from '../../trpc';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
 
 interface GradeDistProps {
   course?: CourseGQLData;

@@ -1,23 +1,24 @@
-import { FC, useContext, useState } from 'react';
-import './ImportTranscriptPopup.scss';
+import { FC, useState, useContext } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
+import './ImportTranscriptPopup.scss';
+
+import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters } from '@peterportal/types';
-import { searchAPIResults } from '../../helpers/util';
-import { QuarterName } from '@peterportal/types';
-import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
+import { quarters, QuarterName } from '@peterportal/types';
+
 import {
   setUserAPExams,
   setTransferredCourses,
   setUncategorizedCourses,
 } from '../../store/slices/transferCreditsSlice';
+import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import trpc from '../../trpc';
+import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
+import { searchAPIResults } from '../../helpers/util';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 

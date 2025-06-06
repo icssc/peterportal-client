@@ -1,4 +1,4 @@
-import { useEffect, FC, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import './SearchHitContainer.scss';
 
 import SearchPagination from '../SearchPagination/SearchPagination';

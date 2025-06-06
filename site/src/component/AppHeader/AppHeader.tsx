@@ -1,16 +1,16 @@
-import { useState, useEffect, FC, useContext } from 'react';
+import { FC, useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-
-import Logo from '../../asset/peterportal-banner-logo.svg';
+import { Button, Popover } from 'react-bootstrap';
 import './AppHeader.scss';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import trpc from '../../trpc';
-import { Button, Popover } from 'react-bootstrap';
 import PPCOverlayTrigger from '../PPCOverlayTrigger';
+
+import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
+import Logo from '../../asset/peterportal-banner-logo.svg';
+import { setSidebarStatus } from '../../store/slices/uiSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';

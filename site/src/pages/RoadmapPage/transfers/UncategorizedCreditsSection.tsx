@@ -1,10 +1,12 @@
 import { FC } from 'react';
+
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
+
 import trpc from '../../../trpc';
+import { TransferredUncategorized } from '@peterportal/types';
 import { removeUncategorizedCourse } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { TransferredUncategorized } from '@peterportal/types';
 
 const UncategorizedMenuTile: FC<TransferredUncategorized> = ({ name, units }) => {
   const dispatch = useAppDispatch();

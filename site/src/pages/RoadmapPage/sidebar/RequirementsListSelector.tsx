@@ -1,9 +1,10 @@
-import './RequirementsListSelector.scss';
 import { FC, useContext } from 'react';
 import { Button } from 'react-bootstrap';
+import './RequirementsListSelector.scss';
+
 import ThemeContext from '../../../style/theme-context';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface ListSelectorProps {
   text: RequirementsTabName;
