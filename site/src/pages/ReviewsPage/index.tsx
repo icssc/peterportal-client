@@ -11,7 +11,7 @@ const ReviewsPage: FC = () => {
   }, []);
 
   if (!isLoggedIn) {
-    return <Error message="Access Denied: Log in to view this page."></Error>;
+    return <Error message="Access Denied: Log in to view this page." />;
   }
 
   return <UserReviews />;

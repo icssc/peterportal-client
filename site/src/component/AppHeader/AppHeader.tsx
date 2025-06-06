@@ -82,7 +82,7 @@ const AppHeader: FC = () => {
         {/* Logo */}
         <div className="navbar-logo">
           <Link to={'/'}>
-            <img alt="PeterPortal" id="peterportal-logo" src={Logo}></img>
+            <img alt="PeterPortal" id="peterportal-logo" src={Logo} />
           </Link>
         </div>
 

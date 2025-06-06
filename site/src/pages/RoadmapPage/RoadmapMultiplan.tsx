@@ -203,7 +203,7 @@ const RoadmapMultiplan: FC = () => {
                 }}
                 maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button
@@ -246,7 +246,7 @@ const RoadmapMultiplan: FC = () => {
                 }}
                 maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button

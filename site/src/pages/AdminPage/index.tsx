@@ -27,7 +27,7 @@ const AdminPage: FC = () => {
   }
 
   if (!authorized) {
-    return <Error message="Access Denied: You are not authorized to view this page."></Error>;
+    return <Error message="Access Denied: You are not authorized to view this page." />;
   }
 
   if (location.pathname.includes('reports')) {
@@ -38,7 +38,7 @@ const AdminPage: FC = () => {
     return <Verify />;
   }
 
-  return <Error message="Invalid Admin Page"></Error>;
+  return <Error message="Invalid Admin Page" />;
 };
 
 export default AdminPage;

@@ -297,7 +297,7 @@ const ImportTranscriptPopup: FC = () => {
                   setFile(input.files![0]);
                   setFilePath(input.value);
                 }}
-              ></Form.Control>
+              />
             </Form.Group>
           </Form>
           <Button variant="primary" disabled={!file || busy} onClick={importHandler}>

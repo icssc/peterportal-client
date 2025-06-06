@@ -39,7 +39,7 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
       <div className="popover-name">
         {`${department} ${courseNumber} `}
         <span className="popover-units">({unitText})</span>
-        <div className="spacer"></div>
+        <span className="spacer" />
         {interactive && <CourseBookmarkButton course={course} />}
       </div>
       <br />

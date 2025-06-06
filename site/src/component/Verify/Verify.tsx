@@ -49,7 +49,7 @@ const Verify: FC = () => {
       {reviews.map((review, i) => (
         <div key={`verify-${i}`} className="verify">
           <br />
-          <SubReview review={review}></SubReview>
+          <SubReview review={review} />
           <div className="verify-footer">
             <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>
               Delete

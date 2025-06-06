@@ -60,7 +60,7 @@ const AddCoursePopupContent: FC<AddCoursePopupContentProps> = ({ closePopup }) =
         </h2>
         <span className="unit-count">{unitText}</span>
         <CourseBookmarkButton course={activeCourse} />
-        <div className="spacer"></div>
+        <span className="spacer" />
         <button onClick={closePopup} className="close-button">
           <CloseIcon />
         </button>

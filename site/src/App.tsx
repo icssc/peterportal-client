@@ -50,9 +50,7 @@ export default function App() {
       <AppThemeProvider>
         <AppHeader />
         <div className="app-body">
-          <div className="app-sidebar">
-            <SideBar></SideBar>
-          </div>
+          <SideBar />
           <div className="app-content">
             <Routes>
               <Route path="/roadmap" element={<RoadmapPage />} />
@@ -65,7 +63,7 @@ export default function App() {
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </div>
-          <div className="changelog-modal">{<ChangelogModal />}</div>
+          <ChangelogModal />
         </div>
       </AppThemeProvider>
     </Router>
