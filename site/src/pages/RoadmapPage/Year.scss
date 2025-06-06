@@ -18,6 +18,7 @@
 div.year {
   border-radius: 8px;
   container: roadmap-year / inline-size;
+  background-color: var(--overlay1);
 
   @mixin year-subtext() {
     font-size: 16px;
