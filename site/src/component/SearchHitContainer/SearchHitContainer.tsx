@@ -75,11 +75,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
           ProfessorHitItem={ProfessorHitItem!}
         />
       )}
-      {!searchInProgress && (
-        <div className="search-pagination">
-          <SearchPagination index={index} />
-        </div>
-      )}
+      {!searchInProgress && <SearchPagination index={index} />}
     </div>
   );
 };
