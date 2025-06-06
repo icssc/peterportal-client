@@ -6,9 +6,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters } from '@peterportal/types';
+import { quarters, QuarterName } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
-import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
 import {
   setUserAPExams,
