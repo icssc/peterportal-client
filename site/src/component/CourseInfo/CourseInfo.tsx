@@ -5,6 +5,7 @@ import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
+import IconButton from '@mui/material/IconButton';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -17,10 +18,11 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
   const { coursebag: bookmarks, toggleBookmark } = useCoursebag();
   const isBookmarked = bookmarks.some((c) => c.id === course.id);
 
+  // TODO: note to self - this isn't finalized, I still need to fix IconButton so that it's unstyled
   return (
-    <button className="unstyled" onClick={() => toggleBookmark(course)}>
+    <IconButton onClick={() => toggleBookmark(course)}>
       {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </button>
+    </IconButton>
   );
 };
 
