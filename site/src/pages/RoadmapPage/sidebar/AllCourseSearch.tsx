@@ -10,28 +10,8 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
 import { Spinner } from 'react-bootstrap';
-import noResultsImg from '../../../asset/no-results-crop.webp';
+import NoResults from '../../../NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
-
-interface SearchPlaceholderProps {
-  searchInProgress: boolean;
-  showCourseBag: boolean;
-}
-
-const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <Spinner animation="border" role="status" />;
-
-  const placeholderText = showCourseBag
-    ? 'No courses saved. Try searching for something!'
-    : "Sorry, we couldn't find any results for that search!";
-
-  return (
-    <>
-      <img src={noResultsImg} alt="No results found" />
-      {placeholderText}
-    </>
-  );
-};
 
 const AllCourseSearch: FC = () => {
   const { showCourseBag } = useAppSelector((state) => state.roadmap);
@@ -77,10 +57,10 @@ const AllCourseSearch: FC = () => {
             );
           })}
         </ReactSortable>
+      ) : searchInProgress ? (
+        <Spinner animation="border" role="status" />
       ) : (
-        <div className="no-results">
-          <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
-        </div>
+        <NoResults notSearching={showCourseBag} placeholderText="No courses saved. Try searching for something!" />
       )}
     </>
   );
