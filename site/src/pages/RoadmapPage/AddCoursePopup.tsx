@@ -71,7 +71,7 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           </span>
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
-          <IconButton onClick={closePopup} className="close-button unstyled">
+          <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
           </IconButton>
         </Modal.Header>
