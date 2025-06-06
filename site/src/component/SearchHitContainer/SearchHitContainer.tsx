@@ -5,7 +5,7 @@ import { useAppSelector } from '../../store/hooks';
 
 import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
-import NoResults from '../../NoResults/NoResults';
+import NoResults from '../NoResults/NoResults';
 import { getMissingPrerequisites } from '../../helpers/planner';
 import { Spinner } from 'react-bootstrap';
 import { useClearedCourses } from '../../hooks/planner';

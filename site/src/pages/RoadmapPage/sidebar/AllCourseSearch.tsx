@@ -10,7 +10,7 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
 import { Spinner } from 'react-bootstrap';
-import NoResults from '../../../NoResults/NoResults';
+import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 
 const AllCourseSearch: FC = () => {
