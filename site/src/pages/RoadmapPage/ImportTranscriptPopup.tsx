@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
 import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
-import { quarters, TransferredUncategorized, TransferredAPExam, TransferredCourse } from '@peterportal/types';
+import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
 import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
@@ -183,6 +183,14 @@ async function organizeTransfers(transfers: TransferUnitDetails[]) {
   return response;
 }
 
+/** Make all transfers in the given list of transfers unread */
+function markTransfersAsUnread<T>(transfer: T[]): TransferWithUnread<T>[] {
+  return transfer.map((item) => ({
+    unread: true,
+    ...item,
+  }));
+}
+
 const ImportTranscriptPopup: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
@@ -206,20 +214,13 @@ const ImportTranscriptPopup: FC = () => {
       const { transfers, years, invalidCourseIDs } = await processTranscript(file);
       const { courses, ap, other } = await organizeTransfers(transfers);
 
-      // Format the results
       const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
       const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
 
-      // Mark all new transfers as unread
-      const coursesUnread: TransferWithUnread<TransferredCourse>[] = courses.map((course) => ({
-        unread: true,
-        ...course,
-      }));
-      const apUnread: TransferWithUnread<TransferredAPExam>[] = scoredAps.map((exam) => ({ unread: true, ...exam }));
-      const otherUnread: TransferWithUnread<TransferredUncategorized>[] = formattedOther.map((course) => ({
-        unread: true,
-        ...course,
-      }));
+      // All newly added transfers should display as unread
+      const coursesUnread = markTransfersAsUnread(courses);
+      const apUnread = markTransfersAsUnread(scoredAps);
+      const otherUnread = markTransfersAsUnread(formattedOther);
 
       // Merge the new AP exams, courses, and other transfers into current transfers
       // via a process similar to the updated Zot4Plan imports
