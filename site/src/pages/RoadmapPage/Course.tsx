@@ -76,9 +76,9 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 interface CourseProps {
   requiredCourses?: string[];
   onDelete?: () => void;
-  onAddToBag?: () => void;
-  isInBag?: boolean;
-  removeFromBag?: () => void;
+  saveCourse?: () => void;
+  courseIsSaved?: boolean;
+  unsaveCourse?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
   data: CourseGQLData;
@@ -86,7 +86,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, minUnits, maxUnits, terms } = props.data;
-  const { requiredCourses, onDelete, onAddToBag, isInBag, removeFromBag, openPopoverLeft } = props;
+  const { requiredCourses, onDelete, saveCourse, courseIsSaved, unsaveCourse, openPopoverLeft } = props;
 
   const dispatch = useAppDispatch();
 
@@ -121,13 +121,13 @@ const Course: FC<CourseProps> = (props) => {
       </div>
       <div className="title">{title}</div>
       <div className="course-footer">
-        {onAddToBag && !isInBag && (
-          <IconButton onClick={onAddToBag}>
+        {saveCourse && !courseIsSaved && (
+          <IconButton onClick={saveCourse}>
             <AddShoppingCartIcon />
           </IconButton>
         )}
-        {isInBag && (
-          <IconButton onClick={removeFromBag}>
+        {courseIsSaved && (
+          <IconButton onClick={unsaveCourse}>
             <ShoppingCartIcon />
           </IconButton>
         )}
