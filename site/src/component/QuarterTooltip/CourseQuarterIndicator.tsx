@@ -32,7 +32,7 @@ const CourseQuarterIndicator: FC<CourseQuarterIndicatorProps> = (props) => {
   const allOfferings = [
     { condition: termsInOrder.includes(`${prevYear - 1} Fall`), emoji: '🍂', label: `Fall ${prevYear - 1}` },
     { condition: termsInOrder.includes(`${prevYear} Winter`), emoji: '❄️', label: `Winter ${prevYear}` },
-    { condition: termsInOrder.includes(`${prevYear} Spring`), emoji: '🌱', label: `Spring ${prevYear}` },
+    { condition: termsInOrder.includes(`${prevYear} Spring`), emoji: '🌸', label: `Spring ${prevYear}` },
     { condition: summerOfferings.length > 0, emoji: '☀️', label: `${summerOfferings.join(', ')} ${prevYear}` },
   ];
 
