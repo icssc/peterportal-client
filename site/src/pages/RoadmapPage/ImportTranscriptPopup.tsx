@@ -8,13 +8,13 @@ import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
 import {
   setUserAPExams,
   setTransferredCourses,
   setUncategorizedCourses,
-  TransferWithUnread,
 } from '../../store/slices/transferCreditsSlice';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -181,14 +181,6 @@ async function organizeTransfers(transfers: TransferUnitDetails[]) {
   const mapped = transfers.map((transfer) => ({ name: transfer.name, units: transfer.units, score: transfer.score }));
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(mapped);
   return response;
-}
-
-/** Make all transfers in the given list of transfers unread */
-function markTransfersAsUnread<T>(transfer: T[]): TransferWithUnread<T>[] {
-  return transfer.map((item) => ({
-    unread: true,
-    ...item,
-  }));
 }
 
 const ImportTranscriptPopup: FC = () => {

@@ -6,12 +6,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
 import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
-import { setUserAPExams, TransferWithUnread } from '../../store/slices/transferCreditsSlice';
-import { TransferredAPExam } from '@peterportal/types';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -40,10 +40,7 @@ const ImportZot4PlanPopup: FC = () => {
         (imported) => !apExams.some((existing) => existing.examName === imported.examName),
       );
 
-      const newExamsUnread: TransferWithUnread<TransferredAPExam>[] = newExams.map((exam) => ({
-        unread: true,
-        ...exam,
-      }));
+      const newExamsUnread = markTransfersAsUnread(newExams);
 
       const combinedExams = apExams.concat(newExamsUnread);
       dispatch(setUserAPExams(combinedExams));
