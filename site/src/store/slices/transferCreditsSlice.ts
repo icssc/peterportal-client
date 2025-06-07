@@ -19,7 +19,7 @@ export const transferCreditsSlice = createSlice({
     transferredCourses: [] as TransferWithUnread<TransferredCourse>[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as TransferWithUnread<TransferredAPExam>[],
-    transferredGEs: [] as TransferWithUnread<TransferredGE>[],
+    transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as TransferWithUnread<TransferredUncategorized>[],
   },
   reducers: {
@@ -80,9 +80,6 @@ export const transferCreditsSlice = createSlice({
       );
     },
     clearUnreadTransfers: (state) => {
-      for (const ge of state.transferredGEs) {
-        delete ge.unread;
-      }
       for (const course of state.transferredCourses) {
         delete course.unread;
       }
