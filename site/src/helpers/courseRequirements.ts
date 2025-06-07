@@ -11,6 +11,7 @@ import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
+import { getCssVariable } from './styling';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -63,11 +64,6 @@ const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.
 
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
-
-  const getCssVariable = (variableName: string) => {
-    const bodyStyles = getComputedStyle(document.body);
-    return bodyStyles.getPropertyValue(variableName).trim();
-  };
 
   themeCopy.colors.primary = getCssVariable('--blue-primary'); // box border
   themeCopy.colors.primary50 = getCssVariable('--blue-secondary'); // active

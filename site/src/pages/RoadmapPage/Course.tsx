@@ -7,7 +7,7 @@ import { useIsMobile, pluralize } from '../../helpers/util';
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
