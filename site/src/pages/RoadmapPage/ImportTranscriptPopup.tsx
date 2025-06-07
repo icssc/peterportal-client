@@ -8,6 +8,7 @@ import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import { QuarterName } from '@peterportal/types';
 import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
 import {
@@ -205,21 +206,27 @@ const ImportTranscriptPopup: FC = () => {
       const { transfers, years, invalidCourseIDs } = await processTranscript(file);
       const { courses, ap, other } = await organizeTransfers(transfers);
 
+      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+
+      // All newly added transfers should display as unread
+      const coursesUnread = markTransfersAsUnread(courses);
+      const apUnread = markTransfersAsUnread(scoredAps);
+      const otherUnread = markTransfersAsUnread(formattedOther);
+
       // Merge the new AP exams, courses, and other transfers into current transfers
       // via a process similar to the updated Zot4Plan imports
-      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
-      const newAps = scoredAps.filter(
+      const newAps = apUnread.filter(
         (imported) => !currentAps.some((existing) => existing.examName == imported.examName),
       );
       const mergedAps = currentAps.concat(newAps);
 
-      const newCourses = courses.filter(
+      const newCourses = coursesUnread.filter(
         (imported) => !currentCourses.some((existing) => existing.courseName == imported.courseName),
       );
       const mergedCourses = currentCourses.concat(newCourses);
 
-      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
-      const newOther = formattedOther.filter(
+      const newOther = otherUnread.filter(
         (imported) => !currentOther.some((existing) => existing.name == imported.name),
       );
       const mergedOther = currentOther.concat(newOther);

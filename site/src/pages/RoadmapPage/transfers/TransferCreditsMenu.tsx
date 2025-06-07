@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import { useIsMobile } from '../../../helpers/util';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
@@ -16,7 +16,13 @@ export const ToggleTransfersButton: FC = () => {
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
 
-  const toggleMenu = () => dispatch(setShowTransfersMenu(!show));
+  const toggleMenu = () => {
+    if (show) {
+      // After closing the menu, clear all the unread markers
+      dispatch(clearUnreadTransfers());
+    }
+    dispatch(setShowTransfersMenu(!show));
+  };
 
   return (
     <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>

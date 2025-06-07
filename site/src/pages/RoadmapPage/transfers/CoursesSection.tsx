@@ -10,6 +10,7 @@ import {
   addTransferredCourse,
   removeTransferredCourse,
   updateTransferredCourse,
+  TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { getCourseIdWithSpaces } from '../../../helpers/util';
@@ -19,23 +20,24 @@ interface CourseSelectOption {
   label: string;
 }
 
-interface CourseCreditMenuTileProps {
-  course: TransferredCourse;
-}
-const CourseCreditMenuTile: FC<CourseCreditMenuTileProps> = ({ course }) => {
+const CourseCreditMenuTile: FC<TransferWithUnread<TransferredCourse>> = ({ courseName, units, unread }) => {
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
-    trpc.transferCredits.removeTransferredCourse.mutate(course.courseName);
-    dispatch(removeTransferredCourse(course.courseName));
+    trpc.transferCredits.removeTransferredCourse.mutate(courseName);
+    dispatch(removeTransferredCourse(courseName));
   };
   const setUnits = (value: number) => {
-    const updatedCourse: TransferredCourse = { courseName: course.courseName, units: value };
+    const updatedCourse: TransferredCourse = { courseName, units: value };
     trpc.transferCredits.updateTransferredCourse.mutate(updatedCourse);
     dispatch(updateTransferredCourse(updatedCourse));
   };
 
-  return <MenuTile title={course.courseName} units={course.units} setUnits={setUnits} deleteFn={deleteFn} />;
+  return (
+    <>
+      <MenuTile title={courseName} units={units} setUnits={setUnits} deleteFn={deleteFn} unread={unread} />
+    </>
+  );
 };
 
 const CoursesSection: FC = () => {
@@ -92,7 +94,12 @@ const CoursesSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <CourseCreditMenuTile key={course.courseName} course={course} />
+        <CourseCreditMenuTile
+          key={course.courseName}
+          courseName={course.courseName}
+          units={course.units}
+          unread={course.unread}
+        />
       ))}
 
       <AsyncSelect

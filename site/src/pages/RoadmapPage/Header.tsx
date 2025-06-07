@@ -5,7 +5,8 @@ import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from './AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setShowTransfersMenu } from '../../store/slices/transferCreditsSlice';
+import { setShowTransfersMenu, clearUnreadTransfers } from '../../store/slices/transferCreditsSlice';
+import UnreadDot from '../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
@@ -18,10 +19,25 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
 
-  const toggleTransfers = () => dispatch(setShowTransfersMenu(!show));
+  const toggleTransfers = () => {
+    if (showTransfers) {
+      // After closing the menu, clear all the unread markers
+      dispatch(clearUnreadTransfers());
+    }
+    dispatch(setShowTransfersMenu(!showTransfers));
+  };
+
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+
+  const hasUnreadTransfers =
+    transferredCourses.some((course) => course.unread) ||
+    userAPExams.some((ap) => ap.unread) ||
+    uncategorizedCourses.some((course) => course.unread);
 
   return (
     <div className="header">
@@ -38,6 +54,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
           <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
             <SwapHorizOutlinedIcon className="header-icon" />
             Transfer Credits
+            <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
           <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
             <SaveIcon className="header-icon" />
