@@ -4,9 +4,9 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../types/types';
+import { SearchIndex, SearchResultData } from '../../types/types';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
-import { setShowCourseBag } from '../../store/slices/roadmapSlice';
+import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
 import { setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
@@ -45,7 +45,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           dispatch(
             setResults({
               index,
-              results: results.map((x) => transformGQLData(index, x.result)) as CourseGQLData[] | ProfessorGQLData[],
+              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
               count,
             }),
           );
@@ -74,7 +74,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
     if (location.pathname === '/roadmap') {
-      dispatch(setShowCourseBag(!query));
+      dispatch(setShowSavedCourses(!query));
     }
     if (query && query !== search.query) {
       dispatch(setQuery({ index, query }));
