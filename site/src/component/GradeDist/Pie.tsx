@@ -81,7 +81,7 @@ export default class Pie extends Component<PieProps> {
     this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1);
     this.gpaToGradeConverter(this.averageGPA);
 
-    const PNPdata: Slice[] = [
+    const pnpData: Slice[] = [
       {
         id: 'P',
         label: 'P',
@@ -97,7 +97,7 @@ export default class Pie extends Component<PieProps> {
     ];
 
     if (this.totalPNP == this.total) {
-      return PNPdata;
+      return pnpData;
     }
 
     const gradeData: Slice[] = [
@@ -133,7 +133,7 @@ export default class Pie extends Component<PieProps> {
       },
     ];
 
-    return gradeData.concat(PNPdata).filter((slice) => slice.value !== 0);
+    return gradeData.concat(pnpData).filter((slice) => slice.value !== 0);
   };
 
   gpaToGradeConverter(gpa: string) {
@@ -143,7 +143,8 @@ export default class Pie extends Component<PieProps> {
   }
 
   styleTooltip = (props: PieTooltipProps<Slice>) => {
-    return <ChartTooltip label={props.datum.id} value={((props.datum.value / this.total) * 100).toFixed(2) + '%'} />;
+    const gradePercent = ((props.datum.value / this.total) * 100).toFixed(2) + '%';
+    return <ChartTooltip label={props.datum.id} value={gradePercent} />;
   };
 
   render() {
