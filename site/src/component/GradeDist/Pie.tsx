@@ -48,7 +48,7 @@ export default class Pie extends React.Component<PieProps> {
 
     this.props.gradeData.forEach((data) => {
       if (
-        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
+        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'All') &&
         (data.instructors.includes(this.props.professor ?? '') ||
           data.department + ' ' + data.courseNumber === this.props.course ||
           this.props.professor == 'All')

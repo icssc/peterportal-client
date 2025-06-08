@@ -102,7 +102,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .forEach((course) => result.push({ value: course, text: course }));
 
     setCourseEntries(result);
-    setCurrentCourse(result[0].value);
+    setCurrentCourse(result[0].text);
   }, [gradeDistData]);
 
   // update list of professors/courses when new course/professor is detected
@@ -122,7 +122,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createQuarterEntries = useCallback(() => {
     const quarters: Set<string> = new Set();
-    const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
+    const result: Entry[] = [{ value: 'All', text: 'All Quarters' }];
 
     gradeDistData!
       .filter((entry) => {
@@ -147,10 +147,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     setQuarterEntries(
       result.sort((a, b) => {
-        if (a.value === 'ALL') {
+        if (a.value === 'All') {
           return -1;
         }
-        if (b.value === 'ALL') {
+        if (b.value === 'All') {
           return 1;
         }
         const [thisQuarter, thisYear] = a.value.split(' ') as [QuarterName, string];
@@ -180,6 +180,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const selectedProfCourseName = profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text;
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -200,7 +201,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       <div className="gradedist-filter">
         <DropdownButton
           className="ppc-dropdown-btn"
-          title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
+          title={selectedProfCourseName}
           variant={buttonVariant}
           onSelect={updateProfCourse}
         >
