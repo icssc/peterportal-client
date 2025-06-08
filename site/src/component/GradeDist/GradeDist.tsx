@@ -180,7 +180,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
-  const selectedProfCourseName = profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text;
+  const selectedProfCourseName =
+    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
 
   const optionsRow = (
     <div className="gradedist-menu">
