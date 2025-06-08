@@ -1,5 +1,5 @@
 import './GESection.scss';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import { GEName, TransferredGE, ALL_GE_NAMES } from '@peterportal/types';

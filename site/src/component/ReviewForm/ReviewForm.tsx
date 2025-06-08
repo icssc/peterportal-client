@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
+import { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';

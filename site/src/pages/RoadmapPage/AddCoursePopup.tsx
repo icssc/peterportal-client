@@ -16,11 +16,7 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 
-interface AddCoursePopupContentProps {
-  closePopup: () => void;
-}
-
-const AddCoursePopupContent: FC<AddCoursePopupContentProps> = ({ closePopup }) => {
+const AddCoursePopupContent = () => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
@@ -31,17 +27,20 @@ const AddCoursePopupContent: FC<AddCoursePopupContentProps> = ({ closePopup }) =
 
   if (!activeCourse) return null;
 
-  const addToRoadmap = () => {
-    const year = currentYearAndQuarter?.year ?? -1;
-    const quarter = currentYearAndQuarter?.quarter ?? -1;
+  const closePopup = () => dispatch(setShowAddCourse(false));
 
+  const addToRoadmap = () => {
+    // add course to roadmap
     dispatch(
       moveCourse({
         from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
-        to: { yearIndex: year, quarterIndex: quarter, courseIndex: 0 },
+        to: {
+          yearIndex: currentYearAndQuarter?.year ?? -1,
+          quarterIndex: currentYearAndQuarter?.quarter ?? -1,
+          courseIndex: 0,
+        },
       }),
     );
-
     // hide the search bar to view the roadmap
     dispatch(setShowSearch({ show: false }));
     closePopup();
@@ -85,7 +84,7 @@ const AddCoursePopup: FC = () => {
 
   return (
     <>
-      <AddCoursePopupContent closePopup={closePopup} />
+      <AddCoursePopupContent />
       <UIOverlay onClick={closePopup} zIndex={499} />
     </>
   );

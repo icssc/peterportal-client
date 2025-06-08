@@ -1,5 +1,5 @@
 import './ProgramRequirementsList.scss';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
   COMPLETE_ALL_TEXT,
   formatRequirements,
