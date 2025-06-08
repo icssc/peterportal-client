@@ -95,16 +95,6 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     selectedSpec?.id,
   ]);
 
-  // Initial Loader
-  useEffect(() => {
-    if (specOptions.length) return;
-    const loadSpecsAndSpecRequirements = async () => {
-      if (hasSpecs) await loadSpecs();
-      await loadSpecRequirements();
-    };
-    loadSpecsAndSpecRequirements();
-  }, [hasSpecs, loadSpecRequirements, specOptions.length, loadSpecs]);
-
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
       const updatedSpec = data?.value || null;
@@ -119,6 +109,12 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   );
 
   const toggleExpand = () => setOpen(!open);
+
+  // Initial Loader
+  useEffect(() => {
+    if (specOptions.length) return;
+    hasSpecs ? loadSpecs().then(loadSpecRequirements) : loadSpecRequirements();
+  }, [specOptions.length, hasSpecs, loadSpecs, loadSpecRequirements]);
 
   return (
     <div className="major-section">
