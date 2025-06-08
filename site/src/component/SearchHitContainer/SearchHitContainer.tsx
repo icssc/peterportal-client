@@ -57,7 +57,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
       {noResults && (
         <NoResults
           notSearching={query === ''}
-          placeholderText={`Start typing in the search bar to search for ${index === 'courses' ? 'courses' : 'professors'}...`}
+          placeholderText={`Start typing in the search bar to search for ${index}...`}
         />
       )}
       {searchInProgress && (
