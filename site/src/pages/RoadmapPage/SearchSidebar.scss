@@ -1,7 +1,7 @@
 @use '../../globals';
 
 .search-sidebar {
-  .coursebag-title {
+  .saved-course-title {
     margin: 12px 6px 0;
   }
   &.mobile {
@@ -30,12 +30,12 @@
   }
 }
 
-.coursebag-title {
+.saved-courses-title {
   font-size: 1.25rem;
   font-weight: 500;
 }
 
-h3.coursebag-title {
+h3.saved-courses-title {
   font-size: 20px;
 }
 
