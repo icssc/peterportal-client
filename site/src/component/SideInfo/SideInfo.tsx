@@ -7,23 +7,21 @@ import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
-import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 import RecentOfferings from '../RecentOfferings/RecentOfferings';
 
 interface FeaturedInfoData {
-  searchType: SearchType;
+  dataType: DataType;
   featureType: 'Highest' | 'Lowest';
   averageReviews: { [key: string]: AverageReview };
   reviewKey: string;
   displayName: string;
 }
 
-const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
-  if (averageReviews[reviewKey] === undefined) {
-    return null;
-  }
+const FeaturedInfo: FC<FeaturedInfoData> = ({ dataType, featureType, averageReviews, reviewKey, displayName }) => {
+  if (!averageReviews[reviewKey]) return null;
 
   // rating and difficulty were constructed as totals (??)
   const { rating, difficulty, count } = averageReviews[reviewKey];
@@ -33,9 +31,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
       <div className="column">
         <p className="field-name">{featureType} Rated</p>
         <p className="field-value">
-          <Link to={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
-            {displayName}
-          </Link>
+          <Link to={{ pathname: `/${dataType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>{displayName}</Link>
         </p>
       </div>
       <div className="column">
@@ -51,7 +47,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
 };
 
 interface SideInfoProps {
-  searchType: SearchType;
+  dataType: DataType;
   name: string;
   title: string;
   description: string;
@@ -70,7 +66,7 @@ interface AverageReview {
 
 const SideInfo: FC<SideInfoProps> = (props) => {
   const dispatch = useAppDispatch();
-  const allToken = 'All ' + (props.searchType == 'course' ? 'Instructors' : 'Courses');
+  const allToken = 'All ' + (props.dataType == 'course' ? 'Instructors' : 'Courses');
   const reviews = useAppSelector((state) => state.review.reviews);
   const [averageReviews, setAverageReviews] = useState<{ [key: string]: AverageReview }>({});
   const [highestReview, setHighestReview] = useState('');
@@ -89,9 +85,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     reviews.forEach((review) => {
       let key = '';
       // determine the key to group reviews by
-      if (props.searchType == 'course') {
+      if (props.dataType == 'course') {
         key = review.professorId;
-      } else if (props.searchType == 'professor') {
+      } else if (props.dataType == 'professor') {
         key = review.courseId;
       }
 
@@ -132,7 +128,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       setHighestReview(sortedKeys[sortedKeys.length - 1]);
       setLowestReview(sortedKeys[0]);
     }
-  }, [reviews, allToken, props.searchType]);
+  }, [reviews, allToken, props.dataType]);
 
   // sort by number of reviews for the dropdown
   const sortedReviews = Object.keys(averageReviews);
@@ -176,9 +172,9 @@ const SideInfo: FC<SideInfoProps> = (props) => {
             >
               {sortedReviews.map((key, index) => (
                 <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-                  {props.searchType == 'course' &&
+                  {props.dataType == 'course' &&
                     (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
-                  {props.searchType == 'professor' &&
+                  {props.dataType == 'professor' &&
                     (props.professor?.courses[key]
                       ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
                       : key)}
@@ -193,7 +189,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                 dispatch(toggleFormStatus());
               }}
             >
-              Rate {props.searchType}
+              Rate {props.dataType}
             </Button>
           </div>
           {hasReviews && (
@@ -205,7 +201,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                   <div className="side-info-selected-rating">
                     <div className="side-info-stat">
                       <div className="side-info-stat-label">
-                        {props.searchType.replace(/./, (x) => x.toUpperCase())} Rating
+                        {props.dataType.replace(/./, (x) => x.toUpperCase())} Rating
                       </div>
                       <div className="side-info-stat-value">{count > 0 ? (rating / count).toFixed(2) : '\u2013'}</div>
                     </div>
@@ -228,23 +224,21 @@ const SideInfo: FC<SideInfoProps> = (props) => {
               )}
             </>
           )}
-          {!hasReviews && (
-            <span className="side-info-selected-based">No reviews found for this {props.searchType}!</span>
-          )}
+          {!hasReviews && <span className="side-info-selected-based">No reviews found for this {props.dataType}!</span>}
         </div>
 
         {hasReviews && (
           <div className="side-info-featured">
-            <h2>{props.searchType == 'course' ? 'Instructors' : 'Courses'}</h2>
+            <h2>{props.dataType == 'course' ? 'Instructors' : 'Courses'}</h2>
             <div className="featured-items">
               {highestReview && (
                 <FeaturedInfo
-                  searchType={props.searchType}
+                  dataType={props.dataType}
                   featureType="Highest"
                   averageReviews={averageReviews}
                   reviewKey={highestReview}
                   displayName={
-                    props.searchType == 'course'
+                    props.dataType == 'course'
                       ? (Object.values(props.course?.instructors ?? {})?.find(
                           ({ ucinetid }) => ucinetid === highestReview,
                         )?.name ?? '')
@@ -258,12 +252,12 @@ const SideInfo: FC<SideInfoProps> = (props) => {
               )}
               {lowestReview && (
                 <FeaturedInfo
-                  searchType={props.searchType}
+                  dataType={props.dataType}
                   featureType="Lowest"
                   averageReviews={averageReviews}
                   reviewKey={lowestReview}
                   displayName={
-                    props.searchType == 'course'
+                    props.dataType == 'course'
                       ? (Object.values(props.course?.instructors ?? {})?.find(
                           ({ ucinetid }) => ucinetid === lowestReview,
                         )?.name ?? '')

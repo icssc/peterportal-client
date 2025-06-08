@@ -45,7 +45,7 @@ const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
 
   const onAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!course || course.id === undefined || coursebag.some((c) => c.id === course.id)) return;
+    if (!course || coursebag.some((c) => c.id === course.id)) return;
     addCourseToBag(course);
   };
 

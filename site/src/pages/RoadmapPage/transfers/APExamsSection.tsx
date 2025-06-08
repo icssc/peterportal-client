@@ -55,7 +55,11 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInfo }) => {
+interface APCreditMenuTileProps {
+  userExamInfo: TransferredAPExam;
+}
+
+const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ userExamInfo }) => {
   const { examName, score, units } = userExamInfo;
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);

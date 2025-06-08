@@ -1,6 +1,6 @@
-import { pluralize } from '../../../helpers/util';
-import './MenuTile.scss';
 import { FC, useState } from 'react';
+import './MenuTile.scss';
+import { pluralize } from '../../../helpers/util';
 
 import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -18,7 +18,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
     return (
       <>
         <p className="units-display">
-          {units} {pluralize(units, 'units', 'unit')}
+          {units} unit{pluralize(units)}
         </p>
         {setUnits && (
           <IconButton onClick={() => setEditing(true)}>
@@ -76,7 +76,7 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
           {title} {headerItems}
         </div>
         <hr />
-        {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
+        {units && <UnitsContainer units={units} setUnits={setUnits} />}
         {deleteFn && (
           <IconButton className="delete-btn" onClick={deleteFn}>
             <DeleteOutlineIcon />

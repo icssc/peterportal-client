@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import SearchPopup from '../../component/SearchPopup/SearchPopup';
-
+import { SearchPopup, SearchPopupPlaceholder } from '../../component/SearchPopup/SearchPopup';
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse } from '../../store/slices/popupSlice';
 import { ScoreData } from '../../types/types';
@@ -11,36 +10,38 @@ const CoursePopup: FC = () => {
   const [scores, setScores] = useState<ScoreData[]>([]);
 
   useEffect(() => {
-    if (course) {
-      trpc.reviews.avgRating.query({ type: 'course', id: course.id }).then((res) => {
-        const scores: ScoreData[] = [];
-        // set of ucinetid professors with scores
-        const scoredProfessors = new Set(res.map((v) => v.name));
-        // add known scores
-        res.forEach((entry) => {
-          if (course.instructors[entry.name]) {
-            scores.push({
-              name: course.instructors[entry.name].name,
-              avgRating: entry.avgRating,
-              id: entry.name,
-            });
-          }
-        });
-        // add unknown score
-        Object.keys(course.instructors).forEach((ucinetid) => {
-          if (!scoredProfessors.has(ucinetid)) {
-            scores.push({ name: course.instructors[ucinetid].name, avgRating: -1, id: ucinetid });
-          }
-        });
-        // sort by highest score
-        scores.sort((a, b) => b.avgRating - a.avgRating);
-        setScores(scores);
+    if (!course) return;
+    trpc.reviews.avgRating.query({ type: 'course', id: course.id }).then((res) => {
+      // set of ucinetid professors with scores
+      const scoredProfessors = new Set(res.map((v) => v.name));
+      const scores: ScoreData[] = [];
+
+      // add known scores
+      res.forEach((entry) => {
+        if (course.instructors[entry.name]) {
+          scores.push({
+            name: course.instructors[entry.name].name,
+            avgRating: entry.avgRating,
+            id: entry.name,
+          });
+        }
       });
-    }
+
+      // add unknown score
+      Object.keys(course.instructors).forEach((ucinetid) => {
+        if (!scoredProfessors.has(ucinetid)) {
+          scores.push({ name: course.instructors[ucinetid].name, avgRating: -1, id: ucinetid });
+        }
+      });
+
+      // sort by highest score
+      scores.sort((a, b) => b.avgRating - a.avgRating);
+      setScores(scores);
+    });
   }, [course]);
 
   if (!course) {
-    return <SearchPopup name="" id="" infos={[]} scores={[]} searchType="course" title="" />;
+    return <SearchPopupPlaceholder dataType="course" />;
   }
 
   // include prerequisite and restriction panels
@@ -57,13 +58,13 @@ const CoursePopup: FC = () => {
 
   return (
     <SearchPopup
-      name={course.id}
+      dataType="course"
+      data={course}
       id={course.id}
+      name={course.id}
       title={course.title}
       infos={infos}
       scores={scores}
-      searchType="course"
-      course={course}
     />
   );
 };

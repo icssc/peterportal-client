@@ -74,20 +74,18 @@ const ReviewForm: FC<ReviewFormProps> = ({
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
       searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
-        if (professor) {
-          const profTerms = sortTerms(getProfessorTerms(professor));
-          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
-          const newQuarters = [
-            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
-          ];
+        if (!professor) return;
 
-          setTerms(profTerms);
-          setYears(newYears);
-          setQuarters(newQuarters);
-          setYearTaken(yearTakenDefault);
-          setQuarterTaken(quarterTakenDefault);
-          setProfessorName(professor.name);
-        }
+        const profTerms = sortTerms(getProfessorTerms(professor));
+        const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+        const newQuarters = [...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+
+        setTerms(profTerms);
+        setYears(newYears);
+        setQuarters(newQuarters);
+        setYearTaken(yearTakenDefault);
+        setQuarterTaken(quarterTakenDefault);
+        setProfessorName(professor.name);
       });
     }
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);

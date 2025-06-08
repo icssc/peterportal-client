@@ -52,7 +52,11 @@ export const CorequisiteText: FC<CourseProp> = ({ course }) => {
   );
 };
 
-export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => {
+interface IncompletePrerequisiteTextProps {
+  requiredCourses?: string[];
+}
+
+export const IncompletePrerequisiteText: FC<IncompletePrerequisiteTextProps> = ({ requiredCourses }) => {
   if (!requiredCourses?.length) return null;
 
   return (

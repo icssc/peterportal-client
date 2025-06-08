@@ -8,7 +8,7 @@ import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import { ResultPageContent, ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
@@ -21,17 +21,17 @@ const CoursePage: FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (id !== undefined) {
-      searchAPIResult('course', id).then((course) => {
-        if (course) {
-          dispatch(setCourse(course));
-          setError('');
-          document.title = `${course.department + ' ' + course.courseNumber} | PeterPortal`;
-        } else {
-          setError(`Course ${id} does not exist!`);
-        }
-      });
-    }
+    if (!id) return;
+
+    searchAPIResult('course', id).then((course) => {
+      if (!course) {
+        setError(`Course ${id} does not exist!`);
+        return;
+      }
+      dispatch(setCourse(course));
+      setError('');
+      document.title = `${course.department + ' ' + course.courseNumber} | PeterPortal`;
+    });
   }, [dispatch, id]);
 
   // if course does not exists
@@ -46,7 +46,7 @@ const CoursePage: FC = () => {
 
   const sideInfo = (
     <SideInfo
-      searchType="course"
+      dataType="course"
       name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
       title={courseGQLData.title}
       description={courseGQLData.description}
@@ -59,7 +59,7 @@ const CoursePage: FC = () => {
   return (
     <ResultPageContent sideInfo={sideInfo}>
       <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist course={courseGQLData} />
+        <GradeDist dataType="course" data={courseGQLData} />
       </ResultPageSection>
 
       <ResultPageSection title="🌲 Prerequisite Tree">

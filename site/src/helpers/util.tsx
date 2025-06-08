@@ -4,7 +4,7 @@ import {
   ProfessorGQLData,
   BatchCourseData,
   BatchProfessorData,
-  SearchType,
+  DataType,
   CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
@@ -29,16 +29,13 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to search 1 result from course/professor page
-export async function searchAPIResult<T extends SearchType>(
+export async function searchAPIResult<T extends DataType>(
   type: T,
   name: string,
 ): Promise<(T extends 'course' ? CourseGQLData : ProfessorGQLData) | undefined> {
   const results = await searchAPIResults(`${type}s`, [name]);
-  if (Object.keys(results).length > 0) {
-    return Object.values(results)[0];
-  } else {
-    return undefined;
-  }
+  if (Object.keys(results).length === 0) return undefined;
+  return Object.values(results)[0];
 }
 
 // helper function to query from API and transform to data used in redux

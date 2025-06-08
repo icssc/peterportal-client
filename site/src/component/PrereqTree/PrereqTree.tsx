@@ -113,7 +113,7 @@ const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
   const hasPrereqs = JSON.stringify(course.prerequisiteTree) !== '{}';
   const hasDependents = Object.keys(course.dependents).length !== 0;
 
-  if (course.id === undefined) return null;
+  if (!course) return null;
 
   if (!hasPrereqs && !hasDependents) {
     return (

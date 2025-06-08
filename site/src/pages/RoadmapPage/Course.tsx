@@ -22,7 +22,7 @@ interface CourseNameAndInfoProps {
   alwaysCollapse?: boolean;
 }
 export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
-  const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
+  const { data, popupListener, openPopoverLeft, requiredCourses, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const [allowTouchClick, setAllowTouchClick] = useState(false);

@@ -1,11 +1,10 @@
 import { FC, useState, useEffect } from 'react';
-import SearchPopup from '../../component/SearchPopup/SearchPopup';
-
+import { SearchPopup, SearchPopupPlaceholder } from '../../component/SearchPopup/SearchPopup';
 import { useAppSelector } from '../../store/hooks';
 import { selectProfessor } from '../../store/slices/popupSlice';
 import { ScoreData } from '../../types/types';
-import trpc from '../../trpc';
 import { FeaturedReviewData } from '@peterportal/types';
+import trpc from '../../trpc';
 
 const ProfessorPopup: FC = () => {
   const professor = useAppSelector(selectProfessor);
@@ -13,32 +12,34 @@ const ProfessorPopup: FC = () => {
   const [scores, setScores] = useState<ScoreData[]>([]);
 
   useEffect(() => {
-    if (professor) {
-      const reviewParams = {
-        type: 'professor',
-        id: professor.ucinetid,
-      } as const;
-      trpc.reviews.avgRating.query(reviewParams).then((res) => {
-        const scores = res.map((course) => ({ name: course.name, avgRating: course.avgRating, id: course.name }));
-        const scoredCourses = new Set(res.map((v) => v.name));
-        Object.keys(professor.courses).forEach((course) => {
-          // remove spaces
-          course = course.replace(/\s+/g, '');
-          // add unknown score
-          if (!scoredCourses.has(course)) {
-            scores.push({ name: course, avgRating: -1, id: course });
-          }
-        });
-        // sort by highest score
-        res.sort((a, b) => b.avgRating - a.avgRating);
-        setScores(scores);
+    if (!professor) return;
+
+    const reviewParams = {
+      type: 'professor',
+      id: professor.ucinetid,
+    } as const;
+
+    trpc.reviews.avgRating.query(reviewParams).then((res) => {
+      const scores = res.map((course) => ({ name: course.name, avgRating: course.avgRating, id: course.name }));
+      const scoredCourses = new Set(res.map((v) => v.name));
+      Object.keys(professor.courses).forEach((course) => {
+        // remove spaces
+        course = course.replace(/\s+/g, '');
+        // add unknown score
+        if (!scoredCourses.has(course)) {
+          scores.push({ name: course, avgRating: -1, id: course });
+        }
       });
-      trpc.reviews.featured.query(reviewParams).then(setFeatured);
-    }
+      // sort by highest score
+      res.sort((a, b) => b.avgRating - a.avgRating);
+      setScores(scores);
+    });
+
+    trpc.reviews.featured.query(reviewParams).then(setFeatured);
   }, [professor]);
 
   if (!professor) {
-    return <SearchPopup name="" id="" infos={[]} scores={[]} searchType="professor" title="" />;
+    return <SearchPopupPlaceholder dataType="professor" />;
   }
 
   // include basic info and featured review panels
@@ -57,13 +58,13 @@ const ProfessorPopup: FC = () => {
 
   return (
     <SearchPopup
-      name={professor.name}
+      dataType="professor"
+      data={professor}
       id={professor.ucinetid}
+      name={professor.name}
       title={professor.title}
       infos={infos}
       scores={scores}
-      searchType="professor"
-      professor={professor}
     />
   );
 };

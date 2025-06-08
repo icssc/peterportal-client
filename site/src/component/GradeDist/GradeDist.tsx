@@ -1,17 +1,18 @@
 import { FC, useState, useEffect, useCallback, useContext } from 'react';
-import Chart from './Chart';
-import Pie from './Pie';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 import './GradeDist.scss';
 
-import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import Chart from './Chart';
+import Pie from './Pie';
+
+import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
 
 interface GradeDistProps {
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
+  dataType: DataType;
+  data: CourseGQLData | ProfessorGQLData;
   minify?: boolean;
 }
 
@@ -24,252 +25,182 @@ type ChartTypes = 'bar' | 'pie';
 
 const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
-const GradeDist: FC<GradeDistProps> = (props) => {
-  /*
-   * Initialize a GradeDist block on the webpage.
-   * @param props attributes received from the parent element
-   */
-
-  const [gradeDistData, setGradeDistData] = useState<GradesRaw>();
+const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
+  const [gradeDistData, setGradeDistData] = useState<GradesRaw>([]);
+  const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState<ChartTypes>('bar');
   const [currentQuarter, setCurrentQuarter] = useState('');
-  const [currentProf, setCurrentProf] = useState('');
-  const [profEntries, setProfEntries] = useState<Entry[]>();
-  const [currentCourse, setCurrentCourse] = useState('');
-  const [courseEntries, setCourseEntries] = useState<Entry[]>();
-  const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+  const [quarterEntries, setQuarterEntries] = useState<Entry[]>([]);
+  const [currentData, setCurrentData] = useState('');
+  const [dataEntries, setDataEntries] = useState<Entry[]>([]);
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
 
-  const fetchGradeDistData = useCallback(() => {
+  const fetchGradeDistData = useCallback(async () => {
+    setGradeDistData([]);
+    setLoading(true);
+
     let requests: Promise<GradesRaw>[];
-    // course context
-    if (props.course) {
-      const params = {
-        department: props.course.department,
-        number: props.course.courseNumber,
-      };
-      requests = [trpc.courses.grades.query(params)];
-    } else if (props.professor) {
-      requests = props.professor.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
+
+    if (dataType === 'course') {
+      const { department, courseNumber } = data as CourseGQLData;
+      requests = [trpc.courses.grades.query({ department, number: courseNumber })];
+    } else {
+      const professorData = data as ProfessorGQLData;
+      requests = professorData.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
     }
 
-    Promise.all(requests!)
-      .then((res) => res.flat())
-      .then(setGradeDistData)
-      .catch((error) => {
-        setGradeDistData([]);
-        console.error(error.response);
-      });
-  }, [props.course, props.professor]);
+    try {
+      const res = await Promise.all(requests);
+      setGradeDistData(res.flat());
+    } finally {
+      setLoading(false);
+    }
+  }, [dataType, data]);
 
-  // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
-    setGradeDistData(null!);
     fetchGradeDistData();
   }, [fetchGradeDistData]);
 
-  /*
-   * Create an array of objects to feed into the professor dropdown menu.
-   * @return an array of JSON objects recording professor's names
-   */
-  const createProfEntries = useCallback(() => {
-    const professors: Set<string> = new Set();
-    const result: Entry[] = [];
+  // Create an array of objects to feed into the course/prof dropdown menu
+  const createDataEntries = useCallback(() => {
+    const entries =
+      dataType === 'course'
+        ? gradeDistData.flatMap((match) => match.instructors)
+        : gradeDistData.map((match) => `${match.department} ${match.courseNumber}`);
 
-    gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
-
-    Array.from(professors)
+    const dataEntries: Entry[] = Array.from(new Set(entries))
       .sort((a, b) => a.localeCompare(b))
-      .forEach((professor) => result.push({ value: professor, text: professor }));
+      .map((entry) => ({
+        value: entry,
+        text: entry,
+      }));
 
-    setProfEntries(result);
-    setCurrentProf(result[0].value);
-  }, [gradeDistData]);
-
-  /*
-   * Create an array of objects to feed into the course dropdown menu.
-   * @return an array of JSON objects recording course's names
-   */
-  const createCourseEntries = useCallback(() => {
-    const courses: Set<string> = new Set();
-    const result: Entry[] = [];
-
-    gradeDistData!.forEach((match) => courses.add(match.department + ' ' + match.courseNumber));
-
-    Array.from(courses)
-      .sort((a, b) => a.localeCompare(b))
-      .forEach((course) => result.push({ value: course, text: course }));
-
-    setCourseEntries(result);
-    setCurrentCourse(result[0].value);
-  }, [gradeDistData]);
+    setDataEntries(dataEntries);
+    setCurrentData(dataEntries[0]?.value ?? '');
+  }, [gradeDistData, dataType]);
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {
-    if (gradeDistData?.length) {
-      if (props.course) {
-        createProfEntries();
-      } else if (props.professor) {
-        createCourseEntries();
-      }
-    }
-  }, [gradeDistData, createCourseEntries, createProfEntries, props.course, props.professor]);
+    if (!gradeDistData.length) return;
+    createDataEntries();
+  }, [gradeDistData, createDataEntries]);
 
-  /*
-   * Create an array of objects to feed into the quarter dropdown menu.
-   * @return an array of JSON objects recording each quarter
-   */
+  // Create an array of objects to feed into the quarter dropdown menu.
   const createQuarterEntries = useCallback(() => {
-    const quarters: Set<string> = new Set();
-    const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
+    const quarters = gradeDistData
+      .filter((entry) =>
+        dataType === 'course'
+          ? entry.instructors.includes(currentData)
+          : entry.department + ' ' + entry.courseNumber === currentData,
+      )
+      .map((entry) => `${entry.quarter} ${entry.year}`);
 
-    gradeDistData!
-      .filter((entry) => {
-        if (props.course && entry.instructors.includes(currentProf)) {
-          return true;
-        }
-        if (props.professor && entry.department + ' ' + entry.courseNumber == currentCourse) {
-          return true;
-        }
-        return false;
-      })
-      .forEach((data) => quarters.add(data.quarter + ' ' + data.year));
-    quarters.forEach((quarter) => result.push({ value: quarter, text: quarter }));
+    const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }]
+      .concat(Array.from(new Set(quarters)).map((q) => ({ value: q, text: q })))
+      .sort((a, b) => {
+        if (a.value === 'ALL') return -1;
+        if (b.value === 'ALL') return 1;
 
-    setQuarterEntries(
-      result.sort((a, b) => {
-        if (a.value === 'ALL') {
-          return -1;
-        }
-        if (b.value === 'ALL') {
-          return 1;
-        }
-        const [thisQuarter, thisYear] = a.value.split(' ') as [QuarterName, string];
-        const [thatQuarter, thatYear] = b.value.split(' ') as [QuarterName, string];
-        if (thisYear === thatYear) {
-          return quarterOrder.indexOf(thatQuarter) - quarterOrder.indexOf(thisQuarter);
-        } else {
-          return Number.parseInt(thatYear, 10) - Number.parseInt(thisYear, 10);
-        }
-      }),
-    );
+        const [quarterA, yearA] = a.value.split(' ') as [QuarterName, string];
+        const [quarterB, yearB] = b.value.split(' ') as [QuarterName, string];
+
+        return yearA === yearB
+          ? quarterOrder.indexOf(quarterB) - quarterOrder.indexOf(quarterA)
+          : Number.parseInt(yearB) - Number.parseInt(yearA);
+      });
+
+    setQuarterEntries(result);
     setCurrentQuarter(result[0].value);
-  }, [currentCourse, currentProf, gradeDistData, props.course, props.professor]);
+  }, [gradeDistData, currentData, dataType]);
 
   // update list of quarters when new professor/course is chosen
   useEffect(() => {
-    if ((currentProf || currentCourse) && gradeDistData?.length) {
-      createQuarterEntries();
-    }
-  }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
+    if (!gradeDistData.length || !currentData) return;
+    createQuarterEntries();
+  }, [gradeDistData, currentData, createQuarterEntries]);
 
-  const profCourseOptions = props.course ? profEntries : courseEntries;
-  const profCourseSelectedValue = props.course ? currentProf : currentCourse;
-  const updateProfCourse = (value: string | null) => {
-    if (props.course) setCurrentProf(value!);
-    else setCurrentCourse(value!);
+  const ChartTypeDropdown = () => {
+    return (
+      <div className="gradedist-filter">
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title="Chart Type"
+          variant={buttonVariant}
+          onSelect={(value) => setChartType(value as ChartTypes)}
+        >
+          <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
+          <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
+        </DropdownButton>
+      </div>
+    );
   };
 
-  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const DataOptionsDropdown = () => {
+    return (
+      <div className="gradedist-filter">
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title={currentData}
+          variant={buttonVariant}
+          onSelect={(value) => setCurrentData(value ?? '')}
+        >
+          {dataEntries.map((entry) => (
+            <Dropdown.Item key={entry.value} eventKey={entry.value}>
+              {entry.text}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+      </div>
+    );
+  };
 
-  const optionsRow = (
-    <div className="gradedist-menu">
-      {props.minify && (
-        <div className="gradedist-filter">
-          <DropdownButton
-            className="ppc-dropdown-btn"
-            title="Chart Type"
-            variant={buttonVariant}
-            onSelect={(value) => setChartType(value as ChartTypes)}
-          >
-            <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
-            <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
-          </DropdownButton>
+  const QuarterOptionsDropdown = () => {
+    return (
+      <div className="gradedist-filter">
+        <DropdownButton
+          className="ppc-dropdown-btn"
+          title={quarterEntries.find((q) => q.value === currentQuarter)?.text ?? 'Quarter'}
+          variant={buttonVariant}
+          onSelect={(value) => setCurrentQuarter(value ?? '')}
+        >
+          {quarterEntries.map((entry) => (
+            <Dropdown.Item key={entry.value} eventKey={entry.value}>
+              {entry.text}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+      </div>
+    );
+  };
+
+  const graphProps = {
+    gradeData: gradeDistData,
+    quarter: currentQuarter,
+    data: currentData,
+    dataType,
+  };
+
+  return (
+    <div className={`gradedist-module-container ${minify && 'grade-dist-mini'}`}>
+      <div className="gradedist-menu">
+        {minify && <ChartTypeDropdown />}
+        <DataOptionsDropdown />
+        <QuarterOptionsDropdown />
+      </div>
+      {!gradeDistData.length ? (
+        <div className="chart-container">
+          <div className={`grade_distribution_chart-container ${chartType}`}>
+            {chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />}
+          </div>
+        </div>
+      ) : (
+        <div style={{ height: 400, textAlign: 'center' }}>
+          <p>{loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.'}</p>
         </div>
       )}
-
-      <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
-          variant={buttonVariant}
-          onSelect={updateProfCourse}
-        >
-          {profCourseOptions?.map((q) => {
-            return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
-                {q.text}
-              </Dropdown.Item>
-            );
-          })}
-        </DropdownButton>
-      </div>
-
-      <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={selectedQuarterName}
-          variant={buttonVariant}
-          onSelect={(value) => setCurrentQuarter(value!)}
-        >
-          {quarterEntries?.map((q) => {
-            return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
-                {q.text}
-              </Dropdown.Item>
-            );
-          })}
-        </DropdownButton>
-      </div>
     </div>
   );
-
-  if (gradeDistData?.length) {
-    const graphProps = {
-      gradeData: gradeDistData,
-      quarter: currentQuarter,
-      course: currentCourse,
-      professor: currentProf,
-    };
-    return (
-      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
-        {optionsRow}
-        <div className="chart-container">
-          {((props.minify && chartType == 'bar') || !props.minify) && (
-            <div className={'grade_distribution_chart-container chart'}>
-              <Chart {...graphProps} />
-            </div>
-          )}
-          {((props.minify && chartType == 'pie') || !props.minify) && (
-            <div className={'grade_distribution_chart-container pie'}>
-              <Pie {...graphProps} />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  } else if (gradeDistData == null) {
-    // null if still fetching, display loading message
-    return (
-      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
-        {optionsRow}
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>Loading Distribution..</p>
-        </div>
-      </div>
-    );
-  } else {
-    // gradeDistData is empty, did not receive any data from API call or received an error, display an error message
-    return (
-      <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
-        {optionsRow}
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>Error: could not retrieve grade distribution data.</p>
-        </div>
-      </div>
-    );
-  }
 };
 
 export default GradeDist;

@@ -28,14 +28,13 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
     return <LoadingSpinner />;
   }
 
-  const { department, courseNumber } = course;
   requiredCourses = getMissingPrerequisites(clearedCourses, course);
   const unitText = getUnitText(course);
 
   return (
     <>
       <div className="popover-name">
-        {`${department} ${courseNumber} `}
+        {`${course.department} ${course.courseNumber} `}
         <span className="popover-units">({unitText})</span>
         <span className="spacer" />
         {interactive && <CourseBookmarkButton course={course} />}
@@ -53,7 +52,7 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
 const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, interactive = true }) => {
   return (
     <Popover.Content className="course-popover">
-      <CoursePopoverContent course={course} interactive={interactive} requiredCourses={requiredCourses} />
+      <CoursePopoverContent course={course} requiredCourses={requiredCourses} interactive={interactive} />
     </Popover.Content>
   );
 };

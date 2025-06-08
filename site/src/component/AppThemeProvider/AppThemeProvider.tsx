@@ -13,7 +13,11 @@ function isLocalUsingSystemTheme() {
   return localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme');
 }
 
-const AppThemeProvider: FC<React.PropsWithChildren> = ({ children }) => {
+interface AppThemeProviderProps {
+  children: React.ReactNode;
+}
+
+const AppThemeProvider: FC<AppThemeProviderProps> = ({ children }) => {
   const isLoggedIn = useIsLoggedIn();
 
   // default darkMode to local or system preferences

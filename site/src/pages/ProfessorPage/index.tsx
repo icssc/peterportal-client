@@ -7,7 +7,7 @@ import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import { ResultPageContent, ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -21,17 +21,17 @@ const ProfessorPage: FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (id !== undefined) {
-      searchAPIResult('professor', id).then((professor) => {
-        if (professor) {
-          dispatch(setProfessor(professor));
-          setError('');
-          document.title = `${professor.name} | PeterPortal`;
-        } else {
-          setError(`Professor ${id} does not exist!`);
-        }
-      });
-    }
+    if (!id) return;
+
+    searchAPIResult('professor', id).then((professor) => {
+      if (!professor) {
+        setError(`Professor ${id} does not exist!`);
+        return;
+      }
+      dispatch(setProfessor(professor));
+      setError('');
+      document.title = `${professor.name} | PeterPortal`;
+    });
   }, [dispatch, id]);
 
   // if professor does not exists
@@ -46,7 +46,7 @@ const ProfessorPage: FC = () => {
 
   const sideInfo = (
     <SideInfo
-      searchType="professor"
+      dataType="professor"
       name={professorGQLData.name}
       title={professorGQLData.title}
       description={professorGQLData.department}
@@ -58,7 +58,7 @@ const ProfessorPage: FC = () => {
   return (
     <ResultPageContent sideInfo={sideInfo}>
       <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist professor={professorGQLData} />
+        <GradeDist dataType="professor" data={professorGQLData} />
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">

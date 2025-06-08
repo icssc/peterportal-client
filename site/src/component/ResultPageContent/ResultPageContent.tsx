@@ -1,6 +1,6 @@
-import './ResultPageContent.scss';
 import { FC } from 'react';
 import Twemoji from 'react-twemoji';
+import './ResultPageContent.scss';
 
 interface ResultPageSectionProps {
   title: string;
@@ -20,6 +20,7 @@ interface ResultPageContentProps {
   sideInfo: React.ReactNode;
   children: React.ReactNode;
 }
+
 export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, children }) => {
   return (
     <div className="content-wrapper search-result-page">
@@ -30,5 +31,3 @@ export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, childr
     </div>
   );
 };
-
-export default ResultPageContent;

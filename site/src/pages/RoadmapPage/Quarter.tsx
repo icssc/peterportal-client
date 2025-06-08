@@ -42,7 +42,6 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-  const isDragging = activeCourse !== undefined;
 
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
@@ -154,7 +153,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
       </div>
       <ReactSortable
         list={coursesCopy}
-        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
+        className={`quarter-course-list ${activeCourse ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
