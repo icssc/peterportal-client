@@ -1,12 +1,13 @@
-.dependent-list-branch {
-  margin: auto;
-}
-
 .prereq {
   display: flex;
   flex-direction: column;
   overflow-x: auto;
   font-size: 13px;
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
 
   .node {
     color: var(--text);
@@ -25,66 +26,29 @@
   }
 }
 
-.prereq-clump {
-  display: flex;
-  position: relative;
-  margin-left: 20px;
-  &::before {
-    content: '';
-    position: absolute;
-    background: var(--mid-gray);
-    top: 50%;
-    left: -1.5rem;
-    width: 0.5rem;
-    height: 1px;
-  }
-}
-
-.prereq-branch,
-.dependent-branch {
-  position: relative;
-  display: flex;
+.complete-prereq-tree {
+  display: inline-flex;
+  flex-direction: row;
+  width: fit-content;
   justify-content: center;
-  align-items: center;
-  padding: 0.125rem 0.25rem;
-  margin: 0 0.25rem 1px 0.25rem;
-  border-radius: 0.25rem;
-  flex: 0 0 auto;
-  border: 0;
+  margin: auto;
 }
 
-.dependent-needs {
-  &::before {
-    content: '';
-    position: absolute;
-    background: var(--mid-gray);
-    top: 50%;
-    left: -0.8rem;
-    width: 0.7rem;
-    height: 1px;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    background: var(--mid-gray);
-    top: 50%;
-    right: -1rem;
-    width: 1rem;
-    height: 1px;
-  }
+.dependent-list {
+  display: flex;
+  padding: 0;
 }
 
-.course-node {
-  margin: auto 1rem auto 0;
+.dependent-list-branch {
+  margin: auto;
 }
 
 .dependent-node {
   position: relative;
   display: flex;
   width: fit-content;
-  margin: auto;
-  margin-right: 0;
+  margin: auto 0 auto auto;
+  padding: 1px 0;
 
   a {
     background: blue;
@@ -142,10 +106,76 @@
   }
 }
 
-.prerequisite-node {
+.dependent-needs-container {
+  display: inline-flex;
+  margin: auto 1rem auto 1.5rem;
+}
+
+.dependent-needs {
+  &::before {
+    content: '';
+    position: absolute;
+    background: var(--mid-gray);
+    top: 50%;
+    left: -0.8rem;
+    width: 0.7rem;
+    height: 1px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    background: var(--mid-gray);
+    top: 50%;
+    right: -1rem;
+    width: 1rem;
+    height: 1px;
+  }
+}
+
+.course-node {
+  margin: auto 1rem auto 0;
+  padding: 1px 0;
+}
+
+.prerequisite-node-container {
+  display: flex;
+}
+
+.prereq-clump {
+  display: flex;
+  position: relative;
+  margin-left: 20px;
+  &::before {
+    content: '';
+    position: absolute;
+    background: var(--mid-gray);
+    top: 50%;
+    left: -1.5rem;
+    width: 0.5rem;
+    height: 1px;
+  }
+}
+
+.prereq-branch,
+.dependent-branch {
   position: relative;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.125rem 0.25rem;
+  margin: 0 0.25rem 1px 0.25rem;
+  border-radius: 0.25rem;
+  flex: 0 0 auto;
+  border: 0;
+}
+
+.prerequisite-node {
+  display: flex;
+  position: relative;
   width: fit-content;
+  margin: auto 0;
+  padding: 1px 0;
 
   &:first-child:last-child {
     &::after {
@@ -199,6 +229,12 @@
   }
 }
 
+.tree-node-popover {
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
 .prereq-text-box {
   padding: 1em;
   margin-top: 2em;
@@ -206,14 +242,4 @@
   p {
     margin: 0;
   }
-}
-
-.prereq ul {
-  margin: 0;
-  padding: 0;
-}
-.tree-node-popover {
-  font-size: 14px;
-  text-align: center;
-  pointer-events: none;
 }
