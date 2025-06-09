@@ -29,34 +29,35 @@ const Node: FC<NodeProps> = ({ label, content }) => {
   );
 };
 
-interface PrereqLeafNodeProps {
+interface LeafNodeProps {
   prereq: Prerequisite;
   prereqNames: CourseLookup;
 }
 
-const PrereqLeafNode: FC<PrereqLeafNodeProps> = ({ prereq, prereqNames }) => {
-  const nodeLabel =
+const LeafNode: FC<LeafNodeProps> = ({ prereq, prereqNames }) => {
+  const label =
     prereq.prereqType === 'course'
       ? `${prereq.courseId} ${prereq.coreq ? '(coreq)' : prereq.minGrade ? `(min grade = ${prereq.minGrade})` : ''}`
       : `${prereq.examName} ${prereq.minGrade ? `(min grade = ${prereq.minGrade})` : ''}`;
-  const nodeContent =
-    prereqNames[prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : (prereq.examName ?? '')]?.title ??
-    '';
-  return <Node label={nodeLabel} content={nodeContent} />;
+  const content =
+    prereq.prereqType === 'course'
+      ? prereqNames[prereq.courseId.replace(/ /g, '')]?.title
+      : prereqNames[prereq.examName]?.title;
+  return <Node label={label} content={content} />;
 };
 
-interface PrereqInternalNodeProps {
+interface InternalNodeProps {
   prereqTree: PrerequisiteTree;
   prereqNames: CourseLookup;
 }
 
-const PrereqInternalNode: FC<PrereqInternalNodeProps> = ({ prereqTree, prereqNames }) => {
+const InternalNode: FC<InternalNodeProps> = ({ prereqTree, prereqNames }) => {
   const prereqTreeType = Object.keys(prereqTree)[0] as keyof PrerequisiteTree;
   const prereqChildren = prereqTree[prereqTreeType]!;
 
   // converts "[course] - all of - one of - [prereq]" to "[course] - one of - [prereq]"
   if (prereqTree.AND && prereqChildren.length === 1 && 'OR' in prereqChildren[0]) {
-    return <PrereqInternalNode prereqTree={prereqChildren[0]} prereqNames={prereqNames} />;
+    return <InternalNode prereqTree={prereqChildren[0]} prereqNames={prereqNames} />;
   }
 
   const phraseMapping = {
@@ -73,9 +74,9 @@ const PrereqInternalNode: FC<PrereqInternalNodeProps> = ({ prereqTree, prereqNam
           {prereqChildren.map((child, index) => (
             <div key={`tree-${index}`} className="prerequisite-node">
               {Object.prototype.hasOwnProperty.call(child, 'prereqType') ? (
-                <PrereqLeafNode prereq={child as Prerequisite} prereqNames={prereqNames} />
+                <LeafNode prereq={child as Prerequisite} prereqNames={prereqNames} />
               ) : (
-                <PrereqInternalNode prereqTree={child as PrerequisiteTree} prereqNames={prereqNames} />
+                <InternalNode prereqTree={child as PrerequisiteTree} prereqNames={prereqNames} />
               )}
             </div>
           ))}
@@ -89,7 +90,7 @@ interface PrereqTreeProps {
   course: CourseGQLData;
 }
 
-const PrereqDependents: FC<PrereqTreeProps> = ({ course }) => {
+const DependentNodes: FC<PrereqTreeProps> = ({ course }) => {
   return (
     <>
       <ul className="dependent-list">
@@ -105,15 +106,6 @@ const PrereqDependents: FC<PrereqTreeProps> = ({ course }) => {
         <div className="dependent-needs dependent-branch">needs</div>
       </div>
     </>
-  );
-};
-
-const PrereqText: FC<PrereqTreeProps> = ({ course }) => {
-  return (
-    <div className="prereq-text-box">
-      <b>Prerequisite: </b>
-      {course.prerequisiteText}
-    </div>
   );
 };
 
@@ -133,9 +125,9 @@ const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
     <div className="prereq">
       <div className="complete-prereq-tree">
         {/* Display dependents */}
-        {hasDependents && <PrereqDependents course={course} />}
+        {hasDependents && <DependentNodes course={course} />}
 
-        {/* Display the course node itself */}
+        {/* Display the starting node */}
         <div className="course-node">
           <Node label={`${course.department} ${course.courseNumber}`} content={course.title} />
         </div>
@@ -144,13 +136,18 @@ const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
         {hasPrereqs && (
           <div className="prerequisite-node-container">
             <div className="prerequisite-node">
-              <PrereqInternalNode prereqTree={course.prerequisiteTree} prereqNames={course.prerequisites} />
+              <InternalNode prereqTree={course.prerequisiteTree} prereqNames={course.prerequisites} />
             </div>
           </div>
         )}
       </div>
       {/* Display prerequisite text */}
-      {course.prerequisiteText && <PrereqText course={course} />}
+      {course.prerequisiteText && (
+        <div className="prereq-text-box">
+          <b>Prerequisite: </b>
+          {course.prerequisiteText}
+        </div>
+      )}
     </div>
   );
 };
