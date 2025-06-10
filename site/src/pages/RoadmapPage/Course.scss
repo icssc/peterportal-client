@@ -33,10 +33,6 @@
     margin-left: auto;
   }
 
-  .info-wrapper {
-    display: flex;
-  }
-
   .missing-prereq {
     color: var(--red-primary);
   }
@@ -56,6 +52,9 @@
   width: 100%;
   > .name {
     display: block;
+  }
+  .warning-container svg {
+    font-size: 20px;
   }
 }
 
@@ -117,9 +116,6 @@ button.course-delete-btn {
       font-style: italic;
       margin-top: 0;
     }
-    .info-wrapper {
-      display: none;
-    }
     .units {
       order: 2;
       margin-left: 5px;
@@ -133,9 +129,6 @@ button.course-delete-btn {
       display: flex;
     }
   }
-  .course :is(.course-footer) {
-    display: none;
-  }
   .course :is(.course-and-info) {
     display: contents;
   }
@@ -147,8 +140,4 @@ button.course-delete-btn {
     gap: 8px;
     height: fit-content;
   }
-}
-
-.course-warn-icon {
-  font-size: 20px;
 }
