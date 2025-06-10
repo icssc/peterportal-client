@@ -24,6 +24,7 @@ div.quarter {
   flex-direction: column;
   font-size: 14px;
   margin: -1px -0.75px;
+  background-color: transparent;
 
   .quarter-header {
     background-color: #8881;
@@ -90,12 +91,6 @@ div.quarter {
       }
       &.sortable-ghost {
         opacity: 0.35;
-      }
-      .title {
-        font-size: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
     }
   }

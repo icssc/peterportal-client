@@ -104,6 +104,8 @@ div.quarter-list {
   grid-template-columns: repeat(auto-fill, minmax(var(--min-quarter-width), 1fr));
   gap: 1px;
   margin: 16px;
+  background-color: transparent;
+
   @media (max-width: globals.$mobile-cutoff) {
     --min-quarter-width: 325px;
   }

@@ -12,6 +12,7 @@ import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
   <>
@@ -95,7 +96,12 @@ const Course: FC<CourseProps> = (props) => {
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className="course" {...tappableCourseProps}>
+    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+      {onDelete && (
+        <div className="course-drag-handle">
+          <DragIndicatorIcon />
+        </div>
+      )}
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
