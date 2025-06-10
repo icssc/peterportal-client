@@ -6,7 +6,9 @@ import { removeUncategorizedCourse, TransferWithUnread } from '../../../store/sl
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { TransferredUncategorized } from '@peterportal/types';
 
-const UncategorizedMenuTile: FC<TransferWithUnread<TransferredUncategorized>> = ({ name, units, unread }) => {
+const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncategorized> }> = ({ course }) => {
+  const { name, units, unread } = course;
+
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
@@ -32,12 +34,7 @@ const UncategorizedCreditsSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <UncategorizedMenuTile
-          key={`${course.name}-${course.units}`}
-          name={course.name}
-          units={course.units}
-          unread={course.unread}
-        />
+        <UncategorizedMenuTile key={`${course.name}-${course.units}`} course={course} />
       ))}
     </MenuSection>
   );

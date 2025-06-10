@@ -20,7 +20,8 @@ interface CourseSelectOption {
   label: string;
 }
 
-const CourseCreditMenuTile: FC<TransferWithUnread<TransferredCourse>> = ({ courseName, units, unread }) => {
+const CourseCreditMenuTile: FC<{ course: TransferWithUnread<TransferredCourse> }> = ({ course }) => {
+  const { courseName, units, unread } = course;
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
@@ -94,12 +95,7 @@ const CoursesSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <CourseCreditMenuTile
-          key={course.courseName}
-          courseName={course.courseName}
-          units={course.units}
-          unread={course.unread}
-        />
+        <CourseCreditMenuTile key={course.courseName} course={course} />
       ))}
 
       <AsyncSelect

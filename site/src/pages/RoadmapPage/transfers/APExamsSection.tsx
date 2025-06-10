@@ -60,7 +60,9 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<TransferWithUnread<TransferredAPExam>> = ({ examName, score, units, unread }) => {
+const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({ exam }) => {
+  const { examName, score, units, unread } = exam;
+
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
 
@@ -149,13 +151,7 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile
-          key={exam.examName}
-          examName={exam.examName}
-          score={exam.score}
-          units={exam.units}
-          unread={exam.unread}
-        />
+        <APCreditMenuTile key={exam.examName} exam={exam} />
       ))}
       <div className="ap-import-row">
         <div className="exam-input">
