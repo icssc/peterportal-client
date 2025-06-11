@@ -10,7 +10,6 @@ import { PlannerYearData } from '../../types/types';
 import EditYearModal from './YearModal';
 
 import { Card, Collapse, Divider, IconButton } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../component/ExpandMore/ExpandMore';
@@ -126,13 +125,11 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           </IconButton>
 
           <ExpandMore
-            expand={showContent}
+            expanded={showContent}
             onClick={() => setShowContent(!showContent)}
             aria-expanded={showContent}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
+            aria-label="expand planner"
+          />
         </div>
       </div>
       <EditYearModal
