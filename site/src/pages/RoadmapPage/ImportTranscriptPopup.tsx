@@ -208,11 +208,16 @@ const ImportTranscriptPopup: FC = () => {
 
       const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
       const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      // Invalid courses should also count as other transfers
+      const newOtherFromCourses = invalidCourseIDs
+        .map((courseID) => ({ name: courseID, units: 0 }))
+        .filter((otherCourse) => !formattedOther.some((existing) => existing.name == otherCourse.name));
+      const allOther = formattedOther.concat(newOtherFromCourses);
 
       // All newly added transfers should display as unread
       const coursesUnread = markTransfersAsUnread(courses);
       const apUnread = markTransfersAsUnread(scoredAps);
-      const otherUnread = markTransfersAsUnread(formattedOther);
+      const otherUnread = markTransfersAsUnread(allOther);
 
       // Merge the new AP exams, courses, and other transfers into current transfers
       // via a process similar to the updated Zot4Plan imports
@@ -230,15 +235,11 @@ const ImportTranscriptPopup: FC = () => {
         (imported) => !currentOther.some((existing) => existing.name == imported.name),
       );
       const mergedOther = currentOther.concat(newOther);
-      const newOtherFromCourses = invalidCourseIDs
-        .map((courseID) => ({ name: courseID, units: 0 }))
-        .filter((otherCourse) => !mergedOther.some((existing) => existing.name == otherCourse.name));
-      const mergedOtherFinal = mergedOther.concat(newOtherFromCourses);
 
       // Override local transfers with the merged results
       dispatch(setTransferredCourses(mergedCourses));
       dispatch(setUserAPExams(mergedAps));
-      dispatch(setUncategorizedCourses(mergedOtherFinal));
+      dispatch(setUncategorizedCourses(mergedOther));
 
       // Add the new rows in the database if logged in
       if (isLoggedIn) {
@@ -246,7 +247,7 @@ const ImportTranscriptPopup: FC = () => {
           courses: mergedCourses,
           ap: mergedAps,
           ge: [],
-          other: mergedOtherFinal,
+          other: mergedOther,
         });
       }
 
