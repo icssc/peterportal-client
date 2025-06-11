@@ -3,15 +3,6 @@
   .quarter {
     color: #eee;
   }
-  .plus-icon {
-    fill: #eee;
-  }
-
-  .quarter-menu-btn:hover,
-  .quarter-menu-btn:focus,
-  .popover-body .quarter-menu-btn:active {
-    background-color: var(--overlay2);
-  }
 }
 
 div.quarter {
@@ -132,28 +123,4 @@ body:has(> #profile-popover) {
 body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
   // when a course is dragged, show grabbing cursor no matter what
   cursor: grabbing !important;
-}
-
-.quarter-menu-btn {
-  display: block;
-  width: 100%;
-  text-align: start;
-  border: 0px;
-  background: transparent;
-  padding: 0;
-}
-
-.quarter-menu-popover {
-  z-index: 1;
-}
-
-.plus-icon {
-  fill: #000000;
-}
-
-.red-menu-btn,
-.red-menu-btn:hover,
-.red-menu-btn:focus,
-.popover-body .quarter-menu-btn.red-menu-btn:active {
-  color: var(--red-primary);
 }
