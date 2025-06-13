@@ -38,16 +38,19 @@
     font-size: 20px;
   }
 
-  button:not(.fixed),
-  button.close {
+  button:not(.fixed) {
     width: 20px;
     height: 20px;
 
     @include globals.clickable(0.8, 0.5);
   }
 
-  button.close-button {
-    width: 32px;
+  .close-button {
+    margin: -2px 4px -4px 0;
+    &.MuiButtonBase-root {
+      width: 32px;
+      height: 32px;
+    }
   }
 
   .quarter-offerings-section {

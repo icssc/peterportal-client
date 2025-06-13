@@ -67,7 +67,9 @@ const AddCoursePopup: FC = () => {
           <span className="unit-count">
             ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)})
           </span>
-          <CourseBookmarkButton course={activeCourse} />
+          <span className="bookmark-button">
+            <CourseBookmarkButton course={activeCourse} />
+          </span>
           <div className="spacer"></div>
           <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />

@@ -42,7 +42,11 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
           </span>
 
           <div className="spacer"></div>
-          {interactive && <CourseBookmarkButton course={course} />}
+          {interactive && (
+            <span className="bookmark-button-wrapper">
+              <CourseBookmarkButton course={course} />
+            </span>
+          )}
         </div>
         <br />
         <CourseDescription course={course} />

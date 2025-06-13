@@ -18,7 +18,7 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
   const courseIsSaved = isCourseSaved(course);
   return (
-    <IconButton onClick={() => toggleSavedCourse(course)}>
+    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)}>
       {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </IconButton>
   );
