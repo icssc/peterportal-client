@@ -122,56 +122,33 @@ div.quarter-list {
 // This code works up until 2598px wide, at which quarter count 5 doesn't extend to the full width.
 // If there was a formula to calculate all of this, that would be extremely beneficial.
 
-@media only screen and (min-width: 1108px) {
-  .years[data-max-quarter-count='1'] .quarter-list {
-    --min-quarter-width: 520px;
+.years {
+  &[data-max-quarter-count='1'] div.quarter-list {
+    grid-template-columns: 100%;
   }
-}
-
-@media only screen and (min-width: 1378px) {
-  .years[data-max-quarter-count='2'] .quarter-list {
-    --min-quarter-width: 380px;
+  @media only screen and (min-width: 1250px) {
+    &[data-max-quarter-count='2'] div.quarter-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-}
-
-@media only screen and (min-width: 1648px) {
-  .years[data-max-quarter-count='1'] .quarter-list {
-    --min-quarter-width: 1060px;
+  @media only screen and (min-width: 1500px) {
+    &[data-max-quarter-count='3'] div.quarter-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
-  .years[data-max-quarter-count='2'] .quarter-list {
-    --min-quarter-width: 520px;
+  @media only screen and (min-width: 1750px) {
+    &[data-max-quarter-count='4'] div.quarter-list {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
-  .years[data-max-quarter-count='3'] .quarter-list {
-    --min-quarter-width: 340px;
+  @media only screen and (min-width: 2000px) {
+    &[data-max-quarter-count='5'] div.quarter-list {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
-}
-
-@media only screen and (min-width: 1918px) {
-  .years[data-max-quarter-count='2'] .quarter-list {
-    --min-quarter-width: 655px;
-  }
-  .years[data-max-quarter-count='3'] .quarter-list {
-    --min-quarter-width: 430px;
-  }
-  .years[data-max-quarter-count='4'] .quarter-list {
-    --min-quarter-width: 304px;
-  }
-}
-
-@media only screen and (min-width: 2194px) {
-  .years[data-max-quarter-count='3'] .quarter-list {
-    --min-quarter-width: 520px;
-  }
-  .years[data-max-quarter-count='4'] .quarter-list {
-    --min-quarter-width: 385px;
-  }
-  .years[data-max-quarter-count='5'] .quarter-list {
-    --min-quarter-width: 304px;
-  }
-}
-
-@media only screen and (min-width: 2532px) {
-  .years[data-max-quarter-count='6'] .quarter-list {
-    --min-quarter-width: 258px;
+  @media only screen and (min-width: 2250px) {
+    &[data-max-quarter-count='6'] div.quarter-list {
+      grid-template-columns: repeat(6, 1fr);
+    }
   }
 }
