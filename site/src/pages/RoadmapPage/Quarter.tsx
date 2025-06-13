@@ -119,15 +119,12 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
-          let requiredCourses: string[] | undefined = undefined;
-
-          // if this is an invalid course, set the required courses
-          invalidCourses.forEach((ic) => {
-            const loc = ic.location;
-            if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
-              requiredCourses = ic.required;
-            }
-          });
+          const requiredCourses = invalidCourses.find(
+            (ic) =>
+              ic.location.courseIndex === index &&
+              ic.location.quarterIndex === quarterIndex &&
+              ic.location.yearIndex === yearIndex,
+          )?.required;
 
           return (
             <Course

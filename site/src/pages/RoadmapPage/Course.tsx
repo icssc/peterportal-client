@@ -41,7 +41,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
+  const popoverContent = <CoursePopover course={data} />;
 
   return (
     <PPCOverlayTrigger

@@ -14,7 +14,7 @@ const RoadmapPage: FC = () => {
 
   return (
     <div className="roadmap-page">
-      <AddCoursePopup />
+      {isMobile && <AddCoursePopup />}
       <Planner />
       <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit>
         <SearchSidebar />

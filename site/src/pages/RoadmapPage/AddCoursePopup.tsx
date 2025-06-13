@@ -5,16 +5,7 @@ import { moveCourse, setShowAddCourse, setShowSearch } from '../../store/slices/
 import './AddCoursePopup.scss';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
-import { getUnitText } from '../../helpers/util';
-import {
-  CourseBookmarkButton,
-  CourseDescription,
-  IncompletePrerequisiteText,
-  PrerequisiteText,
-  PreviousOfferingsRow,
-} from '../../component/CourseInfo/CourseInfo';
-
-import CloseIcon from '@mui/icons-material/Close';
+import { CourseHeader, AllCourseInfo } from '../../component/CourseInfo/CourseInfo';
 
 const AddCoursePopupContent = () => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
@@ -26,8 +17,6 @@ const AddCoursePopupContent = () => {
   const term = useNamedAcademicTerm();
 
   if (!activeCourse) return null;
-
-  const closePopup = () => dispatch(setShowAddCourse(false));
 
   const addToRoadmap = () => {
     // add course to roadmap
@@ -43,33 +32,16 @@ const AddCoursePopupContent = () => {
     );
     // hide the search bar to view the roadmap
     dispatch(setShowSearch({ show: false }));
-    closePopup();
+    dispatch(setShowAddCourse(false));
   };
-
-  const { department, courseNumber } = activeCourse;
-  const unitText = getUnitText(activeCourse);
 
   return (
     <div className={`ppc-modal add-course-modal ${showAddCourse ? 'enter' : 'exit'}`}>
       <Modal.Header>
-        <div className="course-name">
-          {department} {courseNumber}
-        </div>
-        <span className="unit-count">{unitText}</span>
-        <CourseBookmarkButton course={activeCourse} />
-        <span className="spacer" />
-        <button onClick={closePopup} className="close-button">
-          <CloseIcon />
-        </button>
+        <CourseHeader course={activeCourse} />
       </Modal.Header>
       <Modal.Body>
-        <CourseDescription course={activeCourse} />
-        {activeMissingPrerequisites ? (
-          <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
-        ) : (
-          <PrerequisiteText course={activeCourse} />
-        )}
-        <PreviousOfferingsRow course={activeCourse} />
+        <AllCourseInfo course={activeCourse} missingPrerequisites={activeMissingPrerequisites} />
       </Modal.Body>
       <button className="fixed" onClick={addToRoadmap}>
         Add to {term.quarter} {term.year}
