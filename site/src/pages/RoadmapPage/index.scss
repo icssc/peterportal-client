@@ -13,21 +13,6 @@
 
   .main-wrapper.mobile {
     width: 100%;
-    padding-bottom: 60px;
-  }
-}
-
-.search-body,
-.quarter {
-  &:not(.disabled) .course {
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    &:active {
-      cursor: grabbing;
-    }
-  }
-  &.disabled .course {
-    cursor: pointer;
+    padding: 16px;
   }
 }

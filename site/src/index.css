@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 body {
   margin: 0;
@@ -50,6 +51,8 @@ code {
   --spring-quarter: #ffc7df;
 
   --border-radius: 8px;
+  --border-primary: rgba(96, 97, 102, 0.5);
+  --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
 /* User theme is not accessible to :root, so we override them in body */
@@ -58,4 +61,6 @@ body[data-theme='dark'] {
   --blue-tertiary: #0b293c;
   --red-primary: #ff3333;
   --green-secondary: #295629;
+
+  --border-secondary: rgba(255, 255, 255, 0.12);
 }
