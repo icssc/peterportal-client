@@ -15,19 +15,6 @@
     width: 100%;
     padding-bottom: 60px;
   }
-
-  .sidebar-wrapper {
-    border-radius: var(--border-radius);
-    margin-left: 1vw;
-    width: 25%;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  .sidebar-wrapper.mobile {
-    width: 100%;
-    margin: 0;
-  }
 }
 
 .search-body,

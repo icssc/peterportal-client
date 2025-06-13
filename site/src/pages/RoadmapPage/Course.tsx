@@ -38,7 +38,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
+  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
     <PPCOverlayTrigger

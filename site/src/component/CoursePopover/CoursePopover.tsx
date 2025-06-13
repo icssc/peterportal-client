@@ -18,10 +18,9 @@ import { getMissingPrerequisites } from '../../helpers/planner';
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  interactive?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   let content = (
     <div className="center">
       <Spinner animation="border" />
@@ -42,11 +41,9 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
           </span>
 
           <div className="spacer"></div>
-          {interactive && (
-            <span className="bookmark-button-wrapper">
-              <CourseBookmarkButton course={course} />
-            </span>
-          )}
+          <span className="bookmark-button-wrapper">
+            <CourseBookmarkButton course={course} />
+          </span>
         </div>
         <br />
         <CourseDescription course={course} />
