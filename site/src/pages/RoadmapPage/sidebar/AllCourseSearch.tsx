@@ -26,10 +26,10 @@ const SearchPlaceholder = ({ searchInProgress, showSavedCourses }: SearchPlaceho
     : "Sorry, we couldn't find any results for that search!";
 
   return (
-    <div className="no-results">
+    <>
       <img src={noResultsImg} alt="No results found" />
       {placeholderText}
-    </div>
+    </>
   );
 };
 
