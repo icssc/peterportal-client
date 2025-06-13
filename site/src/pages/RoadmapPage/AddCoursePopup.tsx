@@ -52,9 +52,9 @@ const AddCoursePopupContent = () => {
   return (
     <div className={`ppc-modal add-course-modal ${showAddCourse ? 'enter' : 'exit'}`}>
       <Modal.Header>
-        <h2>
+        <div className="course-name">
           {department} {courseNumber}
-        </h2>
+        </div>
         <span className="unit-count">{unitText}</span>
         <CourseBookmarkButton course={activeCourse} />
         <span className="spacer" />

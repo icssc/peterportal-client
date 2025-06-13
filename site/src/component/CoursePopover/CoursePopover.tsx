@@ -18,10 +18,9 @@ import { getMissingPrerequisites } from '../../helpers/planner';
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  interactive?: boolean;
 }
 
-const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses, interactive }) => {
+const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const clearedCourses = useClearedCourses();
 
   if (typeof course === 'string') {
@@ -34,12 +33,11 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
   return (
     <>
       <div className="popover-name">
-        {`${course.department} ${course.courseNumber} `}
-        <span className="popover-units">({unitText})</span>
+        <b>{`${course.department} ${course.courseNumber} `}</b>
+        <p>({unitText})</p>
         <span className="spacer" />
-        {interactive && <CourseBookmarkButton course={course} />}
+        <CourseBookmarkButton course={course} />
       </div>
-      <br />
       <CourseDescription course={course} />
       <PrerequisiteText course={course} />
       <CorequisiteText course={course} />
@@ -49,10 +47,10 @@ const CoursePopoverContent: FC<CoursePopoverProps> = ({ course, requiredCourses,
   );
 };
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, interactive = true }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   return (
     <Popover.Content className="course-popover">
-      <CoursePopoverContent course={course} requiredCourses={requiredCourses} interactive={interactive} />
+      <CoursePopoverContent course={course} requiredCourses={requiredCourses} />
     </Popover.Content>
   );
 };
