@@ -4,6 +4,7 @@ import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 import type { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { removeWhitespace } from '../../helpers/util';
 
 interface NodeProps {
   label: string;
@@ -19,7 +20,7 @@ const Node: FC<NodeProps> = ({ label, content }) => {
   return (
     <OverlayTrigger overlay={popover}>
       {!label.startsWith('AP ') ? (
-        <Link to={'/course/' + label.split('(')[0].replace(/\s+/g, '')} role="button" className="node">
+        <Link to={'/course/' + removeWhitespace(label.split('(')[0])} role="button" className="node">
           {label}
         </Link>
       ) : (

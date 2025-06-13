@@ -150,3 +150,7 @@ export function getUnitText(course: CourseGQLData) {
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
   return `${course.department} ${course.courseNumber}`;
 }
+
+export function removeWhitespace(str: string) {
+  return str.replace(/\s+/g, '');
+}

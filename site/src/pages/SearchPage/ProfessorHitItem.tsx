@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 
 import { ProfessorGQLData } from '../../types/types';
-import { useIsMobile } from '../../helpers/util';
+import { useIsMobile, removeWhitespace } from '../../helpers/util';
 
 interface ProfessorHitItemProps {
   professor: ProfessorGQLData;
@@ -59,7 +59,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = ({ professor }) => {
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <Link to={'/course/' + item.replace(/\s+/g, '')} onClick={(e) => e.stopPropagation()}>
+                  <Link to={'/course/' + removeWhitespace(item)} onClick={(e) => e.stopPropagation()}>
                     {item}
                   </Link>
                 </span>

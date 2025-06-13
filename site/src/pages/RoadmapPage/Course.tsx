@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import './Course.scss';
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, getUnitText } from '../../helpers/util';
+import { useIsMobile, getUnitText, removeWhitespace } from '../../helpers/util';
 
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
@@ -30,9 +30,10 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
 
-  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
+  const courseRoute = '/course/' + removeWhitespace(department) + removeWhitespace(courseNumber);
+
   let courseID = department + ' ' + courseNumber;
-  if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
+  if (alwaysCollapse) courseID = removeWhitespace(courseID);
 
   const handleLinkClick = (event: React.MouseEvent) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');

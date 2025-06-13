@@ -2,6 +2,7 @@ import { FC, useState, useEffect } from 'react';
 import { SearchPopup, SearchPopupPlaceholder } from '../../component/SearchPopup/SearchPopup';
 import { useAppSelector } from '../../store/hooks';
 import { selectProfessor } from '../../store/slices/popupSlice';
+import { removeWhitespace } from '../../helpers/util';
 import { ScoreData } from '../../types/types';
 import { FeaturedReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
@@ -24,7 +25,7 @@ const ProfessorPopup: FC = () => {
       const scoredCourses = new Set(res.map((v) => v.name));
       Object.keys(professor.courses).forEach((course) => {
         // remove spaces
-        course = course.replace(/\s+/g, '');
+        course = removeWhitespace(course);
         // add unknown score
         if (!scoredCourses.has(course)) {
           scores.push({ name: course, avgRating: -1, id: course });
