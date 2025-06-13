@@ -19,13 +19,9 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { initializeCompletedMarkers } from '../../store/slices/courseRequirementsSlice';
 
 const CloseRoadmapSearchButton = () => {
-  const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
-  const { year, quarter } = useNamedAcademicTerm();
-
-  if (!isMobile) return null;
-
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
+  const { year, quarter } = useNamedAcademicTerm();
 
   return (
     <button className="fixed" onClick={closeSearch}>
@@ -72,7 +68,7 @@ const SearchSidebar = () => {
       <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
         {courseListComponentMap[selectedCourseList]}
-        <CloseRoadmapSearchButton />
+        {isMobile && <CloseRoadmapSearchButton />}
       </div>
       {!isMobile && <TransferCreditsMenu />}
     </>

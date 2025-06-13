@@ -57,11 +57,6 @@ button {
     border-radius: 8px 8px 0 0;
   }
 
-  button.fixed {
-    @include globals.bottom-button();
-    z-index: 1;
-  }
-
   .ppc-combobox__clear-indicator {
     display: none;
   }
@@ -366,6 +361,10 @@ button {
 .table-wrapper {
   width: 100%;
   overflow: auto;
+}
+
+.fixed {
+  @include globals.bottom-button();
 }
 
 // monkey patch for recaptcha border bug
