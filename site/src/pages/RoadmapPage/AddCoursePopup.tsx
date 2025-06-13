@@ -17,9 +17,7 @@ import {
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface AddCoursePopupProps {}
-
-const AddCoursePopup: FC<AddCoursePopupProps> = () => {
+const AddCoursePopup: FC = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
