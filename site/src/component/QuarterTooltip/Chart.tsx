@@ -2,52 +2,32 @@ import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
-import { type Theme } from '@nivo/core';
-
-const colors = ['#E8966D', '#60A3D1', '#FFC7DF', '#F5D77F', '#E8966D', '#EBEBEB'];
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   terms: string[];
 }
 
 export default class Chart extends Component<ChartProps> {
-  getTheme = (darkMode: boolean): Theme => {
-    return {
-      axis: {
-        ticks: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-        legend: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-      },
-    };
-  };
-
   /*
    * Create an array of objects to feed into the chart.
    * @return an array of JSON objects detailing the grades for each class
    */
   getTermData = (): BarDatum[] => {
-    let fallCount = 0,
-      winterCount = 0,
-      springCount = 0;
+    const termCounts = {
+      Fall: 0,
+      Winter: 0,
+      Spring: 0,
+    };
 
     // for summer, count unique years rather than total terms (e.g. count SS1 2023 and SS2 2023 as one)
     const summerYears = new Set<string>();
 
     this.props.terms.forEach((data) => {
       const [year, term] = data.split(' ');
-      if (term === 'Fall') {
-        fallCount++;
-      } else if (term === 'Winter') {
-        winterCount++;
-      } else if (term === 'Spring') {
-        springCount++;
+      if (term === 'Fall' || term === 'Winter' || term === 'Spring') {
+        termCounts[term]++;
       } else if (term.startsWith('Summer')) {
         summerYears.add(year);
       }
@@ -57,42 +37,28 @@ export default class Chart extends Component<ChartProps> {
       {
         id: 'fall',
         label: 'Fall',
-        fall: fallCount,
-        color: '#E8966D',
+        fall: termCounts.Fall,
+        color: getCssVariable('--red-secondary-light'),
       },
       {
         id: 'winter',
         label: 'Winter',
-        winter: winterCount,
-        color: '#2484C6',
+        winter: termCounts.Winter,
+        color: getCssVariable('--blue-secondary-light'),
       },
       {
         id: 'spring',
         label: 'Spring',
-        spring: springCount,
-        color: '#FFC7DF',
+        spring: termCounts.Spring,
+        color: getCssVariable('--spring-quarter'),
       },
       {
         id: 'summer',
         label: 'Summer',
         summer: summerYears.size,
-        color: '#F9CE50',
+        color: getCssVariable('--yellow-secondary-light'),
       },
     ];
-  };
-
-  tooltipStyle: Theme = {
-    tooltip: {
-      container: {
-        background: 'rgba(0,0,0,.87)',
-        color: '#ffffff',
-        fontSize: '1.2rem',
-        outline: 'none',
-        margin: 0,
-        padding: '0.25em 0.5em',
-        borderRadius: '2px',
-      },
-    },
   };
 
   /*
@@ -103,13 +69,7 @@ export default class Chart extends Component<ChartProps> {
    * @return a JSX block styling the chart
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
-    return (
-      <div style={this.tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.label}: {props.data[props.label]}
-        </strong>
-      </div>
-    );
+    return <ChartTooltip label={props.label} value={props.data[props.label]} />;
   };
 
   /*
@@ -117,10 +77,10 @@ export default class Chart extends Component<ChartProps> {
    * @return a JSX block rendering the chart
    */
   render() {
-    const data = this.getTermData();
+    const termCounts = this.getTermData();
 
     // greatestCount calculates the upper bound of the graph (i.e. the greatest number of students in a single grade)
-    const greatestCount = data.reduce(
+    const greatestCount = termCounts.reduce(
       (max, term) => ((term[term.id] as number) > max ? (term[term.id] as number) : max),
       0,
     );
@@ -138,8 +98,9 @@ export default class Chart extends Component<ChartProps> {
         <ThemeContext.Consumer>
           {({ darkMode }) => (
             <ResponsiveBar
-              data={data}
-              keys={['fall', 'winter', 'spring', 'summer']}
+              data={termCounts}
+              keys={termCounts.map((term) => String(term.id))}
+              colors={termCounts.map((term) => String(term.color))}
               margin={{
                 top: 25,
                 right: marginX,
@@ -159,8 +120,7 @@ export default class Chart extends Component<ChartProps> {
                 tickValues: Array.from({ length: greatestCount / tickSize }, (_, i) => i * tickSize + tickSize),
               }}
               enableLabel={false}
-              colors={colors}
-              theme={this.getTheme(darkMode)}
+              theme={getChartTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
             />

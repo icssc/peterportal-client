@@ -7,11 +7,12 @@ import { useIsMobile, getUnitText } from '../../helpers/util';
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -54,7 +55,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
         </a>
         {requiredCourses && (
           <span className="warning-container">
-            <WarningAmberIcon className="course-warn-icon" />
+            <WarningAmberIcon />
           </span>
         )}
       </>
@@ -84,7 +85,12 @@ const Course: FC<CourseProps> = ({ course, requiredCourses, onDelete, openPopove
   const unitText = getUnitText(course);
 
   return (
-    <div className="course" {...tappableCourseProps}>
+    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+      {onDelete && (
+        <div className="course-drag-handle">
+          <DragIndicatorIcon />
+        </div>
+      )}
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>

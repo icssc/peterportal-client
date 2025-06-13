@@ -28,14 +28,14 @@ const AppThemeProvider: FC<AppThemeProviderProps> = ({ children }) => {
 
   const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
 
+  // Theme styling is controlled by data-theme attribute on body being set to light or dark
+  document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   /**
    * we run this check at render-time and compare with previous state because a useEffect
    * would cause a flicker for dark mode users on page load since the first render would be without
    * the data-theme property set (light would be used by default)
    */
   if (darkMode != prevDarkMode) {
-    // Theme styling is controlled by data-theme attribute on body being set to light or dark
-    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     setPrevDarkMode(darkMode);
   }
 

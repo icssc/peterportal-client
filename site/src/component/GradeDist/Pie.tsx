@@ -3,8 +3,8 @@ import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw, LetterGrade, letterGrades, pnpGrades } from '@peterportal/types';
 import { DataType } from '../../types/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getCssVariable } from '../../helpers/styling.ts';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
@@ -31,8 +31,6 @@ export default class Pie extends Component<PieProps> {
   averagePNP = '';
 
   getClassData = (): Slice[] => {
-    const gradeCounts = Object.fromEntries(letterGrades.map((g) => [g, 0]));
-
     this.total = 0;
     this.totalPNP = 0;
     this.averageGPA = '';
@@ -41,6 +39,25 @@ export default class Pie extends Component<PieProps> {
     let sum = 0;
 
     const { gradeData, dataType, data, quarter } = this.props;
+
+    const gradeCounts = {
+      A: 0,
+      B: 0,
+      C: 0,
+      D: 0,
+      F: 0,
+      P: 0,
+      NP: 0,
+    };
+    const gradeColorVars = {
+      A: '--blue-secondary-light',
+      B: '--green-secondary-light',
+      C: '--yellow-secondary-light',
+      D: '--orange-secondary-light',
+      F: '--red-secondary-light',
+      P: '--gradedist-p',
+      NP: '--gradedist-np',
+    };
 
     gradeData.forEach((entry) => {
       const correctQuarter = quarter === 'ALL' || `${entry.quarter} ${entry.year}` === quarter;
@@ -62,48 +79,31 @@ export default class Pie extends Component<PieProps> {
     });
 
     this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1);
-    this.gpaToGradeConverter(this.averageGPA);
+    const gpaIndex = gpaScale.findIndex((scale) => Number(this.averageGPA) < scale);
+    this.averageGrade = gradeScale[gpaIndex];
 
-    // Determine if only P/NP grades exist
-    if (this.totalPNP === this.total) {
-      return pnpGrades.map((grade) => ({
-        id: grade,
-        label: grade,
-        value: gradeCounts[grade],
-        color: GradeColors[grade],
-      }));
-    }
+    const createSlice = (grade: LetterGrade): Slice => ({
+      id: grade,
+      label: grade,
+      value: gradeCounts[grade],
+      color: getCssVariable(gradeColorVars[grade]),
+    });
 
-    return letterGrades
-      .map((grade) => ({
-        id: grade,
-        label: grade,
-        value: gradeCounts[grade],
-        color: GradeColors[grade],
-      }))
-      .filter((slice) => slice.value !== 0);
+    const dataset = this.totalPNP === this.total ? pnpGrades : letterGrades;
+    return dataset.map(createSlice).filter((slice) => slice.value !== 0);
   };
 
-  gpaToGradeConverter(gpa: string) {
-    const index = gpaScale.findIndex((scale) => Number(gpa) < scale);
-    this.averageGrade = gradeScale[index];
-  }
-
   styleTooltip = (props: PieTooltipProps<Slice>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
-        </strong>
-      </div>
-    );
+    const gradePercent = ((props.datum.value / this.total) * 100).toFixed(2) + '%';
+    return <ChartTooltip label={props.datum.id} value={gradePercent} />;
   };
 
   render() {
+    const gradeDistribution = this.getClassData();
     return (
       <div style={{ width: '100%', position: 'relative' }}>
         <ResponsivePie<Slice>
-          data={this.getClassData()}
+          data={gradeDistribution}
           margin={{
             top: 50,
             bottom: 50,
@@ -114,7 +114,7 @@ export default class Pie extends Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={Object.values(GradeColors)}
+          colors={gradeDistribution.map((grade) => grade.color)}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}

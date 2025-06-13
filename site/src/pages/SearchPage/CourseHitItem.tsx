@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
-import { useCoursebag } from '../../hooks/coursebag';
+import { useSavedCourses } from '../../hooks/savedCourses';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -24,9 +24,9 @@ const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
-  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
-  const isInBag = coursebag.some((c) => c.id === course.id);
-  const pillData = getCourseTags(course);
+  const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(course);
+  const pillData = getCourseTags(course); // data to be displayed in pills
 
   const onClickName = () => {
     // set the popup course
@@ -43,15 +43,15 @@ const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
     }
   };
 
-  const onAddToBag = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!course || coursebag.some((c) => c.id === course.id)) return;
-    addCourseToBag(course);
+    if (!course || course.id === undefined || isCourseSaved(course)) return;
+    saveCourse(course);
   };
 
-  const removeFromBag = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onUnsaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    removeCourseFromBag(course);
+    unsaveCourse(course);
   };
 
   return (
@@ -76,8 +76,8 @@ const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
               </Badge>
             ))}
           </div>
-          <IconButton onClick={(e) => (isInBag ? removeFromBag(e) : onAddToBag(e))} size="small">
-            {isInBag ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          <IconButton onClick={(e) => (courseIsSaved ? onUnsaveCourse(e) : onSaveCourse(e))} size="small">
+            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
           </IconButton>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { CourseGQLData } from '../../types/types';
-import { useCoursebag } from '../../hooks/coursebag';
+import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
@@ -15,13 +15,11 @@ interface CourseProp {
 }
 
 export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
-  const { coursebag: bookmarks, toggleBookmark } = useCoursebag();
-  const isBookmarked = bookmarks.some((c) => c.id === course.id);
-
-  // TODO: note to self - this isn't finalized, I still need to fix IconButton so that it's unstyled
+  const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(course);
   return (
-    <IconButton onClick={() => toggleBookmark(course)}>
-      {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+    <IconButton onClick={() => toggleSavedCourse(course)}>
+      {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </IconButton>
   );
 };

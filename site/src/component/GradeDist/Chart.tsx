@@ -2,11 +2,10 @@ import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
-import { type Theme } from '@nivo/core';
 import { GradesRaw, letterGrades } from '@peterportal/types';
 import { DataType } from '../../types/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -16,26 +15,26 @@ interface ChartProps {
 }
 
 export default class Chart extends Component<ChartProps> {
-  getTheme = (darkMode: boolean): Theme => {
-    return {
-      axis: {
-        ticks: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-        legend: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-      },
-    };
-  };
-
   getGradeData = (): BarDatum[] => {
     const { gradeData, dataType, data, quarter } = this.props;
-    const gradeCounts = { A: 0, B: 0, C: 0, D: 0, F: 0, P: 0, NP: 0 };
+    const gradeCounts = {
+      A: 0,
+      B: 0,
+      C: 0,
+      D: 0,
+      F: 0,
+      P: 0,
+      NP: 0,
+    };
+    const gradeColorVars = {
+      A: '--blue-secondary-light',
+      B: '--green-secondary-light',
+      C: '--yellow-secondary-light',
+      D: '--orange-secondary-light',
+      F: '--red-secondary-light',
+      P: '--gradedist-p',
+      NP: '--gradedist-np',
+    };
 
     gradeData.forEach((entry) => {
       const correctQuarter = quarter === 'ALL' || `${entry.quarter} ${entry.year}` === quarter;
@@ -55,25 +54,19 @@ export default class Chart extends Component<ChartProps> {
       id: grade,
       label: grade,
       [grade]: gradeCounts[grade],
-      color: GradeColors[grade],
+      color: getCssVariable(gradeColorVars[grade]),
     }));
   };
 
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.label}: {props.data[props.label]}
-        </strong>
-      </div>
-    );
+    return <ChartTooltip label={props.label} value={props.data[props.label]} />;
   };
 
   render() {
-    const data = this.getGradeData();
+    const gradeDistribution = this.getGradeData();
 
     // calculates the graph's upper bound, aka the greatest number of students in a single grade
-    const greatestCount = data.reduce(
+    const greatestCount = gradeDistribution.reduce(
       (max, grade) => ((grade[grade.id] as number) > max ? (grade[grade.id] as number) : max),
       0,
     );
@@ -87,35 +80,37 @@ export default class Chart extends Component<ChartProps> {
     const marginX = 30 + 5 * Math.floor(Math.log10(Math.max(100, greatestCount) / 100));
 
     return (
-      <ThemeContext.Consumer>
-        {({ darkMode }) => (
-          <ResponsiveBar
-            data={data}
-            keys={letterGrades}
-            colors={Object.values(GradeColors)}
-            theme={this.getTheme(darkMode)}
-            tooltip={this.styleTooltip}
-            tooltipLabel={(datum) => String(datum.id)}
-            enableLabel={false}
-            indexBy="label"
-            layout="vertical"
-            margin={{
-              top: 50,
-              right: marginX,
-              bottom: 50,
-              left: marginX,
-            }}
-            axisBottom={{
-              tickSize: 10,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Grade',
-              legendPosition: 'middle',
-              legendOffset: 36,
-            }}
-          />
-        )}
-      </ThemeContext.Consumer>
+      <>
+        <ThemeContext.Consumer>
+          {({ darkMode }) => (
+            <ResponsiveBar
+              data={gradeDistribution}
+              keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
+              colors={gradeDistribution.map((grade) => String(grade.color))}
+              theme={getChartTheme(darkMode)}
+              tooltip={this.styleTooltip}
+              tooltipLabel={(datum) => String(datum.id)}
+              enableLabel={false}
+              indexBy="label"
+              layout="vertical"
+              margin={{
+                top: 50,
+                right: marginX,
+                bottom: 50,
+                left: marginX,
+              }}
+              axisBottom={{
+                tickSize: 10,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Grade',
+                legendPosition: 'middle',
+                legendOffset: 36,
+              }}
+            />
+          )}
+        </ThemeContext.Consumer>
+      </>
     );
   }
 }

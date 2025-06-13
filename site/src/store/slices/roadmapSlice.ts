@@ -98,7 +98,7 @@ export const roadmapSlice = createSlice({
     showSearch: false,
     /** Whether to show the add course modal on mobile */
     showAddCourse: false,
-    showCourseBag: true,
+    showSavedCourses: true,
     /** Store the course data of the active dragging item */
     activeCourse: undefined as CourseGQLData | undefined,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
@@ -278,8 +278,8 @@ export const roadmapSlice = createSlice({
       const index = action.payload.index;
       state.plans[index].name = action.payload.name;
     },
-    setShowCourseBag: (state, action: PayloadAction<boolean>) => {
-      state.showCourseBag = action.payload;
+    setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
+      state.showSavedCourses = action.payload;
     },
     setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
       state.unsavedChanges = action.payload;
@@ -323,7 +323,7 @@ export const {
   setPlanIndex,
   setPlanName,
   setUnsavedChanges,
-  setShowCourseBag,
+  setShowSavedCourses,
   setRoadmapLoading,
 } = roadmapSlice.actions;
 
