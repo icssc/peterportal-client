@@ -4,15 +4,4 @@
   overflow: hidden;
   display: flex;
   width: 100%;
-
-  .main-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-
-    &.mobile {
-      width: 100%;
-      padding: 16px;
-    }
-  }
 }

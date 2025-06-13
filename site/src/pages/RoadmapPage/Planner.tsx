@@ -8,6 +8,7 @@ import { useAppSelector } from '../../store/hooks';
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
 import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
+import { useIsMobile } from '../../helpers/util';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
@@ -17,6 +18,7 @@ const Planner: FC = () => {
   const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
   const transferred = useTransferredCredits();
   const isLoggedIn = useIsLoggedIn();
+  const isMobile = useIsMobile();
 
   const handleSave = async (plans?: RoadmapPlan[]) => {
     const collapsed = collapseAllPlanners(plans?.length ? plans : allPlanData);
@@ -45,23 +47,25 @@ const Planner: FC = () => {
   const maxQuarterCount = Math.max(...quarterCounts);
 
   return (
-    <div className="planner">
-      <PlannerLoader />
-      <Header
-        courseCount={courseCount}
-        unitCount={unitCount}
-        saveRoadmap={handleSave}
-        missingPrerequisites={new Set()}
-      />
-      {roadmapLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <section className="years" data-max-quarter-count={maxQuarterCount}>
-          {currentPlanData.map((year, yearIndex) => {
-            return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
-          })}
-        </section>
-      )}
+    <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+      <div className="planner">
+        <PlannerLoader />
+        <Header
+          courseCount={courseCount}
+          unitCount={unitCount}
+          saveRoadmap={handleSave}
+          missingPrerequisites={new Set()}
+        />
+        {roadmapLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <section className="years" data-max-quarter-count={maxQuarterCount}>
+            {currentPlanData.map((year, yearIndex) => {
+              return <Year key={yearIndex} yearIndex={yearIndex} data={year} />;
+            })}
+          </section>
+        )}
+      </div>
     </div>
   );
 };

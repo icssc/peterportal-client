@@ -24,16 +24,17 @@ interface CourseNameAndInfoProps {
 }
 export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
   const { data, popupListener, openPopoverLeft, requiredCourses, alwaysCollapse } = props;
-  const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
+
+  const courseRoute = removeWhitespace(
+    typeof data === 'string' ? `/course/${data}` : `/course/${data.department}${data.courseNumber}`,
+  );
+
+  let courseID = typeof data === 'string' ? data : `${data.department} ${data.courseNumber}`;
+  if (alwaysCollapse) courseID = removeWhitespace(courseID);
 
   const [allowTouchClick, setAllowTouchClick] = useState(false);
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
-
-  const courseRoute = '/course/' + removeWhitespace(department) + removeWhitespace(courseNumber);
-
-  let courseID = department + ' ' + courseNumber;
-  if (alwaysCollapse) courseID = removeWhitespace(courseID);
 
   const handleLinkClick = (event: React.MouseEvent) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
