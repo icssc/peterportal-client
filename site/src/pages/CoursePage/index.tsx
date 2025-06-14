@@ -69,7 +69,7 @@ const CoursePage: FC = () => {
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
+        <Schedule dataType="course" data={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
       </ResultPageSection>
 
       <ResultPageSection title="💬 Reviews">

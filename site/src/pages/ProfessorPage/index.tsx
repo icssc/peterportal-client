@@ -61,7 +61,7 @@ const ProfessorPage: FC = () => {
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule professorIDs={professorGQLData.shortenedNames} terms={sortProfessorTerms(professorGQLData.courses)} />
+        <Schedule dataType="professor" data={professorGQLData} terms={sortProfessorTerms(professorGQLData.courses)} />
       </ResultPageSection>
 
       <ResultPageSection title="💬 Reviews">
