@@ -4,7 +4,7 @@
 .sidebar {
   position: fixed;
   width: globals.$sidebar-width-open;
-  height: 100vh;
+  height: 100%;
   top: 0;
   z-index: 400;
   background-color: var(--overlay1);
