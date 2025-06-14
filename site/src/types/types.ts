@@ -15,7 +15,7 @@ export interface ScoreData {
 }
 
 export type SearchIndex = 'courses' | 'professors';
-export type SearchType = 'course' | 'professor';
+export type DataType = 'course' | 'professor';
 
 /**
  * Peter's Roadmaps Type Definitions

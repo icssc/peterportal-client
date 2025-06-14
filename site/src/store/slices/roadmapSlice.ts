@@ -13,6 +13,7 @@ import {
 import type { RootState } from '../store';
 import spawnToast from '../../helpers/toastify';
 import { quarters } from '@peterportal/types';
+
 // Define a type for the slice state
 interface RoadmapPlanState {
   // Store planner data
@@ -250,7 +251,7 @@ export const roadmapSlice = createSlice({
     },
     setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
       state.showSearch = action.payload.show;
-      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
+      if (action.payload.year && action.payload.quarter) {
         state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
       }
     },

@@ -19,13 +19,9 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { initializeCompletedMarkers } from '../../store/slices/courseRequirementsSlice';
 
 const CloseRoadmapSearchButton = () => {
-  const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
-  const { year, quarter } = useNamedAcademicTerm();
-
-  if (!isMobile) return <></>;
-
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
+  const { year, quarter } = useNamedAcademicTerm();
 
   return (
     <button className="fixed" onClick={closeSearch}>
@@ -59,18 +55,20 @@ const SearchSidebar = () => {
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
+  const courseListComponentMap = {
+    Major: <MajorSelector />,
+    Minor: <MinorSelector />,
+    GE: <GERequiredCourseList />,
+    Search: <AllCourseSearch />,
+  };
+
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
       <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
-
-        {selectedCourseList === 'Major' && <MajorSelector />}
-        {selectedCourseList === 'Minor' && <MinorSelector />}
-        {selectedCourseList === 'GE' && <GERequiredCourseList />}
-        {selectedCourseList === 'Search' && <AllCourseSearch />}
-
-        <CloseRoadmapSearchButton />
+        {courseListComponentMap[selectedCourseList]}
+        {isMobile && <CloseRoadmapSearchButton />}
       </div>
       {!isMobile && <TransferCreditsMenu />}
     </>

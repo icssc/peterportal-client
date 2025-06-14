@@ -9,10 +9,6 @@
     pointer-events: all;
   }
 
-  button.fixed {
-    @include globals.bottom-button();
-  }
-
   .modal-dialog {
     position: fixed;
     bottom: 0;
@@ -28,22 +24,15 @@
 
   .modal-header {
     gap: 8px;
-    .spacer {
-      margin-left: auto;
-    }
   }
 
-  h2,
+  .course-name,
   .unit-count {
     font-size: 20px;
   }
 
-  button:not(.fixed),
-  button.close {
-    width: 20px;
-    height: 20px;
-
-    @include globals.clickable(0.8, 0.5);
+  .spacer {
+    margin-left: auto;
   }
 
   button.close-button {
@@ -58,8 +47,4 @@
       margin-left: 0;
     }
   }
-}
-
-.add-course-form {
-  padding: 2rem;
 }

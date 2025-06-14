@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../types/types';
 import { quarterDisplayNames } from '../../helpers/planner';
@@ -92,7 +92,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               }}
               maxLength={35}
               placeholder={placeholderName}
-            ></Form.Control>
+            />
           </Form.Group>
           <Form.Group>
             <Form.Label className="ppc-modal-form-label">Start Year</Form.Label>
@@ -113,7 +113,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               min={1000}
               max={9999}
               placeholder={placeholderYear.toString()}
-            ></Form.Control>
+            />
           </Form.Group>
           <Form.Group>
             <Form.Label>Include Quarters</Form.Label>

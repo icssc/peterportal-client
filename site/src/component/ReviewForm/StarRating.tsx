@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react';
+import { useState } from 'react';
 import './StarRating.scss';
 
 import StarIcon from '@mui/icons-material/Star';
@@ -7,7 +7,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: number) => void }) => {
   const [hovered, setHovered] = useState<number>(0);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLSpanElement>, val: number) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>, val: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       setRating(val);

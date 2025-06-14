@@ -33,7 +33,7 @@ const AddYearPopup: FC = () => {
       />
       <Button variant="light" className="header-btn ppc-btn" onClick={() => setShowModal(true)}>
         <AddIcon />
-        <span>Add Year</span>
+        Add Year
       </Button>
     </>
   );

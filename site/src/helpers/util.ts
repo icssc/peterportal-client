@@ -4,7 +4,7 @@ import {
   ProfessorGQLData,
   BatchCourseData,
   BatchProfessorData,
-  SearchType,
+  DataType,
   CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
@@ -15,8 +15,7 @@ export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
   const tags: string[] = [];
   // units
-  const { minUnits, maxUnits } = course;
-  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`);
+  tags.push(getUnitText(course));
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {
@@ -30,16 +29,13 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to search 1 result from course/professor page
-export async function searchAPIResult<T extends SearchType>(
+export async function searchAPIResult<T extends DataType>(
   type: T,
   name: string,
 ): Promise<(T extends 'course' ? CourseGQLData : ProfessorGQLData) | undefined> {
   const results = await searchAPIResults(`${type}s`, [name]);
-  if (Object.keys(results).length > 0) {
-    return Object.values(results)[0];
-  } else {
-    return undefined;
-  }
+  if (Object.keys(results).length === 0) return undefined;
+  return Object.values(results)[0];
 }
 
 // helper function to query from API and transform to data used in redux
@@ -145,6 +141,16 @@ export function pluralize(count: number, pluralText: string = 's', singularText:
   return count === 1 ? singularText : pluralText;
 }
 
+export function getUnitText(course: CourseGQLData) {
+  const { minUnits, maxUnits } = course;
+  const numUnits = minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`;
+  return `${numUnits} unit${pluralize(maxUnits)}`;
+}
+
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
   return `${course.department} ${course.courseNumber}`;
+}
+
+export function removeWhitespace(str: string) {
+  return str.replace(/\s+/g, '');
 }

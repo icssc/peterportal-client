@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Theme } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -13,7 +13,11 @@ function isLocalUsingSystemTheme() {
   return localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme');
 }
 
-const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
+interface AppThemeProviderProps {
+  children: React.ReactNode;
+}
+
+const AppThemeProvider: FC<AppThemeProviderProps> = ({ children }) => {
   const isLoggedIn = useIsLoggedIn();
 
   // default darkMode to local or system preferences

@@ -1,10 +1,10 @@
-import './ResultPageContent.scss';
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import Twemoji from 'react-twemoji';
+import './ResultPageContent.scss';
 
 interface ResultPageSectionProps {
   title: string;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children }) => {
@@ -17,9 +17,10 @@ export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children 
 };
 
 interface ResultPageContentProps {
-  sideInfo: ReactNode;
-  children: ReactNode;
+  sideInfo: React.ReactNode;
+  children: React.ReactNode;
 }
+
 export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, children }) => {
   return (
     <div className="content-wrapper search-result-page">
@@ -30,5 +31,3 @@ export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, childr
     </div>
   );
 };
-
-export default ResultPageContent;

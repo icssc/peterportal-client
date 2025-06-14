@@ -34,28 +34,9 @@
       -webkit-filter: brightness(0) invert(var(--is-dark));
     }
   }
+
   .sidebar-close {
     margin-inline: 0 -8px;
-  }
-
-  .sidebar-profile {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    img {
-      width: 50%;
-      border-radius: 50%;
-    }
-
-    p {
-      margin-top: 1vh;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-align: center;
-    }
   }
 
   .sidebar-links ul li {
@@ -114,7 +95,7 @@
     display: none;
   }
 
-  .sidebar-icon {
+  .sidebar-icon > .MuiSvgIcon-root {
     font-size: 28px;
   }
 }
@@ -165,7 +146,7 @@
       i.icon {
         margin: 0;
       }
-      span {
+      .short-name {
         font-size: 12px;
       }
     }
