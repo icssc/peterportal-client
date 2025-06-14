@@ -1,13 +1,18 @@
 import {
-  Prerequisite,
-  PrerequisiteTree,
+  LegacyRoadmap,
+  PrerequisiteNode,
   QuarterName,
   quarters,
   SavedPlannerData,
   SavedPlannerQuarterData,
   SavedPlannerYearData,
   SavedRoadmap,
-  TransferData,
+  LegacyTransfer,
+  TransferredAPExam,
+  TransferredCourse,
+  TransferredUncategorized,
+  Prerequisite,
+  PrerequisiteTree,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
@@ -20,6 +25,8 @@ import {
   PlannerYearData,
 } from '../types/types';
 import trpc from '../trpc';
+import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
+import spawnToast from './toastify';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -140,44 +147,29 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-export const loadRoadmap = async (
-  isLoggedIn: boolean,
-  loadHandler: (r: RoadmapPlan[], s: SavedRoadmap, isLocalNewer: boolean) => void,
-) => {
-  let roadmap: SavedRoadmap = null!;
-  const localRoadmap: SavedRoadmap = JSON.parse(localStorage.getItem('roadmap') ?? 'null');
-  if (isLoggedIn) {
-    // get data from account
-    const res = await trpc.roadmaps.get.query();
-    // if a roadmap is found
-    if (res) {
-      roadmap = res;
-    }
+function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
+  let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
+  try {
+    localRoadmap = JSON.parse(localStorage.roadmap);
+  } catch {
+    /* ignore */
   }
+  const EMPTY_ROADMAP_STR = JSON.stringify({
+    planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
+    transfers: [],
+  } as Omit<SavedRoadmap, 'timestamp'>);
 
-  let isLocalNewer = false;
-
-  if (!roadmap && localRoadmap) {
-    roadmap = convertLegacyLocalRoadmap(localRoadmap);
-  } else if (roadmap && localRoadmap && new Date(localRoadmap.timestamp ?? 0) > new Date(roadmap.timestamp ?? 0)) {
-    isLocalNewer = true;
-  } else if (!roadmap && !localRoadmap) {
-    // no saved planner
-    return;
-  }
-
-  // expand planner and set the state
-  const planners = await expandAllPlanners(roadmap.planners);
-  loadHandler(planners, roadmap, isLocalNewer);
-};
-
-interface LegacyRoadmap {
-  planner: SavedPlannerYearData[];
-  transfers: TransferData[];
-  timestamp?: string;
+  return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
 }
 
-export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+export const loadRoadmap = async (isLoggedIn: boolean) => {
+  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
+  const localRoadmap = loadLocalRoadmap() as SavedRoadmap;
+  return { accountRoadmap, localRoadmap };
+};
+
+// Adding Multiplan
+function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
   if ('planners' in roadmap) {
     // if already in multiplanner format, everything is good
     return roadmap;
@@ -196,6 +188,72 @@ export function convertLegacyLocalRoadmap(roadmap: SavedRoadmap | LegacyRoadmap)
   }
 }
 
+enum RoadmapVersionKey {
+  SinglePlanner = '1',
+  MultiPlanner = '2',
+  RedesignedTransfers = '3',
+}
+
+// Upgrading Transfers
+async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
+  // Avoid issues with double first render
+  if (!transfers.length || localStorage.roadmap__versionKey === RoadmapVersionKey.RedesignedTransfers) {
+    return false; // nothing to convert
+  }
+
+  localStorage.roadmap__versionKey = RoadmapVersionKey.RedesignedTransfers;
+  const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
+  const { courses, ap, other } = response;
+
+  const scoredAPs = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+  const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+
+  saveLocalTransfers<TransferredCourse>(LocalTransferSaveKey.Course, courses);
+  saveLocalTransfers<TransferredAPExam>(LocalTransferSaveKey.AP, scoredAPs);
+  saveLocalTransfers<TransferredUncategorized>(LocalTransferSaveKey.Uncategorized, formattedOther);
+
+  // immediately update localStorage to not have transfers, now that we've converted them
+  localStorage.setItem('roadmap', JSON.stringify(roadmapToSave));
+  return true;
+}
+
+/**
+ * Updates the format of transferred credits in localStorage before data is used by other parts of the app
+ * @param roadmap The roadmap whose transfers to upgrade
+ */
+async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
+  const legacyTransfers = roadmap.transfers;
+  const updatedRoadmap = { ...roadmap, transfers: [] };
+  const complete = await saveUpgradedTransfers(updatedRoadmap, legacyTransfers);
+  return complete ? updatedRoadmap : roadmap;
+}
+
+// Upgrading Entire Roadmap
+/**
+ * Function to upgrade a local roadmap. Gets called BEFORE user data is loaded
+ */
+export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
+  const localRoadmap = loadLocalRoadmap();
+  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
+  const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
+  return roadmapWithoutLegacyTransfers;
+}
+
+export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };
+  localStorage.setItem('roadmap', JSON.stringify(roadmap));
+
+  const showMessage = showToasts ? spawnToast : (str: string) => str;
+
+  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Log in to save it to your account.';
+  if (!isLoggedIn) return showMessage(SAVED_LOCALLY_MESSAGE);
+
+  await trpc.roadmaps.save
+    .mutate(roadmap)
+    .then(() => showMessage('Roadmap saved to your account!'))
+    .catch(() => showMessage(SAVED_LOCALLY_MESSAGE));
+};
+
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
   return yearPlans.map((year) => ({
     ...year,
@@ -203,47 +261,38 @@ function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
   }));
 }
 
-type PrerequisiteNode = Prerequisite | PrerequisiteTree;
-
-type plannerCallback = (missing: Set<string>, invalidCourses: InvalidCourseData[]) => void;
-
-export const validatePlanner = (transfers: TransferData[], currentPlanData: PlannerData, handler: plannerCallback) => {
+export const validatePlanner = (transferNames: string[], currentPlanData: PlannerData) => {
   // store courses that have been taken
-  const taken: Set<string> = new Set(transfers.map((transfer) => transfer.name));
+  // Transferred courses use ID (no spaces), AP Exams use Catalogue Name
+  const taken: Set<string> = new Set(transferNames);
   const invalidCourses: InvalidCourseData[] = [];
   const missing = new Set<string>();
-  currentPlanData.forEach((year, yi) => {
-    year.quarters.forEach((quarter, qi) => {
-      const taking: Set<string> = new Set(
-        quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
-      );
-      quarter.courses.forEach((course, ci) => {
-        // if has prerequisite
-        if (course.prerequisiteTree) {
-          const required = validateCourse(taken, course.prerequisiteTree, taking, course.corequisites);
-          // prerequisite not fulfilled, has some required classes to take
-          if (required.size > 0) {
-            invalidCourses.push({
-              location: {
-                yearIndex: yi,
-                quarterIndex: qi,
-                courseIndex: ci,
-              },
-              required: Array.from(required),
-            });
+  currentPlanData.forEach((year, yearIndex) => {
+    year.quarters.forEach((quarter, quarterIndex) => {
+      const taking: Set<string> = new Set(quarter.courses.map((c) => c.department + ' ' + c.courseNumber));
+      quarter.courses.forEach((course, courseIndex) => {
+        if (!course.prerequisiteTree) return;
 
-            required.forEach((course) => {
-              missing.add(course);
-            });
-          }
-        }
+        const { prerequisiteTree: prerequisite, corequisites: corequisite } = course;
+
+        const incomplete = validatePrerequisites({ taken, prerequisite, taking, corequisite });
+        if (incomplete.size === 0) return;
+
+        // prerequisite not fulfilled, has some required classes to take
+        invalidCourses.push({
+          location: { yearIndex, quarterIndex, courseIndex },
+          required: Array.from(incomplete),
+        });
+
+        incomplete.forEach((course) => missing.add(course));
       });
+
       // after the quarter is over, add the courses into taken
       taking.forEach((course) => taken.add(course));
     });
   });
 
-  handler(missing, invalidCourses);
+  return { missing, invalidCourses };
 };
 
 export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
@@ -254,61 +303,77 @@ export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
   );
 };
 
-// returns set of courses that need to be taken to fulfill requirements
-export const validateCourse = (
-  taken: Set<string>,
-  prerequisite: PrerequisiteNode,
-  taking: Set<string>,
-  corequisite: string,
-): Set<string> => {
-  // base case just a course
-  if ('prereqType' in prerequisite) {
-    const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
-    // already taken prerequisite or is currently taking the corequisite
-    if (taken.has(id) || (corequisite.includes(id) && taking.has(id))) {
-      return new Set();
-    }
-    // need to take this prerequisite still
-    else {
-      return new Set([id]);
-    }
+interface ValidationInput<PreqrequisiteType> {
+  /** The set of courses already taken */
+  taken: Set<string>;
+  /** The specific prerequisite being checked */
+  prerequisite: PreqrequisiteType;
+  /** The set of courses being taken in the same quarter */
+  taking: Set<string>;
+  /** The corequisite text of the course, typically a single course name */
+  corequisite: string;
+}
+
+const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
+  const { prerequisite, taken, taking, corequisite } = input;
+  const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
+
+  const previouslyComplete = taken.has(id);
+  const takingCorequisite = corequisite.trim() === id && taking.has(id);
+
+  if (previouslyComplete || takingCorequisite) return new Set<string>();
+  return new Set([id]);
+};
+
+const validateAndPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
+  const required: Set<string> = new Set();
+  if (!prerequisite.AND) throw new Error('Expected AND prerequisite');
+
+  prerequisite.AND.forEach((nested) => {
+    const missing = validatePrerequisites({ prerequisite: nested, ...input });
+    missing.forEach((course) => required.add(course));
+  });
+
+  return required;
+};
+
+const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
+  const required: Set<string> = new Set();
+  if (!prerequisite.OR) throw new Error('Expected OR prerequisite');
+
+  for (const nested of prerequisite.OR) {
+    const missing = validatePrerequisites({ prerequisite: nested, ...input });
+    if (missing.size === 0) return new Set<string>(); // one is complete; return early
+    missing.forEach((course) => required.add(course));
   }
-  // has nested prerequisites
-  else {
-    // needs to satisfy all nested
-    if (prerequisite.AND) {
-      const required: Set<string> = new Set();
-      prerequisite.AND.forEach((nested) => {
-        // combine all the courses that are required
-        validateCourse(taken, nested, taking, corequisite).forEach((course) => required.add(course));
-      });
-      return required;
-    }
-    // only need to satisfy one nested
-    else if (prerequisite.OR) {
-      const required: Set<string> = new Set();
-      let satisfied = false;
-      prerequisite.OR.forEach((nested) => {
-        // combine all the courses that are required
-        const courses = validateCourse(taken, nested, taking, corequisite);
-        // if one is satisfied, no other courses are required
-        if (courses.size == 0) {
-          satisfied = true;
-          return;
-        }
-        courses.forEach((course) => required.add(course));
-      });
-      return satisfied ? new Set() : required;
-    } else {
-      // should never reach here
-      return new Set();
-    }
-  }
+
+  return required;
+};
+
+/**
+ * Returns the set of prerequisites and corequisites of a course that need to be taken but are missing
+ * @returns A set of all the prerequisites and corequisites that are missing
+ */
+const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
+  // base case is just a course
+  if ('prereqType' in prerequisite) return validateCoursePrerequisite({ prerequisite, ...input });
+
+  if (prerequisite.AND) return validateAndPrerequisite({ prerequisite, ...input });
+  if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
+
+  // should never reach here
+  console.error('unrecognized prerequisite structure');
+  return new Set();
 };
 
 export const getMissingPrerequisites = (clearedCourses: Set<string>, course: CourseGQLData) => {
-  const missingPrerequisites = Array.from(
-    validateCourse(clearedCourses, course.prerequisiteTree, new Set(), course.corequisites),
-  );
+  const input = {
+    prerequisite: course.prerequisiteTree,
+    taken: clearedCourses,
+    taking: new Set<string>(),
+    corequisite: course.corequisites,
+  };
+
+  const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };

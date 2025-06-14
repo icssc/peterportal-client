@@ -54,8 +54,6 @@ export interface InvalidCourseData {
   required: string[];
 }
 
-export type Coursebag = CourseGQLData[];
-
 export interface ProfessorLookup {
   [ucinetid: string]: ProfessorPreview;
 }
@@ -83,3 +81,5 @@ export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
 export interface BatchProfessorData {
   [ucinetid: string]: ProfessorGQLData;
 }
+
+export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];

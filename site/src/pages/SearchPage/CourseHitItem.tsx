@@ -8,20 +8,21 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
-import { BagFill, BagPlus } from 'react-bootstrap-icons';
-import { useCoursebag } from '../../hooks/coursebag';
+import { useSavedCourses } from '../../hooks/savedCourses';
 interface CourseHitItemProps extends CourseGQLData {}
+
+import { IconButton } from '@mui/material';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
-  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
-  const isInBag = coursebag.some((course) => course.id === props.id);
-
-  // data to be displayed in pills
-  const pillData = getCourseTags(props);
+  const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(props);
+  const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
     // set the popup course
@@ -40,17 +41,15 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     }
   };
 
-  const onAddToBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const onSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!props) return;
-    if (props.id === undefined) return;
-    if (coursebag.some((course) => course.id === props.id)) return;
-    addCourseToBag(props);
+    if (!props || props.id === undefined || isCourseSaved(props)) return;
+    saveCourse(props);
   };
 
-  const removeFromBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const onUnsaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    removeCourseFromBag(props);
+    unsaveCourse(props);
   };
 
   return (
@@ -76,8 +75,16 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
             ))}
           </div>
           <div>
-            {onAddToBag && !isInBag && <BagPlus onClick={(e) => onAddToBag(e)} size={24}></BagPlus>}
-            {isInBag && <BagFill size={24} onClick={(e) => removeFromBag(e)}></BagFill>}
+            {onSaveCourse && !courseIsSaved && (
+              <IconButton onClick={(e) => onSaveCourse(e)} size={'small'}>
+                <BookmarkBorderIcon />
+              </IconButton>
+            )}
+            {courseIsSaved && (
+              <IconButton onClick={(e) => onUnsaveCourse(e)} size={'small'}>
+                <BookmarkIcon />
+              </IconButton>
+            )}
           </div>
         </div>
       </div>

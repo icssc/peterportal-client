@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { CardList, Clipboard2Check, ExclamationTriangle, Map, People, XCircle } from 'react-bootstrap-icons';
 import { NavLink } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import Logo from '../../asset/peterportal-banner-logo.svg';
@@ -11,6 +10,14 @@ import Footer from '../Footer/Footer';
 import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import UIOverlay from '../UIOverlay/UIOverlay';
+
+import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
+import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
@@ -41,7 +48,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <CardList />
+              <ListAltRoundedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Course Catalog</span>
             <span>Courses</span>
@@ -54,7 +61,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <People />
+              <PeopleOutlineIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
@@ -67,7 +74,7 @@ const SideBar = () => {
             onClick={closeSidebar}
           >
             <div>
-              <Map />
+              <MapOutlinedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
@@ -82,7 +89,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <Clipboard2Check />
+                  <DomainVerificationIcon className="sidebar-icon" />
                 </div>
                 <span className="full-name">Verify Reviews</span>
                 <span>Verification</span>
@@ -95,7 +102,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
               >
                 <div>
-                  <ExclamationTriangle />
+                  <WarningAmberIcon className="sidebar-icon" />
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>
@@ -118,9 +125,9 @@ const SideBar = () => {
           {/* Close Button */}
           <div className="button-container">
             <img alt="PeterPortal" src={Logo} height="32" />
-            <button className="sidebar-close" onClick={closeSidebar} id="close-sidebar-btn">
-              <XCircle className="sidebar-close-icon" size="28px" />
-            </button>
+            <IconButton onClick={closeSidebar} className="sidebar-close">
+              <CloseIcon />
+            </IconButton>
           </div>
 
           {links}

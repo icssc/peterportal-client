@@ -24,6 +24,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  font-size: 14px;
 
   .quarter-header {
     display: flex;
@@ -98,6 +99,21 @@
   .course {
     margin-block: 0;
     margin-inline: -1px;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .quarter .quarter-course-list:empty {
+    padding: 16px;
+    border: none;
+    margin-block: -16px;
+    pointer-events: none;
+    &::before {
+      content: '';
+    }
+    &.dropzone-active {
+      pointer-events: auto;
+    }
   }
 }
 

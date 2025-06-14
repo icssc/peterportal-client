@@ -4,7 +4,6 @@ import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { Link } from 'react-router-dom';
-import { PencilFill, PersonFill, TrashFill } from 'react-bootstrap-icons';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -18,6 +17,10 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
 import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
+
+import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -112,7 +115,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
       <Badge variant="success" style={{ padding: '1px' }}>
-        <PersonFill size={14}></PersonFill>
+        <PersonIcon />
       </Badge>
     </OverlayTrigger>
   );
@@ -151,10 +154,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         {review.authored && (
           <div className="edit-buttons">
             <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
-              <PencilFill width="16" height="16" />
+              <EditIcon />
             </Button>
             <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
-              <TrashFill width="16" height="16" />
+              <DeleteIcon />
             </Button>
             <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
               <Modal.Header closeButton>

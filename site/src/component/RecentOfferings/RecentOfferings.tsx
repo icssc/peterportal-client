@@ -1,6 +1,7 @@
 import { FC } from 'react';
-import { Check } from 'react-bootstrap-icons';
 import './RecentOfferings.scss';
+
+import CheckIcon from '@mui/icons-material/Check';
 
 interface RecentOfferingsProps {
   terms: string[];
@@ -69,7 +70,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
               <tr key={year}>
                 <td>{year}</td>
                 {quarters.map((offered, index) => (
-                  <td key={index}>{offered ? <Check /> : null}</td>
+                  <td key={index}>{offered ? <CheckIcon style={{ fontSize: 20 }} /> : null}</td>
                 ))}
               </tr>
             ))}

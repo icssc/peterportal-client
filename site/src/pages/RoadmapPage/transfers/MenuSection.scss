@@ -1,0 +1,20 @@
+.transfer-credits-section {
+  margin-block: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  .section-description {
+    font-size: 14px;
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
+  .section-description a {
+    color: var(--blue-primary);
+  }
+}

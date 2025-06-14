@@ -1,22 +1,24 @@
 import { FC } from 'react';
 import { CourseGQLData } from '../../types/types';
-import { useCoursebag } from '../../hooks/coursebag';
-import { Bookmark, BookmarkFill, ExclamationTriangle } from 'react-bootstrap-icons';
+import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
+
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface CourseProp {
   course: CourseGQLData;
 }
 
 export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
-  const { coursebag: bookmarks, toggleBookmark } = useCoursebag();
-  const isBookmarked = bookmarks.some((c) => c.id === course.id);
-
+  const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(course);
   return (
-    <button className="unstyled" onClick={() => toggleBookmark(course)}>
-      {isBookmarked ? <BookmarkFill /> : <Bookmark />}
+    <button className="unstyled" onClick={() => toggleSavedCourse(course)}>
+      {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </button>
   );
 };
@@ -55,7 +57,7 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
   return (
     <div className="course-info-warning">
       <div className="warning-primary">
-        <ExclamationTriangle className="warning-primary-icon" />
+        <WarningAmberIcon className="warning-primary-icon" />
         Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
       </div>
       <div className="warning-hint-italics">
