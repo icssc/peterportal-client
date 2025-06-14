@@ -15,6 +15,7 @@ import {
   selectYearPlans,
   setAllPlans,
   setInvalidCourses,
+  setPlanIndex,
   setUnsavedChanges,
   setRoadmapLoading,
 } from '../../../store/slices/roadmapSlice';
@@ -75,6 +76,7 @@ const PlannerLoader: FC = () => {
     async (roadmap: SavedRoadmap) => {
       const planners = await expandAllPlanners(roadmap.planners);
       dispatch(setAllPlans(planners));
+      dispatch(setPlanIndex(roadmap.currentPlanIndex ?? 0));
       dispatch(setRoadmapLoading(false));
     },
     [dispatch],
