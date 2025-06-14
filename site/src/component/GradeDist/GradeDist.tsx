@@ -75,7 +75,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createProfEntries = useCallback(() => {
     const professors: Set<string> = new Set();
-    const result: Entry[] = [{ value: 'All', text: 'All Instructors' }];
+    const result: Entry[] = [{ value: 'ALL', text: 'All Instructors' }];
 
     gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
@@ -122,13 +122,13 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createQuarterEntries = useCallback(() => {
     const quarters: Set<string> = new Set();
-    const result: Entry[] = [{ value: 'All', text: 'All Quarters' }];
+    const result: Entry[] = [{ value: 'ALL', text: 'All Quarters' }];
 
     gradeDistData!
       .filter((entry) => {
         if (
           props.course &&
-          currentProf === 'All' &&
+          currentProf === 'ALL' &&
           entry.department + ' ' + entry.courseNumber === props.course.department + ' ' + props.course.courseNumber
         ) {
           return true;
@@ -147,10 +147,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     setQuarterEntries(
       result.sort((a, b) => {
-        if (a.value === 'All') {
+        if (a.value === 'ALL') {
           return -1;
         }
-        if (b.value === 'All') {
+        if (b.value === 'ALL') {
           return 1;
         }
         const [thisQuarter, thisYear] = a.value.split(' ') as [QuarterName, string];
