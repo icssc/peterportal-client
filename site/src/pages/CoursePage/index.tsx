@@ -47,11 +47,11 @@ const CoursePage: FC = () => {
   const sideInfo = (
     <SideInfo
       dataType="course"
+      data={courseGQLData}
       name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
       title={courseGQLData.title}
       description={courseGQLData.description}
       tags={getCourseTags(courseGQLData)}
-      course={courseGQLData}
       terms={courseGQLData.terms}
     />
   );

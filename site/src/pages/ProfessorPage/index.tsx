@@ -47,11 +47,11 @@ const ProfessorPage: FC = () => {
   const sideInfo = (
     <SideInfo
       dataType="professor"
+      data={professorGQLData}
       name={professorGQLData.name}
       title={professorGQLData.title}
       description={professorGQLData.department}
       tags={[professorGQLData.ucinetid, ...professorGQLData.shortenedNames]}
-      professor={professorGQLData}
     />
   );
 
