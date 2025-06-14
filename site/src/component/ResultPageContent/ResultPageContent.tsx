@@ -18,16 +18,18 @@ export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children 
 
 interface ResultPageContentProps {
   sideInfo: React.ReactNode;
-  children: React.ReactNode;
+  mainContent: React.ReactNode;
 }
 
-export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, children }) => {
+export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, mainContent }) => {
   return (
     <div className="content-wrapper search-result-page">
-      {sideInfo}
-      <Twemoji options={{ className: 'twemoji' }}>
-        <div className="result-page-body">{children}</div>
-      </Twemoji>
+      <div className="side-info-wrapper">{sideInfo}</div>
+      <span className="twemoji-wrapper">
+        <Twemoji options={{ className: 'twemoji' }}>
+          <div className="result-page-body">{mainContent}</div>
+        </Twemoji>
+      </span>
     </div>
   );
 };

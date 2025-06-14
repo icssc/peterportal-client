@@ -62,8 +62,6 @@ export interface CourseLookup {
   [courseid: string]: CoursePreview;
 }
 
-export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
-
 export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
@@ -73,6 +71,8 @@ export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisi
 export interface BatchCourseData {
   [courseid: string]: CourseGQLData;
 }
+
+export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
 
 export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
   courses: CourseWithTermsLookup;

@@ -24,8 +24,8 @@ import StarRating from './StarRating';
 import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
-import { searchAPIResult, sortTerms } from '../../helpers/util';
+import { getYears, getQuarters } from '../../helpers/reviews';
+import { searchAPIResult, sortProfessorTerms } from '../../helpers/util';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -76,7 +76,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
         if (!professor) return;
 
-        const profTerms = sortTerms(getProfessorTerms(professor));
+        const profTerms = sortProfessorTerms(professor.courses);
         const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
         const newQuarters = [...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
 

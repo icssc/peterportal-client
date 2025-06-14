@@ -11,8 +11,7 @@ import { ResultPageContent, ResultPageSection } from '../../component/ResultPage
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
-import { getProfessorTerms } from '../../helpers/reviews';
+import { searchAPIResult, sortProfessorTerms } from '../../helpers/util';
 
 const ProfessorPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,21 +54,23 @@ const ProfessorPage: FC = () => {
     />
   );
 
-  return (
-    <ResultPageContent sideInfo={sideInfo}>
+  const mainContent = (
+    <>
       <ResultPageSection title="📊 Grade Distribution">
         <GradeDist dataType="professor" data={professorGQLData} />
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule professorIDs={professorGQLData.shortenedNames} termsOffered={unionTerms(professorGQLData.courses)} />
+        <Schedule professorIDs={professorGQLData.shortenedNames} terms={sortProfessorTerms(professorGQLData.courses)} />
       </ResultPageSection>
 
       <ResultPageSection title="💬 Reviews">
-        <Review professor={professorGQLData} terms={sortTerms(getProfessorTerms(professorGQLData))} />
+        <Review professor={professorGQLData} terms={sortProfessorTerms(professorGQLData.courses)} />
       </ResultPageSection>
-    </ResultPageContent>
+    </>
   );
+
+  return <ResultPageContent sideInfo={sideInfo} mainContent={mainContent} />;
 };
 
 export default ProfessorPage;

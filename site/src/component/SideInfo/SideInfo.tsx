@@ -167,6 +167,7 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
   const [selectedReview, setSelectedReview] = useState('');
   const [highestReview, setHighestReview] = useState('');
   const [lowestReview, setLowestReview] = useState('');
+  const capitalizedOtherDataType = dataType === 'course' ? 'Instructors' : 'Courses';
 
   useEffect(() => {
     const newAverageReviews: AverageReviews = {};
@@ -212,7 +213,7 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
     );
 
     // set the all token to all reviews
-    const allToken = 'All ' + (dataType === 'course' ? 'Instructors' : 'Courses');
+    const allToken = `All ${capitalizedOtherDataType}`;
     newAverageReviews[allToken] = allReviews;
 
     // set reviews to state
@@ -222,7 +223,7 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
       setHighestReview(sortedKeys[sortedKeys.length - 1]);
       setLowestReview(sortedKeys[0]);
     }
-  }, [reviews, dataType]);
+  }, [reviews, dataType, capitalizedOtherDataType]);
 
   const getDataName = (key: string) => {
     if (dataType === 'course') {
@@ -233,46 +234,44 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
   };
 
   return (
-    <div className="side-content-wrapper">
-      <div className="side-info">
-        <CourseSynopsis name={name} title={title} description={description} tags={tags} terms={terms} />
+    <div className="side-info">
+      <CourseSynopsis name={name} title={title} description={description} tags={tags} terms={terms} />
 
-        {terms?.length && <RecentOfferings terms={terms} />}
+      {terms?.length && <RecentOfferings terms={terms} />}
 
-        <div className="side-info-ratings">
-          <h2>Average Rating</h2>
-          <AverageRatingButtons
-            dataType={dataType}
-            getDataName={getDataName}
-            averageReviews={averageReviews}
-            selectedReview={selectedReview}
-            setSelectedReview={setSelectedReview}
-          />
-          <AverageRatingsStats dataType={dataType} averageReviews={averageReviews} selectedReview={selectedReview} />
-        </div>
-
-        {Object.keys(averageReviews).length > 1 && (
-          <div className="side-info-featured">
-            <h2>{dataType === 'course' ? 'Instructors' : 'Courses'}</h2>
-            <div className="featured-items">
-              <FeaturedItem
-                dataType={dataType}
-                getDataName={getDataName}
-                averageReviews={averageReviews}
-                featureType="Highest"
-                reviewKey={highestReview}
-              />
-              <FeaturedItem
-                dataType={dataType}
-                getDataName={getDataName}
-                averageReviews={averageReviews}
-                featureType="Lowest"
-                reviewKey={lowestReview}
-              />
-            </div>
-          </div>
-        )}
+      <div className="side-info-ratings">
+        <h2>Average Rating</h2>
+        <AverageRatingButtons
+          dataType={dataType}
+          getDataName={getDataName}
+          averageReviews={averageReviews}
+          selectedReview={selectedReview}
+          setSelectedReview={setSelectedReview}
+        />
+        <AverageRatingsStats dataType={dataType} averageReviews={averageReviews} selectedReview={selectedReview} />
       </div>
+
+      {Object.keys(averageReviews).length > 1 && (
+        <div className="side-info-featured">
+          <h2>{capitalizedOtherDataType}</h2>
+          <div className="featured-items">
+            <FeaturedItem
+              dataType={dataType}
+              getDataName={getDataName}
+              averageReviews={averageReviews}
+              featureType="Highest"
+              reviewKey={highestReview}
+            />
+            <FeaturedItem
+              dataType={dataType}
+              getDataName={getDataName}
+              averageReviews={averageReviews}
+              featureType="Lowest"
+              reviewKey={lowestReview}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -114,23 +114,19 @@ const quartersOrdered: Record<string, string> = {
   Fall: 'f',
 };
 
-export const sortTerms = (terms: string[]) =>
-  [...new Set(terms)].sort((a, b) => {
+export const sortTerms = (terms: string[]) => {
+  return [...new Set(terms)].sort((a, b) => {
     const [yearA, qtrA]: string[] = a.split(' ');
     const [yearB, qtrB]: string[] = b.split(' ');
     // first compare years (descending)
     // if years are equal, compare terms (most recent first)
     return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
   });
+};
 
-export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
-  // get array of arrays of term names
-  const allTerms = Object.values(courseHistory);
-
-  // flatten and take union of array
-  const union = allTerms.flatMap((term) => term.terms);
-
-  return sortTerms(union);
+export const sortProfessorTerms = (courseTerms: CourseWithTermsLookup) => {
+  const allProfessorTerms = Object.values(courseTerms).flatMap((term) => term.terms);
+  return sortTerms(allProfessorTerms);
 };
 
 export function deepCopy<T>(obj: T): T {

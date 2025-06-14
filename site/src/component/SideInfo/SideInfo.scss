@@ -1,7 +1,16 @@
 @use '../../globals';
+@use 'sass:math';
 
 .side-info {
-  width: 100%;
+  $base-content-width: globals.$catalog-side-info-width + globals.$catalog-main-content-max-width +
+    globals.$sidebar-width-closed;
+  $side-margin: calc(50vw - #{math.div($base-content-width + 32px, 2)});
+
+  max-width: globals.$catalog-side-info-width;
+  margin-left: max(#{$side-margin}, 32px);
+
+  width: calc(100% - 32px);
+  max-height: 100%;
   height: fit-content;
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
@@ -164,13 +173,9 @@
 
 @media only screen and (max-width: 1300px) {
   .side-info {
-    width: 100%;
+    margin-inline: 0;
+    max-width: none;
     max-height: fit-content;
-  }
-}
-
-@media only screen and (max-width: 1800px) and (min-width: 600px) {
-  .side-info-denominator {
-    display: none;
+    width: 100%;
   }
 }

@@ -15,8 +15,7 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms } from '../../helpers/util';
-import { getProfessorTerms } from '../../helpers/reviews';
+import { sortTerms, sortProfessorTerms } from '../../helpers/util';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -124,7 +123,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
-  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+  const sortedTerms: string[] = course ? sortTerms(course?.terms) : sortProfessorTerms(professor?.courses ?? {});
 
   return (
     <div className="subreview">

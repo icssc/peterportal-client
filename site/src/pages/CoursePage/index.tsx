@@ -44,11 +44,13 @@ const CoursePage: FC = () => {
     return <LoadingSpinner />;
   }
 
+  const courseName = courseGQLData.department + ' ' + courseGQLData.courseNumber;
+
   const sideInfo = (
     <SideInfo
       dataType="course"
       data={courseGQLData}
-      name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+      name={courseName}
       title={courseGQLData.title}
       description={courseGQLData.description}
       tags={getCourseTags(courseGQLData)}
@@ -56,29 +58,27 @@ const CoursePage: FC = () => {
     />
   );
 
-  return (
-    <ResultPageContent sideInfo={sideInfo}>
+  const mainContent = (
+    <>
       <ResultPageSection title="📊 Grade Distribution">
         <GradeDist dataType="course" data={courseGQLData} />
       </ResultPageSection>
 
       <ResultPageSection title="🌲 Prerequisite Tree">
-        <PrereqTree key={courseGQLData.id} course={courseGQLData} />
+        <PrereqTree course={courseGQLData} />
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule
-          key={courseGQLData.id}
-          courseID={courseGQLData.department + ' ' + courseGQLData.courseNumber}
-          termsOffered={sortTerms(courseGQLData.terms)}
-        />
+        <Schedule course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
       </ResultPageSection>
 
       <ResultPageSection title="💬 Reviews">
-        <Review key={courseGQLData.id} course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
+        <Review course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
       </ResultPageSection>
-    </ResultPageContent>
+    </>
   );
+
+  return <ResultPageContent sideInfo={sideInfo} mainContent={mainContent} />;
 };
 
 export default CoursePage;
