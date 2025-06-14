@@ -5,12 +5,12 @@ const baseSortable: SortableOptions = {
   animation: 150,
   forceFallback: true,
   fallbackOnBody: true,
-  filter: 'button',
 };
 
 export const quarterSortable: SortableOptions & Partial<ReactSortableProps<CourseGQLData>> = {
   ...baseSortable,
   setList: () => {},
+  handle: '.course-drag-handle',
   group: { name: 'courses' },
 };
 

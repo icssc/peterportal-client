@@ -18,9 +18,10 @@ import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+import { IconButton } from '@mui/material';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -48,15 +49,15 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
           {plan.name}
         </Button>
       </Dropdown.Item>
-      <Button variant={buttonVariant} onClick={editHandler}>
+      <IconButton onClick={editHandler}>
         <EditIcon />
-      </Button>
-      <Button variant={buttonVariant} onClick={duplicateHandler}>
+      </IconButton>
+      <IconButton onClick={duplicateHandler}>
         <ContentCopyOutlinedIcon />
-      </Button>
-      <Button variant={buttonVariant} onClick={deleteHandler}>
-        <DeleteIcon />
-      </Button>
+      </IconButton>
+      <IconButton className="delete-btn" onClick={deleteHandler}>
+        <DeleteOutlineIcon />
+      </IconButton>
     </div>
   );
 };
