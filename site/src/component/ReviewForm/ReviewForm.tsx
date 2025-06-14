@@ -5,7 +5,6 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
 import {
   anonymousName,
@@ -17,6 +16,7 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
+import { DataType, CourseGQLData, ProfessorGQLData } from '../../types/types';
 import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -25,37 +25,43 @@ import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getYears, getQuarters } from '../../helpers/reviews';
-import { searchAPIResult, sortProfessorTerms } from '../../helpers/util';
+import { searchAPIResult, sortTerms, sortProfessorTerms } from '../../helpers/util';
 
-interface ReviewFormProps extends ReviewProps {
+interface ReviewFormProps {
   closeForm: () => void;
   show: boolean;
+  dataType: DataType | 'other';
+  data?: CourseGQLData | ProfessorGQLData;
   editing?: boolean;
   reviewToEdit?: ReviewData;
 }
 
-const ReviewForm: FC<ReviewFormProps> = ({
-  closeForm,
-  show,
-  editing,
-  reviewToEdit,
-  professor: professorProp,
-  course: courseProp,
-  terms: termsProp,
-}) => {
+// TODO: it might be possible that both courseProp and professorProp are null at the same
+//! time, for example when the user is editing their own review. If so, I'd need to redo this
+//! entire component to allow them both to be false, instead of assuming one is always true.
+
+// TODO: create helper functions for these repeating dropdowns
+
+const ReviewForm: FC<ReviewFormProps> = ({ dataType, data, closeForm, show, editing, reviewToEdit }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
   const reviews = useAppSelector((state) => state.review.reviews);
   const isLoggedIn = useIsLoggedIn();
+
+  const isCourse = dataType === 'course';
+  const termsProp = isCourse
+    ? sortTerms((data as CourseGQLData).terms)
+    : sortProfessorTerms((data as ProfessorGQLData).courses);
+
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
-  const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
+  const [professorName, setProfessorName] = useState((data as ProfessorGQLData).name ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
-  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
-  const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
+  const [professor, setProfessor] = useState((data as ProfessorGQLData).ucinetid ?? reviewToEdit?.professorId ?? '');
+  const [course, setCourse] = useState((data as CourseGQLData).id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
@@ -72,47 +78,39 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
-    if (!professorProp && reviewToEdit) {
-      searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
-        if (!professor) return;
+    if (dataType === 'professor' || !reviewToEdit) return;
+    searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
+      if (!professor) return;
 
-        const profTerms = sortProfessorTerms(professor.courses);
-        const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
-        const newQuarters = [...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
+      const profTerms = sortProfessorTerms(professor.courses);
+      const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+      const newQuarters = [...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
 
-        setTerms(profTerms);
-        setYears(newYears);
-        setQuarters(newQuarters);
-        setYearTaken(yearTakenDefault);
-        setQuarterTaken(quarterTakenDefault);
-        setProfessorName(professor.name);
-      });
-    }
-  }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
+      setProfessorName(professor.name);
+      setTerms(profTerms);
+      setYears(newYears);
+      setQuarters(newQuarters);
+      setYearTaken(yearTakenDefault);
+      setQuarterTaken(quarterTakenDefault);
+    });
+  }, [dataType, reviewToEdit, yearTaken, yearTakenDefault, quarterTakenDefault]);
 
   // when a year or quarter is selected, update the valid quarters accordingly
   useEffect(() => {
-    if (yearTaken) {
-      const newQuarters = getQuarters(terms, yearTaken);
-      setQuarters(newQuarters);
-
-      if (!newQuarters.includes(quarterTaken)) {
-        setQuarterTaken('');
-      }
-    }
+    if (!yearTaken) return;
+    const newQuarters = getQuarters(terms, yearTaken);
+    setQuarters(newQuarters);
+    if (newQuarters.includes(quarterTaken)) return;
+    setQuarterTaken('');
   }, [yearTaken, terms, quarterTaken]);
 
   useEffect(() => {
-    if (show) {
-      // form opened
-      // if not logged in, close the form
-      if (!isLoggedIn) {
-        spawnToast('You must be logged in to add a review!', true);
-        closeForm();
-      }
-
-      setShowFormErrors(false);
+    if (!show) return;
+    if (!isLoggedIn) {
+      spawnToast('You must be logged in to add a review!', true);
+      closeForm();
     }
+    setShowFormErrors(false);
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
@@ -120,8 +118,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
-    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
-    setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
+    setProfessor((data as ProfessorGQLData).ucinetid ?? reviewToEdit?.professorId ?? '');
+    setCourse((data as CourseGQLData).id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
     setDifficulty(reviewToEdit?.difficulty);
     setRating(reviewToEdit?.rating ?? 3);
@@ -203,94 +201,16 @@ const ReviewForm: FC<ReviewFormProps> = ({
     );
   };
 
-  // if in course context, select a professor
-  const professorSelect = courseProp && (
-    <Form.Group>
-      <Form.Label>Professor</Form.Label>
-      <Form.Control
-        as="select"
-        name="professor"
-        id="professor"
-        defaultValue=""
-        required
-        onChange={(e) => setProfessor(e.target.value)}
-        value={professor}
-      >
-        <option disabled={true} value="">
-          Select one of the following...
-        </option>
-        {Object.keys(courseProp?.instructors).map((ucinetid) => {
-          const name = courseProp?.instructors[ucinetid].name;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
-          return (
-            <option
-              key={ucinetid}
-              value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this professor' : undefined}
-              disabled={alreadyReviewed}
-            >
-              {name}
-            </option>
-          );
-        })}
-      </Form.Control>
-      <Form.Control.Feedback type="invalid">Missing professor</Form.Control.Feedback>
-    </Form.Group>
-  );
-
-  // if in professor context, select a course
-  const courseSelect = professorProp && (
-    <Form.Group>
-      <Form.Label>Course Taken</Form.Label>
-      <Form.Control
-        as="select"
-        name="course"
-        id="course"
-        defaultValue=""
-        required
-        onChange={(e) => setCourse(e.target.value)}
-        value={course}
-      >
-        <option disabled={true} value="">
-          Select one of the following...
-        </option>
-        {Object.keys(professorProp?.courses).map((courseID) => {
-          const name =
-            professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
-          return (
-            <option
-              key={courseID}
-              value={courseID}
-              title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
-              disabled={alreadyReviewed}
-            >
-              {name}
-            </option>
-          );
-        })}
-      </Form.Control>
-      <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback>
-    </Form.Group>
-  );
-
-  function getReviewHeadingName() {
-    if (!courseProp && !professorProp) {
-      return `${reviewToEdit?.courseId}`;
-    } else if (courseProp) {
-      return `${courseProp?.department} ${courseProp?.courseNumber}`;
-    } else {
-      return `${professorProp?.name}`;
-    }
-  }
-
   const reviewForm = (
     <Modal show={show} onHide={closeForm} centered className="ppc-modal review-form-modal">
       <Modal.Header closeButton>
-        {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
+        {editing ? `Edit Review for ` : `Review `}
+        {isCourse
+          ? `${(data as CourseGQLData).department} ${(data as CourseGQLData).courseNumber}`
+          : (data as ProfessorGQLData).name}
       </Modal.Header>
       <Modal.Body>
-        {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
+        {editing && <p className="editing-notice">You are editing your review for {professorName}.</p>}
         <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group>
@@ -339,8 +259,41 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </Form.Group>
           </div>
 
-          {professorSelect}
-          {courseSelect}
+          {/* Course/Professor Selection */}
+          <Form.Group>
+            <Form.Label>{isCourse ? 'Professor' : 'Course Taken'}</Form.Label>
+            <Form.Control
+              as="select"
+              name={isCourse ? 'professor' : 'course'}
+              id={isCourse ? 'professor' : 'course'}
+              defaultValue=""
+              required
+              onChange={(e) => (isCourse ? setProfessor(e.target.value) : setCourse(e.target.value))}
+              value={isCourse ? professor : course}
+            >
+              <option disabled={true} value="">
+                Select one of the following...
+              </option>
+              {Object.entries(isCourse ? (data as CourseGQLData).instructors : (data as ProfessorGQLData).courses).map(
+                ([id, entry]) => {
+                  const alreadyReviewed = isCourse
+                    ? alreadyReviewedCourseProf((data as CourseGQLData).id, id)
+                    : alreadyReviewedCourseProf(id, (data as ProfessorGQLData).ucinetid);
+                  return (
+                    <option
+                      key={id}
+                      value={id}
+                      title={alreadyReviewed ? `You have already reviewed this ${dataType}` : undefined}
+                      disabled={alreadyReviewed}
+                    >
+                      {isCourse ? entry.name : `${entry.department} ${entry.courseNumber}`}
+                    </option>
+                  );
+                },
+              )}
+            </Form.Control>
+            <Form.Control.Feedback type="invalid">Missing {isCourse ? 'professor' : 'course'}</Form.Control.Feedback>
+          </Form.Group>
 
           <div className="grade-difficulty-row">
             <Form.Group>

@@ -35,7 +35,7 @@ const UserReviews: FC = () => {
       {reviews.map((review) => (
         <div key={review.id!} className="user-reviews">
           <br />
-          <SubReview review={review} />
+          <SubReview review={review} dataType="other" />
         </div>
       ))}
     </div>

@@ -7,7 +7,7 @@ interface ResultPageSectionProps {
   children: React.ReactNode;
 }
 
-export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children }) => {
+const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children }) => {
   return (
     <div className="result-page-section">
       <h2>{title}</h2>
@@ -16,20 +16,31 @@ export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children 
   );
 };
 
-interface ResultPageContentProps {
+type ResultPageContentProps = {
   sideInfo: React.ReactNode;
-  mainContent: React.ReactNode;
-}
+  mainSections: {
+    title: string;
+    Component: JSX.Element;
+  }[];
+};
 
-export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, mainContent }) => {
+const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, mainSections }) => {
   return (
     <div className="content-wrapper search-result-page">
       <div className="side-info-wrapper">{sideInfo}</div>
       <span className="twemoji-wrapper">
         <Twemoji options={{ className: 'twemoji' }}>
-          <div className="result-page-body">{mainContent}</div>
+          <div className="result-page-body">
+            {mainSections.map((section, index) => (
+              <ResultPageSection key={index} title={section.title}>
+                {section.Component}
+              </ResultPageSection>
+            ))}
+          </div>
         </Twemoji>
       </span>
     </div>
   );
 };
+
+export default ResultPageContent;

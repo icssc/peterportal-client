@@ -5,7 +5,8 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import { WebsocAPIResponse, WebsocSection as Section } from '@peterportal/types';
 import { CourseGQLData, DataType, ProfessorGQLData } from '../../types/types';
-import { hourMinuteTo12HourString } from '../../helpers/util';
+import { hourMinuteTo12HourString, sortTerms, sortProfessorTerms } from '../../helpers/util';
+
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
@@ -79,10 +80,9 @@ interface ScheduleData {
 interface ScheduleProps {
   dataType: DataType;
   data: CourseGQLData | ProfessorGQLData;
-  terms: string[];
 }
 
-const Schedule: FC<ScheduleProps> = ({ dataType, data, terms }) => {
+const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [selectedQuarter, setSelectedQuarter] = useState('');
@@ -133,6 +133,11 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data, terms }) => {
   if (!scheduleData) {
     return <LoadingSpinner />;
   }
+
+  const terms =
+    dataType === 'course'
+      ? sortTerms((data as CourseGQLData).terms)
+      : sortProfessorTerms((data as ProfessorGQLData).courses);
 
   return (
     <div>

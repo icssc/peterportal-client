@@ -4,7 +4,7 @@ import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { Link } from 'react-router-dom';
-import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -15,7 +15,6 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms, sortProfessorTerms } from '../../helpers/util';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,17 +22,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 interface SubReviewProps {
   review: ReviewData;
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
+  dataType: DataType | 'other';
+  data?: CourseGQLData | ProfessorGQLData;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+const SubReview: FC<SubReviewProps> = ({ review, dataType, data }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'secondary';
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -41,15 +39,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     dispatch(
       setReviews(
         reviewData.map((otherReview) => {
-          if (otherReview.id === review.id) {
-            return {
-              ...otherReview,
-              score: otherReview.score + (newUserVote - otherReview.userVote!),
-              userVote: newUserVote,
-            };
-          } else {
+          if (otherReview.id !== review.id) {
             return otherReview;
           }
+          return {
+            ...otherReview,
+            score: otherReview.score + (newUserVote - otherReview.userVote!),
+            userVote: newUserVote,
+          };
         }),
       ),
     );
@@ -123,36 +120,34 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
-  const sortedTerms: string[] = course ? sortTerms(course?.terms) : sortProfessorTerms(professor?.courses ?? {});
+  const LinksToSubreview = () => {
+    if (dataType === 'course') {
+      const professor = (data as CourseGQLData).instructors[review.professorId];
+      const professorName = professor ? professor.name : review.professorId;
+      return <Link to={{ pathname: `/professor/${review.professorId}` }}>{professorName}</Link>;
+    }
+    if (dataType === 'professor') {
+      const course = (data as ProfessorGQLData).courses[review.courseId];
+      const courseName = course ? course.department + ' ' + course.courseNumber : review.courseId;
+      return <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+    }
+    return (
+      <div>
+        <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
+        <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
+      </div>
+    );
+  };
 
   return (
     <div className="subreview">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
-          {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
-              {professor.courses[review.courseId]
-                ? professor.courses[review.courseId]?.department +
-                  ' ' +
-                  professor.courses[review.courseId]?.courseNumber
-                : review.courseId}
-            </Link>
-          )}
-          {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
-              {course.instructors[review.professorId]?.name ?? review.professorId}
-            </Link>
-          )}
-          {!course && !professor && (
-            <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
-            </div>
-          )}
+          <LinksToSubreview />
         </h3>
         {review.authored && (
           <div className="edit-buttons">
-            <Button variant={buttonVariant} className="edit-button" onClick={openReviewForm}>
+            <Button variant={darkMode ? 'dark' : 'secondary'} className="edit-button" onClick={openReviewForm}>
               <EditIcon />
             </Button>
             <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
@@ -256,13 +251,12 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           closeForm={() => setReportFormOpen(false)}
         />
         <ReviewForm
-          course={course}
-          professor={professor}
+          dataType={dataType}
+          data={data}
           reviewToEdit={review}
           closeForm={closeReviewForm}
           show={showReviewForm}
           editing
-          terms={sortedTerms}
         />
       </div>
     </div>

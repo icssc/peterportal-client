@@ -8,11 +8,11 @@ import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import { ResultPageContent, ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import ResultPageContent from '../../component/ResultPageContent/ResultPageContent';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
+import { getCourseTags, searchAPIResult } from '../../helpers/util';
 
 const CoursePage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,13 +44,11 @@ const CoursePage: FC = () => {
     return <LoadingSpinner />;
   }
 
-  const courseName = courseGQLData.department + ' ' + courseGQLData.courseNumber;
-
   const sideInfo = (
     <SideInfo
       dataType="course"
       data={courseGQLData}
-      name={courseName}
+      name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
       title={courseGQLData.title}
       description={courseGQLData.description}
       tags={getCourseTags(courseGQLData)}
@@ -58,27 +56,17 @@ const CoursePage: FC = () => {
     />
   );
 
-  const mainContent = (
-    <>
-      <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist dataType="course" data={courseGQLData} />
-      </ResultPageSection>
+  const mainSections: {
+    title: string;
+    Component: JSX.Element;
+  }[] = [
+    { title: '📊 Grade Distribution', Component: <GradeDist dataType="course" data={courseGQLData} /> },
+    { title: '🌲 Prerequisite Tree', Component: <PrereqTree data={courseGQLData} /> },
+    { title: '🗓️ Schedule of Classes', Component: <Schedule dataType="course" data={courseGQLData} /> },
+    { title: '💬 Reviews', Component: <Review dataType="course" data={courseGQLData} /> },
+  ];
 
-      <ResultPageSection title="🌲 Prerequisite Tree">
-        <PrereqTree course={courseGQLData} />
-      </ResultPageSection>
-
-      <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule dataType="course" data={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
-      </ResultPageSection>
-
-      <ResultPageSection title="💬 Reviews">
-        <Review course={courseGQLData} terms={sortTerms(courseGQLData.terms)} />
-      </ResultPageSection>
-    </>
-  );
-
-  return <ResultPageContent sideInfo={sideInfo} mainContent={mainContent} />;
+  return <ResultPageContent sideInfo={sideInfo} mainSections={mainSections} />;
 };
 
 export default CoursePage;

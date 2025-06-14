@@ -7,11 +7,11 @@ import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import { ResultPageContent, ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import ResultPageContent from '../../component/ResultPageContent/ResultPageContent';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, sortProfessorTerms } from '../../helpers/util';
+import { searchAPIResult } from '../../helpers/util';
 
 const ProfessorPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,23 +54,16 @@ const ProfessorPage: FC = () => {
     />
   );
 
-  const mainContent = (
-    <>
-      <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist dataType="professor" data={professorGQLData} />
-      </ResultPageSection>
+  const mainSections: {
+    title: string;
+    Component: JSX.Element;
+  }[] = [
+    { title: '📊 Grade Distribution', Component: <GradeDist dataType="professor" data={professorGQLData} /> },
+    { title: '🗓️ Schedule of Classes', Component: <Schedule dataType="professor" data={professorGQLData} /> },
+    { title: '💬 Reviews', Component: <Review dataType="professor" data={professorGQLData} /> },
+  ];
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule dataType="professor" data={professorGQLData} terms={sortProfessorTerms(professorGQLData.courses)} />
-      </ResultPageSection>
-
-      <ResultPageSection title="💬 Reviews">
-        <Review professor={professorGQLData} terms={sortProfessorTerms(professorGQLData.courses)} />
-      </ResultPageSection>
-    </>
-  );
-
-  return <ResultPageContent sideInfo={sideInfo} mainContent={mainContent} />;
+  return <ResultPageContent sideInfo={sideInfo} mainSections={mainSections} />;
 };
 
 export default ProfessorPage;

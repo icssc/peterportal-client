@@ -88,15 +88,15 @@ const InternalNode: FC<InternalNodeProps> = ({ prereqTree, prereqNames }) => {
 };
 
 interface PrereqTreeProps {
-  course: CourseGQLData;
+  data: CourseGQLData;
 }
 
-const DependentNodes: FC<PrereqTreeProps> = ({ course }) => {
+const DependentNodes: FC<PrereqTreeProps> = ({ data }) => {
   return (
     <>
       <ul className="dependent-list">
         <div className="dependent-list-branch">
-          {Object.values(course.dependents).map((dependent, index) => (
+          {Object.values(data.dependents).map((dependent, index) => (
             <li key={`dependent-node-${index}`} className="dependent-node">
               <Node label={`${dependent.department} ${dependent.courseNumber}`} content={dependent.title} />
             </li>
@@ -110,9 +110,9 @@ const DependentNodes: FC<PrereqTreeProps> = ({ course }) => {
   );
 };
 
-const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
-  const hasPrereqs = JSON.stringify(course.prerequisiteTree) !== '{}';
-  const hasDependents = Object.keys(course.dependents).length !== 0;
+const PrereqTree: FC<PrereqTreeProps> = ({ data }) => {
+  const hasPrereqs = JSON.stringify(data.prerequisiteTree) !== '{}';
+  const hasDependents = Object.keys(data.dependents).length !== 0;
 
   if (!hasPrereqs && !hasDependents) {
     return (
@@ -126,27 +126,27 @@ const PrereqTree: FC<PrereqTreeProps> = ({ course }) => {
     <div className="prereq">
       <div className="complete-prereq-tree">
         {/* Display dependents */}
-        {hasDependents && <DependentNodes course={course} />}
+        {hasDependents && <DependentNodes data={data} />}
 
         {/* Display the starting node */}
         <div className="course-node">
-          <Node label={`${course.department} ${course.courseNumber}`} content={course.title} />
+          <Node label={`${data.department} ${data.courseNumber}`} content={data.title} />
         </div>
 
         {/* Display the prerequisite tree, recursively */}
         {hasPrereqs && (
           <div className="prerequisite-node-container">
             <div className="prerequisite-node">
-              <InternalNode prereqTree={course.prerequisiteTree} prereqNames={course.prerequisites} />
+              <InternalNode prereqTree={data.prerequisiteTree} prereqNames={data.prerequisites} />
             </div>
           </div>
         )}
       </div>
       {/* Display prerequisite text */}
-      {course.prerequisiteText && (
+      {data.prerequisiteText && (
         <div className="prereq-text-box">
           <b>Prerequisite: </b>
-          {course.prerequisiteText}
+          {data.prerequisiteText}
         </div>
       )}
     </div>
