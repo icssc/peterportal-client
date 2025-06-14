@@ -9,7 +9,7 @@ import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
 import { Button, Popover } from 'react-bootstrap';
-import PPCOverlayTrigger from '../PPCOverlayTrigger';
+import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 import ThemeContext from '../../style/theme-context';
 
 import GitHubIcon from '@mui/icons-material/GitHub';

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 body {
   margin: 0;
@@ -36,16 +37,32 @@ code {
   --gray-blue: #f5f6fc;
   --ring-road-white: #ffffff;
 
+  /* Unlike the secondary colors above, these secondary-light colors
+  aren't overridden by the dark mode variants defined in the body
+  below, since these are defined at the root, not in the body */
+  --blue-secondary-light: var(--blue-secondary);
+  --green-secondary-light: var(--green-secondary);
+  --yellow-secondary-light: var(--yellow-secondary);
+  --orange-secondary-light: var(--orange-secondary);
+  --red-secondary-light: var(--red-secondary);
+
+  --gradedist-p: #4ab486;
+  --gradedist-np: #e36436;
+  --spring-quarter: #ffc7df;
+
   --border-radius: 8px;
+  --border-primary: rgba(96, 97, 102, 0.5);
+  --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
 /* User theme is not accessible to :root, so we override them in body */
 body[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
-
   --red-primary: #ff3333;
   --green-secondary: #295629;
+
+  --border-secondary: rgba(255, 255, 255, 0.12);
 }
 
 .hide {
