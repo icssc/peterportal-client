@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
@@ -16,7 +21,7 @@ code {
 
 #root {
   position: relative;
-  height: 100vh;
+  height: 100%;
 }
 
 :root {
