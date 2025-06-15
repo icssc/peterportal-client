@@ -19,25 +19,21 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
-  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const { showTransfersMenu, transferredCourses, userAPExams, uncategorizedCourses } = useAppSelector(
+    (state) => state.transferCredits,
+  );
   const dispatch = useAppDispatch();
 
   const toggleTransfers = () => {
-    if (showTransfers) {
+    if (showTransfersMenu) {
       // After closing the menu, clear all the unread markers
       dispatch(clearUnreadTransfers());
     }
-    dispatch(setShowTransfersMenu(!showTransfers));
+    dispatch(setShowTransfersMenu(!showTransfersMenu));
   };
 
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
-
-  const hasUnreadTransfers =
-    transferredCourses.some((course) => course.unread) ||
-    userAPExams.some((ap) => ap.unread) ||
-    uncategorizedCourses.some((course) => course.unread);
+  const hasUnread = (group: { unread?: boolean }[]) => group.some((item) => item.unread);
+  const hasUnreadTransfers = hasUnread(transferredCourses) || hasUnread(userAPExams) || hasUnread(uncategorizedCourses);
 
   return (
     <div className="header">
