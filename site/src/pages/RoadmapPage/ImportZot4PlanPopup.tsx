@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
 import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
@@ -39,7 +40,9 @@ const ImportZot4PlanPopup: FC = () => {
         (imported) => !apExams.some((existing) => existing.examName === imported.examName),
       );
 
-      const combinedExams = apExams.concat(newExams);
+      const newExamsUnread = markTransfersAsUnread(newExams);
+
+      const combinedExams = apExams.concat(newExamsUnread);
       dispatch(setUserAPExams(combinedExams));
 
       // Add new AP exam rows

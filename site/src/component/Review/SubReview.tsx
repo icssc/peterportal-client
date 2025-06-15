@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import './Review.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -9,7 +9,6 @@ import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Button, Modal } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
@@ -18,7 +17,8 @@ import spawnToast from '../../helpers/toastify';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { IconButton } from '@mui/material';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -31,7 +31,6 @@ const SubReview: FC<SubReviewProps> = ({ review, dataType, data }) => {
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const { darkMode } = useContext(ThemeContext);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
@@ -147,12 +146,12 @@ const SubReview: FC<SubReviewProps> = ({ review, dataType, data }) => {
         </h3>
         {review.authored && (
           <div className="edit-buttons">
-            <Button variant={darkMode ? 'dark' : 'secondary'} className="edit-button" onClick={openReviewForm}>
+            <IconButton onClick={openReviewForm}>
               <EditIcon />
-            </Button>
-            <Button variant="danger" className="delete-button" onClick={() => setShowDeleteModal(true)}>
-              <DeleteIcon />
-            </Button>
+            </IconButton>
+            <IconButton onClick={() => setShowDeleteModal(true)}>
+              <DeleteOutlineIcon />
+            </IconButton>
             <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
               <Modal.Header closeButton>
                 <h2>Delete Review</h2>

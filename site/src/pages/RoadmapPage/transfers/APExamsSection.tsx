@@ -6,7 +6,12 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme } from '../../../helpers/courseRequirements';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addUserAPExam, removeUserAPExam, updateUserExam } from '../../../store/slices/transferCreditsSlice';
+import {
+  addUserAPExam,
+  removeUserAPExam,
+  updateUserExam,
+  TransferWithUnread,
+} from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { APExam, TransferredAPExam } from '@peterportal/types';
 import './APExamsSection.scss';
@@ -56,11 +61,12 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
 };
 
 interface APCreditMenuTileProps {
-  userExamInfo: TransferredAPExam;
+  exam: TransferWithUnread<TransferredAPExam>;
 }
 
-const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ userExamInfo }) => {
-  const { examName, score, units } = userExamInfo;
+const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ exam }) => {
+  const { examName, score, units, unread } = exam;
+
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
 
@@ -97,7 +103,14 @@ const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ userExamInfo }) => {
   }
 
   return (
-    <MenuTile title={examName} headerItems={selectBox} units={units} setUnits={updateUnits} deleteFn={deleteFn}>
+    <MenuTile
+      title={examName}
+      headerItems={selectBox}
+      units={units}
+      setUnits={updateUnits}
+      deleteFn={deleteFn}
+      unread={unread}
+    >
       <p>{message ? 'Clears ' + message : 'This exam does not clear any courses'}</p>
     </MenuTile>
   );
@@ -142,7 +155,7 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
+        <APCreditMenuTile key={exam.examName} exam={exam} />
       ))}
       <div className="ap-import-row">
         <div className="exam-input">

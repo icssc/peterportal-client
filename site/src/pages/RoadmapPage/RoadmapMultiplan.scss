@@ -5,6 +5,13 @@
     padding: 4px 8px;
     align-items: center;
   }
+  .select-item button.MuiButtonBase-root {
+    width: 32px;
+    height: 32px;
+    &:not(.delete-btn) .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+  }
   .add-item {
     padding-inline: 16px;
   }
