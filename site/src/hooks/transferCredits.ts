@@ -8,6 +8,8 @@ import {
   setUncategorizedCourses,
   setUserAPExams,
   setDataLoadState,
+  setShowTransfersMenu,
+  clearUnreadTransfers,
 } from '../store/slices/transferCreditsSlice';
 import { components } from '@peterportal/types/src/generated/anteater-api-types';
 import {
@@ -133,3 +135,12 @@ export function useLoadTransferredCredits() {
     saveLocalTransfers<TransferredUncategorized>(OtherKey, transferredOther);
   }, [isLoggedIn, OtherKey, transferredOther, userDataLoaded]);
 }
+
+export const useToggleTransfers = () => {
+  const dispatch = useAppDispatch();
+  return (showTransfersMenu: boolean) => {
+    // After closing the menu, clear all unread markers
+    if (showTransfersMenu) dispatch(clearUnreadTransfers());
+    dispatch(setShowTransfersMenu(!showTransfersMenu));
+  };
+};
