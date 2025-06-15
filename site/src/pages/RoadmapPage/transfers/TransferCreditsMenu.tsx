@@ -1,41 +1,41 @@
-import { FC, useEffect, useRef, useCallback } from 'react';
+import { FC, useEffect, useCallback } from 'react';
 import './TransferCreditsMenu.scss';
 import { CSSTransition } from 'react-transition-group';
-import { useIsMobile } from '../../../helpers/util';
+
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
+
+import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useLoadTransferredCredits, useToggleTransfers } from '../../../hooks/transferCredits';
+import { useToggleRef } from '../../../hooks/planner';
+import { useIsMobile } from '../../../helpers/util';
 
 const TransferCreditsMenu: FC = () => {
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
 
+  const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
   useLoadTransferredCredits();
-  const toggleTransfers = useToggleTransfers();
-
-  const dispatch = useAppDispatch();
+  const setToggleTransfers = useToggleTransfers();
+  const { overlayRef, sidebarRef } = useToggleRef(isMobile, show);
 
   const closeMenu = useCallback(() => dispatch(setShowTransfersMenu(false)), [dispatch]);
-  const toggleMenu = () => toggleTransfers(show);
-
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isMobile) return;
-    sidebarRef.current?.classList.toggle('enter-done', show);
-    overlayRef.current?.classList.toggle('enter-done', show);
-  }, [isMobile, show]);
+  const toggleTransfers = () => setToggleTransfers(show);
 
   useEffect(() => {
     if (isMobile) return;
     closeMenu();
   }, [isMobile, closeMenu]);
+
+  const ToggleTransfersButton = () => (
+    <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleTransfers}>
+      Done Editing Credits
+    </button>
+  );
 
   return (
     <>
@@ -48,9 +48,7 @@ const TransferCreditsMenu: FC = () => {
           <APExamsSection />
           <GESection />
           <UncategorizedCreditsSection />
-          <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>
-            Done Editing Credits
-          </button>
+          <ToggleTransfersButton />
         </div>
       </CSSTransition>
     </>

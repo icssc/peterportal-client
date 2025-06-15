@@ -23,8 +23,8 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     (state) => state.transferCredits,
   );
 
-  const toggleTransfersAction = useToggleTransfers();
-  const toggleTransfers = () => toggleTransfersAction(showTransfersMenu);
+  const setToggleTransfers = useToggleTransfers();
+  const toggleTransfers = () => setToggleTransfers(showTransfersMenu);
 
   const hasUnread = (group: { unread?: boolean }[]) => group.some((item) => item.unread);
   const hasUnreadTransfers = hasUnread(transferredCourses) || hasUnread(userAPExams) || hasUnread(uncategorizedCourses);

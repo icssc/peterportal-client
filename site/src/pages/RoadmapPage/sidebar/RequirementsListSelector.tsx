@@ -6,32 +6,25 @@ import ThemeContext from '../../../style/theme-context';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 
-interface ListSelectorProps {
-  text: RequirementsTabName;
-}
-const ListSelector: FC<ListSelectorProps> = ({ text }) => {
+const RequirementsListSelector: FC = () => {
   const { darkMode } = useContext(ThemeContext);
   const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
   const dispatch = useAppDispatch();
 
-  const selected = selectedTab === text;
-  const variant = selected ? 'primary' : darkMode ? 'dark' : 'light';
-  const selectTab = () => dispatch(setSelectedTab(text));
+  const requirementsTabNames: RequirementsTabName[] = ['Major', 'Minor', 'GE', 'Search'];
 
-  return (
-    <Button variant={variant} className="ppc-btn" onClick={selectTab}>
-      {text}
-    </Button>
-  );
-};
-
-const RequirementsListSelector: FC = () => {
   return (
     <div className="requirements-list-selector">
-      <ListSelector text="Major" />
-      <ListSelector text="Minor" />
-      <ListSelector text="GE" />
-      <ListSelector text="Search" />
+      {requirementsTabNames.map((text) => (
+        <Button
+          key={text}
+          variant={selectedTab === text ? 'primary' : darkMode ? 'dark' : 'light'}
+          className="ppc-btn"
+          onClick={() => dispatch(setSelectedTab(text))}
+        >
+          {text}
+        </Button>
+      ))}
     </div>
   );
 };
