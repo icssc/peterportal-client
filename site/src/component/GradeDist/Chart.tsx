@@ -5,6 +5,7 @@ import ThemeContext from '../../style/theme-context';
 import { GradesRaw, letterGrades } from '@peterportal/types';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
+import { getCourseId } from '../../helpers/util.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -36,7 +37,7 @@ export default class Chart extends Component<ChartProps> {
 
     gradeData.forEach((entry) => {
       const correctQuarter = quarter === 'ALL' || `${entry.quarter} ${entry.year}` === quarter;
-      const correctData = entry.instructors.includes(dataID) || `${entry.department} ${entry.courseNumber}` === dataID;
+      const correctData = entry.instructors.includes(dataID) || getCourseId(entry) === dataID;
       if (correctQuarter && correctData) {
         letterGrades.forEach((grade) => {
           gradeCounts[grade] += entry[`grade${grade}Count` as keyof typeof entry] as number;

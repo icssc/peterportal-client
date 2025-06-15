@@ -9,7 +9,7 @@ import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
-import { getSentenceCase } from '../../helpers/util';
+import { getCourseId, getSentenceCase } from '../../helpers/util';
 
 interface GradeDistProps {
   data: GQLData;
@@ -67,7 +67,7 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
     const entries =
       data.type === 'course'
         ? gradeDistData.flatMap((match) => match.instructors)
-        : gradeDistData.map((match) => `${match.department} ${match.courseNumber}`);
+        : gradeDistData.map((match) => getCourseId(match));
 
     const dataEntries: Entry[] = Array.from(new Set(entries))
       .sort((a, b) => a.localeCompare(b))
@@ -90,9 +90,7 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
   const createQuarterEntries = useCallback(() => {
     const quarters = gradeDistData
       .filter((entry) =>
-        data.type === 'course'
-          ? entry.instructors.includes(currentData)
-          : entry.department + ' ' + entry.courseNumber === currentData,
+        data.type === 'course' ? entry.instructors.includes(currentData) : getCourseId(entry) === currentData,
       )
       .map((entry) => `${entry.quarter} ${entry.year}`);
 

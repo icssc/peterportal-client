@@ -8,10 +8,10 @@ import { Link } from 'react-router-dom';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 import RecentOfferings from '../RecentOfferings/RecentOfferings';
 
-import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
+import { GQLData, GQLDataType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
-import { pluralize, getSentenceCase } from '../../helpers/util';
+import { pluralize, getSentenceCase, getCourseIdFromProfessor } from '../../helpers/util';
 
 interface AverageReview {
   count: number;
@@ -52,13 +52,46 @@ const CourseSynopsis: FC<CourseSynopsisProps> = ({ name, title, description, tag
   );
 };
 
-interface AverageRatingsStatsProps {
+interface AverageRatingButtonsProps {
+  data: GQLData;
+  averageReviews: AverageReviews;
+  selectedReview: string;
+  setSelectedReview: (review: string) => void;
+}
+
+const AverageRatingButtons: FC<AverageRatingButtonsProps> = ({
+  data,
+  averageReviews,
+  selectedReview,
+  setSelectedReview,
+}) => {
+  const dispatch = useAppDispatch();
+  const addReview = () => dispatch(toggleFormStatus());
+  const sortedKeys = Object.keys(averageReviews).sort((a, b) => averageReviews[b].count - averageReviews[a].count);
+
+  return (
+    <div className="side-info-buttons">
+      <DropdownButton title={selectedReview} variant="secondary" onSelect={(e) => setSelectedReview(e as string)}>
+        {sortedKeys.map((key, index) => (
+          <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+            {getCourseIdFromProfessor(data, key)}
+          </Dropdown.Item>
+        ))}
+      </DropdownButton>
+      <Button variant="primary" onClick={addReview}>
+        Rate {data.type}
+      </Button>
+    </div>
+  );
+};
+
+interface AverageRatingStatsProps {
   dataType: GQLDataType;
   averageReviews: AverageReviews;
   selectedReview: string;
 }
 
-const AverageRatingsStats: FC<AverageRatingsStatsProps> = ({ dataType, averageReviews, selectedReview }) => {
+const AverageRatingStats: FC<AverageRatingStatsProps> = ({ dataType, averageReviews, selectedReview }) => {
   if (Object.keys(averageReviews).length <= 1) {
     return <span className="side-info-selected-based">No reviews found for this {dataType}!</span>;
   }
@@ -87,54 +120,20 @@ const AverageRatingsStats: FC<AverageRatingsStatsProps> = ({ dataType, averageRe
   );
 };
 
-interface AverageRatingButtonsProps {
-  dataType: GQLDataType;
-  getDataName: (key: string) => string;
-  averageReviews: AverageReviews;
-  selectedReview: string;
-  setSelectedReview: (review: string) => void;
-}
-
-const AverageRatingButtons: FC<AverageRatingButtonsProps> = ({
-  dataType,
-  getDataName,
-  averageReviews,
-  selectedReview,
-  setSelectedReview,
-}) => {
-  const dispatch = useAppDispatch();
-  const addReview = () => dispatch(toggleFormStatus());
-  const sortedKeys = Object.keys(averageReviews).sort((a, b) => averageReviews[b].count - averageReviews[a].count);
-
-  return (
-    <div className="side-info-buttons">
-      <DropdownButton title={selectedReview} variant="secondary" onSelect={(e) => setSelectedReview(e as string)}>
-        {sortedKeys.map((key, index) => (
-          <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-            {getDataName(key)}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-      <Button variant="primary" onClick={addReview}>
-        Rate {dataType}
-      </Button>
-    </div>
-  );
-};
-
 interface FeaturedItemData {
-  dataType: GQLDataType;
-  getDataName: (key: string) => string;
+  data: GQLData;
   averageReviews: AverageReviews;
   featureType: 'Highest' | 'Lowest';
   reviewKey: string;
 }
 
-const FeaturedItem: FC<FeaturedItemData> = ({ dataType, getDataName, averageReviews, featureType, reviewKey }) => {
-  const linkPath = `/${dataType === 'course' ? 'professor' : 'course'}/${reviewKey}`;
+const FeaturedItem: FC<FeaturedItemData> = ({ data, averageReviews, featureType, reviewKey }) => {
+  const linkPath = `/${data.type === 'course' ? 'professor' : 'course'}/${reviewKey}`;
   const { rating, difficulty, count } = averageReviews[reviewKey];
+  const courseId = getCourseIdFromProfessor(data, reviewKey);
+
   const columns = [
-    { label: `${featureType} Rated`, value: <Link to={{ pathname: linkPath }}>{getDataName(reviewKey)}</Link> },
+    { label: `${featureType} Rated`, value: <Link to={{ pathname: linkPath }}>{courseId}</Link> },
     { label: 'Rating', value: `${(rating / count).toFixed(2)} / 5` },
     { label: 'Difficulty', value: `${(difficulty / count).toFixed(2)} / 5` },
   ];
@@ -224,14 +223,6 @@ const SideInfo: FC<SideInfoProps> = ({ data, name, title, description, tags, ter
     }
   }, [reviews, data, capitalizedOtherDataType]);
 
-  const getDataName = (key: string) => {
-    if (data.type === 'course') {
-      return (data as CourseGQLData).instructors[key]?.name ?? key;
-    }
-    const course = (data as ProfessorGQLData).courses[key];
-    return course ? `${course.department} ${course.courseNumber}` : key;
-  };
-
   return (
     <div className="side-info">
       <CourseSynopsis name={name} title={title} description={description} tags={tags} terms={terms} />
@@ -241,33 +232,20 @@ const SideInfo: FC<SideInfoProps> = ({ data, name, title, description, tags, ter
       <div className="side-info-ratings">
         <h2>Average Rating</h2>
         <AverageRatingButtons
-          dataType={data.type}
-          getDataName={getDataName}
+          data={data}
           averageReviews={averageReviews}
           selectedReview={selectedReview}
           setSelectedReview={setSelectedReview}
         />
-        <AverageRatingsStats dataType={data.type} averageReviews={averageReviews} selectedReview={selectedReview} />
+        <AverageRatingStats dataType={data.type} averageReviews={averageReviews} selectedReview={selectedReview} />
       </div>
 
       {Object.keys(averageReviews).length > 1 && (
         <div className="side-info-featured">
           <h2>{capitalizedOtherDataType}</h2>
           <div className="featured-items">
-            <FeaturedItem
-              dataType={data.type}
-              getDataName={getDataName}
-              averageReviews={averageReviews}
-              featureType="Highest"
-              reviewKey={highestReview}
-            />
-            <FeaturedItem
-              dataType={data.type}
-              getDataName={getDataName}
-              averageReviews={averageReviews}
-              featureType="Lowest"
-              reviewKey={lowestReview}
-            />
+            <FeaturedItem data={data} averageReviews={averageReviews} featureType="Highest" reviewKey={highestReview} />
+            <FeaturedItem data={data} averageReviews={averageReviews} featureType="Lowest" reviewKey={lowestReview} />
           </div>
         </div>
       )}

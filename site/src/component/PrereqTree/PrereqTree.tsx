@@ -4,7 +4,7 @@ import type { Prerequisite, PrerequisiteTree } from '@peterportal/types';
 import type { CourseGQLData, CourseLookup } from '../../types/types';
 import { Link } from 'react-router-dom';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { removeWhitespace } from '../../helpers/util';
+import { getCourseId, removeWhitespace } from '../../helpers/util';
 
 interface NodeProps {
   label: string;
@@ -98,7 +98,7 @@ const DependentNodes: FC<PrereqTreeProps> = ({ data }) => {
         <div className="dependent-list-branch">
           {Object.values(data.dependents).map((dependent, index) => (
             <li key={`dependent-node-${index}`} className="dependent-node">
-              <Node label={`${dependent.department} ${dependent.courseNumber}`} content={dependent.title} />
+              <Node label={getCourseId(dependent)} content={dependent.title} />
             </li>
           ))}
         </div>
@@ -130,7 +130,7 @@ const PrereqTree: FC<PrereqTreeProps> = ({ data }) => {
 
         {/* Display the starting node */}
         <div className="course-node">
-          <Node label={`${data.department} ${data.courseNumber}`} content={data.title} />
+          <Node label={getCourseId(data)} content={data.title} />
         </div>
 
         {/* Display the prerequisite tree, recursively */}

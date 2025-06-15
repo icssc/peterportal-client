@@ -8,7 +8,7 @@ import { setShowAddCourse } from '../../store/slices/roadmapSlice';
 import { useAppDispatch } from '../../store/hooks';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { useClearedCourses } from '../../hooks/planner';
-import { useIsMobile, getUnitText, pluralize } from '../../helpers/util';
+import { useIsMobile, getUnitText, pluralize, getCourseId } from '../../helpers/util';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
 import IconButton from '@mui/material/IconButton';
@@ -90,33 +90,31 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
 
 export const CourseHeader: FC<CourseProp> = ({ course }) => {
   const isMobile = useIsMobile();
-
   const dispatch = useAppDispatch();
   const closePopup = () => dispatch(setShowAddCourse(false));
 
-  const courseName = `${course.department} ${course.courseNumber}`;
-  const unitText = `(${getUnitText(course)})`;
-
-  if (isMobile) {
-    return (
-      <>
-        <b>{courseName}</b>
-        <p>{unitText}</p>
-        <CourseBookmarkButton course={course} />
-        <span className="spacer" />
-        <button onClick={closePopup} className="close-button">
-          <CloseIcon />
-        </button>
-      </>
-    );
-  }
+  const CloseButton = () => (
+    <button onClick={closePopup} className="close-button">
+      <CloseIcon />
+    </button>
+  );
 
   return (
     <>
-      <b>{courseName}</b>
-      <p>{unitText}</p>
-      <span className="spacer" />
-      <CourseBookmarkButton course={course} />
+      <b>{getCourseId(course)}</b>
+      <p>({getUnitText(course)})</p>
+      {isMobile ? (
+        <>
+          <CourseBookmarkButton course={course} />
+          <span className="spacer" />
+          <CloseButton />
+        </>
+      ) : (
+        <>
+          <span className="spacer" />
+          <CourseBookmarkButton course={course} />
+        </>
+      )}
     </>
   );
 };

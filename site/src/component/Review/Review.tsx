@@ -12,6 +12,7 @@ import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
+import { getCourseIdFromProfessor } from '../../helpers/util';
 
 import AddIcon from '@mui/icons-material/Add';
 
@@ -75,11 +76,7 @@ const SortFilterMenu: FC<SortFilterMenuProps> = ({
     },
     ...Object.keys(data.type === 'course' ? (data as CourseGQLData).instructors : (data as ProfessorGQLData).courses)
       .map((id) => ({
-        text: `${
-          data.type === 'course'
-            ? ((data as CourseGQLData).instructors[id]?.name ?? id)
-            : `${(data as ProfessorGQLData).courses[id]?.department} ${(data as ProfessorGQLData).courses[id]?.courseNumber}`
-        } (${reviewFreq.get(id) || 0})`,
+        text: `${getCourseIdFromProfessor(data, id)} (${reviewFreq.get(id) || 0})`,
         value: id,
       }))
       .filter(({ value }) => reviewFreq.get(value))

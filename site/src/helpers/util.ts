@@ -6,6 +6,7 @@ import {
   BatchProfessorData,
   GQLDataType,
   CourseWithTermsLookup,
+  GQLData,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
@@ -143,14 +144,24 @@ export function getUnitText(course: CourseGQLData) {
   return `${numUnits} unit${pluralize(maxUnits)}`;
 }
 
-export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
-  return `${course.department} ${course.courseNumber}`;
-}
-
 export function removeWhitespace(str: string) {
   return str.replace(/\s+/g, '');
 }
 
 export function getSentenceCase(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function getCourseId(
+  course: (Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) | string,
+  fallback: string = '',
+) {
+  if (!course || typeof course === 'string' || !course?.department || !course?.courseNumber) return fallback;
+  return `${course.department} ${course.courseNumber}`;
+}
+
+export function getCourseIdFromProfessor(data: GQLData, key: string) {
+  return data.type === 'course'
+    ? ((data as CourseGQLData).instructors[key]?.name ?? key)
+    : getCourseId((data as ProfessorGQLData).courses[key], key);
 }

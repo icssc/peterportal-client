@@ -1,13 +1,14 @@
 import { FC, useState } from 'react';
 import './Course.scss';
+
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, getUnitText, removeWhitespace } from '../../helpers/util';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import { useIsMobile, getUnitText, removeWhitespace, getCourseId } from '../../helpers/util';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -29,7 +30,7 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
     typeof data === 'string' ? `/course/${data}` : `/course/${data.department}${data.courseNumber}`,
   );
 
-  let courseID = typeof data === 'string' ? data : `${data.department} ${data.courseNumber}`;
+  let courseID = getCourseId(data);
   if (alwaysCollapse) courseID = removeWhitespace(courseID);
 
   const [allowTouchClick, setAllowTouchClick] = useState(false);

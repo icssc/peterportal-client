@@ -25,7 +25,7 @@ import Select from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getYears, getQuarters } from '../../helpers/reviews';
-import { searchAPIResult, sortTerms, sortProfessorTerms } from '../../helpers/util';
+import { searchAPIResult, sortTerms, sortProfessorTerms, getCourseId } from '../../helpers/util';
 
 interface ReviewFormProps {
   closeForm: () => void;
@@ -199,9 +199,7 @@ const ReviewForm: FC<ReviewFormProps> = ({ dataType, data, closeForm, show, edit
     <Modal show={show} onHide={closeForm} centered className="ppc-modal review-form-modal">
       <Modal.Header closeButton>
         {editing ? `Edit Review for ` : `Review `}
-        {isCourse
-          ? `${(data as CourseGQLData).department} ${(data as CourseGQLData).courseNumber}`
-          : (data as ProfessorGQLData).name}
+        {isCourse ? getCourseId(data as CourseGQLData) : (data as ProfessorGQLData).name}
       </Modal.Header>
       <Modal.Body>
         {editing && <p className="editing-notice">You are editing your review for {professorName}.</p>}
@@ -280,7 +278,7 @@ const ReviewForm: FC<ReviewFormProps> = ({ dataType, data, closeForm, show, edit
                       title={alreadyReviewed ? `You have already reviewed this ${dataType}` : undefined}
                       disabled={alreadyReviewed}
                     >
-                      {isCourse ? entry.name : `${entry.department} ${entry.courseNumber}`}
+                      {isCourse ? entry.name : getCourseId(entry)}
                     </option>
                   );
                 },

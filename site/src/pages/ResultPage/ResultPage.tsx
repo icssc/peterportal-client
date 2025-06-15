@@ -13,7 +13,7 @@ import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse, setProfessor } from '../../store/slices/popupSlice';
-import { getCourseTags, searchAPIResult, getSentenceCase } from '../../helpers/util';
+import { getCourseTags, searchAPIResult, getSentenceCase, getCourseId } from '../../helpers/util';
 import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
 
 type PrereqTreeType = React.ComponentType<{ data: CourseGQLData }>;
@@ -41,7 +41,7 @@ const SideInfoWrapper: FC<DataProp> = ({ data }) => {
     return (
       <SideInfo
         data={course}
-        name={`${course.department} ${course.courseNumber}`}
+        name={getCourseId(course)}
         title={course.title}
         description={course.description}
         tags={getCourseTags(course)}
@@ -109,8 +109,7 @@ const ResultPage: FC<ResultPageProps> = ({ dataType }) => {
       dispatch(dataType === 'course' ? setCourse(resultAsCourse) : setProfessor(resultAsProfessor));
       setError('');
 
-      const courseName = resultAsCourse.department + ' ' + resultAsCourse.courseNumber;
-      const dataName = dataType === 'course' ? courseName : resultAsProfessor.name;
+      const dataName = dataType === 'course' ? getCourseId(resultAsCourse) : resultAsProfessor.name;
       document.title = `${dataName} | PeterPortal`;
     });
   }, [dataType, id, dispatch]);

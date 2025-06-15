@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/material';
+import { getCourseId } from '../../helpers/util';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -127,7 +128,7 @@ const SubReview: FC<SubReviewProps> = ({ review, dataType, data }) => {
     }
     if (dataType === 'professor') {
       const course = (data as ProfessorGQLData).courses[review.courseId];
-      const courseName = course ? course.department + ' ' + course.courseNumber : review.courseId;
+      const courseName = getCourseId(course, review.courseId);
       return <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
     }
     return (

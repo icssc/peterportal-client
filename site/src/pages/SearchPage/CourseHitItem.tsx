@@ -7,7 +7,7 @@ import Badge from 'react-bootstrap/Badge';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags, useIsMobile } from '../../helpers/util';
+import { getCourseTags, useIsMobile, getCourseId } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
 
 import { IconButton } from '@mui/material';
@@ -59,7 +59,7 @@ const CourseHitItem: FC<CourseHitItemProps> = ({ course }) => {
       <div className="course-hit-id">
         <div>
           <p className="hit-name">
-            {course.department} {course.courseNumber} • {course.title}
+            {getCourseId(course)} • {course.title}
           </p>
           <CourseQuarterIndicator terms={course.terms} size="sm" />
         </div>
