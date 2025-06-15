@@ -14,7 +14,7 @@ import {
   Prerequisite,
   PrerequisiteTree,
 } from '@peterportal/types';
-import { searchAPIResults } from './util';
+import { getCourseId, searchAPIResults } from './util';
 import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
@@ -269,7 +269,7 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
   const missing = new Set<string>();
   currentPlanData.forEach((year, yearIndex) => {
     year.quarters.forEach((quarter, quarterIndex) => {
-      const taking: Set<string> = new Set(quarter.courses.map((c) => c.department + ' ' + c.courseNumber));
+      const taking: Set<string> = new Set(quarter.courses.map((c) => getCourseId(c)));
       quarter.courses.forEach((course, courseIndex) => {
         if (!course.prerequisiteTree) return;
 
@@ -297,9 +297,7 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
 
 export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
   return plan.yearPlans.flatMap((yearPlan) =>
-    yearPlan.quarters.flatMap((quarter) =>
-      quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
-    ),
+    yearPlan.quarters.flatMap((quarter) => quarter.courses.map((course) => getCourseId(course))),
   );
 };
 

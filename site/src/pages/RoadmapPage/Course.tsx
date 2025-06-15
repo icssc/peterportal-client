@@ -1,27 +1,19 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import './Course.scss';
+
 import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, pluralize } from '../../helpers/util';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import { useIsMobile, getUnitText, removeWhitespace, getCourseId } from '../../helpers/util';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-
-export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
-  <>
-    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-    <br />
-    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-    clear the prerequisite(s).
-  </>
-);
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -31,24 +23,26 @@ interface CourseNameAndInfoProps {
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
 }
-export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
-  const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
-  const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
+export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
+  const { data, popupListener, openPopoverLeft, requiredCourses, alwaysCollapse } = props;
+
+  const courseRoute = removeWhitespace(
+    typeof data === 'string' ? `/course/${data}` : `/course/${data.department}${data.courseNumber}`,
+  );
+
+  let courseID = getCourseId(data);
+  if (alwaysCollapse) courseID = removeWhitespace(courseID);
 
   const [allowTouchClick, setAllowTouchClick] = useState(false);
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
-
-  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
-  let courseID = department + ' ' + courseNumber;
-  if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
   const handleLinkClick = (event: React.MouseEvent) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
+  const popoverContent = <CoursePopover course={data} />;
 
   return (
     <PPCOverlayTrigger
@@ -58,7 +52,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       setAllowSecondaryTap={setAllowTouchClick}
       disabled={isMobile && showSearch}
     >
-      <span>
+      <>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </a>
@@ -67,33 +61,31 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
             <WarningAmberIcon />
           </span>
         )}
-      </span>
+      </>
     </PPCOverlayTrigger>
   );
 };
 
 interface CourseProps {
-  requiredCourses?: string[];
+  course: CourseGQLData;
   onDelete?: () => void;
+  requiredCourses?: string[];
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
-  data: CourseGQLData;
 }
 
-const Course: FC<CourseProps> = (props) => {
-  const { title, minUnits, maxUnits, terms } = props.data;
-  const { requiredCourses, onDelete, openPopoverLeft } = props;
-
+const Course: FC<CourseProps> = ({ course, requiredCourses, onDelete, openPopoverLeft, addMode }) => {
   const dispatch = useAppDispatch();
 
   const insertCourseOnClick = () => {
-    dispatch(setActiveCourse(props.data));
+    dispatch(setActiveCourse(course));
     dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
-  const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
+  const tappableCourseProps = addMode === 'tap' ? tapProps : {};
+  const unitText = getUnitText(course);
 
   return (
     <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
@@ -105,22 +97,19 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
-            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+            <CourseNameAndInfo data={course} openPopoverLeft={openPopoverLeft} requiredCourses={requiredCourses} />
           </span>
-          <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-          </span>
+          <span className="units">{unitText}</span>
         </div>
-        <div className="spacer"></div>
         {onDelete ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
             <DeleteOutlineIcon className="course-delete-icon" />
           </IconButton>
         ) : (
-          <CourseQuarterIndicator terms={terms} size="xs" />
+          <CourseQuarterIndicator terms={course.terms} size="xs" />
         )}
       </div>
-      <div className="title">{title}</div>
+      <div className="title">{course.title}</div>
     </div>
   );
 };

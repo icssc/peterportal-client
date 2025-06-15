@@ -1,7 +1,7 @@
-import React from 'react';
+import { createContext } from 'react';
 import { Theme } from '@peterportal/types';
 
-const ThemeContext = React.createContext<{
+const ThemeContext = createContext<{
   darkMode: boolean;
   usingSystemTheme: boolean;
   setTheme: (theme: Theme) => void;

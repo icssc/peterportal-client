@@ -1,6 +1,6 @@
-import { pluralize } from '../../../helpers/util';
+import { FC, useState } from 'react';
 import './MenuTile.scss';
-import { FC, FormEvent, ReactNode, useState } from 'react';
+import { pluralize } from '../../../helpers/util';
 
 import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -19,7 +19,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
     return (
       <>
         <p className="units-display">
-          {units} {pluralize(units, 'units', 'unit')}
+          {units} unit{pluralize(units)}
         </p>
         {setUnits && (
           <IconButton onClick={() => setEditing(true)}>
@@ -30,7 +30,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
     );
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const unitsValue = parseFloat(formData.get('units') as string);
@@ -60,13 +60,13 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
 };
 
 export interface MenuTileProps {
-  children?: ReactNode;
+  children?: React.ReactNode;
   title: string;
   units?: number;
   setUnits?: (value: number) => void;
   deleteFn?: () => void;
   /** Additional items to include alongsite the title */
-  headerItems?: ReactNode;
+  headerItems?: React.ReactNode;
   unread?: boolean;
 }
 
@@ -79,7 +79,7 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
           {title} {headerItems}
         </div>
         <hr />
-        {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
+        {units && <UnitsContainer units={units} setUnits={setUnits} />}
         {deleteFn && (
           <IconButton className="delete-btn" onClick={deleteFn}>
             <DeleteOutlineIcon />

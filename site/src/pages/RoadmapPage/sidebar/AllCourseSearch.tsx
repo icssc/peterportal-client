@@ -9,33 +9,14 @@ import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
-import { Spinner } from 'react-bootstrap';
-import noResultsImg from '../../../asset/no-results-crop.webp';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
-
-interface SearchPlaceholderProps {
-  searchInProgress: boolean;
-  showSavedCourses: boolean;
-}
-
-const SearchPlaceholder = ({ searchInProgress, showSavedCourses }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <Spinner animation="border" role="status" />;
-
-  const placeholderText = showSavedCourses
-    ? 'No courses saved. Try searching for something!'
-    : "Sorry, we couldn't find any results for that search!";
-
-  return (
-    <>
-      <img src={noResultsImg} alt="No results found" />
-      {placeholderText}
-    </>
-  );
-};
 
 const AllCourseSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
   const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
+  const clearedCourses = useClearedCourses();
   const { savedCourses } = useSavedCourses();
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
@@ -47,16 +28,15 @@ const AllCourseSearch: FC = () => {
     dispatch(setActiveCourse(course));
   };
 
-  const clearedCourses = useClearedCourses();
-
   return (
     <>
-      <div className="search-sidebar-search-module">
-        <SearchModule index="courses" />
-      </div>
+      <SearchModule index="courses" />
       <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
-
-      {!searchInProgress && shownCourses.length ? (
+      {searchInProgress ? (
+        <LoadingSpinner />
+      ) : shownCourses.length === 0 ? (
+        <NoResults notSearching={showSavedCourses} placeholderText="No courses saved. Try searching for something!" />
+      ) : (
         <ReactSortable
           {...courseSearchSortable}
           list={shownCourses}
@@ -68,19 +48,15 @@ const AllCourseSearch: FC = () => {
             const missingPrerequisites = getMissingPrerequisites(clearedCourses, course);
             return (
               <Course
-                data={course}
                 key={i}
-                addMode={isMobile ? 'tap' : 'drag'}
-                openPopoverLeft={true}
+                course={course}
                 requiredCourses={missingPrerequisites}
+                openPopoverLeft={true}
+                addMode={isMobile ? 'tap' : 'drag'}
               />
             );
           })}
         </ReactSortable>
-      ) : (
-        <div className="no-results">
-          <SearchPlaceholder searchInProgress={searchInProgress} showSavedCourses={showSavedCourses} />
-        </div>
       )}
     </>
   );

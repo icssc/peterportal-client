@@ -88,7 +88,8 @@ const Profile = () => {
     <>
       <div className="profile-popover__header">
         <button onClick={() => setTab('default')}>
-          <ArrowCircleLeftIcon /> <span>Back</span>
+          <ArrowCircleLeftIcon />
+          Back
         </button>
       </div>
       <div className="profile-popover__links">
@@ -98,9 +99,7 @@ const Profile = () => {
               className={`theme-popover__link${!usingSystemTheme && !darkMode ? ' active' : ''}`}
               onClick={() => setTheme('light')}
             >
-              <div>
-                <LightModeIcon />
-              </div>
+              <LightModeIcon />
               Light
             </button>
           </li>
@@ -109,9 +108,7 @@ const Profile = () => {
               className={`theme-popover__link${!usingSystemTheme && darkMode ? ' active' : ''}`}
               onClick={() => setTheme('dark')}
             >
-              <div>
-                <DarkModeIcon />
-              </div>
+              <DarkModeIcon />
               Dark
             </button>
           </li>
@@ -120,9 +117,7 @@ const Profile = () => {
               className={`theme-popover__link${usingSystemTheme ? ' active' : ''}`}
               onClick={() => setTheme('system')}
             >
-              <div>
-                <LaptopIcon />
-              </div>
+              <LaptopIcon />
               System
             </button>
           </li>
@@ -131,12 +126,7 @@ const Profile = () => {
     </>
   );
 
-  const ProfilePopover = (
-    <Popover id="profile-popover">
-      {tab === 'default' && DefaultTab}
-      {tab === 'theme' && ThemeTab}
-    </Popover>
-  );
+  const ProfilePopover = <Popover id="profile-popover">{tab === 'default' ? DefaultTab : ThemeTab}</Popover>;
 
   return (
     <>
@@ -170,9 +160,7 @@ const Profile = () => {
       ) : (
         <a href={`/api/users/auth/google`}>
           <Button variant={darkMode ? 'dark' : 'light'}>
-            <span>
-              <ExitToAppIcon className="exit-icon" />
-            </span>
+            <ExitToAppIcon className="exit-icon" />
             Log In
           </Button>
         </a>

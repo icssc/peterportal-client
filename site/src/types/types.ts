@@ -14,9 +14,6 @@ export interface ScoreData {
   id: string;
 }
 
-export type SearchIndex = 'courses' | 'professors';
-export type SearchType = 'course' | 'professor';
-
 /**
  * Peter's Roadmaps Type Definitions
  */
@@ -62,9 +59,8 @@ export interface CourseLookup {
   [courseid: string]: CoursePreview;
 }
 
-export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
-
 export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
+  type: 'course';
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
   dependents: CourseLookup;
@@ -74,7 +70,10 @@ export interface BatchCourseData {
   [courseid: string]: CourseGQLData;
 }
 
+export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
+
 export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
+  type: 'professor';
   courses: CourseWithTermsLookup;
 };
 
@@ -82,4 +81,8 @@ export interface BatchProfessorData {
   [ucinetid: string]: ProfessorGQLData;
 }
 
+export type GQLDataType = 'course' | 'professor';
+export type GQLData = CourseGQLData | ProfessorGQLData;
+
+export type SearchIndex = 'courses' | 'professors';
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../store';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 // Define a type for the slice state
@@ -30,9 +29,4 @@ export const reviewSlice = createSlice({
 });
 
 export const { setCourse, setProfessor } = reviewSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-export const selectCourse = (state: RootState) => state.popup.course;
-export const selectProfessor = (state: RootState) => state.popup.professor;
-
 export default reviewSlice.reducer;

@@ -1,14 +1,80 @@
 import { FC } from 'react';
 import './SearchPopup.scss';
-import GradeDist from '../GradeDist/GradeDist';
+import 'react-multi-carousel/lib/styles.css';
+
+import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Carousel from 'react-multi-carousel';
-import searching from '../../asset/searching.webp';
 
-import { useAppSelector } from '../../store/hooks';
-import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
-import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
-import { Link } from 'react-router-dom';
+import GradeDist from '../GradeDist/GradeDist';
+import searching from '../../asset/searching.webp';
+import { GQLData, GQLDataType, ScoreData } from '../../types/types';
+
+interface SearchPopupCarouselProps {
+  dataType: GQLDataType;
+  scores: ScoreData[];
+}
+
+const SearchPopupCarousel: FC<SearchPopupCarouselProps> = ({ dataType, scores }) => {
+  const responsive = {
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+      partialVisibilityGutter: 60,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+      partialVisibilityGutter: 50,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      partialVisibilityGutter: 30,
+    },
+  };
+
+  const getCarouselScore = (rating: number) => {
+    return rating === -1 ? '?' : Number.isInteger(rating) ? rating : rating.toFixed(2);
+  };
+
+  return (
+    <Carousel responsive={responsive} renderButtonGroupOutside>
+      {scores.map((datum, i) => (
+        <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
+          <div>
+            <span className="search-popup-carousel-score">{getCarouselScore(datum.avgRating)}</span>
+            <span className="search-popup-carousel-max-score">/ 5.0</span>
+          </div>
+          <Link to={`/${dataType === 'course' ? 'professor' : 'course'}/${datum.id}`}>
+            <span className="search-popup-professor-name" title={datum.name}>
+              {datum.name.split(' ').map((part, i) => (
+                <span key={i} className={part.length > 13 ? 'ellipsis' : ''}>
+                  {part}
+                </span>
+              ))}
+            </span>
+          </Link>
+        </div>
+      ))}
+    </Carousel>
+  );
+};
+
+interface SearchPopupPlaceholderProps {
+  dataType: GQLDataType;
+}
+
+export const SearchPopupPlaceholder: FC<SearchPopupPlaceholderProps> = ({ dataType }) => {
+  return (
+    <div className="side-panel search-popup">
+      <div className="search-popup-missing">
+        <img style={{ width: '80%' }} src={searching} alt="searching" />
+        <p>Click on a {dataType} card to view more information!</p>
+      </div>
+    </div>
+  );
+};
 
 interface InfoData {
   title: string;
@@ -16,76 +82,31 @@ interface InfoData {
 }
 
 interface SearchPopupProps {
-  searchType: SearchType;
-  name: string;
+  data: GQLData;
   id: string;
+  name: string;
   title: string;
   infos: InfoData[];
   scores: ScoreData[];
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
 }
 
-const SearchPopup: FC<SearchPopupProps> = (props) => {
-  const course = useAppSelector(selectCourse);
-  const professor = useAppSelector(selectProfessor);
-
-  let selected = false;
-  if (props.searchType == 'course') {
-    selected = course != null;
-  } else if (props.searchType == 'professor') {
-    selected = professor != null;
-  }
-
-  if (!selected) {
-    return (
-      <div className="side-panel search-popup">
-        <div className="search-popup-missing">
-          <img style={{ width: '80%' }} src={searching} alt="searching" />
-          <p>Click on a {props.searchType} card to view more information!</p>
-        </div>
-      </div>
-    );
-  } else {
-    return <SearchPopupContent {...props} />;
-  }
-};
-
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 3,
-    paritialVisibilityGutter: 60,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 2,
-    paritialVisibilityGutter: 50,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-    paritialVisibilityGutter: 30,
-  },
-};
-
-const SearchPopupContent: FC<SearchPopupProps> = (props) => {
+export const SearchPopup: FC<SearchPopupProps> = ({ data, id, name, title, infos, scores }) => {
   return (
     <div className="side-panel search-popup">
       <div className="search-popup-header">
         <h2 className="search-popup-id">
-          {props.name}
-          <Link to={`/${props.searchType}/${props.id}`}>
+          {name}
+          <Link to={`/${data.type}/${id}`}>
             <Button type="button" className="search-popup-more btn btn-outline-primary">
               More Information
             </Button>
           </Link>
         </h2>
-        <h5 className="search-popup-title">{props.title}</h5>
+        <h5 className="search-popup-title">{title}</h5>
       </div>
       <div>
         <div className="search-popup-infos">
-          {props.infos.map((info, i) => (
+          {infos.map((info, i) => (
             <div className="search-popup-info search-popup-block" key={`search-popup-info-${i}`}>
               <h3>{info.title}</h3>
               <p>{info.content || `No ${info.title}`}</p>
@@ -95,49 +116,14 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
 
         <h2 className="search-popup-label">Grade Distribution</h2>
         <div className="search-popup-block">
-          <GradeDist course={props.course} professor={props.professor} minify={true} />
+          <GradeDist data={data} minify={true} />
         </div>
 
-        <h2 className="search-popup-label">
-          {props.searchType == 'course' ? 'Current Instructors' : 'Previously Taught'}
-        </h2>
+        <h2 className="search-popup-label">{data.type === 'course' ? 'Current Instructors' : 'Previously Taught'}</h2>
         <div>
-          {props.scores.length > 0 ? (
-            <Carousel responsive={responsive} renderButtonGroupOutside>
-              {props.scores.map((score, i) => (
-                <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
-                  <div>
-                    <span className="search-popup-carousel-score">
-                      {score.avgRating == -1
-                        ? '?'
-                        : Number.isInteger(score.avgRating)
-                          ? score.avgRating
-                          : score.avgRating.toFixed(2)}
-                    </span>
-                    <span className="search-popup-carousel-max-score">/ 5.0</span>
-                  </div>
-                  <Link to={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
-                    <span className="search-popup-professor-name" title={score.name}>
-                      {score.name.split(' ').map((part, idx) => {
-                        const isTooLong = part.length > 13;
-                        return (
-                          <span key={idx} className={isTooLong ? 'ellipsis' : ''}>
-                            {part}
-                          </span>
-                        );
-                      })}
-                    </span>
-                  </Link>
-                </div>
-              ))}
-            </Carousel>
-          ) : (
-            'No Instructors Found'
-          )}
+          {scores.length === 0 ? 'No Instructors Found' : <SearchPopupCarousel dataType={data.type} scores={scores} />}
         </div>
       </div>
     </div>
   );
 };
-
-export default SearchPopup;

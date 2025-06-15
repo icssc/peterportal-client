@@ -6,60 +6,12 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
-
-import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { toggleFormStatus } from '../../store/slices/reviewSlice';
 import RecentOfferings from '../RecentOfferings/RecentOfferings';
 
-interface FeaturedInfoData {
-  searchType: SearchType;
-  featureType: 'Highest' | 'Lowest';
-  averageReviews: { [key: string]: AverageReview };
-  reviewKey: string;
-  displayName: string;
-}
-
-const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
-  if (averageReviews[reviewKey] === undefined) {
-    return null;
-  }
-
-  // rating and difficulty were constructed as totals (??)
-  const { rating, difficulty, count } = averageReviews[reviewKey];
-
-  return (
-    <div className="ratings-widget">
-      <div className="column">
-        <p className="field-name">{featureType} Rated</p>
-        <p className="field-value">
-          <Link to={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
-            {displayName}
-          </Link>
-        </p>
-      </div>
-      <div className="column">
-        <p className="field-name">Rating</p>
-        <p className="field-value">{(rating / count).toFixed(2)} / 5</p>
-      </div>
-      <div className="column">
-        <p className="field-name">Difficulty</p>
-        <p className="field-value">{(difficulty / count).toFixed(2)} / 5</p>
-      </div>
-    </div>
-  );
-};
-
-interface SideInfoProps {
-  searchType: SearchType;
-  name: string;
-  title: string;
-  description: string;
-  tags: string[];
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
-  terms?: string[];
-}
+import { GQLData, GQLDataType } from '../../types/types';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import { pluralize, capitalize, getCourseIdFromProfessor } from '../../helpers/util';
 
 interface AverageReview {
   count: number;
@@ -68,18 +20,156 @@ interface AverageReview {
   takeAgain: number;
 }
 
-const SideInfo: FC<SideInfoProps> = (props) => {
+interface AverageReviews {
+  [key: string]: AverageReview;
+}
+
+interface CourseSynopsisProps {
+  name: string;
+  title: string;
+  description: string;
+  tags: string[];
+  terms?: string[];
+}
+
+const CourseSynopsis: FC<CourseSynopsisProps> = ({ name, title, description, tags, terms }) => {
+  return (
+    <div className="course-synopsis">
+      <div className="title-and-offerings">
+        <h2>{name}</h2>
+        {terms && <CourseQuarterIndicator terms={terms} size="sm" />}
+      </div>
+      <h3>{title}</h3>
+      <p className="description">{description}</p>
+      <div className="tags">
+        {tags.map((tag, i) => (
+          <Badge pill variant="info" key={`side-info-badge-${i}`}>
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface AverageRatingButtonsProps {
+  data: GQLData;
+  averageReviews: AverageReviews;
+  selectedReview: string;
+  setSelectedReview: (review: string) => void;
+}
+
+const AverageRatingButtons: FC<AverageRatingButtonsProps> = ({
+  data,
+  averageReviews,
+  selectedReview,
+  setSelectedReview,
+}) => {
   const dispatch = useAppDispatch();
-  const allToken = 'All ' + (props.searchType == 'course' ? 'Instructors' : 'Courses');
+  const addReview = () => dispatch(toggleFormStatus());
+  const sortedKeys = Object.keys(averageReviews).sort((a, b) => averageReviews[b].count - averageReviews[a].count);
+
+  return (
+    <div className="side-info-buttons">
+      <DropdownButton title={selectedReview} variant="secondary" onSelect={(e) => setSelectedReview(e as string)}>
+        {sortedKeys.map((key, index) => (
+          <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+            {getCourseIdFromProfessor(data, key)}
+          </Dropdown.Item>
+        ))}
+      </DropdownButton>
+      <Button variant="primary" onClick={addReview}>
+        Rate {data.type}
+      </Button>
+    </div>
+  );
+};
+
+interface AverageRatingStatsProps {
+  dataType: GQLDataType;
+  averageReviews: AverageReviews;
+  selectedReview: string;
+}
+
+const AverageRatingStats: FC<AverageRatingStatsProps> = ({ dataType, averageReviews, selectedReview }) => {
+  if (Object.keys(averageReviews).length <= 1) {
+    return <span className="side-info-selected-based">No reviews found for this {dataType}!</span>;
+  }
+
+  const { count, rating, difficulty, takeAgain } = averageReviews[selectedReview];
+  const reviewData = [
+    { label: `${capitalize(dataType)} Rating`, value: (rating / count).toFixed(2) },
+    { label: 'Would Take Again', value: ((100 * takeAgain) / count).toFixed(0) + '%' },
+    { label: 'Difficulty Level', value: (difficulty / count).toFixed(2) },
+  ];
+
+  return (
+    <>
+      <div className="side-info-selected-based">
+        Based on {count} review{pluralize(count)}
+      </div>
+      <div className="side-info-selected-rating">
+        {reviewData.map(({ label, value }) => (
+          <div className="side-info-stat" key={label}>
+            <div className="side-info-stat-label">{label}</div>
+            <div className="side-info-stat-value">{value}</div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+interface FeaturedItemData {
+  data: GQLData;
+  averageReviews: AverageReviews;
+  featureType: 'Highest' | 'Lowest';
+  reviewKey: string;
+}
+
+const FeaturedItem: FC<FeaturedItemData> = ({ data, averageReviews, featureType, reviewKey }) => {
+  const linkPath = `/${data.type === 'course' ? 'professor' : 'course'}/${reviewKey}`;
+  const { rating, difficulty, count } = averageReviews[reviewKey];
+  const courseId = getCourseIdFromProfessor(data, reviewKey);
+
+  const columns = [
+    { label: `${featureType} Rated`, value: <Link to={{ pathname: linkPath }}>{courseId}</Link> },
+    { label: 'Rating', value: `${(rating / count).toFixed(2)} / 5` },
+    { label: 'Difficulty', value: `${(difficulty / count).toFixed(2)} / 5` },
+  ];
+
+  return (
+    <div className="ratings-widget">
+      {columns.map(({ label, value }, index) => (
+        <div className="column" key={index}>
+          <p className="field-name">{label}</p>
+          <p className="field-value">{value}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface SideInfoProps {
+  data: GQLData;
+  name: string;
+  title: string;
+  description: string;
+  tags: string[];
+  terms?: string[];
+}
+
+const SideInfo: FC<SideInfoProps> = ({ data, name, title, description, tags, terms }) => {
   const reviews = useAppSelector((state) => state.review.reviews);
-  const [averageReviews, setAverageReviews] = useState<{ [key: string]: AverageReview }>({});
+  const [averageReviews, setAverageReviews] = useState<AverageReviews>({});
+  const [selectedReview, setSelectedReview] = useState('');
   const [highestReview, setHighestReview] = useState('');
   const [lowestReview, setLowestReview] = useState('');
-  const [selectedReview, setSelectedReview] = useState('');
+  const capitalizedOtherDataType = data.type === 'course' ? 'Instructors' : 'Courses';
 
   useEffect(() => {
-    const newAverageReviews: { [key: string]: AverageReview } = {};
-    const allReviews = {
+    const newAverageReviews: AverageReviews = {};
+    const allReviews: AverageReview = {
       count: 0,
       rating: 0,
       difficulty: 0,
@@ -87,13 +177,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     };
 
     reviews.forEach((review) => {
-      let key = '';
-      // determine the key to group reviews by
-      if (props.searchType == 'course') {
-        key = review.professorId;
-      } else if (props.searchType == 'professor') {
-        key = review.courseId;
-      }
+      // determine key based on data type
+      const key = data.type === 'course' ? review.professorId : review.courseId;
 
       // add review entry
       if (!Object.prototype.hasOwnProperty.call(newAverageReviews, key)) {
@@ -104,10 +189,14 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           takeAgain: 0,
         };
       }
+
+      // update review entry
       newAverageReviews[key].count += 1;
       newAverageReviews[key].rating += review.rating;
       newAverageReviews[key].difficulty += review.difficulty;
       newAverageReviews[key].takeAgain += review.takeAgain ? 1 : 0;
+
+      // update all reviews entry
       allReviews.count += 1;
       allReviews.rating += review.rating;
       allReviews.difficulty += review.difficulty;
@@ -115,14 +204,14 @@ const SideInfo: FC<SideInfoProps> = (props) => {
     });
 
     // find highest and lowest reviews
-    const sortedKeys = Object.keys(newAverageReviews);
-    sortedKeys.sort(
+    const sortedKeys = Object.keys(newAverageReviews).sort(
       (a, b) =>
         newAverageReviews[a].rating / newAverageReviews[a].count -
         newAverageReviews[b].rating / newAverageReviews[b].count,
     );
 
     // set the all token to all reviews
+    const allToken = `All ${capitalizedOtherDataType}`;
     newAverageReviews[allToken] = allReviews;
 
     // set reviews to state
@@ -132,153 +221,34 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       setHighestReview(sortedKeys[sortedKeys.length - 1]);
       setLowestReview(sortedKeys[0]);
     }
-  }, [reviews, allToken, props.searchType]);
-
-  // sort by number of reviews for the dropdown
-  const sortedReviews = Object.keys(averageReviews);
-  sortedReviews.sort((a, b) => averageReviews[b].count - averageReviews[a].count);
-
-  const { count, rating, difficulty, takeAgain } = averageReviews[selectedReview] ?? {};
-  const hasReviews = Object.keys(averageReviews).length > 1; // always has "All Instructors"
+  }, [reviews, data, capitalizedOtherDataType]);
 
   return (
-    <div className="side-content-wrapper">
-      <div className="side-info">
-        <div className="course-synopsis">
-          <div className="title-and-offerings">
-            <h2>{props.name}</h2>
-            {props.terms && <CourseQuarterIndicator terms={props.terms} size="sm" />}
-          </div>
-          <h3>{props.title}</h3>
+    <div className="side-info">
+      <CourseSynopsis name={name} title={title} description={description} tags={tags} terms={terms} />
 
-          <p className="description">{props.description}</p>
-          <div className="tags">
-            {props.tags.map((tag, i) => (
-              <Badge pill variant="info" key={`side-info-badge-${i}`}>
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        </div>
+      {terms?.length && <RecentOfferings terms={terms} />}
 
-        {props.terms?.length ? <RecentOfferings terms={props.terms} /> : null}
-
-        <div className="side-info-ratings">
-          <h2>Average Rating</h2>
-          <div className="side-info-buttons">
-            {/* Dropdown to select specific course/professor */}
-            <DropdownButton
-              title={selectedReview}
-              variant="secondary"
-              onSelect={(e) => {
-                setSelectedReview(e as string);
-              }}
-            >
-              {sortedReviews.map((key, index) => (
-                <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
-                  {props.searchType == 'course' &&
-                    (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
-                  {props.searchType == 'professor' &&
-                    (props.professor?.courses[key]
-                      ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
-                      : key)}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
-
-            {/* Add a review */}
-            <Button
-              variant="primary"
-              onClick={() => {
-                dispatch(toggleFormStatus());
-              }}
-            >
-              Rate {props.searchType}
-            </Button>
-          </div>
-          {hasReviews && (
-            <>
-              {/* Show stats of selected course/professor */}
-              {selectedReview && (
-                <>
-                  <div className="side-info-selected-based">Based on {count} reviews</div>
-                  <div className="side-info-selected-rating">
-                    <div className="side-info-stat">
-                      <div className="side-info-stat-label">
-                        {props.searchType.replace(/./, (x) => x.toUpperCase())} Rating
-                      </div>
-                      <div className="side-info-stat-value">{count > 0 ? (rating / count).toFixed(2) : '\u2013'}</div>
-                    </div>
-
-                    <div className="side-info-stat">
-                      <div className="side-info-stat-label">Would Take Again</div>
-                      <div className="side-info-stat-value">
-                        {count > 0 ? ((takeAgain / count) * 100).toFixed(0) + '%' : '\u2013'}
-                      </div>
-                    </div>
-
-                    <div className="side-info-stat">
-                      <div className="side-info-stat-label">Difficulty Level</div>
-                      <div className="side-info-stat-value">
-                        {count > 0 ? (difficulty / count).toFixed(2) : '\u2013'}
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </>
-          )}
-          {!hasReviews && (
-            <span className="side-info-selected-based">No reviews found for this {props.searchType}!</span>
-          )}
-        </div>
-
-        {hasReviews && (
-          <div className="side-info-featured">
-            <h2>{props.searchType == 'course' ? 'Instructors' : 'Courses'}</h2>
-            <div className="featured-items">
-              {highestReview && (
-                <FeaturedInfo
-                  searchType={props.searchType}
-                  featureType="Highest"
-                  averageReviews={averageReviews}
-                  reviewKey={highestReview}
-                  displayName={
-                    props.searchType == 'course'
-                      ? (Object.values(props.course?.instructors ?? {})?.find(
-                          ({ ucinetid }) => ucinetid === highestReview,
-                        )?.name ?? '')
-                      : props.professor?.courses[highestReview]
-                        ? props.professor?.courses[highestReview].department +
-                          ' ' +
-                          props.professor?.courses[highestReview].courseNumber
-                        : highestReview
-                  }
-                />
-              )}
-              {lowestReview && (
-                <FeaturedInfo
-                  searchType={props.searchType}
-                  featureType="Lowest"
-                  averageReviews={averageReviews}
-                  reviewKey={lowestReview}
-                  displayName={
-                    props.searchType == 'course'
-                      ? (Object.values(props.course?.instructors ?? {})?.find(
-                          ({ ucinetid }) => ucinetid === lowestReview,
-                        )?.name ?? '')
-                      : props.professor?.courses[lowestReview]
-                        ? props.professor?.courses[lowestReview].department +
-                          ' ' +
-                          props.professor?.courses[lowestReview].courseNumber
-                        : lowestReview
-                  }
-                />
-              )}
-            </div>
-          </div>
-        )}
+      <div className="side-info-ratings">
+        <h2>Average Rating</h2>
+        <AverageRatingButtons
+          data={data}
+          averageReviews={averageReviews}
+          selectedReview={selectedReview}
+          setSelectedReview={setSelectedReview}
+        />
+        <AverageRatingStats dataType={data.type} averageReviews={averageReviews} selectedReview={selectedReview} />
       </div>
+
+      {Object.keys(averageReviews).length > 1 && (
+        <div className="side-info-featured">
+          <h2>{capitalizedOtherDataType}</h2>
+          <div className="featured-items">
+            <FeaturedItem data={data} averageReviews={averageReviews} featureType="Highest" reviewKey={highestReview} />
+            <FeaturedItem data={data} averageReviews={averageReviews} featureType="Lowest" reviewKey={lowestReview} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

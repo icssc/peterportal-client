@@ -15,6 +15,7 @@ import { getCssVariable } from './styling';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
+  type: 'course',
   id: 'Loading...',
   department: 'Loading...',
   courseNumber: '',

@@ -1,57 +1,41 @@
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useCallback } from 'react';
 import './TransferCreditsMenu.scss';
 import { CSSTransition } from 'react-transition-group';
-import { useIsMobile } from '../../../helpers/util';
+
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
-import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
 
-export const ToggleTransfersButton: FC = () => {
-  const isMobile = useIsMobile();
+import { setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useLoadTransferredCredits, useToggleTransfers } from '../../../hooks/transferCredits';
+import { useToggleRef } from '../../../hooks/planner';
+import { useIsMobile } from '../../../helpers/util';
+
+const TransferCreditsMenu: FC = () => {
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+
   const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
+  useLoadTransferredCredits();
+  const setToggleTransfers = useToggleTransfers();
+  const { overlayRef, sidebarRef } = useToggleRef(isMobile, show);
 
-  const toggleMenu = () => {
-    if (show) {
-      // After closing the menu, clear all the unread markers
-      dispatch(clearUnreadTransfers());
-    }
-    dispatch(setShowTransfersMenu(!show));
-  };
+  const closeMenu = useCallback(() => dispatch(setShowTransfersMenu(false)), [dispatch]);
+  const toggleTransfers = () => setToggleTransfers(show);
 
-  return (
-    <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleMenu}>
+  useEffect(() => {
+    if (isMobile) return;
+    closeMenu();
+  }, [isMobile, closeMenu]);
+
+  const ToggleTransfersButton = () => (
+    <button className={`toggle-transfers-button ${isMobile ? 'mobile' : ''}`} onClick={toggleTransfers}>
       Done Editing Credits
     </button>
   );
-};
-
-const TransferCreditsMenu: FC = () => {
-  const isMobile = useIsMobile();
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
-  useLoadTransferredCredits();
-
-  const dispatch = useAppDispatch();
-
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isMobile) return;
-    sidebarRef.current?.classList.toggle('enter-done', show);
-    overlayRef.current?.classList.toggle('enter-done', show);
-  }, [isMobile, show]);
-
-  useEffect(() => {
-    if (!isMobile) dispatch(setShowTransfersMenu(false));
-  }, [dispatch, isMobile]);
-
-  const closeMenu = () => dispatch(setShowTransfersMenu(false));
 
   return (
     <>

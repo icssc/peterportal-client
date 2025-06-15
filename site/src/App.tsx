@@ -10,14 +10,13 @@ import AppHeader from './component/AppHeader/AppHeader';
 import AppThemeProvider from './component/AppThemeProvider/AppThemeProvider';
 import ChangelogModal from './component/ChangelogModal/ChangelogModal';
 import SideBar from './component/SideBar/SideBar';
+import Error from './component/Error/Error';
 
 import SearchPage from './pages/SearchPage';
-import CoursePage from './pages/CoursePage';
-import ProfessorPage from './pages/ProfessorPage';
+import ResultPage from './pages/ResultPage';
 import RoadmapPage from './pages/RoadmapPage';
 import AdminPage from './pages/AdminPage';
 import ReviewsPage from './pages/ReviewsPage';
-import ErrorPage from './pages/ErrorPage';
 
 import { useLoadSavedCourses } from './hooks/savedCourses';
 
@@ -32,14 +31,14 @@ export default function App() {
           <SideBar />
           <div className="app-content">
             <Routes>
-              <Route path="/roadmap" element={<RoadmapPage />} />
               <Route path="/" element={<SearchPage />} />
               <Route path="/search/:index" element={<SearchPage />} />
-              <Route path="/course/:id" element={<CoursePage />} />
-              <Route path="/professor/:id" element={<ProfessorPage />} />
+              <Route path="/course/:id" element={<ResultPage dataType="course" />} />
+              <Route path="/professor/:id" element={<ResultPage dataType="professor" />} />
+              <Route path="/roadmap" element={<RoadmapPage />} />
               <Route path="/admin/*" element={<AdminPage />} />
               <Route path="/reviews" element={<ReviewsPage />} />
-              <Route path="*" element={<ErrorPage />} />
+              <Route path="*" element={<Error />} />
             </Routes>
           </div>
           <ChangelogModal />

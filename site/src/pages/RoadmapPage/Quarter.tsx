@@ -36,20 +36,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-  const isDragging = activeCourse !== undefined;
-
-  const calculateQuarterStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
-    data.courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount += 1;
-    });
-    return [unitCount, courseCount];
-  };
-
-  const unitCount = calculateQuarterStats()[0];
-
+  const unitCount = data.courses.reduce((sum, course) => sum + course.minUnits, 0);
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
   const removeCourseAt = useCallback(
@@ -58,7 +45,9 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     },
     [dispatch, quarterIndex, yearIndex],
   );
+
   const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
+
   const addCourse = async (event: SortableEvent) => {
     const movePayload = {
       from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
@@ -67,6 +56,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     if (activeCourseLoading) setMoveCourseTrigger(movePayload);
     else dispatch(moveCourse(movePayload));
   };
+
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
     const movePayload = {
@@ -74,6 +64,11 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
       to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
     };
     dispatch(moveCourse(movePayload));
+  };
+
+  const setDraggedItem = (event: SortableEvent) => {
+    const course = data.courses[event.oldIndex!];
+    dispatch(setActiveCourse(course));
   };
 
   useEffect(() => {
@@ -88,11 +83,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     dispatch(moveCourse(moveCourseTrigger));
     dispatch(setActiveCourse(undefined));
   }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
-
-  const setDraggedItem = (event: SortableEvent) => {
-    const course = data.courses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
-  };
 
   return (
     <Card className="quarter" ref={quarterContainerRef} variant="outlined">
@@ -116,7 +106,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
       </div>
       <ReactSortable
         list={coursesCopy}
-        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
+        className={`quarter-course-list ${activeCourse ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
@@ -129,22 +119,20 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
-          let requiredCourses: string[] = null!;
-          // if this is an invalid course, set the required courses
-          invalidCourses.forEach((ic) => {
-            const loc = ic.location;
-            if (loc.courseIndex == index && loc.quarterIndex == quarterIndex && loc.yearIndex == yearIndex) {
-              requiredCourses = ic.required;
-            }
-          });
+          const requiredCourses = invalidCourses.find(
+            (ic) =>
+              ic.location.courseIndex === index &&
+              ic.location.quarterIndex === quarterIndex &&
+              ic.location.yearIndex === yearIndex,
+          )?.required;
 
           return (
-            // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
             <Course
               key={index}
-              data={course}
+              course={course}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
+              // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
               addMode="drag"
             />
           );

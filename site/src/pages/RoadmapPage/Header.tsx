@@ -4,8 +4,8 @@ import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from './AddYearPopup';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setShowTransfersMenu, clearUnreadTransfers } from '../../store/slices/transferCreditsSlice';
+import { useAppSelector } from '../../store/hooks';
+import { useToggleTransfers } from '../../hooks/transferCredits';
 import UnreadDot from '../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
@@ -19,25 +19,15 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
-  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
-  const dispatch = useAppDispatch();
+  const { showTransfersMenu, transferredCourses, userAPExams, uncategorizedCourses } = useAppSelector(
+    (state) => state.transferCredits,
+  );
 
-  const toggleTransfers = () => {
-    if (showTransfers) {
-      // After closing the menu, clear all the unread markers
-      dispatch(clearUnreadTransfers());
-    }
-    dispatch(setShowTransfersMenu(!showTransfers));
-  };
+  const setToggleTransfers = useToggleTransfers();
+  const toggleTransfers = () => setToggleTransfers(showTransfersMenu);
 
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
-
-  const hasUnreadTransfers =
-    transferredCourses.some((course) => course.unread) ||
-    userAPExams.some((ap) => ap.unread) ||
-    uncategorizedCourses.some((course) => course.unread);
+  const hasUnread = (group: { unread?: boolean }[]) => group.some((item) => item.unread);
+  const hasUnreadTransfers = hasUnread(transferredCourses) || hasUnread(userAPExams) || hasUnread(uncategorizedCourses);
 
   return (
     <div className="header">

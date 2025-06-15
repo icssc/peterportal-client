@@ -1,22 +1,24 @@
 import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import './Review.scss';
+import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
+
 import SubReview from './SubReview';
 import ReviewForm from '../ReviewForm/ReviewForm';
-import './Review.scss';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
-import trpc from '../../trpc';
+import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { ReviewData } from '@peterportal/types';
+import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
+import { getCourseIdFromProfessor } from '../../helpers/util';
 
 import AddIcon from '@mui/icons-material/Add';
 
-export interface ReviewProps {
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
-  terms?: string[];
+interface Option {
+  text: string;
+  value: string | number;
 }
 
 enum SortingOption {
@@ -25,203 +27,194 @@ enum SortingOption {
   CONTROVERSIAL,
 }
 
-const Review: FC<ReviewProps> = (props) => {
-  const dispatch = useAppDispatch();
-  const reviewData = useAppSelector(selectReviews);
-  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
-  const [filterOption, setFilterOption] = useState('');
-  const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
-  const showForm = useAppSelector((state) => state.review.formOpen);
+interface ReviewProps {
+  data: GQLData;
+}
+
+interface SortFilterMenuProps {
+  data: GQLData;
+  sortedReviews: ReviewData[];
+  sortingOption: SortingOption;
+  setSortingOption: (option: SortingOption) => void;
+  filterOption: string;
+  setFilterOption: (option: string) => void;
+  showOnlyVerifiedReviews: boolean;
+  setShowOnlyVerifiedReviews: (showOnly: boolean) => void;
+}
+
+const SortFilterMenu: FC<SortFilterMenuProps> = ({
+  data,
+  sortedReviews,
+  sortingOption,
+  setSortingOption,
+  filterOption,
+  setFilterOption,
+  showOnlyVerifiedReviews,
+  setShowOnlyVerifiedReviews,
+}) => {
   const { darkMode } = useContext(ThemeContext);
   const buttonVariant = darkMode ? 'dark' : 'light';
 
-  const getReviews = useCallback(async () => {
-    interface paramsProps {
-      courseId?: string;
-      professorId?: string;
-    }
-    const params: paramsProps = {};
-    if (props.course) params.courseId = props.course.id;
-    if (props.professor) params.professorId = props.professor.ucinetid;
-    const reviews = await trpc.reviews.get.query(params);
-    dispatch(setReviews(reviews));
-  }, [dispatch, props.course, props.professor]);
+  const reviewSortOptions = [
+    { text: 'Most Recent', value: SortingOption.MOST_RECENT },
+    { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
+    { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
+  ];
 
-  useEffect(() => {
-    // prevent reviews from carrying over
-    dispatch(setReviews([]));
-    getReviews();
-  }, [dispatch, getReviews]);
-
-  let sortedReviews: ReviewData[];
-  // filter verified if option is set
-  if (showOnlyVerifiedReviews) {
-    sortedReviews = reviewData.filter((review) => review.verified);
-  } else {
-    // if not, clone reviewData since its const
-    sortedReviews = reviewData.slice(0);
-  }
+  const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text ?? 'Sort Reviews...';
 
   // calculate frequencies of professors or courses in list of reviews
-  let reviewFreq = new Map<string, number>();
-  if (props.course) {
-    reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.professorId, (acc.get(review.professorId) || 0) + 1),
-      reviewFreq,
-    );
-  } else if (props.professor) {
-    reviewFreq = sortedReviews.reduce(
-      (acc, review) => acc.set(review.courseId, (acc.get(review.courseId) || 0) + 1),
-      reviewFreq,
-    );
+  const reviewFreq = sortedReviews.reduce((acc, review) => {
+    const key = data.type === 'course' ? review.professorId : review.courseId;
+    return acc.set(key, (acc.get(key) || 0) + 1);
+  }, new Map<string, number>());
+
+  const dataOptions: Option[] = [
+    {
+      text: data.type === 'course' ? 'All Professors' : 'All Courses',
+      value: '',
+    },
+    ...Object.keys(data.type === 'course' ? (data as CourseGQLData).instructors : (data as ProfessorGQLData).courses)
+      .map((id) => ({
+        text: `${getCourseIdFromProfessor(data, id)} (${reviewFreq.get(id) || 0})`,
+        value: id,
+      }))
+      .filter(({ value }) => reviewFreq.get(value))
+      .sort((a, b) => a.text.localeCompare(b.text)),
+  ];
+
+  const selectedOptionText =
+    dataOptions.find((option) => option.value === filterOption)?.text ??
+    `Select ${data.type === 'course' ? 'Professor' : 'Course'}...`;
+
+  interface TempButtonProps {
+    title: string;
+    onSelect?: (eventKey: string | null) => void;
+    options: Option[];
   }
 
-  if (filterOption.length > 0) {
-    if (props.course) {
-      // filter course reviews by specific professor
-      sortedReviews = sortedReviews.filter((review) => review.professorId === filterOption);
-    } else if (props.professor) {
-      // filter professor reviews by specific course
-      sortedReviews = sortedReviews.filter((review) => review.courseId === filterOption);
-    }
+  const SortDropdownButton: FC<TempButtonProps> = ({ title, onSelect, options }) => {
+    return (
+      <div className="sort-dropdown">
+        <DropdownButton className="ppc-dropdown-btn" title={title} variant={buttonVariant} onSelect={onSelect}>
+          {options.map((option) => (
+            <Dropdown.Item key={option.value} eventKey={option.value}>
+              {option.text}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+      </div>
+    );
+  };
+
+  return (
+    <div className="sort-filter-menu">
+      <SortDropdownButton
+        title={selectedSortOptionText}
+        onSelect={(value) => setSortingOption(Number(value) as SortingOption)}
+        options={reviewSortOptions}
+      />
+      <SortDropdownButton
+        title={selectedOptionText}
+        onSelect={(value) => setFilterOption(value as string)}
+        options={dataOptions}
+      />
+      <div className="verified-only-checkbox">
+        <Form>
+          <Form.Check
+            type="checkbox"
+            label="Show verified reviews only"
+            id="Show verified reviews only"
+            checked={showOnlyVerifiedReviews}
+            onChange={() => setShowOnlyVerifiedReviews(!showOnlyVerifiedReviews)}
+          />
+        </Form>
+      </div>
+    </div>
+  );
+};
+
+const Review: FC<ReviewProps> = ({ data }) => {
+  const dispatch = useAppDispatch();
+  const reviewData = useAppSelector(selectReviews);
+  const showForm = useAppSelector((state) => state.review.formOpen);
+  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+  const [filterOption, setFilterOption] = useState('');
+  const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
+
+  const getReviews = useCallback(async () => {
+    // prevent reviews from carrying over
+    dispatch(setReviews([]));
+    const params =
+      data.type === 'course'
+        ? { courseId: (data as CourseGQLData).id }
+        : { professorId: (data as ProfessorGQLData).ucinetid };
+    const reviews = await trpc.reviews.get.query(params);
+    dispatch(setReviews(reviews));
+  }, [dispatch, data]);
+
+  useEffect(() => {
+    getReviews();
+  }, [getReviews]);
+
+  if (!reviewData) {
+    return <LoadingSpinner />;
   }
 
-  switch (sortingOption) {
-    case SortingOption.MOST_RECENT:
-      sortedReviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      break;
-    case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
-      sortedReviews.sort(
-        (a, b) => b.score - a.score || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-      break;
-    case SortingOption.CONTROVERSIAL:
-      sortedReviews.sort(
-        (a, b) => a.score - b.score || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-      break;
-  }
+  const sortedReviews = [...reviewData]
+    .filter((review) => !showOnlyVerifiedReviews || review.verified)
+    .filter(
+      (review) =>
+        filterOption.length === 0 || filterOption === (data.type === 'course' ? review.professorId : review.courseId),
+    )
+    .sort((a, b) => {
+      const mostRecentSort = () => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      switch (sortingOption) {
+        case SortingOption.TOP_REVIEWS:
+          return b.score - a.score || mostRecentSort();
+        case SortingOption.CONTROVERSIAL:
+          return a.score - b.score || mostRecentSort();
+        case SortingOption.MOST_RECENT:
+        default:
+          return mostRecentSort();
+      }
+    });
 
   const openReviewForm = () => {
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
   };
+
   const closeForm = () => {
     dispatch(setFormStatus(false));
     document.body.style.overflow = 'visible';
   };
 
-  if (!reviewData) {
-    return <p>Loading reviews..</p>;
-  } else {
-    /** @todo refactor. last change was just pulling this out of semantic */
-    const reviewSortOptions = [
-      { text: 'Most Recent', value: SortingOption.MOST_RECENT },
-      { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
-      { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
-    ];
-    const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text;
-
-    const professorOptions = [{ text: 'All Professors', value: '' }].concat(
-      Object.keys(props.course?.instructors ?? {})
-        .map((profID) => {
-          const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
-          return { text: name, value: profID };
-        })
-        .filter(({ value }) => reviewFreq.get(value))
-        .sort((a, b) => a.text.localeCompare(b.text)),
-    );
-    const courseOptions = [{ text: 'All Courses', value: '' }].concat(
-      Object.keys(props.professor?.courses ?? {})
-        .map((courseID) => {
-          const { department, courseNumber } = props.professor!.courses[courseID];
-          const reviewCt = reviewFreq.get(courseID) || 0;
-          const name = `${department} ${courseNumber} (${reviewCt})`;
-          return { text: name, value: courseID };
-        })
-        .filter(({ value }) => reviewFreq.get(value))
-        .sort((a, b) => a.text.localeCompare(b.text)),
-    );
-    const selectedProfessorOptionText = professorOptions.find((opt) => opt.value === filterOption)?.text;
-    const selectedCourseOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
-
-    return (
-      <>
-        <div className="reviews">
-          <div className="sort-filter-menu">
-            <div className="sort-dropdown">
-              <DropdownButton
-                className="ppc-dropdown-btn"
-                title={selectedSortOptionText}
-                variant={buttonVariant}
-                onSelect={(value) => setSortingOption(parseInt(value!) as SortingOption)}
-              >
-                {reviewSortOptions.map((opt) => (
-                  <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                    {opt.text}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            </div>
-            {props.course && (
-              <div className="filter-dropdown">
-                <DropdownButton
-                  className="ppc-dropdown-btn"
-                  title={selectedProfessorOptionText ?? 'Select Professor...'}
-                  variant={buttonVariant}
-                  onSelect={(value) => setFilterOption(value!)}
-                >
-                  {professorOptions.map((opt) => (
-                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                      {opt.text}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-              </div>
-            )}
-            {props.professor && (
-              <div className="filter-dropdown">
-                <DropdownButton
-                  className="ppc-dropdown-btn"
-                  title={selectedCourseOptionText ?? 'Select Course...'}
-                  variant={buttonVariant}
-                  onSelect={(value) => setFilterOption(value!)}
-                >
-                  {courseOptions.map((opt) => (
-                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                      {opt.text}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-              </div>
-            )}
-            <div className="verified-only-checkbox">
-              <Form>
-                <Form.Check
-                  type="checkbox"
-                  label="Show verified reviews only"
-                  id="Show verified reviews only"
-                  checked={showOnlyVerifiedReviews}
-                  onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
-                />
-              </Form>
-            </div>
-          </div>
-          {sortedReviews.length !== 0 && (
-            <div className="subreviews">
-              {sortedReviews.map((review) => (
-                <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
-              ))}
-            </div>
-          )}
-          <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
-            <AddIcon /> Add Review
-          </Button>
+  return (
+    <>
+      <div className="reviews">
+        <SortFilterMenu
+          data={data}
+          sortedReviews={sortedReviews}
+          sortingOption={sortingOption}
+          setSortingOption={setSortingOption}
+          filterOption={filterOption}
+          setFilterOption={setFilterOption}
+          showOnlyVerifiedReviews={showOnlyVerifiedReviews}
+          setShowOnlyVerifiedReviews={setShowOnlyVerifiedReviews}
+        />
+        <div className="subreviews">
+          {sortedReviews.map((review) => (
+            <SubReview review={review} key={review.id} dataType={data.type} data={data} />
+          ))}
         </div>
-        <ReviewForm closeForm={closeForm} show={showForm} {...props} />
-      </>
-    );
-  }
+        <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
+          <AddIcon /> Add Review
+        </Button>
+      </div>
+      <ReviewForm closeForm={closeForm} show={showForm} dataType={data.type} data={data} />
+    </>
+  );
 };
 
 export default Review;

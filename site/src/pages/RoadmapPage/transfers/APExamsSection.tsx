@@ -60,7 +60,11 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({ exam }) => {
+interface APCreditMenuTileProps {
+  exam: TransferWithUnread<TransferredAPExam>;
+}
+
+const APCreditMenuTile: FC<APCreditMenuTileProps> = ({ exam }) => {
   const { examName, score, units, unread } = exam;
 
   const updateScore = (value: number) => handleUpdate(value, units);
@@ -116,8 +120,7 @@ const APExamsSection: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
   const isDark = useContext(ThemeContext).darkMode;
-  const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
-  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const { apExamInfo, userAPExams } = useAppSelector((state) => state.transferCredits);
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 

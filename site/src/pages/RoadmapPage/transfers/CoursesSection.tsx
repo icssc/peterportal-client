@@ -13,7 +13,7 @@ import {
   TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { getCourseIdWithSpaces } from '../../../helpers/util';
+import { getCourseId } from '../../../helpers/util';
 
 interface CourseSelectOption {
   value: TransferredCourse;
@@ -57,8 +57,8 @@ const CoursesSection: FC = () => {
     const response = await trpc.search.get.query({ query, skip: 0, take: 10, resultType: 'course' });
     const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
     const options: CourseSelectOption[] = courses.map((c) => ({
-      value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
-      label: `${getCourseIdWithSpaces(c)}: ${c.title}`,
+      value: { courseName: getCourseId(c), units: c.maxUnits },
+      label: `${getCourseId(c)}: ${c.title}`,
     }));
     return options;
   };

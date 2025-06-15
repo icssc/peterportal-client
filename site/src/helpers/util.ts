@@ -4,8 +4,9 @@ import {
   ProfessorGQLData,
   BatchCourseData,
   BatchProfessorData,
-  SearchType,
+  GQLDataType,
   CourseWithTermsLookup,
+  GQLData,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
@@ -15,8 +16,7 @@ export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
   const tags: string[] = [];
   // units
-  const { minUnits, maxUnits } = course;
-  tags.push(`${minUnits === maxUnits ? maxUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`);
+  tags.push(getUnitText(course));
   // course level
   const courseLevel = course.courseLevel;
   if (courseLevel) {
@@ -30,16 +30,13 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to search 1 result from course/professor page
-export async function searchAPIResult<T extends SearchType>(
+export async function searchAPIResult<T extends GQLDataType>(
   type: T,
   name: string,
 ): Promise<(T extends 'course' ? CourseGQLData : ProfessorGQLData) | undefined> {
   const results = await searchAPIResults(`${type}s`, [name]);
-  if (Object.keys(results).length > 0) {
-    return Object.values(results)[0];
-  } else {
-    return undefined;
-  }
+  if (Object.keys(results).length === 0) return undefined;
+  return Object.values(results)[0];
 }
 
 // helper function to query from API and transform to data used in redux
@@ -118,23 +115,19 @@ const quartersOrdered: Record<string, string> = {
   Fall: 'f',
 };
 
-export const sortTerms = (terms: string[]) =>
-  [...new Set(terms)].sort((a, b) => {
+export const sortTerms = (terms: string[]) => {
+  return [...new Set(terms)].sort((a, b) => {
     const [yearA, qtrA]: string[] = a.split(' ');
     const [yearB, qtrB]: string[] = b.split(' ');
     // first compare years (descending)
     // if years are equal, compare terms (most recent first)
     return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
   });
+};
 
-export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
-  // get array of arrays of term names
-  const allTerms = Object.values(courseHistory);
-
-  // flatten and take union of array
-  const union = allTerms.flatMap((term) => term.terms);
-
-  return sortTerms(union);
+export const sortProfessorTerms = (courseTerms: CourseWithTermsLookup) => {
+  const allProfessorTerms = Object.values(courseTerms).flatMap((term) => term.terms);
+  return sortTerms(allProfessorTerms);
 };
 
 export function deepCopy<T>(obj: T): T {
@@ -145,6 +138,30 @@ export function pluralize(count: number, pluralText: string = 's', singularText:
   return count === 1 ? singularText : pluralText;
 }
 
-export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
+export function getUnitText(course: CourseGQLData) {
+  const { minUnits, maxUnits } = course;
+  const numUnits = minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`;
+  return `${numUnits} unit${pluralize(maxUnits)}`;
+}
+
+export function removeWhitespace(str: string) {
+  return str.replace(/\s+/g, '');
+}
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function getCourseId(
+  course: (Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) | string,
+  fallback: string = '',
+) {
+  if (!course || typeof course === 'string' || !course?.department || !course?.courseNumber) return fallback;
   return `${course.department} ${course.courseNumber}`;
+}
+
+export function getCourseIdFromProfessor(data: GQLData, key: string) {
+  return data.type === 'course'
+    ? ((data as CourseGQLData).instructors[key]?.name ?? key)
+    : getCourseId((data as ProfessorGQLData).courses[key], key);
 }

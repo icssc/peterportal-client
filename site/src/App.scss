@@ -57,11 +57,6 @@ button {
     border-radius: 8px 8px 0 0;
   }
 
-  button.fixed {
-    @include globals.bottom-button();
-    z-index: 1;
-  }
-
   .ppc-combobox__clear-indicator {
     display: none;
   }
@@ -356,15 +351,6 @@ button {
   }
 }
 
-button.unstyled {
-  background: none;
-  font: inherit;
-  border: none;
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
 .badge-pill {
   padding: 6px 10px;
   margin-right: 10px;
@@ -377,10 +363,8 @@ button.unstyled {
   overflow: auto;
 }
 
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
+.fixed {
+  @include globals.bottom-button();
 }
 
 // monkey patch for recaptcha border bug

@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import './UnreadDot.scss';
 
 interface UnreadDotProps {
@@ -6,13 +6,17 @@ interface UnreadDotProps {
   displayFullNewText: boolean;
 }
 
-const UnreadDot: React.FC<UnreadDotProps> = ({ show, displayFullNewText }) => {
+const UnreadDot: FC<UnreadDotProps> = ({ show, displayFullNewText }) => {
   if (!show) return null;
+
+  if (displayFullNewText) {
+    return <div className="unread-pill">NEW</div>;
+  }
 
   return (
     <>
-      {!displayFullNewText && <div className="spacing"></div>}
-      <div className={`unread-${displayFullNewText ? 'pill' : 'circle'}`}>{displayFullNewText ? 'NEW' : null}</div>
+      <div className="spacing" />
+      <div className="unread-circle" />
     </>
   );
 };

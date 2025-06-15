@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { getAllCoursesFromPlan } from '../helpers/planner';
 import { useAppSelector } from '../store/hooks';
 import { useTransferredCredits } from './transferCredits';
@@ -16,4 +16,17 @@ export function useClearedCourses() {
   }, [allExistingCourses, transfers]);
 
   return clearedCourses;
+}
+
+export function useToggleRef(isMobile: boolean, show: boolean) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    sidebarRef.current?.classList.toggle('enter-done', show);
+    overlayRef.current?.classList.toggle('enter-done', show);
+  }, [isMobile, show]);
+
+  return { overlayRef, sidebarRef };
 }
