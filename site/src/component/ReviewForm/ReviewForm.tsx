@@ -16,7 +16,7 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import { DataType, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { GQLDataType, CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -30,17 +30,11 @@ import { searchAPIResult, sortTerms, sortProfessorTerms } from '../../helpers/ut
 interface ReviewFormProps {
   closeForm: () => void;
   show: boolean;
-  dataType: DataType | 'other';
-  data?: CourseGQLData | ProfessorGQLData;
+  dataType: GQLDataType | 'other';
+  data?: GQLData;
   editing?: boolean;
   reviewToEdit?: ReviewData;
 }
-
-// TODO: it might be possible that both courseProp and professorProp are null at the same
-//! time, for example when the user is editing their own review. If so, I'd need to redo this
-//! entire component to allow them both to be false, instead of assuming one is always true.
-
-// TODO: create helper functions for these repeating dropdowns
 
 const ReviewForm: FC<ReviewFormProps> = ({ dataType, data, closeForm, show, editing, reviewToEdit }) => {
   const dispatch = useAppDispatch();

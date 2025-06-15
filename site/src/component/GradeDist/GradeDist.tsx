@@ -5,14 +5,13 @@ import './GradeDist.scss';
 import Chart from './Chart';
 import Pie from './Pie';
 
-import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
 
 interface GradeDistProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
   minify?: boolean;
 }
 
@@ -25,7 +24,7 @@ type ChartTypes = 'bar' | 'pie';
 
 const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
-const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
+const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
   const [gradeDistData, setGradeDistData] = useState<GradesRaw>([]);
   const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState<ChartTypes>('bar');
@@ -42,7 +41,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
 
     let requests: Promise<GradesRaw>[];
 
-    if (dataType === 'course') {
+    if (data.type === 'course') {
       const { department, courseNumber } = data as CourseGQLData;
       requests = [trpc.courses.grades.query({ department, number: courseNumber })];
     } else {
@@ -56,7 +55,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
     } finally {
       setLoading(false);
     }
-  }, [dataType, data]);
+  }, [data]);
 
   useEffect(() => {
     fetchGradeDistData();
@@ -65,7 +64,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
   // Create an array of objects to feed into the course/prof dropdown menu
   const createDataEntries = useCallback(() => {
     const entries =
-      dataType === 'course'
+      data.type === 'course'
         ? gradeDistData.flatMap((match) => match.instructors)
         : gradeDistData.map((match) => `${match.department} ${match.courseNumber}`);
 
@@ -78,7 +77,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
 
     setDataEntries(dataEntries);
     setCurrentData(dataEntries[0]?.value ?? '');
-  }, [gradeDistData, dataType]);
+  }, [gradeDistData, data]);
 
   // update list of professors/courses when new course/professor is detected
   useEffect(() => {
@@ -90,7 +89,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
   const createQuarterEntries = useCallback(() => {
     const quarters = gradeDistData
       .filter((entry) =>
-        dataType === 'course'
+        data.type === 'course'
           ? entry.instructors.includes(currentData)
           : entry.department + ' ' + entry.courseNumber === currentData,
       )
@@ -112,7 +111,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
 
     setQuarterEntries(result);
     setCurrentQuarter(result[0].value);
-  }, [gradeDistData, currentData, dataType]);
+  }, [gradeDistData, currentData, data]);
 
   // update list of quarters when new professor/course is chosen
   useEffect(() => {
@@ -174,12 +173,25 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
     );
   };
 
+  const Placeholder = () => (
+    <div className="placeholder">
+      <p>{loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.'}</p>
+    </div>
+  );
+
   const graphProps = {
     gradeData: gradeDistData,
     quarter: currentQuarter,
-    data: currentData,
-    dataType,
+    dataID: currentData,
   };
+
+  const Visualization = () => (
+    <div className="chart-container">
+      <div className={`grade_distribution_chart-container ${chartType}`}>
+        {chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />}
+      </div>
+    </div>
+  );
 
   return (
     <div className={`gradedist-module-container ${minify && 'grade-dist-mini'}`}>
@@ -188,17 +200,7 @@ const GradeDist: FC<GradeDistProps> = ({ dataType, data, minify }) => {
         <DataOptionsDropdown />
         <QuarterOptionsDropdown />
       </div>
-      {!gradeDistData.length ? (
-        <div className="chart-container">
-          <div className={`grade_distribution_chart-container ${chartType}`}>
-            {chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />}
-          </div>
-        </div>
-      ) : (
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>{loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.'}</p>
-        </div>
-      )}
+      {gradeDistData.length === 0 ? <Placeholder /> : <Visualization />}
     </div>
   );
 };

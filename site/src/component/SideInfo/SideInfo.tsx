@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 import RecentOfferings from '../RecentOfferings/RecentOfferings';
 
-import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 import { pluralize } from '../../helpers/util';
@@ -53,7 +53,7 @@ const CourseSynopsis: FC<CourseSynopsisProps> = ({ name, title, description, tag
 };
 
 interface AverageRatingsStatsProps {
-  dataType: DataType;
+  dataType: GQLDataType;
   averageReviews: AverageReviews;
   selectedReview: string;
 }
@@ -88,7 +88,7 @@ const AverageRatingsStats: FC<AverageRatingsStatsProps> = ({ dataType, averageRe
 };
 
 interface AverageRatingButtonsProps {
-  dataType: DataType;
+  dataType: GQLDataType;
   getDataName: (key: string) => string;
   averageReviews: AverageReviews;
   selectedReview: string;
@@ -123,7 +123,7 @@ const AverageRatingButtons: FC<AverageRatingButtonsProps> = ({
 };
 
 interface FeaturedItemData {
-  dataType: DataType;
+  dataType: GQLDataType;
   getDataName: (key: string) => string;
   averageReviews: AverageReviews;
   featureType: 'Highest' | 'Lowest';
@@ -152,8 +152,7 @@ const FeaturedItem: FC<FeaturedItemData> = ({ dataType, getDataName, averageRevi
 };
 
 interface SideInfoProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
   name: string;
   title: string;
   description: string;
@@ -161,13 +160,13 @@ interface SideInfoProps {
   terms?: string[];
 }
 
-const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description, tags, terms }) => {
+const SideInfo: FC<SideInfoProps> = ({ data, name, title, description, tags, terms }) => {
   const reviews = useAppSelector((state) => state.review.reviews);
   const [averageReviews, setAverageReviews] = useState<AverageReviews>({});
   const [selectedReview, setSelectedReview] = useState('');
   const [highestReview, setHighestReview] = useState('');
   const [lowestReview, setLowestReview] = useState('');
-  const capitalizedOtherDataType = dataType === 'course' ? 'Instructors' : 'Courses';
+  const capitalizedOtherDataType = data.type === 'course' ? 'Instructors' : 'Courses';
 
   useEffect(() => {
     const newAverageReviews: AverageReviews = {};
@@ -180,7 +179,7 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
 
     reviews.forEach((review) => {
       // determine key based on data type
-      const key = dataType === 'course' ? review.professorId : review.courseId;
+      const key = data.type === 'course' ? review.professorId : review.courseId;
 
       // add review entry
       if (!Object.prototype.hasOwnProperty.call(newAverageReviews, key)) {
@@ -223,10 +222,10 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
       setHighestReview(sortedKeys[sortedKeys.length - 1]);
       setLowestReview(sortedKeys[0]);
     }
-  }, [reviews, dataType, capitalizedOtherDataType]);
+  }, [reviews, data, capitalizedOtherDataType]);
 
   const getDataName = (key: string) => {
-    if (dataType === 'course') {
+    if (data.type === 'course') {
       return (data as CourseGQLData).instructors[key]?.name ?? key;
     }
     const course = (data as ProfessorGQLData).courses[key];
@@ -242,13 +241,13 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
       <div className="side-info-ratings">
         <h2>Average Rating</h2>
         <AverageRatingButtons
-          dataType={dataType}
+          dataType={data.type}
           getDataName={getDataName}
           averageReviews={averageReviews}
           selectedReview={selectedReview}
           setSelectedReview={setSelectedReview}
         />
-        <AverageRatingsStats dataType={dataType} averageReviews={averageReviews} selectedReview={selectedReview} />
+        <AverageRatingsStats dataType={data.type} averageReviews={averageReviews} selectedReview={selectedReview} />
       </div>
 
       {Object.keys(averageReviews).length > 1 && (
@@ -256,14 +255,14 @@ const SideInfo: FC<SideInfoProps> = ({ dataType, data, name, title, description,
           <h2>{capitalizedOtherDataType}</h2>
           <div className="featured-items">
             <FeaturedItem
-              dataType={dataType}
+              dataType={data.type}
               getDataName={getDataName}
               averageReviews={averageReviews}
               featureType="Highest"
               reviewKey={highestReview}
             />
             <FeaturedItem
-              dataType={dataType}
+              dataType={data.type}
               getDataName={getDataName}
               averageReviews={averageReviews}
               featureType="Lowest"

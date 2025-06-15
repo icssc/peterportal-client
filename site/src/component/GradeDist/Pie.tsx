@@ -2,7 +2,6 @@ import { Component } from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw, LetterGrade, letterGrades, pnpGrades } from '@peterportal/types';
-import { DataType } from '../../types/types';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getCssVariable } from '../../helpers/styling.ts';
 
@@ -19,8 +18,7 @@ interface Slice {
 interface PieProps {
   gradeData: GradesRaw;
   quarter: string;
-  data: string;
-  dataType: DataType;
+  dataID: string;
 }
 
 export default class Pie extends Component<PieProps> {
@@ -38,7 +36,7 @@ export default class Pie extends Component<PieProps> {
     this.averagePNP = '';
     let sum = 0;
 
-    const { gradeData, dataType, data, quarter } = this.props;
+    const { gradeData, dataID, quarter } = this.props;
 
     const gradeCounts = {
       A: 0,
@@ -61,10 +59,7 @@ export default class Pie extends Component<PieProps> {
 
     gradeData.forEach((entry) => {
       const correctQuarter = quarter === 'ALL' || `${entry.quarter} ${entry.year}` === quarter;
-      const correctData =
-        dataType === 'professor'
-          ? entry.instructors.includes(data)
-          : `${entry.department} ${entry.courseNumber}` === data;
+      const correctData = entry.instructors.includes(dataID) || `${entry.department} ${entry.courseNumber}` === dataID;
 
       if (correctQuarter && correctData) {
         const getGradeCount = (grade: LetterGrade) => entry[`grade${grade}Count` as keyof typeof entry] as number;

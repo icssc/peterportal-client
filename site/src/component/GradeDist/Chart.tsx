@@ -3,20 +3,18 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
 import { GradesRaw, letterGrades } from '@peterportal/types';
-import { DataType } from '../../types/types';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
   quarter: string;
-  data: string;
-  dataType: DataType;
+  dataID: string;
 }
 
 export default class Chart extends Component<ChartProps> {
   getGradeData = (): BarDatum[] => {
-    const { gradeData, dataType, data, quarter } = this.props;
+    const { gradeData, dataID, quarter } = this.props;
     const gradeCounts = {
       A: 0,
       B: 0,
@@ -38,11 +36,7 @@ export default class Chart extends Component<ChartProps> {
 
     gradeData.forEach((entry) => {
       const correctQuarter = quarter === 'ALL' || `${entry.quarter} ${entry.year}` === quarter;
-      const correctData =
-        dataType === 'professor'
-          ? entry.instructors.includes(data)
-          : `${entry.department} ${entry.courseNumber}` === data;
-
+      const correctData = entry.instructors.includes(dataID) || `${entry.department} ${entry.courseNumber}` === dataID;
       if (correctQuarter && correctData) {
         letterGrades.forEach((grade) => {
           gradeCounts[grade] += entry[`grade${grade}Count` as keyof typeof entry] as number;

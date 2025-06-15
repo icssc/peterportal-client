@@ -2,11 +2,11 @@
 @use 'sass:math';
 
 .side-info {
-  $base-content-width: globals.$catalog-side-info-width + globals.$catalog-main-content-max-width +
+  $base-content-width: globals.$results-page-side-info-width + globals.$results-page-main-content-max-width +
     globals.$sidebar-width-closed;
   $side-margin: calc(50vw - #{math.div($base-content-width + 32px, 2)});
 
-  max-width: globals.$catalog-side-info-width;
+  max-width: globals.$results-page-side-info-width;
   margin-left: max(#{$side-margin}, 32px);
 
   width: calc(100% - 32px);

@@ -4,7 +4,7 @@ import {
   ProfessorGQLData,
   BatchCourseData,
   BatchProfessorData,
-  DataType,
+  GQLDataType,
   CourseWithTermsLookup,
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
@@ -29,7 +29,7 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to search 1 result from course/professor page
-export async function searchAPIResult<T extends DataType>(
+export async function searchAPIResult<T extends GQLDataType>(
   type: T,
   name: string,
 ): Promise<(T extends 'course' ? CourseGQLData : ProfessorGQLData) | undefined> {

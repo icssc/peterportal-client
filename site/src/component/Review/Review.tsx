@@ -8,7 +8,7 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { DataType, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
@@ -27,13 +27,11 @@ enum SortingOption {
 }
 
 interface ReviewProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
 }
 
 interface SortFilterMenuProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
   sortedReviews: ReviewData[];
   sortingOption: SortingOption;
   setSortingOption: (option: SortingOption) => void;
@@ -44,7 +42,6 @@ interface SortFilterMenuProps {
 }
 
 const SortFilterMenu: FC<SortFilterMenuProps> = ({
-  dataType,
   data,
   sortedReviews,
   sortingOption,
@@ -67,19 +64,19 @@ const SortFilterMenu: FC<SortFilterMenuProps> = ({
 
   // calculate frequencies of professors or courses in list of reviews
   const reviewFreq = sortedReviews.reduce((acc, review) => {
-    const key = dataType === 'course' ? review.professorId : review.courseId;
+    const key = data.type === 'course' ? review.professorId : review.courseId;
     return acc.set(key, (acc.get(key) || 0) + 1);
   }, new Map<string, number>());
 
   const dataOptions: Option[] = [
     {
-      text: dataType === 'course' ? 'All Professors' : 'All Courses',
+      text: data.type === 'course' ? 'All Professors' : 'All Courses',
       value: '',
     },
-    ...Object.keys(dataType === 'course' ? (data as CourseGQLData).instructors : (data as ProfessorGQLData).courses)
+    ...Object.keys(data.type === 'course' ? (data as CourseGQLData).instructors : (data as ProfessorGQLData).courses)
       .map((id) => ({
         text: `${
-          dataType === 'course'
+          data.type === 'course'
             ? ((data as CourseGQLData).instructors[id]?.name ?? id)
             : `${(data as ProfessorGQLData).courses[id]?.department} ${(data as ProfessorGQLData).courses[id]?.courseNumber}`
         } (${reviewFreq.get(id) || 0})`,
@@ -91,7 +88,7 @@ const SortFilterMenu: FC<SortFilterMenuProps> = ({
 
   const selectedOptionText =
     dataOptions.find((option) => option.value === filterOption)?.text ??
-    `Select ${dataType === 'course' ? 'Professor' : 'Course'}...`;
+    `Select ${data.type === 'course' ? 'Professor' : 'Course'}...`;
 
   interface TempButtonProps {
     title: string;
@@ -140,7 +137,7 @@ const SortFilterMenu: FC<SortFilterMenuProps> = ({
   );
 };
 
-const Review: FC<ReviewProps> = ({ dataType, data }) => {
+const Review: FC<ReviewProps> = ({ data }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const showForm = useAppSelector((state) => state.review.formOpen);
@@ -152,12 +149,12 @@ const Review: FC<ReviewProps> = ({ dataType, data }) => {
     // prevent reviews from carrying over
     dispatch(setReviews([]));
     const params =
-      dataType === 'course'
+      data.type === 'course'
         ? { courseId: (data as CourseGQLData).id }
         : { professorId: (data as ProfessorGQLData).ucinetid };
     const reviews = await trpc.reviews.get.query(params);
     dispatch(setReviews(reviews));
-  }, [dispatch, dataType, data]);
+  }, [dispatch, data]);
 
   useEffect(() => {
     getReviews();
@@ -171,7 +168,7 @@ const Review: FC<ReviewProps> = ({ dataType, data }) => {
     .filter((review) => !showOnlyVerifiedReviews || review.verified)
     .filter(
       (review) =>
-        filterOption.length === 0 || filterOption === (dataType === 'course' ? review.professorId : review.courseId),
+        filterOption.length === 0 || filterOption === (data.type === 'course' ? review.professorId : review.courseId),
     )
     .sort((a, b) => {
       const mostRecentSort = () => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -200,7 +197,6 @@ const Review: FC<ReviewProps> = ({ dataType, data }) => {
     <>
       <div className="reviews">
         <SortFilterMenu
-          dataType={dataType}
           data={data}
           sortedReviews={sortedReviews}
           sortingOption={sortingOption}
@@ -212,14 +208,14 @@ const Review: FC<ReviewProps> = ({ dataType, data }) => {
         />
         <div className="subreviews">
           {sortedReviews.map((review) => (
-            <SubReview review={review} key={review.id} dataType={dataType} data={data} />
+            <SubReview review={review} key={review.id} dataType={data.type} data={data} />
           ))}
         </div>
         <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
           <AddIcon /> Add Review
         </Button>
       </div>
-      <ReviewForm closeForm={closeForm} show={showForm} dataType={dataType} data={data} />
+      <ReviewForm closeForm={closeForm} show={showForm} dataType={data.type} data={data} />
     </>
   );
 };

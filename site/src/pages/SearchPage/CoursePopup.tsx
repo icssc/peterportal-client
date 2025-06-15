@@ -57,15 +57,7 @@ const CoursePopup: FC = () => {
   ];
 
   return (
-    <SearchPopup
-      dataType="course"
-      data={course}
-      id={course.id}
-      name={course.id}
-      title={course.title}
-      infos={infos}
-      scores={scores}
-    />
+    <SearchPopup data={course} id={course.id} name={course.id} title={course.title} infos={infos} scores={scores} />
   );
 };
 

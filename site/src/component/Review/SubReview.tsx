@@ -4,7 +4,7 @@ import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { Link } from 'react-router-dom';
-import { CourseGQLData, ProfessorGQLData, DataType } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GQLDataType, GQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -22,8 +22,8 @@ import { IconButton } from '@mui/material';
 
 interface SubReviewProps {
   review: ReviewData;
-  dataType: DataType | 'other';
-  data?: CourseGQLData | ProfessorGQLData;
+  dataType: GQLDataType | 'other';
+  data?: GQLData;
 }
 
 const SubReview: FC<SubReviewProps> = ({ review, dataType, data }) => {

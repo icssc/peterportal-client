@@ -59,7 +59,6 @@ const ProfessorPopup: FC = () => {
 
   return (
     <SearchPopup
-      dataType="professor"
       data={professor}
       id={professor.ucinetid}
       name={professor.name}

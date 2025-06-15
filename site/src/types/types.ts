@@ -15,7 +15,6 @@ export interface ScoreData {
 }
 
 export type SearchIndex = 'courses' | 'professors';
-export type DataType = 'course' | 'professor';
 
 /**
  * Peter's Roadmaps Type Definitions
@@ -63,6 +62,7 @@ export interface CourseLookup {
 }
 
 export type CourseGQLData = Omit<CourseAAPIResponse, 'instructors' | 'prerequisites' | 'dependencies'> & {
+  type: 'course';
   instructors: ProfessorLookup;
   prerequisites: CourseLookup;
   dependents: CourseLookup;
@@ -75,25 +75,15 @@ export interface BatchCourseData {
 export type CourseWithTermsLookup = Record<string, CoursePreviewWithTerms>;
 
 export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
+  type: 'professor';
   courses: CourseWithTermsLookup;
 };
+
+export type GQLDataType = 'course' | 'professor';
+export type GQLData = CourseGQLData | ProfessorGQLData;
 
 export interface BatchProfessorData {
   [ucinetid: string]: ProfessorGQLData;
 }
 
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];
-
-type PrereqTreeType = React.ComponentType<{
-  data: CourseGQLData;
-}>;
-
-export type NotPrereqTreeType = React.ComponentType<{
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
-}>;
-
-export interface Section {
-  title: string;
-  Component: PrereqTreeType | NotPrereqTreeType;
-}

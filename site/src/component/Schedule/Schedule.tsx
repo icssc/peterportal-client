@@ -4,7 +4,7 @@ import { Dropdown, DropdownButton } from 'react-bootstrap';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import { WebsocAPIResponse, WebsocSection as Section } from '@peterportal/types';
-import { CourseGQLData, DataType, ProfessorGQLData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
 import { hourMinuteTo12HourString, sortTerms, sortProfessorTerms } from '../../helpers/util';
 
 import trpc from '../../trpc';
@@ -12,7 +12,7 @@ import ThemeContext from '../../style/theme-context';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface TableRowProps {
-  dataType: DataType;
+  dataType: GQLDataType;
   courseID: string;
   section: Section;
   index: number;
@@ -78,11 +78,10 @@ interface ScheduleData {
 }
 
 interface ScheduleProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
 }
 
-const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
+const Schedule: FC<ScheduleProps> = ({ data }) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>({});
   const [currentQuarter, setCurrentQuarter] = useState('');
   const [selectedQuarter, setSelectedQuarter] = useState('');
@@ -99,7 +98,7 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
 
   const fetchScheduleDataFromAPI = useCallback(async () => {
     const apiResponse: WebsocAPIResponse =
-      dataType === 'course'
+      data.type === 'course'
         ? await trpc.schedule.getTermDeptNum.query({
             term: selectedQuarter,
             department: (data as CourseGQLData).department,
@@ -123,7 +122,7 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
       });
     });
     setScheduleData(scheduleData);
-  }, [dataType, data, selectedQuarter]);
+  }, [data, selectedQuarter]);
 
   useEffect(() => {
     if (!selectedQuarter) return;
@@ -135,7 +134,7 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
   }
 
   const terms =
-    dataType === 'course'
+    data.type === 'course'
       ? sortTerms((data as CourseGQLData).terms)
       : sortProfessorTerms((data as ProfessorGQLData).courses);
 
@@ -161,7 +160,7 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
         <table className="ppc-table schedule-table">
           <thead>
             <tr>
-              {dataType === 'professor' && <th>Course</th>}
+              {data.type === 'professor' && <th>Course</th>}
               <th>Code</th>
               <th>Section</th>
               <th>Units</th>
@@ -177,7 +176,7 @@ const Schedule: FC<ScheduleProps> = ({ dataType, data }) => {
           <tbody>
             {Object.entries(scheduleData).flatMap(([courseID, sections]) => {
               return sections.map((section, i) => (
-                <TableRow key={i} dataType={dataType} courseID={courseID} section={section} index={i} />
+                <TableRow key={i} dataType={data.type} courseID={courseID} section={section} index={i} />
               ));
             })}
           </tbody>

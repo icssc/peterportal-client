@@ -1,15 +1,16 @@
 import { FC } from 'react';
+import './SearchPopup.scss';
+
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Carousel from 'react-multi-carousel';
-import './SearchPopup.scss';
 
 import GradeDist from '../GradeDist/GradeDist';
 import searching from '../../asset/searching.webp';
-import { CourseGQLData, ProfessorGQLData, DataType, ScoreData } from '../../types/types';
+import { GQLData, GQLDataType, ScoreData } from '../../types/types';
 
 interface SearchPopupCarouselProps {
-  dataType: DataType;
+  dataType: GQLDataType;
   scores: ScoreData[];
 }
 
@@ -59,12 +60,16 @@ const SearchPopupCarousel: FC<SearchPopupCarouselProps> = ({ dataType, scores })
   );
 };
 
-export const SearchPopupPlaceholder: FC<Pick<SearchPopupProps, 'dataType'>> = (props) => {
+interface SearchPopupPlaceholderProps {
+  dataType: GQLDataType;
+}
+
+export const SearchPopupPlaceholder: FC<SearchPopupPlaceholderProps> = ({ dataType }) => {
   return (
     <div className="side-panel search-popup">
       <div className="search-popup-missing">
         <img style={{ width: '80%' }} src={searching} alt="searching" />
-        <p>Click on a {props.dataType} card to view more information!</p>
+        <p>Click on a {dataType} card to view more information!</p>
       </div>
     </div>
   );
@@ -76,8 +81,7 @@ interface InfoData {
 }
 
 interface SearchPopupProps {
-  dataType: DataType;
-  data: CourseGQLData | ProfessorGQLData;
+  data: GQLData;
   id: string;
   name: string;
   title: string;
@@ -85,23 +89,23 @@ interface SearchPopupProps {
   scores: ScoreData[];
 }
 
-export const SearchPopup: FC<SearchPopupProps> = (props) => {
+export const SearchPopup: FC<SearchPopupProps> = ({ data, id, name, title, infos, scores }) => {
   return (
     <div className="side-panel search-popup">
       <div className="search-popup-header">
         <h2 className="search-popup-id">
-          {props.name}
-          <Link to={`/${props.dataType}/${props.id}`}>
+          {name}
+          <Link to={`/${data.type}/${id}`}>
             <Button type="button" className="search-popup-more btn btn-outline-primary">
               More Information
             </Button>
           </Link>
         </h2>
-        <h5 className="search-popup-title">{props.title}</h5>
+        <h5 className="search-popup-title">{title}</h5>
       </div>
       <div>
         <div className="search-popup-infos">
-          {props.infos.map((info, i) => (
+          {infos.map((info, i) => (
             <div className="search-popup-info search-popup-block" key={`search-popup-info-${i}`}>
               <h3>{info.title}</h3>
               <p>{info.content || `No ${info.title}`}</p>
@@ -111,13 +115,13 @@ export const SearchPopup: FC<SearchPopupProps> = (props) => {
 
         <h2 className="search-popup-label">Grade Distribution</h2>
         <div className="search-popup-block">
-          <GradeDist dataType={props.dataType} data={props.data} minify={true} />
+          <GradeDist data={data} minify={true} />
         </div>
 
-        <h2 className="search-popup-label">
-          {props.dataType === 'course' ? 'Current Instructors' : 'Previously Taught'}
-        </h2>
-        <div>{props.scores.length > 0 ? <SearchPopupCarousel {...props} /> : 'No Instructors Found'}</div>
+        <h2 className="search-popup-label">{data.type === 'course' ? 'Current Instructors' : 'Previously Taught'}</h2>
+        <div>
+          {scores.length === 0 ? 'No Instructors Found' : <SearchPopupCarousel dataType={data.type} scores={scores} />}
+        </div>
       </div>
     </div>
   );
