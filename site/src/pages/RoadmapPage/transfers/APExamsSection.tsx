@@ -120,8 +120,7 @@ const APExamsSection: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
   const isDark = useContext(ThemeContext).darkMode;
-  const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
-  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const { apExamInfo, userAPExams } = useAppSelector((state) => state.transferCredits);
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 

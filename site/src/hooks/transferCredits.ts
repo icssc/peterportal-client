@@ -34,15 +34,17 @@ export interface TransferredCourseWithType extends TransferredCourse {
 }
 
 export function useTransferredCredits() {
-  const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const apTransfers = useAppSelector((state) => state.transferCredits.userAPExams);
-  const ge = useAppSelector((state) => state.transferCredits.transferredGEs);
-  const other = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+  const {
+    apExamInfo,
+    transferredCourses,
+    userAPExams: ap,
+    transferredGEs: ge,
+    uncategorizedCourses: other,
+  } = useAppSelector((state) => state.transferCredits);
 
   const courses = useMemo(() => {
     // Recomputes this value only when APs or Transferred Courses update
-    const rewardedCourses: TransferredCourseWithType[] = apTransfers.flatMap((transfer) => {
+    const rewardedCourses: TransferredCourseWithType[] = ap.flatMap((transfer) => {
       const info = apExamInfo.find((ap) => ap.fullName === transfer.examName);
       if (!info) return [];
       const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
@@ -59,29 +61,32 @@ export function useTransferredCredits() {
       .map((course) => ({ ...course, transferType: 'Course' }) as TransferredCourseWithType)
       .concat(rewardedCourses);
     return [...new Set(clearedCourses)];
-  }, [apExamInfo, apTransfers, transferredCourses]);
+  }, [apExamInfo, ap, transferredCourses]);
 
   // Returns memoized result for efficiency and so we can use the entire return value
   // as a dependency array item. Without memoization, that would not be possible, as
   // a new object would be created every time.
   const memoized = useMemo(
-    () => ({ courses, apInfo: apExamInfo, ap: apTransfers, ge, other }),
-    [apExamInfo, courses, apTransfers, ge, other],
+    () => ({ courses, apInfo: apExamInfo, ap, ge, other }),
+    [courses, apExamInfo, ap, ge, other],
   );
   return memoized;
 }
 
 export function useLoadTransferredCredits() {
   const isLoggedIn = useIsLoggedIn();
-  const dataLoadingState = useAppSelector((state) => state.transferCredits.dataLoadState);
-  const userDataLoaded = dataLoadingState === 'done';
 
   // Use raw data rather than useClearedCourses() because we want just the
   // user's input (not implicit courses) to be saved
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const transferredAPs = useAppSelector((state) => state.transferCredits.userAPExams);
-  const transferredGEs = useAppSelector((state) => state.transferCredits.transferredGEs);
-  const transferredOther = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+  const {
+    dataLoadState: dataLoadingState,
+    transferredCourses,
+    userAPExams: transferredAPs,
+    transferredGEs,
+    uncategorizedCourses: transferredOther,
+  } = useAppSelector((state) => state.transferCredits);
+
+  const userDataLoaded = dataLoadingState === 'done';
 
   const dispatch = useAppDispatch();
 
