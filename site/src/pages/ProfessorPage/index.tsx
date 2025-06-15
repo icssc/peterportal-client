@@ -12,6 +12,7 @@ import ResultPageContent from '../../component/ResultPageContent/ResultPageConte
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { searchAPIResult } from '../../helpers/util';
+import { Section } from '../../types/types';
 
 const ProfessorPage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -54,16 +55,15 @@ const ProfessorPage: FC = () => {
     />
   );
 
-  const mainSections: {
-    title: string;
-    Component: JSX.Element;
-  }[] = [
-    { title: '📊 Grade Distribution', Component: <GradeDist dataType="professor" data={professorGQLData} /> },
-    { title: '🗓️ Schedule of Classes', Component: <Schedule dataType="professor" data={professorGQLData} /> },
-    { title: '💬 Reviews', Component: <Review dataType="professor" data={professorGQLData} /> },
+  const mainSections: Section[] = [
+    { title: '📊 Grade Distribution', Component: GradeDist },
+    { title: '🗓️ Schedule of Classes', Component: Schedule },
+    { title: '💬 Reviews', Component: Review },
   ];
 
-  return <ResultPageContent sideInfo={sideInfo} mainSections={mainSections} />;
+  return (
+    <ResultPageContent dataType="professor" data={professorGQLData} sideInfo={sideInfo} mainSections={mainSections} />
+  );
 };
 
 export default ProfessorPage;

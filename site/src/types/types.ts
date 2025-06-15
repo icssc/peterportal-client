@@ -83,3 +83,17 @@ export interface BatchProfessorData {
 }
 
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];
+
+type PrereqTreeType = React.ComponentType<{
+  data: CourseGQLData;
+}>;
+
+export type NotPrereqTreeType = React.ComponentType<{
+  dataType: DataType;
+  data: CourseGQLData | ProfessorGQLData;
+}>;
+
+export interface Section {
+  title: string;
+  Component: PrereqTreeType | NotPrereqTreeType;
+}

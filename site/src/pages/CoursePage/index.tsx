@@ -13,6 +13,7 @@ import ResultPageContent from '../../component/ResultPageContent/ResultPageConte
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult } from '../../helpers/util';
+import { Section } from '../../types/types';
 
 const CoursePage: FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,7 @@ const CoursePage: FC = () => {
     <SideInfo
       dataType="course"
       data={courseGQLData}
-      name={courseGQLData.department + ' ' + courseGQLData.courseNumber}
+      name={`${courseGQLData.department} ${courseGQLData.courseNumber}`}
       title={courseGQLData.title}
       description={courseGQLData.description}
       tags={getCourseTags(courseGQLData)}
@@ -56,17 +57,14 @@ const CoursePage: FC = () => {
     />
   );
 
-  const mainSections: {
-    title: string;
-    Component: JSX.Element;
-  }[] = [
-    { title: '📊 Grade Distribution', Component: <GradeDist dataType="course" data={courseGQLData} /> },
-    { title: '🌲 Prerequisite Tree', Component: <PrereqTree data={courseGQLData} /> },
-    { title: '🗓️ Schedule of Classes', Component: <Schedule dataType="course" data={courseGQLData} /> },
-    { title: '💬 Reviews', Component: <Review dataType="course" data={courseGQLData} /> },
+  const mainSections: Section[] = [
+    { title: '📊 Grade Distribution', Component: GradeDist },
+    { title: '🌲 Prerequisite Tree', Component: PrereqTree },
+    { title: '🗓️ Schedule of Classes', Component: Schedule },
+    { title: '💬 Reviews', Component: Review },
   ];
 
-  return <ResultPageContent sideInfo={sideInfo} mainSections={mainSections} />;
+  return <ResultPageContent dataType="course" data={courseGQLData} sideInfo={sideInfo} mainSections={mainSections} />;
 };
 
 export default CoursePage;
