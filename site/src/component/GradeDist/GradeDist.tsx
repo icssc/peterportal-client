@@ -146,7 +146,6 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
   const typedSetChartType = (value: string) => setChartType(value as ChartTypes);
   const chartEntries = ['bar', 'pie'].map((v) => ({ value: v, text: getSentenceCase(v) }));
   const currentQuarterText = quarterEntries.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
-  const placeholderText = loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.';
   const graphProps = { gradeData: gradeDistData, quarter: currentQuarter, dataID: currentData };
   const chartJSX = chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />;
 
@@ -159,7 +158,7 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
       </div>
       {gradeDistData.length === 0 ? (
         <div className="placeholder">
-          <p>{placeholderText}</p>
+          <p>{loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.'}</p>
         </div>
       ) : (
         <div className="chart-container">
