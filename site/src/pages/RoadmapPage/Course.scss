@@ -13,6 +13,7 @@
     display: grid;
     grid-template-areas: 'A B' 'A C';
     grid-template-columns: min-content auto;
+    grid-template-rows: repeat(2, min-content); // Fix Safari oversizing dragged courses
     align-items: center;
 
     .course-drag-handle {

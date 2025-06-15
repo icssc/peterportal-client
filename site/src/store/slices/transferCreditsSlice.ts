@@ -9,16 +9,18 @@ import {
 
 type DataLoadingState = 'waiting' | 'loading' | 'done';
 
+export type TransferWithUnread<T> = T & { unread?: true };
+
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
     showTransfersMenu: false,
     dataLoadState: 'waiting' as DataLoadingState,
-    transferredCourses: [] as TransferredCourse[],
+    transferredCourses: [] as TransferWithUnread<TransferredCourse>[],
     apExamInfo: [] as APExam[],
-    userAPExams: [] as TransferredAPExam[],
+    userAPExams: [] as TransferWithUnread<TransferredAPExam>[],
     transferredGEs: [] as TransferredGE[],
-    uncategorizedCourses: [] as TransferredUncategorized[],
+    uncategorizedCourses: [] as TransferWithUnread<TransferredUncategorized>[],
   },
   reducers: {
     setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
@@ -39,13 +41,13 @@ export const transferCreditsSlice = createSlice({
         course.units = action.payload.units;
       }
     },
-    setTransferredCourses: (state, action: PayloadAction<TransferredCourse[]>) => {
+    setTransferredCourses: (state, action: PayloadAction<TransferWithUnread<TransferredCourse>[]>) => {
       state.transferredCourses = action.payload;
     },
-    setAPExams: (state, action: PayloadAction<APExam[]>) => {
+    setAPExams: (state, action: PayloadAction<TransferWithUnread<APExam>[]>) => {
       state.apExamInfo = action.payload;
     },
-    setUserAPExams: (state, action: PayloadAction<TransferredAPExam[]>) => {
+    setUserAPExams: (state, action: PayloadAction<TransferWithUnread<TransferredAPExam>[]>) => {
       state.userAPExams = action.payload;
     },
     addUserAPExam: (state, action: PayloadAction<TransferredAPExam>) => {
@@ -77,6 +79,17 @@ export const transferCreditsSlice = createSlice({
         (course) => course.name !== action.payload.name || course.units !== action.payload.units,
       );
     },
+    clearUnreadTransfers: (state) => {
+      for (const course of state.transferredCourses) {
+        delete course.unread;
+      }
+      for (const ap of state.userAPExams) {
+        delete ap.unread;
+      }
+      for (const other of state.uncategorizedCourses) {
+        delete other.unread;
+      }
+    },
   },
 });
 
@@ -96,6 +109,7 @@ export const {
   setTransferredGE,
   setUncategorizedCourses,
   removeUncategorizedCourse,
+  clearUnreadTransfers,
 } = transferCreditsSlice.actions;
 
 export default transferCreditsSlice.reducer;
