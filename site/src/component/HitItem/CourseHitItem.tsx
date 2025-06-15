@@ -1,14 +1,14 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
 import Badge from 'react-bootstrap/Badge';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setCourse } from '../../store/slices/popupSlice';
+import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags, useIsMobile, getCourseId } from '../../helpers/util';
+import { setCourse } from '../../store/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useSavedCourses } from '../../hooks/savedCourses';
+import { getCourseTags, useIsMobile, getCourseId } from '../../helpers/util';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';

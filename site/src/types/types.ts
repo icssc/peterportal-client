@@ -14,8 +14,6 @@ export interface ScoreData {
   id: string;
 }
 
-export type SearchIndex = 'courses' | 'professors';
-
 /**
  * Peter's Roadmaps Type Definitions
  */
@@ -79,11 +77,12 @@ export type ProfessorGQLData = Omit<ProfessorAAPIResponse, 'courses'> & {
   courses: CourseWithTermsLookup;
 };
 
-export type GQLDataType = 'course' | 'professor';
-export type GQLData = CourseGQLData | ProfessorGQLData;
-
 export interface BatchProfessorData {
   [ucinetid: string]: ProfessorGQLData;
 }
 
+export type GQLDataType = 'course' | 'professor';
+export type GQLData = CourseGQLData | ProfessorGQLData;
+
+export type SearchIndex = 'courses' | 'professors';
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];

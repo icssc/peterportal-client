@@ -9,7 +9,7 @@ import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
-import { getCourseId, getSentenceCase } from '../../helpers/util';
+import { getCourseId, capitalize } from '../../helpers/util';
 
 interface GradeDistProps {
   data: GQLData;
@@ -142,7 +142,7 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
   };
 
   const typedSetChartType = (value: string) => setChartType(value as ChartTypes);
-  const chartEntries = ['bar', 'pie'].map((v) => ({ value: v, text: getSentenceCase(v) }));
+  const chartEntries = ['bar', 'pie'].map((v) => ({ value: v, text: capitalize(v) }));
   const currentQuarterText = quarterEntries.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
   const graphProps = { gradeData: gradeDistData, quarter: currentQuarter, dataID: currentData };
   const chartJSX = chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />;

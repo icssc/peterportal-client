@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import './ResultPage.scss';
+import './index.scss';
 import { useParams } from 'react-router-dom';
 import Twemoji from 'react-twemoji';
 
@@ -13,7 +13,7 @@ import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse, setProfessor } from '../../store/slices/popupSlice';
-import { getCourseTags, searchAPIResult, getSentenceCase, getCourseId } from '../../helpers/util';
+import { getCourseTags, searchAPIResult, capitalize, getCourseId } from '../../helpers/util';
 import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
 
 type PrereqTreeType = React.ComponentType<{ data: CourseGQLData }>;
@@ -97,7 +97,7 @@ const ResultPage: FC<ResultPageProps> = ({ dataType }) => {
 
     searchAPIResult(dataType, id).then((result) => {
       if (!result) {
-        setError(`${getSentenceCase(dataType)} ${id} does not exist!`);
+        setError(`${capitalize(dataType)} ${id} does not exist!`);
         return;
       }
 

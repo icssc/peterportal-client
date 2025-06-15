@@ -11,7 +11,7 @@ import RecentOfferings from '../RecentOfferings/RecentOfferings';
 import { GQLData, GQLDataType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
-import { pluralize, getSentenceCase, getCourseIdFromProfessor } from '../../helpers/util';
+import { pluralize, capitalize, getCourseIdFromProfessor } from '../../helpers/util';
 
 interface AverageReview {
   count: number;
@@ -98,7 +98,7 @@ const AverageRatingStats: FC<AverageRatingStatsProps> = ({ dataType, averageRevi
 
   const { count, rating, difficulty, takeAgain } = averageReviews[selectedReview];
   const reviewData = [
-    { label: `${getSentenceCase(dataType)} Rating`, value: (rating / count).toFixed(2) },
+    { label: `${capitalize(dataType)} Rating`, value: (rating / count).toFixed(2) },
     { label: 'Would Take Again', value: ((100 * takeAgain) / count).toFixed(0) + '%' },
     { label: 'Difficulty Level', value: (difficulty / count).toFixed(2) },
   ];

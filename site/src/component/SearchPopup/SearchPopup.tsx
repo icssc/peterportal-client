@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import './SearchPopup.scss';
+import 'react-multi-carousel/lib/styles.css';
 
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';

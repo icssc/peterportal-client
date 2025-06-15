@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setProfessor } from '../../store/slices/popupSlice';
 
 import { ProfessorGQLData } from '../../types/types';
+import { setProfessor } from '../../store/slices/popupSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useIsMobile, removeWhitespace } from '../../helpers/util';
 
 interface ProfessorHitItemProps {
