@@ -240,8 +240,13 @@ export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
   return roadmapWithoutLegacyTransfers;
 }
 
-export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
-  const roadmap: SavedRoadmap = { planners, transfers: [], timestamp: new Date().toISOString(), currentPlanIndex: 0 };
+export const saveRoadmap = async (
+  isLoggedIn: boolean,
+  planners: SavedPlannerData[],
+  currentPlanIndex: number | undefined,
+  showToasts: boolean = true,
+) => {
+  const roadmap: SavedRoadmap = { planners, transfers: [], timestamp: new Date().toISOString(), currentPlanIndex };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
   const showMessage = showToasts ? spawnToast : (str: string) => str;

@@ -8,7 +8,7 @@ import {
   upgradeLocalRoadmap,
   validatePlanner,
 } from '../../../helpers/planner';
-import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
+import { SavedRoadmap } from '@peterportal/types';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   selectAllPlans,
@@ -84,9 +84,9 @@ const PlannerLoader: FC = () => {
 
   // save function will update localStorage (thus comparisons above will work) and account roadmap
   const saveRoadmapAndUpsertTransfers = useCallback(
-    async (collapsedPlans: SavedPlannerData[]) => {
+    async (roadmap: SavedRoadmap) => {
       // Cannot be called before format is upgraded
-      await saveRoadmap(isLoggedIn, collapsedPlans, false);
+      await saveRoadmap(isLoggedIn, roadmap.planners, roadmap.currentPlanIndex, false);
 
       // mark changes as saved to bypass alert on page leave
       dispatch(setUnsavedChanges(false));
@@ -118,7 +118,7 @@ const PlannerLoader: FC = () => {
       if (accountRoadmap) return setShowSyncModal(true);
 
       // Logged in + doesn't exist => update everything
-      saveRoadmapAndUpsertTransfers(localRoadmap.planners);
+      saveRoadmapAndUpsertTransfers(localRoadmap);
     });
   }, [formatUpgraded, saveRoadmapAndUpsertTransfers, isLoggedIn, populateExistingRoadmap, userTransfersLoaded]);
 
@@ -143,7 +143,7 @@ const PlannerLoader: FC = () => {
     const { localRoadmap } = await loadRoadmap(false);
 
     // Update the account roadmap using local data
-    await saveRoadmapAndUpsertTransfers(localRoadmap.planners);
+    await saveRoadmapAndUpsertTransfers(localRoadmap);
 
     // Update frontend state to show local data
     const planner = await expandAllPlanners(localRoadmap.planners);

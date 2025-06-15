@@ -25,12 +25,13 @@ const roadmapsRouter = router({
       return undefined;
     }
 
-    return {
+    const roadmap: SavedRoadmap = {
       planners: planners as SavedPlannerData[],
       transfers: [],
       timestamp: users[0].timestamp?.toISOString(),
       currentPlanIndex: users[0].currentPlanIndex ?? undefined,
-    } as SavedRoadmap;
+    };
+    return roadmap;
   }),
   /**
    * Save a user's roadmap
