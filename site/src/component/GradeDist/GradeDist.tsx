@@ -47,7 +47,7 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
       requests = [trpc.courses.grades.query({ department, number: courseNumber })];
     } else {
       const professorData = data as ProfessorGQLData;
-      requests = professorData.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
+      requests = professorData.shortenedNames?.map((name) => trpc.professors.grades.query({ name }));
     }
 
     try {

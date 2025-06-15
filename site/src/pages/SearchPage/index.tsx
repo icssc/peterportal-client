@@ -61,6 +61,7 @@ const ResultPopup: FC<ResultPopupProps> = ({ dataType }) => {
   if (!data) {
     return <SearchPopupPlaceholder dataType={dataType} />;
   }
+
   const featuredReviewText = featured
     ? `For ${featured.courseId}: ${(featured?.content ?? '').length > 0 ? featured?.content : `Rating of ${featured?.rating}/5`}`
     : 'No Reviews Yet!';
