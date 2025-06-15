@@ -150,3 +150,7 @@ export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> 
 export function removeWhitespace(str: string) {
   return str.replace(/\s+/g, '');
 }
+
+export function getSentenceCase(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

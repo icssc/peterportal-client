@@ -9,6 +9,7 @@ import { CourseGQLData, ProfessorGQLData, GQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
+import { getSentenceCase } from '../../helpers/util';
 
 interface GradeDistProps {
   data: GQLData;
@@ -119,32 +120,20 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
     createQuarterEntries();
   }, [gradeDistData, currentData, createQuarterEntries]);
 
-  const ChartTypeDropdown = () => {
+  const CustomDropdownButton: FC<{ title: string; onSelect: (value: string) => void; entries: Entry[] }> = ({
+    title,
+    onSelect,
+    entries,
+  }) => {
     return (
       <div className="gradedist-filter">
         <DropdownButton
           className="ppc-dropdown-btn"
-          title="Chart Type"
+          title={title}
           variant={buttonVariant}
-          onSelect={(value) => setChartType(value as ChartTypes)}
+          onSelect={(value) => onSelect(value ?? '')}
         >
-          <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
-          <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
-        </DropdownButton>
-      </div>
-    );
-  };
-
-  const DataOptionsDropdown = () => {
-    return (
-      <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={currentData}
-          variant={buttonVariant}
-          onSelect={(value) => setCurrentData(value ?? '')}
-        >
-          {dataEntries.map((entry) => (
+          {entries.map((entry) => (
             <Dropdown.Item key={entry.value} eventKey={entry.value}>
               {entry.text}
             </Dropdown.Item>
@@ -154,53 +143,29 @@ const GradeDist: FC<GradeDistProps> = ({ data, minify }) => {
     );
   };
 
-  const QuarterOptionsDropdown = () => {
-    return (
-      <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={quarterEntries.find((q) => q.value === currentQuarter)?.text ?? 'Quarter'}
-          variant={buttonVariant}
-          onSelect={(value) => setCurrentQuarter(value ?? '')}
-        >
-          {quarterEntries.map((entry) => (
-            <Dropdown.Item key={entry.value} eventKey={entry.value}>
-              {entry.text}
-            </Dropdown.Item>
-          ))}
-        </DropdownButton>
-      </div>
-    );
-  };
-
-  const Placeholder = () => (
-    <div className="placeholder">
-      <p>{loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.'}</p>
-    </div>
-  );
-
-  const graphProps = {
-    gradeData: gradeDistData,
-    quarter: currentQuarter,
-    dataID: currentData,
-  };
-
-  const Visualization = () => (
-    <div className="chart-container">
-      <div className={`grade_distribution_chart-container ${chartType}`}>
-        {chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />}
-      </div>
-    </div>
-  );
+  const typedSetChartType = (value: string) => setChartType(value as ChartTypes);
+  const chartEntries = ['bar', 'pie'].map((v) => ({ value: v, text: getSentenceCase(v) }));
+  const currentQuarterText = quarterEntries.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const placeholderText = loading ? 'Loading Distribution...' : 'Error: could not retrieve grade distribution data.';
+  const graphProps = { gradeData: gradeDistData, quarter: currentQuarter, dataID: currentData };
+  const chartJSX = chartType === 'bar' ? <Chart {...graphProps} /> : <Pie {...graphProps} />;
 
   return (
     <div className={`gradedist-module-container ${minify && 'grade-dist-mini'}`}>
       <div className="gradedist-menu">
-        {minify && <ChartTypeDropdown />}
-        <DataOptionsDropdown />
-        <QuarterOptionsDropdown />
+        {minify && <CustomDropdownButton title="Chart Type" onSelect={typedSetChartType} entries={chartEntries} />}
+        <CustomDropdownButton title={currentData} onSelect={setCurrentData} entries={dataEntries} />
+        <CustomDropdownButton title={currentQuarterText} onSelect={setCurrentQuarter} entries={quarterEntries} />
       </div>
-      {gradeDistData.length === 0 ? <Placeholder /> : <Visualization />}
+      {gradeDistData.length === 0 ? (
+        <div className="placeholder">
+          <p>{placeholderText}</p>
+        </div>
+      ) : (
+        <div className="chart-container">
+          <div className={`grade_distribution_chart-container ${chartType}`}>{chartJSX}</div>
+        </div>
+      )}
     </div>
   );
 };

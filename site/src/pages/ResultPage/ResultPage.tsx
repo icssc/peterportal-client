@@ -13,7 +13,7 @@ import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse, setProfessor } from '../../store/slices/popupSlice';
-import { getCourseTags, searchAPIResult } from '../../helpers/util';
+import { getCourseTags, searchAPIResult, getSentenceCase } from '../../helpers/util';
 import { CourseGQLData, ProfessorGQLData, GQLData, GQLDataType } from '../../types/types';
 
 type PrereqTreeType = React.ComponentType<{ data: CourseGQLData }>;
@@ -97,7 +97,7 @@ const ResultPage: FC<ResultPageProps> = ({ dataType }) => {
 
     searchAPIResult(dataType, id).then((result) => {
       if (!result) {
-        setError(`${dataType[0].toUpperCase() + dataType.slice(1)} ${id} does not exist!`);
+        setError(`${getSentenceCase(dataType)} ${id} does not exist!`);
         return;
       }
 
