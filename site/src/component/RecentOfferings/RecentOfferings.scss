@@ -11,8 +11,9 @@
   font-size: 16px;
   width: 100%;
   max-width: 540px;
-  .bi-check {
-    transform: scale(1.5);
+
+  .MuiSvgIcon-root {
+    transform: translateY(-2px);
   }
 
   :is(td, th) {
@@ -22,9 +23,5 @@
 
   :is(th, td):not(:first-child) {
     text-align: center;
-  }
-
-  :is(td):not(:first-child) {
-    transform: translateY(-2px);
   }
 }

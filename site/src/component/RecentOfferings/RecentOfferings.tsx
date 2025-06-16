@@ -86,7 +86,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
                   {quarters.map((offered, index) => {
                     const quarterName = quarterLabels[index];
                     const term = `${index === 0 ? startYear : endYear} ${quarterName}`; // Parse an entry to a term string to see if it's in the future
-                    const isFutureTerm = currentTerm && isTermAfter(term, currentTerm);
+                    const isFutureTerm = currentTerm && isTermAfter(currentTerm, term);
 
                     return (
                       <td key={index}>
