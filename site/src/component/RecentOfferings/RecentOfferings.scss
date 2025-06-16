@@ -12,7 +12,7 @@
   width: 100%;
   max-width: 540px;
   .bi-check {
-    transform: scale(1.5) translateY(-1px);
+    transform: scale(1.5);
   }
 
   :is(td, th) {
@@ -22,5 +22,9 @@
 
   :is(th, td):not(:first-child) {
     text-align: center;
+  }
+
+  :is(td):not(:first-child) {
+    transform: translateY(-2px);
   }
 }

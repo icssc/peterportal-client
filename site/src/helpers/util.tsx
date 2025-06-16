@@ -127,6 +127,10 @@ export const sortTerms = (terms: string[]) =>
     return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
   });
 
+export const isTermAfter = (termA: string, termB: string): boolean => {
+  return sortTerms([termA, termB])[0] === termA;
+};
+
 export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
   // get array of arrays of term names
   const allTerms = Object.values(courseHistory);
