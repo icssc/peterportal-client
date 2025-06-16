@@ -5,6 +5,7 @@ import {
   TransferredUncategorized,
   TransferredAPExam,
 } from '@peterportal/types';
+import { TransferWithUnread } from '../store/slices/transferCreditsSlice';
 import trpc from '../trpc';
 
 /**
@@ -62,6 +63,14 @@ export function getTotalUnitsFromTransfers(
   });
 
   return total;
+}
+
+/** Make all transfers in the given list of transfers unread */
+export function markTransfersAsUnread<T>(transfer: T[]): TransferWithUnread<T>[] {
+  return transfer.map((item) => ({
+    unread: true,
+    ...item,
+  }));
 }
 
 export enum LocalTransferSaveKey {
