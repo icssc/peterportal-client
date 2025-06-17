@@ -27,7 +27,7 @@ const RecentOfferingQuarter: FC<RecentOfferingQuarterProps> = (props) => {
   const quarterName = quarterLabels[props.quarterIndex];
   const [startYear, endYear] = props.academicYear.split('-');
   const term = `${props.quarterIndex === 0 ? startYear : endYear} ${quarterName}`; // Parse an entry to a term string to see if it's in the future
-  const isFutureTerm = props.currentTerm && isTermAfter(props.currentTerm, term);
+  const isFutureTerm = props.currentTerm && isTermAfter(term, props.currentTerm);
 
   if (props.offered) {
     return (
@@ -110,24 +110,20 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
           {/* only display the last 4 years of offerings */}
           {Object.entries(offerings)
             .slice(0, 4)
-            .map(([year, quarters]) => {
-              return (
-                <tr key={year}>
-                  <td>{year}</td>
-                  {quarters.map((offered, index) => {
-                    return (
-                      <RecentOfferingQuarter
-                        key={index}
-                        offered={offered}
-                        quarterIndex={index}
-                        currentTerm={currentTerm}
-                        academicYear={year}
-                      />
-                    );
-                  })}
-                </tr>
-              );
-            })}
+            .map(([year, quarters]) => (
+              <tr key={year}>
+                <td>{year}</td>
+                {quarters.map((offered, index) => (
+                  <RecentOfferingQuarter
+                    key={index}
+                    offered={offered}
+                    quarterIndex={index}
+                    currentTerm={currentTerm}
+                    academicYear={year}
+                  />
+                ))}
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
