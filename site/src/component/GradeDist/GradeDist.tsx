@@ -126,18 +126,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     gradeDistData!
       .filter((entry) => {
-        if (
-          props.course &&
-          currentProf === 'ALL' &&
-          entry.department + ' ' + entry.courseNumber === props.course.department + ' ' + props.course.courseNumber
-        ) {
+        const profMatch = currentProf === 'ALL' || entry.instructors.includes(currentProf);
+        const courseMatch = entry.department + ' ' + entry.courseNumber == currentCourse;
+        if (profMatch) {
           return true;
         }
-
-        if (props.course && entry.instructors.includes(currentProf)) {
-          return true;
-        }
-        if (props.professor && entry.department + ' ' + entry.courseNumber == currentCourse) {
+        if (courseMatch) {
           return true;
         }
         return false;
