@@ -14,6 +14,40 @@ interface Offerings {
   [academicYear: string]: boolean[];
 }
 
+interface RecentOfferingQuarterProps {
+  offered: boolean;
+  quarterIndex: number;
+  currentTerm: string;
+  academicYear: string;
+}
+
+const RecentOfferingQuarter: FC<RecentOfferingQuarterProps> = (props) => {
+  const theme = useTheme();
+  const quarterLabels = ['Fall', 'Winter', 'Spring', 'Summer'];
+  const quarterName = quarterLabels[props.quarterIndex];
+  const [startYear, endYear] = props.academicYear.split('-');
+  const term = `${props.quarterIndex === 0 ? startYear : endYear} ${quarterName}`; // Parse an entry to a term string to see if it's in the future
+  const isFutureTerm = props.currentTerm && isTermAfter(props.currentTerm, term);
+
+  if (props.offered) {
+    return (
+      <td>
+        <CheckIcon style={{ fontSize: 20 }} />
+      </td>
+    );
+  }
+
+  if (isFutureTerm) {
+    return (
+      <td>
+        <QuestionMarkIcon style={{ fontSize: 20, color: theme.palette.text.secondary }} />
+      </td>
+    );
+  }
+
+  return <td></td>;
+};
+
 function parseOfferings(terms: string[]): Offerings {
   const offerings: Offerings = {};
 
@@ -51,8 +85,6 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
   const termsInOrder = props.terms.slice().reverse();
   const offerings = parseOfferings(termsInOrder);
   const [currentTerm, setCurrentTerm] = useState<string>('');
-  const quarterLabels = ['Fall', 'Winter', 'Spring', 'Summer'];
-  const theme = useTheme();
 
   useEffect(() => {
     trpc.schedule.currentQuarter.query().then((data) => {
@@ -79,23 +111,18 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
           {Object.entries(offerings)
             .slice(0, 4)
             .map(([year, quarters]) => {
-              const [startYear, endYear] = year.split('-');
               return (
                 <tr key={year}>
                   <td>{year}</td>
                   {quarters.map((offered, index) => {
-                    const quarterName = quarterLabels[index];
-                    const term = `${index === 0 ? startYear : endYear} ${quarterName}`; // Parse an entry to a term string to see if it's in the future
-                    const isFutureTerm = currentTerm && isTermAfter(currentTerm, term);
-
                     return (
-                      <td key={index}>
-                        {offered ? (
-                          <CheckIcon style={{ fontSize: 20 }} />
-                        ) : isFutureTerm ? (
-                          <QuestionMarkIcon style={{ fontSize: 20, color: theme.palette.text.secondary }} />
-                        ) : null}
-                      </td>
+                      <RecentOfferingQuarter
+                        key={index}
+                        offered={offered}
+                        quarterIndex={index}
+                        currentTerm={currentTerm}
+                        academicYear={year}
+                      />
                     );
                   })}
                 </tr>
