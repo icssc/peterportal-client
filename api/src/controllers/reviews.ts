@@ -43,6 +43,7 @@ async function getReviews(
     verified?: boolean;
   },
   sessUserId?: number,
+  isAdminView?: boolean,
 ) {
   const { courseId, professorId, userId, reviewId, verified } = where;
   const userVoteSubquery = db
@@ -77,7 +78,7 @@ async function getReviews(
       datesToStrings({
         ...review,
         score,
-        userDisplay: review.anonymous ? anonymousName : userDisplay!,
+        userDisplay: review.anonymous && !isAdminView ? anonymousName : userDisplay!,
         userVote: userVote,
         authored: sessUserId === review.userId,
       }),
@@ -89,7 +90,7 @@ async function getReviews(
 
 const reviewsRouter = router({
   getUsersReviews: userProcedure.query(async ({ ctx }) => {
-    return await getReviews({ userId: ctx.session.userId }, ctx.session.userId);
+    return await getReviews({ userId: ctx.session.userId }, ctx.session.userId, false);
   }),
   /**
    * Query reviews
@@ -104,7 +105,23 @@ const reviewsRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      return await getReviews({ ...input }, ctx.session.userId);
+      return await getReviews({ ...input }, ctx.session.userId, false);
+    }),
+
+  /**
+   * Query reviews for admin view
+   */
+  getAdminView: adminProcedure
+    .input(
+      z.object({
+        courseId: z.string().optional(),
+        professorId: z.string().optional(),
+        verified: z.boolean().optional(),
+        reviewId: z.number().optional(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      return await getReviews({ ...input }, ctx.session.userId, ctx.session.isAdmin);
     }),
 
   /**
