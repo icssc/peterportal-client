@@ -1,3 +1,16 @@
+.roadmap-header button.dropdown-button {
+  color: white;
+  border-width: 2px;
+  border-color: var(--blue-accent);
+  text-transform: none;
+  font-size: 14px;
+  padding-block: 4px;
+
+  .MuiSvgIcon-root {
+    margin-inline: -4px;
+  }
+}
+
 .multi-plan-selector {
   .select-item {
     display: flex;
@@ -5,12 +18,13 @@
     padding: 4px 8px;
     align-items: center;
   }
-  .dropdown-item .MuiButton-root {
+  .planner-name-btn {
     font-weight: 500;
     color: inherit;
     justify-content: start;
     text-transform: none;
     font-size: inherit;
+    width: 100%;
     height: 32px;
   }
   .select-item button.MuiIconButton-root {
@@ -55,44 +69,6 @@
   .dropdown-item > * {
     width: 100%;
   }
-  .btn {
-    font: inherit;
-    color: inherit;
-    font-weight: bold;
-    background-color: inherit;
-    text-align: left;
-    border: none;
-    padding: 6px;
-    margin: 0;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 32px;
-
-    &:hover,
-    &:focus {
-      background-color: #8882;
-      color: inherit;
-    }
-    &:active {
-      background-color: #8884;
-    }
-  }
-  .btn-primary {
-    border: 2px solid var(--blue-accent);
-    background-color: transparent;
-    border-radius: 4px;
-    font-weight: bold;
-    padding: 4px 10px;
-    height: 34px;
-
-    &[aria-expanded='true'],
-    &:not(.disabled):active {
-      border-color: var(--blue-primary);
-      background-color: #0062cc88;
-    }
-  }
 
   .separator-label {
     text-transform: uppercase;
@@ -112,4 +88,16 @@
     width: 100%;
     opacity: 0.8;
   }
+
+  > .MuiPaper-root {
+    padding-block: 8px;
+  }
+}
+
+.modal-backdrop:has(+ .multiplan-modal) {
+  z-index: 1340;
+}
+
+.multiplan-modal {
+  z-index: 1350;
 }

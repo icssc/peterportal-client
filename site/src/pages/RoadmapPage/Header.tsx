@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     uncategorizedCourses.some((course) => course.unread);
 
   return (
-    <div className="header">
+    <div className="roadmap-header">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">

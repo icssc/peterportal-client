@@ -1,6 +1,6 @@
 @use '../../globals.scss';
 
-.header {
+.roadmap-header {
   border-radius: var(--border-radius);
   color: var(--ring-road-white);
   display: flex;
@@ -109,7 +109,7 @@
 }
 
 @media only screen and (max-width: 400px) {
-  .header {
+  .roadmap-header {
     #title {
       font-size: 1em;
     }

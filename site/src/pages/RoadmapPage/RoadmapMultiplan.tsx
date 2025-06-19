@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
@@ -10,7 +10,7 @@ import {
   setPlanName,
 } from '../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button as Button2, Dropdown, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
@@ -20,7 +20,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Popover } from '@mui/material';
+
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -33,7 +35,6 @@ interface RoadmapSelectableItemProps {
 
 const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   plan,
-  index,
   clickHandler,
   editHandler,
   duplicateHandler,
@@ -41,11 +42,9 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
 }) => {
   return (
     <div className="select-item">
-      <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
-        <Button variant="text" className="planner-name-btn">
-          {plan.name}
-        </Button>
-      </Dropdown.Item>
+      <Button variant="text" className="planner-name-btn" onClick={clickHandler}>
+        {plan.name}
+      </Button>
       <IconButton onClick={editHandler}>
         <EditIcon />
       </IconButton>
@@ -59,6 +58,81 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   );
 };
 
+interface MultiplanDropdownProps {
+  setEditIndex: (index: number) => void;
+  setDeleteIndex: (index: number) => void;
+  handleCreate: () => void;
+}
+const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ setEditIndex, setDeleteIndex, handleCreate }) => {
+  const dispatch = useAppDispatch();
+  const allPlans = useAppSelector((state) => state.roadmap);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const { name } = allPlans.plans[currentPlanIndex];
+  const [showDropdown, setShowDropdown] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const duplicatePlan = (plan: RoadmapPlan) => {
+    const newName = makeUniquePlanName(plan.name, allPlans.plans);
+    dispatch(
+      addRoadmapPlan({
+        name: newName,
+        content: JSON.parse(JSON.stringify(plan.content)),
+      }),
+    );
+    const newIndex = allPlans.plans.length;
+    dispatch(setPlanIndex(newIndex));
+  };
+
+  const handleClose = () => setShowDropdown(false);
+
+  return (
+    <div ref={containerRef}>
+      <Button
+        className="dropdown-button"
+        variant="outlined"
+        onClick={() => setShowDropdown(!showDropdown)}
+        endIcon={<ArrowDropDownIcon />}
+      >
+        {name}
+      </Button>
+      <Popover
+        className="multi-plan-selector"
+        open={showDropdown}
+        anchorReference="anchorEl"
+        anchorEl={containerRef.current}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        onClose={handleClose}
+      >
+        {allPlans.plans.map((plan, index) => (
+          <RoadmapSelectableItem
+            key={plan.name}
+            plan={plan}
+            index={index}
+            clickHandler={() => {
+              dispatch(setPlanIndex(index));
+            }}
+            editHandler={() => setEditIndex(index)}
+            duplicateHandler={() => duplicatePlan(plan)}
+            deleteHandler={() => setDeleteIndex(index)}
+          />
+        ))}
+        <div className="separator-label">
+          Add or Import Roadmap
+          <hr />
+        </div>
+        <div className="select-item add-item">
+          <Button variant="text" onClick={handleCreate}>
+            <AddIcon />
+            <span>Blank Roadmap</span>
+          </Button>
+          <ImportTranscriptPopup />
+          <ImportZot4PlanPopup />
+        </div>
+      </Popover>
+    </div>
+  );
+};
+
 const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
@@ -67,12 +141,9 @@ const RoadmapMultiplan: FC = () => {
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
-  const [showDropdown, setShowDropdown] = useState(false);
   const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
 
-  // name: name of the plan, content: stores the content of plan
-  // const { name, content } = allPlans.plans[currentPlanIndex];
-  const { name } = allPlans.plans[currentPlanIndex];
+  const name = allPlans.plans[currentPlanIndex].name;
 
   const addNewPlan = (name: string) => {
     dispatch(addRoadmapPlan({ name: name, content: initialPlanState }));
@@ -101,67 +172,13 @@ const RoadmapMultiplan: FC = () => {
     setEditIdx(-1);
   };
 
-  const duplicatePlan = (plan: RoadmapPlan) => {
-    const newName = makeUniquePlanName(plan.name, allPlans.plans);
-    dispatch(
-      addRoadmapPlan({
-        name: newName,
-        content: JSON.parse(JSON.stringify(plan.content)),
-      }),
-    );
-    const newIndex = allPlans.plans.length;
-    dispatch(setPlanIndex(newIndex));
-  };
-
   useEffect(() => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
 
   return (
-    <div className="multi-plan-selector">
-      <Dropdown
-        show={showDropdown}
-        onToggle={(s, e) => {
-          const target = e.target as HTMLElement;
-          // Stay open if something in this menu is clicked unless it's switching roadmaps
-          const inMenu =
-            document.querySelector('.multi-plan-selector')!.contains(target) &&
-            !target.classList.contains('planner-name-btn');
-          const inDialog = document.querySelector('.multiplan-modal')?.contains(target) ?? false;
-          setShowDropdown(s || inMenu || inDialog);
-        }}
-      >
-        <Dropdown.Toggle onClick={() => setShowDropdown(!showDropdown)}>
-          <span>{name}</span>
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {allPlans.plans.map((plan, index) => (
-            <RoadmapSelectableItem
-              key={plan.name}
-              plan={plan}
-              index={index}
-              clickHandler={() => {
-                dispatch(setPlanIndex(index));
-              }}
-              editHandler={() => setEditIdx(index)}
-              duplicateHandler={() => duplicatePlan(plan)}
-              deleteHandler={() => setDelIdx(index)}
-            />
-          ))}
-          <div className="separator-label">
-            Add or Import Roadmap
-            <hr />
-          </div>
-          <div className="select-item add-item">
-            <Button variant="text" onClick={() => setIsOpen(true)}>
-              <AddIcon />
-              <span>Blank Roadmap</span>
-            </Button>
-            <ImportTranscriptPopup />
-            <ImportZot4PlanPopup />
-          </div>
-        </Dropdown.Menu>
-      </Dropdown>
+    <>
+      <MultiplanDropdown handleCreate={() => setIsOpen(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx} />
 
       {/* Create Roadmap Modal */}
       <Modal
@@ -282,7 +299,7 @@ const RoadmapMultiplan: FC = () => {
           </Button2>
         </Modal.Body>
       </Modal>
-    </div>
+    </>
   );
 };
 
