@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
@@ -10,10 +10,9 @@ import {
   setPlanName,
 } from '../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button, Dropdown, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Dropdown, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
-import ThemeContext from '../../style/theme-context';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -21,7 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -40,12 +39,10 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   duplicateHandler,
   deleteHandler,
 }) => {
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
   return (
     <div className="select-item">
       <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
-        <Button variant={buttonVariant} className="planner-name-btn">
+        <Button variant="text" className="planner-name-btn">
           {plan.name}
         </Button>
       </Dropdown.Item>
@@ -66,15 +63,12 @@ const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const { darkMode } = useContext(ThemeContext);
   const [isOpen, setIsOpen] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
   const [showDropdown, setShowDropdown] = useState(false);
   const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
-
-  const buttonVariant = darkMode ? 'dark' : 'light';
 
   // name: name of the plan, content: stores the content of plan
   // const { name, content } = allPlans.plans[currentPlanIndex];
@@ -159,7 +153,7 @@ const RoadmapMultiplan: FC = () => {
             <hr />
           </div>
           <div className="select-item add-item">
-            <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
+            <Button variant="text" onClick={() => setIsOpen(true)}>
               <AddIcon />
               <span>Blank Roadmap</span>
             </Button>
@@ -205,14 +199,14 @@ const RoadmapMultiplan: FC = () => {
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="primary"
             onClick={() => {
               handleSubmitNewPlan();
             }}
           >
             Create Roadmap
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
 
@@ -248,14 +242,14 @@ const RoadmapMultiplan: FC = () => {
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="primary"
             onClick={() => {
               modifyPlanName();
             }}
           >
             Save Roadmap
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
 
@@ -278,14 +272,14 @@ const RoadmapMultiplan: FC = () => {
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="danger"
             onClick={() => {
               deleteCurrentPlan();
             }}
           >
             I am sure
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
     </div>

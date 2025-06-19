@@ -5,7 +5,15 @@
     padding: 4px 8px;
     align-items: center;
   }
-  .select-item button.MuiButtonBase-root {
+  .dropdown-item .MuiButton-root {
+    font-weight: 500;
+    color: inherit;
+    justify-content: start;
+    text-transform: none;
+    font-size: inherit;
+    height: 32px;
+  }
+  .select-item button.MuiIconButton-root {
     width: 32px;
     height: 32px;
     &:not(.delete-btn) .MuiSvgIcon-root {
@@ -15,7 +23,7 @@
   .add-item {
     padding-inline: 16px;
   }
-  .add-item button.btn {
+  .add-item button.MuiButton-root {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -24,9 +32,11 @@
     padding: 6px 12px;
     width: 80px;
     flex-grow: 1;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
     background-color: #88888818;
+    color: inherit;
+    text-transform: none;
 
     span {
       white-space: normal;
