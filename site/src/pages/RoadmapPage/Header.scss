@@ -63,12 +63,26 @@
     }
   }
 
-  .planner-right {
-    .btn-group {
-      justify-content: end;
+  .planner-actions {
+    padding-right: 2px;
+
+    span.MuiButton-startIcon {
+      margin-right: 4px;
     }
-    .btn-group > button {
-      flex-grow: 0;
+
+    .header-btn {
+      white-space: nowrap;
+      text-transform: none;
+      color: inherit;
+      font-weight: 600;
+      height: fit-content;
+      border-radius: 4px;
+      padding: 4px 8px 4px 10px;
+
+      @media (max-width: 900px) {
+        font-size: 13px;
+        padding-inline: 8px 6px;
+      }
     }
   }
 }
@@ -80,15 +94,6 @@
 #course-count,
 #unit-count {
   font-weight: bold;
-}
-
-.header-btn {
-  color: var(--ring-road-white);
-  background-color: transparent;
-  font-weight: bold;
-  border: none;
-  font-size: 14px;
-  padding: 6px 12px;
 }
 
 .header-btn:hover,
