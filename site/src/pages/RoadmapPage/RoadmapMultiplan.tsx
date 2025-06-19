@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
@@ -62,8 +62,9 @@ interface MultiplanDropdownProps {
   setEditIndex: (index: number) => void;
   setDeleteIndex: (index: number) => void;
   handleCreate: () => void;
+  children?: ReactNode;
 }
-const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ setEditIndex, setDeleteIndex, handleCreate }) => {
+const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex, setDeleteIndex, handleCreate }) => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
@@ -128,6 +129,7 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ setEditIndex, setDelete
           <ImportTranscriptPopup />
           <ImportZot4PlanPopup />
         </div>
+        {children}
       </Popover>
     </div>
   );
@@ -177,9 +179,7 @@ const RoadmapMultiplan: FC = () => {
   }, [name]);
 
   return (
-    <>
-      <MultiplanDropdown handleCreate={() => setIsOpen(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx} />
-
+    <MultiplanDropdown handleCreate={() => setIsOpen(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
       {/* Create Roadmap Modal */}
       <Modal
         show={isOpen}
@@ -299,7 +299,7 @@ const RoadmapMultiplan: FC = () => {
           </Button2>
         </Modal.Body>
       </Modal>
-    </>
+    </MultiplanDropdown>
   );
 };
 
