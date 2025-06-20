@@ -36,6 +36,7 @@
   }
   .add-item {
     padding-inline: 16px;
+    container: multiplan-add / inline-size;
   }
   .add-item button.MuiButton-root {
     display: flex;
@@ -52,10 +53,14 @@
     color: inherit;
     text-transform: none;
 
-    span {
+    > span:not(.MuiTouchRipple-root) {
       white-space: normal;
       text-align: center;
       line-height: 1.25;
+      max-width: 80px;
+      @container multiplan-add (min-width: 440px) {
+        max-width: none;
+      }
     }
   }
   .dropdown-item {
