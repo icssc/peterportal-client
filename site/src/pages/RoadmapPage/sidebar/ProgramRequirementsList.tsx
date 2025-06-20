@@ -189,7 +189,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   return (
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} unmountOnExit>
         {showLabel && (
           <p className="requirement-label">
             <b>Complete {label} of the following:</b>
@@ -240,7 +240,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   return (
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} unmountOnExit>
         <p className="requirement-label">
           Complete <b>{data.requirementCount}</b> of the following series:
         </p>

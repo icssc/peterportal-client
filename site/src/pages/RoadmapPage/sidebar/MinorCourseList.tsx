@@ -58,7 +58,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         <h4 className="major-name">{minorReqs.minor.name}</h4>
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} unmountOnExit>
         {renderRequirements()}
       </Collapse>
     </div>

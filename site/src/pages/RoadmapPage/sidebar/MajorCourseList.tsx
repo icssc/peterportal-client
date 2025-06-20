@@ -145,7 +145,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
         <h4 className="major-name">{major.name}</h4>
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} unmountOnExit>
         {hasSpecs && (
           <Select
             options={specOptions}
