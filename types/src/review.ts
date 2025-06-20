@@ -62,6 +62,14 @@ export const reviewData = reviewSubmission.omit({ captchaToken: true, anonymous:
 });
 export type ReviewData = z.infer<typeof reviewData>;
 
+export const reviewInput = z.object({
+  courseId: z.string().optional(),
+  professorId: z.string().optional(),
+  verified: z.boolean().optional(),
+  reviewId: z.number().optional(),
+});
+export type ReviewInput = z.infer<typeof reviewInput>;
+
 export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote' | 'userDisplay' | 'authored'>;
 
 export const featuredQuery = z.object({
