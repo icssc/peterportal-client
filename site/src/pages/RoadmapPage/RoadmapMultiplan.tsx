@@ -143,7 +143,7 @@ const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const [isOpen, setIsOpen] = useState(false);
+  const [showAddPlan, setShowAddPlan] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
@@ -165,7 +165,7 @@ const RoadmapMultiplan: FC = () => {
   const handleSubmitNewPlan = () => {
     if (!newPlanName) return spawnToast('Name cannot be empty', true);
     if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
-    setIsOpen(false);
+    setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
     dispatch(setPlanIndex(newIndex));
@@ -183,18 +183,18 @@ const RoadmapMultiplan: FC = () => {
   }, [name]);
 
   return (
-    <MultiplanDropdown handleCreate={() => setIsOpen(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
+    <MultiplanDropdown handleCreate={() => setShowAddPlan(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
       {/* Create Roadmap Modal */}
       <Modal
-        show={isOpen}
+        show={showAddPlan}
         onShow={() => {
-          setIsOpen(true);
+          setShowAddPlan(true);
           const planCount = allPlans.plans?.length ?? 0;
           let newIdx = planCount + 1;
           while (allPlans.plans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
           setNewPlanName(`Roadmap ${newIdx}`);
         }}
-        onHide={() => setIsOpen(false)}
+        onHide={() => setShowAddPlan(false)}
         centered
         className="ppc-modal multiplan-modal"
       >
