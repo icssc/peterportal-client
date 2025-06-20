@@ -40,8 +40,17 @@
     outline: none;
     width: 100%;
 
+    transition: margin globals.$mui-transition-time;
+
     &.open {
       margin-bottom: 12px;
+    }
+    + .MuiCollapse-root {
+      opacity: 0;
+      transition-property: height, opacity;
+    }
+    &.open + .MuiCollapse-root {
+      opacity: 1;
     }
   }
 
@@ -89,6 +98,17 @@
   > .group-requirement:not(:last-child),
   .course-requirement:not(:last-child) {
     margin-bottom: 16px;
+  }
+
+  .expand-requirements {
+    margin-block: -8px;
+    margin-right: -4px;
+    padding: 4px;
+    color: inherit;
+
+    .MuiSvgIcon-root {
+      color: inherit;
+    }
   }
 }
 
