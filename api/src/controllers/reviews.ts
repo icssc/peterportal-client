@@ -12,6 +12,7 @@ import {
   FeaturedReviewData,
   ReviewData,
   reviewSubmission,
+  reviewInput,
 } from '@peterportal/types';
 import { TRPCError } from '@trpc/server';
 import { db } from '../db';
@@ -95,34 +96,16 @@ const reviewsRouter = router({
   /**
    * Query reviews
    */
-  get: publicProcedure
-    .input(
-      z.object({
-        courseId: z.string().optional(),
-        professorId: z.string().optional(),
-        verified: z.boolean().optional(),
-        reviewId: z.number().optional(),
-      }),
-    )
-    .query(async ({ input, ctx }) => {
-      return await getReviews({ ...input }, ctx.session.userId, false);
-    }),
+  get: publicProcedure.input(reviewInput).query(async ({ input, ctx }) => {
+    return await getReviews({ ...input }, ctx.session.userId, false);
+  }),
 
   /**
    * Query reviews for admin view
    */
-  getAdminView: adminProcedure
-    .input(
-      z.object({
-        courseId: z.string().optional(),
-        professorId: z.string().optional(),
-        verified: z.boolean().optional(),
-        reviewId: z.number().optional(),
-      }),
-    )
-    .query(async ({ input, ctx }) => {
-      return await getReviews({ ...input }, ctx.session.userId, ctx.session.isAdmin);
-    }),
+  getAdminView: adminProcedure.input(reviewInput).query(async ({ input, ctx }) => {
+    return await getReviews({ ...input }, ctx.session.userId, ctx.session.isAdmin);
+  }),
 
   /**
    * Add a review
