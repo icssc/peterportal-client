@@ -84,7 +84,7 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
     dispatch(setPlanIndex(newIndex));
   };
 
-  const handleClose = (_: Event, reason?: string) => {
+  const handleClose = (_?: object, reason?: string) => {
     const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
     if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
     setShowDropdown(false);
@@ -115,6 +115,7 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
             index={index}
             clickHandler={() => {
               dispatch(setPlanIndex(index));
+              handleClose();
             }}
             editHandler={() => setEditIndex(index)}
             duplicateHandler={() => duplicatePlan(plan)}
