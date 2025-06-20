@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Button, ButtonGroup } from 'react-bootstrap';
 import { pluralize } from '../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
@@ -10,6 +9,7 @@ import UnreadDot from '../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
+import { Button, ButtonGroup } from '@mui/material';
 
 interface HeaderProps {
   courseCount: number;
@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     uncategorizedCourses.some((course) => course.unread);
 
   return (
-    <div className="header">
+    <div className="roadmap-header">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
@@ -48,16 +48,14 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
           <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
-      <div className="planner-right">
+      <div className="planner-actions">
         <ButtonGroup>
           <AddYearPopup />
-          <Button variant="light" className="header-btn ppc-btn" onClick={toggleTransfers}>
-            <SwapHorizOutlinedIcon className="header-icon" />
+          <Button variant="text" className="header-btn" startIcon={<SwapHorizOutlinedIcon />} onClick={toggleTransfers}>
             Transfer Credits
             <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
-          <Button variant="light" className="header-btn ppc-btn" onClick={saveRoadmap}>
-            <SaveIcon className="header-icon" />
+          <Button variant="text" className="header-btn" startIcon={<SaveIcon />} onClick={saveRoadmap}>
             Save
           </Button>
         </ButtonGroup>

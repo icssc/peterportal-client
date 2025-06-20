@@ -1,10 +1,9 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
 import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
-import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
@@ -21,6 +20,7 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
+import { Button } from '@mui/material';
 
 interface TransferUnitDetails {
   date: string;
@@ -184,7 +184,6 @@ async function organizeTransfers(transfers: TransferUnitDetails[]) {
 }
 
 const ImportTranscriptPopup: FC = () => {
-  const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
   const [file, setFile] = useState<Blob | null>(null);
@@ -307,12 +306,12 @@ const ImportTranscriptPopup: FC = () => {
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button variant="primary" disabled={!file || busy} onClick={importHandler}>
+          <Button2 variant="primary" disabled={!file || busy} onClick={importHandler}>
             {busy ? 'Importing...' : 'Import'}
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
-      <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
+      <Button variant="text" onClick={() => setShowModal(true)}>
         <DescriptionIcon />
         <span>Student Transcript</span>
       </Button>
