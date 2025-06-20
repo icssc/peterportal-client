@@ -84,7 +84,11 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
     dispatch(setPlanIndex(newIndex));
   };
 
-  const handleClose = () => setShowDropdown(false);
+  const handleClose = (_: Event, reason?: string) => {
+    const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
+    if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
+    setShowDropdown(false);
+  };
 
   return (
     <div ref={containerRef}>
