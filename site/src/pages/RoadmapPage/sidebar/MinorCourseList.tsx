@@ -6,8 +6,8 @@ import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import { Collapse } from '@mui/material';
 
 function getCoursesForMinor(programId: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
@@ -55,10 +55,12 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
         <h4 className="major-name">{minorReqs.minor.name}</h4>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      {open && <>{renderRequirements()}</>}
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        {renderRequirements()}
+      </Collapse>
     </div>
   );
 };

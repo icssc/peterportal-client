@@ -39,19 +39,6 @@
     border: none;
     outline: none;
     width: 100%;
-
-    transition: margin globals.$mui-transition-time;
-
-    &.open {
-      margin-bottom: 12px;
-    }
-    + .MuiCollapse-root {
-      opacity: 0;
-      transition-property: height, opacity;
-    }
-    &.open + .MuiCollapse-root {
-      opacity: 1;
-    }
   }
 
   .group-header svg.bi {
@@ -109,6 +96,10 @@
     .MuiSvgIcon-root {
       color: inherit;
     }
+  }
+
+  .MuiCollapse-wrapperInner > :first-child {
+    padding-top: 12px;
   }
 }
 

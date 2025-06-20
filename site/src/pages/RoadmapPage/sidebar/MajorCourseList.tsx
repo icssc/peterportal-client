@@ -15,8 +15,8 @@ import RequirementsLoadingIcon from './RequirementsLoadingIcon';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import { Collapse } from '@mui/material';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -142,27 +142,25 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ExpandMoreIcon /> : <ChevronRightIcon />}
         <h4 className="major-name">{major.name}</h4>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      {open && (
-        <>
-          {hasSpecs && (
-            <Select
-              options={specOptions}
-              value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
-              isDisabled={specsLoading}
-              isLoading={specsLoading}
-              onChange={handleSpecializationChange}
-              className="ppc-combobox"
-              classNamePrefix="ppc-combobox"
-              placeholder="Select a specialization..."
-              theme={(t) => comboboxTheme(t, isDark)}
-            />
-          )}
-          {renderRequirements()}
-        </>
-      )}
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        {hasSpecs && (
+          <Select
+            options={specOptions}
+            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
+            isDisabled={specsLoading}
+            isLoading={specsLoading}
+            onChange={handleSpecializationChange}
+            className="ppc-combobox"
+            classNamePrefix="ppc-combobox"
+            placeholder="Select a specialization..."
+            theme={(t) => comboboxTheme(t, isDark)}
+          />
+        )}
+        {renderRequirements()}
+      </Collapse>
     </div>
   );
 };
