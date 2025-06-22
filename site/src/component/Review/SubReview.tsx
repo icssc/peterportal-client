@@ -249,9 +249,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
             </button>
           </div>
         </div>
-        <Button variant="primary" className="add-report-button" onClick={openReportForm}>
-          Report
-        </Button>
+        <button className="add-report-button" onClick={openReportForm}>
+          Report...
+        </button>
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}

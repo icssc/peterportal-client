@@ -95,7 +95,7 @@
   display: flex;
   flex-direction: column;
   justify-content: left;
-  gap: 1rem;
+  gap: 10px;
 }
 .rating {
   border-radius: var(--border-radius);
@@ -153,7 +153,6 @@
   padding-block: 2.5px;
 }
 .subreview-detail {
-  border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
   width: fit-content;
@@ -172,7 +171,7 @@
   @media (min-width: 500px) {
     min-width: 170px;
     &:first-child {
-      min-width: 340px;
+      min-width: 250px;
     }
   }
 }
@@ -209,7 +208,7 @@
 }
 .subreview-tag {
   padding: 6px 12px;
-  background-color: var(--blue-primary);
+  background-color: #606166;
   color: white;
   margin: 0;
 }
@@ -219,6 +218,7 @@
   flex-direction: row;
   justify-content: space-between;
   margin-top: auto;
+  color: var(--text-secondary);
 }
 // vote on a review
 .subreview-voting {
@@ -226,44 +226,42 @@
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
+  font-weight: bold;
+  height: 20px;
+
+  * {
+    margin: 0px;
+  }
+
+  .subreview-voting-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .upvote,
+  .downvote {
+    padding: 0px;
+    border: none;
+    height: fit-content;
+    background-color: transparent;
+    transition: 0.25s;
+    font-size: 20px;
+  }
+  .colored-upvote {
+    color: var(--blue-primary);
+  }
+  .colored-downvote {
+    color: var(--red-secondary);
+  }
 }
-.subreview-voting-question,
-.subreview-voting-count {
-  margin: 0;
-}
-.subreview-voting-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  background-color: transparent;
-}
-.upvote,
-.downvote {
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-  height: fit-content;
-  background-color: transparent;
-  color: var(--mid-gray);
-  transition: 0.25s;
-}
-.colored-upvote {
-  color: var(--blue-primary);
-}
-.colored-downvote {
-  color: var(--red-secondary);
-}
-// report a review
+
 .add-report-button {
+  border: none;
   background-color: transparent;
-  border-color: transparent;
-  color: var(--text);
+  text-decoration: underline;
 }
 .add-report-button:hover {
-  background-color: var(--overlay3);
-  border-color: var(--overlay3);
-  border-radius: var(--border-radius);
   color: var(--text);
 }
 
