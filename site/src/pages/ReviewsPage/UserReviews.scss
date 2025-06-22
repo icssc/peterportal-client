@@ -4,22 +4,3 @@
     font-weight: bold;
   }
 }
-
-.user-reviews-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 1rem;
-}
-
-.user-review-wrapper {
-  width: 100%;
-  height: 100%;
-}
-
-.user-review-wrapper > * {
-  height: 100%;
-}
-
-.user-review-wrapper > .subreview {
-  background-color: var(--overlay1);
-}

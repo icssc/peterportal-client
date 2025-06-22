@@ -4,20 +4,21 @@ import './UserReviews.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { ReviewData } from '@peterportal/types';
+import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
 import trpc from '../../trpc';
 
 const UserReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
   return (
-    <div className="user-reviews-container">
+    <ReviewItemGrid>
       {reviews.length == 0 && (
         <span>You haven't reviewed any courses yet. Look up a course you've taken to review it!</span>
       )}
       {reviews.map((review) => (
-        <div key={'user-review-' + review.id!} className="user-review-wrapper">
+        <div key={'user-review-' + review.id!}>
           <SubReview review={review} />
         </div>
       ))}
-    </div>
+    </ReviewItemGrid>
   );
 };
 
