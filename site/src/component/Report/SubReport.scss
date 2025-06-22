@@ -1,13 +1,16 @@
 .subreport {
+  background-color: var(--overlay2);
   border-radius: var(--border-radius);
+
+  padding: 10px 16px;
 }
 
 .subreport-content {
-  label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .label {
     font-weight: bold;
-  }
-  p {
-    font-style: italic;
-    margin-left: 1vw;
   }
 }

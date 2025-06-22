@@ -10,13 +10,15 @@ interface SubReportProps {
 }
 
 const SubReport: FC<SubReportProps> = (props) => {
+  const date = new Date(Date.parse(props.timestamp));
   return (
     <div className="subreport">
       <div className="subreport-content">
-        <h5>Reported at {props.timestamp}</h5>
-        <p>{props.reason}</p>
+        <span className="label">
+          Reason for Report on {date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}
+        </span>
+        <i>{props.reason}</i>
       </div>
-      {!props.isLast && <br />}
     </div>
   );
 };
