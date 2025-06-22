@@ -13,6 +13,5 @@
   height: 100%;
 }
 
-.reviews-grid > div > * {
-  background-color: var(--overlay1);
+.reviews-grid > div > *.MuiPaper-root {
 }
