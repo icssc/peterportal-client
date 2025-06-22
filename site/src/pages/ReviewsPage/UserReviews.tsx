@@ -13,7 +13,7 @@ const UserReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
         <span>You haven't reviewed any courses yet. Look up a course you've taken to review it!</span>
       )}
       {reviews.map((review) => (
-        <div key={review.id!} className="user-review-wrapper">
+        <div key={'user-review-' + review.id!} className="user-review-wrapper">
           <SubReview review={review} />
         </div>
       ))}
@@ -38,7 +38,7 @@ const UserReviews: FC = () => {
 
   /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper user-reviews-page">
       <h1>Your Reviews</h1>
       <p>Deleting a review will remove it permanently.</p>
       {reviewsLoading ? <p>Loading...</p> : <UserReviewsList reviews={reviews} />}

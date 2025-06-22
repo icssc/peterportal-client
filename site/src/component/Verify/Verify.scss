@@ -1,15 +1,27 @@
 .verify-container {
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+  }
   border-radius: var(--border-radius);
-}
 
-.verify {
-  border-radius: var(--border-radius);
-  margin-bottom: 3vh;
-
-  .verify-footer {
+  .MuiButton-root {
+    margin: 6px;
+    display: flex;
     flex-direction: row;
-    width: 100%;
-    align-items: flex-end;
-    margin-top: 16px;
+    gap: 7px;
+    padding: 0px 14px 0px 10px;
+    height: 29px;
+    font-size: 13px;
+  }
+
+  .delete-button.MuiButton-root {
+    background-color: var(--overlay2); //rgba(136, 136, 136, 0.0941176471);//var(--gray-blue);
+    color: var(--text);
+  }
+
+  .verify-button.MuiButton-root {
+    background-color: var(--blue-primary);
+    color: white;
   }
 }
