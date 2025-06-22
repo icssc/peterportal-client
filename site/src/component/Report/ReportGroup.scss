@@ -1,19 +1,7 @@
 .report-group {
   padding: 16px 20px;
 
-  .MuiButton-root {
-    margin: 6px;
-    display: flex;
-    flex-direction: row;
-    gap: 7px;
-    padding: 0px 14px 0px 10px;
-    height: 29px;
-    font-size: 13px;
-  }
-
   .report-group-header {
-    /*margin: 0;
-    font-size: x-large;*/
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,7 +11,7 @@
     .edit-buttons {
       display: flex;
       flex-direction: row;
-      margin-right: -8px;
+      gap: 12px;
     }
   }
 

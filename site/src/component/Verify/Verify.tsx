@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import { Button } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/Delete';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
 import trpc from '../../trpc';
@@ -29,16 +29,18 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
       {reviews.map((review) => (
         <div key={'verify-' + review.id!}>
           <SubReview review={review}>
-            <Button className="ppc-mui-button with-icon" variant="contained" onClick={() => deleteReview(review.id)}>
-              <DeleteForeverIcon /> Delete
-            </Button>
-            <Button
-              className="ppc-mui-button primary-button with-icon"
-              variant="contained"
-              onClick={() => verifyReview(review.id)}
-            >
-              <CheckIcon /> Verify
-            </Button>
+            <div className="verification-buttons">
+              <Button className="ppc-mui-button with-icon" variant="contained" onClick={() => deleteReview(review.id)}>
+                <DeleteForeverIcon /> Delete
+              </Button>
+              <Button
+                className="ppc-mui-button primary-button with-icon"
+                variant="contained"
+                onClick={() => verifyReview(review.id)}
+              >
+                <CheckIcon /> Verify
+              </Button>
+            </div>
           </SubReview>
         </div>
       ))}

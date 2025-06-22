@@ -5,3 +5,10 @@
   }
   border-radius: var(--border-radius);
 }
+
+.verification-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin: 0px 8px;
+}

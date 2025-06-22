@@ -85,9 +85,9 @@ button {
 }
 
 .ppc-mui-button.MuiButton-root {
-  margin: 6px;
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
+  align-items: center;
   gap: 7px;
   height: 29px;
   font-size: 13px;
