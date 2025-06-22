@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SubReport from './SubReport';
@@ -30,7 +30,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return <></>;
   } else {
     return (
-      <div className="report-group">
+      <Paper className="report-group ppc-paper">
         <div className="report-group-header">
           <div className="report-group-identifier">
             {review.courseId} {review.professorId}
@@ -44,14 +44,12 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
             </Button>
           </div>
         </div>
-        <div className="report-group-content">
-          <p>{review.content}</p>
-          <div className="report-group-user-display">
-            Posted by <i>{review.userDisplay}</i> on{' '}
-            <i>
-              {new Date(review.createdAt).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </i>
-          </div>
+        <div className="report-group-content">{review.content}</div>
+        <div className="report-group-user-display">
+          Posted by <i>{review.userDisplay}</i> on{' '}
+          <i>
+            {new Date(review.createdAt).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </i>
         </div>
         <div className="report-group-subreports-container">
           {props.reports.map((report, i) => (
@@ -65,7 +63,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
             />
           ))}
         </div>
-      </div>
+      </Paper>
     );
   }
 };

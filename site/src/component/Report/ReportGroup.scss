@@ -1,6 +1,4 @@
 .report-group {
-  background-color: var(--overlay2);
-  border-radius: var(--border-radius);
   padding: 16px 20px;
 
   .MuiButton-root {
@@ -51,20 +49,22 @@
     margin-bottom: 0.5rem;
   }
 
-  .report-group-user-display {
-    color: var(--text-secondary);
-  }
-
   .report-group-content {
+    font-size: 17px;
     margin-top: 16px;
     margin-bottom: 10px;
   }
 
+  .report-group-user-display {
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
   .report-group-subreports-container {
-    background-color: var(--overlay3);
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 10px;
   }
 }

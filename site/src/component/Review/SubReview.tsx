@@ -20,7 +20,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 
 interface SubReviewProps {
   review: ReviewData;
@@ -126,7 +126,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
-    <div className="subreview">
+    <Paper className="subreview ppc-paper">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
           {professor && (
@@ -268,7 +268,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
           terms={sortedTerms}
         />
       </div>
-    </div>
+    </Paper>
   );
 };
 

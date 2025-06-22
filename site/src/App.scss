@@ -383,6 +383,12 @@ button.unstyled {
   justify-content: center;
 }
 
+.ppc-paper.MuiPaper-root {
+  background-color: var(--overlay1);
+  box-shadow: 0px 0px 6px rgba(28, 38, 71, 0.1);
+  border-radius: 4px;
+}
+
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
