@@ -1,5 +1,5 @@
 import { FC, useState, ReactNode } from 'react';
-import './Review.scss';
+import './SubReview.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
