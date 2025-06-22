@@ -84,6 +84,36 @@ button {
   }
 }
 
+.ppc-mui-button.MuiButton-root {
+  margin: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+  height: 29px;
+  font-size: 13px;
+
+  padding: 0px 14px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+}
+
+[data-theme='dark'] {
+  .ppc-mui-button.MuiButton-root {
+    background-color: #606166;
+  }
+}
+
+.ppc-mui-button.primary-button.MuiButton-root {
+  background-color: var(--blue-primary);
+  color: white;
+}
+
+/* Prevent the icon from making padding appear too large */
+.ppc-mui-button.with-icon.MuiButton-root {
+  padding: 0px 14px 0px 10px;
+}
+
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;

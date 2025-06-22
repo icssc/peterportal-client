@@ -15,7 +15,6 @@ const ReportsList: FC<{
   acceptReports: (reviewId: number) => Promise<void>;
   denyReports: (reviewId: number) => Promise<void>;
 }> = ({ data, acceptReports, denyReports }) => {
-  // TODO: class for user reviews container (move to its own component?)
   return (
     <ReviewItemGrid>
       {data.length == 0 && <span>There are currently no reports that need attention</span>}

@@ -4,24 +4,4 @@
     font-weight: bold;
   }
   border-radius: var(--border-radius);
-
-  .MuiButton-root {
-    margin: 6px;
-    display: flex;
-    flex-direction: row;
-    gap: 7px;
-    padding: 0px 14px 0px 10px;
-    height: 29px;
-    font-size: 13px;
-  }
-
-  .delete-button.MuiButton-root {
-    background-color: var(--overlay2); //rgba(136, 136, 136, 0.0941176471);//var(--gray-blue);
-    color: var(--text);
-  }
-
-  .verify-button.MuiButton-root {
-    background-color: var(--blue-primary);
-    color: white;
-  }
 }

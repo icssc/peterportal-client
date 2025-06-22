@@ -23,17 +23,20 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
     dispatch(setReviews(reviews.filter((review) => review.id !== reviewId)));
   };
 
-  // TODO: class for user reviews container (move to its own component?)
   return (
     <ReviewItemGrid>
       {reviews.length == 0 && <span>There are no unverified reviews</span>}
       {reviews.map((review) => (
         <div key={'verify-' + review.id!}>
           <SubReview review={review}>
-            <Button className="delete-button" variant="contained" onClick={() => deleteReview(review.id)}>
+            <Button className="ppc-mui-button with-icon" variant="contained" onClick={() => deleteReview(review.id)}>
               <DeleteForeverIcon /> Delete
             </Button>
-            <Button className="verify-button" variant="contained" onClick={() => verifyReview(review.id)}>
+            <Button
+              className="ppc-mui-button primary-button with-icon"
+              variant="contained"
+              onClick={() => verifyReview(review.id)}
+            >
               <CheckIcon /> Verify
             </Button>
           </SubReview>
