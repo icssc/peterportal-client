@@ -98,7 +98,12 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+
+  .author-bottom {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
 
   .review-content {
     // font alignment

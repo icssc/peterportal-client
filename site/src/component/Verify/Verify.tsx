@@ -30,11 +30,11 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
         <div key={'verify-' + review.id!}>
           <SubReview review={review}>
             <div className="verification-buttons">
-              <Button className="ppc-mui-button with-icon" variant="contained" onClick={() => deleteReview(review.id)}>
+              <Button className="ppc-mui-button" variant="contained" onClick={() => deleteReview(review.id)}>
                 <DeleteForeverIcon /> Delete
               </Button>
               <Button
-                className="ppc-mui-button primary-button with-icon"
+                className="ppc-mui-button primary-button"
                 variant="contained"
                 onClick={() => verifyReview(review.id)}
               >

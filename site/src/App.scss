@@ -98,6 +98,11 @@ button {
   color: var(--text);
 }
 
+/* Prevent icon from making button padding look too large on the left */
+.ppc-mui-button.MuiButton-root > .MuiSvgIcon-root {
+  margin-left: -4px;
+}
+
 [data-theme='dark'] {
   .ppc-mui-button.MuiButton-root {
     background-color: #606166;
@@ -107,11 +112,6 @@ button {
 .ppc-mui-button.primary-button.MuiButton-root {
   background-color: var(--blue-primary);
   color: white;
-}
-
-/* Prevent the icon from making padding appear too large */
-.ppc-mui-button.with-icon.MuiButton-root {
-  padding: 0px 14px 0px 10px;
 }
 
 .ppc-popover {
