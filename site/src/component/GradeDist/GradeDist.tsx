@@ -128,13 +128,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .filter((entry) => {
         const profMatch = currentProf === 'ALL' || entry.instructors.includes(currentProf);
         const courseMatch = entry.department + ' ' + entry.courseNumber == currentCourse;
-        if (profMatch) {
-          return true;
-        }
-        if (courseMatch) {
-          return true;
-        }
-        return false;
+
+        return profMatch || courseMatch;
       })
       .forEach((data) => quarters.add(data.quarter + ' ' + data.year));
     quarters.forEach((quarter) => result.push({ value: quarter, text: quarter }));
