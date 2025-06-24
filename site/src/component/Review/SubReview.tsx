@@ -224,7 +224,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
               </p>
             </div>
           </div>
-          <span className="author-bottom">Posted by {review.userDisplay}</span>
           <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
       </div>
