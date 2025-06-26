@@ -19,7 +19,7 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
 
-const SideBar = () => {
+const Sidebar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const isLoggedIn = useIsLoggedIn();
@@ -124,4 +124,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default Sidebar;

@@ -9,7 +9,7 @@ import './App.scss';
 import AppHeader from './component/AppHeader/AppHeader';
 import AppThemeProvider from './component/AppThemeProvider/AppThemeProvider';
 import ChangelogModal from './component/ChangelogModal/ChangelogModal';
-import SideBar from './component/SideBar/SideBar';
+import Sidebar from './component/Sidebar/Sidebar';
 import Error from './component/Error/Error';
 
 import SearchPage from './pages/SearchPage';
@@ -28,7 +28,7 @@ export default function App() {
       <AppThemeProvider>
         <AppHeader />
         <div className="app-body">
-          <SideBar />
+          <Sidebar />
           <div className="app-content">
             <Routes>
               <Route path="/" element={<SearchPage />} />
