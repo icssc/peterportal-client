@@ -33,10 +33,9 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
     <div className="header">
       <div className="planner-left">
         <RoadmapMultiplan />
-        <span id="planner-stats">
-          <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
-          <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
-        </span>
+        <div>
+          <b>{courseCount}</b> course{pluralize(courseCount)}, <b>{unitCount}</b> unit{pluralize(unitCount)}
+        </div>
       </div>
       <div className="planner-right">
         <ButtonGroup>

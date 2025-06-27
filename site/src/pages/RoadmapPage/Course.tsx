@@ -53,8 +53,8 @@ export const CourseNameAndInfo: FC<CourseNameAndInfoProps> = (props) => {
       disabled={isMobile && showSearch}
     >
       <>
-        <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
-          {courseID}
+        <a href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
+          <b>{courseID}</b>
         </a>
         {requiredCourses && (
           <span className="warning-container">

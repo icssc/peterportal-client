@@ -35,10 +35,6 @@
     z-index: 1;
   }
 
-  #title {
-    font-size: 1.5em;
-  }
-
   .planner-left {
     display: flex;
     flex-wrap: wrap;
@@ -73,15 +69,6 @@
   }
 }
 
-#planner-stats {
-  font-size: 1em;
-}
-
-#course-count,
-#unit-count {
-  font-weight: bold;
-}
-
 .header-btn {
   color: var(--ring-road-white);
   background-color: transparent;
@@ -101,16 +88,4 @@
   margin-right: 6px;
   padding-inline: 1px;
   margin-top: 1px;
-}
-
-@media only screen and (max-width: 400px) {
-  .header {
-    #title {
-      font-size: 1em;
-    }
-
-    .add-course {
-      font-size: 0.7em;
-    }
-  }
 }

@@ -15,43 +15,21 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../component/ExpandMore/ExpandMore';
 import { CSSTransition } from 'react-transition-group';
 
-interface YearTitleProps {
-  year: PlannerYearData;
-  index: number;
-}
-const YearTitle = ({ year, index }: YearTitleProps) => {
-  return (
-    <span className="year-title">
-      {year.name ? (
-        <span className="year-number">{year.name} </span>
-      ) : (
-        <span className="year-number">Year {index + 1} </span>
-      )}
-      <span className="year-range">
-        ({year.startYear}-{year.startYear + 1})
-      </span>
-    </span>
-  );
-};
+// TODO: everywhere possible (search for ' • ' or ', '), combine courses and units into helper function
 
 interface YearStatsProps {
   year: PlannerYearData;
 }
 const YearStats = ({ year }: YearStatsProps) => {
-  let unitCount = 0;
-  let courseCount = 0;
-  year.quarters.forEach((quarter) => {
-    quarter.courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount += 1;
-    });
-  });
+  const courses = year.quarters.flatMap((q) => q.courses);
+  const unitCount = courses.reduce((sum, c) => sum + c.minUnits, 0);
+  const courseCount = courses.length;
 
   return (
     <p className="year-stats">
-      <span className="course-count">{courseCount}</span> {pluralize(courseCount, 'courses', 'course')}
+      <b>{courseCount}</b> course{pluralize(courseCount)}
       {' • '}
-      <span className="unit-count">{unitCount}</span> {pluralize(unitCount, 'units', 'unit')}
+      <b>{unitCount}</b> unit{pluralize(unitCount)}
     </p>
   );
 };
@@ -114,7 +92,10 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   return (
     <Card className="year" ref={yearContainerRef} variant="outlined">
       <div className="year-header">
-        <YearTitle year={data} index={yearIndex} />
+        <span className="year-title">
+          <b>{data.name ?? `Year ${yearIndex + 1}`}</b>{' '}
+          <span className="year-range">({`${data.startYear}-${data.startYear + 1}`})</span>
+        </span>
         <YearStats year={data} />
         <div className="action-row">
           <IconButton onClick={handleEditYearClick}>

@@ -67,40 +67,37 @@
   margin: 0 1vw;
   padding: 2vh 1vw;
 
-  p {
-    font-weight: bold;
-  }
-
-  div {
+  .carousel-header {
     display: flex;
+
+    .carousel-score {
+      font-size: 2em;
+    }
+
+    .carousel-max-score {
+      margin-left: 0.5vw;
+      display: flex;
+      align-items: center;
+      color: var(--mid-gray);
+    }
   }
 
-  .search-popup-carousel-score {
-    font-size: 2em;
-  }
-
-  .search-popup-carousel-max-score {
-    margin-left: 0.5vw;
+  .search-popup-professor-name {
     display: flex;
-    align-items: center;
-    color: var(--mid-gray);
+    flex-wrap: wrap;
+
+    > span {
+      display: inline-block;
+      margin-right: 0.3em;
+
+      &.ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+      }
+    }
   }
-}
-.search-popup-professor-name {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.search-popup-professor-name > span {
-  display: inline-block;
-  margin-right: 0.3em;
-}
-
-.search-popup-professor-name > span.ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
 }
 
 @media only screen and (max-width: 1300px) {

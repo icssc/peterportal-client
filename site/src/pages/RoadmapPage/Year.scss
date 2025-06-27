@@ -56,12 +56,6 @@ div.year {
       @include year-subtext();
     }
 
-    .year-number,
-    .course-count,
-    .unit-count {
-      font-weight: bold;
-    }
-
     .year-title {
       color: var(--text);
       text-align: left;

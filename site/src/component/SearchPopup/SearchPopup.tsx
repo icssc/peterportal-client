@@ -42,9 +42,9 @@ const SearchPopupCarousel: FC<SearchPopupCarouselProps> = ({ dataType, scores })
     <Carousel responsive={responsive} renderButtonGroupOutside>
       {scores.map((datum, i) => (
         <div key={`search-popup-carousel-${i}`} className="search-popup-carousel search-popup-block">
-          <div>
-            <span className="search-popup-carousel-score">{getCarouselScore(datum.avgRating)}</span>
-            <span className="search-popup-carousel-max-score">/ 5.0</span>
+          <div className="carousel-header">
+            <span className="carousel-score">{getCarouselScore(datum.avgRating)}</span>
+            <span className="carousel-max-score">/ 5.0</span>
           </div>
           <Link to={`/${dataType === 'course' ? 'professor' : 'course'}/${datum.id}`}>
             <span className="search-popup-professor-name" title={datum.name}>
