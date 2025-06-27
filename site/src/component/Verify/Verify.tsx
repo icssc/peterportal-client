@@ -1,20 +1,23 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
-import Button from 'react-bootstrap/Button';
+import { Button } from '@mui/material';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
 import trpc from '../../trpc';
+import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 const Verify: FC = () => {
   const reviews = useAppSelector(selectReviews);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const dispatch = useAppDispatch();
 
   const getUnverifiedReviews = useCallback(async () => {
-    const res = await trpc.reviews.getAdminView.query({ verified: false });
-    dispatch(setReviews(res));
-    setLoaded(true);
+    const reviews = await trpc.reviews.getAdminView.query({ verified: false });
+    dispatch(setReviews(reviews));
+    setReviewsLoading(false);
   }, [dispatch]);
 
   useEffect(() => {
@@ -32,33 +35,34 @@ const Verify: FC = () => {
     dispatch(setReviews(reviews.filter((review) => review.id !== reviewId)));
   };
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  } else if (reviews.length === 0) {
-    return <p>No reviews to display at the moment.</p>;
-  } else {
-    return (
-      <div className="content-wrapper verify-container">
-        <h1>Unverified Reviews</h1>
-        <p>Verifying a review will display the review on top of unverified reviews.</p>
-        <p>Deleting a review will remove it permanently.</p>
-        {reviews.map((review, i) => (
-          <div key={`verify-${i}`} className="verify">
-            <br />
-            <SubReview review={review}></SubReview>
-            <div className="verify-footer">
-              <Button variant="danger" className="mr-3" onClick={() => deleteReview(review.id)}>
-                Delete
+  return (
+    <ReviewsGrid
+      title="Unverified Reviews"
+      description="Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it permanently."
+      isLoading={reviewsLoading}
+      noData={reviews.length === 0}
+      noDataMsg="There are currently no unverified reviews"
+    >
+      {reviews.map((review) => (
+        <div key={`verify-${review.id}`}>
+          <SubReview review={review}>
+            <div className="verification-buttons">
+              <Button className="ppc-mui-button" variant="contained" onClick={() => deleteReview(review.id)}>
+                <DeleteForeverIcon /> Delete
               </Button>
-              <Button variant="success" onClick={() => verifyReview(review.id)}>
-                Verify
+              <Button
+                className="ppc-mui-button primary-button"
+                variant="contained"
+                onClick={() => verifyReview(review.id)}
+              >
+                <CheckIcon /> Verify
               </Button>
             </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+          </SubReview>
+        </div>
+      ))}
+    </ReviewsGrid>
+  );
 };
 
 export default Verify;

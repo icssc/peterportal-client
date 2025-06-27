@@ -1,15 +1,6 @@
-.verify-container {
-  border-radius: var(--border-radius);
-}
-
-.verify {
-  border-radius: var(--border-radius);
-  margin-bottom: 3vh;
-
-  .verify-footer {
-    flex-direction: row;
-    width: 100%;
-    align-items: flex-end;
-    margin-top: 16px;
-  }
+.verification-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin: 0px 8px;
 }

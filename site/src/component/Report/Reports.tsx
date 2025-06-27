@@ -1,43 +1,38 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
-import './Reports.scss';
+import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
 import trpc from '../../trpc';
 import { ReportData } from '@peterportal/types';
 
+interface ReviewDisplay {
+  reviewId: number;
+  reports: ReportData[];
+}
+
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  interface ReviewDisplay {
-    reviewId: number;
-    reports: ReportData[];
-  }
+  const [reportsLoading, setReportsLoading] = useState(true);
 
   const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
-
     const reportsDisplay: ReviewDisplay[] = [];
 
     reports.forEach((report) => {
-      let i;
-      if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId)) < 0) {
+      const foundIndex = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId);
+      if (foundIndex < 0) {
         reportsDisplay.push({
           reviewId: report.reviewId,
           reports: [report],
         });
       } else {
-        reportsDisplay[i].reports.push(report);
+        reportsDisplay[foundIndex].reports.push(report);
       }
     });
 
-    reportsDisplay.sort((rd1, rd2) => {
-      if (rd1.reports.length > rd2.reports.length) return -1;
-      if (rd1.reports.length < rd2.reports.length) return 1;
-      return 0;
-    });
+    reportsDisplay.sort((a, b) => b.reports.length - a.reports.length);
 
     setData(reportsDisplay);
-    setLoaded(true);
+    setReportsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -56,30 +51,27 @@ const Reports: FC = () => {
     setData(data.filter((review) => review.reviewId !== reviewId));
   };
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  } else if (data.length === 0) {
-    return <p>No reports to display at the moment.</p>;
-  } else {
-    return (
-      <div className="content-wrapper reports-container">
-        <h1>User Review Reports</h1>
-        <p>Denying a review's reports will discard the reports and preserve the review.</p>
-        <p>Accepting a review's reports will discard the reports and the review.</p>
-        {data.map((review) => {
-          return (
-            <ReportGroup
-              key={review.reviewId}
-              reviewId={review.reviewId}
-              reports={review.reports}
-              onAccept={() => acceptReports(review.reviewId)}
-              onDeny={() => denyReports(review.reviewId)}
-            />
-          );
-        })}
-      </div>
-    );
-  }
+  return (
+    <ReviewsGrid
+      title="User Review Reports"
+      description="Accepting a report will delete the review. Ignoring a report will preserve the review."
+      isLoading={reportsLoading}
+      noData={data.length === 0}
+      noDataMsg="There are currently no reports that need attention"
+    >
+      {data.map((reviewPair) => (
+        <div key={`report-${reviewPair.reviewId}`}>
+          <ReportGroup
+            key={reviewPair.reviewId}
+            reviewId={reviewPair.reviewId}
+            reports={reviewPair.reports}
+            onAccept={() => acceptReports(reviewPair.reviewId)}
+            onDeny={() => denyReports(reviewPair.reviewId)}
+          />
+        </div>
+      ))}
+    </ReviewsGrid>
+  );
 };
 
 export default Reports;
