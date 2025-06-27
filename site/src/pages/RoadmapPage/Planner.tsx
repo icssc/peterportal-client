@@ -5,57 +5,21 @@ import Header from './Header';
 import Year from './Year';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import { useAppSelector } from '../../store/hooks';
-import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
-import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
-import { collapseAllPlanners, saveRoadmap } from '../../helpers/planner';
+import { selectYearPlans } from '../../store/slices/roadmapSlice';
 import { useIsMobile } from '../../helpers/util';
-import { useTransferredCredits } from '../../hooks/transferCredits';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
-  const allPlanData = useAppSelector(selectAllPlans);
   const currentPlanData = useAppSelector(selectYearPlans);
   const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
-  const transferred = useTransferredCredits();
-  const isLoggedIn = useIsLoggedIn();
   const isMobile = useIsMobile();
 
-  const handleSave = async (plans?: RoadmapPlan[]) => {
-    const collapsed = collapseAllPlanners(plans?.length ? plans : allPlanData);
-    saveRoadmap(isLoggedIn, collapsed, true);
-  };
-
-  const calculatePlannerOverviewStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
-    // sum up all courses
-    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
-    courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount++;
-    });
-
-    // add in transfer courses
-    courseCount += transferred.courses.length;
-    unitCount += getTotalUnitsFromTransfers(transferred.courses, transferred.ap, transferred.ge, transferred.other);
-    return { unitCount, courseCount };
-  };
-
-  const { unitCount, courseCount } = calculatePlannerOverviewStats();
-
-  const quarterCounts = currentPlanData.map((years) => years.quarters.length);
-  const maxQuarterCount = Math.max(...quarterCounts);
+  const maxQuarterCount = Math.max(...currentPlanData.map((y) => y.quarters.length));
 
   return (
     <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
       <div className="planner">
         <PlannerLoader />
-        <Header
-          courseCount={courseCount}
-          unitCount={unitCount}
-          saveRoadmap={handleSave}
-          missingPrerequisites={new Set()}
-        />
+        <Header currentPlanData={currentPlanData} />
         {roadmapLoading ? (
           <LoadingSpinner />
         ) : (
