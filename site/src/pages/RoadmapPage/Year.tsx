@@ -20,7 +20,7 @@ import { CSSTransition } from 'react-transition-group';
 interface YearStatsProps {
   year: PlannerYearData;
 }
-const YearStats = ({ year }: YearStatsProps) => {
+const YearStats: FC<YearStatsProps> = ({ year }) => {
   const courses = year.quarters.flatMap((q) => q.courses);
   const unitCount = courses.reduce((sum, c) => sum + c.minUnits, 0);
   const courseCount = courses.length;
@@ -41,7 +41,7 @@ interface DeleteYearModalProps {
   yearIndex: number;
 }
 
-const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModalProps) => {
+const DeleteYearModal: FC<DeleteYearModalProps> = ({ show, setShow, yearName, yearIndex }) => {
   const dispatch = useAppDispatch();
   const handleDeleteYear = () => {
     setShow(false);

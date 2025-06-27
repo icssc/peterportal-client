@@ -1,10 +1,16 @@
+import { FC } from 'react';
 import { useState } from 'react';
 import './StarRating.scss';
 
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-const StarRating = ({ rating, setRating }: { rating: number; setRating: (r: number) => void }) => {
+interface StarRatingProps {
+  rating: number;
+  setRating: (rating: number) => void;
+}
+
+const StarRating: FC<StarRatingProps> = ({ rating, setRating }) => {
   const [hovered, setHovered] = useState<number>(0);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>, val: number) => {
