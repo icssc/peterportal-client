@@ -15,25 +15,6 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../component/ExpandMore/ExpandMore';
 import { CSSTransition } from 'react-transition-group';
 
-// TODO: everywhere possible (search for ' • ' or ', '), combine courses and units into helper function
-
-interface YearStatsProps {
-  year: PlannerYearData;
-}
-const YearStats: FC<YearStatsProps> = ({ year }) => {
-  const courses = year.quarters.flatMap((q) => q.courses);
-  const unitCount = courses.reduce((sum, c) => sum + c.minUnits, 0);
-  const courseCount = courses.length;
-
-  return (
-    <p className="year-stats">
-      <b>{courseCount}</b> course{pluralize(courseCount)}
-      {' • '}
-      <b>{unitCount}</b> unit{pluralize(unitCount)}
-    </p>
-  );
-};
-
 interface DeleteYearModalProps {
   show?: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -89,6 +70,10 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     setShowEditYear(true);
   };
 
+  const courses = data.quarters.flatMap((q) => q.courses);
+  const unitCount = courses.reduce((sum, c) => sum + c.minUnits, 0);
+  const courseCount = courses.length;
+
   return (
     <Card className="year" ref={yearContainerRef} variant="outlined">
       <div className="year-header">
@@ -96,7 +81,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           <b>{data.name ?? `Year ${yearIndex + 1}`}</b>{' '}
           <span className="year-range">({`${data.startYear}-${data.startYear + 1}`})</span>
         </span>
-        <YearStats year={data} />
+        <p className="year-stats">
+          <b>{courseCount}</b> course{pluralize(courseCount)} • <b>{unitCount}</b> unit{pluralize(unitCount)}
+        </p>
         <div className="action-row">
           <IconButton onClick={handleEditYearClick}>
             <EditIcon />

@@ -47,7 +47,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = ({ professor }) => {
         <div>
           <p className="hit-name">{professor.name}</p>
           <p className="hit-subtitle">
-            {professor.department}&nbsp;• {professor.title}
+            {professor.department} • {professor.title}
           </p>
         </div>
       </div>
