@@ -5,13 +5,25 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
 import trpc from '../../trpc';
-import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
+import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { ReviewData } from '@peterportal/types';
 
-const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
+const Verify: FC = () => {
+  const reviews = useAppSelector(selectReviews);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const dispatch = useAppDispatch();
+
+  const getUnverifiedReviews = useCallback(async () => {
+    const reviews = await trpc.reviews.getAdminView.query({ verified: false });
+    dispatch(setReviews(reviews));
+    setReviewsLoading(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    getUnverifiedReviews();
+    document.title = 'Verify Reviews | PeterPortal';
+  }, [getUnverifiedReviews]);
 
   const verifyReview = async (reviewId: number) => {
     await trpc.reviews.verify.mutate({ id: reviewId });
@@ -24,10 +36,15 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
   };
 
   return (
-    <ReviewItemGrid>
-      {reviews.length == 0 && <span>There are no unverified reviews</span>}
+    <ReviewsGrid
+      title="Unverified Reviews"
+      description="Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it permanently."
+      isLoading={reviewsLoading}
+      noData={reviews.length === 0}
+      noDataMsg="There are currently no unverified reviews"
+    >
       {reviews.map((review) => (
-        <div key={'verify-' + review.id!}>
+        <div key={`verify-${review.id}`}>
           <SubReview review={review}>
             <div className="verification-buttons">
               <Button className="ppc-mui-button" variant="contained" onClick={() => deleteReview(review.id)}>
@@ -44,36 +61,7 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
           </SubReview>
         </div>
       ))}
-    </ReviewItemGrid>
-  );
-};
-
-const Verify: FC = () => {
-  const reviews = useAppSelector(selectReviews);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
-  const dispatch = useAppDispatch();
-
-  const getUnverifiedReviews = useCallback(async () => {
-    const res = await trpc.reviews.getAdminView.query({ verified: false });
-    dispatch(setReviews(res));
-    setReviewsLoading(false);
-  }, [dispatch]);
-
-  useEffect(() => {
-    getUnverifiedReviews();
-    document.title = 'Verify Reviews | PeterPortal';
-  }, [getUnverifiedReviews]);
-
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
-  return (
-    <div className="content-wrapper verify-container">
-      <h1>Unverified Reviews</h1>
-      <p>
-        Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it
-        permanently.
-      </p>
-      {reviewsLoading ? <p>Loading...</p> : <UnverifiedReviewsList reviews={reviews} />}
-    </div>
+    </ReviewsGrid>
   );
 };
 

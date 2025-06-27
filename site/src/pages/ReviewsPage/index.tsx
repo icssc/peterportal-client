@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import UserReviews from './UserReviews';
+import UserReviews from '../../component/UserReviews/UserReviews';
 import Error from '../../component/Error/Error';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 

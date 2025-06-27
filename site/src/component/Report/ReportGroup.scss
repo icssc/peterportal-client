@@ -46,3 +46,12 @@
     gap: 10px;
   }
 }
+
+.subreport {
+  background-color: var(--overlay4);
+  border-radius: var(--border-radius);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
