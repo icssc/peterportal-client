@@ -18,7 +18,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
   const getReviewData = async (reviewId: number) => {
-    const review = (await trpc.reviews.get.query({ reviewId }))[0];
+    const review = (await trpc.reviews.getAdminView.query({ reviewId }))[0];
     setReview(review);
   };
 
