@@ -40,8 +40,11 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const fetchProfName = async () => {
     try {
-      const result = await trpc.professors.get.query({ ucinetid: review.professorId });
-      return result.name;
+      const [profFirstName, profLastName] = (
+        await trpc.professors.get.query({ ucinetid: review.professorId })
+      ).name.split(' ');
+      const profInitial = profFirstName[0] + '.';
+      return profInitial + ' ' + profLastName;
     } catch (error) {
       console.error('Error fetching professor name:', error);
     }
@@ -52,26 +55,24 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId;
-        const profIdentifier = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
-        setIdentifier(profIdentifier);
+        const courseLink = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+        setIdentifier(courseLink);
       } else if (course) {
         const profName = course.instructors[review.professorId]?.name;
-        const courseIdentifier = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
-        setIdentifier(courseIdentifier);
+        const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        setIdentifier(profLink);
       } else {
         const [foundCourseName, foundCourseNumber] = splitCourseId(review.courseId);
         const courseName = foundCourseName + ' ' + foundCourseNumber;
         const profName = await fetchProfName();
-        const nonProfCourseIdentifier = (
+        const courseAndProfLink = (
           <div>
             <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
-            <br />
-            <div className="professor-identifier">
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
-            </div>
+            {' • '}
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
           </div>
         );
-        setIdentifier(nonProfCourseIdentifier);
+        setIdentifier(courseAndProfLink);
       }
     };
 
