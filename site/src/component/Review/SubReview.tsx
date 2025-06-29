@@ -1,4 +1,4 @@
-import { FC, useState, ReactNode } from 'react';
+import { FC, useState, useEffect, ReactNode } from 'react';
 import './SubReview.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -33,9 +33,25 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
+  const [profName, setProfName] = useState<string | null>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+
+  useEffect(() => {
+    if (!course && !professor) {
+      const fetchProfName = async () => {
+        try {
+          const result = await trpc.professors.get.query({ ucinetid: review.professorId });
+          setProfName(result.name);
+        } catch (error) {
+          console.error('Error fetching professor name:', error);
+        }
+      };
+
+      fetchProfName();
+    }
+  }, [course, professor, review.professorId]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -146,7 +162,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
           {!course && !professor && (
             <div>
               <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
+              <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
             </div>
           )}
         </h3>
