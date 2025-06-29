@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
+import ReviewCard from '../../component/Review/ReviewCard';
 import './UserReviews.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -15,7 +15,7 @@ const UserReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
       )}
       {reviews.map((review) => (
         <div key={'user-review-' + review.id!}>
-          <SubReview review={review} />
+          <ReviewCard review={review} />
         </div>
       ))}
     </ReviewItemGrid>

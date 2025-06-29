@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
+import ReviewCard from '../Review/ReviewCard';
 import { Button } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
@@ -28,7 +28,7 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
       {reviews.length == 0 && <span>There are no unverified reviews</span>}
       {reviews.map((review) => (
         <div key={'verify-' + review.id!}>
-          <SubReview review={review}>
+          <ReviewCard review={review}>
             <div className="verification-buttons">
               <Button className="ppc-mui-button" variant="contained" onClick={() => deleteReview(review.id)}>
                 <DeleteForeverIcon /> Delete
@@ -41,7 +41,7 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
                 <CheckIcon /> Verify
               </Button>
             </div>
-          </SubReview>
+          </ReviewCard>
         </div>
       ))}
     </ReviewItemGrid>

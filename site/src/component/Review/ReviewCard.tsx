@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, ReactNode } from 'react';
-import './SubReview.scss';
+import './ReviewCard.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -22,14 +22,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton, Paper } from '@mui/material';
 
-interface SubReviewProps {
+interface ReviewCardProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
   children?: ReactNode;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
@@ -157,9 +157,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
-    <Paper className="subreview ppc-paper">
-      <div className="subreview-header">
-        <h3 className="subreview-identifier">
+    <Paper className="reviewcard ppc-paper">
+      <div className="reviewcard-header">
+        <h3 className="reviewcard-identifier">
           {professor && <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>}
           {course && (
             <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
@@ -203,8 +203,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
         </div>
       </div>
 
-      <div className="subreview-content">
-        <div className="subreview-ratings">
+      <div className="reviewcard-content">
+        <div className="reviewcard-ratings">
           <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
             <div className="rating-label">Quality</div>
             <div className="rating-value">{review.rating}</div>
@@ -214,9 +214,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
             <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
-        <div className="subreview-info">
-          <div className="subreview-details">
-            <div className="subreview-detail">
+        <div className="reviewcard-info">
+          <div className="reviewcard-details">
+            <div className="reviewcard-detail">
               <p>
                 <b>Posted on:</b>
                 {' ' +
@@ -229,17 +229,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
                   <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
                 )}
               </p>
-              <div className="subreview-author">
+              <div className="reviewcard-author">
                 <b>Posted by:</b>
-                <p className="subreview-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
-                {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
+                <p className="reviewcard-author-name">{review.userDisplay}</p>
+                {review.verified && <div className="reviewcard-author-verified">{verifiedBadge}</div>}
+                {review.authored && <div className="reviewcard-author-author">{authorBadge}</div>}
               </div>
               <p>
                 <b>Quarter:</b> {review.quarter}
               </p>
             </div>
-            <div className="subreview-detail">
+            <div className="reviewcard-detail">
               <p>
                 <b>Grade:</b> {review.gradeReceived}
               </p>
@@ -252,22 +252,22 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
         </div>
       </div>
       {tags.length > 0 && (
-        <div className="subreview-tags">
+        <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Badge pill className="subreview-tag" key={tag}>
+            <Badge pill className="reviewcard-tag" key={tag}>
               {tag}
             </Badge>
           ))}
         </div>
       )}
-      <div className="subreview-footer" id={review.id.toString()}>
-        <div className="subreview-voting">
-          <p className="subreview-voting-question">Helpful?</p>
-          <div className="subreview-voting-buttons">
+      <div className="reviewcard-footer" id={review.id.toString()}>
+        <div className="reviewcard-voting">
+          <p className="reviewcard-voting-question">Helpful?</p>
+          <div className="reviewcard-voting-buttons">
             <button className={upvoteClassname} onClick={upvote}>
               &#9650;
             </button>
-            <p className="subreview-voting-count">{review.score}</p>
+            <p className="reviewcard-voting-count">{review.score}</p>
             <button className={downvoteClassname} onClick={downvote}>
               &#9660;
             </button>
@@ -296,4 +296,4 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   );
 };
 
-export default SubReview;
+export default ReviewCard;
