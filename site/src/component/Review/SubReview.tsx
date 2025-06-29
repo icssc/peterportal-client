@@ -14,7 +14,7 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms } from '../../helpers/util';
+import { sortTerms, splitCourseId } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -33,13 +33,18 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
+  const [courseName, setCourseName] = useState<string | null>(null);
   const [profName, setProfName] = useState<string | null>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
-    if (!course && !professor) {
+    if (professor) {
+      setProfName(professor.name);
+    } else if (course) {
+      setProfName(course.instructors[review.professorId]?.name);
+    } else if (!course && !professor) {
       const fetchProfName = async () => {
         try {
           const result = await trpc.professors.get.query({ ucinetid: review.professorId });
@@ -52,6 +57,16 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
       fetchProfName();
     }
   }, [course, professor, review.professorId]);
+
+  useEffect(() => {
+    if (professor) {
+      const foundCourse = professor.courses[review.courseId];
+      setCourseName(foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId);
+    } else if (!course && !professor) {
+      const [foundCourseName, foundCourseNumber] = splitCourseId(review.courseId);
+      setCourseName(foundCourseName + ' ' + foundCourseNumber);
+    }
+  }, [course, professor]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -145,24 +160,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
     <Paper className="subreview ppc-paper">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
-          {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
-              {professor.courses[review.courseId]
-                ? professor.courses[review.courseId]?.department +
-                  ' ' +
-                  professor.courses[review.courseId]?.courseNumber
-                : review.courseId}
-            </Link>
-          )}
+          {professor && <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>}
           {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
-              {course.instructors[review.professorId]?.name ?? review.professorId}
-            </Link>
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
           )}
           {!course && !professor && (
             <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+              <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
+              <br />
+              <div className="professor-identifier">
+                <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+              </div>
             </div>
           )}
         </h3>
