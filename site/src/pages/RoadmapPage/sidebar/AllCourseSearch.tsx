@@ -26,10 +26,10 @@ const SearchPlaceholder = ({ searchInProgress, showCourseBag }: SearchPlaceholde
     : "Sorry, we couldn't find any results for that search!";
 
   return (
-    <>
+    <div className="no-results">
       <img src={noResultsImg} alt="No results found" />
       {placeholderText}
-    </>
+    </div>
   );
 };
 
@@ -78,9 +78,7 @@ const AllCourseSearch: FC = () => {
           })}
         </ReactSortable>
       ) : (
-        <div className="no-results">
-          <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
-        </div>
+        <SearchPlaceholder searchInProgress={searchInProgress} showCourseBag={showCourseBag} />
       )}
     </>
   );
