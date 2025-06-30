@@ -122,7 +122,10 @@ export const transferredMisc = pgTable(
     courseName: text('course_name'),
     units: real('units'),
   },
-  (table) => [index('transferred_courses_user_id_idx').on(table.userId)],
+  (table) => [
+    primaryKey({ columns: [table.userId, table.courseName] }),
+    index('transferred_courses_user_id_idx').on(table.userId),
+  ],
 );
 
 export const vote = pgTable(
