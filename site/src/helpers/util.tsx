@@ -112,10 +112,11 @@ export function useIsMobile() {
 const quartersOrdered: Record<string, string> = {
   Winter: 'a',
   Spring: 'b',
-  Summer1: 'c',
-  Summer2: 'd',
-  Summer10wk: 'e',
-  Fall: 'f',
+  Summer: 'c',
+  Summer1: 'd',
+  Summer2: 'e',
+  Summer10wk: 'f',
+  Fall: 'g',
 };
 
 export const sortTerms = (terms: string[]) =>
@@ -126,6 +127,10 @@ export const sortTerms = (terms: string[]) =>
     // if years are equal, compare terms (most recent first)
     return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
   });
+
+export const isTermAfter = (term: string, otherTerm: string): boolean => {
+  return sortTerms([term, otherTerm])[0] === term;
+};
 
 export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
   // get array of arrays of term names
