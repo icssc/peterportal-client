@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import './Review.scss';
+import { FC, useState, ReactNode } from 'react';
+import './SubReview.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -20,15 +20,16 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 
 interface SubReviewProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  children?: ReactNode;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
@@ -125,7 +126,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
-    <div className="subreview">
+    <Paper className="subreview ppc-paper">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
           {professor && (
@@ -149,30 +150,33 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </div>
           )}
         </h3>
-        {review.authored && (
-          <div className="edit-buttons">
-            <IconButton onClick={openReviewForm}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => setShowDeleteModal(true)}>
-              <DeleteOutlineIcon />
-            </IconButton>
-            <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-              <Modal.Header closeButton>
-                <h2>Delete Review</h2>
-              </Modal.Header>
-              <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        )}
+        <div className="edit-buttons">
+          {review.authored && (
+            <>
+              <IconButton onClick={openReviewForm}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => setShowDeleteModal(true)}>
+                <DeleteOutlineIcon />
+              </IconButton>
+              <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                <Modal.Header closeButton>
+                  <h2>Delete Review</h2>
+                </Modal.Header>
+                <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={() => deleteReview(review.id!)}>
+                    Delete
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </>
+          )}
+          {children}
+        </div>
       </div>
 
       <div className="subreview-content">
@@ -245,9 +249,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </button>
           </div>
         </div>
-        <Button variant="primary" className="add-report-button" onClick={openReportForm}>
-          Report
-        </Button>
+        <button className="add-report-button" onClick={openReportForm}>
+          Report...
+        </button>
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}
@@ -264,7 +268,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           terms={sortedTerms}
         />
       </div>
-    </div>
+    </Paper>
   );
 };
 
