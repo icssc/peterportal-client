@@ -98,6 +98,10 @@
     }
   }
 
+  .MuiCollapse-root {
+    padding-inline: 2px;
+    margin-inline: -2px;
+  }
   .MuiCollapse-wrapperInner > :first-child {
     padding-top: 12px;
   }
