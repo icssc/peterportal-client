@@ -1,11 +1,11 @@
 import { FC, useState } from 'react';
 import './AddYearPopup.scss';
-import { Button } from 'react-bootstrap';
 import YearModal from './YearModal';
 import { addYear, selectYearPlans } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { PlannerYearData } from '../../types/types';
 import AddIcon from '@mui/icons-material/Add';
+import { Button } from '@mui/material';
 
 const AddYearPopup: FC = () => {
   const [showModal, setShowModal] = useState(false);
@@ -31,8 +31,7 @@ const AddYearPopup: FC = () => {
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
-      <Button variant="light" className="header-btn ppc-btn" onClick={() => setShowModal(true)}>
-        <AddIcon />
+      <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
         <span>Add Year</span>
       </Button>
     </>
