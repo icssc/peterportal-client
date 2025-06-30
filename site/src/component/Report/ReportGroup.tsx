@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Paper } from '@mui/material';
+import { Button, Card } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SubReport from './SubReport';
@@ -30,16 +30,16 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return <></>;
   } else {
     return (
-      <Paper className="report-group ppc-paper">
+      <Card className="report-group ppc-card">
         <div className="report-group-header">
           <div className="report-group-identifier">
             {review.courseId} {review.professorId}
           </div>
           <div className="edit-buttons">
-            <Button className="ppc-mui-button" variant="contained" onClick={props.onDeny}>
+            <Button className="ppc-mui-button" variant="text" onClick={props.onDeny}>
               <PersonRemoveIcon /> Ignore
             </Button>
-            <Button className="ppc-mui-button primary-button" variant="contained" onClick={props.onAccept}>
+            <Button className="ppc-mui-button primary-button" variant="text" onClick={props.onAccept}>
               <DeleteIcon /> Accept Report
             </Button>
           </div>
@@ -63,7 +63,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
             />
           ))}
         </div>
-      </Paper>
+      </Card>
     );
   }
 };
