@@ -30,11 +30,11 @@ interface ReportGroupProps {
 }
 
 const ReportGroup: FC<ReportGroupProps> = (props) => {
-  const [review, setReview] = useState<ReviewData>();
+  const [review, setReview] = useState<ReviewData>(null!);
 
   useEffect(() => {
     const getReviewData = async (reviewId: number) => {
-      const reviews = await trpc.reviews.get.query({ reviewId });
+      const reviews = await trpc.reviews.getAdminView.query({ reviewId });
       setReview(reviews[0]);
     };
     getReviewData(props.reviewId);
