@@ -28,9 +28,9 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
+import { Collapse } from '@mui/material';
+import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -154,11 +154,10 @@ interface GroupHeaderProps {
 }
 const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
-  const icon = open ? <ArrowDropDownIcon /> : <ArrowRightIcon />;
   return (
     <button className={className} onClick={() => setOpen(!open)}>
-      {icon}
       <b>{title}</b>
+      <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
     </button>
   );
 };
@@ -190,12 +189,14 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   return (
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      {open && showLabel && (
-        <p className="requirement-label">
-          <b>Complete {label} of the following:</b>
-        </p>
-      )}
-      {open && <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />}
+      <Collapse in={open} unmountOnExit>
+        {showLabel && (
+          <p className="requirement-label">
+            <b>Complete {label} of the following:</b>
+          </p>
+        )}
+        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+      </Collapse>
     </div>
   );
 };
@@ -239,13 +240,11 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   return (
     <div className={className}>
       <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      {open && (
+      <Collapse in={open} unmountOnExit>
         <p className="requirement-label">
           Complete <b>{data.requirementCount}</b> of the following series:
         </p>
-      )}
-      {open &&
-        data.requirements.map((r, i) => (
+        {data.requirements.map((r, i) => (
           <ProgramRequirementDisplay
             key={i}
             storeKey={`${storeKey}-${i}`}
@@ -254,6 +253,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             takenCourseIDs={takenCourseIDs}
           />
         ))}
+      </Collapse>
     </div>
   );
 };
