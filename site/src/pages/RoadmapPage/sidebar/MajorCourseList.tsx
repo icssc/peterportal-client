@@ -88,7 +88,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
-      await fetchRequirements(major.id, selectedSpec?.id);
+      await fetchRequirements(major.id, foundSpec?.id);
     }
   }, [
     dispatch,
