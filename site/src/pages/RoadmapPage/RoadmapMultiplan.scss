@@ -1,3 +1,16 @@
+.roadmap-header button.dropdown-button {
+  color: white;
+  border-width: 2px;
+  border-color: var(--blue-accent);
+  text-transform: none;
+  font-size: 14px;
+  padding: 3px 12px;
+
+  .MuiSvgIcon-root {
+    margin-inline: -4px;
+  }
+}
+
 .multi-plan-selector {
   .select-item {
     display: flex;
@@ -5,10 +18,28 @@
     padding: 4px 8px;
     align-items: center;
   }
+  .planner-name-btn {
+    font-weight: 500;
+    color: inherit;
+    justify-content: start;
+    text-transform: none;
+    font-size: inherit;
+    width: 100%;
+    min-width: 120px;
+    height: 32px;
+  }
+  .select-item button.MuiIconButton-root {
+    width: 32px;
+    height: 32px;
+    &:not(.delete-btn) .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+  }
   .add-item {
     padding-inline: 16px;
+    container: multiplan-add / inline-size;
   }
-  .add-item button.btn {
+  .add-item button.MuiButton-root {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -17,14 +48,20 @@
     padding: 6px 12px;
     width: 80px;
     flex-grow: 1;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
     background-color: #88888818;
+    color: inherit;
+    text-transform: none;
 
-    span {
+    > span:not(.MuiTouchRipple-root) {
       white-space: normal;
       text-align: center;
       line-height: 1.25;
+      max-width: 80px;
+      @container multiplan-add (min-width: 440px) {
+        max-width: none;
+      }
     }
   }
   .dropdown-item {
@@ -37,44 +74,6 @@
   }
   .dropdown-item > * {
     width: 100%;
-  }
-  .btn {
-    font: inherit;
-    color: inherit;
-    font-weight: bold;
-    background-color: inherit;
-    text-align: left;
-    border: none;
-    padding: 6px;
-    margin: 0;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 32px;
-
-    &:hover,
-    &:focus {
-      background-color: #8882;
-      color: inherit;
-    }
-    &:active {
-      background-color: #8884;
-    }
-  }
-  .btn-primary {
-    border: 2px solid var(--blue-accent);
-    background-color: transparent;
-    border-radius: 4px;
-    font-weight: bold;
-    padding: 4px 10px;
-    height: 34px;
-
-    &[aria-expanded='true'],
-    &:not(.disabled):active {
-      border-color: var(--blue-primary);
-      background-color: #0062cc88;
-    }
   }
 
   .separator-label {
@@ -95,4 +94,18 @@
     width: 100%;
     opacity: 0.8;
   }
+
+  > .MuiPaper-root {
+    padding-block: 8px;
+  }
+}
+
+// Override multiplan modal z-index to be greater than MUI Popover's z-index of 1300
+// This is so things like "Edit Plan" show up in front of the roadmap selector menu
+.modal-backdrop:has(+ .multiplan-modal) {
+  z-index: 1340;
+}
+
+.multiplan-modal {
+  z-index: 1350;
 }

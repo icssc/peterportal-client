@@ -1,7 +1,10 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import './RecentOfferings.scss';
-
+import { isTermAfter } from '../../helpers/util';
+import trpc from '../../trpc';
+import { useTheme } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 interface RecentOfferingsProps {
   terms: string[];
@@ -10,6 +13,40 @@ interface RecentOfferingsProps {
 interface Offerings {
   [academicYear: string]: boolean[];
 }
+
+interface RecentOfferingQuarterProps {
+  offered: boolean;
+  quarterIndex: number;
+  currentTerm: string;
+  academicYear: string;
+}
+
+const RecentOfferingQuarter: FC<RecentOfferingQuarterProps> = (props) => {
+  const theme = useTheme();
+  const quarterLabels = ['Fall', 'Winter', 'Spring', 'Summer'];
+  const quarterName = quarterLabels[props.quarterIndex];
+  const [startYear, endYear] = props.academicYear.split('-');
+  const term = `${props.quarterIndex === 0 ? startYear : endYear} ${quarterName}`; // Parse an entry to a term string to see if it's in the future
+  const isFutureTerm = props.currentTerm && isTermAfter(term, props.currentTerm);
+
+  if (props.offered) {
+    return (
+      <td>
+        <CheckIcon style={{ fontSize: 20 }} />
+      </td>
+    );
+  }
+
+  if (isFutureTerm) {
+    return (
+      <td>
+        <QuestionMarkIcon style={{ fontSize: 20, color: theme.palette.text.secondary }} />
+      </td>
+    );
+  }
+
+  return <td></td>;
+};
 
 function parseOfferings(terms: string[]): Offerings {
   const offerings: Offerings = {};
@@ -30,7 +67,7 @@ function parseOfferings(terms: string[]): Offerings {
     const startYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
     // Initialize Fall, Winter, Spring, Summer of the year to false
-    offerings[startYear] ??= [false, false, false, false]; // Fall, Winter, Spring, Summer
+    offerings[startYear] ??= [false, false, false, false];
 
     offerings[startYear][quarterIndex] = true;
   }
@@ -47,6 +84,13 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
   // Show in order of Fall, Winter, Spring, Summer
   const termsInOrder = props.terms.slice().reverse();
   const offerings = parseOfferings(termsInOrder);
+  const [currentTerm, setCurrentTerm] = useState<string>('');
+
+  useEffect(() => {
+    trpc.schedule.currentQuarter.query().then((data) => {
+      setCurrentTerm(data);
+    });
+  }, []);
 
   return (
     <div className="recent-offerings">
@@ -70,7 +114,13 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
               <tr key={year}>
                 <td>{year}</td>
                 {quarters.map((offered, index) => (
-                  <td key={index}>{offered ? <CheckIcon style={{ fontSize: 20 }} /> : null}</td>
+                  <RecentOfferingQuarter
+                    key={index}
+                    offered={offered}
+                    quarterIndex={index}
+                    currentTerm={currentTerm}
+                    academicYear={year}
+                  />
                 ))}
               </tr>
             ))}

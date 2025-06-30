@@ -2,11 +2,13 @@ import { FC } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
-import { removeUncategorizedCourse } from '../../../store/slices/transferCreditsSlice';
+import { removeUncategorizedCourse, TransferWithUnread } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { TransferredUncategorized } from '@peterportal/types';
 
-const UncategorizedMenuTile: FC<TransferredUncategorized> = ({ name, units }) => {
+const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncategorized> }> = ({ course }) => {
+  const { name, units, unread } = course;
+
   const dispatch = useAppDispatch();
 
   const deleteFn = () => {
@@ -14,7 +16,7 @@ const UncategorizedMenuTile: FC<TransferredUncategorized> = ({ name, units }) =>
     dispatch(removeUncategorizedCourse({ name, units }));
   };
 
-  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} />;
+  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} unread={unread} />;
 };
 
 const UncategorizedCreditsSection: FC = () => {
@@ -32,7 +34,7 @@ const UncategorizedCreditsSection: FC = () => {
       </SectionDescription>
 
       {courses.map((course) => (
-        <UncategorizedMenuTile key={`${course.name}-${course.units}`} name={course.name} units={course.units} />
+        <UncategorizedMenuTile key={`${course.name}-${course.units}`} course={course} />
       ))}
     </MenuSection>
   );
