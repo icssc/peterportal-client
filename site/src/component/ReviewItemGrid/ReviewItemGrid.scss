@@ -3,12 +3,3 @@
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 1rem;
 }
-
-.reviews-grid > div {
-  width: 100%;
-  height: 100%;
-}
-
-.reviews-grid > div > * {
-  height: 100%;
-}
