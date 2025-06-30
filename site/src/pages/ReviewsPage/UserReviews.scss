@@ -1,10 +1,6 @@
-.user-reviews-container {
-  padding: 2rem;
-  background-color: var(--overlay1);
-  border-radius: var(--border-radius);
-}
-
-.user-reviews {
-  border-radius: var(--border-radius);
-  margin-bottom: 3vh;
+.user-reviews-page {
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+  }
 }
