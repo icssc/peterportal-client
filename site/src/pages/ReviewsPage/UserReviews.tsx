@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import SubReview from '../Review/SubReview';
-import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
+import SubReview from '../../component/Review/SubReview';
+import ReviewsGrid from '../../component/ReviewsGrid/ReviewsGrid';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import trpc from '../../trpc';
