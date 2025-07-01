@@ -24,7 +24,6 @@ const UserReviews: FC = () => {
       title="Your Reviews"
       description="Deleting a review will remove it permanently."
       isLoading={reviewsLoading}
-      noData={reviews.length === 0}
       noDataMsg="You haven't reviewed any courses yet. Look up a course you've taken to review it!"
     >
       {reviews.map((review) => (
