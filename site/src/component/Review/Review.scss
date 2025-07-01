@@ -51,7 +51,7 @@
 Subreviews on courses/professors pages need a background of overlay2,
 while subreviews in verification need the usual (overlay1) background
  */
-.subreviews > div.MuiPaper-root {
+.subreviews > div.MuiCard-root {
   background-color: var(--overlay2);
   box-shadow: none;
 }

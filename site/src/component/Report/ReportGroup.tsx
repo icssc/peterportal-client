@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Paper } from '@mui/material';
+import { Button, Card } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import './ReportGroup.scss';
@@ -15,10 +15,10 @@ const SubReport: FC<SubReportProps> = ({ reason, timestamp }) => {
   const date = new Date(Date.parse(timestamp));
   const dateText = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   return (
-    <div className="subreport">
+    <Card className="ppc-card subreport">
       <b>Reason for Report on {dateText}</b>
       <i>{reason}</i>
-    </div>
+    </Card>
   );
 };
 
@@ -48,16 +48,16 @@ const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) =>
   });
 
   return (
-    <Paper className="report-group ppc-paper">
+    <Card className="report-group ppc-card">
       <div className="report-group-header">
         <div className="report-group-identifier">
           {review.courseId} {review.professorId}
         </div>
         <div className="edit-buttons">
-          <Button className="ppc-mui-button" variant="contained" onClick={onDeny}>
+          <Button className="ppc-mui-button" variant="text" onClick={onDeny}>
             <PersonRemoveIcon /> Ignore
           </Button>
-          <Button className="ppc-mui-button primary-button" variant="contained" onClick={onAccept}>
+          <Button className="ppc-mui-button primary-button" variant="text" onClick={onAccept}>
             <DeleteIcon /> Accept Report
           </Button>
         </div>
@@ -71,7 +71,7 @@ const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) =>
           <SubReport key={report.id} reason={report.reason} timestamp={report.createdAt} />
         ))}
       </div>
-    </Paper>
+    </Card>
   );
 };
 
