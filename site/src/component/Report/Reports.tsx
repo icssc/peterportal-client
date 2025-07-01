@@ -54,14 +54,12 @@ const Reports: FC = () => {
       noDataMsg="There are currently no reports that need attention."
     >
       {data.map((reportGroup) => (
-        <div key={`report-${reportGroup.reviewId}`}>
-          <ReportGroup
-            key={reportGroup.reviewId}
-            reportGroup={reportGroup}
-            onAccept={() => acceptReports(reportGroup.reviewId)}
-            onDeny={() => denyReports(reportGroup.reviewId)}
-          />
-        </div>
+        <ReportGroup
+          key={`report-${reportGroup.reviewId}`}
+          reportGroup={reportGroup}
+          onAccept={() => acceptReports(reportGroup.reviewId)}
+          onDeny={() => denyReports(reportGroup.reviewId)}
+        />
       ))}
     </ReviewGridTemplate>
   );

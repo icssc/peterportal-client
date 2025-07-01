@@ -27,9 +27,7 @@ const UserReviews: FC = () => {
       noDataMsg="You haven't reviewed any courses yet. Look up a course you've taken to review it!"
     >
       {reviews.map((review) => (
-        <div key={`user-review-${review.id}`}>
-          <SubReview review={review} />
-        </div>
+        <SubReview key={`user-review-${review.id}`} review={review} />
       ))}
     </ReviewGridTemplate>
   );

@@ -43,18 +43,16 @@ const Verify: FC = () => {
       noDataMsg="There are currently no unverified reviews."
     >
       {reviews.map((review) => (
-        <div key={`verify-${review.id}`}>
-          <SubReview review={review}>
-            <div className="verification-buttons">
-              <Button className="ppc-mui-button" variant="text" onClick={() => deleteReview(review.id)}>
-                <DeleteForeverIcon /> Delete
-              </Button>
-              <Button className="ppc-mui-button primary-button" variant="text" onClick={() => verifyReview(review.id)}>
-                <CheckIcon /> Verify
-              </Button>
-            </div>
-          </SubReview>
-        </div>
+        <SubReview key={`verify-${review.id}`} review={review}>
+          <div className="verification-buttons">
+            <Button className="ppc-mui-button" variant="text" onClick={() => deleteReview(review.id)}>
+              <DeleteForeverIcon /> Delete
+            </Button>
+            <Button className="ppc-mui-button primary-button" variant="text" onClick={() => verifyReview(review.id)}>
+              <CheckIcon /> Verify
+            </Button>
+          </div>
+        </SubReview>
       ))}
     </ReviewGridTemplate>
   );
