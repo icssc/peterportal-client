@@ -19,13 +19,13 @@ const ReviewGridTemplate: FC<ReviewGridTemplateProps> = ({
   children,
 }) => {
   return (
-    <div className="content-wrapper reviews-container">
+    <div className="content-wrapper review-grid-template">
       <h1>{title}</h1>
       <p>{description}</p>
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <div className="reviews-grid">{noData ? <span>{noDataMsg}</span> : children}</div>
+        <div className="review-grid">{noData ? <span>{noDataMsg}</span> : children}</div>
       )}
     </div>
   );
