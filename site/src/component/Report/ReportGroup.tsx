@@ -3,7 +3,7 @@ import { Button, Paper } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import './ReportGroup.scss';
-import { ReportData, ReviewData } from '@peterportal/types';
+import { ReportGroupData, ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 
 interface SubReportProps {
@@ -23,13 +23,12 @@ const SubReport: FC<SubReportProps> = ({ reason, timestamp }) => {
 };
 
 interface ReportGroupProps {
-  reviewId: number;
-  reports: ReportData[];
+  reportGroup: ReportGroupData;
   onAccept: () => void;
   onDeny: () => void;
 }
 
-const ReportGroup: FC<ReportGroupProps> = (props) => {
+const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
   useEffect(() => {
@@ -37,12 +36,10 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
       const reviews = await trpc.reviews.getAdminView.query({ reviewId });
       setReview(reviews[0]);
     };
-    getReviewData(props.reviewId);
-  }, [props.reviewId]);
+    getReviewData(reportGroup.reviewId);
+  }, [reportGroup.reviewId]);
 
-  if (!review) {
-    return null;
-  }
+  if (!review) return null;
 
   const reviewCreationDate = new Date(review.createdAt).toLocaleString('default', {
     year: 'numeric',
@@ -57,10 +54,10 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
           {review.courseId} {review.professorId}
         </div>
         <div className="edit-buttons">
-          <Button className="ppc-mui-button" variant="contained" onClick={props.onDeny}>
+          <Button className="ppc-mui-button" variant="contained" onClick={onDeny}>
             <PersonRemoveIcon /> Ignore
           </Button>
-          <Button className="ppc-mui-button primary-button" variant="contained" onClick={props.onAccept}>
+          <Button className="ppc-mui-button primary-button" variant="contained" onClick={onAccept}>
             <DeleteIcon /> Accept Report
           </Button>
         </div>
@@ -70,7 +67,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
         Posted by <i>{review.userDisplay}</i> on <i>{reviewCreationDate}</i>
       </div>
       <div className="report-group-subreports-container">
-        {props.reports.map((report) => (
+        {reportGroup.reports.map((report) => (
           <SubReport key={report.id} reason={report.reason} timestamp={report.createdAt} />
         ))}
       </div>

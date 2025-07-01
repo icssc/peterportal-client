@@ -1,54 +1,49 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import ReviewGridTemplate from '../ReviewGridTemplate/ReviewGridTemplate';
 import trpc from '../../trpc';
-import { ReportData } from '@peterportal/types';
-
-interface ReviewDisplay {
-  reviewId: number;
-  reports: ReportData[];
-}
+import { ReportGroupData } from '@peterportal/types';
 
 const Reports: FC = () => {
-  const [data, setData] = useState<ReviewDisplay[]>([]);
+  const [data, setData] = useState<ReportGroupData[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
 
-  const getData = useCallback(async () => {
-    const reports = await trpc.reports.get.query();
-    const reportsDisplay: ReviewDisplay[] = [];
-
-    reports.forEach((report) => {
-      const foundIndex = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId);
-      if (foundIndex < 0) {
-        reportsDisplay.push({
-          reviewId: report.reviewId,
-          reports: [report],
-        });
-      } else {
-        reportsDisplay[foundIndex].reports.push(report);
-      }
-    });
-
-    reportsDisplay.sort((a, b) => b.reports.length - a.reports.length);
-
-    setData(reportsDisplay);
-    setReportsLoading(false);
-  }, []);
-
   useEffect(() => {
+    const getData = async () => {
+      const reports = await trpc.reports.get.query();
+
+      const reportGroupMap: Record<string, ReportGroupData> = {};
+
+      reports.forEach((report) => {
+        if (reportGroupMap[report.reviewId]) {
+          reportGroupMap[report.reviewId].reports.push(report);
+        } else {
+          reportGroupMap[report.reviewId] = { reviewId: report.reviewId, reports: [report] };
+        }
+      });
+
+      const reportGroups = Object.values(reportGroupMap).sort((a, b) => b.reports.length - a.reports.length);
+
+      setData(reportGroups);
+      setReportsLoading(false);
+    };
     getData();
     document.title = 'View Reports | PeterPortal';
-  }, [getData]);
+  }, []);
+
+  const removeReviewFromData = (reviewId: number) => {
+    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
+  };
 
   const acceptReports = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
     // reports are automatically deleted when deleting a review
-    setData(data.filter((review) => review.reviewId !== reviewId));
+    removeReviewFromData(reviewId);
   };
 
   const denyReports = async (reviewId: number) => {
     await trpc.reports.delete.mutate({ reviewId });
-    setData(data.filter((review) => review.reviewId !== reviewId));
+    removeReviewFromData(reviewId);
   };
 
   return (
@@ -58,14 +53,13 @@ const Reports: FC = () => {
       isLoading={reportsLoading}
       noDataMsg="There are currently no reports that need attention."
     >
-      {data.map((reviewPair) => (
-        <div key={`report-${reviewPair.reviewId}`}>
+      {data.map((reportGroup) => (
+        <div key={`report-${reportGroup.reviewId}`}>
           <ReportGroup
-            key={reviewPair.reviewId}
-            reviewId={reviewPair.reviewId}
-            reports={reviewPair.reports}
-            onAccept={() => acceptReports(reviewPair.reviewId)}
-            onDeny={() => denyReports(reviewPair.reviewId)}
+            key={reportGroup.reviewId}
+            reportGroup={reportGroup}
+            onAccept={() => acceptReports(reportGroup.reviewId)}
+            onDeny={() => denyReports(reportGroup.reviewId)}
           />
         </div>
       ))}
