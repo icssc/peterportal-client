@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
 import { Button } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -14,16 +14,15 @@ const Verify: FC = () => {
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const dispatch = useAppDispatch();
 
-  const getUnverifiedReviews = useCallback(async () => {
-    const reviews = await trpc.reviews.getAdminView.query({ verified: false });
-    dispatch(setReviews(reviews));
-    setReviewsLoading(false);
-  }, [dispatch]);
-
   useEffect(() => {
+    const getUnverifiedReviews = async () => {
+      const reviews = await trpc.reviews.getAdminView.query({ verified: false });
+      dispatch(setReviews(reviews));
+      setReviewsLoading(false);
+    };
     getUnverifiedReviews();
     document.title = 'Verify Reviews | PeterPortal';
-  }, [getUnverifiedReviews]);
+  }, [dispatch]);
 
   const verifyReview = async (reviewId: number) => {
     await trpc.reviews.verify.mutate({ id: reviewId });
