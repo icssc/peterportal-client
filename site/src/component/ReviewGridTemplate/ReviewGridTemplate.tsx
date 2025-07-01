@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import './ReviewsGrid.scss';
+import './ReviewGridTemplate.scss';
 
-interface ReviewsGridProps {
+interface ReviewGridTemplateProps {
   title: string;
   description: string;
   isLoading: boolean;
@@ -10,7 +10,14 @@ interface ReviewsGridProps {
   children: React.ReactNode;
 }
 
-const ReviewsGrid: FC<ReviewsGridProps> = ({ title, description, isLoading, noData, noDataMsg, children }) => {
+const ReviewGridTemplate: FC<ReviewGridTemplateProps> = ({
+  title,
+  description,
+  isLoading,
+  noData,
+  noDataMsg,
+  children,
+}) => {
   return (
     <div className="content-wrapper reviews-container">
       <h1>{title}</h1>
@@ -24,4 +31,4 @@ const ReviewsGrid: FC<ReviewsGridProps> = ({ title, description, isLoading, noDa
   );
 };
 
-export default ReviewsGrid;
+export default ReviewGridTemplate;

@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import SubReview from '../../component/Review/SubReview';
-import ReviewsGrid from '../../component/ReviewsGrid/ReviewsGrid';
+import ReviewGridTemplate from '../../component/ReviewGridTemplate/ReviewGridTemplate';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import trpc from '../../trpc';
@@ -20,7 +20,7 @@ const UserReviews: FC = () => {
   }, [dispatch]);
 
   return (
-    <ReviewsGrid
+    <ReviewGridTemplate
       title="Your Reviews"
       description="Deleting a review will remove it permanently."
       isLoading={reviewsLoading}
@@ -32,7 +32,7 @@ const UserReviews: FC = () => {
           <SubReview review={review} />
         </div>
       ))}
-    </ReviewsGrid>
+    </ReviewGridTemplate>
   );
 };
 

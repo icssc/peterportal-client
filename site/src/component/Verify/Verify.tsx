@@ -5,7 +5,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
 import trpc from '../../trpc';
-import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
+import ReviewGridTemplate from '../ReviewGridTemplate/ReviewGridTemplate';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
@@ -36,7 +36,7 @@ const Verify: FC = () => {
   };
 
   return (
-    <ReviewsGrid
+    <ReviewGridTemplate
       title="Unverified Reviews"
       description="Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it permanently."
       isLoading={reviewsLoading}
@@ -61,7 +61,7 @@ const Verify: FC = () => {
           </SubReview>
         </div>
       ))}
-    </ReviewsGrid>
+    </ReviewGridTemplate>
   );
 };
 

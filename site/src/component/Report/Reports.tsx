@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
-import ReviewsGrid from '../ReviewsGrid/ReviewsGrid';
+import ReviewGridTemplate from '../ReviewGridTemplate/ReviewGridTemplate';
 import trpc from '../../trpc';
 import { ReportData } from '@peterportal/types';
 
@@ -52,7 +52,7 @@ const Reports: FC = () => {
   };
 
   return (
-    <ReviewsGrid
+    <ReviewGridTemplate
       title="User Review Reports"
       description="Accepting a report will delete the review. Ignoring a report will preserve the review."
       isLoading={reportsLoading}
@@ -70,7 +70,7 @@ const Reports: FC = () => {
           />
         </div>
       ))}
-    </ReviewsGrid>
+    </ReviewGridTemplate>
   );
 };
 
