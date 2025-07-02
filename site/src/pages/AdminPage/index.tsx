@@ -1,47 +1,46 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import './AdminPage.scss';
+
+import Error from '../../component/Error/Error';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
-import Error from '../../component/Error/Error';
-import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';
 
-const AdminPage: FC = () => {
-  const location = useLocation();
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [authorized, setAuthorized] = useState<boolean>(false);
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
-  // user has to be authenticated as admin to view this page
-  const checkAdmin = useCallback(async () => {
-    trpc.users.get
-      .query()
-      .then((res) => {
-        setAuthorized(res.isAdmin);
-        setLoaded(true);
-      })
-      .catch(() => {
-        // If a user is not logged in, they can't be authorized
-        setAuthorized(false);
-        setLoaded(true);
-      });
-  }, []);
+type AdminTab = 'verify' | 'reports';
+
+const AdminPage: FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [currentTab, setCurrentTab] = useState<AdminTab>('verify');
 
   useEffect(() => {
-    checkAdmin();
-  }, [checkAdmin]);
+    trpc.users.get
+      .query()
+      .then((res) => setAuthorized(res.isAdmin))
+      .finally(() => setLoading(false));
+  }, []);
 
   /** @todo replace the loading text here with LoadingSpinner once that gets merged */
-  if (!loaded) {
+  if (loading) {
     return <p>Loading...</p>;
-  } else if (!authorized) {
-    return <Error message="Access Denied: You are not authorized to view this page."></Error>;
-  } else {
-    if (location.pathname.includes('reports')) {
-      return <Reports />;
-    } else if (location.pathname.includes('verify')) {
-      return <Verify />;
-    }
   }
-  return <Error message="Invalid Admin Page"></Error>;
+
+  if (!authorized) {
+    return <Error message="Access Denied: You are not authorized to view this page." />;
+  }
+
+  return (
+    <>
+      <Tabs className="admin-tabs" value={currentTab} onChange={(_, newTab: AdminTab) => setCurrentTab(newTab)}>
+        <Tab label="Verify Reviews" value="verify" />
+        <Tab label="View Reports" value="reports" />
+      </Tabs>
+      {currentTab === 'verify' ? <Verify /> : <Reports />}
+    </>
+  );
 };
 
 export default AdminPage;

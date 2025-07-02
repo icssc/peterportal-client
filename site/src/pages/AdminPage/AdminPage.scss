@@ -1,0 +1,14 @@
+.admin-tabs .MuiTabs-list {
+  .MuiTab-root {
+    min-width: 50%;
+    background-color: var(--overlay1);
+  }
+
+  .Mui-selected {
+    color: var(--blue-primary) !important;
+  }
+
+  .MuiTabs-indicator {
+    background-color: var(--blue-primary);
+  }
+}
