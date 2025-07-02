@@ -12,7 +12,6 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
-import RecentOfferingsTooltip from '../RecentOfferingsTooltip/RecentOfferingsTooltip';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -146,15 +145,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   return (
     <div className="side-content-wrapper">
       <div className="side-info">
-        <div className="course-synopsis">
-          <div className="title-and-offerings">
-            <h2>{props.name}</h2>
-            {props.terms && <RecentOfferingsTooltip terms={props.terms} />}
-          </div>
+        <div>
+          <h2>{props.name}</h2>
           <h3>{props.title}</h3>
-
-          <p className="description">{props.description}</p>
-          <div className="tags">
+          <p>{props.description}</p>
+          <div className="course-tags">
             {props.tags.map((tag, i) => (
               <Badge pill variant="info" key={`side-info-badge-${i}`}>
                 {tag}
@@ -163,7 +158,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
-        {props.terms?.length && <RecentOfferingsTable terms={props.terms} size="wide" />}
+        {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>

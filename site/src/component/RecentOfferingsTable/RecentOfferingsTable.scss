@@ -5,6 +5,11 @@
   h2 {
     font-weight: bold;
   }
+
+  .center {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .recent-offerings-table {

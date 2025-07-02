@@ -47,23 +47,24 @@ interface RecentOfferingsTableProps {
 }
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
+  if (terms.length === 0) return null;
+
   const offerings = parseOfferings(terms);
 
-  const shortenYear = (year: string) => {
+  const getYearColumnValue = (year: string) => {
+    if (size === 'wide') return year;
     const [start, end] = year.split('-');
     return `${start.substring(2)}-${end.substring(2)}`;
   };
-  const yearColumnName = size === 'thin' ? 'Year' : 'Academic Year';
-  const getYearColumnValue = (year: string) => (size === 'thin' ? shortenYear(year) : year);
 
   return (
     <div className="recent-offerings">
-      <h2>Recent Offerings</h2>
+      <h2 className={size === 'thin' ? 'center' : ''}>Recent Offerings</h2>
 
       <table className="ppc-table recent-offerings-table">
         <thead>
           <tr>
-            <th>{yearColumnName}</th>
+            <th>{size === 'thin' ? 'Year' : 'Academic Year'}</th>
             <th>🍂</th>
             <th>❄️</th>
             <th>🌸</th>

@@ -7,25 +7,9 @@ interface RecentOfferingsTooltipProps {
   terms: string[];
 }
 
-/*
-
-- improve styling
-  - center the "Recent Offerings" title
-  - fix the tooltip's positioning
-  - fix the bug w/ the tooltip arrow showing up in the wrong place
-  - make sure it looks good on mobile
-  - make sure the emojis in this PR are the same size as on prod
-
-- for courses offered more than 4 years ago, show, desending vertically:
-  1. the current year
-  2. a vertical ellipsis
-  3. the 2 most recent years it was offered
-
-- if terms.length is less than 4, add empty rows to the table
-
-*/
-
 const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
+  if (terms.length === 0) return null;
+
   const prevYear = new Date().getMonth() > 9 ? new Date().getFullYear() : new Date().getFullYear() - 1;
   const prevOfferings = [];
 
