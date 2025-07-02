@@ -31,15 +31,15 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   );
 
   return (
-    <div className="tooltip-container">
-      <OverlayTrigger overlay={popover} placement="auto">
-        <div className="tooltip-trigger">
-          {prevOfferings.map((emoji) => (
-            <span key={emoji}>{emoji}</span>
-          ))}
-        </div>
-      </OverlayTrigger>
-    </div>
+    // <div style={{ marginLeft: 'auto' }}>
+    <OverlayTrigger overlay={popover} placement="auto">
+      <div className="tooltip-trigger">
+        {prevOfferings.map((emoji) => (
+          <span key={emoji}>{emoji}</span>
+        ))}
+      </div>
+    </OverlayTrigger>
+    // </div>
   );
 };
 

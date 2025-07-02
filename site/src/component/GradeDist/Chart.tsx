@@ -1,11 +1,10 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
-import { type Theme } from '@nivo/core';
 import { GradesRaw } from '@peterportal/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -14,33 +13,18 @@ interface ChartProps {
   course?: string;
 }
 
-export default class Chart extends React.Component<ChartProps> {
+export default class Chart extends Component<ChartProps> {
   /*
    * Initialize the grade distribution chart on the webpage.
    */
-
-  getTheme = (darkMode: boolean): Theme => {
-    return {
-      axis: {
-        ticks: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-        legend: {
-          text: {
-            fill: darkMode ? '#eee' : '#333',
-          },
-        },
-      },
-    };
-  };
 
   /*
    * Create an array of objects to feed into the chart.
    * @return an array of JSON objects detailing the grades for each class
    */
   getClassData = (): BarDatum[] => {
+    const { professor, quarter, course } = this.props;
+
     let gradeACount = 0,
       gradeBCount = 0,
       gradeCCount = 0,
@@ -50,11 +34,11 @@ export default class Chart extends React.Component<ChartProps> {
       gradeNPCount = 0;
 
     this.props.gradeData.forEach((data) => {
-      if (
-        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
-        (data.instructors.includes(this.props.professor ?? '') ||
-          data.department + ' ' + data.courseNumber === this.props.course)
-      ) {
+      const quarterMatch = quarter === 'ALL' || data.quarter + ' ' + data.year === quarter;
+      const profMatch = professor === 'ALL' || data.instructors.includes(this.props.professor ?? '');
+      const courseMatch = course === 'ALL' || data.department + ' ' + data.courseNumber === this.props.course;
+
+      if (quarterMatch && (profMatch || courseMatch)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;
@@ -70,43 +54,43 @@ export default class Chart extends React.Component<ChartProps> {
         id: 'A',
         label: 'A',
         A: gradeACount,
-        color: GradeColors.A,
+        color: getCssVariable('--blue-secondary-light'),
       },
       {
         id: 'B',
         label: 'B',
         B: gradeBCount,
-        color: GradeColors.B,
+        color: getCssVariable('--green-secondary-light'),
       },
       {
         id: 'C',
         label: 'C',
         C: gradeCCount,
-        color: GradeColors.C,
+        color: getCssVariable('--yellow-secondary-light'),
       },
       {
         id: 'D',
         label: 'D',
         D: gradeDCount,
-        color: GradeColors.D,
+        color: getCssVariable('--orange-secondary-light'),
       },
       {
         id: 'F',
         label: 'F',
         F: gradeFCount,
-        color: GradeColors.F,
+        color: getCssVariable('--red-secondary-light'),
       },
       {
         id: 'P',
         label: 'P',
         P: gradePCount,
-        color: GradeColors.P,
+        color: getCssVariable('--gradedist-p'),
       },
       {
         id: 'NP',
         label: 'NP',
         NP: gradeNPCount,
-        color: GradeColors.NP,
+        color: getCssVariable('--gradedist-np'),
       },
     ];
   };
@@ -119,13 +103,7 @@ export default class Chart extends React.Component<ChartProps> {
    * @return a JSX block styling the chart
    */
   styleTooltip = (props: BarTooltipProps<BarDatum>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.label}: {props.data[props.label]}
-        </strong>
-      </div>
-    );
+    return <ChartTooltip label={props.label} value={props.data[props.label]} />;
   };
 
   /*
@@ -133,10 +111,10 @@ export default class Chart extends React.Component<ChartProps> {
    * @return a JSX block rendering the chart
    */
   render() {
-    const data = this.getClassData();
+    const gradeDistribution = this.getClassData();
 
     // greatestCount calculates the upper bound of the graph (i.e. the greatest number of students in a single grade)
-    const greatestCount = data.reduce(
+    const greatestCount = gradeDistribution.reduce(
       (max, grade) => ((grade[grade.id] as number) > max ? (grade[grade.id] as number) : max),
       0,
     );
@@ -151,7 +129,7 @@ export default class Chart extends React.Component<ChartProps> {
         <ThemeContext.Consumer>
           {({ darkMode }) => (
             <ResponsiveBar
-              data={data}
+              data={gradeDistribution}
               keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
               indexBy="label"
               margin={{
@@ -170,8 +148,8 @@ export default class Chart extends React.Component<ChartProps> {
                 legendOffset: 36,
               }}
               enableLabel={false}
-              colors={Object.values(GradeColors)}
-              theme={this.getTheme(darkMode)}
+              colors={gradeDistribution.map((grade) => String(grade.color))}
+              theme={getChartTheme(darkMode)}
               tooltipLabel={(datum) => String(datum.id)}
               tooltip={this.styleTooltip}
             />

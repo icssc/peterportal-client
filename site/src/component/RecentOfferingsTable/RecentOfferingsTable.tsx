@@ -1,14 +1,17 @@
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 import './RecentOfferingsTable.scss';
-import CheckIcon from '@mui/icons-material/Check';
 import { QuarterName } from '@peterportal/types';
+import trpc from '../../trpc';
+import { sortTerms } from '../../helpers/util';
 
-interface Offerings {
-  [academicYear: string]: boolean[];
-}
+import { useTheme } from '@mui/material/styles';
+import CheckIcon from '@mui/icons-material/Check';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+
+type RecentOfferingsTableSize = 'thin' | 'wide';
 
 function parseOfferings(terms: string[]) {
-  const offerings: Offerings = {};
+  const offerings: { [academicYear: string]: boolean[] } = {};
 
   for (const term of terms) {
     const [yearStr, quarter] = term.split(' ') as [string, QuarterName];
@@ -26,12 +29,12 @@ function parseOfferings(terms: string[]) {
 
     // If the course is not described as a "Fall" course, it should be listed as starting in the previous academic year
     // e.g. "Winter 2023" should be in "2022-2023", but "Fall 2023" should be in "2023-2024"
-    const startYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+    const academicYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
     // Initialize each quarter (Fall, Winter, Spring, Summer) as false
-    offerings[startYear] ??= [false, false, false, false];
+    offerings[academicYear] ??= [false, false, false, false];
 
-    offerings[startYear][quarterIndex] = true;
+    offerings[academicYear][quarterIndex] = true;
   }
 
   // Sort offerings by academic year in descending order
@@ -41,21 +44,42 @@ function parseOfferings(terms: string[]) {
   return top4Offerings;
 }
 
+function getYearColumnValue(size: RecentOfferingsTableSize, academicYear: string) {
+  if (size === 'wide') return academicYear;
+  const [startYear, endYear] = academicYear.split('-');
+  return `${startYear.substring(2)}-${endYear.substring(2)}`;
+}
+
+function isFutureTerm(currentTerm: string, academicYear: string, quarterIndex: number) {
+  // if the actual current term hasn't been fetched yet, return false
+  if (!currentTerm) return false;
+
+  // get the term from the table cell's academic year and quarter index
+  const [startYear, endYear] = academicYear.split('-');
+  const termYear = quarterIndex === 0 ? startYear : endYear;
+  const termQuarter = ['Fall', 'Winter', 'Spring', 'Summer'][quarterIndex];
+  const term = `${termYear} ${termQuarter}`;
+
+  // determine if the term from the table cell comes first (sortTerms is in descending order)
+  const sortedTerms = sortTerms([term, currentTerm]);
+  return sortedTerms[0] === term;
+}
+
 interface RecentOfferingsTableProps {
   terms: string[];
-  size: 'thin' | 'wide';
+  size: RecentOfferingsTableSize;
 }
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
-  if (terms.length === 0) return null;
-
+  const [currentTerm, setCurrentTerm] = useState('');
+  const theme = useTheme();
   const offerings = parseOfferings(terms);
 
-  const getYearColumnValue = (year: string) => {
-    if (size === 'wide') return year;
-    const [start, end] = year.split('-');
-    return `${start.substring(2)}-${end.substring(2)}`;
-  };
+  useEffect(() => {
+    trpc.schedule.currentQuarter.query().then((data) => setCurrentTerm(data));
+  }, []);
+
+  if (terms.length === 0) return null;
 
   return (
     <div className="recent-offerings">
@@ -64,7 +88,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
       <table className="ppc-table recent-offerings-table">
         <thead>
           <tr>
-            <th>{size === 'thin' ? 'Year' : 'Academic Year'}</th>
+            <th>{size === 'wide' ? 'Academic Year' : 'Year'}</th>
             <th>🍂</th>
             <th>❄️</th>
             <th>🌸</th>
@@ -72,11 +96,17 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
           </tr>
         </thead>
         <tbody>
-          {offerings.map(([year, quarters]) => (
-            <tr key={year}>
-              <td>{getYearColumnValue(year)}</td>
+          {offerings.map(([academicYear, quarters]) => (
+            <tr key={academicYear}>
+              <td>{getYearColumnValue(size, academicYear)}</td>
               {quarters.map((offered, index) => (
-                <td key={index}>{offered && <CheckIcon style={{ fontSize: 20 }} />}</td>
+                <td key={index} className="recent-offerings-quarter">
+                  {offered ? (
+                    <CheckIcon />
+                  ) : isFutureTerm(currentTerm, academicYear, index) ? (
+                    <QuestionMarkIcon style={{ color: theme.palette.text.secondary }} />
+                  ) : null}
+                </td>
               ))}
             </tr>
           ))}

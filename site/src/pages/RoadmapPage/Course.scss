@@ -7,9 +7,37 @@
   padding: 12px;
   position: relative;
   margin: 4px;
+  color: var(--blue-primary);
+
+  &.roadmap-course {
+    display: grid;
+    grid-template-areas: 'A B' 'A C';
+    grid-template-columns: min-content auto;
+    grid-template-rows: repeat(2, min-content); // Fix Safari oversizing dragged courses
+    align-items: center;
+
+    .course-drag-handle {
+      grid-area: A;
+      position: relative;
+      left: -6px;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    .title {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 
   .course-and-info {
-    color: var(--blue-primary);
+    grid-area: B;
     a {
       color: inherit;
     }
@@ -26,15 +54,12 @@
   }
 
   .title {
-    margin-top: 4px;
+    margin-top: 2px;
+    grid-area: C;
   }
 
   .units {
     margin-left: auto;
-  }
-
-  .info-wrapper {
-    display: flex;
   }
 
   .missing-prereq {
@@ -57,6 +82,9 @@
   > .name {
     display: block;
   }
+  .warning-container svg {
+    font-size: 20px;
+  }
 }
 
 button.course-delete-btn {
@@ -71,14 +99,8 @@ button.course-delete-btn {
   }
 }
 
-.course-footer {
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  margin-top: auto;
-  width: 100%;
+.course-tooltip {
+  margin-left: auto;
 }
 
 .course.sortable-fallback {
@@ -117,9 +139,6 @@ button.course-delete-btn {
       font-style: italic;
       margin-top: 0;
     }
-    .info-wrapper {
-      display: none;
-    }
     .units {
       order: 2;
       margin-left: 5px;
@@ -133,9 +152,6 @@ button.course-delete-btn {
       display: flex;
     }
   }
-  .course :is(.course-footer) {
-    display: none;
-  }
   .course :is(.course-and-info) {
     display: contents;
   }
@@ -146,9 +162,17 @@ button.course-delete-btn {
     justify-items: stretch;
     gap: 8px;
     height: fit-content;
-  }
-}
 
-.course-warn-icon {
-  font-size: 20px;
+    &:not(.disabled) .course {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      &:active {
+        cursor: grabbing;
+      }
+    }
+    &.disabled .course {
+      cursor: pointer;
+    }
+  }
 }
