@@ -23,6 +23,8 @@ export default class Chart extends Component<ChartProps> {
    * @return an array of JSON objects detailing the grades for each class
    */
   getClassData = (): BarDatum[] => {
+    const { professor, quarter, course } = this.props;
+
     let gradeACount = 0,
       gradeBCount = 0,
       gradeCCount = 0,
@@ -32,11 +34,11 @@ export default class Chart extends Component<ChartProps> {
       gradeNPCount = 0;
 
     this.props.gradeData.forEach((data) => {
-      if (
-        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
-        (data.instructors.includes(this.props.professor ?? '') ||
-          data.department + ' ' + data.courseNumber === this.props.course)
-      ) {
+      const quarterMatch = quarter === 'ALL' || data.quarter + ' ' + data.year === quarter;
+      const profMatch = professor === 'ALL' || data.instructors.includes(this.props.professor ?? '');
+      const courseMatch = course === 'ALL' || data.department + ' ' + data.courseNumber === this.props.course;
+
+      if (quarterMatch && (profMatch || courseMatch)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;

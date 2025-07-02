@@ -75,7 +75,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createProfEntries = useCallback(() => {
     const professors: Set<string> = new Set();
-    const result: Entry[] = [];
+    const result: Entry[] = [{ value: 'ALL', text: 'All Instructors' }];
 
     gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
@@ -102,7 +102,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       .forEach((course) => result.push({ value: course, text: course }));
 
     setCourseEntries(result);
-    setCurrentCourse(result[0].value);
+    setCurrentCourse(result[0].text);
   }, [gradeDistData]);
 
   // update list of professors/courses when new course/professor is detected
@@ -126,13 +126,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
     gradeDistData!
       .filter((entry) => {
-        if (props.course && entry.instructors.includes(currentProf)) {
-          return true;
-        }
-        if (props.professor && entry.department + ' ' + entry.courseNumber == currentCourse) {
-          return true;
-        }
-        return false;
+        const profMatch = currentProf === 'ALL' || entry.instructors.includes(currentProf);
+        const courseMatch = entry.department + ' ' + entry.courseNumber == currentCourse;
+
+        return profMatch || courseMatch;
       })
       .forEach((data) => quarters.add(data.quarter + ' ' + data.year));
     quarters.forEach((quarter) => result.push({ value: quarter, text: quarter }));
@@ -172,6 +169,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const selectedProfCourseName =
+    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -192,7 +191,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       <div className="gradedist-filter">
         <DropdownButton
           className="ppc-dropdown-btn"
-          title={profCourseSelectedValue || (props.course ? 'Professor' : 'Course')}
+          title={selectedProfCourseName}
           variant={buttonVariant}
           onSelect={updateProfCourse}
         >
