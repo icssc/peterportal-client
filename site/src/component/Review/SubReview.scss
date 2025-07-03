@@ -13,9 +13,8 @@
 .subreview-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  height: 24px;
 
   .subreview-identifier {
     font-weight: bold;
@@ -32,6 +31,7 @@
     flex-direction: row;
     margin-right: -8px;
     align-items: center;
+    height: 24px;
   }
 }
 

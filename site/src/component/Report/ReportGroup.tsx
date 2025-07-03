@@ -32,9 +32,9 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return (
       <Card className="report-group ppc-card">
         <div className="report-group-header">
-          <div className="report-group-identifier">
+          <h3 className="report-group-identifier">
             {review.courseId} {review.professorId}
-          </div>
+          </h3>
           <div className="edit-buttons">
             <Button className="ppc-mui-button" variant="text" onClick={props.onDeny}>
               <PersonRemoveIcon /> Ignore

@@ -4,22 +4,23 @@
   .report-group-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    height: 24px;
+
+    .report-group-identifier {
+      font-weight: bold;
+      font-size: 20px;
+      margin: 0;
+      word-break: break-word;
+    }
 
     .edit-buttons {
       display: flex;
       flex-direction: row;
       gap: 12px;
+      align-items: center;
+      height: 24px;
     }
-  }
-
-  .report-group-identifier {
-    font-weight: bold;
-    font-size: 20px;
-    margin: 0;
-    word-break: break-word;
   }
 
   .report-group-label {
