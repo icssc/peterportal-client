@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import './Review.scss';
+import { FC, useState, useEffect, ReactNode } from 'react';
+import './ReviewCard.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -14,27 +14,70 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms } from '../../helpers/util';
+import { sortTerms, splitCourseId } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
 
-interface SubReviewProps {
+interface ReviewCardProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  children?: ReactNode;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
+  const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+
+  const fetchProfName = async () => {
+    try {
+      const [profFirstName, profLastName] = (
+        await trpc.professors.get.query({ ucinetid: review.professorId })
+      ).name.split(' ');
+      const profInitial = profFirstName[0] + '.';
+      return profInitial + ' ' + profLastName;
+    } catch (error) {
+      console.error('Error fetching professor name:', error);
+    }
+  };
+
+  useEffect(() => {
+    const getIdentifier = async () => {
+      if (professor) {
+        const foundCourse = professor.courses[review.courseId];
+        const courseName = foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId;
+        const courseLink = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+        setIdentifier(courseLink);
+      } else if (course) {
+        const profName = course.instructors[review.professorId]?.name;
+        const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        setIdentifier(profLink);
+      } else {
+        const [foundCourseName, foundCourseNumber] = splitCourseId(review.courseId);
+        const courseName = foundCourseName + ' ' + foundCourseNumber;
+        const profName = await fetchProfName();
+        const courseAndProfLink = (
+          <div>
+            <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
+            {' • '}
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+          </div>
+        );
+        setIdentifier(courseAndProfLink);
+      }
+    };
+
+    getIdentifier();
+  }, [professor, course, review.courseId, review.professorId]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -125,58 +168,40 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
-    <div className="subreview">
-      <div className="subreview-header">
-        <h3 className="subreview-identifier">
-          {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
-              {professor.courses[review.courseId]
-                ? professor.courses[review.courseId]?.department +
-                  ' ' +
-                  professor.courses[review.courseId]?.courseNumber
-                : review.courseId}
-            </Link>
+    <Paper className="reviewcard ppc-paper">
+      <div className="reviewcard-header">
+        <h3 className="reviewcard-identifier">{identifier}</h3>
+        <div className="edit-buttons">
+          {review.authored && (
+            <>
+              <IconButton onClick={openReviewForm}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => setShowDeleteModal(true)}>
+                <DeleteOutlineIcon />
+              </IconButton>
+              <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+                <Modal.Header closeButton>
+                  <h2>Delete Review</h2>
+                </Modal.Header>
+                <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={() => deleteReview(review.id!)}>
+                    Delete
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </>
           )}
-          {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
-              {course.instructors[review.professorId]?.name ?? review.professorId}
-            </Link>
-          )}
-          {!course && !professor && (
-            <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
-            </div>
-          )}
-        </h3>
-        {review.authored && (
-          <div className="edit-buttons">
-            <IconButton onClick={openReviewForm}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => setShowDeleteModal(true)}>
-              <DeleteOutlineIcon />
-            </IconButton>
-            <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-              <Modal.Header closeButton>
-                <h2>Delete Review</h2>
-              </Modal.Header>
-              <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        )}
+          {children}
+        </div>
       </div>
 
-      <div className="subreview-content">
-        <div className="subreview-ratings">
+      <div className="reviewcard-content">
+        <div className="reviewcard-ratings">
           <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
             <div className="rating-label">Quality</div>
             <div className="rating-value">{review.rating}</div>
@@ -186,9 +211,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
-        <div className="subreview-info">
-          <div className="subreview-details">
-            <div className="subreview-detail">
+        <div className="reviewcard-info">
+          <div className="reviewcard-details">
+            <div className="reviewcard-detail">
               <p>
                 <b>Posted on:</b>
                 {' ' +
@@ -201,17 +226,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
                   <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
                 )}
               </p>
-              <div className="subreview-author">
+              <div className="reviewcard-author">
                 <b>Posted by:</b>
-                <p className="subreview-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
-                {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
+                <p className="reviewcard-author-name">{review.userDisplay}</p>
+                {review.verified && <div className="reviewcard-author-verified">{verifiedBadge}</div>}
+                {review.authored && <div className="reviewcard-author-author">{authorBadge}</div>}
               </div>
               <p>
                 <b>Quarter:</b> {review.quarter}
               </p>
             </div>
-            <div className="subreview-detail">
+            <div className="reviewcard-detail">
               <p>
                 <b>Grade:</b> {review.gradeReceived}
               </p>
@@ -224,30 +249,30 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         </div>
       </div>
       {tags.length > 0 && (
-        <div className="subreview-tags">
+        <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Badge pill className="subreview-tag" key={tag}>
+            <Badge pill className="reviewcard-tag" key={tag}>
               {tag}
             </Badge>
           ))}
         </div>
       )}
-      <div className="subreview-footer" id={review.id.toString()}>
-        <div className="subreview-voting">
-          <p className="subreview-voting-question">Helpful?</p>
-          <div className="subreview-voting-buttons">
+      <div className="reviewcard-footer" id={review.id.toString()}>
+        <div className="reviewcard-voting">
+          <p className="reviewcard-voting-question">Helpful?</p>
+          <div className="reviewcard-voting-buttons">
             <button className={upvoteClassname} onClick={upvote}>
               &#9650;
             </button>
-            <p className="subreview-voting-count">{review.score}</p>
+            <p className="reviewcard-voting-count">{review.score}</p>
             <button className={downvoteClassname} onClick={downvote}>
               &#9660;
             </button>
           </div>
         </div>
-        <Button variant="primary" className="add-report-button" onClick={openReportForm}>
-          Report
-        </Button>
+        <button className="add-report-button" onClick={openReportForm}>
+          Report...
+        </button>
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}
@@ -264,8 +289,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
           terms={sortedTerms}
         />
       </div>
-    </div>
+    </Paper>
   );
 };
 
-export default SubReview;
+export default ReviewCard;
