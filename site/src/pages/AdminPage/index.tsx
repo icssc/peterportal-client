@@ -12,15 +12,24 @@ const AdminPage: FC = () => {
 
   // user has to be authenticated as admin to view this page
   const checkAdmin = useCallback(async () => {
-    const res = await trpc.users.get.query();
-    setAuthorized(res.isAdmin);
-    setLoaded(true);
+    trpc.users.get
+      .query()
+      .then((res) => {
+        setAuthorized(res.isAdmin);
+        setLoaded(true);
+      })
+      .catch(() => {
+        // If a user is not logged in, they can't be authorized
+        setAuthorized(false);
+        setLoaded(true);
+      });
   }, []);
 
   useEffect(() => {
     checkAdmin();
   }, [checkAdmin]);
 
+  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   if (!loaded) {
     return <p>Loading...</p>;
   } else if (!authorized) {
