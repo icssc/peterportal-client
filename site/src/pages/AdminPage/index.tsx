@@ -1,20 +1,36 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useContext } from 'react';
+import { Button } from 'react-bootstrap';
 import './AdminPage.scss';
 
 import Error from '../../component/Error/Error';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
 import trpc from '../../trpc';
+import ThemeContext from '../../style/theme-context';
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+type AdminTab = 'Verify Reviews' | 'View Reports';
 
-type AdminTab = 'verify' | 'reports';
+interface ListSelectorProps {
+  text: AdminTab;
+  selectedTab: AdminTab;
+  setSelectedTab: (tab: AdminTab) => void;
+}
+const ListSelector: FC<ListSelectorProps> = ({ text, selectedTab, setSelectedTab }) => {
+  const { darkMode } = useContext(ThemeContext);
+  const variant = selectedTab === text ? 'primary' : darkMode ? 'dark' : 'light';
+  const selectTab = () => setSelectedTab(text);
+
+  return (
+    <Button variant={variant} className="ppc-btn" onClick={selectTab}>
+      <span>{text}</span>
+    </Button>
+  );
+};
 
 const AdminPage: FC = () => {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-  const [currentTab, setCurrentTab] = useState<AdminTab>('verify');
+  const [selectedTab, setSelectedTab] = useState<AdminTab>('Verify Reviews');
 
   useEffect(() => {
     trpc.users.get
@@ -34,11 +50,11 @@ const AdminPage: FC = () => {
 
   return (
     <>
-      <Tabs className="admin-tabs" value={currentTab} onChange={(_, newTab: AdminTab) => setCurrentTab(newTab)}>
-        <Tab label="Verify Reviews" value="verify" />
-        <Tab label="View Reports" value="reports" />
-      </Tabs>
-      {currentTab === 'verify' ? <Verify /> : <Reports />}
+      <div className="admin-tabs">
+        <ListSelector text="Verify Reviews" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        <ListSelector text="View Reports" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      </div>
+      {selectedTab === 'Verify Reviews' ? <Verify /> : <Reports />}
     </>
   );
 };

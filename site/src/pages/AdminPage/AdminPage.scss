@@ -1,14 +1,30 @@
-.admin-tabs .MuiTabs-list {
-  .MuiTab-root {
-    min-width: 50%;
-    background-color: var(--overlay1);
-  }
+.admin-tabs {
+  background-color: #8886;
+  display: flex;
+  gap: 1px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem 2rem 0 2rem;
+  flex-shrink: 0;
 
-  .Mui-selected {
+  button.ppc-btn {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    justify-content: center;
+    font-weight: bold;
     color: var(--blue-primary) !important;
-  }
 
-  .MuiTabs-indicator {
-    background-color: var(--blue-primary);
+    &.btn-primary {
+      color: var(--ring-road-white) !important;
+      &:active {
+        background-color: var(--blue-primary) !important;
+      }
+    }
+
+    &:not(:disabled):not(.disabled):is(:focus, :active) {
+      box-shadow: none;
+    }
   }
 }
