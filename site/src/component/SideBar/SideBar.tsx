@@ -12,10 +12,9 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import UIOverlay from '../UIOverlay/UIOverlay';
 
 import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
-import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
 
@@ -23,17 +22,11 @@ const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const isLoggedIn = useIsLoggedIn();
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      // useEffect's function is not allowed to be async, create async checkAdmin function within
-      const checkAdmin = async () => {
-        const { isAdmin } = await trpc.users.get.query();
-        setIsAdmin(isAdmin);
-      };
-      checkAdmin();
-    }
+    if (!isLoggedIn) return;
+    trpc.users.get.query().then((res) => setIsAdmin(res.isAdmin));
   }, [isLoggedIn]);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
@@ -81,34 +74,19 @@ const SideBar = () => {
           </NavLink>
         </li>
         {isAdmin && (
-          <>
-            <li>
-              <NavLink
-                to="/admin/verify"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-                onClick={closeSidebar}
-              >
-                <div>
-                  <DomainVerificationIcon className="sidebar-icon" />
-                </div>
-                <span className="full-name">Verify Reviews</span>
-                <span>Verification</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/admin/reports"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-                onClick={closeSidebar}
-              >
-                <div>
-                  <WarningAmberIcon className="sidebar-icon" />
-                </div>
-                <span className="full-name">View Reports</span>
-                <span>Reports</span>
-              </NavLink>
-            </li>{' '}
-          </>
+          <li>
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+              onClick={closeSidebar}
+            >
+              <div>
+                <AdminPanelSettingsOutlinedIcon className="sidebar-icon" />
+              </div>
+              <span className="full-name">Administration Panel</span>
+              <span>Admin</span>
+            </NavLink>
+          </li>
         )}
       </ul>
     </div>

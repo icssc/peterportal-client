@@ -1,72 +1,78 @@
 import { FC, useEffect, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import SubReport from './SubReport';
+import { Button, Card } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import './ReportGroup.scss';
-import { ReportData, ReviewData } from '@peterportal/types';
+import { ReportGroupData, ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 
+interface SubReportProps {
+  reason: string;
+  timestamp: string;
+}
+
+const SubReport: FC<SubReportProps> = ({ reason, timestamp }) => {
+  const date = new Date(Date.parse(timestamp));
+  const dateText = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  return (
+    <Card className="ppc-card subreport">
+      <b>Reason for Report on {dateText}</b>
+      <i>{reason}</i>
+    </Card>
+  );
+};
+
 interface ReportGroupProps {
-  reviewId: number;
-  reports: ReportData[];
+  reportGroup: ReportGroupData;
   onAccept: () => void;
   onDeny: () => void;
 }
 
-const ReportGroup: FC<ReportGroupProps> = (props) => {
+const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
-  const getReviewData = async (reviewId: number) => {
-    const review = (await trpc.reviews.getAdminView.query({ reviewId }))[0];
-    setReview(review);
-  };
-
   useEffect(() => {
-    getReviewData(props.reviewId);
-  }, [props.reviewId]);
+    const getReviewData = async (reviewId: number) => {
+      const reviews = await trpc.reviews.getAdminView.query({ reviewId });
+      setReview(reviews[0]);
+    };
+    getReviewData(reportGroup.reviewId);
+  }, [reportGroup.reviewId]);
 
-  if (!review) {
-    return <></>;
-  } else {
-    return (
-      <div className="report-group">
+  if (!review) return null;
+
+  const reviewCreationDate = new Date(review.createdAt).toLocaleString('default', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return (
+    <Card className="report-group ppc-card">
+      <div className="report-group-header">
         <div className="report-group-identifier">
-          <div className="report-group-professor-name">{review.professorId}</div>
-          <div className="report-group-course-id">{review.courseId}</div>
-          <div className="report-group-user-display">
-            Posted by {review.userDisplay} on{' '}
-            {new Date(review.createdAt).toLocaleString('default', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </div>
+          {review.courseId} {review.professorId}
         </div>
-        <div className="report-group-content">
-          <p className="report-group-label">Review Content:</p>
-          <p>{review.content}</p>
-        </div>
-        <p className="report-group-label">Reports on this review:</p>
-        <div className="report-group-subreports-container">
-          {props.reports.map((report, i) => {
-            return (
-              <SubReport
-                key={report.id}
-                reportId={report.id}
-                reviewId={report.reviewId}
-                reason={report.reason}
-                timestamp={report.createdAt}
-                isLast={i == props.reports.length - 1}
-              />
-            );
-          })}
-        </div>
-        <div className="report-group-footer">
-          <Button variant="danger" className="mr-3" onClick={props.onDeny}>
-            Deny
+        <div className="edit-buttons">
+          <Button className="ppc-mui-button" variant="text" onClick={onDeny}>
+            <PersonRemoveIcon /> Ignore
           </Button>
-          <Button variant="success" onClick={props.onAccept}>
-            Accept
+          <Button className="ppc-mui-button primary-button" variant="text" onClick={onAccept}>
+            <DeleteIcon /> Accept Report
           </Button>
         </div>
       </div>
-    );
-  }
+      <div className="report-group-content">{review.content}</div>
+      <div className="report-group-user-display">
+        Posted by <i>{review.userDisplay}</i> on <i>{reviewCreationDate}</i>
+      </div>
+      <div className="report-group-subreports-container">
+        {reportGroup.reports.map((report) => (
+          <SubReport key={report.id} reason={report.reason} timestamp={report.createdAt} />
+        ))}
+      </div>
+    </Card>
+  );
 };
 
 export default ReportGroup;

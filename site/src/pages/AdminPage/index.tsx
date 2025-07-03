@@ -1,38 +1,62 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useContext } from 'react';
+import { Button } from 'react-bootstrap';
+import './AdminPage.scss';
+
+import Error from '../../component/Error/Error';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
-import Error from '../../component/Error/Error';
-import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';
+import ThemeContext from '../../style/theme-context';
+
+type AdminTab = 'Verify Reviews' | 'View Reports';
+
+interface ListSelectorProps {
+  text: AdminTab;
+  selectedTab: AdminTab;
+  setSelectedTab: (tab: AdminTab) => void;
+}
+const ListSelector: FC<ListSelectorProps> = ({ text, selectedTab, setSelectedTab }) => {
+  const { darkMode } = useContext(ThemeContext);
+  const variant = selectedTab === text ? 'primary' : darkMode ? 'dark' : 'light';
+  const selectTab = () => setSelectedTab(text);
+
+  return (
+    <Button variant={variant} className="ppc-btn" onClick={selectTab}>
+      <span>{text}</span>
+    </Button>
+  );
+};
 
 const AdminPage: FC = () => {
-  const location = useLocation();
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [authorized, setAuthorized] = useState<boolean>(false);
-
-  // user has to be authenticated as admin to view this page
-  const checkAdmin = useCallback(async () => {
-    const res = await trpc.users.get.query();
-    setAuthorized(res.isAdmin);
-    setLoaded(true);
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<AdminTab>('Verify Reviews');
 
   useEffect(() => {
-    checkAdmin();
-  }, [checkAdmin]);
+    trpc.users.get
+      .query()
+      .then((res) => setAuthorized(res.isAdmin))
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (!loaded) {
+  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
+  if (loading) {
     return <p>Loading...</p>;
-  } else if (!authorized) {
-    return <Error message="Access Denied: You are not authorized to view this page."></Error>;
-  } else {
-    if (location.pathname.includes('reports')) {
-      return <Reports />;
-    } else if (location.pathname.includes('verify')) {
-      return <Verify />;
-    }
   }
-  return <Error message="Invalid Admin Page"></Error>;
+
+  if (!authorized) {
+    return <Error message="Access Denied: You are not authorized to view this page." />;
+  }
+
+  return (
+    <>
+      <div className="admin-tabs">
+        <ListSelector text="Verify Reviews" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        <ListSelector text="View Reports" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      </div>
+      {selectedTab === 'Verify Reviews' ? <Verify /> : <Reports />}
+    </>
+  );
 };
 
 export default AdminPage;
