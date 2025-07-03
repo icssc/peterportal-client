@@ -31,7 +31,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   );
 
   return (
-    // <div style={{ marginLeft: 'auto' }}>
     <OverlayTrigger overlay={popover} placement="auto">
       <div className="tooltip-trigger">
         {prevOfferings.map((emoji) => (
@@ -39,7 +38,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
         ))}
       </div>
     </OverlayTrigger>
-    // </div>
   );
 };
 

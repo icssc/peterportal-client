@@ -4,7 +4,6 @@ import { QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { sortTerms } from '../../helpers/util';
 
-import { useTheme } from '@mui/material/styles';
 import CheckIcon from '@mui/icons-material/Check';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
@@ -31,7 +30,7 @@ function parseOfferings(terms: string[]) {
     // e.g. "Winter 2023" should be in "2022-2023", but "Fall 2023" should be in "2023-2024"
     const academicYear = quarterIndex === 0 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
 
-    // Initialize each quarter (Fall, Winter, Spring, Summer) as false
+    // If this academic year hasn't already been parsed, initialize all four quarters as false
     offerings[academicYear] ??= [false, false, false, false];
 
     offerings[academicYear][quarterIndex] = true;
@@ -72,7 +71,6 @@ interface RecentOfferingsTableProps {
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
   const [currentTerm, setCurrentTerm] = useState('');
-  const theme = useTheme();
   const offerings = parseOfferings(terms);
 
   useEffect(() => {
@@ -104,7 +102,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
                   {offered ? (
                     <CheckIcon />
                   ) : isFutureTerm(currentTerm, academicYear, index) ? (
-                    <QuestionMarkIcon style={{ color: theme.palette.text.secondary }} />
+                    <QuestionMarkIcon />
                   ) : null}
                 </td>
               ))}
