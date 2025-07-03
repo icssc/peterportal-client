@@ -152,7 +152,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       }),
     );
     setCurrentQuarter(result[0].value);
-  }, [currentCourse, currentProf, gradeDistData, props.course, props.professor]);
+  }, [currentCourse, currentProf, gradeDistData]);
 
   // update list of quarters when new professor/course is chosen
   useEffect(() => {
