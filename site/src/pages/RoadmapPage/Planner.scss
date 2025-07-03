@@ -7,6 +7,7 @@
   flex-direction: column;
   gap: $planner-gap;
   position: relative;
+  padding: 0;
 
   .years {
     display: flex;
@@ -19,10 +20,5 @@
   padding: 0;
   .roadmap-header {
     top: 0px;
-  }
-
-  .loading-spinner {
-    display: flex;
-    justify-content: center;
   }
 }
