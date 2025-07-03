@@ -81,7 +81,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
 
   return (
     <div className="recent-offerings">
-      <h2 className={size === 'thin' ? 'center' : ''}>Recent Offerings</h2>
+      <h4 className={size === 'thin' ? 'center' : ''}>Recent Offerings</h4>
 
       <table className="ppc-table recent-offerings-table">
         <thead>
