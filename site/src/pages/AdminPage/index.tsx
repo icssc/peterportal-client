@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import Reports from '../../component/Report/Reports';
-import Verify from '../../component/Verify/Verify';
+import Reports from './Reports/Reports';
+import Verify from './Verify/Verify';
 import Error from '../../component/Error/Error';
 import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';

@@ -5,7 +5,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SubReport from './SubReport';
 import './ReportGroup.scss';
 import { ReportData, ReviewData } from '@peterportal/types';
-import trpc from '../../trpc';
+import trpc from '../../../trpc';
 
 interface ReportGroupProps {
   reviewId: number;

@@ -1,8 +1,8 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
-import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
+import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
 import './Reports.scss';
-import trpc from '../../trpc';
+import trpc from '../../../trpc';
 import { ReportData } from '@peterportal/types';
 
 interface ReviewDisplay {

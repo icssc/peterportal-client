@@ -1,13 +1,10 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
-import { Button } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
-import trpc from '../../trpc';
-import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
-import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import trpc from '../../../trpc';
+import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
+import UnverifiedReview from './UnverifiedReview';
+import { selectReviews, setReviews } from '../../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { ReviewData } from '@peterportal/types';
 
 const UnverifiedReviewList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
@@ -27,16 +24,12 @@ const UnverifiedReviewList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
     <ReviewItemGrid>
       {reviews.length == 0 && <span>There are no unverified reviews</span>}
       {reviews.map((review) => (
-        <SubReview key={'verify-' + review.id!} review={review}>
-          <div className="verification-buttons">
-            <Button className="ppc-mui-button" variant="text" onClick={() => deleteReview(review.id)}>
-              <DeleteForeverIcon /> Delete
-            </Button>
-            <Button className="ppc-mui-button primary-button" variant="text" onClick={() => verifyReview(review.id)}>
-              <CheckIcon /> Verify
-            </Button>
-          </div>
-        </SubReview>
+        <UnverifiedReview
+          key={'verify-' + review.id!}
+          review={review}
+          onDelete={() => deleteReview(review.id)}
+          onVerify={() => verifyReview(review.id)}
+        />
       ))}
     </ReviewItemGrid>
   );
