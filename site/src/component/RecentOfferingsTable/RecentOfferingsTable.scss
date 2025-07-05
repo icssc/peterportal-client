@@ -28,5 +28,9 @@
 
   .recent-offerings-quarter {
     font-size: 20px;
+
+    .question-mark {
+      color: var(--text-secondary);
+    }
   }
 }

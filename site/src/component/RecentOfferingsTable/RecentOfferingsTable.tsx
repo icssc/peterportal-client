@@ -102,7 +102,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
                   {offered ? (
                     <CheckIcon />
                   ) : isFutureTerm(currentTerm, academicYear, index) ? (
-                    <QuestionMarkIcon />
+                    <QuestionMarkIcon className="question-mark" />
                   ) : null}
                 </td>
               ))}
