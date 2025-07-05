@@ -128,10 +128,6 @@ export const sortTerms = (terms: string[]) =>
     return yearB.localeCompare(yearA) || quartersOrdered[qtrB].localeCompare(quartersOrdered[qtrA]);
   });
 
-export const isTermAfter = (term: string, otherTerm: string): boolean => {
-  return sortTerms([term, otherTerm])[0] === term;
-};
-
 export const unionTerms = (courseHistory: CourseWithTermsLookup) => {
   // get array of arrays of term names
   const allTerms = Object.values(courseHistory);

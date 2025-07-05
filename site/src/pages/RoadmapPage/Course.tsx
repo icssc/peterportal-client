@@ -1,13 +1,14 @@
 import React, { FC, useState } from 'react';
 import './Course.scss';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, pluralize } from '../../helpers/util';
 
+import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
+import CoursePopover from '../../component/CoursePopover/CoursePopover';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+
+import { useIsMobile, pluralize } from '../../helpers/util';
 import { CourseGQLData } from '../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -117,7 +118,9 @@ const Course: FC<CourseProps> = (props) => {
             <DeleteOutlineIcon className="course-delete-icon" />
           </IconButton>
         ) : (
-          <CourseQuarterIndicator terms={terms} size="xs" />
+          <div className="course-tooltip">
+            <RecentOfferingsTooltip terms={terms} />
+          </div>
         )}
       </div>
       <div className="title">{title}</div>
