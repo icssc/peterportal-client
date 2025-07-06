@@ -208,7 +208,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if in course context, select a professor
   const professorSelect = courseProp && (
     <Form.Group>
-      <Form.Label>Professor</Form.Label>
+      <Form.Label className="ppc-modal-form-label required">Professor</Form.Label>
       <Form.Control
         as="select"
         name="professor"
@@ -243,7 +243,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if in professor context, select a course
   const courseSelect = professorProp && (
     <Form.Group>
-      <Form.Label>Course Taken</Form.Label>
+      <Form.Label className="ppc-modal-form-label required">Course Taken</Form.Label>
       <Form.Control
         as="select"
         name="course"
@@ -296,7 +296,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group>
-              <Form.Label className="ppc-modal-form-label">Year</Form.Label>
+              <Form.Label className="ppc-modal-form-label required">Year</Form.Label>
               <Form.Control
                 as="select"
                 name="year"
@@ -318,7 +318,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
-              <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
+              <Form.Label className="ppc-modal-form-label required">Quarter</Form.Label>
               <Form.Control
                 as="select"
                 name="quarter"
@@ -346,7 +346,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           <div className="grade-difficulty-row">
             <Form.Group>
-              <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
+              <Form.Label className="ppc-modal-form-label required">Grade</Form.Label>
               <Form.Control
                 as="select"
                 name="grade"
@@ -367,7 +367,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </Form.Group>
 
             <Form.Group>
-              <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
+              <Form.Label className="ppc-modal-form-label required">Difficulty</Form.Label>
               <Form.Control
                 as="select"
                 name="difficulty"

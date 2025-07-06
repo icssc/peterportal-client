@@ -13,6 +13,13 @@
     font-weight: bold;
   }
 
+  .required::after {
+    content: ' *';
+    color: red;
+    font-weight: normal;
+    font-size: 14px;
+  }
+
   .editing-notice {
     margin-top: -16px;
     font-size: 12px;
