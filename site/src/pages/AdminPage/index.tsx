@@ -21,7 +21,7 @@ const ListSelector: FC<ListSelectorProps> = ({ text, selectedTab, setSelectedTab
   const selectTab = () => setSelectedTab(text);
 
   return (
-    <Button variant={variant} className="ppc-btn" onClick={selectTab}>
+    <Button variant={variant} className="admin-tab-button" onClick={selectTab}>
       <span>{text}</span>
     </Button>
   );

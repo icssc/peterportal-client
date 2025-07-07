@@ -8,18 +8,28 @@
   margin: 2rem 2rem 0 2rem;
   flex-shrink: 0;
 
-  button.ppc-btn {
+  .admin-tab-button {
     width: 100%;
     margin: 0;
+    border: none;
     border-radius: 0;
     justify-content: center;
     font-weight: bold;
-    color: var(--blue-primary) !important;
+
+    color: var(--blue-primary);
+
+    &:not(.btn-primary):active {
+      color: var(--blue-primary);
+    }
 
     &.btn-primary {
-      color: var(--ring-road-white) !important;
-      &:active {
-        background-color: var(--blue-primary) !important;
+      color: var(--ring-road-white);
+      border-color: var(--blue-primary);
+      background-color: var(--blue-primary);
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: var(--blue-primary);
       }
     }
 
