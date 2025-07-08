@@ -99,6 +99,10 @@ button.course-delete-btn {
   }
 }
 
+.course-tooltip {
+  margin-left: auto;
+}
+
 .course.sortable-fallback {
   height: fit-content !important;
   animation: course-fade-in 0.2s forwards;

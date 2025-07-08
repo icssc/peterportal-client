@@ -9,7 +9,7 @@ import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import noResultsImg from '../../../asset/no-results-crop.webp';
 import { useClearedCourses } from '../../../hooks/planner';
 
@@ -19,17 +19,17 @@ interface SearchPlaceholderProps {
 }
 
 const SearchPlaceholder = ({ searchInProgress, showSavedCourses }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <Spinner animation="border" role="status" />;
+  if (searchInProgress) return <LoadingSpinner />;
 
   const placeholderText = showSavedCourses
     ? 'No courses saved. Try searching for something!'
     : "Sorry, we couldn't find any results for that search!";
 
   return (
-    <>
+    <div className="no-results">
       <img src={noResultsImg} alt="No results found" />
       {placeholderText}
-    </>
+    </div>
   );
 };
 
@@ -78,9 +78,7 @@ const AllCourseSearch: FC = () => {
           })}
         </ReactSortable>
       ) : (
-        <div className="no-results">
-          <SearchPlaceholder searchInProgress={searchInProgress} showSavedCourses={showSavedCourses} />
-        </div>
+        <SearchPlaceholder searchInProgress={searchInProgress} showSavedCourses={showSavedCourses} />
       )}
     </>
   );

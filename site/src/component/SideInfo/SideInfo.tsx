@@ -1,16 +1,17 @@
 import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
+
 import Badge from 'react-bootstrap/Badge';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
-import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
-import RecentOfferings from '../RecentOfferings/RecentOfferings';
+
+import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -144,15 +145,11 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   return (
     <div className="side-content-wrapper">
       <div className="side-info">
-        <div className="course-synopsis">
-          <div className="title-and-offerings">
-            <h2>{props.name}</h2>
-            {props.terms && <CourseQuarterIndicator terms={props.terms} size="sm" />}
-          </div>
+        <div>
+          <h2>{props.name}</h2>
           <h3>{props.title}</h3>
-
-          <p className="description">{props.description}</p>
-          <div className="tags">
+          <p>{props.description}</p>
+          <div className="course-tags">
             {props.tags.map((tag, i) => (
               <Badge pill variant="info" key={`side-info-badge-${i}`}>
                 {tag}
@@ -161,7 +158,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
-        {props.terms?.length ? <RecentOfferings terms={props.terms} /> : null}
+        {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>

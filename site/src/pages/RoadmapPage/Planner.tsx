@@ -3,7 +3,7 @@ import './Planner.scss';
 import PlannerLoader from './planner/PlannerLoader';
 import Header from './Header';
 import Year from './Year';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import { useAppSelector } from '../../store/hooks';
 import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../helpers/transferCredits';
@@ -54,9 +54,7 @@ const Planner: FC = () => {
         missingPrerequisites={new Set()}
       />
       {roadmapLoading ? (
-        <div className="loading-spinner">
-          <Spinner animation="border" />
-        </div>
+        <LoadingSpinner />
       ) : (
         <section className="years" data-max-quarter-count={maxQuarterCount}>
           {currentPlanData.map((year, yearIndex) => {
