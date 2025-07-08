@@ -6,6 +6,7 @@ import UnverifiedReview from './UnverifiedReview';
 import { selectReviews, setReviews } from '../../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { ReviewData } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 
 const UnverifiedReviewList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
   const dispatch = useAppDispatch();
@@ -51,7 +52,6 @@ const Verify: FC = () => {
     document.title = 'Verify Reviews | PeterPortal';
   }, [getUnverifiedReviews]);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   return (
     <div className="content-wrapper verify-container">
       <h1>Unverified Reviews</h1>
@@ -59,7 +59,7 @@ const Verify: FC = () => {
         Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it
         permanently.
       </p>
-      {reviewsLoading ? <p>Loading...</p> : <UnverifiedReviewList reviews={reviews} />}
+      {reviewsLoading ? <LoadingSpinner /> : <UnverifiedReviewList reviews={reviews} />}
     </div>
   );
 };

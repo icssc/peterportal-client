@@ -6,6 +6,7 @@ import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { ReviewData } from '@peterportal/types';
 import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
 import trpc from '../../trpc';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 const UserReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
   return (
@@ -35,12 +36,11 @@ const UserReviews: FC = () => {
     getUserReviews();
   }, [getUserReviews]);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   return (
     <div className="content-wrapper user-reviews-page">
       <h1>Your Reviews</h1>
       <p>Deleting a review will remove it permanently.</p>
-      {reviewsLoading ? <p>Loading...</p> : <UserReviewsList reviews={reviews} />}
+      {reviewsLoading ? <LoadingSpinner /> : <UserReviewsList reviews={reviews} />}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import Reports from './Reports/Reports';
 import Verify from './Verify/Verify';
 import Error from '../../component/Error/Error';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';
 
@@ -29,9 +30,8 @@ const AdminPage: FC = () => {
     checkAdmin();
   }, [checkAdmin]);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   if (!loaded) {
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   } else if (!authorized) {
     return <Error message="Access Denied: You are not authorized to view this page."></Error>;
   } else {

@@ -4,6 +4,7 @@ import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
 import './Reports.scss';
 import trpc from '../../../trpc';
 import { ReportData } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 
 interface ReviewDisplay {
   reviewId: number;
@@ -85,7 +86,7 @@ const Reports: FC = () => {
         Accepting a report will <b>delete</b> the review. Ignoring a report will <b>preserve</b> the review.
       </p>
       {reportsLoading ? (
-        <p>Loading...</p>
+        <LoadingSpinner />
       ) : (
         <ReportsList data={data} acceptReports={acceptReports} denyReports={denyReports} />
       )}
