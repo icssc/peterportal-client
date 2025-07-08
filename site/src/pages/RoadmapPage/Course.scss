@@ -155,6 +155,7 @@ button.course-delete-btn {
   .course :is(.course-and-info) {
     display: contents;
   }
+
   div.search-body {
     display: grid;
     grid-auto-flow: row;
