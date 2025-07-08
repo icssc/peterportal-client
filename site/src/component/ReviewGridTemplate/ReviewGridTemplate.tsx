@@ -9,11 +9,11 @@ interface ReviewGridTemplateProps {
   children: React.ReactNode;
 }
 
-const ReviewGridTemplate: FC<ReviewGridTemplateProps> = ({ title, description, isLoading, noDataMsg, children }) => {
+const ReviewGridTemplate: FC<ReviewGridTemplateProps> = ({ description, isLoading, noDataMsg, children }) => {
   return (
     <div className="content-wrapper review-grid-template">
-      <h1>{title}</h1>
-      <p>{description}</p>
+      {/* <h1>{title}</h1> */}
+      <p style={{ display: 'flex', justifyContent: 'center' }}>{description}</p>
       {isLoading ? (
         <p>Loading...</p>
       ) : (

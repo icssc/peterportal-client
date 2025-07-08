@@ -50,9 +50,11 @@ const AdminPage: FC = () => {
 
   return (
     <>
-      <div className="admin-tabs">
-        <ListSelector text="Verify Reviews" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-        <ListSelector text="View Reports" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <div className="admin-tabs-container">
+        <div className="admin-tabs">
+          <ListSelector text="Verify Reviews" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+          <ListSelector text="View Reports" selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+        </div>
       </div>
       {selectedTab === 'Verify Reviews' ? <Verify /> : <Reports />}
     </>

@@ -1,11 +1,17 @@
+.admin-tabs-container {
+  display: flex;
+  justify-content: center;
+}
+
 .admin-tabs {
+  width: 600px;
   background-color: #8886;
   display: flex;
   gap: 1px;
   border: 1px solid transparent;
   border-radius: 8px;
   overflow: hidden;
-  margin: 2rem 2rem 0 2rem;
+  margin: 2rem 2rem -0.5rem 2rem;
   flex-shrink: 0;
 
   .admin-tab-button {
