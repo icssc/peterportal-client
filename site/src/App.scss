@@ -84,6 +84,37 @@ button {
   }
 }
 
+.ppc-mui-button.MuiButton-root {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 7px;
+  height: 29px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  padding: 0px 14px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+
+  /* Prevent icon from making button padding look too large on the left */
+  > .MuiSvgIcon-root {
+    margin-left: -4px;
+  }
+}
+
+[data-theme='dark'] {
+  .ppc-mui-button.MuiButton-root {
+    background-color: #606166;
+  }
+}
+
+.ppc-mui-button.primary-button.MuiButton-root {
+  background-color: var(--blue-primary);
+  color: white;
+}
+
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;
@@ -375,6 +406,19 @@ button.unstyled {
 .table-wrapper {
   width: 100%;
   overflow: auto;
+}
+
+.loader-container {
+  display: flex;
+  margin: 20px;
+  justify-content: center;
+}
+
+.ppc-card.MuiCard-root {
+  background-color: var(--overlay1);
+  box-shadow: none;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-secondary);
 }
 
 // monkey patch for recaptcha border bug

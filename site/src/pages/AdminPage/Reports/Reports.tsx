@@ -1,17 +1,40 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
+import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
 import './Reports.scss';
-import trpc from '../../trpc';
+import trpc from '../../../trpc';
 import { ReportData } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+
+interface ReviewDisplay {
+  reviewId: number;
+  reports: ReportData[];
+}
+
+const ReportsList: FC<{
+  data: ReviewDisplay[];
+  acceptReports: (reviewId: number) => Promise<void>;
+  denyReports: (reviewId: number) => Promise<void>;
+}> = ({ data, acceptReports, denyReports }) => {
+  return (
+    <ReviewItemGrid>
+      {data.length == 0 && <span>There are currently no reports that need attention</span>}
+      {data.map((reviewPair) => (
+        <ReportGroup
+          key={'report-' + reviewPair.reviewId}
+          reviewId={reviewPair.reviewId}
+          reports={reviewPair.reports}
+          onAccept={() => acceptReports(reviewPair.reviewId)}
+          onDeny={() => denyReports(reviewPair.reviewId)}
+        />
+      ))}
+    </ReviewItemGrid>
+  );
+};
 
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  interface ReviewDisplay {
-    reviewId: number;
-    reports: ReportData[];
-  }
+  const [reportsLoading, setReportsLoading] = useState(true);
 
   const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
@@ -37,7 +60,7 @@ const Reports: FC = () => {
     });
 
     setData(reportsDisplay);
-    setLoaded(true);
+    setReportsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -56,30 +79,19 @@ const Reports: FC = () => {
     setData(data.filter((review) => review.reviewId !== reviewId));
   };
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  } else if (data.length === 0) {
-    return <p>No reports to display at the moment.</p>;
-  } else {
-    return (
-      <div className="content-wrapper reports-container">
-        <h1>User Review Reports</h1>
-        <p>Denying a review's reports will discard the reports and preserve the review.</p>
-        <p>Accepting a review's reports will discard the reports and the review.</p>
-        {data.map((review) => {
-          return (
-            <ReportGroup
-              key={review.reviewId}
-              reviewId={review.reviewId}
-              reports={review.reports}
-              onAccept={() => acceptReports(review.reviewId)}
-              onDeny={() => denyReports(review.reviewId)}
-            />
-          );
-        })}
-      </div>
-    );
-  }
+  return (
+    <div className="content-wrapper reports-container">
+      <h1>User Review Reports</h1>
+      <p>
+        Accepting a report will <b>delete</b> the review. Ignoring a report will <b>preserve</b> the review.
+      </p>
+      {reportsLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <ReportsList data={data} acceptReports={acceptReports} denyReports={denyReports} />
+      )}
+    </div>
+  );
 };
 
 export default Reports;
