@@ -377,12 +377,6 @@ button.unstyled {
   overflow: auto;
 }
 
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;

@@ -11,7 +11,7 @@ import {
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
@@ -127,7 +127,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const toggleExpand = () => setOpen(!open);
 
   const renderRequirements = () => {
-    if (resultsLoading) return <RequirementsLoadingIcon />;
+    if (resultsLoading) return <LoadingSpinner />;
     if (hasSpecs && !majorWithSpec.selectedSpec) {
       return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
     }
