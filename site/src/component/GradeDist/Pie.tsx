@@ -1,9 +1,9 @@
-import React from 'react';
+import { Component } from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
-import { GradeColors } from './gradeColors.ts';
-import { tooltipStyle } from './tooltipStyle.ts';
+import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
+import { getCssVariable } from '../../helpers/styling.ts';
 
 const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
 const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
@@ -22,7 +22,7 @@ interface PieProps {
   course?: string;
 }
 
-export default class Pie extends React.Component<PieProps> {
+export default class Pie extends Component<PieProps> {
   total = 0;
   totalPNP = 0;
   averageGPA = '';
@@ -30,6 +30,8 @@ export default class Pie extends React.Component<PieProps> {
   averagePNP = '';
 
   getClassData = (): Slice[] => {
+    const { professor, quarter, course } = this.props;
+
     let gradeACount = 0,
       gradeBCount = 0,
       gradeCCount = 0,
@@ -47,11 +49,10 @@ export default class Pie extends React.Component<PieProps> {
     let sum = 0;
 
     this.props.gradeData.forEach((data) => {
-      if (
-        (data.quarter + ' ' + data.year === this.props.quarter || this.props.quarter == 'ALL') &&
-        (data.instructors.includes(this.props.professor ?? '') ||
-          data.department + ' ' + data.courseNumber === this.props.course)
-      ) {
+      const quarterMatch = quarter === 'ALL' || data.quarter + ' ' + data.year === quarter;
+      const profMatch = professor === 'ALL' || data.instructors.includes(this.props.professor ?? '');
+      const courseMatch = course === 'ALL' || data.department + ' ' + data.courseNumber === this.props.course;
+      if (quarterMatch && (profMatch || courseMatch)) {
         gradeACount += data.gradeACount;
         gradeBCount += data.gradeBCount;
         gradeCCount += data.gradeCCount;
@@ -81,69 +82,59 @@ export default class Pie extends React.Component<PieProps> {
     this.averageGPA = (sum / (this.total - this.totalPNP)).toFixed(1);
     this.gpaToGradeConverter(this.averageGPA);
 
-    if (this.totalPNP == this.total) {
-      const data: Slice[] = [
-        {
-          id: 'P',
-          label: 'P',
-          value: gradePCount,
-          color: GradeColors.P,
-        },
-        {
-          id: 'NP',
-          label: 'NP',
-          value: gradeNPCount,
-          color: GradeColors.NP,
-        },
-      ];
-      return data;
-    }
-
-    const data: Slice[] = [
-      {
-        id: 'A',
-        label: 'A',
-        value: gradeACount,
-        color: GradeColors.A,
-      },
-      {
-        id: 'B',
-        label: 'B',
-        value: gradeBCount,
-        color: GradeColors.B,
-      },
-      {
-        id: 'C',
-        label: 'C',
-        value: gradeCCount,
-        color: GradeColors.C,
-      },
-      {
-        id: 'D',
-        label: 'D',
-        value: gradeDCount,
-        color: GradeColors.D,
-      },
-      {
-        id: 'F',
-        label: 'F',
-        value: gradeFCount,
-        color: GradeColors.F,
-      },
+    const pnpData: Slice[] = [
       {
         id: 'P',
         label: 'P',
         value: gradePCount,
-        color: GradeColors.P,
+        color: getCssVariable('--gradedist-p'),
       },
       {
         id: 'NP',
         label: 'NP',
         value: gradeNPCount,
-        color: GradeColors.NP,
+        color: getCssVariable('--gradedist-np'),
       },
     ];
-    return data.filter((slice) => slice.value !== 0);
+
+    if (this.totalPNP == this.total) {
+      return pnpData;
+    }
+
+    const gradeData: Slice[] = [
+      {
+        id: 'A',
+        label: 'A',
+        value: gradeACount,
+        color: getCssVariable('--blue-secondary-light'),
+      },
+      {
+        id: 'B',
+        label: 'B',
+        value: gradeBCount,
+        color: getCssVariable('--green-secondary-light'),
+      },
+      {
+        id: 'C',
+        label: 'C',
+        value: gradeCCount,
+        color: getCssVariable('--yellow-secondary-light'),
+      },
+      {
+        id: 'D',
+        label: 'D',
+        value: gradeDCount,
+        color: getCssVariable('--orange-secondary-light'),
+      },
+      {
+        id: 'F',
+        label: 'F',
+        value: gradeFCount,
+        color: getCssVariable('--red-secondary-light'),
+      },
+    ];
+
+    return gradeData.concat(pnpData).filter((slice) => slice.value !== 0);
   };
 
   gpaToGradeConverter(gpa: string) {
@@ -153,20 +144,16 @@ export default class Pie extends React.Component<PieProps> {
   }
 
   styleTooltip = (props: PieTooltipProps<Slice>) => {
-    return (
-      <div style={tooltipStyle.tooltip?.container}>
-        <strong>
-          {props.datum.id}: {((props.datum.value / this.total) * 100).toFixed(2)}%
-        </strong>
-      </div>
-    );
+    const gradePercent = ((props.datum.value / this.total) * 100).toFixed(2) + '%';
+    return <ChartTooltip label={props.datum.id} value={gradePercent} />;
   };
 
   render() {
+    const gradeDistribution = this.getClassData();
     return (
       <div style={{ width: '100%', position: 'relative' }}>
         <ResponsivePie<Slice>
-          data={this.getClassData()}
+          data={gradeDistribution}
           margin={{
             top: 50,
             bottom: 50,
@@ -177,7 +164,7 @@ export default class Pie extends React.Component<PieProps> {
           enableArcLinkLabels={false}
           innerRadius={0.8}
           padAngle={2}
-          colors={Object.values(GradeColors)}
+          colors={gradeDistribution.map((grade) => grade.color)}
           cornerRadius={3}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}

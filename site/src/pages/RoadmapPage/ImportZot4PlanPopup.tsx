@@ -1,11 +1,11 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import ThemeContext from '../../style/theme-context';
 import trpc from '../../trpc.ts';
 import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import spawnToast from '../../helpers/toastify';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
@@ -14,10 +14,10 @@ import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Button } from '@mui/material';
 
 const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
-  const { darkMode } = useContext(ThemeContext);
   const isLoggedIn = useIsLoggedIn();
   const [showModal, setShowModal] = useState(false);
   const [scheduleName, setScheduleName] = useState('');
@@ -39,7 +39,9 @@ const ImportZot4PlanPopup: FC = () => {
         (imported) => !apExams.some((existing) => existing.examName === imported.examName),
       );
 
-      const combinedExams = apExams.concat(newExams);
+      const newExamsUnread = markTransfersAsUnread(newExams);
+
+      const combinedExams = apExams.concat(newExamsUnread);
       dispatch(setUserAPExams(combinedExams));
 
       // Add new AP exam rows
@@ -150,12 +152,12 @@ const ImportZot4PlanPopup: FC = () => {
               </Form.Control>
             </Form.Group>
           </Form>
-          <Button variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
+          <Button2 variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
             {busy ? 'Importing...' : 'Import and Save'}
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
-      <Button variant={darkMode ? 'dark' : 'light'} className="ppc-btn" onClick={() => setShowModal(true)}>
+      <Button variant="text" className="ppc-btn" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>

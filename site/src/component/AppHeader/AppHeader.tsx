@@ -9,12 +9,13 @@ import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
 import { Button, Popover } from 'react-bootstrap';
-import PPCOverlayTrigger from '../PPCOverlayTrigger';
+import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 import ThemeContext from '../../style/theme-context';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import SmsIcon from '@mui/icons-material/Sms';
+import { IconButton } from '@mui/material';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -74,9 +75,9 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Hamburger Menu */}
-          <button className="navbar-menu" onClick={toggleMenu}>
+          <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
             <MenuIcon className="navbar-menu-icon" />
-          </button>
+          </IconButton>
         </div>
 
         {/* Logo */}

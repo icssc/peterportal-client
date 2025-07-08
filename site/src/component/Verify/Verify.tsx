@@ -12,7 +12,7 @@ const Verify: FC = () => {
   const dispatch = useAppDispatch();
 
   const getUnverifiedReviews = useCallback(async () => {
-    const res = await trpc.reviews.get.query({ verified: false });
+    const res = await trpc.reviews.getAdminView.query({ verified: false });
     dispatch(setReviews(res));
     setLoaded(true);
   }, [dispatch]);

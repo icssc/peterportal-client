@@ -9,7 +9,7 @@ import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 
@@ -58,7 +58,7 @@ const AllCourseSearch: FC = () => {
           })}
         </ReactSortable>
       ) : searchInProgress ? (
-        <Spinner animation="border" role="status" />
+        <LoadingSpinner />
       ) : (
         <NoResults notSearching={showSavedCourses} placeholderText="No courses saved. Try searching for something!" />
       )}

@@ -2,8 +2,9 @@
   overflow-x: auto;
   width: 100%;
 
-  h2 {
-    font-weight: bold;
+  .center {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -11,8 +12,9 @@
   font-size: 16px;
   width: 100%;
   max-width: 540px;
-  .bi-check {
-    transform: scale(1.5) translateY(-1px);
+
+  .MuiSvgIcon-root {
+    transform: translateY(-2px);
   }
 
   :is(td, th) {
@@ -22,5 +24,13 @@
 
   :is(th, td):not(:first-child) {
     text-align: center;
+  }
+
+  .recent-offerings-quarter {
+    font-size: 20px;
+
+    .question-mark {
+      color: var(--text-secondary);
+    }
   }
 }

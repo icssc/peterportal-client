@@ -7,7 +7,7 @@ import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '
 import SearchPagination from '../SearchPagination/SearchPagination';
 import NoResults from '../NoResults/NoResults';
 import { getMissingPrerequisites } from '../../helpers/planner';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
@@ -60,11 +60,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
           placeholderText={`Start typing in the search bar to search for ${index}...`}
         />
       )}
-      {searchInProgress && (
-        <div className="no-results">
-          <Spinner animation="border" role="status" />
-        </div>
-      )}
+      {searchInProgress && <LoadingSpinner />}
       {!searchInProgress && results.length > 0 && (
         <SearchResults
           index={index}

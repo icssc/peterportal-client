@@ -42,7 +42,7 @@ button {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: 16px 20px 56px;
+  padding: 16px 20px;
 
   .search-body {
     display: flex;
@@ -375,12 +375,6 @@ button.unstyled {
 .table-wrapper {
   width: 100%;
   overflow: auto;
-}
-
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
 }
 
 // monkey patch for recaptcha border bug

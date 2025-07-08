@@ -39,10 +39,6 @@
     border: none;
     outline: none;
     width: 100%;
-
-    &.open {
-      margin-bottom: 12px;
-    }
   }
 
   .group-header svg.bi {
@@ -89,6 +85,25 @@
   > .group-requirement:not(:last-child),
   .course-requirement:not(:last-child) {
     margin-bottom: 16px;
+  }
+
+  .expand-requirements {
+    margin-block: -8px;
+    margin-right: -4px;
+    padding: 4px;
+    color: inherit;
+
+    .MuiSvgIcon-root {
+      color: inherit;
+    }
+  }
+
+  .MuiCollapse-root {
+    padding-inline: 2px;
+    margin-inline: -2px;
+  }
+  .MuiCollapse-wrapperInner > :first-child {
+    padding-top: 12px;
   }
 }
 
@@ -196,15 +211,13 @@ body[data-theme='dark'] {
 .program-course-tile.mobile {
   position: relative;
   cursor: pointer;
+
   a {
     pointer-events: none;
   }
 
-  div.spinner-border {
+  .spinner {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
     scale: 0.67;
     color: white;
   }
