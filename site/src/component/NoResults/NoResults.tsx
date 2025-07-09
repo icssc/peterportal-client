@@ -3,14 +3,14 @@ import './NoResults.scss';
 import noResultsImg from '../../asset/no-results-crop.webp';
 
 interface NoResultsProps {
-  notSearching: boolean;
-  placeholderText: string;
+  showPrompt: boolean;
+  prompt: string;
 }
-const NoResults: FC<NoResultsProps> = ({ notSearching, placeholderText }) => {
+const NoResults: FC<NoResultsProps> = ({ showPrompt, prompt }) => {
   return (
     <div className="no-results">
       <img src={noResultsImg} alt="No results found" />
-      {notSearching ? placeholderText : "Sorry, we couldn't find any results for that search!"}
+      {showPrompt ? prompt : "Sorry, we couldn't find any results for that search!"}
     </div>
   );
 };

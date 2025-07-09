@@ -60,7 +60,7 @@ const AllCourseSearch: FC = () => {
       ) : searchInProgress ? (
         <LoadingSpinner />
       ) : (
-        <NoResults notSearching={showSavedCourses} placeholderText="No courses saved. Try searching for something!" />
+        <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       )}
     </>
   );

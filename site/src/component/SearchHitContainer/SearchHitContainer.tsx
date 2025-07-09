@@ -55,10 +55,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
   return (
     <div ref={containerDivRef} className="search-hit-container">
       {noResults && (
-        <NoResults
-          notSearching={query === ''}
-          placeholderText={`Start typing in the search bar to search for ${index}...`}
-        />
+        <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
       {searchInProgress && <LoadingSpinner />}
       {!searchInProgress && results.length > 0 && (
