@@ -45,13 +45,6 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const toggleExpand = () => setOpen(!open);
 
-  const renderRequirements = () => {
-    if (resultsLoading) return <LoadingSpinner />;
-    return (
-      <ProgramRequirementsList requirements={minorReqs.requirements} storeKeyPrefix={`minor-${minorReqs.minor.id}`} />
-    );
-  };
-
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
@@ -59,7 +52,14 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
       <Collapse in={open} unmountOnExit>
-        {renderRequirements()}
+        {resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={minorReqs.requirements}
+            storeKeyPrefix={`minor-${minorReqs.minor.id}`}
+          />
+        )}
       </Collapse>
     </div>
   );
