@@ -76,18 +76,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
               </Badge>
             ))}
           </div>
-          <div>
-            {onSaveCourse && !courseIsSaved && (
-              <IconButton onClick={(e) => onSaveCourse(e)} size={'small'}>
-                <BookmarkBorderIcon />
-              </IconButton>
-            )}
-            {courseIsSaved && (
-              <IconButton onClick={(e) => onUnsaveCourse(e)} size={'small'}>
-                <BookmarkIcon />
-              </IconButton>
-            )}
-          </div>
+          <IconButton onClick={(e) => (courseIsSaved ? onUnsaveCourse(e) : onSaveCourse(e))} size="small">
+            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
         </div>
       </div>
     </div>
