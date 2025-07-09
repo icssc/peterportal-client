@@ -10,28 +10,8 @@ import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../Course';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import noResultsImg from '../../../asset/no-results-crop.webp';
+import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
-
-interface SearchPlaceholderProps {
-  searchInProgress: boolean;
-  showSavedCourses: boolean;
-}
-
-const SearchPlaceholder = ({ searchInProgress, showSavedCourses }: SearchPlaceholderProps) => {
-  if (searchInProgress) return <LoadingSpinner />;
-
-  const placeholderText = showSavedCourses
-    ? 'No courses saved. Try searching for something!'
-    : "Sorry, we couldn't find any results for that search!";
-
-  return (
-    <div className="no-results">
-      <img src={noResultsImg} alt="No results found" />
-      {placeholderText}
-    </div>
-  );
-};
 
 const AllCourseSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
@@ -77,8 +57,10 @@ const AllCourseSearch: FC = () => {
             );
           })}
         </ReactSortable>
+      ) : searchInProgress ? (
+        <LoadingSpinner />
       ) : (
-        <SearchPlaceholder searchInProgress={searchInProgress} showSavedCourses={showSavedCourses} />
+        <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       )}
     </>
   );
