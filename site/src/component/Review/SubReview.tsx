@@ -151,7 +151,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
           )}
         </h3>
         <div className="edit-buttons">
-          {review.authored && (
+          {!children && review.authored && (
             <>
               <IconButton onClick={openReviewForm}>
                 <EditIcon />
