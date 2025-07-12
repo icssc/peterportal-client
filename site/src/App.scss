@@ -86,22 +86,14 @@ button {
 
 .ppc-mui-button.MuiButton-root {
   display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 7px;
   height: 29px;
   font-size: 13px;
   white-space: nowrap;
 
-  padding: 0px 14px;
+  padding: 0px 12px;
 
   background-color: #e0e0e0;
   color: var(--text);
-
-  /* Prevent icon from making button padding look too large on the left */
-  > .MuiSvgIcon-root {
-    margin-left: -4px;
-  }
 }
 
 [data-theme='dark'] {

@@ -14,11 +14,11 @@ const UnverifiedReview: FC<{ review: ReviewData; onDelete: () => void; onVerify:
   return (
     <SubReview review={review}>
       <div className="verification-buttons">
-        <Button className="ppc-mui-button" variant="text" onClick={onDelete}>
-          <DeleteForeverIcon /> Delete
+        <Button className="ppc-mui-button" variant="text" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
+          Delete
         </Button>
-        <Button className="ppc-mui-button primary-button" variant="text" onClick={onVerify}>
-          <CheckIcon /> Verify
+        <Button className="ppc-mui-button primary-button" variant="text" onClick={onVerify} startIcon={<CheckIcon />}>
+          Verify
         </Button>
       </div>
     </SubReview>

@@ -36,11 +36,16 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
             {review.courseId} {review.professorId}
           </h3>
           <div className="edit-buttons">
-            <Button className="ppc-mui-button" variant="text" onClick={props.onDeny}>
-              <PersonRemoveIcon /> Ignore
+            <Button className="ppc-mui-button" variant="text" onClick={props.onDeny} startIcon={<PersonRemoveIcon />}>
+              Ignore
             </Button>
-            <Button className="ppc-mui-button primary-button" variant="text" onClick={props.onAccept}>
-              <DeleteIcon /> Accept Report
+            <Button
+              className="ppc-mui-button primary-button"
+              variant="text"
+              onClick={props.onAccept}
+              startIcon={<DeleteIcon />}
+            >
+              Accept Report
             </Button>
           </div>
         </div>
