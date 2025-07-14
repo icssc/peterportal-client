@@ -13,7 +13,7 @@ interface SubReportProps {
 const SubReport: FC<SubReportProps> = (props) => {
   const date = new Date(Date.parse(props.timestamp));
   return (
-    <Card className="ppc-card subreport">
+    <Card variant="outlined" className="subreport">
       <div className="subreport-content">
         <span className="label">
           Reason for Report on {date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}

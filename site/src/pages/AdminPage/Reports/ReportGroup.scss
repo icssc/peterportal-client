@@ -1,6 +1,11 @@
 .report-group {
   padding: 16px 20px;
 
+  &.MuiCard-root {
+    border-radius: var(--border-radius);
+    background-color: var(--overlay1);
+  }
+
   .report-group-header {
     display: flex;
     justify-content: space-between;

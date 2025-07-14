@@ -406,13 +406,6 @@ button.unstyled {
   justify-content: center;
 }
 
-.ppc-card.MuiCard-root {
-  background-color: var(--overlay1);
-  box-shadow: none;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--border-secondary);
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;

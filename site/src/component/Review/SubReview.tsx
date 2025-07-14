@@ -126,7 +126,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
-    <Card className="subreview ppc-card">
+    <Card variant="outlined" className="subreview">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
           {professor && (

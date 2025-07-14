@@ -30,7 +30,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return <></>;
   } else {
     return (
-      <Card className="report-group ppc-card">
+      <Card variant="outlined" className="report-group">
         <div className="report-group-header">
           <h3 className="report-group-identifier">
             {review.courseId} {review.professorId}

@@ -3,11 +3,15 @@
   flex-direction: column;
   gap: 1rem;
   background-color: var(--overlay2);
-  border-radius: var(--border-radius);
   padding: 16px 20px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 14px;
+
+  &.MuiCard-root {
+    border-radius: var(--border-radius);
+    background-color: var(--overlay1);
+  }
 }
 
 .subreview-header {
