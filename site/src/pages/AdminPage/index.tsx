@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Reports from './Reports/Reports';
 import Verify from './Verify/Verify';
 import Error from '../../component/Error/Error';
@@ -11,24 +11,13 @@ const AdminPage: FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [authorized, setAuthorized] = useState<boolean>(false);
 
-  // user has to be authenticated as admin to view this page
-  const checkAdmin = useCallback(async () => {
+  useEffect(() => {
     trpc.users.get
       .query()
-      .then((res) => {
-        setAuthorized(res.isAdmin);
-        setLoaded(true);
-      })
-      .catch(() => {
-        // If a user is not logged in, they can't be authorized
-        setAuthorized(false);
-        setLoaded(true);
-      });
+      .then((res) => setAuthorized(res.isAdmin))
+      .catch(() => setAuthorized(false))
+      .finally(() => setLoaded(true));
   }, []);
-
-  useEffect(() => {
-    checkAdmin();
-  }, [checkAdmin]);
 
   if (!loaded) {
     return <LoadingSpinner />;
