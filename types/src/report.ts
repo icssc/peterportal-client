@@ -11,3 +11,8 @@ export const reportData = reportSubmission.extend({
   createdAt: z.string(),
 });
 export type ReportData = z.infer<typeof reportData>;
+
+export interface ReportGroupData {
+  reviewId: number;
+  reports: ReportData[];
+}
