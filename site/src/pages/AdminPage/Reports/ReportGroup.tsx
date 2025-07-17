@@ -16,10 +16,8 @@ const SubReport: FC<SubReportProps> = ({ reason, timestamp }) => {
   const dateText = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   return (
     <Card variant="outlined" className="subreport">
-      <div className="subreport-content">
-        <b>Reason for Report on {dateText}</b>
-        <i>{reason}</i>
-      </div>
+      <b>Reason for Report on {dateText}</b>
+      <i>{reason}</i>
     </Card>
   );
 };
@@ -31,17 +29,17 @@ interface ReportGroupProps {
   onDeny: () => void;
 }
 
-const ReportGroup: FC<ReportGroupProps> = (props) => {
-  const [review, setReview] = useState<ReviewData>();
+const ReportGroup: FC<ReportGroupProps> = ({ reviewId, reports, onAccept, onDeny }) => {
+  const [review, setReview] = useState<ReviewData>(null!);
 
   const getReviewData = async (reviewId: number) => {
-    const reviews = await trpc.reviews.get.query({ reviewId });
+    const reviews = await trpc.reviews.getAdminView.query({ reviewId });
     setReview(reviews[0]);
   };
 
   useEffect(() => {
-    getReviewData(props.reviewId);
-  }, [props.reviewId]);
+    getReviewData(reviewId);
+  }, [reviewId]);
 
   if (!review) {
     return null;
@@ -60,13 +58,13 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
           {review.courseId} {review.professorId}
         </h3>
         <div className="edit-buttons">
-          <Button className="ppc-mui-button" variant="text" onClick={props.onDeny} startIcon={<PersonRemoveIcon />}>
+          <Button className="ppc-mui-button" variant="text" onClick={onDeny} startIcon={<PersonRemoveIcon />}>
             Ignore
           </Button>
           <Button
             className="ppc-mui-button primary-button"
             variant="text"
-            onClick={props.onAccept}
+            onClick={onAccept}
             startIcon={<DeleteIcon />}
           >
             Accept Report
@@ -78,7 +76,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
         Posted by <i>{review.userDisplay}</i> on <i>{reviewCreationDate}</i>
       </div>
       <div className="report-group-subreports-container">
-        {props.reports.map((report) => (
+        {reports.map((report) => (
           <SubReport key={report.id} reason={report.reason} timestamp={report.createdAt} />
         ))}
       </div>

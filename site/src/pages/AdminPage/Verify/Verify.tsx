@@ -36,7 +36,7 @@ const Verify: FC = () => {
       title="Unverified Reviews"
       description="Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it permanently."
       isLoading={reviewsLoading}
-      noDataMsg="There are currently no unverified reviews"
+      noDataMsg="There are currently no unverified reviews."
     >
       {reviews.map((review) => (
         <UnverifiedReview

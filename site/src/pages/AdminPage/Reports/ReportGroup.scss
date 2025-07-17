@@ -51,16 +51,16 @@
     flex-direction: column;
     gap: 10px;
   }
-}
 
-.subreport {
-  padding: 10px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  .subreport {
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 
-  &.MuiCard-root {
-    background-color: var(--overlay4);
-    border-radius: var(--border-radius);
+    &.MuiCard-root {
+      background-color: var(--overlay4);
+      border-radius: var(--border-radius);
+    }
   }
 }
