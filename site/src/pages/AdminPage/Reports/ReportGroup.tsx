@@ -3,7 +3,7 @@ import { Button, Card } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import './ReportGroup.scss';
-import { ReportData, ReviewData } from '@peterportal/types';
+import { ReportGroupData, ReviewData } from '@peterportal/types';
 import trpc from '../../../trpc';
 
 interface SubReportProps {
@@ -23,13 +23,12 @@ const SubReport: FC<SubReportProps> = ({ reason, timestamp }) => {
 };
 
 interface ReportGroupProps {
-  reviewId: number;
-  reports: ReportData[];
+  reportGroup: ReportGroupData;
   onAccept: () => void;
   onDeny: () => void;
 }
 
-const ReportGroup: FC<ReportGroupProps> = ({ reviewId, reports, onAccept, onDeny }) => {
+const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) => {
   const [review, setReview] = useState<ReviewData>(null!);
 
   const getReviewData = async (reviewId: number) => {
@@ -38,8 +37,8 @@ const ReportGroup: FC<ReportGroupProps> = ({ reviewId, reports, onAccept, onDeny
   };
 
   useEffect(() => {
-    getReviewData(reviewId);
-  }, [reviewId]);
+    getReviewData(reportGroup.reviewId);
+  }, [reportGroup.reviewId]);
 
   if (!review) {
     return null;
@@ -76,7 +75,7 @@ const ReportGroup: FC<ReportGroupProps> = ({ reviewId, reports, onAccept, onDeny
         Posted by <i>{review.userDisplay}</i> on <i>{reviewCreationDate}</i>
       </div>
       <div className="report-group-subreports-container">
-        {reports.map((report) => (
+        {reportGroup.reports.map((report) => (
           <SubReport key={report.id} reason={report.reason} timestamp={report.createdAt} />
         ))}
       </div>
