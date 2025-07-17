@@ -19,8 +19,8 @@ const Reports: FC = () => {
     const reportsDisplay: ReviewDisplay[] = [];
 
     reports.forEach((report) => {
-      let i;
-      if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId)) < 0) {
+      const i = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId);
+      if (i < 0) {
         reportsDisplay.push({
           reviewId: report.reviewId,
           reports: [report],
@@ -30,11 +30,7 @@ const Reports: FC = () => {
       }
     });
 
-    reportsDisplay.sort((rd1, rd2) => {
-      if (rd1.reports.length > rd2.reports.length) return -1;
-      if (rd1.reports.length < rd2.reports.length) return 1;
-      return 0;
-    });
+    reportsDisplay.sort((a, b) => b.reports.length - a.reports.length);
 
     setData(reportsDisplay);
     setReportsLoading(false);
@@ -61,7 +57,7 @@ const Reports: FC = () => {
       title="User Review Reports"
       description="Accepting a report will delete the review. Ignoring a report will preserve the review."
       isLoading={reportsLoading}
-      noDataMsg="There are currently no reports that need attention"
+      noDataMsg="There are currently no reports that need attention."
     >
       {data.map((reviewPair) => (
         <ReportGroup
