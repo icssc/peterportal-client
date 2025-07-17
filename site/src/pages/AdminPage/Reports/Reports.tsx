@@ -1,36 +1,13 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
-import './Reports.scss';
 import trpc from '../../../trpc';
 import { ReportData } from '@peterportal/types';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 
 interface ReviewDisplay {
   reviewId: number;
   reports: ReportData[];
 }
-
-const ReportsList: FC<{
-  data: ReviewDisplay[];
-  acceptReports: (reviewId: number) => Promise<void>;
-  denyReports: (reviewId: number) => Promise<void>;
-}> = ({ data, acceptReports, denyReports }) => {
-  return (
-    <ReviewItemGrid>
-      {data.length == 0 && <span>There are currently no reports that need attention</span>}
-      {data.map((reviewPair) => (
-        <ReportGroup
-          key={'report-' + reviewPair.reviewId}
-          reviewId={reviewPair.reviewId}
-          reports={reviewPair.reports}
-          onAccept={() => acceptReports(reviewPair.reviewId)}
-          onDeny={() => denyReports(reviewPair.reviewId)}
-        />
-      ))}
-    </ReviewItemGrid>
-  );
-};
 
 const Reports: FC = () => {
   const [data, setData] = useState<ReviewDisplay[]>([]);
@@ -80,17 +57,22 @@ const Reports: FC = () => {
   };
 
   return (
-    <div className="content-wrapper reports-container">
-      <h1>User Review Reports</h1>
-      <p>
-        Accepting a report will <b>delete</b> the review. Ignoring a report will <b>preserve</b> the review.
-      </p>
-      {reportsLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <ReportsList data={data} acceptReports={acceptReports} denyReports={denyReports} />
-      )}
-    </div>
+    <ReviewItemGrid
+      title="User Review Reports"
+      description="Accepting a report will delete the review. Ignoring a report will preserve the review."
+      isLoading={reportsLoading}
+      noDataMsg="There are currently no reports that need attention"
+    >
+      {data.map((reviewPair) => (
+        <ReportGroup
+          key={`report-${reviewPair.reviewId}`}
+          reviewId={reviewPair.reviewId}
+          reports={reviewPair.reports}
+          onAccept={() => acceptReports(reviewPair.reviewId)}
+          onDeny={() => denyReports(reviewPair.reviewId)}
+        />
+      ))}
+    </ReviewItemGrid>
   );
 };
 
