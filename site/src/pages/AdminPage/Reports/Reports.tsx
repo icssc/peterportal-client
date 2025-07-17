@@ -12,15 +12,10 @@ const Reports: FC = () => {
     const reports = await trpc.reports.get.query();
 
     const reportGroupMap: Record<string, ReportGroupData> = {};
-
     reports.forEach((report) => {
-      if (reportGroupMap[report.reviewId]) {
-        reportGroupMap[report.reviewId].reports.push(report);
-      } else {
-        reportGroupMap[report.reviewId] = { reviewId: report.reviewId, reports: [report] };
-      }
+      reportGroupMap[report.reviewId] ??= { reviewId: report.reviewId, reports: [] };
+      reportGroupMap[report.reviewId].reports.push(report);
     });
-
     const reportGroups = Object.values(reportGroupMap).sort((a, b) => b.reports.length - a.reports.length);
 
     setData(reportGroups);
