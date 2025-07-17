@@ -32,19 +32,15 @@ const Reports: FC = () => {
     document.title = 'View Reports | PeterPortal';
   }, [getData]);
 
-  const removeReviewFromData = (reviewId: number) => {
-    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
-  };
-
   const acceptReports = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
     // reports are automatically deleted when deleting a review
-    removeReviewFromData(reviewId);
+    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
   };
 
   const denyReports = async (reviewId: number) => {
     await trpc.reports.delete.mutate({ reviewId });
-    removeReviewFromData(reviewId);
+    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
   };
 
   return (
