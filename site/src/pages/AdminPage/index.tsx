@@ -5,6 +5,7 @@ import './AdminPage.scss';
 import Error from '../../component/Error/Error';
 import Reports from '../../component/Report/Reports';
 import Verify from '../../component/Verify/Verify';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../trpc';
 import ThemeContext from '../../style/theme-context';
 
@@ -36,12 +37,12 @@ const AdminPage: FC = () => {
     trpc.users.get
       .query()
       .then((res) => setAuthorized(res.isAdmin))
+      .catch(() => setAuthorized(false))
       .finally(() => setLoading(false));
   }, []);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   }
 
   if (!authorized) {

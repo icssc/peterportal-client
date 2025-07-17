@@ -21,7 +21,7 @@ import {
   setShowAddCourse,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { Spinner } from 'react-bootstrap';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
@@ -108,7 +108,11 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
     <div className={className} {...tappableCourseProps} style={{ fontSize }}>
       <SourceOverlay completedBy={completedBy} />
       <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
-      {isMobile && loading && <Spinner animation="border" />}
+      {isMobile && loading && (
+        <div className="spinner">
+          <LoadingSpinner />
+        </div>
+      )}
     </div>
   );
 };
