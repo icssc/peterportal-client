@@ -1,0 +1,46 @@
+.admin-tabs-container {
+  display: flex;
+  justify-content: center;
+}
+
+.admin-tabs {
+  width: 600px;
+  background-color: #8886;
+  display: flex;
+  gap: 1px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem 2rem -0.5rem 2rem;
+  flex-shrink: 0;
+
+  .admin-tab-button {
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    justify-content: center;
+    font-weight: bold;
+
+    color: var(--blue-primary);
+
+    &:not(.btn-primary):active {
+      color: var(--blue-primary);
+    }
+
+    &.btn-primary {
+      color: var(--ring-road-white);
+      border-color: var(--blue-primary);
+      background-color: var(--blue-primary);
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: var(--blue-primary);
+      }
+    }
+
+    &:not(:disabled):not(.disabled):is(:focus, :active) {
+      box-shadow: none;
+    }
+  }
+}

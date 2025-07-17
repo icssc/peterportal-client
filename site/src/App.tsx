@@ -37,7 +37,7 @@ export default function App() {
               <Route path="/search/:index" element={<SearchPage />} />
               <Route path="/course/:id" element={<CoursePage />} />
               <Route path="/professor/:id" element={<ProfessorPage />} />
-              <Route path="/admin/*" element={<AdminPage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>

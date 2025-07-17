@@ -1,0 +1,17 @@
+.review-grid-template {
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .centered-description {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 1rem;
+}
