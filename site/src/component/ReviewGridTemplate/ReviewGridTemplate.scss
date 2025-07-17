@@ -3,6 +3,11 @@
     font-size: 24px;
     font-weight: bold;
   }
+
+  .centered-description {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .review-grid {

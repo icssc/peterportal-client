@@ -44,7 +44,6 @@ const Reports: FC = () => {
 
   return (
     <ReviewGridTemplate
-      title="User Review Reports"
       description="Accepting a report will delete the review. Ignoring a report will preserve the review."
       isLoading={reportsLoading}
       noDataMsg="There are currently no reports that need attention."
