@@ -79,7 +79,7 @@ const ImportZot4PlanPopup: FC = () => {
       dispatch(setPlanIndex(updatedPlans.length - 1));
 
       const collapsed = collapseAllPlanners(updatedPlans);
-      await saveRoadmap(isLoggedIn, collapsed, true);
+      await saveRoadmap(isLoggedIn, collapsed, updatedPlans.length - 1, true);
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
