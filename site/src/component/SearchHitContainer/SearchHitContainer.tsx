@@ -5,7 +5,7 @@ import { useAppSelector } from '../../store/hooks';
 
 import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
-import noResultsImg from '../../asset/no-results-crop.webp';
+import NoResults from '../NoResults/NoResults';
 import { getMissingPrerequisites } from '../../helpers/planner';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
@@ -55,12 +55,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
   return (
     <div ref={containerDivRef} className="search-hit-container">
       {noResults && (
-        <div className="no-results">
-          <img src={noResultsImg} alt="No results found" />
-          {query === ''
-            ? `Start typing in the search bar to search for ${index === 'courses' ? 'courses' : 'professors'}...`
-            : "Sorry, we couldn't find any results for that search!"}
-        </div>
+        <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
       {searchInProgress && <LoadingSpinner />}
       {!searchInProgress && results.length > 0 && (
