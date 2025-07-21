@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { Card } from '@mui/material';
 import './SubReport.scss';
 
 interface SubReportProps {
@@ -10,14 +11,16 @@ interface SubReportProps {
 }
 
 const SubReport: FC<SubReportProps> = (props) => {
+  const date = new Date(Date.parse(props.timestamp));
   return (
-    <div className="subreport">
+    <Card variant="outlined" className="subreport">
       <div className="subreport-content">
-        <h5>Reported at {props.timestamp}</h5>
-        <p>{props.reason}</p>
+        <span className="label">
+          Reason for Report on {date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}
+        </span>
+        <i>{props.reason}</i>
       </div>
-      {!props.isLast && <br />}
-    </div>
+    </Card>
   );
 };
 
