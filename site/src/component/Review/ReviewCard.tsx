@@ -20,7 +20,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton, Paper } from '@mui/material';
+import { IconButton, Card } from '@mui/material';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -214,7 +214,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   if (review.attendance) tags.unshift('Mandatory attendance');
 
   return (
-    <Paper className="reviewcard ppc-paper">
+    <Card variant="outlined" className="reviewcard">
       <div className="reviewcard-header">
         <h3 className="reviewcard-identifier">{identifier}</h3>
         <div className="edit-buttons">
@@ -303,7 +303,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
           closeForm={() => setReportFormOpen(false)}
         />
       </div>
-    </Paper>
+    </Card>
   );
 };
 
