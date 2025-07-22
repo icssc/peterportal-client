@@ -1,16 +1,14 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import ReviewCard from '../Review/ReviewCard';
-import { Button } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import CheckIcon from '@mui/icons-material/Check';
 import './Verify.scss';
-import trpc from '../../trpc';
-import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
-import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import trpc from '../../../trpc';
+import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
+import UnverifiedReview from './UnverifiedReview';
+import { selectReviews, setReviews } from '../../../store/slices/reviewSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { ReviewData } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 
-const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
+const UnverifiedReviewList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
   const dispatch = useAppDispatch();
 
   const verifyReview = async (reviewId: number) => {
@@ -27,22 +25,12 @@ const UnverifiedReviewsList: FC<{ reviews: ReviewData[] }> = ({ reviews }) => {
     <ReviewItemGrid>
       {reviews.length == 0 && <span>There are no unverified reviews</span>}
       {reviews.map((review) => (
-        <div key={'verify-' + review.id!}>
-          <ReviewCard review={review}>
-            <div className="verification-buttons">
-              <Button className="ppc-mui-button" variant="contained" onClick={() => deleteReview(review.id)}>
-                <DeleteForeverIcon /> Delete
-              </Button>
-              <Button
-                className="ppc-mui-button primary-button"
-                variant="contained"
-                onClick={() => verifyReview(review.id)}
-              >
-                <CheckIcon /> Verify
-              </Button>
-            </div>
-          </ReviewCard>
-        </div>
+        <UnverifiedReview
+          key={'verify-' + review.id!}
+          review={review}
+          onDelete={() => deleteReview(review.id)}
+          onVerify={() => verifyReview(review.id)}
+        />
       ))}
     </ReviewItemGrid>
   );
@@ -64,7 +52,6 @@ const Verify: FC = () => {
     document.title = 'Verify Reviews | PeterPortal';
   }, [getUnverifiedReviews]);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   return (
     <div className="content-wrapper verify-container">
       <h1>Unverified Reviews</h1>
@@ -72,7 +59,7 @@ const Verify: FC = () => {
         Verifying a review will display the review on top of unverified reviews. Deleting a review will remove it
         permanently.
       </p>
-      {reviewsLoading ? <p>Loading...</p> : <UnverifiedReviewsList reviews={reviews} />}
+      {reviewsLoading ? <LoadingSpinner /> : <UnverifiedReviewList reviews={reviews} />}
     </div>
   );
 };

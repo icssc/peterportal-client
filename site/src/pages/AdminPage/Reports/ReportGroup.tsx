@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Paper } from '@mui/material';
+import { Button, Card } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SubReport from './SubReport';
 import './ReportGroup.scss';
 import { ReportData, ReviewData } from '@peterportal/types';
-import trpc from '../../trpc';
+import trpc from '../../../trpc';
 
 interface ReportGroupProps {
   reviewId: number;
@@ -30,17 +30,22 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
     return <></>;
   } else {
     return (
-      <Paper className="report-group ppc-paper">
+      <Card variant="outlined" className="report-group">
         <div className="report-group-header">
-          <div className="report-group-identifier">
+          <h3 className="report-group-identifier">
             {review.courseId} {review.professorId}
-          </div>
+          </h3>
           <div className="edit-buttons">
-            <Button className="ppc-mui-button" variant="contained" onClick={props.onDeny}>
-              <PersonRemoveIcon /> Ignore
+            <Button className="ppc-mui-button" variant="text" onClick={props.onDeny} startIcon={<PersonRemoveIcon />}>
+              Ignore
             </Button>
-            <Button className="ppc-mui-button primary-button" variant="contained" onClick={props.onAccept}>
-              <DeleteIcon /> Accept Report
+            <Button
+              className="ppc-mui-button primary-button"
+              variant="text"
+              onClick={props.onAccept}
+              startIcon={<DeleteIcon />}
+            >
+              Accept Report
             </Button>
           </div>
         </div>
@@ -63,7 +68,7 @@ const ReportGroup: FC<ReportGroupProps> = (props) => {
             />
           ))}
         </div>
-      </Paper>
+      </Card>
     );
   }
 };
