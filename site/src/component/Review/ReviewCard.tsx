@@ -22,6 +22,72 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton, Paper } from '@mui/material';
 
+interface AuthorEditButtonsProps {
+  review: ReviewData;
+  course?: CourseGQLData;
+  professor?: ProfessorGQLData;
+}
+
+const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const reviewData = useAppSelector(selectReviews);
+
+  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+
+  const deleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    setShowDeleteModal(false);
+  };
+
+  const openReviewForm = () => {
+    setShowReviewForm(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeReviewForm = () => {
+    setShowReviewForm(false);
+    document.body.style.overflow = 'visible';
+  };
+
+  return (
+    <>
+      <IconButton onClick={openReviewForm}>
+        <EditIcon />
+      </IconButton>
+      <IconButton onClick={() => setShowDeleteModal(true)}>
+        <DeleteOutlineIcon />
+      </IconButton>
+      <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <h2>Delete Review</h2>
+        </Modal.Header>
+        <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={() => deleteReview(review.id!)}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ReviewForm
+        course={course}
+        professor={professor}
+        reviewToEdit={review}
+        closeForm={closeReviewForm}
+        show={showReviewForm}
+        editing
+        terms={sortedTerms}
+      />
+    </>
+  );
+};
+
 interface ReviewCardProps {
   review: ReviewData;
   course?: CourseGQLData;
@@ -35,7 +101,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const isLoggedIn = useIsLoggedIn();
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   const fetchProfName = async () => {
@@ -97,12 +162,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     );
   };
 
-  const deleteReview = async (reviewId: number) => {
-    await trpc.reviews.delete.mutate({ id: reviewId });
-    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
-    setShowDeleteModal(false);
-  };
-
   const upvote = async () => {
     const newVote = review.userVote === 1 ? 0 : 1;
     await vote(newVote);
@@ -129,11 +188,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const openReportForm = () => {
     setReportFormOpen(true);
-  };
-
-  const openReviewForm = () => {
-    setShowReviewForm(true);
-    document.body.style.overflow = 'hidden';
   };
 
   const closeReviewForm = () => {
@@ -172,30 +226,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       <div className="reviewcard-header">
         <h3 className="reviewcard-identifier">{identifier}</h3>
         <div className="edit-buttons">
-          {review.authored && (
-            <>
-              <IconButton onClick={openReviewForm}>
-                <EditIcon />
-              </IconButton>
-              <IconButton onClick={() => setShowDeleteModal(true)}>
-                <DeleteOutlineIcon />
-              </IconButton>
-              <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-                <Modal.Header closeButton>
-                  <h2>Delete Review</h2>
-                </Modal.Header>
-                <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                    Cancel
-                  </Button>
-                  <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-                    Delete
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-            </>
-          )}
+          {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
           {children}
         </div>
       </div>
