@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, ReactNode } from 'react';
+import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
 import './ReviewCard.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -103,7 +103,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
 
-  const fetchProfName = async () => {
+  const fetchProfName = useCallback(async () => {
     try {
       const [profFirstName, profLastName] = (
         await trpc.professors.get.query({ ucinetid: review.professorId })
@@ -113,7 +113,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     } catch (error) {
       console.error('Error fetching professor name:', error);
     }
-  };
+  }, [review.professorId]);
 
   useEffect(() => {
     const getIdentifier = async () => {
