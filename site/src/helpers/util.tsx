@@ -151,7 +151,7 @@ export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> 
 }
 
 export function splitCourseId(courseId: string): [string, string] {
-  // splits a course id into it's department and number
+  // splits a course id into its department and number
   const courseMatch = courseId.match(/^([A-Za-z&]+)(\d.*)$/);
   return courseMatch ? [courseMatch[1], courseMatch[2]] : [courseId, ''];
 }

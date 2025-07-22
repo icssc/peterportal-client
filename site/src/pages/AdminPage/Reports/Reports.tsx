@@ -20,15 +20,13 @@ const ReportsList: FC<{
     <ReviewItemGrid>
       {data.length == 0 && <span>There are currently no reports that need attention</span>}
       {data.map((reviewPair) => (
-        <div key={'report-' + reviewPair.reviewId}>
-          <ReportGroup
-            key={reviewPair.reviewId}
-            reviewId={reviewPair.reviewId}
-            reports={reviewPair.reports}
-            onAccept={() => acceptReports(reviewPair.reviewId)}
-            onDeny={() => denyReports(reviewPair.reviewId)}
-          />
-        </div>
+        <ReportGroup
+          key={'report-' + reviewPair.reviewId}
+          reviewId={reviewPair.reviewId}
+          reports={reviewPair.reports}
+          onAccept={() => acceptReports(reviewPair.reviewId)}
+          onDeny={() => denyReports(reviewPair.reviewId)}
+        />
       ))}
     </ReviewItemGrid>
   );

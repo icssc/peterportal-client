@@ -30,7 +30,6 @@ const AdminPage: FC = () => {
     checkAdmin();
   }, [checkAdmin]);
 
-  /** @todo replace the loading text here with LoadingSpinner once that gets merged */
   if (!loaded) {
     return <LoadingSpinner />;
   } else if (!authorized) {
