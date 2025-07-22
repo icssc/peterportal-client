@@ -101,7 +101,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const isLoggedIn = useIsLoggedIn();
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const fetchProfName = useCallback(async () => {
     try {
@@ -190,11 +189,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     setReportFormOpen(true);
   };
 
-  const closeReviewForm = () => {
-    setShowReviewForm(false);
-    document.body.style.overflow = 'visible';
-  };
-
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
@@ -218,8 +212,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const tags: string[] = review.tags?.slice() ?? [];
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
-
-  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
   return (
     <Paper className="reviewcard ppc-paper">
@@ -309,15 +301,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
           reviewId={review.id}
           reviewContent={review.content}
           closeForm={() => setReportFormOpen(false)}
-        />
-        <ReviewForm
-          course={course}
-          professor={professor}
-          reviewToEdit={review}
-          closeForm={closeReviewForm}
-          show={showReviewForm}
-          editing
-          terms={sortedTerms}
         />
       </div>
     </Paper>

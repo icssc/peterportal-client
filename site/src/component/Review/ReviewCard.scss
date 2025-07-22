@@ -3,17 +3,21 @@
   flex-direction: column;
   gap: 1rem;
   background-color: var(--overlay2);
-  border-radius: var(--border-radius);
   padding: 16px 20px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 14px;
+
+  &.MuiCard-root {
+    border-radius: var(--border-radius);
+    background-color: var(--overlay1);
+  }
 }
 
 .reviewcard-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   height: 24px;
 
@@ -25,10 +29,6 @@
       color: var(--text);
     }
     word-break: break-word;
-
-    .professor-identifier {
-      font-size: 12px;
-    }
   }
 
   .edit-buttons {
