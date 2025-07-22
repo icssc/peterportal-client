@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import SubReview from '../../../component/Review/SubReview';
+import SubReview from '../../../component/Review/ReviewCard';
 import { Button } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';

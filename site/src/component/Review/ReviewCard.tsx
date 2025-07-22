@@ -77,7 +77,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [professor, course, review.courseId, review.professorId]);
+  }, [professor, course, review.courseId, review.professorId, fetchProfName]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
