@@ -31,6 +31,16 @@
   }
 }
 
+.side-info-name {
+  // Force adaptive width to work while keeping the name width the same
+  display: flex;
+  align-items: center;
+
+  h2 {
+    width: 100vw;
+  }
+}
+
 .course-tags {
   display: flex;
   flex-wrap: wrap;
