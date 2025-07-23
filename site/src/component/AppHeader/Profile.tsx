@@ -131,12 +131,7 @@ const Profile = () => {
     </>
   );
 
-  const ProfilePopover = (
-    <Popover id="profile-popover">
-      {tab === 'default' && DefaultTab}
-      {tab === 'theme' && ThemeTab}
-    </Popover>
-  );
+  const ProfilePopover = <Popover id="profile-popover">{tab === 'default' ? DefaultTab : ThemeTab}</Popover>;
 
   return (
     <>
