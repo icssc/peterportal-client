@@ -145,10 +145,8 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   return (
     <div className="side-content-wrapper">
       <div className="side-info">
-        <div>
-          <div className="side-info-name">
-            <h2>{props.name}</h2>
-          </div>
+        <div className="side-info-overview">
+          <h2>{props.name}</h2>
           <h3>{props.title}</h3>
           <p>{props.description}</p>
           <div className="course-tags">

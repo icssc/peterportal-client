@@ -31,12 +31,13 @@
   }
 }
 
-.side-info-name {
+.side-info-overview {
   // Force adaptive width on the professor page to work
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
 
-  h2 {
+  > * {
     width: 100vw;
   }
 }
