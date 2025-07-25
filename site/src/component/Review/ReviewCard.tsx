@@ -1,5 +1,5 @@
-import { FC, useState, ReactNode } from 'react';
-import './SubReview.scss';
+import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
+import './ReviewCard.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -14,7 +14,7 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms } from '../../helpers/util';
+import { sortTerms, splitCourseId } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -88,18 +88,60 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
   );
 };
 
-interface SubReviewProps {
+interface ReviewCardProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
   children?: ReactNode;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
+  const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
+
+  const fetchProfName = useCallback(async () => {
+    try {
+      const [profFirstName, profLastName] = (
+        await trpc.professors.get.query({ ucinetid: review.professorId })
+      ).name.split(' ');
+      const profInitial = profFirstName[0] + '.';
+      return profInitial + ' ' + profLastName;
+    } catch (error) {
+      console.error('Error fetching professor name:', error);
+    }
+  }, [review.professorId]);
+
+  useEffect(() => {
+    const getIdentifier = async () => {
+      if (professor) {
+        const foundCourse = professor.courses[review.courseId];
+        const courseName = foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId;
+        const courseLink = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+        setIdentifier(courseLink);
+      } else if (course) {
+        const profName = course.instructors[review.professorId]?.name;
+        const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        setIdentifier(profLink);
+      } else {
+        const [foundCourseName, foundCourseNumber] = splitCourseId(review.courseId);
+        const courseName = foundCourseName + ' ' + foundCourseNumber;
+        const profName = await fetchProfName();
+        const courseAndProfLink = (
+          <div>
+            <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
+            {' • '}
+            <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+          </div>
+        );
+        setIdentifier(courseAndProfLink);
+      }
+    };
+
+    getIdentifier();
+  }, [professor, course, review.courseId, review.professorId, fetchProfName]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -172,38 +214,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   if (review.attendance) tags.unshift('Mandatory attendance');
 
   return (
-    <Card variant="outlined" className="subreview">
-      <div className="subreview-header">
-        <h3 className="subreview-identifier">
-          {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
-              {professor.courses[review.courseId]
-                ? professor.courses[review.courseId]?.department +
-                  ' ' +
-                  professor.courses[review.courseId]?.courseNumber
-                : review.courseId}
-            </Link>
-          )}
-          {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
-              {course.instructors[review.professorId]?.name ?? review.professorId}
-            </Link>
-          )}
-          {!course && !professor && (
-            <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
-            </div>
-          )}
-        </h3>
+    <Card variant="outlined" className="reviewcard">
+      <div className="reviewcard-header">
+        <h3 className="reviewcard-identifier">{identifier}</h3>
         <div className="edit-buttons">
           {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
           {children}
         </div>
       </div>
 
-      <div className="subreview-content">
-        <div className="subreview-ratings">
+      <div className="reviewcard-content">
+        <div className="reviewcard-ratings">
           <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
             <div className="rating-label">Quality</div>
             <div className="rating-value">{review.rating}</div>
@@ -213,9 +234,9 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
             <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
-        <div className="subreview-info">
-          <div className="subreview-details">
-            <div className="subreview-detail">
+        <div className="reviewcard-info">
+          <div className="reviewcard-details">
+            <div className="reviewcard-detail">
               <p>
                 <b>Posted on:</b>
                 {' ' +
@@ -228,17 +249,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
                   <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
                 )}
               </p>
-              <div className="subreview-author">
+              <div className="reviewcard-author">
                 <b>Posted by:</b>
-                <p className="subreview-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="subreview-author-verified">{verifiedBadge}</div>}
-                {review.authored && <div className="subreview-author-author">{authorBadge}</div>}
+                <p className="reviewcard-author-name">{review.userDisplay}</p>
+                {review.verified && <div className="reviewcard-author-verified">{verifiedBadge}</div>}
+                {review.authored && <div className="reviewcard-author-author">{authorBadge}</div>}
               </div>
               <p>
                 <b>Quarter:</b> {review.quarter}
               </p>
             </div>
-            <div className="subreview-detail">
+            <div className="reviewcard-detail">
               <p>
                 <b>Grade:</b> {review.gradeReceived}
               </p>
@@ -251,22 +272,22 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
         </div>
       </div>
       {tags.length > 0 && (
-        <div className="subreview-tags">
+        <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Badge pill className="subreview-tag" key={tag}>
+            <Badge pill className="reviewcard-tag" key={tag}>
               {tag}
             </Badge>
           ))}
         </div>
       )}
-      <div className="subreview-footer" id={review.id.toString()}>
-        <div className="subreview-voting">
-          <p className="subreview-voting-question">Helpful?</p>
-          <div className="subreview-voting-buttons">
+      <div className="reviewcard-footer" id={review.id.toString()}>
+        <div className="reviewcard-voting">
+          <p className="reviewcard-voting-question">Helpful?</p>
+          <div className="reviewcard-voting-buttons">
             <button className={upvoteClassname} onClick={upvote}>
               &#9650;
             </button>
-            <p className="subreview-voting-count">{review.score}</p>
+            <p className="reviewcard-voting-count">{review.score}</p>
             <button className={downvoteClassname} onClick={downvote}>
               &#9660;
             </button>
@@ -286,4 +307,4 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
   );
 };
 
-export default SubReview;
+export default ReviewCard;
