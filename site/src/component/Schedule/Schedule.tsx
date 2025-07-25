@@ -92,7 +92,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const renderData = (courseID: string, section: Section, index: number) => {
     if (!section.status) section.status = 'FULL';
     const currentlyEnrolled = parseInt(section.numCurrentlyEnrolled.totalEnrolled);
-    const enrollmentPercent = (currentlyEnrolled * 100) / parseInt(section.maxCapacity);
+    const enrollmentPercent = parseInt(section.maxCapacity) ? ((currentlyEnrolled * 100) / parseInt(section.maxCapacity)) : 0;
 
     //This function returns the data for a dynamic table after accessing the API
     return (
