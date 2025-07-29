@@ -52,20 +52,18 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
 
   return (
     <div ref={containerDivRef} className="search-hit-container">
-      {searchInProgress ? (
-        <LoadingSpinner />
-      ) : (
+      {searchInProgress && <LoadingSpinner />}
+      {!searchInProgress && results.length === 0 && (
+        <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
+      )}
+      {searchInProgress && results.length > 0 && (
         <>
-          {results.length === 0 ? (
-            <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
-          ) : (
-            <SearchResults
-              index={index}
-              results={results}
-              CourseHitItem={CourseHitItem}
-              ProfessorHitItem={ProfessorHitItem!}
-            />
-          )}
+          <SearchResults
+            index={index}
+            results={results}
+            CourseHitItem={CourseHitItem}
+            ProfessorHitItem={ProfessorHitItem!}
+          />
           <div className="search-pagination">
             <SearchPagination index={index} />
           </div>
