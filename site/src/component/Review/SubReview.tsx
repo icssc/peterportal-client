@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import './Review.scss';
+import { FC, useState, ReactNode } from 'react';
+import './SubReview.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -20,21 +20,86 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton } from '@mui/material';
+import { IconButton, Card } from '@mui/material';
 
-interface SubReviewProps {
+interface AuthorEditButtonsProps {
   review: ReviewData;
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
 }
 
-const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
+const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const reviewData = useAppSelector(selectReviews);
+
+  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+
+  const deleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    setShowDeleteModal(false);
+  };
+
+  const openReviewForm = () => {
+    setShowReviewForm(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeReviewForm = () => {
+    setShowReviewForm(false);
+    document.body.style.overflow = 'visible';
+  };
+
+  return (
+    <>
+      <IconButton onClick={openReviewForm}>
+        <EditIcon />
+      </IconButton>
+      <IconButton onClick={() => setShowDeleteModal(true)}>
+        <DeleteOutlineIcon />
+      </IconButton>
+      <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Header closeButton>
+          <h2>Delete Review</h2>
+        </Modal.Header>
+        <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={() => deleteReview(review.id!)}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ReviewForm
+        course={course}
+        professor={professor}
+        reviewToEdit={review}
+        closeForm={closeReviewForm}
+        show={showReviewForm}
+        editing
+        terms={sortedTerms}
+      />
+    </>
+  );
+};
+
+interface SubReviewProps {
+  review: ReviewData;
+  course?: CourseGQLData;
+  professor?: ProfessorGQLData;
+  children?: ReactNode;
+}
+
+const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showReviewForm, setShowReviewForm] = useState(false);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -52,12 +117,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
         }),
       ),
     );
-  };
-
-  const deleteReview = async (reviewId: number) => {
-    await trpc.reviews.delete.mutate({ id: reviewId });
-    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
-    setShowDeleteModal(false);
   };
 
   const upvote = async () => {
@@ -88,16 +147,6 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
     setReportFormOpen(true);
   };
 
-  const openReviewForm = () => {
-    setShowReviewForm(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeReviewForm = () => {
-    setShowReviewForm(false);
-    document.body.style.overflow = 'visible';
-  };
-
   const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
@@ -122,10 +171,8 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
-  const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
-
   return (
-    <div className="subreview">
+    <Card variant="outlined" className="subreview">
       <div className="subreview-header">
         <h3 className="subreview-identifier">
           {professor && (
@@ -149,30 +196,10 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </div>
           )}
         </h3>
-        {review.authored && (
-          <div className="edit-buttons">
-            <IconButton onClick={openReviewForm}>
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => setShowDeleteModal(true)}>
-              <DeleteOutlineIcon />
-            </IconButton>
-            <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-              <Modal.Header closeButton>
-                <h2>Delete Review</h2>
-              </Modal.Header>
-              <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-                  Delete
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        )}
+        <div className="edit-buttons">
+          {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
+          {children}
+        </div>
       </div>
 
       <div className="subreview-content">
@@ -245,26 +272,17 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor }) => {
             </button>
           </div>
         </div>
-        <Button variant="primary" className="add-report-button" onClick={openReportForm}>
-          Report
-        </Button>
+        <button className="add-report-button" onClick={openReportForm}>
+          Report...
+        </button>
         <ReportForm
           showForm={reportFormOpen}
           reviewId={review.id}
           reviewContent={review.content}
           closeForm={() => setReportFormOpen(false)}
         />
-        <ReviewForm
-          course={course}
-          professor={professor}
-          reviewToEdit={review}
-          closeForm={closeReviewForm}
-          show={showReviewForm}
-          editing
-          terms={sortedTerms}
-        />
       </div>
-    </div>
+    </Card>
   );
 };
 

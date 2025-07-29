@@ -2,7 +2,7 @@ import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
@@ -45,13 +45,6 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const toggleExpand = () => setOpen(!open);
 
-  const renderRequirements = () => {
-    if (resultsLoading) return <RequirementsLoadingIcon />;
-    return (
-      <ProgramRequirementsList requirements={minorReqs.requirements} storeKeyPrefix={`minor-${minorReqs.minor.id}`} />
-    );
-  };
-
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
@@ -59,7 +52,14 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
       <Collapse in={open} unmountOnExit>
-        {renderRequirements()}
+        {resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={minorReqs.requirements}
+            storeKeyPrefix={`minor-${minorReqs.minor.id}`}
+          />
+        )}
       </Collapse>
     </div>
   );

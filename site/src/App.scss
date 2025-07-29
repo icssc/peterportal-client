@@ -84,6 +84,29 @@ button {
   }
 }
 
+.ppc-mui-button.MuiButton-root {
+  display: inline-flex;
+  height: 29px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  padding: 0px 12px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+}
+
+[data-theme='dark'] {
+  .ppc-mui-button.MuiButton-root {
+    background-color: #606166;
+  }
+}
+
+.ppc-mui-button.primary-button.MuiButton-root {
+  background-color: var(--blue-primary);
+  color: white;
+}
+
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;

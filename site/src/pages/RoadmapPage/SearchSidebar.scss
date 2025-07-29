@@ -31,17 +31,7 @@ h3.saved-courses-title {
   margin-block: 16px 0;
 }
 
-.no-results {
+.search-pagination {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  font-size: 20px;
-  padding: 2rem;
-  text-align: center;
-
-  img {
-    width: 400px;
-    max-width: 100%;
-  }
+  justify-content: center;
 }

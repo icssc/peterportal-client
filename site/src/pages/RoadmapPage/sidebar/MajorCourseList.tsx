@@ -11,7 +11,7 @@ import {
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
@@ -126,19 +126,6 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const toggleExpand = () => setOpen(!open);
 
-  const renderRequirements = () => {
-    if (resultsLoading) return <RequirementsLoadingIcon />;
-    if (hasSpecs && !majorWithSpec.selectedSpec) {
-      return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
-    }
-    return (
-      <ProgramRequirementsList
-        requirements={majorWithSpec.requirements}
-        storeKeyPrefix={`major-${majorWithSpec.major.id}`}
-      />
-    );
-  };
-
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
@@ -159,7 +146,16 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
             theme={(t) => comboboxTheme(t, isDark)}
           />
         )}
-        {renderRequirements()}
+        {hasSpecs && !majorWithSpec.selectedSpec ? (
+          <p className="unselected-spec-notice">Please select a specialization to view requirements</p>
+        ) : resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={majorWithSpec.requirements}
+            storeKeyPrefix={`major-${majorWithSpec.major.id}`}
+          />
+        )}
       </Collapse>
     </div>
   );
