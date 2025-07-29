@@ -41,9 +41,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
           </span>
 
           <div className="spacer"></div>
-          <span className="bookmark-button-wrapper">
-            <CourseBookmarkButton course={course} />
-          </span>
+          <CourseBookmarkButton course={course} />
         </div>
         <br />
         <CourseDescription course={course} />

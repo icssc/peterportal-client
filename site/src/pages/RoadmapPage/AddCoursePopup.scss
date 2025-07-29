@@ -38,11 +38,9 @@
     font-size: 20px;
   }
 
-  button:not(.fixed) {
-    width: 20px;
-    height: 20px;
-
-    @include globals.clickable(0.8, 0.5);
+  button.MuiButtonBase-root {
+    padding: 4px;
+    margin: -6px -2px -8px;
   }
 
   .close-button {

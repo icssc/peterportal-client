@@ -36,9 +36,11 @@
     }
   }
 
-  .bookmark-button-wrapper {
+  button.bookmark-button {
     margin-top: -6px;
     margin-right: -6px;
+    width: 32px;
+    height: 32px;
   }
 
   .center {
