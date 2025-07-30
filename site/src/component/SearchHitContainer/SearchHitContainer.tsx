@@ -50,26 +50,24 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
     throw 'Professor Component not provided';
   }
 
-  const noResults = results.length === 0 && !searchInProgress;
-
   return (
     <div ref={containerDivRef} className="search-hit-container">
-      {noResults && (
+      {searchInProgress && <LoadingSpinner />}
+      {!searchInProgress && results.length === 0 && (
         <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
-      {searchInProgress && <LoadingSpinner />}
       {!searchInProgress && results.length > 0 && (
-        <SearchResults
-          index={index}
-          results={results}
-          CourseHitItem={CourseHitItem}
-          ProfessorHitItem={ProfessorHitItem!}
-        />
-      )}
-      {!searchInProgress && (
-        <div className="search-pagination">
-          <SearchPagination index={index} />
-        </div>
+        <>
+          <SearchResults
+            index={index}
+            results={results}
+            CourseHitItem={CourseHitItem}
+            ProfessorHitItem={ProfessorHitItem!}
+          />
+          <div className="search-pagination">
+            <SearchPagination index={index} />
+          </div>
+        </>
       )}
     </div>
   );

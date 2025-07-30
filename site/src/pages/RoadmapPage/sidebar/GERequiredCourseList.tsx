@@ -31,15 +31,9 @@ const GERequiredCourseList: FC = () => {
     });
   }, [dispatch, requirements]);
 
-  return (
-    <>
-      {resultsLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <ProgramRequirementsList requirements={requirements} storeKeyPrefix="ge" />
-      )}
-    </>
-  );
+  if (resultsLoading) return <LoadingSpinner />;
+
+  return <ProgramRequirementsList requirements={requirements} storeKeyPrefix="ge" />;
 };
 
 export default GERequiredCourseList;
