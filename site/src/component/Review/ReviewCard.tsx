@@ -105,11 +105,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const fetchProfName = useCallback(async () => {
     try {
-      const [profFirstName, profLastName] = (
-        await trpc.professors.get.query({ ucinetid: review.professorId })
-      ).name.split(' ');
-      const profInitial = profFirstName[0] + '.';
-      return profInitial + ' ' + profLastName;
+      const fullName = (await trpc.professors.get.query({ ucinetid: review.professorId })).name;
+      const nameParts = fullName.split(' ');
+      const profInitial = nameParts[0][0] + '.';
+      const profLastName = nameParts[nameParts.length - 1];
+
+      return `${profInitial} ${profLastName}`;
     } catch (error) {
       console.error('Error fetching professor name:', error);
     }
