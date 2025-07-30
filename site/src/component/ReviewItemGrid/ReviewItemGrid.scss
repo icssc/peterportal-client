@@ -1,4 +1,9 @@
-.reviews-grid {
+.review-grid-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.review-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 1rem;

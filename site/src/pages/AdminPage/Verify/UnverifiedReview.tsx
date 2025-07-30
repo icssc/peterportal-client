@@ -6,11 +6,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import './UnverifiedReview.scss';
 import { ReviewData } from '@peterportal/types';
 
-const UnverifiedReview: FC<{ review: ReviewData; onDelete: () => void; onVerify: () => void }> = ({
-  review,
-  onDelete,
-  onVerify,
-}) => {
+interface UnverifiedReviewProps {
+  review: ReviewData;
+  onDelete: () => void;
+  onVerify: () => void;
+}
+
+const UnverifiedReview: FC<UnverifiedReviewProps> = ({ review, onDelete, onVerify }) => {
   return (
     <SubReview review={review}>
       <div className="verification-buttons">
