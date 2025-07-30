@@ -20,7 +20,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton, Card } from '@mui/material';
+import { IconButton, Card, Skeleton } from '@mui/material';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -100,6 +100,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
   const [identifier, setIdentifier] = useState<ReactNode>(null);
+  const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
 
   const fetchProfName = useCallback(async () => {
@@ -116,6 +117,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   useEffect(() => {
     const getIdentifier = async () => {
+      setLoadingIdentifier(true);
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId;
@@ -138,6 +140,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         );
         setIdentifier(courseAndProfLink);
       }
+      setLoadingIdentifier(false);
     };
 
     getIdentifier();
@@ -216,7 +219,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   return (
     <Card variant="outlined" className="reviewcard">
       <div className="reviewcard-header">
-        <h3 className="reviewcard-identifier">{identifier}</h3>
+        <h3 className="reviewcard-identifier">
+          {loadingIdentifier ? <Skeleton variant="text" animation="wave" width={210} /> : identifier}
+        </h3>
         <div className="edit-buttons">
           {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
           {children}
