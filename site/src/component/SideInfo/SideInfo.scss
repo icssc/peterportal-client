@@ -31,6 +31,17 @@
   }
 }
 
+.side-info-overview {
+  // Force adaptive width on the professor page to work
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  > * {
+    width: 100vw;
+  }
+}
+
 .course-tags {
   display: flex;
   flex-wrap: wrap;

@@ -9,11 +9,12 @@ import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
-interface CourseHitItemProps extends CourseGQLData {}
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+
+interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
@@ -41,15 +42,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     }
   };
 
-  const onSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const toggleSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!props || props.id === undefined || isCourseSaved(props)) return;
-    saveCourse(props);
-  };
-
-  const onUnsaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    unsaveCourse(props);
+    if (courseIsSaved) {
+      unsaveCourse(props);
+    } else if (props && props.id) {
+      saveCourse(props);
+    }
   };
 
   return (
@@ -76,18 +75,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
               </Badge>
             ))}
           </div>
-          <div>
-            {onSaveCourse && !courseIsSaved && (
-              <IconButton onClick={(e) => onSaveCourse(e)} size={'small'}>
-                <BookmarkBorderIcon />
-              </IconButton>
-            )}
-            {courseIsSaved && (
-              <IconButton onClick={(e) => onUnsaveCourse(e)} size={'small'}>
-                <BookmarkIcon />
-              </IconButton>
-            )}
-          </div>
+          <IconButton onClick={toggleSaveCourse} size="small">
+            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
         </div>
       </div>
     </div>

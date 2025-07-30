@@ -94,17 +94,15 @@ button {
 
   background-color: #e0e0e0;
   color: var(--text);
-}
 
-[data-theme='dark'] {
-  .ppc-mui-button.MuiButton-root {
+  [data-theme='dark'] & {
     background-color: #606166;
   }
-}
 
-.ppc-mui-button.primary-button.MuiButton-root {
-  background-color: var(--blue-primary);
-  color: white;
+  &.primary-button {
+    background-color: var(--blue-primary);
+    color: white;
+  }
 }
 
 .ppc-popover {

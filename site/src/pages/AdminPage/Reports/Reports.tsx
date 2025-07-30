@@ -1,65 +1,24 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import ReportGroup from './ReportGroup';
 import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';
-import './Reports.scss';
 import trpc from '../../../trpc';
-import { ReportData } from '@peterportal/types';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-
-interface ReviewDisplay {
-  reviewId: number;
-  reports: ReportData[];
-}
-
-const ReportsList: FC<{
-  data: ReviewDisplay[];
-  acceptReports: (reviewId: number) => Promise<void>;
-  denyReports: (reviewId: number) => Promise<void>;
-}> = ({ data, acceptReports, denyReports }) => {
-  return (
-    <ReviewItemGrid>
-      {data.length == 0 && <span>There are currently no reports that need attention</span>}
-      {data.map((reviewPair) => (
-        <ReportGroup
-          key={'report-' + reviewPair.reviewId}
-          reviewId={reviewPair.reviewId}
-          reports={reviewPair.reports}
-          onAccept={() => acceptReports(reviewPair.reviewId)}
-          onDeny={() => denyReports(reviewPair.reviewId)}
-        />
-      ))}
-    </ReviewItemGrid>
-  );
-};
+import { ReportGroupData } from '@peterportal/types';
 
 const Reports: FC = () => {
-  const [data, setData] = useState<ReviewDisplay[]>([]);
+  const [data, setData] = useState<ReportGroupData[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
 
   const getData = useCallback(async () => {
     const reports = await trpc.reports.get.query();
 
-    const reportsDisplay: ReviewDisplay[] = [];
-
+    const reportGroupMap: Record<string, ReportGroupData> = {};
     reports.forEach((report) => {
-      let i;
-      if ((i = reportsDisplay.findIndex((reviewDisplay) => report.reviewId === reviewDisplay.reviewId)) < 0) {
-        reportsDisplay.push({
-          reviewId: report.reviewId,
-          reports: [report],
-        });
-      } else {
-        reportsDisplay[i].reports.push(report);
-      }
+      reportGroupMap[report.reviewId] ??= { reviewId: report.reviewId, reports: [] };
+      reportGroupMap[report.reviewId].reports.push(report);
     });
+    const reportGroups = Object.values(reportGroupMap).sort((a, b) => b.reports.length - a.reports.length);
 
-    reportsDisplay.sort((rd1, rd2) => {
-      if (rd1.reports.length > rd2.reports.length) return -1;
-      if (rd1.reports.length < rd2.reports.length) return 1;
-      return 0;
-    });
-
-    setData(reportsDisplay);
+    setData(reportGroups);
     setReportsLoading(false);
   }, []);
 
@@ -71,26 +30,30 @@ const Reports: FC = () => {
   const acceptReports = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
     // reports are automatically deleted when deleting a review
-    setData(data.filter((review) => review.reviewId !== reviewId));
+    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
   };
 
   const denyReports = async (reviewId: number) => {
     await trpc.reports.delete.mutate({ reviewId });
-    setData(data.filter((review) => review.reviewId !== reviewId));
+    setData(data.filter((reportGroup) => reportGroup.reviewId !== reviewId));
   };
 
   return (
-    <div className="content-wrapper reports-container">
-      <h1>User Review Reports</h1>
-      <p>
-        Accepting a report will <b>delete</b> the review. Ignoring a report will <b>preserve</b> the review.
-      </p>
-      {reportsLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <ReportsList data={data} acceptReports={acceptReports} denyReports={denyReports} />
-      )}
-    </div>
+    <ReviewItemGrid
+      title="User Review Reports"
+      description="Accepting a report will delete the review. Ignoring a report will preserve the review."
+      isLoading={reportsLoading}
+      noDataMsg="There are currently no reports that need attention."
+    >
+      {data.map((reportGroup) => (
+        <ReportGroup
+          key={`report-${reportGroup.reviewId}`}
+          reportGroup={reportGroup}
+          onAccept={() => acceptReports(reportGroup.reviewId)}
+          onDeny={() => denyReports(reportGroup.reviewId)}
+        />
+      ))}
+    </ReviewItemGrid>
   );
 };
 
