@@ -56,7 +56,7 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
       {!searchInProgress && results.length === 0 && (
         <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
-      {searchInProgress && results.length > 0 && (
+      {!searchInProgress && results.length > 0 && (
         <>
           <SearchResults
             index={index}
