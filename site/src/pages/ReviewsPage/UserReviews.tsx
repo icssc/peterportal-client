@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
+import ReviewCard from '../../component/Review/ReviewCard';
 import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -28,7 +28,7 @@ const UserReviews: FC = () => {
       noDataMsg="You haven't reviewed any courses yet. Look up a course you've taken to review it!"
     >
       {reviews.map((review) => (
-        <SubReview key={`user-review-${review.id}`} review={review} />
+        <ReviewCard key={`user-review-${review.id}`} review={review} />
       ))}
     </ReviewItemGrid>
   );
