@@ -18,10 +18,9 @@ import { getMissingPrerequisites } from '../../helpers/planner';
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  interactive?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const clearedCourses = useClearedCourses();
 
   if (typeof course === 'string') {
@@ -43,7 +42,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, req
           ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
         </span>
         <div className="spacer" />
-        {interactive && <CourseBookmarkButton course={course} />}
+        <CourseBookmarkButton course={course} />
       </div>
       <br />
       <CourseDescription course={course} />

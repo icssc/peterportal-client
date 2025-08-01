@@ -31,9 +31,7 @@ const AllCourseSearch: FC = () => {
 
   return (
     <>
-      <div className="search-sidebar-search-module">
-        <SearchModule index="courses" />
-      </div>
+      <SearchModule index="courses" />
       <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
 
       {searchInProgress ? (

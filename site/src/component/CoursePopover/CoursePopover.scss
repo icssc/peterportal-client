@@ -4,7 +4,6 @@
 
   .popover-name {
     font-weight: bold;
-    color: var(--text-dark);
     font-size: 16px;
     height: 21px;
     margin-top: -2px;
@@ -17,26 +16,8 @@
     margin: auto;
   }
 
-  .popover-subtitle {
-    font-weight: bold;
-  }
-
   .popover-units {
     font-weight: normal;
-  }
-
-  .popover-description {
-    font-size: 14px;
-    padding-top: 12px;
-    line-height: 17px;
-  }
-
-  .popover-detail {
-    padding-top: 12px;
-  }
-
-  .popover-detail-prefix {
-    font-weight: bold;
   }
 
   .course-info-warning {
@@ -55,12 +36,11 @@
     }
   }
 
-  .popover-detail-italics {
-    padding-top: 6px;
-    font-weight: 400;
-    font-size: 12px;
-    font-style: italic;
-    color: var(--mid-gray);
+  button.bookmark-button {
+    margin-top: -6px;
+    margin-right: -6px;
+    width: 32px;
+    height: 32px;
   }
 
   .quarter-offerings-section {
