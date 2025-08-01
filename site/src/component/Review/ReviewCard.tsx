@@ -14,7 +14,7 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import spawnToast from '../../helpers/toastify';
-import { sortTerms, splitCourseId } from '../../helpers/util';
+import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -116,6 +116,18 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.professorId]);
 
+  const fetchCourseName = useCallback(async () => {
+    try {
+      const courseResponse = await trpc.courses.get.query({ courseID: review.courseId });
+      const courseDepartment = courseResponse.department;
+      const courseNumber = courseResponse.courseNumber;
+
+      return `${courseDepartment} ${courseNumber}`;
+    } catch (error) {
+      console.error('Error fetching course name:', error);
+    }
+  }, [review.courseId]);
+
   useEffect(() => {
     const getIdentifier = async () => {
       setLoadingIdentifier(true);
@@ -129,8 +141,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
         setIdentifier(profLink);
       } else {
-        const [foundCourseName, foundCourseNumber] = splitCourseId(review.courseId);
-        const courseName = foundCourseName + ' ' + foundCourseNumber;
+        const courseName = await fetchCourseName();
         const profName = await fetchProfName();
         const courseAndProfLink = (
           <div>
@@ -145,7 +156,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [professor, course, review.courseId, review.professorId, fetchProfName]);
+  }, [professor, course, review.courseId, review.professorId, fetchProfName, fetchCourseName]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(

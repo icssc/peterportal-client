@@ -149,11 +149,3 @@ export function pluralize(count: number, pluralText: string = 's', singularText:
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
   return `${course.department} ${course.courseNumber}`;
 }
-
-export function splitCourseId(courseId: string): [string, string] {
-  // splits a course id into its department and number
-  // department can consist of letters, digits, and an optional &
-  // number consists of digits and an optional letter
-  const courseMatch = courseId.match(/^([A-Z]+&?[A-Z0-9]*?)(\d+[A-Z]?)$/i);
-  return courseMatch ? [courseMatch[1], courseMatch[2]] : [courseId, ''];
-}
