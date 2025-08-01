@@ -1,5 +1,5 @@
+'use client';
 import './SearchSidebar.scss';
-
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setShowSearch } from '../../store/slices/roadmapSlice';

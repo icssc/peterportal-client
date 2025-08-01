@@ -23,7 +23,7 @@ const Profile = () => {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [picture, setPicture] = useState('');
+  const [picture, setPicture] = useState<string | undefined>(undefined);
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {

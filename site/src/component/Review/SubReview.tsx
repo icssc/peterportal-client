@@ -1,9 +1,9 @@
+'use client';
 import { FC, useState, ReactNode } from 'react';
 import './SubReview.scss';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import { Link } from 'react-router-dom';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -21,6 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton, Card } from '@mui/material';
+import Link from 'next/link';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -176,7 +177,7 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
       <div className="subreview-header">
         <h3 className="subreview-identifier">
           {professor && (
-            <Link to={{ pathname: `/course/${review.courseId}` }}>
+            <Link href={{ pathname: `/course/${review.courseId}` }}>
               {professor.courses[review.courseId]
                 ? professor.courses[review.courseId]?.department +
                   ' ' +
@@ -185,14 +186,14 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
             </Link>
           )}
           {course && (
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>
+            <Link href={{ pathname: `/professor/${review.professorId}` }}>
               {course.instructors[review.professorId]?.name ?? review.professorId}
             </Link>
           )}
           {!course && !professor && (
             <div>
-              <Link to={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
-              <Link to={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
+              <Link href={{ pathname: `/course/${review.courseId}` }}>{review.courseId}</Link>{' '}
+              <Link href={{ pathname: `/professor/${review.professorId}` }}>{review.professorId}</Link>
             </div>
           )}
         </h3>

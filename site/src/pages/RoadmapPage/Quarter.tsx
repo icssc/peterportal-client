@@ -1,3 +1,4 @@
+'use client';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';

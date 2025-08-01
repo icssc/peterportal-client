@@ -1,3 +1,4 @@
+'use client';
 import { FC, useState, useEffect } from 'react';
 import './RecentOfferingsTable.scss';
 import { QuarterName } from '@peterportal/types';

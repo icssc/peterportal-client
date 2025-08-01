@@ -1,5 +1,6 @@
+'use client';
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+
 import { CSSTransition } from 'react-transition-group';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
@@ -18,12 +19,15 @@ import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const isLoggedIn = useIsLoggedIn();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -42,9 +46,9 @@ const SideBar = () => {
     <div className="sidebar-links">
       <ul>
         <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) => (isActive || location.pathname === '/search/courses' ? 'sidebar-active' : '')}
+          <Link
+            href="/"
+            className={pathname === '/' || pathname === '/search/courses' ? 'sidebar-active' : ''}
             onClick={closeSidebar}
           >
             <div>
@@ -52,12 +56,12 @@ const SideBar = () => {
             </div>
             <span className="full-name">Course Catalog</span>
             <span>Courses</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink
-            to="/search/professors"
-            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+          <Link
+            href="/search/professors"
+            className={pathname === '/search/professors' ? 'sidebar-active' : ''}
             onClick={closeSidebar}
           >
             <div>
@@ -65,27 +69,23 @@ const SideBar = () => {
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink
-            to="/roadmap"
-            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-            onClick={closeSidebar}
-          >
+          <Link href="/roadmap" className={pathname === '/roadmap' ? 'sidebar-active' : ''} onClick={closeSidebar}>
             <div>
               <MapOutlinedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
-          </NavLink>
+          </Link>
         </li>
         {isAdmin && (
           <>
             <li>
-              <NavLink
-                to="/admin/verify"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+              <Link
+                href="/admin/verify"
+                className={pathname === '/admin/verify' ? 'sidebar-active' : ''}
                 onClick={closeSidebar}
               >
                 <div>
@@ -93,12 +93,12 @@ const SideBar = () => {
                 </div>
                 <span className="full-name">Verify Reviews</span>
                 <span>Verification</span>
-              </NavLink>
+              </Link>
             </li>
             <li>
-              <NavLink
-                to="/admin/reports"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+              <Link
+                href="/admin/reports"
+                className={pathname === '/admin/reports' ? 'sidebar-active' : ''}
                 onClick={closeSidebar}
               >
                 <div>
@@ -106,7 +106,7 @@ const SideBar = () => {
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>
-              </NavLink>
+              </Link>
             </li>{' '}
           </>
         )}

@@ -1,7 +1,9 @@
+'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
 import changelogImage from '../../asset/transfer-credits.webp';
+import Image from 'next/image';
 
 const DESCRIPTION = 'Transferred courses are now easier to add, and AP Exams now clear prerequisites!';
 const LAST_UPDATED = '5/16/2025';
@@ -34,7 +36,7 @@ const ChangelogModal = () => {
       </Modal.Header>
 
       <p className="modal-body">{DESCRIPTION}</p>
-      <img className="modal-img" src={changelogImage} alt="Screenshot or gif of new changes" />
+      <Image className="modal-img" src={changelogImage} alt="Screenshot or gif of new changes" />
     </Modal>
   );
 };

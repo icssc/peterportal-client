@@ -1,3 +1,4 @@
+'use client';
 import { FC } from 'react';
 import './Planner.scss';
 import PlannerLoader from './planner/PlannerLoader';

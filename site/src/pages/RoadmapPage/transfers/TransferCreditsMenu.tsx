@@ -1,3 +1,4 @@
+'use client';
 import { FC, useEffect, useRef } from 'react';
 import './TransferCreditsMenu.scss';
 import { CSSTransition } from 'react-transition-group';

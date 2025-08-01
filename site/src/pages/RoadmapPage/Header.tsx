@@ -1,3 +1,4 @@
+'use client';
 import { FC } from 'react';
 import { pluralize } from '../../helpers/util';
 import './Header.scss';

@@ -11,6 +11,7 @@ import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../hooks/transferCredits';
 import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -114,7 +115,7 @@ const ImportZot4PlanPopup: FC = () => {
                 classes into a new roadmap, enter the exact name that you used to save your Zot4Plan schedule (as shown
                 below).
               </p>
-              <img
+              <Image
                 className="w-100"
                 src={helpImage}
                 alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"

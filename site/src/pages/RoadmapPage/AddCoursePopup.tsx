@@ -1,3 +1,4 @@
+'use client';
 import { FC } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';

@@ -1,3 +1,4 @@
+'use client';
 import { FC, useRef, useState } from 'react';
 import './Year.scss';
 import { Button, Modal, Form } from 'react-bootstrap';

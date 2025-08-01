@@ -1,3 +1,4 @@
+'use client';
 import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Theme } from '@peterportal/types';
@@ -6,10 +7,12 @@ import trpc from '../../trpc';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 function isSystemDark() {
+  if (typeof window === 'undefined') return false;
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
 function isLocalUsingSystemTheme() {
+  if (typeof localStorage === 'undefined') return true;
   return localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme');
 }
 
@@ -24,8 +27,11 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
 
-  // Theme styling is controlled by data-theme attribute on body being set to light or dark
-  document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  if (typeof document !== 'undefined') {
+    // Theme styling is controlled by data-theme attribute on body being set to light or dark
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }
+
   /**
    * we run this check at render-time and compare with previous state because a useEffect
    * would cause a flicker for dark mode users on page load since the first render would be without

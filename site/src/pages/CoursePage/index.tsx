@@ -1,3 +1,4 @@
+'use client';
 import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';

@@ -1,3 +1,4 @@
+'use client';
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
