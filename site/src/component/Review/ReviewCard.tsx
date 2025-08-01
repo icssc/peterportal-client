@@ -119,10 +119,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const fetchCourseName = useCallback(async () => {
     try {
       const courseResponse = await trpc.courses.get.query({ courseID: review.courseId });
-      const courseDepartment = courseResponse.department;
-      const courseNumber = courseResponse.courseNumber;
 
-      return `${courseDepartment} ${courseNumber}`;
+      return `${courseResponse.department} ${courseResponse.courseNumber}`;
     } catch (error) {
       console.error('Error fetching course name:', error);
     }
