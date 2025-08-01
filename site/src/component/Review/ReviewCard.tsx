@@ -103,44 +103,53 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
 
-  const fetchProfName = useCallback(async () => {
+  const fetchCourseAndProfName = useCallback(async () => {
+    let profName: string | undefined = undefined;
+    let courseName: string | undefined = undefined;
+
     try {
-      const fullName = (await trpc.professors.get.query({ ucinetid: review.professorId })).name;
-      const nameParts = fullName.split(' ');
+      const profResponse = await trpc.professors.get.query({ ucinetid: review.professorId });
+      const nameParts = profResponse.name.split(' ');
       const profInitial = nameParts[0][0] + '.';
       const profLastName = nameParts[nameParts.length - 1];
+      profName = `${profInitial} ${profLastName}`;
 
-      return `${profInitial} ${profLastName}`;
+      const matchedCourse = profResponse.courses.find((c) => c.id === review.courseId);
+
+      // first, try to match a course name using the professor's API course array. otherwise, lookup the course separately.
+      if (matchedCourse) {
+        courseName = `${matchedCourse.department} ${matchedCourse.courseNumber}`;
+      } else {
+        try {
+          const courseResponse = await trpc.courses.get.query({ courseID: review.courseId });
+          courseName = `${courseResponse.department} ${courseResponse.courseNumber}`;
+        } catch (error) {
+          console.error('Error fetching course name: ', error);
+        }
+      }
+      return { courseName, profName };
     } catch (error) {
-      console.error('Error fetching professor name:', error);
+      console.error('Error fetching professor or course name:', error);
     }
-  }, [review.professorId]);
-
-  const fetchCourseName = useCallback(async () => {
-    try {
-      const courseResponse = await trpc.courses.get.query({ courseID: review.courseId });
-
-      return `${courseResponse.department} ${courseResponse.courseNumber}`;
-    } catch (error) {
-      console.error('Error fetching course name:', error);
-    }
-  }, [review.courseId]);
+  }, [review.professorId, review.courseId]);
 
   useEffect(() => {
     const getIdentifier = async () => {
       setLoadingIdentifier(true);
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
-        const courseName = foundCourse ? foundCourse.department + ' ' + foundCourse.courseNumber : review.courseId;
+        const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
         setIdentifier(courseLink);
       } else if (course) {
-        const profName = course.instructors[review.professorId]?.name;
+        const foundProf = course.instructors[review.professorId];
+        const profName = foundProf ? `${foundProf.name}` : review.professorId;
         const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
         setIdentifier(profLink);
       } else {
-        const courseName = await fetchCourseName();
-        const profName = await fetchProfName();
+        const foundCourseAndProfName = await fetchCourseAndProfName();
+        const courseName = foundCourseAndProfName?.courseName ?? review.courseId;
+        const profName = foundCourseAndProfName?.profName ?? review.professorId;
         const courseAndProfLink = (
           <div>
             <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
@@ -154,7 +163,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [professor, course, review.courseId, review.professorId, fetchProfName, fetchCourseName]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
