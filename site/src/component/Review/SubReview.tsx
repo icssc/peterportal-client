@@ -156,13 +156,13 @@ const SubReview: FC<SubReviewProps> = ({ review, course, professor, children }) 
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
-      <Badge variant="primary">Verified</Badge>
+      <Badge bg="primary">Verified</Badge>
     </OverlayTrigger>
   );
 
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
-      <Badge variant="success" style={{ padding: '1px' }}>
+      <Badge bg="success" style={{ padding: '1px' }}>
         <PersonIcon />
       </Badge>
     </OverlayTrigger>

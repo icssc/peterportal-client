@@ -10,7 +10,7 @@ interface NoResultsProps {
 const NoResults: FC<NoResultsProps> = ({ showPrompt, prompt }) => {
   return (
     <div className="no-results">
-      <Image src={noResultsImg} alt="No results found" />
+      <Image src={noResultsImg.src} width={noResultsImg.width} height={noResultsImg.height} alt="No results found" />
       {showPrompt ? prompt : "Sorry, we couldn't find any results for that search!"}
     </div>
   );

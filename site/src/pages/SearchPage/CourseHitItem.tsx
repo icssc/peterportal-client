@@ -1,3 +1,4 @@
+'use client';
 import { FC } from 'react';
 import './HitItem.scss';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -70,7 +71,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
         <div className="hit-lower">
           <div className="hit-badges">
             {pillData.map((pill, i) => (
-              <Badge key={`course-hit-item-pill-${i}`} pill className="badge" variant="info">
+              <Badge key={`course-hit-item-pill-${i}`} pill className="badge" bg="info">
                 {pill}
               </Badge>
             ))}

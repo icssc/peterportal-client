@@ -36,7 +36,13 @@ const ChangelogModal = () => {
       </Modal.Header>
 
       <p className="modal-body">{DESCRIPTION}</p>
-      <Image className="modal-img" src={changelogImage} alt="Screenshot or gif of new changes" />
+      <Image
+        className="modal-img"
+        src={changelogImage.src}
+        width={changelogImage.width}
+        height={changelogImage.height}
+        alt="Screenshot or gif of new changes"
+      />
     </Modal>
   );
 };

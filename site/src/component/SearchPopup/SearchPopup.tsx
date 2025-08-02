@@ -42,7 +42,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     return (
       <div className="side-panel search-popup">
         <div className="search-popup-missing">
-          <Image style={{ width: '80%' }} src={searching} alt="searching" />
+          <Image alt="searching" src={searching.src} width={searching.width} height={searching.height} />
           <p>Click on a {props.searchType} card to view more information!</p>
         </div>
       </div>

@@ -10,7 +10,7 @@ interface ErrorProps {
 const Error: FC<ErrorProps> = (props) => {
   return (
     <div className="error">
-      <Image src={noResultsImg} alt="no results" />
+      <Image src={noResultsImg.src} width={noResultsImg.width} height={noResultsImg.height} alt="no results" />
       <h1>404 PAGE NOT FOUND</h1>
       <h2>{props.message}</h2>
     </div>

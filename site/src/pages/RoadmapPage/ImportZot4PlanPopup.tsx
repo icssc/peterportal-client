@@ -1,16 +1,17 @@
+'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../store/slices/roadmapSlice.ts';
+import { useAppDispatch, useAppSelector } from '../../store/hooks.ts';
 import trpc from '../../trpc.ts';
-import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner';
-import { markTransfersAsUnread } from '../../helpers/transferCredits';
-import spawnToast from '../../helpers/toastify';
+import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../helpers/planner.ts';
+import { markTransfersAsUnread } from '../../helpers/transferCredits.ts';
+import spawnToast from '../../helpers/toastify.ts';
 import helpImage from '../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn.ts';
-import { useTransferredCredits } from '../../hooks/transferCredits';
-import { setUserAPExams } from '../../store/slices/transferCreditsSlice';
+import { useTransferredCredits } from '../../hooks/transferCredits.ts';
+import { setUserAPExams } from '../../store/slices/transferCreditsSlice.ts';
 import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
@@ -117,7 +118,9 @@ const ImportZot4PlanPopup: FC = () => {
               </p>
               <Image
                 className="w-100"
-                src={helpImage}
+                src={helpImage.src}
+                width={helpImage.width}
+                height={helpImage.height}
                 alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"
               />
             </Form.Group>
