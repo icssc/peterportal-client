@@ -1,10 +1,9 @@
-import { FC } from 'react';
 import CoursePage from '../../../pages/CoursePage';
 
 interface CoursePageParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
-const Page: FC<CoursePageParams> = ({ params }) => {
-  return <CoursePage courseId={decodeURIComponent(params.id)} />;
+const Page = async ({ params }: CoursePageParams) => {
+  return <CoursePage courseId={decodeURIComponent((await params).id)} />;
 };
 export default Page;

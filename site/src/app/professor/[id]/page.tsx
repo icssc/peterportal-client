@@ -1,10 +1,9 @@
-import { FC } from 'react';
 import ProfessorPage from '../../../pages/ProfessorPage';
 
 interface ProfessorPageParams {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
-const Page: FC<ProfessorPageParams> = ({ params }) => {
-  return <ProfessorPage netid={decodeURIComponent(params.id)} />;
+const Page = async ({ params }: ProfessorPageParams) => {
+  return <ProfessorPage netid={decodeURIComponent((await params).id)} />;
 };
 export default Page;
