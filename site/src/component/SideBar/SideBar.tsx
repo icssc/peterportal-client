@@ -1,9 +1,10 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { CSSTransition } from 'react-transition-group';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
+import Image from 'next/image';
 
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
@@ -28,6 +29,8 @@ const SideBar = () => {
   const isLoggedIn = useIsLoggedIn();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
+  const sidebarRef = useRef(null);
+  const overlayRef = useRef(null);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -117,14 +120,14 @@ const SideBar = () => {
   return (
     <>
       <div className="sidebar mini">{links}</div>
-      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        <UIOverlay zIndex={399} onClick={closeSidebar}></UIOverlay>
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit nodeRef={overlayRef}>
+        <UIOverlay zIndex={399} onClick={closeSidebar} ref={overlayRef}></UIOverlay>
       </CSSTransition>
-      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        <div className="sidebar">
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit nodeRef={sidebarRef}>
+        <div className="sidebar" ref={sidebarRef}>
           {/* Close Button */}
           <div className="button-container">
-            <img alt="PeterPortal" src={Logo} height="32" />
+            <Image alt="PeterPortal" src={Logo} height="32" />
             <IconButton onClick={closeSidebar} className="sidebar-close">
               <CloseIcon />
             </IconButton>

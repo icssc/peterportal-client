@@ -3,7 +3,7 @@ import './SearchSidebar.scss';
 import { useIsMobile } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
-import { useEffect, useRef } from 'react';
+import { Ref, useEffect, useRef } from 'react';
 import UIOverlay from '../../component/UIOverlay/UIOverlay';
 
 import { useNamedAcademicTerm } from '../../hooks/namedAcademicTerm';
@@ -34,13 +34,12 @@ const CloseRoadmapSearchButton = () => {
   );
 };
 
-const SearchSidebar = () => {
+const SearchSidebar = ({ sidebarRef }: { sidebarRef: Ref<HTMLDivElement> }) => {
   const isMobile = useIsMobile();
   const isLoggedIn = useIsLoggedIn();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
   const closeSearch = () => dispatch(setShowSearch({ show: false }));
@@ -55,13 +54,12 @@ const SearchSidebar = () => {
   // Patch applying class names when a transition is triggered
   useEffect(() => {
     if (!isMobile) return;
-    sidebarRef.current?.classList.toggle('enter-done', showSearch);
     overlayRef.current?.classList.toggle('enter-done', showSearch);
   }, [isMobile, showSearch]);
 
   return (
     <>
-      {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} passedRef={overlayRef} />}
+      {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} ref={overlayRef} />}
       <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
         <RequirementsListSelector />
 

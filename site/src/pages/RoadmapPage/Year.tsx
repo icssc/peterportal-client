@@ -14,7 +14,6 @@ import { Card, Collapse, Divider, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../component/ExpandMore/ExpandMore';
-import { CSSTransition } from 'react-transition-group';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -72,23 +71,21 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
   };
 
   return (
-    <CSSTransition in={show} timeout={500} unmountOnExit>
-      <Modal show={show} onHide={() => setShow(false)} centered className="ppc-modal">
-        <Modal.Header closeButton>
-          <h2>Delete Year</h2>
-        </Modal.Header>
-        <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
-            <Form.Group>
-              <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
-            </Form.Group>
-          </Form>
-          <Button variant="danger" onClick={handleDeleteYear}>
-            I am sure
-          </Button>
-        </Modal.Body>
-      </Modal>
-    </CSSTransition>
+    <Modal show={show} onHide={() => setShow(false)} centered className="ppc-modal">
+      <Modal.Header closeButton>
+        <h2>Delete Year</h2>
+      </Modal.Header>
+      <Modal.Body>
+        <Form noValidate className="ppc-modal-form">
+          <Form.Group>
+            <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
+          </Form.Group>
+        </Form>
+        <Button variant="danger" onClick={handleDeleteYear}>
+          I am sure
+        </Button>
+      </Modal.Body>
+    </Modal>
   );
 };
 

@@ -1,5 +1,5 @@
 'use client';
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import './index.scss';
 import Planner from './Planner';
 import SearchSidebar from './SearchSidebar';
@@ -12,6 +12,7 @@ import TransferCreditsMenu from './transfers/TransferCreditsMenu';
 const RoadmapPage: FC = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
+  const sidebarRef = useRef(null);
 
   return (
     <>
@@ -20,8 +21,8 @@ const RoadmapPage: FC = () => {
         <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
           <Planner />
         </div>
-        <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit>
-          <SearchSidebar />
+        <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
+          <SearchSidebar sidebarRef={sidebarRef} />
         </CSSTransition>
         {isMobile && <TransferCreditsMenu />}
       </div>
