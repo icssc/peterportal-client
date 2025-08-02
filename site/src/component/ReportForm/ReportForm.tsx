@@ -53,7 +53,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
             <i>{props.reviewContent}</i>
           </p>
 
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label>Why are you reporting this review?</Form.Label>
             <Form.Control
               as="textarea"

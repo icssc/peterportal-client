@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useNavigate } from 'react-router-dom';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import Badge from 'react-bootstrap/Badge';
 
@@ -13,12 +12,13 @@ import { useSavedCourses } from '../../hooks/savedCourses';
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { useRouter } from 'next/navigation';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
   const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
@@ -32,7 +32,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     // if click on a course that is already in popup
     // or if on mobile
     if ((activeCourse && props.id == activeCourse.id) || isMobile) {
-      navigate(`/course/${props.id}`);
+      router.push(`/course/${props.id}`);
     }
   };
 

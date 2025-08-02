@@ -205,7 +205,7 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form noValidate className="ppc-modal-form">
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
               <Form.Control
                 required
@@ -248,7 +248,7 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form noValidate className="ppc-modal-form">
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
               <Form.Control
                 required
@@ -291,7 +291,7 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form noValidate className="ppc-modal-form">
-            <Form.Group>
+            <Form.Group className="form-group">
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>

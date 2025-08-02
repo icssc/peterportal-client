@@ -106,7 +106,7 @@ const ImportZot4PlanPopup: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form className="ppc-modal-form">
-            <Form.Group>
+            <Form.Group className="form-group">
               <p>
                 To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
@@ -121,7 +121,7 @@ const ImportZot4PlanPopup: FC = () => {
                 alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"
               />
             </Form.Group>
-            <Form.Group controlId="ScheduleName">
+            <Form.Group className="form-group" controlId="ScheduleName">
               <Form.Label className="ppc-modal-form-label">Schedule Name</Form.Label>
               <Form.Control
                 type="text"
@@ -141,7 +141,7 @@ const ImportZot4PlanPopup: FC = () => {
                 </span>
               )}
             </Form.Group>
-            <Form.Group controlId="CurrentYear">
+            <Form.Group className="form-group" controlId="CurrentYear">
               <Form.Label className="ppc-modal-form-label">I am currently a...</Form.Label>
               <Form.Control as="select" onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
                 <option value="1" selected>

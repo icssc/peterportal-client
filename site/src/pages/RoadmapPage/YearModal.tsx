@@ -76,7 +76,7 @@ const YearModal: FC<YearModalProps> = (props) => {
       </Modal.Header>
       <Modal.Body>
         <Form noValidate validated={validated} className="ppc-modal-form">
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label className="ppc-modal-form-label">Name</Form.Label>
             <Form.Control
               required
@@ -94,7 +94,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               placeholder={placeholderName}
             ></Form.Control>
           </Form.Group>
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label className="ppc-modal-form-label">Start Year</Form.Label>
             <Form.Control
               required
@@ -115,7 +115,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               placeholder={placeholderYear.toString()}
             ></Form.Control>
           </Form.Group>
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label>Include Quarters</Form.Label>
             {quarterCheckboxes}
           </Form.Group>

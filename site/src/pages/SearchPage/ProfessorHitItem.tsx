@@ -1,17 +1,18 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setProfessor } from '../../store/slices/popupSlice';
 
 import { ProfessorGQLData } from '../../types/types';
 import { useIsMobile } from '../../helpers/util';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const isMobile = useIsMobile();
   const activeProfessor = useAppSelector((state) => state.popup.professor);
 
@@ -22,7 +23,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     // if click on a professor that is already in popup
     // or if on mobile
     if ((activeProfessor && props.ucinetid == activeProfessor.ucinetid) || isMobile) {
-      navigate(`/professor/${props.ucinetid}`);
+      router.push(`/professor/${props.ucinetid}`);
     }
   };
 
@@ -59,7 +60,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <Link to={'/course/' + item.replace(/\s+/g, '')} onClick={(e) => e.stopPropagation()}>
+                  <Link href={'/course/' + item.replace(/\s+/g, '')} onClick={(e) => e.stopPropagation()}>
                     {item}
                   </Link>
                 </span>

@@ -207,7 +207,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in course context, select a professor
   const professorSelect = courseProp && (
-    <Form.Group>
+    <Form.Group className="form-group">
       <Form.Label>Professor</Form.Label>
       <Form.Control
         as="select"
@@ -242,7 +242,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in professor context, select a course
   const courseSelect = professorProp && (
-    <Form.Group>
+    <Form.Group className="form-group">
       <Form.Label>Course Taken</Form.Label>
       <Form.Control
         as="select"
@@ -295,7 +295,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
         <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Year</Form.Label>
               <Form.Control
                 as="select"
@@ -317,7 +317,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               </Form.Control>
               <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Quarter</Form.Label>
               <Form.Control
                 as="select"
@@ -345,7 +345,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           {courseSelect}
 
           <div className="grade-difficulty-row">
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Grade</Form.Label>
               <Form.Control
                 as="select"
@@ -366,7 +366,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Difficulty</Form.Label>
               <Form.Control
                 as="select"
@@ -388,12 +388,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </Form.Group>
           </div>
 
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label className="ppc-modal-form-label">Rating</Form.Label>
             <StarRating rating={rating} setRating={setRating} />
           </Form.Group>
 
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label className="ppc-modal-form-label">Course Details</Form.Label>
             <Form.Check
               type="checkbox"
@@ -418,7 +418,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Label className="ppc-modal-form-label">Tags</Form.Label>
             <Select
               isMulti
@@ -443,7 +443,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </Form.Group>
 
-          <Form.Group className="additional-details">
+          <Form.Group className="form-group additional-details">
             <Form.Label className="ppc-modal-form-label">Additional Details</Form.Label>
             <Form.Control
               as="textarea"
@@ -464,7 +464,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </div>
           )}
 
-          <Form.Group>
+          <Form.Group className="form-group">
             <Form.Check
               type="checkbox"
               id="anonymous"

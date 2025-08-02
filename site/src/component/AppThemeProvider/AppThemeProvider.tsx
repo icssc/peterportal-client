@@ -41,6 +41,10 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
     setPrevDarkMode(darkMode);
   }
 
+  useEffect(() => {
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   /**
    * Sets the theme state and saves the users theme preference.
    * Saves to account if logged in, local storage if not

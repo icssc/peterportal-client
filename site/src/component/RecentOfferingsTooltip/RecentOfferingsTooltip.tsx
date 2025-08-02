@@ -23,7 +23,7 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   if (prevOfferings.length === 0) prevOfferings.push('❌');
 
   const popover = (
-    <Popover id="recent-offerings-popover" className="recent-offerings-popover">
+    <Popover id="recent-offerings-popover" className="ppc-popover recent-offerings-popover">
       <div className="popover-body">
         <RecentOfferingsTable terms={terms} size="thin" />
       </div>

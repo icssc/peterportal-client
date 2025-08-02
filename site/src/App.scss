@@ -4,6 +4,13 @@ button {
   color: inherit;
 }
 
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .app-body {
   display: flex;
   height: calc(100% - 72px);
@@ -244,8 +251,13 @@ button {
     .form-check {
       padding-block: 2px;
       align-items: center;
+      margin-bottom: 0;
+      > input.form-check-input {
+        float: none;
+        margin-right: 0;
+      }
       .form-check-label {
-        margin-left: 12px;
+        margin-left: 10px;
       }
     }
     input[type='file'] {
@@ -263,6 +275,12 @@ button {
   button.btn-primary {
     border-color: var(--blue-primary);
     background-color: var(--blue-primary);
+  }
+
+  [data-theme='dark'] & .btn-close {
+    opacity: 1;
+    filter: invert(1) hue-rotate(180deg);
+    -webkit-filter: invert(1) hue-rotate(180deg);
   }
 }
 
@@ -395,6 +413,14 @@ button {
   display: flex;
   margin: 20px;
   justify-content: center;
+}
+
+// revert styles that bootstrap decided to override for SOME reason
+body hr {
+  opacity: 1;
+}
+.form-group {
+  margin-bottom: 16px;
 }
 
 // monkey patch for recaptcha border bug

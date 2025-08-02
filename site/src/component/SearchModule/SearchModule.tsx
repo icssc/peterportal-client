@@ -94,7 +94,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   return (
     <div className="search-module">
-      <Form.Group>
+      <Form.Group className="form-group">
         <InputGroup>
           <Form.Control
             className="search-bar"

@@ -77,7 +77,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
       </Modal.Header>
       <Modal.Body>
         <Form noValidate className="ppc-modal-form">
-          <Form.Group>
+          <Form.Group className="form-group">
             <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
           </Form.Group>
         </Form>

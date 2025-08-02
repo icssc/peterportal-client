@@ -278,7 +278,7 @@ const ImportTranscriptPopup: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form className="ppc-modal-form">
-            <Form.Group>
+            <Form.Group className="form-group">
               Please upload an HTML copy of your unofficial transcript. To obtain this:
               <ol>
                 <li>
@@ -291,7 +291,7 @@ const ImportTranscriptPopup: FC = () => {
                 <li>Save the page (ctrl/cmd + s)</li>
               </ol>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Transcript File</Form.Label>
               <Form.Control
                 required
