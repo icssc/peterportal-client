@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import './CoursePopover.scss';
-import Popover from 'react-bootstrap/Popover';
 import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
@@ -25,9 +24,9 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
 
   if (typeof course === 'string') {
     return (
-      <Popover.Content className="course-popover">
+      <div className="popover-body course-popover">
         <LoadingSpinner />
-      </Popover.Content>
+      </div>
     );
   }
 
@@ -35,7 +34,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
-    <Popover.Content className="course-popover">
+    <div className="popover-body course-popover">
       <div className="popover-name">
         {department + ' ' + courseNumber + ' '}
         <span className="popover-units">
@@ -50,7 +49,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
-    </Popover.Content>
+    </div>
   );
 };
 

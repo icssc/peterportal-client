@@ -24,9 +24,9 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
 
   const popover = (
     <Popover id="recent-offerings-popover" className="recent-offerings-popover">
-      <Popover.Content>
+      <div className="popover-body">
         <RecentOfferingsTable terms={terms} size="thin" />
-      </Popover.Content>
+      </div>
     </Popover>
   );
 

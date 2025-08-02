@@ -32,6 +32,7 @@ export const getChartTheme = (darkMode: boolean): Theme => {
 };
 
 export const getCssVariable = (name: string): string => {
+  if (typeof document === 'undefined') return '';
   const bodyStyles = getComputedStyle(document.body);
   const valueFromBody = bodyStyles.getPropertyValue(name).trim();
   return valueFromBody;
