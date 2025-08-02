@@ -14,6 +14,7 @@ import SideBar from '../component/SideBar/SideBar';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   description:
@@ -38,7 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AppHeader />
             <div className="app-body">
               <SideBar />
-              <div className="app-content">{children}</div>
+              <div className="app-content">
+                <Suspense fallback={<p>aslkdjkasjhdahs</p>}>{children}</Suspense>
+              </div>
               <ChangelogModal />
             </div>
           </div>

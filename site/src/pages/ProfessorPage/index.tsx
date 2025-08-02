@@ -1,6 +1,5 @@
 'use client';
 import { FC, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
@@ -14,8 +13,11 @@ import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
-const ProfessorPage: FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface ProfessorPageProps {
+  netid: string;
+}
+
+const ProfessorPage: FC<ProfessorPageProps> = ({ netid: id }) => {
   const dispatch = useAppDispatch();
   const professorGQLData = useAppSelector((state) => state.popup.professor);
   const [error, setError] = useState('');

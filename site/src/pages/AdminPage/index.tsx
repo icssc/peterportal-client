@@ -1,13 +1,13 @@
+'use client';
 import { FC, useEffect, useState } from 'react';
 import Reports from './Reports/Reports';
 import Verify from './Verify/Verify';
 import Error from '../../component/Error/Error';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
-import { useLocation } from 'react-router-dom';
 import trpc from '../../trpc';
+import { AdminTab } from '@peterportal/types';
 
-const AdminPage: FC = () => {
-  const location = useLocation();
+const AdminPage: FC<{ activeTab: AdminTab }> = ({ activeTab }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [authorized, setAuthorized] = useState<boolean>(false);
 
@@ -24,9 +24,9 @@ const AdminPage: FC = () => {
   } else if (!authorized) {
     return <Error message="Access Denied: You are not authorized to view this page."></Error>;
   } else {
-    if (location.pathname.includes('reports')) {
+    if (activeTab === 'reports') {
       return <Reports />;
-    } else if (location.pathname.includes('verify')) {
+    } else if (activeTab === 'verify') {
       return <Verify />;
     }
   }

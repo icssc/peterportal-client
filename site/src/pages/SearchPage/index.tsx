@@ -1,6 +1,5 @@
 'use client';
 import { FC, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import './SearchPage.scss';
 import 'react-multi-carousel/lib/styles.css';
 import CoursePopup from './CoursePopup';
@@ -12,9 +11,7 @@ import ProfessorHitItem from './ProfessorHitItem';
 
 import { SearchIndex } from '../../types/types';
 
-const SearchPage: FC = () => {
-  const { index = 'courses' } = useParams<{ index: SearchIndex }>();
-
+const SearchPage: FC<{ index: SearchIndex }> = ({ index }) => {
   useEffect(() => {
     document.title = `${index === 'courses' ? 'Courses' : 'Professors'} | PeterPortal`;
   }, [index]);

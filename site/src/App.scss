@@ -397,11 +397,10 @@ a {
   }
 }
 
-.badge-pill {
+.badge.rounded-pill {
   padding: 6px 10px;
-  margin-right: 10px;
   font-size: 12px;
-  background-color: var(--blue-primary);
+  background-color: var(--blue-primary) !important; // override bootstrap important
 }
 
 .table-wrapper {

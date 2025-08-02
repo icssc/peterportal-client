@@ -23,6 +23,11 @@
     margin-block: 0 2px;
     font-weight: bold;
   }
+
+  .hit-badges {
+    display: flex;
+    gap: 8px;
+  }
 }
 
 .course-hit {

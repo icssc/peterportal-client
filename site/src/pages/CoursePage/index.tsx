@@ -1,6 +1,5 @@
 'use client';
 import { FC, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
@@ -15,8 +14,11 @@ import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
-const CoursePage: FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface CoursePageProps {
+  courseId: string;
+}
+
+const CoursePage: FC<CoursePageProps> = ({ courseId: id }) => {
   const dispatch = useAppDispatch();
   const courseGQLData = useAppSelector((state) => state.popup.course);
   const [error, setError] = useState('');
