@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import SubReview from '../../../component/Review/SubReview';
+import ReviewCard from '../../../component/Review/ReviewCard';
 import { Button } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CheckIcon from '@mui/icons-material/Check';
@@ -14,7 +14,7 @@ interface UnverifiedReviewProps {
 
 const UnverifiedReview: FC<UnverifiedReviewProps> = ({ review, onDelete, onVerify }) => {
   return (
-    <SubReview review={review}>
+    <ReviewCard review={review}>
       <div className="verification-buttons">
         <Button className="ppc-mui-button" variant="text" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
           Delete
@@ -23,7 +23,7 @@ const UnverifiedReview: FC<UnverifiedReviewProps> = ({ review, onDelete, onVerif
           Verify
         </Button>
       </div>
-    </SubReview>
+    </ReviewCard>
   );
 };
 
