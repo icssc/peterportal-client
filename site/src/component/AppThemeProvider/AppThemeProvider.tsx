@@ -1,57 +1,37 @@
 'use client';
-import { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Theme } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
-import { createTheme, ThemeProvider } from '@mui/material';
-
-function isSystemDark() {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-function isLocalUsingSystemTheme() {
-  if (typeof localStorage === 'undefined') return true;
-  return localStorage.getItem('theme') === 'system' || !localStorage.getItem('theme');
-}
+import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material';
 
 const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const isLoggedIn = useIsLoggedIn();
+  const isSystemDark = useMediaQuery('(prefers-color-scheme: dark)');
 
   // default darkMode to local or system preferences
-  const [usingSystemTheme, setUsingSystemTheme] = useState(isLocalUsingSystemTheme());
-  const [darkMode, setDarkMode] = useState(
-    usingSystemTheme ? isSystemDark() : localStorage.getItem('theme') === 'dark',
-  );
+  /** @todo see if there's a way to make it so loading on first render (via localStorage) doesn't get overridden */
+  const [themePreference, setThemePreference] = useState<Theme | null>(null);
+  const [darkMode, setDarkMode] = useState(isSystemDark);
 
-  const [prevDarkMode, setPrevDarkMode] = useState(false); // light theme is default on page load
-
-  if (typeof document !== 'undefined') {
-    // Theme styling is controlled by data-theme attribute on body being set to light or dark
-    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  }
-
-  /**
-   * we run this check at render-time and compare with previous state because a useEffect
-   * would cause a flicker for dark mode users on page load since the first render would be without
-   * the data-theme property set (light would be used by default)
-   */
-  if (darkMode != prevDarkMode) {
-    setPrevDarkMode(darkMode);
-  }
+  // either preferences or system change can trigger a recomputation of whether we are in dark mode
+  useEffect(() => {
+    const fallbackToSystem = !themePreference || themePreference === 'system';
+    setDarkMode(fallbackToSystem ? isSystemDark : themePreference === 'dark');
+  }, [themePreference, isSystemDark]);
 
   useEffect(() => {
+    // Theme styling is controlled by data-theme attribute on body being set to light or dark
     document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   /**
-   * Sets the theme state and saves the users theme preference.
-   * Saves to account if logged in, local storage if not
+   * Sets and stores the new theme preference
    * @param theme
    */
   const setTheme = (theme: Theme) => {
-    setThemeState(theme);
+    setThemePreference(theme);
     if (isLoggedIn) {
       trpc.users.setTheme.mutate({ theme });
     } else {
@@ -59,40 +39,21 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  /**
-   * Sets the theme state
-   * @param theme
-   */
-  const setThemeState = useCallback((theme: Theme) => {
-    if (theme === 'system') {
-      setDarkMode(isSystemDark());
-      setUsingSystemTheme(true);
-    } else {
-      setDarkMode(theme === 'dark');
-      setUsingSystemTheme(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const setSystemTheme = () => setThemeState('system');
-    const matcher = window.matchMedia('(prefers-color-scheme: dark)');
-
-    if (usingSystemTheme) matcher.addEventListener('change', setSystemTheme);
-    return () => matcher.removeEventListener('change', setSystemTheme);
-  }, [setThemeState, usingSystemTheme]);
-
   useEffect(() => {
     // if logged in, load user theme from db
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      setThemePreference((localStorage.getItem('theme') ?? null) as Theme | null);
+      return;
+    }
     trpc.users.get.query().then((res) => {
-      if (res.theme) setThemeState(res.theme);
+      if (res.theme) setThemePreference(res.theme);
     });
-  }, [isLoggedIn, setThemeState]);
+  }, [isLoggedIn, setThemePreference]);
 
   const muiTheme = createTheme({ palette: { mode: darkMode ? 'dark' : 'light' } });
 
   return (
-    <ThemeContext.Provider value={{ darkMode, usingSystemTheme, setTheme }}>
+    <ThemeContext.Provider value={{ darkMode, usingSystemTheme: themePreference === 'system', setTheme }}>
       <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
     </ThemeContext.Provider>
   );
