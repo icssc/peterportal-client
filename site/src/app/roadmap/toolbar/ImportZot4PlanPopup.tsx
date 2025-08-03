@@ -117,7 +117,6 @@ const ImportZot4PlanPopup: FC = () => {
                 below).
               </p>
               <Image
-                className="w-100"
                 src={helpImage.src}
                 width={helpImage.width}
                 height={helpImage.height}

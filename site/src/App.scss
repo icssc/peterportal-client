@@ -263,6 +263,10 @@ a {
     input[type='file'] {
       font-size: 16px;
     }
+    > img {
+      width: 100%;
+      height: auto;
+    }
   }
 
   .form-control {
