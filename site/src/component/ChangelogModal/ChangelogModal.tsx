@@ -28,7 +28,7 @@ const ChangelogModal = () => {
   };
 
   return (
-    <Modal className="changelog-modal" show={showModal} centered onHide={closeModal}>
+    <Modal className="ppc-modal changelog-modal" show={showModal} centered onHide={closeModal}>
       <Modal.Header closeButton>
         <h2>
           What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}

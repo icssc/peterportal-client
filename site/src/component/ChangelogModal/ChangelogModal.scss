@@ -1,16 +1,8 @@
 @use '../../globals';
 
 .changelog-modal {
-  .modal-content {
-    border: none;
-    background-color: var(--overlay2);
-    padding: 4px 8px 8px;
-  }
-
-  .modal-header {
-    align-items: center;
-    border-bottom: none;
-    padding-bottom: 0;
+  .modal-dialog {
+    max-width: 500px;
   }
 
   h2 {
@@ -31,10 +23,6 @@
     max-width: 70vw;
     max-height: 50vh;
     object-fit: contain;
-  }
-
-  button.close {
-    font-size: 32px;
   }
 
   @media only screen and (max-width: globals.$mobile-cutoff) {
