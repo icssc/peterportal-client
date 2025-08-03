@@ -28,6 +28,6 @@
     /* Next.js */
     "plugins": [{ "name": "next" }]
   },
-  "include": ["src/", "./dist/types/**/*.ts", "./next-env.d.ts"],
+  "include": [".next/types/**/*.ts", "./next-env.d.ts", "src/"],
   "exclude": ["./node_modules"]
 }

@@ -15,10 +15,10 @@ function getDomainConfig() {
   } else {
     throw new Error('Invalid stage');
   }
-  return { domainName, domainRedirects };
+  return { name: domainName, redirects: domainRedirects };
 }
 
-function createLambdaFunction() {
+function createTrpcLambdaFunction() {
   const environment = {
     DATABASE_URL: process.env.DATABASE_URL!,
     SESSION_SECRET: process.env.SESSION_SECRET!,
@@ -94,47 +94,67 @@ function createApiOrigin(lambdaFunction: sst.aws.Function): aws.types.input.clou
   };
 }
 
-function createStaticSite(
-  domainName: string,
-  domainRedirects: string[] | undefined,
+enum AWSPolicyId {
+  // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
+  CachingDisabled = '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
+  // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
+  AllViewerExceptHostHeader = 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
+}
+
+/**
+ * Creates a CloudFront cache behavior to prevent caching of API requests, forward the host header
+ * (used for clients logging in from staging domains since OAUTH urls cannot be added programmatically),
+ * and redirect the traffic to be handled by the tRPC handler
+ * @param apiOrigin The Origin serving the tRPC API routes
+ * @param cloudfrontInjectionFunction The Cloudfront function used to inject headers into API requests,
+ * used to add referer headers to logins
+ * @returns The behavior to apply to all `/api/*` routes
+ */
+function createApiCFCacheBehavior(
   apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
   cloudfrontInjectionFunction: aws.cloudfront.Function,
 ) {
-  return new sst.aws.StaticSite('PeterPortal Site', {
-    domain: {
-      name: domainName,
-      redirects: domainRedirects,
+  const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
+    pathPattern: '/api/*',
+    allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
+    cachedMethods: ['GET', 'HEAD'],
+    targetOriginId: apiOrigin.originId,
+    viewerProtocolPolicy: 'https-only',
+    cachePolicyId: AWSPolicyId.CachingDisabled,
+    originRequestPolicyId: AWSPolicyId.AllViewerExceptHostHeader,
+    functionAssociations: [
+      {
+        eventType: 'viewer-request',
+        functionArn: cloudfrontInjectionFunction.arn,
+      },
+    ],
+  };
+  return behavior;
+}
+
+function createNextJsApplication(
+  apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
+  apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
+) {
+  // The Nextjs Site Name must not have spaces; unlike static sites, this name
+  // gets prepended in CreatePolicy, so it must meet these requirements:
+  // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
+  return new sst.aws.Nextjs('PeterPortal-Site', {
+    environment: {
+      NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
+      NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
     },
+    domain: getDomainConfig(),
     path: './site',
-    build: {
-      command: 'pnpm build',
-      output: 'dist',
-    },
     transform: {
       cdn: (args) => {
-        args.origins = $output(args.origins).apply((origins) => [...origins, apiOrigin]);
-        args.orderedCacheBehaviors = [
-          {
-            pathPattern: '/api/*',
-            allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
-            cachedMethods: ['GET', 'HEAD'],
-            targetOriginId: apiOrigin.originId,
-            viewerProtocolPolicy: 'https-only',
-            cachePolicyId: '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled policy: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
-            originRequestPolicyId: 'b689b0a8-53d0-40ab-baf2-68738e2966ac', // all viewer except host header policy: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
-            functionAssociations: [
-              {
-                eventType: 'viewer-request',
-                functionArn: cloudfrontInjectionFunction.arn,
-              },
-            ],
-          },
-        ];
+        args.origins = $output(args.origins).apply((origins) => [apiOrigin, ...origins]);
+
+        args.orderedCacheBehaviors = $output(args.orderedCacheBehaviors).apply((behaviors) => [
+          apiCacheBehavior,
+          ...(behaviors ?? []),
+        ]);
       },
-    },
-    environment: {
-      VITE_PUBLIC_POSTHOG_KEY: process.env.VITE_PUBLIC_POSTHOG_KEY!,
-      VITE_PUBLIC_POSTHOG_HOST: process.env.VITE_PUBLIC_POSTHOG_HOST!,
     },
   });
 }
@@ -145,21 +165,17 @@ export default $config({
       name: 'peterportal-client',
       removal: input?.stage === 'prod' ? 'retain' : 'remove',
       home: 'aws',
-      providers: {
-        aws: {
-          region: 'us-west-1',
-        },
-      },
+      providers: { aws: { region: 'us-west-1' } },
     };
   },
 
   async run() {
-    const { domainName, domainRedirects } = getDomainConfig();
-    const lambdaFunction = createLambdaFunction();
+    const lambdaFunction = createTrpcLambdaFunction();
 
     const apiOrigin = createApiOrigin(lambdaFunction);
     const cloudfrontInjectionFunction = createCloudFrontInjectionFunction();
+    const apiCacheBehavior = createApiCFCacheBehavior(apiOrigin, cloudfrontInjectionFunction);
 
-    createStaticSite(domainName, domainRedirects, apiOrigin, cloudfrontInjectionFunction);
+    createNextJsApplication(apiCacheBehavior, apiOrigin);
   },
 });
