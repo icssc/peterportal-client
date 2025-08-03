@@ -26,6 +26,7 @@ export const user = pgTable(
     picture: text('picture').notNull(),
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
+    currentPlanIndex: integer('current_plan_index'),
   },
   (table) => [unique('unique_google_id').on(table.googleId)],
 );

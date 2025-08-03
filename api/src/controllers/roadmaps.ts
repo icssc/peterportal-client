@@ -6,24 +6,30 @@ import { and, asc, eq, inArray, not } from 'drizzle-orm';
 
 const roadmapsRouter = router({
   /**
-   * Get a user's roadmap
+   * Get a user's roadmaps
    */
   get: userProcedure.query(async ({ ctx }) => {
-    const [planners, timestamp] = await Promise.all([
+    const [planners, users] = await Promise.all([
       db
         .select({ id: planner.id, name: planner.name, content: planner.years })
         .from(planner)
         .where(eq(planner.userId, ctx.session.userId!))
         .orderBy(asc(planner.id)),
-      db.select({ timestamp: user.lastRoadmapEditAt }).from(user).where(eq(user.id, ctx.session.userId!)),
+      db
+        .select({ timestamp: user.lastRoadmapEditAt, currentPlanIndex: user.currentPlanIndex })
+        .from(user)
+        .where(eq(user.id, ctx.session.userId!)),
     ]);
+
     if (planners.length === 0) {
       return undefined;
     }
+
     const roadmap: SavedRoadmap = {
       planners: planners as SavedPlannerData[],
       transfers: [],
-      timestamp: timestamp[0].timestamp?.toISOString(),
+      timestamp: users[0].timestamp?.toISOString(),
+      currentPlanIndex: users[0].currentPlanIndex ?? undefined,
     };
     return roadmap;
   }),
@@ -31,7 +37,7 @@ const roadmapsRouter = router({
    * Save a user's roadmap
    */
   save: userProcedure.input(savedRoadmap).mutation(async ({ input, ctx }) => {
-    const { planners, transfers, timestamp } = input;
+    const { planners, transfers, timestamp, currentPlanIndex } = input;
     const userId = ctx.session.userId!;
 
     const plannerUpdates = planners
@@ -73,17 +79,12 @@ const roadmapsRouter = router({
         }
       });
 
-    const updateLastEditTimestamp = db
+    const updateUser = db
       .update(user)
-      .set({ lastRoadmapEditAt: new Date(timestamp!) })
+      .set({ lastRoadmapEditAt: new Date(timestamp!), currentPlanIndex })
       .where(eq(user.id, userId));
 
-    await Promise.all([
-      ...plannerUpdates,
-      plannerInsertionsAndDeletions,
-      replaceTransferredCourses,
-      updateLastEditTimestamp,
-    ]);
+    await Promise.all([...plannerUpdates, plannerInsertionsAndDeletions, replaceTransferredCourses, updateUser]);
   }),
 });
 

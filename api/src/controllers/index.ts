@@ -4,7 +4,7 @@ import professorsRouter from './professors';
 import programsRouter from './programs';
 import reportsRouter from './reports';
 import reviewsRouter from './reviews';
-import roadmapsRouter from './roadmap';
+import roadmapsRouter from './roadmaps';
 import courseRequirementsRouter from './courseRequirements';
 import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';

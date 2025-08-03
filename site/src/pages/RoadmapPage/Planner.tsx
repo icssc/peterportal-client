@@ -15,12 +15,13 @@ const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const currentPlanData = useAppSelector(selectYearPlans);
   const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
+  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const transferred = useTransferredCredits();
   const isLoggedIn = useIsLoggedIn();
 
   const handleSave = async (plans?: RoadmapPlan[]) => {
     const collapsed = collapseAllPlanners(plans?.length ? plans : allPlanData);
-    saveRoadmap(isLoggedIn, collapsed, true);
+    saveRoadmap(isLoggedIn, collapsed, planIndex, true);
   };
 
   const calculatePlannerOverviewStats = () => {
