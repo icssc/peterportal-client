@@ -1,4 +1,4 @@
-import SearchPage from '../../../pages/SearchPage';
+import SearchPage from '../SearchPage';
 
 export default function Page() {
   return <SearchPage index="professors" />;

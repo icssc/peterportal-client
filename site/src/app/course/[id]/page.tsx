@@ -1,4 +1,4 @@
-import CoursePage from '../../../pages/CoursePage';
+import CoursePage from '../CoursePage';
 
 interface CoursePageParams {
   params: Promise<{ id: string }>;
