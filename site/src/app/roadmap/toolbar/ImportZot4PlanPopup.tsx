@@ -146,9 +146,7 @@ const ImportZot4PlanPopup: FC = () => {
             <Form.Group className="form-group" controlId="CurrentYear">
               <Form.Label className="ppc-modal-form-label">I am currently a...</Form.Label>
               <Form.Control as="select" onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
-                <option value="1" selected>
-                  1st year
-                </option>
+                <option value="1">1st year</option>
                 <option value="2">2nd year</option>
                 <option value="3">3rd year</option>
                 <option value="4">4th year</option>

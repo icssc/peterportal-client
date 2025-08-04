@@ -213,7 +213,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         as="select"
         name="professor"
         id="professor"
-        defaultValue=""
         required
         onChange={(e) => setProfessor(e.target.value)}
         value={professor}
@@ -248,7 +247,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         as="select"
         name="course"
         id="course"
-        defaultValue=""
         required
         onChange={(e) => setCourse(e.target.value)}
         value={course}
@@ -301,7 +299,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 as="select"
                 name="year"
                 id="year"
-                defaultValue=""
                 required
                 onChange={(e) => setYearTaken(e.target.value)}
                 value={yearTaken}
@@ -323,7 +320,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 as="select"
                 name="quarter"
                 id="quarter"
-                defaultValue=""
                 required
                 onChange={(e) => setQuarterTaken(e.target.value)}
                 value={quarterTaken}
@@ -351,10 +347,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 as="select"
                 name="grade"
                 id="grade"
-                defaultValue=""
                 required
                 onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
-                value={gradeReceived}
+                value={gradeReceived ?? ''}
               >
                 <option disabled={true} value="">
                   Select
@@ -372,10 +367,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 as="select"
                 name="difficulty"
                 id="difficulty"
-                defaultValue=""
                 required
                 onChange={(e) => setDifficulty(parseInt(e.currentTarget.value))}
-                value={difficulty}
+                value={difficulty ?? ''}
               >
                 <option disabled={true} value="">
                   Select
