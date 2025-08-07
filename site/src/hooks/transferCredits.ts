@@ -21,12 +21,12 @@ import {
 import { useIsLoggedIn } from './isLoggedIn';
 import { TransferredGE, TransferredCourse, TransferredUncategorized, TransferredAPExam } from '@peterportal/types';
 
-/** A temporary function that returns the rewarded courses for an AP but always choosing the first choice in any given OR */
+/** A temporary function that returns the rewarded courses for an AP */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
-function naiveCountedCourses(courses: CourseTreeItem): string[] {
+function naiveCountedCourses(courses: CourseTreeItem, selectedIndex: number): string[] {
   if (typeof courses === 'string') return [courses];
   if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(naiveCountedCourses);
-  return naiveCountedCourses(courses.OR[0]);
+  return naiveCountedCourses(courses.OR[selectedIndex], selectedIndex);
 }
 
 export interface TransferredCourseWithType extends TransferredCourse {
@@ -39,6 +39,7 @@ export function useTransferredCredits() {
   const apTransfers = useAppSelector((state) => state.transferCredits.userAPExams);
   const ge = useAppSelector((state) => state.transferCredits.transferredGEs);
   const other = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+  const selectedApRewards = useAppSelector((state) => state.transferCredits.selectedApRewards);
 
   const courses = useMemo(() => {
     // Recomputes this value only when APs or Transferred Courses update
@@ -48,9 +49,9 @@ export function useTransferredCredits() {
       const reward = info.rewards.find((r) => r.acceptableScores.includes(transfer.score));
       if (!reward) return [];
 
-      const courseNames = naiveCountedCourses(reward.coursesGranted);
-      /** @todo debug print statement – remove once a user can choose which 'OR' reward they want */
-      // console.log(info.catalogueName ?? info.fullName, '=>', courseNames)
+      const selectedIndex =
+        selectedApRewards.find((reward) => reward.examName === transfer.examName)?.selectedIndex ?? 0;
+      const courseNames = naiveCountedCourses(reward.coursesGranted, selectedIndex);
 
       return courseNames.map((courseName) => ({ courseName, units: 0, transferType: 'AP' }));
     });
@@ -59,7 +60,7 @@ export function useTransferredCredits() {
       .map((course) => ({ ...course, transferType: 'Course' }) as TransferredCourseWithType)
       .concat(rewardedCourses);
     return [...new Set(clearedCourses)];
-  }, [apExamInfo, apTransfers, transferredCourses]);
+  }, [apExamInfo, apTransfers, transferredCourses, selectedApRewards]);
 
   // Returns memoized result for efficiency and so we can use the entire return value
   // as a dependency array item. Without memoization, that would not be possible, as
