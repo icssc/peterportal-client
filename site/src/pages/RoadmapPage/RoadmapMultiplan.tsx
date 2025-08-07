@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   addRoadmapPlan,
@@ -10,17 +10,19 @@ import {
   setPlanName,
 } from '../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button, Dropdown, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../helpers/planner';
 import spawnToast from '../../helpers/toastify';
-import ThemeContext from '../../style/theme-context';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
+import { Button, IconButton, Popover } from '@mui/material';
+
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -33,30 +35,107 @@ interface RoadmapSelectableItemProps {
 
 const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
   plan,
-  index,
   clickHandler,
   editHandler,
   duplicateHandler,
   deleteHandler,
 }) => {
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
   return (
     <div className="select-item">
-      <Dropdown.Item key={plan.name} value={index} onClick={clickHandler}>
-        <Button variant={buttonVariant} className="planner-name-btn">
-          {plan.name}
-        </Button>
-      </Dropdown.Item>
-      <Button variant={buttonVariant} onClick={editHandler}>
+      <Button variant="text" className="planner-name-btn" onClick={clickHandler}>
+        {plan.name}
+      </Button>
+      <IconButton onClick={editHandler}>
         <EditIcon />
-      </Button>
-      <Button variant={buttonVariant} onClick={duplicateHandler}>
+      </IconButton>
+      <IconButton onClick={duplicateHandler}>
         <ContentCopyOutlinedIcon />
+      </IconButton>
+      <IconButton className="delete-btn" onClick={deleteHandler}>
+        <DeleteOutlineIcon />
+      </IconButton>
+    </div>
+  );
+};
+
+interface MultiplanDropdownProps {
+  setEditIndex: (index: number) => void;
+  setDeleteIndex: (index: number) => void;
+  handleCreate: () => void;
+  children?: ReactNode;
+}
+const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex, setDeleteIndex, handleCreate }) => {
+  const dispatch = useAppDispatch();
+  const allPlans = useAppSelector((state) => state.roadmap);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const { name } = allPlans.plans[currentPlanIndex];
+  const [showDropdown, setShowDropdown] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const duplicatePlan = (plan: RoadmapPlan) => {
+    const newName = makeUniquePlanName(plan.name, allPlans.plans);
+    dispatch(
+      addRoadmapPlan({
+        name: newName,
+        content: JSON.parse(JSON.stringify(plan.content)),
+      }),
+    );
+    const newIndex = allPlans.plans.length;
+    dispatch(setPlanIndex(newIndex));
+  };
+
+  const handleClose = (_?: object, reason?: string) => {
+    const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
+    if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
+    setShowDropdown(false);
+  };
+
+  return (
+    <div ref={containerRef}>
+      <Button
+        className="dropdown-button"
+        variant="outlined"
+        onClick={() => setShowDropdown(!showDropdown)}
+        endIcon={<ArrowDropDownIcon />}
+      >
+        {name}
       </Button>
-      <Button variant={buttonVariant} onClick={deleteHandler}>
-        <DeleteIcon />
-      </Button>
+      <Popover
+        className="multi-plan-selector"
+        open={showDropdown}
+        anchorReference="anchorEl"
+        anchorEl={containerRef.current}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        onClose={handleClose}
+      >
+        {allPlans.plans.map((plan, index) => (
+          <RoadmapSelectableItem
+            key={plan.name}
+            plan={plan}
+            index={index}
+            clickHandler={() => {
+              dispatch(setPlanIndex(index));
+              handleClose();
+            }}
+            editHandler={() => setEditIndex(index)}
+            duplicateHandler={() => duplicatePlan(plan)}
+            deleteHandler={() => setDeleteIndex(index)}
+          />
+        ))}
+        <div className="separator-label">
+          Add or Import Roadmap
+          <hr />
+        </div>
+        <div className="select-item add-item">
+          <Button variant="text" onClick={handleCreate}>
+            <AddIcon />
+            <span>Blank Roadmap</span>
+          </Button>
+          <ImportTranscriptPopup />
+          <ImportZot4PlanPopup />
+        </div>
+        {children}
+      </Popover>
     </div>
   );
 };
@@ -65,19 +144,13 @@ const RoadmapMultiplan: FC = () => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const { darkMode } = useContext(ThemeContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const [showAddPlan, setShowAddPlan] = useState(false);
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans.plans[allPlans.currentPlanIndex].name);
-  const [showDropdown, setShowDropdown] = useState(false);
   const isDuplicateName = () => allPlans.plans.find((p) => p.name === newPlanName);
 
-  const buttonVariant = darkMode ? 'dark' : 'light';
-
-  // name: name of the plan, content: stores the content of plan
-  // const { name, content } = allPlans.plans[currentPlanIndex];
-  const { name } = allPlans.plans[currentPlanIndex];
+  const name = allPlans.plans[currentPlanIndex].name;
 
   const addNewPlan = (name: string) => {
     dispatch(addRoadmapPlan({ name: name, content: initialPlanState }));
@@ -93,7 +166,7 @@ const RoadmapMultiplan: FC = () => {
   const handleSubmitNewPlan = () => {
     if (!newPlanName) return spawnToast('Name cannot be empty', true);
     if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
-    setIsOpen(false);
+    setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.plans.length;
     dispatch(setPlanIndex(newIndex));
@@ -106,79 +179,23 @@ const RoadmapMultiplan: FC = () => {
     setEditIdx(-1);
   };
 
-  const duplicatePlan = (plan: RoadmapPlan) => {
-    const newName = makeUniquePlanName(plan.name, allPlans.plans);
-    dispatch(
-      addRoadmapPlan({
-        name: newName,
-        content: JSON.parse(JSON.stringify(plan.content)),
-      }),
-    );
-    const newIndex = allPlans.plans.length;
-    dispatch(setPlanIndex(newIndex));
-  };
-
   useEffect(() => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
 
   return (
-    <div className="multi-plan-selector">
-      <Dropdown
-        show={showDropdown}
-        onToggle={(s, e) => {
-          const target = e.target as HTMLElement;
-          // Stay open if something in this menu is clicked unless it's switching roadmaps
-          const inMenu =
-            document.querySelector('.multi-plan-selector')!.contains(target) &&
-            !target.classList.contains('planner-name-btn');
-          const inDialog = document.querySelector('.multiplan-modal')?.contains(target) ?? false;
-          setShowDropdown(s || inMenu || inDialog);
-        }}
-      >
-        <Dropdown.Toggle onClick={() => setShowDropdown(!showDropdown)}>
-          <span>{name}</span>
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {allPlans.plans.map((plan, index) => (
-            <RoadmapSelectableItem
-              key={plan.name}
-              plan={plan}
-              index={index}
-              clickHandler={() => {
-                dispatch(setPlanIndex(index));
-              }}
-              editHandler={() => setEditIdx(index)}
-              duplicateHandler={() => duplicatePlan(plan)}
-              deleteHandler={() => setDelIdx(index)}
-            />
-          ))}
-          <div className="separator-label">
-            Add or Import Roadmap
-            <hr />
-          </div>
-          <div className="select-item add-item">
-            <Button variant={buttonVariant} onClick={() => setIsOpen(true)}>
-              <AddIcon />
-              <span>Blank Roadmap</span>
-            </Button>
-            <ImportTranscriptPopup />
-            <ImportZot4PlanPopup />
-          </div>
-        </Dropdown.Menu>
-      </Dropdown>
-
+    <MultiplanDropdown handleCreate={() => setShowAddPlan(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
       {/* Create Roadmap Modal */}
       <Modal
-        show={isOpen}
+        show={showAddPlan}
         onShow={() => {
-          setIsOpen(true);
+          setShowAddPlan(true);
           const planCount = allPlans.plans?.length ?? 0;
           let newIdx = planCount + 1;
           while (allPlans.plans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
           setNewPlanName(`Roadmap ${newIdx}`);
         }}
-        onHide={() => setIsOpen(false)}
+        onHide={() => setShowAddPlan(false)}
         centered
         className="ppc-modal multiplan-modal"
       >
@@ -204,14 +221,14 @@ const RoadmapMultiplan: FC = () => {
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="primary"
             onClick={() => {
               handleSubmitNewPlan();
             }}
           >
             Create Roadmap
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
 
@@ -247,14 +264,14 @@ const RoadmapMultiplan: FC = () => {
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="primary"
             onClick={() => {
               modifyPlanName();
             }}
           >
             Save Roadmap
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
 
@@ -277,17 +294,17 @@ const RoadmapMultiplan: FC = () => {
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>
-          <Button
+          <Button2
             variant="danger"
             onClick={() => {
               deleteCurrentPlan();
             }}
           >
             I am sure
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
-    </div>
+    </MultiplanDropdown>
   );
 };
 

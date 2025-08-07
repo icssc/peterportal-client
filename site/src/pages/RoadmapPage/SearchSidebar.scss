@@ -1,7 +1,7 @@
 @use '../../globals';
 
 .search-sidebar {
-  .coursebag-title {
+  .saved-course-title {
     margin: 12px 6px 0;
   }
   &.mobile {
@@ -24,34 +24,11 @@
   width: 100%;
 }
 
-.search-sidebar-search-module {
-  .form-group {
-    margin-bottom: 0;
-  }
-}
-
-.coursebag-title {
+h3.saved-courses-title {
+  font-size: 20px;
   font-size: 1.25rem;
   font-weight: 500;
-}
-
-h3.coursebag-title {
-  font-size: 20px;
-}
-
-.no-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  font-size: 20px;
-  padding: 2rem;
-  text-align: center;
-
-  img {
-    width: 400px;
-    max-width: 100%;
-  }
+  margin-block: 16px 0;
 }
 
 .search-pagination {

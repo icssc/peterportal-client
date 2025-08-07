@@ -31,32 +31,23 @@
   }
 }
 
-.course-synopsis {
-  h2 {
-    margin-bottom: 0;
-  }
+.side-info-overview {
+  // Force adaptive width on the professor page to work
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 
-  .title-and-offerings {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-
-    // Force adaptive width to work
-    h2 {
-      width: 100vw;
-    }
+  > * {
+    width: 100vw;
   }
+}
 
-  .emoji {
-    font-size: 24px;
-  }
+.course-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .tags .badge-pill {
+  .badge-pill {
     margin: 0;
   }
 }

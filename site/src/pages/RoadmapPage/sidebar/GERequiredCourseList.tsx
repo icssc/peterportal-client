@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import trpc from '../../../trpc';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { normalizeTitleLabels } from '../../../helpers/substitutions';
@@ -31,15 +31,9 @@ const GERequiredCourseList: FC = () => {
     });
   }, [dispatch, requirements]);
 
-  return (
-    <>
-      {resultsLoading ? (
-        <RequirementsLoadingIcon />
-      ) : (
-        <ProgramRequirementsList requirements={requirements} storeKeyPrefix="ge" />
-      )}
-    </>
-  );
+  if (resultsLoading) return <LoadingSpinner />;
+
+  return <ProgramRequirementsList requirements={requirements} storeKeyPrefix="ge" />;
 };
 
 export default GERequiredCourseList;

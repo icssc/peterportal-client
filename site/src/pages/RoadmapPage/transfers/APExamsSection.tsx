@@ -132,8 +132,85 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
   return <div className="rewards">{renderTree(coursesGranted)}</div>;
 };
 
-const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInfo }) => {
-  const { examName, score, units } = userExamInfo;
+const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex, options, onSelect }) => {
+  return (
+    <select
+      value={selectedIndex ?? ''}
+      onChange={(event) => onSelect(Number(event.target.value))}
+      className="select-box"
+    >
+      <optgroup label="Options">
+        {selectedIndex === undefined && (
+          <option disabled value="">
+            Select...
+          </option>
+        )}
+        {options.map((opt, i) => (
+          <option key={i} value={i}>
+            {opt}
+          </option>
+        ))}
+      </optgroup>
+    </select>
+  );
+};
+
+const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({ examName, coursesGranted }) => {
+  const selectedApRewards = useAppSelector((state) => state.transferCredits.selectedApRewards);
+  let selectedReward = selectedApRewards.find((reward) => reward.examName === examName);
+  const dispatch = useAppDispatch();
+
+  if (!selectedReward) {
+    selectedReward = { examName, path: '', selectedIndex: 0 };
+    dispatch(addSelectedApReward(selectedReward));
+    trpc.transferCredits.addSelectedAPReward.mutate(selectedReward);
+  }
+
+  const handleSelect = (selectedIndex: number) => {
+    dispatch(updateSelectedApReward({ examName, path: '', selectedIndex }));
+    trpc.transferCredits.updateSelectedAPReward.mutate({ examName, path: '', selectedIndex });
+  };
+
+  const formatCourses = (tree: CoursesGrantedTree): string => {
+    if (typeof tree === 'string') return tree;
+    if ('AND' in tree) return tree.AND.map(formatCourses).join(', ');
+    if ('OR' in tree) return tree.OR.map(formatCourses).join(' or ');
+    return 'This exam does not clear any courses.';
+  };
+
+  const renderTree = (tree: CoursesGrantedTree): React.ReactNode => {
+    if (typeof tree === 'string') {
+      return <span>{tree}</span>;
+    }
+    if ('AND' in tree && tree.AND.length > 0) {
+      return (
+        <span>
+          {tree.AND.map((subtree, idx) => (
+            <span key={idx}>
+              {renderTree(subtree)}
+              {idx < tree.AND.length - 1 && ' and '}
+            </span>
+          ))}
+        </span>
+      );
+    }
+    if ('OR' in tree) {
+      const options = tree.OR.map(formatCourses);
+      return (
+        <span style={{ display: 'inline' }}>
+          <RewardsSelect selectedIndex={selectedReward?.selectedIndex} options={options} onSelect={handleSelect} />
+        </span>
+      );
+    }
+    return <div>This exam does not clear any courses.</div>;
+  };
+
+  return <div className="rewards">{renderTree(coursesGranted)}</div>;
+};
+
+const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({ exam }) => {
+  const { examName, score, units, unread } = exam;
+
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
@@ -163,7 +240,14 @@ const APCreditMenuTile: FC<{ userExamInfo: TransferredAPExam }> = ({ userExamInf
     if (!reward.acceptableScores.includes(score)) continue;
     const coursesGranted = reward.coursesGranted as CoursesGrantedTree;
     return (
-      <MenuTile title={examName} headerItems={selectBox} units={units} setUnits={updateUnits} deleteFn={deleteFn}>
+      <MenuTile
+        title={examName}
+        headerItems={selectBox}
+        units={units}
+        setUnits={updateUnits}
+        deleteFn={deleteFn}
+        unread={unread}
+      >
         <Rewards examName={examName} coursesGranted={coursesGranted} />
       </MenuTile>
     );
@@ -220,7 +304,7 @@ const APExamsSection: FC = () => {
         Enter the names of AP Exams that you&rsquo;ve taken to clear course prerequisites.
       </SectionDescription>
       {userAPExams.map((exam) => (
-        <APCreditMenuTile key={exam.examName} userExamInfo={exam} />
+        <APCreditMenuTile key={exam.examName} exam={exam} />
       ))}
       <div className="ap-import-row">
         <div className="exam-input">

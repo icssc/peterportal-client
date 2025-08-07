@@ -40,229 +40,20 @@
   border: 1px solid var(--overlay3);
 }
 
-// subreviews
-.subreviews {
+// The list of ReviewCards that appears on course/professors pages
+.reviewcards {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 1rem;
 }
-.subreview {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/*
+ReviewCards on courses/professors pages need a background of overlay2,
+while ReviewCards in verification need the usual (overlay1) background
+ */
+.reviewcards > div.MuiCard-root {
   background-color: var(--overlay2);
-  border-radius: var(--border-radius);
-  padding: 16px 20px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  font-size: 14px;
-
-  .subreview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-}
-
-// subreview header (class/professor name & edit buttons)
-.subreview-identifier {
-  font-weight: bold;
-  font-size: 20px;
-  margin: 0;
-  a {
-    color: var(--text);
-  }
-  word-break: break-word;
-}
-.edit-buttons {
-  display: flex;
-  flex-direction: row;
-  float: right;
-  gap: 8px;
-}
-
-// content of review
-.subreview-content {
-  display: flex;
-  gap: 1rem;
-}
-// rating boxes (quality and difficulty)
-.subreview-ratings {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  gap: 1rem;
-}
-.rating {
-  border-radius: var(--border-radius);
-  width: 72px;
-  height: 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-.rating-label {
-  line-height: 1rem;
-  font-size: 11px;
-  font-weight: bold;
-}
-.rating-value {
-  line-height: 33px;
-  font-size: 36px;
-}
-// color scheme for numerical ratings
-// reversed for difficulty so 1 => r5, etc.
-.r1 {
-  background-color: var(--red-secondary);
-}
-.r2 {
-  background-color: var(--orange-secondary);
-}
-.r3 {
-  background-color: var(--yellow-secondary);
-}
-.r4 {
-  background-color: var(--green-secondary);
-}
-.r5 {
-  background-color: var(--blue-primary);
-}
-
-// subreview info
-.subreview-info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  .review-content {
-    // font alignment
-    margin: -3px 0 3px;
-  }
-}
-.subreview-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 16px;
-  padding-block: 2.5px;
-}
-.subreview-detail {
-  border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  width: fit-content;
-  justify-content: flex-start;
-  gap: 2px;
-
-  p {
-    margin: 0;
-  }
-
-  span.edit-time {
-    color: var(--mid-gray);
-    white-space: nowrap;
-  }
-
-  @media (min-width: 500px) {
-    min-width: 170px;
-    &:first-child {
-      min-width: 340px;
-    }
-  }
-}
-.subreview-author {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  gap: 0 4px;
-  flex-wrap: wrap;
-}
-.subreview-author-name {
-  margin: 0;
-}
-.subreview-author-verified,
-.subreview-author-author {
-  margin: 0;
-  display: flex;
-  margin-left: 2px;
-
-  .MuiSvgIcon-root {
-    font-size: 16px;
-  }
-}
-
-// tags
-.subreview-tags {
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.subreview-tag {
-  padding: 6px 12px;
-  background-color: var(--blue-primary);
-  color: white;
-  margin: 0;
-}
-// footer
-.subreview-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-// vote on a review
-.subreview-voting {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-}
-.subreview-voting-question,
-.subreview-voting-count {
-  margin: 0;
-}
-.subreview-voting-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 0.25rem;
-  background-color: transparent;
-}
-.upvote,
-.downvote {
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-  height: fit-content;
-  background-color: transparent;
-  color: var(--mid-gray);
-  transition: 0.25s;
-}
-.colored-upvote {
-  color: var(--blue-primary);
-}
-.colored-downvote {
-  color: var(--red-secondary);
-}
-// report a review
-.add-report-button {
-  background-color: transparent;
-  border-color: transparent;
-  color: var(--text);
-}
-.add-report-button:hover {
-  background-color: var(--overlay3);
-  border-color: var(--overlay3);
-  border-radius: var(--border-radius);
-  color: var(--text);
+  box-shadow: none;
 }
 
 // screen width is less than or equal to 599px
@@ -274,14 +65,5 @@
   .sort-dropdown,
   .filter-dropdown {
     max-width: none;
-  }
-  .subreview-content {
-    flex-direction: column;
-  }
-  .subreview-ratings {
-    flex-direction: row;
-  }
-  .subreview-details {
-    flex-direction: column;
   }
 }

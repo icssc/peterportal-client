@@ -42,7 +42,7 @@ button {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: 16px 20px 56px;
+  padding: 16px 20px;
 
   .search-body {
     display: flex;
@@ -81,6 +81,27 @@ button {
     &:focus {
       background-color: var(--blue-primary);
     }
+  }
+}
+
+.ppc-mui-button.MuiButton-root {
+  display: inline-flex;
+  height: 29px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  padding: 0px 12px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+
+  [data-theme='dark'] & {
+    background-color: #606166;
+  }
+
+  &.primary-button {
+    background-color: var(--blue-primary);
+    color: white;
   }
 }
 
@@ -354,15 +375,6 @@ button {
     pointer-events: none;
     opacity: 0;
   }
-}
-
-button.unstyled {
-  background: none;
-  font: inherit;
-  border: none;
-  display: flex;
-  align-items: center;
-  padding: 0;
 }
 
 .badge-pill {
