@@ -14,10 +14,10 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 interface ProfessorPageProps {
-  netid: string;
+  ucinetid: string;
 }
 
-const ProfessorPage: FC<ProfessorPageProps> = ({ netid: id }) => {
+const ProfessorPage: FC<ProfessorPageProps> = ({ ucinetid: id }) => {
   const dispatch = useAppDispatch();
   const professorGQLData = useAppSelector((state) => state.popup.professor);
   const [error, setError] = useState('');

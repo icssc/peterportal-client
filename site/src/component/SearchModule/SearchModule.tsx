@@ -105,11 +105,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             defaultValue={search.query}
             autoCorrect="off"
           />
-          {/* <InputGroup.Append> */}
           <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
             <SearchIcon />
           </button>
-          {/* </InputGroup.Append> */}
         </InputGroup>
       </Form.Group>
     </div>

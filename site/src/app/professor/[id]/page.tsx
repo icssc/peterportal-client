@@ -4,6 +4,6 @@ interface ProfessorPageParams {
   params: Promise<{ id: string }>;
 }
 const Page = async ({ params }: ProfessorPageParams) => {
-  return <ProfessorPage netid={decodeURIComponent((await params).id)} />;
+  return <ProfessorPage ucinetid={decodeURIComponent((await params).id)} />;
 };
 export default Page;
