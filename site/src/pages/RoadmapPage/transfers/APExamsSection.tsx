@@ -64,11 +64,6 @@ const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex = 0, options, onS
       className="select-box"
     >
       <optgroup label="Options">
-        {selectedIndex === undefined && (
-          <option disabled value="">
-            Select...
-          </option>
-        )}
         {options.map((opt, i) => (
           <option key={i} value={i}>
             {opt}
@@ -184,12 +179,9 @@ const APExamsSection: FC = () => {
 
   // Set selected rewards
   useEffect(() => {
-    const fetchSelectedApRewards = async () => {
-      const rewards = await trpc.transferCredits.getSelectedAPRewards.query();
+    trpc.transferCredits.getSelectedAPRewards.query().then((rewards) => {
       dispatch(setSelectedApRewards(rewards));
-    };
-
-    fetchSelectedApRewards();
+    });
   }, [dispatch]);
 
   // Save AP Exam to store
