@@ -110,26 +110,26 @@ const transferCreditsRouter = router({
       examName: reward.examName,
       path: reward.path,
       selectedIndex: reward.selectedIndex,
-    })) as selectedReward[];
+    }));
   }),
-  addSelectedAPReward: userProcedure
+  setSelectedAPReward: userProcedure
     .input(z.object({ examName: z.string(), path: z.string(), selectedIndex: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const { examName, path, selectedIndex } = input;
       const userId = ctx.session.userId!;
-
-      await db.insert(selectedApReward).values({ userId, examName, path, selectedIndex });
-    }),
-  updateSelectedAPReward: userProcedure
-    .input(z.object({ examName: z.string(), path: z.string(), selectedIndex: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const { examName, path, selectedIndex } = input;
-      const userId = ctx.session.userId!;
+      const valuesDict = {
+        userId: userId,
+        examName: input.examName,
+        path: input.path,
+        selectedIndex: input.selectedIndex,
+      };
 
       await db
-        .update(selectedApReward)
-        .set({ path, selectedIndex })
-        .where(and(eq(selectedApReward.userId, userId), eq(selectedApReward.examName, examName)));
+        .insert(selectedApReward)
+        .values(valuesDict)
+        .onConflictDoUpdate({
+          target: [selectedApReward.userId, selectedApReward.examName, selectedApReward.path],
+          set: { selectedIndex: valuesDict.selectedIndex },
+        });
     }),
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db

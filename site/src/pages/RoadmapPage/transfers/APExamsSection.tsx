@@ -11,7 +11,6 @@ import {
   removeUserAPExam,
   updateUserExam,
   setSelectedApRewards,
-  addSelectedApReward,
   updateSelectedApReward,
   TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
@@ -30,7 +29,7 @@ interface APExamOption {
 }
 
 interface RewardsSelectProps {
-  selectedIndex?: number;
+  selectedIndex: number | undefined;
   options: string[];
   onSelect: (selected: number) => void;
 }
@@ -57,7 +56,7 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex, options, onSelect }) => {
+const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex = 0, options, onSelect }) => {
   return (
     <select
       value={selectedIndex ?? ''}
@@ -82,18 +81,13 @@ const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex, options, onSelec
 
 const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({ examName, coursesGranted }) => {
   const selectedApRewards = useAppSelector((state) => state.transferCredits.selectedApRewards);
-  let selectedReward = selectedApRewards.find((reward) => reward.examName === examName);
+  const selectedReward = selectedApRewards.find((reward) => reward.examName === examName);
   const dispatch = useAppDispatch();
 
-  if (!selectedReward) {
-    selectedReward = { examName, path: '', selectedIndex: 0 };
-    dispatch(addSelectedApReward(selectedReward));
-    trpc.transferCredits.addSelectedAPReward.mutate(selectedReward);
-  }
-
   const handleSelect = (selectedIndex: number) => {
+    // path column to be removed in a future PR
     dispatch(updateSelectedApReward({ examName, path: '', selectedIndex }));
-    trpc.transferCredits.updateSelectedAPReward.mutate({ examName, path: '', selectedIndex });
+    trpc.transferCredits.setSelectedAPReward.mutate({ examName, path: '', selectedIndex });
   };
 
   const formatCourses = (tree: CoursesGrantedTree): string => {
@@ -122,7 +116,7 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
     if ('OR' in tree) {
       const options = tree.OR.map(formatCourses);
       return (
-        <span style={{ display: 'inline' }}>
+        <span>
           <RewardsSelect selectedIndex={selectedReward?.selectedIndex} options={options} onSelect={handleSelect} />
         </span>
       );

@@ -23,10 +23,10 @@ import { TransferredGE, TransferredCourse, TransferredUncategorized, Transferred
 
 /** A temporary function that returns the rewarded courses for an AP */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
-function naiveCountedCourses(courses: CourseTreeItem, selectedIndex: number): string[] {
+function selectedRewardCourses(courses: CourseTreeItem, selectedIndex: number): string[] {
   if (typeof courses === 'string') return [courses];
-  if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(naiveCountedCourses);
-  return naiveCountedCourses(courses.OR[selectedIndex], selectedIndex);
+  if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(selectedRewardCourses);
+  return selectedRewardCourses(courses.OR[selectedIndex], selectedIndex);
 }
 
 export interface TransferredCourseWithType extends TransferredCourse {
@@ -51,7 +51,7 @@ export function useTransferredCredits() {
 
       const selectedIndex =
         selectedApRewards.find((reward) => reward.examName === transfer.examName)?.selectedIndex ?? 0;
-      const courseNames = naiveCountedCourses(reward.coursesGranted, selectedIndex);
+      const courseNames = selectedRewardCourses(reward.coursesGranted, selectedIndex);
 
       return courseNames.map((courseName) => ({ courseName, units: 0, transferType: 'AP' }));
     });
