@@ -1,25 +1,19 @@
 import React, { FC, useState } from 'react';
 import './Course.scss';
-import { Button } from 'react-bootstrap';
-import { ExclamationTriangle, Trash, BagPlus, BagFill } from 'react-bootstrap-icons';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
-import CoursePopover from '../../component/CoursePopover/CoursePopover';
-import { useIsMobile, pluralize } from '../../helpers/util';
 
+import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
+import CoursePopover from '../../component/CoursePopover/CoursePopover';
+import PPCOverlayTrigger from '../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+
+import { useIsMobile, pluralize } from '../../helpers/util';
 import { CourseGQLData } from '../../types/types';
-import ThemeContext from '../../style/theme-context';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import PPCOverlayTrigger from '../../component/PPCOverlayTrigger';
 
-export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
-  <>
-    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-    <br />
-    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-    clear the prerequisite(s).
-  </>
-);
+import { IconButton } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -46,7 +40,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
+  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
     <PPCOverlayTrigger
@@ -62,7 +56,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         </a>
         {requiredCourses && (
           <span className="warning-container">
-            <ExclamationTriangle />
+            <WarningAmberIcon />
           </span>
         )}
       </span>
@@ -73,9 +67,6 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 interface CourseProps {
   requiredCourses?: string[];
   onDelete?: () => void;
-  onAddToBag?: () => void;
-  isInBag?: boolean;
-  removeFromBag?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
   data: CourseGQLData;
@@ -83,7 +74,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, minUnits, maxUnits, terms } = props.data;
-  const { requiredCourses, onDelete, onAddToBag, isInBag, removeFromBag, openPopoverLeft } = props;
+  const { requiredCourses, onDelete, openPopoverLeft } = props;
 
   const dispatch = useAppDispatch();
 
@@ -97,37 +88,32 @@ const Course: FC<CourseProps> = (props) => {
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
   return (
-    <div className={`course ${requiredCourses ? 'invalid' : ''}`} {...tappableCourseProps}>
+    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+      {onDelete && (
+        <div className="course-drag-handle">
+          <DragIndicatorIcon />
+        </div>
+      )}
       <div className="course-card-top">
         <div className="course-and-info">
-          <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
+            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+          </span>
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
         </div>
-        <div className="spacer"></div>
         {onDelete ? (
-          <ThemeContext.Consumer>
-            {({ darkMode }) => (
-              <Button
-                variant={darkMode ? 'dark' : 'light'}
-                className="course-delete-btn"
-                onClick={onDelete}
-                aria-label="delete"
-              >
-                <Trash className="course-delete-icon" />
-              </Button>
-            )}
-          </ThemeContext.Consumer>
+          <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
+            <DeleteOutlineIcon className="course-delete-icon" />
+          </IconButton>
         ) : (
-          <CourseQuarterIndicator terms={terms} size="xs" />
+          <div className="course-tooltip">
+            <RecentOfferingsTooltip terms={terms} />
+          </div>
         )}
       </div>
       <div className="title">{title}</div>
-      <div className="course-footer">
-        {onAddToBag && !isInBag && <BagPlus onClick={onAddToBag}></BagPlus>}
-        {isInBag && <BagFill onClick={removeFromBag}></BagFill>}
-      </div>
     </div>
   );
 };

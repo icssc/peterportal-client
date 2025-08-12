@@ -3,11 +3,12 @@ import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
 
-import { SearchIndex, CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
-import noResultsImg from '../../asset/no-results-crop.webp';
-import { getAllCoursesFromPlan, validateCourse } from '../../helpers/planner';
-import { Spinner } from 'react-bootstrap';
+import NoResults from '../NoResults/NoResults';
+import { getMissingPrerequisites } from '../../helpers/planner';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { useClearedCourses } from '../../hooks/planner';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
 // investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
@@ -22,24 +23,13 @@ const SearchResults = ({
   results,
   CourseHitItem,
   ProfessorHitItem,
-}: Required<SearchHitContainerProps> & { results: CourseGQLData[] | ProfessorGQLData[] }) => {
-  const roadmap = useAppSelector((state) => state.roadmap);
-  const allExistingCourses = getAllCoursesFromPlan(roadmap?.plans[roadmap.currentPlanIndex].content);
-  const transfers = roadmap?.transfers.map((transfer) => transfer.name);
+}: Required<SearchHitContainerProps> & { results: SearchResultData }) => {
+  const clearedCourses = useClearedCourses();
 
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
-      const requiredCourses = Array.from(
-        validateCourse(
-          new Set([...allExistingCourses, ...transfers]),
-          course.prerequisiteTree,
-          new Set(),
-          course.corequisites,
-        ),
-      );
-      return (
-        <CourseHitItem key={course.id} index={i} {...course} {...(requiredCourses.length > 0 && { requiredCourses })} />
-      );
+      const requiredCourses = getMissingPrerequisites(clearedCourses, course);
+      return <CourseHitItem key={course.id} index={i} {...course} requiredCourses={requiredCourses} />;
     });
   } else {
     return (results as ProfessorGQLData[]).map((professor, i) => (
@@ -60,35 +50,24 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
     throw 'Professor Component not provided';
   }
 
-  const noResults = results.length === 0 && !searchInProgress;
-
   return (
     <div ref={containerDivRef} className="search-hit-container">
-      {noResults && (
-        <div className="no-results">
-          <img src={noResultsImg} alt="No results found" />
-          {query === ''
-            ? `Start typing in the search bar to search for ${index === 'courses' ? 'courses' : 'professors'}...`
-            : "Sorry, we couldn't find any results for that search!"}
-        </div>
-      )}
-      {searchInProgress && (
-        <div className="no-results">
-          <Spinner animation="border" role="status" />
-        </div>
+      {searchInProgress && <LoadingSpinner />}
+      {!searchInProgress && results.length === 0 && (
+        <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
       {!searchInProgress && results.length > 0 && (
-        <SearchResults
-          index={index}
-          results={results}
-          CourseHitItem={CourseHitItem}
-          ProfessorHitItem={ProfessorHitItem!}
-        />
-      )}
-      {!searchInProgress && (
-        <div className="search-pagination">
-          <SearchPagination index={index} />
-        </div>
+        <>
+          <SearchResults
+            index={index}
+            results={results}
+            CourseHitItem={CourseHitItem}
+            ProfessorHitItem={ProfessorHitItem!}
+          />
+          <div className="search-pagination">
+            <SearchPagination index={index} />
+          </div>
+        </>
       )}
     </div>
   );

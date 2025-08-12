@@ -1,11 +1,13 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
+
+import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import { Collapse } from '@mui/material';
 
 function getCoursesForMinor(programId: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
@@ -43,20 +45,22 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const toggleExpand = () => setOpen(!open);
 
-  const renderRequirements = () => {
-    if (resultsLoading) return <RequirementsLoadingIcon />;
-    return (
-      <ProgramRequirementsList requirements={minorReqs.requirements} storeKeyPrefix={`minor-${minorReqs.minor.id}`} />
-    );
-  };
-
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
         <h4 className="major-name">{minorReqs.minor.name}</h4>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      {open && <>{renderRequirements()}</>}
+      <Collapse in={open} unmountOnExit>
+        {resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={minorReqs.requirements}
+            storeKeyPrefix={`minor-${minorReqs.minor.id}`}
+          />
+        )}
+      </Collapse>
     </div>
   );
 };

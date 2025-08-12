@@ -112,10 +112,11 @@ export function useIsMobile() {
 const quartersOrdered: Record<string, string> = {
   Winter: 'a',
   Spring: 'b',
-  Summer1: 'c',
-  Summer2: 'd',
-  Summer10wk: 'e',
-  Fall: 'f',
+  Summer: 'c',
+  Summer1: 'd',
+  Summer2: 'e',
+  Summer10wk: 'f',
+  Fall: 'g',
 };
 
 export const sortTerms = (terms: string[]) =>
@@ -143,4 +144,8 @@ export function deepCopy<T>(obj: T): T {
 
 export function pluralize(count: number, pluralText: string = 's', singularText: string = '') {
   return count === 1 ? singularText : pluralText;
+}
+
+export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
+  return `${course.department} ${course.courseNumber}`;
 }

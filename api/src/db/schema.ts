@@ -3,6 +3,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -120,7 +121,10 @@ export const transferredMisc = pgTable(
     courseName: text('course_name'),
     units: real('units'),
   },
-  (table) => [index('transferred_courses_user_id_idx').on(table.userId)],
+  (table) => [
+    primaryKey({ columns: [table.userId, table.courseName] }),
+    index('transferred_courses_user_id_idx').on(table.userId),
+  ],
 );
 
 export const vote = pgTable(
@@ -186,6 +190,23 @@ export const transferredApExam = pgTable(
   ],
 );
 
+export const selectedApReward = pgTable(
+  'transferred_ap_exam_reward_selection',
+  {
+    userId: integer('user_id').notNull(),
+    examName: text('exam_name').notNull(),
+    path: text('path').notNull(),
+    selectedIndex: integer('selected_index').notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId, table.examName],
+      foreignColumns: [transferredApExam.userId, transferredApExam.examName],
+    }).onDelete('cascade'),
+    primaryKey({ columns: [table.userId, table.examName, table.path] }),
+  ],
+);
+
 export const transferredGe = pgTable(
   'transferred_ge',
   {
@@ -209,4 +230,15 @@ export const transferredCourse = pgTable(
     units: real('units').notNull().default(0),
   },
   (table) => [primaryKey({ columns: [table.userId, table.courseName] })],
+);
+
+export const completedMarkerRequirement = pgTable(
+  'completed_marker_requirement',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+    markerName: text('marker_name').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
 );

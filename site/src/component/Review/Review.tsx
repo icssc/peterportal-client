@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useCallback, useContext } from 'react';
-import SubReview from './SubReview';
+import ReviewCard from './ReviewCard';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
@@ -10,11 +10,13 @@ import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import ThemeContext from '../../style/theme-context';
-import { PlusLg } from 'react-bootstrap-icons';
+
+import AddIcon from '@mui/icons-material/Add';
 
 export interface ReviewProps {
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
+  terms?: string[];
 }
 
 enum SortingOption {
@@ -206,14 +208,14 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           </div>
           {sortedReviews.length !== 0 && (
-            <div className="subreviews">
+            <div className="reviewcards">
               {sortedReviews.map((review) => (
-                <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
+                <ReviewCard review={review} key={review.id} course={props.course} professor={props.professor} />
               ))}
             </div>
           )}
           <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
-            <PlusLg /> Add Review
+            <AddIcon /> Add Review
           </Button>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />

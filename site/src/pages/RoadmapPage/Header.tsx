@@ -1,12 +1,15 @@
-import React, { FC, useState } from 'react';
-import { Button, ButtonGroup, Overlay, Popover } from 'react-bootstrap';
-import { ArrowLeftRight, List, Save } from 'react-bootstrap-icons';
-import { useIsDesktop, useIsMobile, pluralize } from '../../helpers/util';
-import { useAppDispatch } from '../../store/hooks';
-import { setShowTransfer } from '../../store/slices/roadmapSlice';
+import { FC } from 'react';
+import { pluralize } from '../../helpers/util';
 import './Header.scss';
-import Transfer from './Transfer';
 import RoadmapMultiplan from './RoadmapMultiplan';
+import AddYearPopup from './AddYearPopup';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setShowTransfersMenu, clearUnreadTransfers } from '../../store/slices/transferCreditsSlice';
+import UnreadDot from '../../component/UnreadDot/UnreadDot';
+
+import SaveIcon from '@mui/icons-material/Save';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
+import { Button, ButtonGroup } from '@mui/material';
 
 interface HeaderProps {
   courseCount: number;
@@ -15,67 +18,47 @@ interface HeaderProps {
   saveRoadmap: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap, missingPrerequisites }) => {
+const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
+  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
-  const [target, setTarget] = useState<HTMLElement | null>(null);
-  const [showMenu, setShowMenu] = useState(false);
 
-  const isMobile = useIsMobile();
-  const isDesktop = useIsDesktop();
-
-  const buttons = (
-    <>
-      <Button
-        variant={isMobile ? 'primary' : 'light'}
-        className={isMobile ? 'my-1' : 'header-btn'}
-        onClick={() => {
-          setShowMenu(false);
-          dispatch(setShowTransfer(true));
-        }}
-      >
-        Transfer Credits
-        <ArrowLeftRight className="header-icon" />
-      </Button>
-      <Button
-        variant={isMobile ? 'primary' : 'light'}
-        className={isMobile ? 'my-1' : 'header-btn'}
-        onClick={saveRoadmap}
-      >
-        Save
-        <Save className="header-icon" />
-      </Button>
-    </>
-  );
-
-  const onMenuClick = (event: React.MouseEvent) => {
-    setShowMenu(!showMenu);
-    setTarget(event.target as HTMLElement);
+  const toggleTransfers = () => {
+    if (showTransfers) {
+      // After closing the menu, clear all the unread markers
+      dispatch(clearUnreadTransfers());
+    }
+    dispatch(setShowTransfersMenu(!showTransfers));
   };
 
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+
+  const hasUnreadTransfers =
+    transferredCourses.some((course) => course.unread) ||
+    userAPExams.some((ap) => ap.unread) ||
+    uncategorizedCourses.some((course) => course.unread);
+
   return (
-    <div className="header">
-      <Transfer missingPrereqNames={missingPrerequisites} />
+    <div className="roadmap-header">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
-          Total: <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
+          <span id="course-count">{courseCount}</span> course{pluralize(courseCount)},{' '}
           <span id="unit-count">{unitCount}</span> unit{pluralize(unitCount)}
         </span>
       </div>
-      <div className="planner-right">
-        {isMobile && (
-          <>
-            <List className="mx-3" onClick={onMenuClick} />
-            <Overlay show={showMenu} target={target} placement="left">
-              <Popover id="roadmap-header-buttons">
-                <Popover.Content>
-                  <div className="d-flex flex-column">{buttons}</div>
-                </Popover.Content>
-              </Popover>
-            </Overlay>
-          </>
-        )}
-        {isDesktop && <ButtonGroup>{buttons}</ButtonGroup>}
+      <div className="planner-actions">
+        <ButtonGroup>
+          <AddYearPopup />
+          <Button variant="text" className="header-btn" startIcon={<SwapHorizOutlinedIcon />} onClick={toggleTransfers}>
+            Transfer Credits
+            <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
+          </Button>
+          <Button variant="text" className="header-btn" startIcon={<SaveIcon />} onClick={saveRoadmap}>
+            Save
+          </Button>
+        </ButtonGroup>
       </div>
     </div>
   );

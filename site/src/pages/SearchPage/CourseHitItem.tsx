@@ -1,15 +1,19 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import { useNavigate } from 'react-router-dom';
-import CourseQuarterIndicator from '../../component/QuarterTooltip/CourseQuarterIndicator';
+import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import Badge from 'react-bootstrap/Badge';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags, useIsMobile } from '../../helpers/util';
-import { BagFill, BagPlus } from 'react-bootstrap-icons';
-import { useCoursebag } from '../../hooks/coursebag';
+import { useSavedCourses } from '../../hooks/savedCourses';
+
+import { IconButton } from '@mui/material';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+
 interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
@@ -17,11 +21,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const navigate = useNavigate();
   const activeCourse = useAppSelector((state) => state.popup.course);
   const isMobile = useIsMobile();
-  const { coursebag, addCourseToBag, removeCourseFromBag } = useCoursebag();
-  const isInBag = coursebag.some((course) => course.id === props.id);
-
-  // data to be displayed in pills
-  const pillData = getCourseTags(props);
+  const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
+  const courseIsSaved = isCourseSaved(props);
+  const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
     // set the popup course
@@ -40,17 +42,13 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     }
   };
 
-  const onAddToBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const toggleSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!props) return;
-    if (props.id === undefined) return;
-    if (coursebag.some((course) => course.id === props.id)) return;
-    addCourseToBag(props);
-  };
-
-  const removeFromBag = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    e.stopPropagation();
-    removeCourseFromBag(props);
+    if (courseIsSaved) {
+      unsaveCourse(props);
+    } else if (props && props.id) {
+      saveCourse(props);
+    }
   };
 
   return (
@@ -60,7 +58,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           <p className="hit-name">
             {props.department} {props.courseNumber} • {props.title}
           </p>
-          <CourseQuarterIndicator terms={props.terms} size="sm" />
+          <div className="hit-tooltip">
+            <RecentOfferingsTooltip terms={props.terms} />
+          </div>
         </div>
         <p className="hit-subtitle">{props.school}</p>
       </div>
@@ -75,10 +75,9 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
               </Badge>
             ))}
           </div>
-          <div>
-            {onAddToBag && !isInBag && <BagPlus onClick={(e) => onAddToBag(e)} size={24}></BagPlus>}
-            {isInBag && <BagFill size={24} onClick={(e) => removeFromBag(e)}></BagFill>}
-          </div>
+          <IconButton onClick={toggleSaveCourse} size="small">
+            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
         </div>
       </div>
     </div>

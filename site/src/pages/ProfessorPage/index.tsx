@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import LoadingPage from '../LoadingPage';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
@@ -9,7 +9,8 @@ import Error from '../../component/Error/Error';
 
 import { setProfessor } from '../../store/slices/popupSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, unionTerms } from '../../helpers/util';
+import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
+import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
 
 const ProfessorPage: FC = () => {
@@ -38,7 +39,7 @@ const ProfessorPage: FC = () => {
   }
   // loading results
   else if (!professorGQLData) {
-    return <LoadingPage />;
+    return <LoadingSpinner />;
   } else {
     const sideInfo = (
       <SideInfo
@@ -64,7 +65,7 @@ const ProfessorPage: FC = () => {
         </ResultPageSection>
 
         <ResultPageSection title="💬 Reviews">
-          <Review professor={professorGQLData} />
+          <Review professor={professorGQLData} terms={sortTerms(getProfessorTerms(professorGQLData))} />
         </ResultPageSection>
       </ResultPageContent>
     );

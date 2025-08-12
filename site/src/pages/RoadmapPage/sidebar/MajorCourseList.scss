@@ -12,9 +12,7 @@
     align-items: center;
     gap: 6px;
     overflow: visible;
-  }
-  .header-tab + .program-requirements {
-    margin-top: 8px;
+    padding: 0 0.5px;
   }
 
   h4 {
@@ -26,10 +24,15 @@
     margin-bottom: 0;
   }
 
-  > .ppc-combobox {
-    margin-top: 8px;
-  }
   .program-requirements {
     gap: 12px;
+  }
+
+  .expand-requirements {
+    padding: 6px;
+  }
+
+  .MuiCollapse-wrapperInner > :first-child {
+    padding-top: 8px;
   }
 }

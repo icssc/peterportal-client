@@ -1,16 +1,26 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { FileEarmarkText } from 'react-bootstrap-icons';
-import { Button, Form, Modal } from 'react-bootstrap';
-import { setTransfers, setYearPlans } from '../../store/slices/roadmapSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { addRoadmapPlan, RoadmapPlan, selectAllPlans, setPlanIndex } from '../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
-import ThemeContext from '../../style/theme-context';
 import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../helpers/util';
+import { markTransfersAsUnread } from '../../helpers/transferCredits';
 import { QuarterName } from '@peterportal/types';
-import { normalizeQuarterName } from '../../helpers/planner';
+import { makeUniquePlanName, normalizeQuarterName } from '../../helpers/planner';
+import {
+  setUserAPExams,
+  setTransferredCourses,
+  setUncategorizedCourses,
+} from '../../store/slices/transferCreditsSlice';
+import { useTransferredCredits } from '../../hooks/transferCredits';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import trpc from '../../trpc';
+
+import DescriptionIcon from '@mui/icons-material/Description';
+import { Button } from '@mui/material';
 
 interface TransferUnitDetails {
   date: string;
@@ -100,6 +110,25 @@ function toPlannerQuarter(
   };
 }
 
+function filterOutInvalidCourses(quarters: TranscriptQuarter[], courses: BatchCourseData) {
+  const validatedQuarters: TranscriptQuarter[] = [];
+  const invalidCourseIDs: string[] = [];
+
+  for (const q of quarters) {
+    const validatedQuarter: TranscriptQuarter = { ...q, courses: [] };
+    for (const c of q.courses) {
+      if (toCourseID(c) in courses) {
+        validatedQuarter.courses.push(c);
+      } else {
+        invalidCourseIDs.push(toCourseID(c));
+      }
+    }
+    validatedQuarters.push(validatedQuarter);
+  }
+
+  return { validatedQuarters, invalidCourseIDs };
+}
+
 function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterData }[]) {
   const years = qtrs.reduce(
     (years, q) => {
@@ -136,29 +165,99 @@ async function processTranscript(file: Blob) {
 
   const courses = await transcriptCourseDetails(quarters);
 
+  const { validatedQuarters, invalidCourseIDs } = filterOutInvalidCourses(quarters, courses);
+
   // Create the planner quarter format (with course details) by using the
   // course lookup and the grouped quarters in the transcript
-  const plannerQuarters = quarters.map((q) => toPlannerQuarter(q, courses));
+  const plannerQuarters = validatedQuarters.map((q) => toPlannerQuarter(q, courses));
   plannerQuarters.sort((a, b) => a.startYear - b.startYear);
 
   const years = groupIntoYears(plannerQuarters);
-  return { transfers, years };
+
+  return { transfers, years, invalidCourseIDs };
+}
+
+async function organizeTransfers(transfers: TransferUnitDetails[]) {
+  const mapped = transfers.map((transfer) => ({ name: transfer.name, units: transfer.units, score: transfer.score }));
+  const response = await trpc.transferCredits.convertUserLegacyTransfers.query(mapped);
+  return response;
 }
 
 const ImportTranscriptPopup: FC = () => {
-  const { darkMode } = useContext(ThemeContext);
   const [showModal, setShowModal] = useState(false);
+  const allPlanData = useAppSelector(selectAllPlans);
   const [file, setFile] = useState<Blob | null>(null);
+  const [filePath, setFilePath] = useState('');
   const [busy, setBusy] = useState(false);
+  const isLoggedIn = useIsLoggedIn();
+
+  const currentAps = useTransferredCredits().ap;
+  // App selector instead of useTransferredCredits.courses here because
+  // useTransferredCredits.courses also includes all courses that have been cleared
+  const currentCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const currentOther = useTransferredCredits().other;
 
   const dispatch = useAppDispatch();
   const importHandler = async () => {
     if (!file) return;
     setBusy(true);
     try {
-      const { transfers, years } = await processTranscript(file);
-      dispatch(setTransfers(transfers)); // these types are compatible
-      dispatch(setYearPlans(Object.values(years)));
+      const { transfers, years, invalidCourseIDs } = await processTranscript(file);
+      const { courses, ap, other } = await organizeTransfers(transfers);
+
+      const formattedOther = other.map(({ courseName: name, units }) => ({ name, units }));
+      const scoredAps = ap.map(({ score, ...other }) => ({ ...other, score: score ?? 1 }));
+      // Invalid courses should also count as other transfers
+      const newOtherFromCourses = invalidCourseIDs
+        .map((courseID) => ({ name: courseID, units: 0 }))
+        .filter((otherCourse) => !formattedOther.some((existing) => existing.name == otherCourse.name));
+      const allOther = formattedOther.concat(newOtherFromCourses);
+
+      // All newly added transfers should display as unread
+      const coursesUnread = markTransfersAsUnread(courses);
+      const apUnread = markTransfersAsUnread(scoredAps);
+      const otherUnread = markTransfersAsUnread(allOther);
+
+      // Merge the new AP exams, courses, and other transfers into current transfers
+      // via a process similar to the updated Zot4Plan imports
+      const newAps = apUnread.filter(
+        (imported) => !currentAps.some((existing) => existing.examName == imported.examName),
+      );
+      const mergedAps = currentAps.concat(newAps);
+
+      const newCourses = coursesUnread.filter(
+        (imported) => !currentCourses.some((existing) => existing.courseName == imported.courseName),
+      );
+      const mergedCourses = currentCourses.concat(newCourses);
+
+      const newOther = otherUnread.filter(
+        (imported) => !currentOther.some((existing) => existing.name == imported.name),
+      );
+      const mergedOther = currentOther.concat(newOther);
+
+      // Override local transfers with the merged results
+      dispatch(setTransferredCourses(mergedCourses));
+      dispatch(setUserAPExams(mergedAps));
+      dispatch(setUncategorizedCourses(mergedOther));
+
+      // Add the new rows in the database if logged in
+      if (isLoggedIn) {
+        await trpc.transferCredits.overrideAllTransfers.mutate({
+          courses: mergedCourses,
+          ap: mergedAps,
+          ge: [],
+          other: mergedOther,
+        });
+      }
+
+      const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
+      const newPlan: RoadmapPlan = {
+        name: makeUniquePlanName(filename, allPlanData),
+        content: { yearPlans: Object.values(years), invalidCourses: [] },
+      };
+      dispatch(addRoadmapPlan(newPlan));
+      dispatch(setPlanIndex(allPlanData.length));
+
       setShowModal(false);
       setFile(null);
     } finally {
@@ -168,16 +267,18 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal transcript-form">
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        className="ppc-modal multiplan-modal transcript-form"
+      >
         <Modal.Header closeButton>
           <h2>Import from Transcript</h2>
         </Modal.Header>
         <Modal.Body>
           <Form className="ppc-modal-form">
             <Form.Group>
-              <p>
-                <b>Warning:</b> This will overwrite your current planner data.
-              </p>
               Please upload an HTML copy of your unofficial transcript. To obtain this:
               <ol>
                 <li>
@@ -200,22 +301,19 @@ const ImportTranscriptPopup: FC = () => {
                 onInput={(e: React.FormEvent<HTMLInputElement>) => {
                   const input = e.target as HTMLInputElement;
                   setFile(input.files![0]);
+                  setFilePath(input.value);
                 }}
               ></Form.Control>
             </Form.Group>
           </Form>
-          <Button variant="primary" disabled={!file || busy} onClick={importHandler}>
+          <Button2 variant="primary" disabled={!file || busy} onClick={importHandler}>
             {busy ? 'Importing...' : 'Import'}
-          </Button>
+          </Button2>
         </Modal.Body>
       </Modal>
-      <Button
-        variant={darkMode ? 'dark' : 'light'}
-        className="ppc-btn add-transcript-btn"
-        onClick={() => setShowModal(true)}
-      >
-        <FileEarmarkText className="add-transcript-icon" />
-        <div>Import Transcript</div>
+      <Button variant="text" onClick={() => setShowModal(true)}>
+        <DescriptionIcon />
+        <span>Student Transcript</span>
       </Button>
     </>
   );

@@ -1,13 +1,9 @@
 .roadmap-page {
   font-family: 'Open Sans', sans-serif;
-  height: calc(100vh - 4rem);
   overflow: hidden;
   display: flex;
   width: 100%;
-
-  .hide {
-    display: none;
-  }
+  height: 100%;
 
   .main-wrapper {
     width: 100%;
@@ -17,33 +13,6 @@
 
   .main-wrapper.mobile {
     width: 100%;
-  }
-
-  .sidebar-wrapper {
-    border-radius: var(--border-radius);
-    margin-left: 1vw;
-    width: 25%;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  .sidebar-wrapper.mobile {
-    width: 100%;
-    margin: 0;
-  }
-}
-
-.search-body,
-.quarter {
-  &:not(.disabled) .course {
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    &:active {
-      cursor: grabbing;
-    }
-  }
-  &.disabled .course {
-    cursor: pointer;
+    padding: 16px;
   }
 }

@@ -1,51 +1,51 @@
 [data-theme='dark'] {
   .quarter .quarter-header .quarter-title,
-  .quarter .quarter-add-course {
+  .quarter {
     color: #eee;
-  }
-  .plus-icon {
-    fill: #eee;
-  }
-
-  .quarter-menu-btn:hover,
-  .quarter-menu-btn:focus,
-  .popover-body .quarter-menu-btn:active {
-    background-color: var(--overlay2);
   }
 }
 
-.quarter {
-  background-color: var(--overlay1);
-  border-radius: 10px;
-  box-shadow: 0px 0px 4px var(--blue-primary);
+div.quarter {
+  border-radius: 0;
   flex: 1 1 30%;
   min-width: 250px;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  font-size: 14px;
+  margin: -1px -0.75px;
+  background-color: transparent;
 
   .quarter-header {
+    background-color: #8881;
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border-primary);
+    margin-bottom: -2px;
+    z-index: 1;
 
     .quarter-title {
       color: #202e47;
       font-weight: bold;
       font-size: 18px;
-      padding: 10px 0 10px 12px;
       margin: 0;
       margin-right: auto;
     }
 
-    .quarter-edit-btn {
-      background: none;
-      border: none;
-      margin-right: 8px;
-      padding: 0;
-      width: 20px;
+    button {
+      height: 24px;
+      font-size: 11px;
+      font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-weight: 600;
+
+      .MuiButton-icon {
+        margin-right: 4px;
+      }
     }
   }
 
@@ -54,23 +54,13 @@
     font-size: 16px;
   }
 
-  .quarter-add-course {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #202e47;
-    font-size: 16px;
-  }
-
   .quarter-course-list {
-    border: 1px solid #268cd366;
-    border-inline-width: 0;
     margin-bottom: -2px;
     height: 100%;
+    overflow: hidden;
 
     &:empty {
-      padding: 12px 32px 20px;
+      padding: 16px 32px;
       border: none;
       display: flex;
       justify-content: center;
@@ -84,11 +74,9 @@
 
     .course {
       box-shadow: none;
-      border: 1px solid #268cd366;
+      border: 1px solid var(--border-secondary);
       border-radius: 0;
-      &.invalid .course-and-info {
-        color: orange;
-      }
+      margin-block: -0.5px;
       .quarter-indicator-container {
         display: none;
       }
@@ -104,38 +92,35 @@
   }
 }
 
+body[data-theme='light'] {
+  div.quarter .quarter-header button.MuiButton-root:hover {
+    --variant-containedBg: #e8e8e8;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  div.quarter .quarter-course-list:empty {
+    padding: 16px;
+    border: none;
+    margin-block: -16px;
+    pointer-events: none;
+    &::before {
+      content: '';
+    }
+    &.dropzone-active {
+      pointer-events: auto;
+    }
+  }
+}
+
 // Although :has is not super widely supported, this style is not critical to page functionality.
 // It should be fine to make it work for just browsers that do support it.
 body:has(> #profile-popover) {
-  .quarter-add-course {
+  .MuiButtonBase-root {
     transition: background-color 0s;
   }
 }
 body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
   // when a course is dragged, show grabbing cursor no matter what
   cursor: grabbing !important;
-}
-
-.quarter-menu-btn {
-  display: block;
-  width: 100%;
-  text-align: start;
-  border: 0px;
-  background: transparent;
-  padding: 0;
-}
-
-.quarter-menu-popover {
-  z-index: 1;
-}
-
-.plus-icon {
-  fill: #000000;
-}
-
-.red-menu-btn,
-.red-menu-btn:hover,
-.red-menu-btn:focus,
-.popover-body .quarter-menu-btn.red-menu-btn:active {
-  color: red;
 }

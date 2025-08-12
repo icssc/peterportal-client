@@ -42,7 +42,7 @@
 
   h2 {
     font-size: 14px;
-    color: var(--text-light);
+    color: var(--text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
     padding-bottom: 4px;
@@ -148,4 +148,8 @@ i.login-icon {
 .theme-popover__link:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.exit-icon {
+  font-size: 20px;
 }

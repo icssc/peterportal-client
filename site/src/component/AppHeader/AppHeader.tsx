@@ -1,8 +1,6 @@
 import { useState, useEffect, FC, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import { ChatLeftDotsFill, Github, List } from 'react-bootstrap-icons';
-
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './AppHeader.scss';
 
@@ -11,8 +9,13 @@ import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
 import { Button, Popover } from 'react-bootstrap';
-import PPCOverlayTrigger from '../PPCOverlayTrigger';
+import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 import ThemeContext from '../../style/theme-context';
+
+import GitHubIcon from '@mui/icons-material/GitHub';
+import MenuIcon from '@mui/icons-material/Menu';
+import SmsIcon from '@mui/icons-material/Sms';
+import { IconButton } from '@mui/material';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +55,7 @@ const AppHeader: FC = () => {
           rel="noopener noreferrer"
           variant={buttonVariant}
         >
-          <Github /> Report an issue
+          <GitHubIcon /> Report an issue
         </Button>
         <Button
           as="a"
@@ -61,7 +64,7 @@ const AppHeader: FC = () => {
           rel="noopener noreferrer"
           variant={buttonVariant}
         >
-          <ChatLeftDotsFill /> Feedback
+          <SmsIcon /> Feedback
         </Button>
       </div>
     </Popover.Content>
@@ -72,9 +75,9 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Hamburger Menu */}
-          <button className="navbar-menu" onClick={toggleMenu}>
-            <List className="navbar-menu-icon" size="32px" />
-          </button>
+          <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
+            <MenuIcon className="navbar-menu-icon" />
+          </IconButton>
         </div>
 
         {/* Logo */}

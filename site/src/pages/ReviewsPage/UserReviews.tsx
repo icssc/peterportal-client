@@ -1,43 +1,37 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import SubReview from '../../component/Review/SubReview';
-import './UserReviews.scss';
+import ReviewCard from '../../component/Review/ReviewCard';
+import ReviewItemGrid from '../../component/ReviewItemGrid/ReviewItemGrid';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import trpc from '../../trpc';
 
 const UserReviews: FC = () => {
   const reviews = useAppSelector(selectReviews);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
   const dispatch = useAppDispatch();
 
   const getUserReviews = useCallback(async () => {
     const response = await trpc.reviews.getUsersReviews.query();
     dispatch(setReviews(response));
-    setLoaded(true);
+    setReviewsLoading(false);
   }, [dispatch]);
 
   useEffect(() => {
     getUserReviews();
   }, [getUserReviews]);
 
-  if (!loaded) {
-    return <p>Loading...</p>;
-  } else if (reviews.length === 0) {
-    return <p>No reviews to display at the moment.</p>;
-  } else {
-    return (
-      <div className="user-reviews-container">
-        <h1>Your Reviews</h1>
-        <p>Deleting a review will remove it permanently.</p>
-        {reviews.map((review) => (
-          <div key={review.id!} className="user-reviews">
-            <br />
-            <SubReview review={review} />
-          </div>
-        ))}
-      </div>
-    );
-  }
+  return (
+    <ReviewItemGrid
+      title="Your Reviews"
+      description="Deleting a review will remove it permanently."
+      isLoading={reviewsLoading}
+      noDataMsg="You haven't reviewed any courses yet. Look up a course you've taken to review it!"
+    >
+      {reviews.map((review) => (
+        <ReviewCard key={`user-review-${review.id}`} review={review} />
+      ))}
+    </ReviewItemGrid>
+  );
 };
 
 export default UserReviews;

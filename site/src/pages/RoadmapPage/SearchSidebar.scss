@@ -1,39 +1,11 @@
 @use '../../globals';
 
 .search-sidebar {
-  overflow: auto;
-  width: 368px;
-
-  background-color: var(--overlay1);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding: 16px 20px;
-
-  .search-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: auto;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  &.mobile {
-    @include globals.bottom-overlay(450);
-    border-radius: 8px 8px 0 0;
-  }
-
-  button.fixed {
-    @include globals.bottom-button();
-  }
-
-  .coursebag-title {
+  .saved-course-title {
     margin: 12px 6px 0;
   }
-
-  .ppc-combobox__clear-indicator {
-    display: none;
+  &.mobile {
+    @include globals.bottom-overlay(450);
   }
 }
 
@@ -52,34 +24,11 @@
   width: 100%;
 }
 
-.search-sidebar-search-module {
-  .form-group {
-    margin-bottom: 0;
-  }
-}
-
-.coursebag-title {
+h3.saved-courses-title {
+  font-size: 20px;
   font-size: 1.25rem;
   font-weight: 500;
-}
-
-h3.coursebag-title {
-  font-size: 20px;
-}
-
-.no-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  font-size: 20px;
-  padding: 2rem;
-  text-align: center;
-
-  img {
-    width: 400px;
-    max-width: 100%;
-  }
+  margin-block: 16px 0;
 }
 
 .search-pagination {

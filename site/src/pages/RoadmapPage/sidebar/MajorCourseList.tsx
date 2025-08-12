@@ -1,7 +1,6 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
-import { ChevronDown, ChevronRight } from 'react-bootstrap-icons';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -12,9 +11,12 @@ import {
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
-import RequirementsLoadingIcon from './RequirementsLoadingIcon';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
+
+import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import { Collapse } from '@mui/material';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -86,7 +88,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
-      await fetchRequirements(major.id, selectedSpec?.id);
+      await fetchRequirements(major.id, foundSpec?.id);
     }
   }, [
     dispatch,
@@ -124,43 +126,37 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const toggleExpand = () => setOpen(!open);
 
-  const renderRequirements = () => {
-    if (resultsLoading) return <RequirementsLoadingIcon />;
-    if (hasSpecs && !majorWithSpec.selectedSpec) {
-      return <p className="unselected-spec-notice">Please select a specialization to view requirements</p>;
-    }
-    return (
-      <ProgramRequirementsList
-        requirements={majorWithSpec.requirements}
-        storeKeyPrefix={`major-${majorWithSpec.major.id}`}
-      />
-    );
-  };
-
   return (
     <div className="major-section">
       <button className="header-tab" onClick={toggleExpand}>
-        {open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
         <h4 className="major-name">{major.name}</h4>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </button>
-      {open && (
-        <>
-          {hasSpecs && (
-            <Select
-              options={specOptions}
-              value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
-              isDisabled={specsLoading}
-              isLoading={specsLoading}
-              onChange={handleSpecializationChange}
-              className="ppc-combobox"
-              classNamePrefix="ppc-combobox"
-              placeholder="Select a specialization..."
-              theme={(t) => comboboxTheme(t, isDark)}
-            />
-          )}
-          {renderRequirements()}
-        </>
-      )}
+      <Collapse in={open} unmountOnExit>
+        {hasSpecs && (
+          <Select
+            options={specOptions}
+            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
+            isDisabled={specsLoading}
+            isLoading={specsLoading}
+            onChange={handleSpecializationChange}
+            className="ppc-combobox"
+            classNamePrefix="ppc-combobox"
+            placeholder="Select a specialization..."
+            theme={(t) => comboboxTheme(t, isDark)}
+          />
+        )}
+        {hasSpecs && !majorWithSpec.selectedSpec ? (
+          <p className="unselected-spec-notice">Please select a specialization to view requirements</p>
+        ) : resultsLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ProgramRequirementsList
+            requirements={majorWithSpec.requirements}
+            storeKeyPrefix={`major-${majorWithSpec.major.id}`}
+          />
+        )}
+      </Collapse>
     </div>
   );
 };

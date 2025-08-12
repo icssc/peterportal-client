@@ -1,8 +1,11 @@
-.header {
+@use '../../globals.scss';
+
+.roadmap-header {
   border-radius: var(--border-radius);
   color: var(--ring-road-white);
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
   padding: 8px;
   position: sticky;
@@ -42,20 +45,44 @@
     padding: 8px;
     align-items: center;
     gap: 8px 12px;
+    z-index: 2;
   }
 
-  .planner-right {
-    @media (min-width: 860px) {
-      button {
-        white-space: nowrap;
+  .btn-group button {
+    white-space: nowrap;
+    padding-inline: 8px;
+    @media (max-width: 900px) {
+      font-size: 13px;
+      margin: 0;
+      padding: 6px;
+
+      .MuiSvgIcon-root {
+        font-size: 18px;
+        margin-right: 4px;
       }
     }
-    .btn-group {
-      flex-wrap: wrap;
-      justify-content: end;
+  }
+
+  .planner-actions {
+    padding-right: 2px;
+
+    span.MuiButton-startIcon {
+      margin-right: 4px;
     }
-    .btn-group button {
-      flex-grow: 0;
+
+    .header-btn {
+      white-space: nowrap;
+      text-transform: none;
+      color: inherit;
+      font-weight: 500;
+      height: fit-content;
+      border-radius: 4px;
+      padding: 4px 8px 4px 10px;
+
+      @media (max-width: 900px) {
+        font-size: 13px;
+        padding-inline: 8px 6px;
+      }
     }
   }
 }
@@ -69,15 +96,6 @@
   font-weight: bold;
 }
 
-.header-btn {
-  color: var(--ring-road-white);
-  background-color: transparent;
-  font-weight: bold;
-  border: none;
-  font-size: 14px;
-  padding: 6px 12px;
-}
-
 .header-btn:hover,
 .header-btn:focus {
   background-color: transparent;
@@ -85,17 +103,15 @@
 }
 
 .header-icon {
-  margin-left: 10px;
+  margin-right: 6px;
+  padding-inline: 1px;
+  margin-top: 1px;
 }
 
 @media only screen and (max-width: 400px) {
-  .header {
+  .roadmap-header {
     #title {
       font-size: 1em;
-    }
-
-    #planner-stats {
-      font-size: 0.7em;
     }
 
     .add-course {

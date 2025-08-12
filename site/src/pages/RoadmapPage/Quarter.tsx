@@ -1,19 +1,14 @@
-import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
-import { Plus, ThreeDots } from 'react-bootstrap-icons';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { quarterDisplayNames } from '../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
-  clearQuarter,
   deleteCourse,
-  deleteQuarter,
   moveCourse,
   MoveCoursePayload,
   setActiveCourse,
   setShowSearch,
 } from '../../store/slices/roadmapSlice';
-import ThemeContext from '../../style/theme-context';
 import { PlannerQuarterData } from '../../types/types';
 import './Quarter.scss';
 
@@ -21,14 +16,16 @@ import Course from './Course';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../helpers/sortable';
 
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import { Button, Card } from '@mui/material';
+
 interface QuarterProps {
-  year: number;
   yearIndex: number;
   quarterIndex: number;
   data: PlannerQuarterData;
 }
 
-const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
+const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const dispatch = useAppDispatch();
   const quarterTitle = quarterDisplayNames[data.name];
   const invalidCourses = useAppSelector(
@@ -36,16 +33,10 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   );
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const [showQuarterMenu, setShowQuarterMenu] = useState(false);
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
-
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
-
-  const handleQuarterMenuClick = () => {
-    setShowQuarterMenu(!showQuarterMenu);
-  };
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const isDragging = activeCourse !== undefined;
 
   const calculateQuarterStats = () => {
     let unitCount = 0;
@@ -95,36 +86,8 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
     removeCourseAt(moveCourseTrigger.to.courseIndex);
     setMoveCourseTrigger(null);
     dispatch(moveCourse(moveCourseTrigger));
+    dispatch(setActiveCourse(undefined));
   }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
-
-  const popover = (
-    <Popover id={`quarter-menu-${yearIndex}-${quarterIndex}`} className="quarter-menu-popover">
-      <Popover.Content>
-        <div>
-          <Button
-            variant={buttonVariant}
-            className="quarter-menu-btn red-menu-btn"
-            onClick={() => {
-              dispatch(clearQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
-              setShowQuarterMenu(false);
-            }}
-          >
-            Clear
-          </Button>
-          <Button
-            variant={buttonVariant}
-            className="quarter-menu-btn red-menu-btn"
-            onClick={() => {
-              dispatch(deleteQuarter({ yearIndex: yearIndex, quarterIndex: quarterIndex }));
-              setShowQuarterMenu(false);
-            }}
-          >
-            Delete
-          </Button>
-        </div>
-      </Popover.Content>
-    </Popover>
-  );
 
   const setDraggedItem = (event: SortableEvent) => {
     const course = data.courses[event.oldIndex!];
@@ -132,37 +95,37 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
   };
 
   return (
-    <div className="quarter" ref={quarterContainerRef}>
+    <Card className="quarter" ref={quarterContainerRef} variant="outlined">
       <div className="quarter-header">
-        <h2 className="quarter-title">
-          {quarterTitle} {year}
-        </h2>
+        <h2 className="quarter-title">{quarterTitle.replace('10 Week', '10wk')}</h2>
         <div className="quarter-units">
           {unitCount} unit{pluralize(unitCount)}
         </div>
-        <OverlayTrigger
-          trigger="click"
-          overlay={popover}
-          rootClose
-          onToggle={setShowQuarterMenu}
-          show={showQuarterMenu}
-          container={quarterContainerRef}
-          placement="bottom"
-        >
-          {({ ref, ...triggerHandler }) => (
-            <button ref={ref} {...triggerHandler} onClick={handleQuarterMenuClick} className="quarter-edit-btn">
-              <ThreeDots />
-            </button>
-          )}
-        </OverlayTrigger>
+        {isMobile && (
+          <Button
+            startIcon={<PlaylistAddIcon />}
+            onClick={() => dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }))}
+            size="small"
+            variant="contained"
+            color="inherit"
+            disableElevation
+          >
+            Add Course
+          </Button>
+        )}
       </div>
       <ReactSortable
         list={coursesCopy}
-        className="quarter-course-list"
+        className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse}
         onRemove={removeCourse}
         onSort={sortCourse}
+        onEnd={() => {
+          if (!activeCourseLoading) {
+            dispatch(setActiveCourse(undefined));
+          }
+        }}
         {...quarterSortable}
       >
         {data.courses.map((course, index) => {
@@ -187,22 +150,7 @@ const Quarter: FC<QuarterProps> = ({ year, yearIndex, quarterIndex, data }) => {
           );
         })}
       </ReactSortable>
-
-      {isMobile && (
-        <>
-          <Button
-            variant={buttonVariant}
-            className="quarter-add-course"
-            onClick={() => {
-              dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }));
-            }}
-          >
-            <Plus className="plus-icon" />
-            <span>Add Course</span>
-          </Button>
-        </>
-      )}
-    </div>
+    </Card>
   );
 };
 
