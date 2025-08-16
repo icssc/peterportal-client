@@ -18,38 +18,40 @@ import { getMissingPrerequisites } from '../../helpers/planner';
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  interactive?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, interactive = true, requiredCourses }) => {
-  let content = <LoadingSpinner />;
-
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const clearedCourses = useClearedCourses();
-  if (typeof course !== 'string') {
-    requiredCourses = getMissingPrerequisites(clearedCourses, course);
 
-    const { department, courseNumber, minUnits, maxUnits } = course;
-    content = (
-      <>
-        <div className="popover-name">
-          {department + ' ' + courseNumber + ' '}
-          <span className="popover-units">
-            ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
-          </span>
-
-          <div className="spacer"></div>
-          {interactive && <CourseBookmarkButton course={course} />}
-        </div>
-        <br />
-        <CourseDescription course={course} />
-        <PrerequisiteText course={course} />
-        <CorequisiteText course={course} />
-        <IncompletePrerequisiteText requiredCourses={requiredCourses} />
-        <PreviousOfferingsRow course={course} />
-      </>
+  if (typeof course === 'string') {
+    return (
+      <Popover.Content className="course-popover">
+        <LoadingSpinner />
+      </Popover.Content>
     );
   }
-  return <Popover.Content className="course-popover">{content}</Popover.Content>;
+
+  requiredCourses = getMissingPrerequisites(clearedCourses, course);
+  const { department, courseNumber, minUnits, maxUnits } = course;
+
+  return (
+    <Popover.Content className="course-popover">
+      <div className="popover-name">
+        {department + ' ' + courseNumber + ' '}
+        <span className="popover-units">
+          ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
+        </span>
+        <div className="spacer" />
+        <CourseBookmarkButton course={course} />
+      </div>
+      <br />
+      <CourseDescription course={course} />
+      <PrerequisiteText course={course} />
+      <CorequisiteText course={course} />
+      <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+      <PreviousOfferingsRow course={course} />
+    </Popover.Content>
+  );
 };
 
 export default CoursePopover;

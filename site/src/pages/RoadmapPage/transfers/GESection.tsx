@@ -94,14 +94,14 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
 };
 
 const GESection: FC = () => {
-  const doneLoading = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
+  const loading = useAppSelector((state) => state.transferCredits.dataLoadState !== 'done');
 
   return (
     <MenuSection title="General Education Credits">
       <SectionDescription>
         Enter the GE credits that you've received in each category from other colleges/universities.
       </SectionDescription>
-      {doneLoading ? ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />) : <LoadingSpinner />}
+      {loading ? <LoadingSpinner /> : ALL_GE_NAMES.map((geName) => <GEMenuTile key={geName} geName={geName} />)}
     </MenuSection>
   );
 };

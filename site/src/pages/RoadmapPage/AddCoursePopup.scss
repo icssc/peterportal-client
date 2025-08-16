@@ -38,16 +38,17 @@
     font-size: 20px;
   }
 
-  button:not(.fixed),
-  button.close {
-    width: 20px;
-    height: 20px;
-
-    @include globals.clickable(0.8, 0.5);
+  button.MuiButtonBase-root {
+    padding: 4px;
+    margin: -6px -2px -8px;
   }
 
-  button.close-button {
-    width: 32px;
+  .close-button {
+    margin: -2px 4px -4px 0;
+    &.MuiButtonBase-root {
+      width: 32px;
+      height: 32px;
+    }
   }
 
   .quarter-offerings-section {
@@ -58,8 +59,4 @@
       margin-left: 0;
     }
   }
-}
-
-.add-course-form {
-  padding: 2rem;
 }

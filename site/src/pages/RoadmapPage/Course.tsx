@@ -15,15 +15,6 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-export const UnmetPrerequisiteText: React.FC<{ requiredCourses?: string[] }> = ({ requiredCourses }) => (
-  <>
-    Prerequisite(s) not met! Missing: {requiredCourses?.join(', ')}
-    <br />
-    Already completed prerequisite(s) at another institution? Click 'Transfer Credits' at the top of the planner to
-    clear the prerequisite(s).
-  </>
-);
-
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
   popupListener?: (open: boolean) => void;
@@ -49,7 +40,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     if (isTouchEvent && !allowTouchClick) event.preventDefault();
   };
 
-  const popoverContent = <CoursePopover course={data} interactive={true} requiredCourses={requiredCourses} />;
+  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
     <PPCOverlayTrigger
@@ -112,7 +103,6 @@ const Course: FC<CourseProps> = (props) => {
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
         </div>
-        <div className="spacer"></div>
         {onDelete ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
             <DeleteOutlineIcon className="course-delete-icon" />

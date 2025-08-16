@@ -31,12 +31,14 @@ const AllCourseSearch: FC = () => {
 
   return (
     <>
-      <div className="search-sidebar-search-module">
-        <SearchModule index="courses" />
-      </div>
+      <SearchModule index="courses" />
       <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
 
-      {!searchInProgress && shownCourses.length ? (
+      {searchInProgress ? (
+        <LoadingSpinner />
+      ) : shownCourses.length === 0 ? (
+        <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
+      ) : (
         <ReactSortable
           {...courseSearchSortable}
           list={shownCourses}
@@ -57,10 +59,6 @@ const AllCourseSearch: FC = () => {
             );
           })}
         </ReactSortable>
-      ) : searchInProgress ? (
-        <LoadingSpinner />
-      ) : (
-        <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       )}
     </>
   );

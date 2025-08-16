@@ -84,6 +84,27 @@ button {
   }
 }
 
+.ppc-mui-button.MuiButton-root {
+  display: inline-flex;
+  height: 29px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  padding: 0px 12px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+
+  [data-theme='dark'] & {
+    background-color: #606166;
+  }
+
+  &.primary-button {
+    background-color: var(--blue-primary);
+    color: white;
+  }
+}
+
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;
@@ -356,15 +377,6 @@ button {
   }
 }
 
-button.unstyled {
-  background: none;
-  font: inherit;
-  border: none;
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
 .badge-pill {
   padding: 6px 10px;
   margin-right: 10px;
@@ -375,6 +387,12 @@ button.unstyled {
 .table-wrapper {
   width: 100%;
   overflow: auto;
+}
+
+.loader-container {
+  display: flex;
+  margin: 20px;
+  justify-content: center;
 }
 
 // monkey patch for recaptcha border bug

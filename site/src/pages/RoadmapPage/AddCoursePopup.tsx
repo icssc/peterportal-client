@@ -14,11 +14,10 @@ import {
   PreviousOfferingsRow,
 } from '../../component/CourseInfo/CourseInfo';
 
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface AddCoursePopupProps {}
-
-const AddCoursePopup: FC<AddCoursePopupProps> = () => {
+const AddCoursePopup: FC = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
   const showAddCourse = useAppSelector((state) => state.roadmap.showAddCourse);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
@@ -70,9 +69,9 @@ const AddCoursePopup: FC<AddCoursePopupProps> = () => {
           </span>
           <CourseBookmarkButton course={activeCourse} />
           <div className="spacer"></div>
-          <button onClick={closePopup} className="close-button unstyled">
+          <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
-          </button>
+          </IconButton>
         </Modal.Header>
         <Modal.Body>
           <CourseDescription course={activeCourse} />

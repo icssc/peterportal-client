@@ -69,7 +69,3 @@ body[data-theme='dark'] {
 
   --border-secondary: rgba(255, 255, 255, 0.12);
 }
-
-.hide {
-  display: none;
-}
