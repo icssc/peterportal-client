@@ -147,6 +147,7 @@ export default $config({
       home: 'aws',
       providers: {
         aws: {
+          version: 'aws-7.3.1', // try pinning provider version
           region: 'us-west-1',
         },
       },
