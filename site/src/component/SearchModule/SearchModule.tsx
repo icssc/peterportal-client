@@ -94,7 +94,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   return (
     <div className="search-module">
-      <Form.Group>
+      <Form.Group className="form-group">
         <InputGroup>
           <Form.Control
             className="search-bar"
@@ -105,11 +105,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             defaultValue={search.query}
             autoCorrect="off"
           />
-          <InputGroup.Append>
-            <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
-              <SearchIcon />
-            </button>
-          </InputGroup.Append>
+          <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
+            <SearchIcon />
+          </button>
         </InputGroup>
       </Form.Group>
       <div className="search-filters">

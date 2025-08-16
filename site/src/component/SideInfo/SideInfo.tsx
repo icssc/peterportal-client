@@ -1,3 +1,4 @@
+'use client';
 import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
@@ -5,7 +6,7 @@ import Badge from 'react-bootstrap/Badge';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -34,7 +35,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
       <div className="column">
         <p className="field-name">{featureType} Rated</p>
         <p className="field-value">
-          <Link to={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
+          <Link href={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
             {displayName}
           </Link>
         </p>
@@ -151,7 +152,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           <p>{props.description}</p>
           <div className="course-tags">
             {props.tags.map((tag, i) => (
-              <Badge pill variant="info" key={`side-info-badge-${i}`}>
+              <Badge pill bg="info" key={`side-info-badge-${i}`}>
                 {tag}
               </Badge>
             ))}

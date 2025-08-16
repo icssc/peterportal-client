@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
 
     /* Linting */
     "strict": true,
@@ -22,8 +22,12 @@
 
     "allowJs": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+
+    /* Next.js */
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["src/"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [".next/types/**/*.ts", "./next-env.d.ts", "src/"],
+  "exclude": ["./node_modules"]
 }

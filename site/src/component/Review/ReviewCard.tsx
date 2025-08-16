@@ -1,9 +1,9 @@
-import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
+'use client';
 import './ReviewCard.scss';
+import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
 import Badge from 'react-bootstrap/Badge';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import { Link } from 'react-router-dom';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
@@ -21,6 +21,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton, Card, Skeleton } from '@mui/material';
+import Link from 'next/link';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -139,12 +140,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
-        const courseLink = <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+        const courseLink = <Link href={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
-        const profLink = <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        const profLink = <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
         setIdentifier(profLink);
       } else {
         const foundCourseAndProfName = await fetchCourseAndProfName();
@@ -152,9 +153,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const profName = foundCourseAndProfName?.profName ?? review.professorId;
         const courseAndProfLink = (
           <div>
-            <Link to={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
+            <Link href={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
             {' • '}
-            <Link to={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+            <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
           </div>
         );
         setIdentifier(courseAndProfLink);
@@ -219,13 +220,13 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
-      <Badge variant="primary">Verified</Badge>
+      <Badge bg="primary">Verified</Badge>
     </OverlayTrigger>
   );
 
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
-      <Badge variant="success" style={{ padding: '1px' }}>
+      <Badge bg="success" style={{ padding: '1px' }}>
         <PersonIcon />
       </Badge>
     </OverlayTrigger>

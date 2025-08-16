@@ -1,7 +1,8 @@
-/** temporary file/patch for overlay trigger to make it so user can mouse into it wihtout it closing */
-
+'use client';
 import { FC, ReactNode, useState } from 'react';
 import { OverlayTrigger, OverlayTriggerProps, Popover } from 'react-bootstrap';
+
+/** temporary file/patch for overlay trigger to make it so user can mouse into it without it closing */
 
 interface PPCOverlayTriggerProps extends Omit<OverlayTriggerProps, 'overlay'> {
   popoverContent: ReactNode;

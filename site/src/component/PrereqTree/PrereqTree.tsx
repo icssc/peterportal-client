@@ -1,10 +1,11 @@
+'use client';
 import { FC } from 'react';
 import './PrereqTree.scss';
 import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
-import { Link } from 'react-router-dom';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
+import Link from 'next/link';
 
 interface NodeProps {
   node: string;
@@ -21,14 +22,14 @@ const phraseMapping = {
 const Node: FC<NodeProps> = (props) => {
   const popover = (
     <Popover id="tree-node-popover" className="tree-node-popover" placement="bottom">
-      <Popover.Content>{props.content ? props.content : props.label}</Popover.Content>
+      <div className="popover-body">{props.content ? props.content : props.label}</div>
     </Popover>
   );
   return (
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
       <OverlayTrigger overlay={popover}>
         {!props.label.startsWith('AP ') ? (
-          <Link to={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')} role="button" className="node">
+          <Link href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')} role="button" className="node">
             {props.label}
           </Link>
         ) : (
