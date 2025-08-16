@@ -1,3 +1,4 @@
+'use client';
 import { useCallback, useEffect } from 'react';
 import trpc from '../trpc';
 import { CourseGQLData } from '../types/types';

@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import trpc from '../trpc';

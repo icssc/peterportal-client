@@ -5,7 +5,9 @@ interface ExpandMoreProps extends IconButtonProps {
   expanded: boolean;
 }
 
-export const ExpandMore = styled((props: ExpandMoreProps) => (
+// `expand` must be passed for this component to be updated properly
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const ExpandMore = styled(({ expanded, ...props }: ExpandMoreProps) => (
   <IconButton {...props}>
     <ExpandMoreIcon />
   </IconButton>

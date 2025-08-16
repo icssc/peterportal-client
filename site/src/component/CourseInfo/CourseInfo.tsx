@@ -73,10 +73,10 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
   return (
     <>
       {course.terms && course.terms.length > 0 && (
-        <p className="quarter-offerings-section">
+        <div className="quarter-offerings-section">
           <b>Previous Offerings:</b>
           <RecentOfferingsTooltip terms={course.terms} />
-        </p>
+        </div>
       )}
     </>
   );

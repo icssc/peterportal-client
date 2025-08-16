@@ -55,7 +55,8 @@ router.get('/google/callback', function (req, res) {
   // all staging auths will redirect their callback to prod since all callback URLs must be registered
   // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
   // staging instances
-  // if we are not on a staging instance (on prod or local) but original host is a staging instance, redirect back to host
+  // if Google redirects the user to a non-staging instance (on prod or local), but original host is
+  // a staging instance, redirect back to host.
   if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
     // req.url doesn't include /api/users/auth part, only /google/callback? and whatever params after that
     res.redirect(`https://${host}/api/users/auth${req.url}`);
