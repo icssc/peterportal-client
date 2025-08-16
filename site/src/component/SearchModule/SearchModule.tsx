@@ -112,6 +112,24 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           </InputGroup.Append>
         </InputGroup>
       </Form.Group>
+      <div className="search-filters">
+        <Form.Control as="select" className="filter-chip">
+          <option>Department</option>
+          {/* TODO: Add department options dynamically */}
+        </Form.Control>
+        <Form.Control as="select" className="filter-chip">
+          <option>Level</option>
+          {/* TODO: Add level options dynamically */}
+        </Form.Control>
+        <Form.Control as="select" className="filter-chip">
+          <option>Units</option>
+          {/* TODO: Add units options dynamically */}
+        </Form.Control>
+        <Form.Control as="select" className="filter-chip">
+          <option>GE Category</option>
+          {/* TODO: Add GE category options dynamically */}
+        </Form.Control>
+      </div>
     </div>
   );
 };
