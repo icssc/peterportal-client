@@ -1,0 +1,37 @@
+@use '../../../globals';
+
+.search-sidebar {
+  .saved-course-title {
+    margin: 12px 6px 0;
+  }
+  &.mobile {
+    @include globals.bottom-overlay(450);
+  }
+}
+
+.search {
+  padding: 2rem;
+}
+
+.search-header {
+  display: flex;
+}
+
+.search-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+h3.saved-courses-title {
+  font-size: 20px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-block: 16px 0;
+}
+
+.search-pagination {
+  display: flex;
+  justify-content: center;
+}
