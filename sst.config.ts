@@ -41,7 +41,7 @@ function createTrpcLambdaFunction() {
     }),
   };
 
-  return new sst.aws.Function('PeterPortal Backend', {
+  return new sst.aws.Function('PeterPortal-Backend', {
     handler: 'api/src/app.handler',
     memory: '256 MB',
     runtime: 'nodejs22.x',
