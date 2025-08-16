@@ -41,7 +41,7 @@ function createLambdaFunction() {
     }),
   };
 
-  return new sst.aws.Function('PeterPortal Backend', {
+  return new sst.aws.Function('PeterPortal-Backend', {
     handler: 'api/src/app.handler',
     memory: '256 MB',
     runtime: 'nodejs22.x',
@@ -100,7 +100,7 @@ function createStaticSite(
   apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
   cloudfrontInjectionFunction: aws.cloudfront.Function,
 ) {
-  return new sst.aws.StaticSite('PeterPortal Site', {
+  return new sst.aws.StaticSite('PeterPortal-Site', {
     domain: {
       name: domainName,
       redirects: domainRedirects,
@@ -147,7 +147,6 @@ export default $config({
       home: 'aws',
       providers: {
         aws: {
-          version: '7.3.1', // try pinning provider version
           region: 'us-west-1',
         },
       },
