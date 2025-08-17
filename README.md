@@ -99,9 +99,9 @@ git checkout -b [branch name]
 
 1. Open a terminal in the root directory of the repo.
 
-2. Run `pnpm run dev` to start both the backend Express server and frontend Vite dev server
+2. Run `pnpm run dev` to start both the backend Express server and frontend Next.js dev server
 
-3. Visit the link printed to the console by Vite!
+3. Visit the link printed to the console by Next.js!
 
 Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `pnpm run dev`
 
