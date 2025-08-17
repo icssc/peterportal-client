@@ -36,7 +36,7 @@ Features include:
 - PostgreSQL
 - Drizzle ORM
 - TypeScript
-- Vite
+- Next.js
 
 ## First time setup
 
