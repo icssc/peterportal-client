@@ -13,6 +13,11 @@
     @include globals.bottom-button();
   }
 
+  .modal-header,
+  .modal-body {
+    padding: 16px;
+  }
+
   .modal-dialog {
     position: fixed;
     bottom: 0;
@@ -28,6 +33,7 @@
 
   .modal-header {
     gap: 8px;
+    padding-bottom: 0;
     .spacer {
       margin-left: auto;
     }
