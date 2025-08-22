@@ -4,6 +4,13 @@ button {
   color: inherit;
 }
 
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .app-body {
   display: flex;
   height: calc(100% - 72px);
@@ -84,12 +91,33 @@ button {
   }
 }
 
+.ppc-mui-button.MuiButton-root {
+  display: inline-flex;
+  height: 29px;
+  font-size: 13px;
+  white-space: nowrap;
+
+  padding: 0px 12px;
+
+  background-color: #e0e0e0;
+  color: var(--text);
+
+  [data-theme='dark'] & {
+    background-color: #606166;
+  }
+
+  &.primary-button {
+    background-color: var(--blue-primary);
+    color: white;
+  }
+}
+
 .ppc-popover {
   border-radius: 8px;
   padding: 0px;
   box-shadow: none;
   max-width: 375px;
-  top: -16px !important;
+  top: -12px !important;
 
   $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
   filter: $filter;
@@ -101,13 +129,13 @@ button {
     padding: 16px;
   }
 
-  .arrow {
+  .popover-arrow {
     z-index: -1;
-    &::after {
+    &::before {
       display: none;
     }
   }
-  .arrow::before {
+  .popover-arrow::after {
     position: absolute;
     border: 8px solid transparent;
     border-width: 12px 16px;
@@ -116,23 +144,25 @@ button {
   }
   &[data-popper-placement='bottom'] {
     top: -24px !important;
-    .arrow::before {
+    .popover-arrow::after {
       left: 0;
       bottom: 0;
-      top: 8px;
+      top: 10px;
       border-bottom-color: var(--overlay1);
       transform: translate(-25%, -100%);
       border-width: 16px 12px;
     }
   }
   &[data-popper-placement='left-start'] {
-    .arrow::before {
+    margin-inline: 8px !important;
+    .popover-arrow::after {
       left: -2px;
       border-left-color: var(--overlay1);
     }
   }
   &[data-popper-placement='right-start'] {
-    .arrow::before {
+    margin-inline: 8px !important;
+    .popover-arrow::after {
       right: -2px;
       border-right-color: var(--overlay1);
     }
@@ -221,12 +251,21 @@ button {
     .form-check {
       padding-block: 2px;
       align-items: center;
+      margin-bottom: 0;
+      > input.form-check-input {
+        float: none;
+        margin-right: 0;
+      }
       .form-check-label {
-        margin-left: 12px;
+        margin-left: 10px;
       }
     }
     input[type='file'] {
       font-size: 16px;
+    }
+    > img {
+      width: 100%;
+      height: auto;
     }
   }
 
@@ -240,6 +279,12 @@ button {
   button.btn-primary {
     border-color: var(--blue-primary);
     background-color: var(--blue-primary);
+  }
+
+  [data-theme='dark'] & .btn-close {
+    opacity: 1;
+    filter: invert(1) hue-rotate(180deg);
+    -webkit-filter: invert(1) hue-rotate(180deg);
   }
 }
 
@@ -356,20 +401,10 @@ button {
   }
 }
 
-button.unstyled {
-  background: none;
-  font: inherit;
-  border: none;
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
-.badge-pill {
+.badge.rounded-pill {
   padding: 6px 10px;
-  margin-right: 10px;
   font-size: 12px;
-  background-color: var(--blue-primary);
+  background-color: var(--blue-primary) !important; // override bootstrap important
 }
 
 .table-wrapper {
@@ -381,6 +416,14 @@ button.unstyled {
   display: flex;
   margin: 20px;
   justify-content: center;
+}
+
+// revert styles that bootstrap decided to override for SOME reason
+body hr {
+  opacity: 1;
+}
+.form-group {
+  margin-bottom: 16px;
 }
 
 // monkey patch for recaptcha border bug

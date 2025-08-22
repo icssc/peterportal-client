@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import './Profile.scss';
-import { NavLink } from 'react-router-dom';
 import trpc from '../../trpc';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
@@ -13,6 +12,8 @@ import LaptopIcon from '@mui/icons-material/Laptop';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -20,10 +21,11 @@ const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
   const [show, setShow] = useState(false);
   const [tab, setTab] = useState<ProfileMenuTab>('default');
+  const pathname = usePathname();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [picture, setPicture] = useState('');
+  const [picture, setPicture] = useState<string | undefined>(undefined);
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
@@ -42,6 +44,7 @@ const Profile = () => {
     }
   });
 
+  /** @todo change to <Image/> once we get user data to be server-rendered */
   const DefaultTab = (
     <>
       <div className="profile-popover__header">
@@ -54,16 +57,16 @@ const Profile = () => {
       <div className="profile-popover__links">
         <ul>
           <li>
-            <NavLink
-              className={({ isActive }) => 'profile-popover__link' + (isActive ? ' active' : '')}
-              to="/reviews"
+            <Link
+              className={'profile-popover__link' + (pathname === '/reviews' ? ' active' : '')}
+              href="/reviews"
               onClick={() => setShow(false)}
             >
               <div>
                 <StickyNote2OutlinedIcon />
               </div>
               Your Reviews
-            </NavLink>
+            </Link>
           </li>
           <li>
             <button className="theme-button profile-popover__link" onClick={() => setTab('theme')}>
@@ -132,9 +135,8 @@ const Profile = () => {
   );
 
   const ProfilePopover = (
-    <Popover id="profile-popover">
-      {tab === 'default' && DefaultTab}
-      {tab === 'theme' && ThemeTab}
+    <Popover id="profile-popover" className="ppc-popover">
+      {tab === 'default' ? DefaultTab : ThemeTab}
     </Popover>
   );
 

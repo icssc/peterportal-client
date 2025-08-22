@@ -4,11 +4,8 @@
   --overlay1: #fff;
   --overlay2: var(--gray-blue);
   --overlay3: #fff;
-  --overlay4: var(--gray-blue);
   --text: #212529; // default bootstrap color
   --text-secondary: #606166;
-  --text-dark: #000;
-  --text-light: #495057;
 }
 
 // dark theme vars
@@ -19,12 +16,8 @@
   --overlay1: #1e1e1e;
   --overlay2: #292929;
   --overlay3: #363636;
-  // jumps to 10% brighter
-  --overlay4: #4c4c4c;
   --text: #fff;
   --text-secondary: #99999f;
-  --text-dark: #fff;
-  --text-light: #fff;
   color-scheme: dark;
 }
 
@@ -42,6 +35,9 @@
   .form-control:focus {
     color: var(--text);
     background-color: var(--overlay2);
+    &::placeholder {
+      color: #8888;
+    }
   }
 
   .form-control {

@@ -1,0 +1,13 @@
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  margin: 8px auto;
+
+  .spinner-border {
+    color: inherit;
+  }
+
+  &.page-loader {
+    margin-top: 24px;
+  }
+}

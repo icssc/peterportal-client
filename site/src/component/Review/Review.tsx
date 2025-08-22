@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useCallback, useContext } from 'react';
-import SubReview from './SubReview';
+import ReviewCard from './ReviewCard';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
@@ -208,9 +208,9 @@ const Review: FC<ReviewProps> = (props) => {
             </div>
           </div>
           {sortedReviews.length !== 0 && (
-            <div className="subreviews">
+            <div className="reviewcards">
               {sortedReviews.map((review) => (
-                <SubReview review={review} key={review.id} course={props.course} professor={props.professor} />
+                <ReviewCard review={review} key={review.id} course={props.course} professor={props.professor} />
               ))}
             </div>
           )}

@@ -6,7 +6,7 @@ body {
   height: 100%;
 }
 
-body {
+html > body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -68,8 +68,4 @@ body[data-theme='dark'] {
   --green-secondary: #295629;
 
   --border-secondary: rgba(255, 255, 255, 0.12);
-}
-
-.hide {
-  display: none;
 }

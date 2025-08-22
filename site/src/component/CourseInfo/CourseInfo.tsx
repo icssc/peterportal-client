@@ -3,8 +3,9 @@ import { CourseGQLData } from '../../types/types';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
-import CourseQuarterIndicator from '../QuarterTooltip/CourseQuarterIndicator';
+import RecentOfferingsTooltip from '../RecentOfferingsTooltip/RecentOfferingsTooltip';
 
+import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -17,9 +18,9 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
   const courseIsSaved = isCourseSaved(course);
   return (
-    <button className="unstyled" onClick={() => toggleSavedCourse(course)}>
+    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)}>
       {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </button>
+    </IconButton>
   );
 };
 
@@ -72,10 +73,10 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
   return (
     <>
       {course.terms && course.terms.length > 0 && (
-        <p className="quarter-offerings-section">
+        <div className="quarter-offerings-section">
           <b>Previous Offerings:</b>
-          <CourseQuarterIndicator terms={course.terms} size="sm" />
-        </p>
+          <RecentOfferingsTooltip terms={course.terms} />
+        </div>
       )}
     </>
   );
