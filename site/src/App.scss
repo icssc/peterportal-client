@@ -240,14 +240,14 @@ a {
     overflow: hidden;
   }
 
-  .form-group {
-    .MuiFormLabel-root {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
+  .MuiFormLabel-root {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
 
+  .form-group {
     .MuiInputBase-input {
       font-size: 16px;
       padding: 5px 10px;
