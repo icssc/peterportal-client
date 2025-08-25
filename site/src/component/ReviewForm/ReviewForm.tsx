@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
@@ -21,11 +20,13 @@ import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
 import StarRating from './StarRating';
-import Select from 'react-select';
+import Select2 from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
+import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, MenuItem, Select, TextField } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
@@ -67,7 +68,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
-  const [showFormErrors, setShowFormErrors] = useState(false);
+  // const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
@@ -113,7 +114,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         closeForm();
       }
 
-      setShowFormErrors(false);
+      // setShowFormErrors(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,7 +135,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setContent(reviewToEdit?.content ?? '');
     setCaptchaToken('');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
-    setShowFormErrors(false);
+    // setShowFormErrors(false);
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
@@ -167,7 +168,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.stopPropagation();
 
     if (!valid) {
-      setShowFormErrors(true);
+      // setShowFormErrors(true);
       return;
     }
 
@@ -207,71 +208,71 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in course context, select a professor
   const professorSelect = courseProp && (
-    <Form.Group className="form-group">
-      <Form.Label>Professor</Form.Label>
-      <Form.Control
-        as="select"
+    <FormControl className="form-group">
+      <FormLabel>Professor</FormLabel>
+      <Select
         name="professor"
         id="professor"
         required
         onChange={(e) => setProfessor(e.target.value)}
         value={professor}
+        displayEmpty
       >
-        <option disabled={true} value="">
+        <MenuItem disabled value="">
           Select one of the following...
-        </option>
+        </MenuItem>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
           const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
           return (
-            <option
+            <MenuItem
               key={ucinetid}
               value={ucinetid}
               title={alreadyReviewed ? 'You have already reviewed this professor' : undefined}
               disabled={alreadyReviewed}
             >
               {name}
-            </option>
+            </MenuItem>
           );
         })}
-      </Form.Control>
-      <Form.Control.Feedback type="invalid">Missing professor</Form.Control.Feedback>
-    </Form.Group>
+      </Select>
+      {/* <Form.Control.Feedback type="invalid">Missing professor</Form.Control.Feedback> */}
+    </FormControl>
   );
 
   // if in professor context, select a course
   const courseSelect = professorProp && (
-    <Form.Group className="form-group">
-      <Form.Label>Course Taken</Form.Label>
-      <Form.Control
-        as="select"
+    <FormControl className="form-group">
+      <FormLabel>Course Taken</FormLabel>
+      <Select
         name="course"
         id="course"
         required
         onChange={(e) => setCourse(e.target.value)}
         value={course}
+        displayEmpty
       >
-        <option disabled={true} value="">
+        <MenuItem disabled value="">
           Select one of the following...
-        </option>
+        </MenuItem>
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
             professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
           const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
           return (
-            <option
+            <MenuItem
               key={courseID}
               value={courseID}
               title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
               disabled={alreadyReviewed}
             >
               {name}
-            </option>
+            </MenuItem>
           );
         })}
-      </Form.Control>
-      <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback>
-    </Form.Group>
+      </Select>
+      {/* <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback> */}
+    </FormControl>
   );
 
   function getReviewHeadingName() {
@@ -291,7 +292,187 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </Modal.Header>
       <Modal.Body>
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
-        <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
+        <Box component="form" noValidate onSubmit={submitForm} className="ppc-modal-form">
+          <div className="year-quarter-row">
+            <FormControl className="form-group">
+              <FormLabel className="ppc-modal-form-label">Year</FormLabel>
+              <Select
+                name="year"
+                id="year"
+                required
+                onChange={(e) => setYearTaken(e.target.value)}
+                value={yearTaken}
+                displayEmpty
+              >
+                <MenuItem disabled value="">
+                  Select
+                </MenuItem>
+                {years?.map((term) => (
+                  <MenuItem key={term} value={term}>
+                    {term}
+                  </MenuItem>
+                ))}
+              </Select>
+              {/* <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback> */}
+            </FormControl>
+            <FormControl className="form-group">
+              <FormLabel className="ppc-modal-form-label">Quarter</FormLabel>
+              <Select
+                name="quarter"
+                id="quarter"
+                required
+                onChange={(e) => setQuarterTaken(e.target.value)}
+                value={quarterTaken}
+                displayEmpty
+              >
+                <MenuItem disabled value="">
+                  Select
+                </MenuItem>
+                {quarters?.map((term) => (
+                  <MenuItem key={term} value={term}>
+                    {term}
+                  </MenuItem>
+                ))}
+              </Select>
+              {/* <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback> */}
+            </FormControl>
+          </div>
+
+          {professorSelect}
+          {courseSelect}
+
+          <div className="grade-difficulty-row">
+            <FormControl className="form-group">
+              <FormLabel className="ppc-modal-form-label">Grade</FormLabel>
+              <Select
+                name="grade"
+                id="grade"
+                required
+                onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
+                value={gradeReceived ?? ''}
+                displayEmpty
+              >
+                <MenuItem disabled value="">
+                  Select
+                </MenuItem>
+                {grades.map((grade) => (
+                  <MenuItem key={grade}>{grade}</MenuItem>
+                ))}
+              </Select>
+              {/* <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback> */}
+            </FormControl>
+
+            <FormControl className="form-group">
+              <FormLabel className="ppc-modal-form-label">Difficulty</FormLabel>
+              <Select
+                name="difficulty"
+                id="difficulty"
+                required
+                onChange={(e: SelectChangeEvent) => setDifficulty(parseInt(e.target.value))}
+                value={difficulty?.toString() ?? ''}
+                displayEmpty
+              >
+                <MenuItem disabled={true} value="">
+                  Select
+                </MenuItem>
+                {[1, 2, 3, 4, 5].map((difficulty) => (
+                  <MenuItem key={difficulty}>{difficulty}</MenuItem>
+                ))}
+              </Select>
+              {/* <Form.Control.Feedback type="invalid">Missing difficulty</Form.Control.Feedback> */}
+            </FormControl>
+          </div>
+
+          <FormControl className="form-group">
+            <FormLabel className="ppc-modal-form-label">Rating</FormLabel>
+            <StarRating rating={rating} setRating={setRating} /> {/** @todo migrate to Rating */}
+          </FormControl>
+
+          <FormControl className="form-group">
+            <FormLabel className="ppc-modal-form-label">Course Details</FormLabel>
+
+            <FormControlLabel
+              label="Would Take Again"
+              control={
+                <Checkbox id="takeAgain" checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />
+              }
+            ></FormControlLabel>
+
+            <FormControlLabel
+              label="Requires Textbook"
+              control={<Checkbox id="textbook" checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
+            />
+
+            <FormControlLabel
+              label="Mandatory Attendance"
+              control={
+                <Checkbox id="attendance" checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />
+              }
+            />
+          </FormControl>
+
+          <FormControl className="form-group">
+            <FormLabel className="ppc-modal-form-label">Tags</FormLabel>
+            <Select2 /** @todo migrate this to a MUI component? */
+              isMulti
+              options={tags.map((tag) => ({ label: tag, value: tag }))}
+              value={selectedTags.map((tag) => ({ label: tag, value: tag }))}
+              onChange={(selected) => {
+                const newTags = selected.map((opt) => opt.value);
+                setSelectedTags(newTags);
+                if (newTags.length > 3) {
+                  setTagsOpen(false);
+                }
+              }}
+              onMenuOpen={() => setTagsOpen(true)}
+              onMenuClose={() => setTagsOpen(false)}
+              menuIsOpen={selectedTags.length < 3 && tagsOpen}
+              isOptionDisabled={() => selectedTags.length >= 3}
+              placeholder="Select up to 3 tags"
+              closeMenuOnSelect={false}
+              theme={(t) => comboboxTheme(t, darkMode)}
+              className="ppc-combobox"
+              classNamePrefix="ppc-combobox"
+            />
+          </FormControl>
+
+          <FormControl className="form-group additional-details">
+            <FormLabel className="ppc-modal-form-label">Additional Details</FormLabel>
+            <TextField
+              multiline
+              placeholder="The course was pretty good."
+              onChange={(e) => setContent(e.target.value)}
+              value={content}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 500,
+                },
+              }}
+            />
+          </FormControl>
+
+          {!editing && (
+            <div className="g-recaptcha">
+              <ReCAPTCHA
+                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4" //
+                theme={darkMode ? 'dark' : 'light'}
+                onChange={(token) => setCaptchaToken(token ?? '')}
+              />
+            </div>
+          )}
+
+          <FormControl className="anonymous-checkbox form-group">
+            <FormControlLabel
+              label="Post as Anonymous"
+              control={<Checkbox id="anonymous" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
+            />
+          </FormControl>
+
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+          </Button>
+        </Box>
+        {/* <Form noValidate validated={showFormErrors} onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Year</Form.Label>
@@ -474,7 +655,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? 'Submitting...' : 'Submit Review'}
           </Button>
-        </Form>
+        </Form> */}
       </Modal.Body>
     </Modal>
   );
