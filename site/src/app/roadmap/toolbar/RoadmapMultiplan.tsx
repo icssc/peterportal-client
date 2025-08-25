@@ -223,7 +223,7 @@ const RoadmapMultiplan: FC = () => {
                   },
                 }}
                 placeholder={defaultPlan.name}
-              ></TextField>
+              />
             </FormControl>
           </Box>
           {/* <Form noValidate className="ppc-modal-form">
@@ -269,7 +269,29 @@ const RoadmapMultiplan: FC = () => {
           <h2>Edit Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
+          <Box component="form" noValidate className="ppc-modal-form">
+            <FormControl className="form-group">
+              <FormLabel className="ppc-modal-form-label">Roadmap Name</FormLabel>
+              <TextField
+                required
+                type="text"
+                name="roadmap_name"
+                value={newPlanName}
+                onChange={(e) => setNewPlanName(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  // prevent submitting form (reloads the page)
+                  if (e.key === 'Enter') e.preventDefault();
+                }}
+                slotProps={{
+                  htmlInput: {
+                    maxLength: 35,
+                  },
+                }}
+                placeholder={defaultPlan.name}
+              />
+            </FormControl>
+          </Box>
+          {/* <Form noValidate className="ppc-modal-form">
             <Form.Group className="form-group">
               <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
               <Form.Control
@@ -286,7 +308,7 @@ const RoadmapMultiplan: FC = () => {
                 placeholder={defaultPlan.name}
               ></Form.Control>
             </Form.Group>
-          </Form>
+          </Form> */}
           <Button2
             variant="primary"
             onClick={() => {
