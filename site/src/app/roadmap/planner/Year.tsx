@@ -1,7 +1,7 @@
 'use client';
 import { FC, useRef, useState } from 'react';
 import './Year.scss';
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Quarter from './Quarter';
 import { useAppDispatch } from '../../../store/hooks';
 import { addQuarter, editYear, editName, deleteYear, deleteQuarter } from '../../../store/slices/roadmapSlice';
@@ -10,7 +10,7 @@ import { pluralize } from '../../../helpers/util';
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
 
-import { Card, Collapse, Divider, IconButton } from '@mui/material';
+import { Box, Card, Collapse, Divider, FormControl, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
@@ -76,14 +76,23 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
         <h2>Delete Year</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate className="ppc-modal-form">
+        <Box component="form" noValidate className="ppc-modal-form">
+          <FormControl className="form-group">
+            <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
+          </FormControl>
+        </Box>
+
+        <Button variant="danger" onClick={handleDeleteYear}>
+          I am sure
+        </Button>
+        {/* <Form noValidate className="ppc-modal-form">
           <Form.Group className="form-group">
             <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
           </Form.Group>
         </Form>
         <Button variant="danger" onClick={handleDeleteYear}>
           I am sure
-        </Button>
+        </Button> */}
       </Modal.Body>
     </Modal>
   );
