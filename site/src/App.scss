@@ -197,12 +197,14 @@ a {
 
 .ppc-modal {
   font-size: 18px;
+  display: flex;
+  flex-direction: column;
 
-  .ppc-modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  // .ppc-modal-form {
+  //   display: flex;
+  //   flex-direction: column;
+  //   gap: 16px;
+  // }
   .modal-header {
     align-items: center;
     border-bottom: none;
@@ -239,7 +241,7 @@ a {
   }
 
   .form-group {
-    > .MuiFormLabel-root {
+    .MuiFormLabel-root {
       font-size: 18px;
       font-weight: 600;
       color: var(--text);
@@ -281,6 +283,9 @@ a {
       display: flex;
       gap: 8px 12px;
     }
+
+    display: flex;
+    flex-direction: column;
     margin-bottom: 16px;
   }
 
