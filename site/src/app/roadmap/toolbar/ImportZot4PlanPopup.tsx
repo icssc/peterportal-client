@@ -1,7 +1,7 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { Button as Button2, Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
@@ -16,7 +16,7 @@ import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Button } from '@mui/material';
+import { Box, Button, FormControl, FormLabel, MenuItem, Select, TextField } from '@mui/material';
 
 const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
@@ -106,7 +106,62 @@ const ImportZot4PlanPopup: FC = () => {
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form className="ppc-modal-form">
+          <Box component="form" noValidate className="ppc-modal-form">
+            <FormControl className="form-group">
+              <p>
+                To add your{' '}
+                <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
+                  Zot4Plan
+                </a>{' '}
+                classes into a new roadmap, enter the exact name that you used to save your Zot4Plan schedule (as shown
+                below).
+              </p>
+              <Image
+                src={helpImage.src}
+                width={helpImage.width}
+                height={helpImage.height}
+                alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"
+              />
+            </FormControl>
+
+            <FormControl className="form-group">
+              <FormLabel>Schedule Name</FormLabel>
+              <TextField
+                type="text"
+                placeholder="Exact Zot4Plan schedule name"
+                onChange={(e) => setScheduleName(e.target.value)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  // prevent submitting form (reloads the page)
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
+              />
+              {scheduleName.length > 0 && scheduleName.length < 8 && (
+                <span className="import-schedule-warning">
+                  <WarningAmberIcon className="import-schedule-icon" />
+                  No Zot4Plan schedule name contains less than 8 characters
+                </span>
+              )}
+            </FormControl>
+
+            <FormControl className="form-group">
+              <FormLabel>I am currently a...</FormLabel>
+              <Select
+                onChange={(ev) => setStudentYear(ev.target.value)}
+                value={studentYear}
+                MenuProps={{
+                  disablePortal: true, // prevents z-indexing issues while using bootstrap modal; can probably be removed after modal is migrated
+                }}
+              >
+                <MenuItem value="1">1st year</MenuItem>
+                <MenuItem value="2">2nd year</MenuItem>
+                <MenuItem value="3">3rd year</MenuItem>
+                <MenuItem value="4">4th year</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          {/* <Form className="ppc-modal-form">
             <Form.Group className="form-group">
               <p>
                 To add your{' '}
@@ -152,7 +207,7 @@ const ImportZot4PlanPopup: FC = () => {
                 <option value="4">4th year</option>
               </Form.Control>
             </Form.Group>
-          </Form>
+          </Form> */}
           <Button2 variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
             {busy ? 'Importing...' : 'Import and Save'}
           </Button2>

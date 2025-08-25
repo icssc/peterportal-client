@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import spawnToast from '../../helpers/toastify';
+import { Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -47,7 +47,35 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <h2>Report Review</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate onSubmit={submitReport}>
+        <Box component="form" noValidate className="ppc-modal-form" onSubmit={submitReport}>
+          <FormLabel>Review Content</FormLabel>
+          <p className="reported-review-content">
+            <i>{props.reviewContent}</i>
+          </p>
+
+          <FormLabel>Why are you reporting this review?</FormLabel>
+
+          <FormControl className="form-group">
+            <TextField
+              placeholder="Enter a reason..."
+              multiline
+              slotProps={{
+                htmlInput: {
+                  minLength: 1,
+                  maxLength: 500,
+                },
+              }}
+              onChange={(e) => setReason(e.target.value)}
+              value={reason}
+              rows={4}
+            />
+          </FormControl>
+
+          <Button variant="primary" type="submit" disabled={!reason.length || busy}>
+            Submit Report
+          </Button>
+        </Box>
+        {/* <Form noValidate onSubmit={submitReport}>
           <Form.Label className="ppc-modal-form-label">Review Content</Form.Label>
           <p className="reported-review-content">
             <i>{props.reviewContent}</i>
@@ -65,10 +93,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
               rows={4}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" disabled={!reason.length || busy}>
-            Submit Report
-          </Button>
-        </Form>
+        </Form> */}
       </Modal.Body>
     </Modal>
   );
