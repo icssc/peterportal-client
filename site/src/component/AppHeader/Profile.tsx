@@ -2,8 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import './Profile.scss';
-import trpc from '../../trpc';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -14,6 +12,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '../../store/hooks';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -23,10 +22,12 @@ const Profile = () => {
   const [tab, setTab] = useState<ProfileMenuTab>('default');
   const pathname = usePathname();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [picture, setPicture] = useState<string | undefined>(undefined);
-  const isLoggedIn = useIsLoggedIn();
+  // const [name, setName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [picture, setPicture] = useState<string | undefined>(undefined);
+  // const isLoggedIn = useIsLoggedIn();
+
+  const user = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!show) {
@@ -35,14 +36,29 @@ const Profile = () => {
   }, [show]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      trpc.users.get.query().then((user) => {
-        setName(user.name);
-        setEmail(user.email);
-        setPicture(user.picture);
-      });
-    }
+    // if (isLoggedIn) {
+    //   trpc.users.get.query().then((user) => {
+    //     setName(user.name);
+    //     setEmail(user.email);
+    //     setPicture(user.picture);
+    //   });
+    // }
   });
+
+  if (!user) {
+    return (
+      <a href={`/api/users/auth/google`}>
+        <Button variant={darkMode ? 'dark' : 'light'}>
+          <span>
+            <ExitToAppIcon className="exit-icon" />
+          </span>
+          Log In
+        </Button>
+      </a>
+    );
+  }
+
+  const { name, email, picture } = user;
 
   /** @todo change to <Image/> once we get user data to be server-rendered */
   const DefaultTab = (
@@ -141,45 +157,32 @@ const Profile = () => {
   );
 
   return (
-    <>
-      {isLoggedIn ? (
-        <div className="navbar-profile">
-          <OverlayTrigger
-            rootClose
-            trigger="click"
-            placement="bottom"
-            overlay={ProfilePopover}
-            show={show}
-            onToggle={setShow}
-            popperConfig={{
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [-135, 8],
-                  },
-                },
-              ],
-            }}
-          >
-            {({ ref, ...triggerHandler }) => (
-              <button {...triggerHandler} className="profile-button">
-                <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
-              </button>
-            )}
-          </OverlayTrigger>
-        </div>
-      ) : (
-        <a href={`/api/users/auth/google`}>
-          <Button variant={darkMode ? 'dark' : 'light'}>
-            <span>
-              <ExitToAppIcon className="exit-icon" />
-            </span>
-            Log In
-          </Button>
-        </a>
-      )}
-    </>
+    <div className="navbar-profile">
+      <OverlayTrigger
+        rootClose
+        trigger="click"
+        placement="bottom"
+        overlay={ProfilePopover}
+        show={show}
+        onToggle={setShow}
+        popperConfig={{
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [-135, 8],
+              },
+            },
+          ],
+        }}
+      >
+        {({ ref, ...triggerHandler }) => (
+          <button {...triggerHandler} className="profile-button">
+            <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
+          </button>
+        )}
+      </OverlayTrigger>
+    </div>
   );
 };
 

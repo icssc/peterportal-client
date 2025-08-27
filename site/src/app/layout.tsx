@@ -14,13 +14,19 @@ import SideBar from '../component/SideBar/SideBar';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
+import { createServerSideTrpcCaller } from '../trpc';
+import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   description:
     'A web application for course discovery and planning at UCI, featuring an enhanced catalogue and a 4-year planner.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const reqHeaders = await headers().then((h) => Object.fromEntries(h.entries()));
+  const serverTrpc = createServerSideTrpcCaller(reqHeaders);
+  const user = await serverTrpc.users.get.query().catch(() => null);
+
   return (
     <html lang="en">
       <head>
@@ -33,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>PeterPortal</title>
       </head>
       <body>
-        <AppProvider>
+        <AppProvider user={user}>
           <div id="root">
             <AppHeader />
             <div className="app-body">

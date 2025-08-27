@@ -19,3 +19,8 @@ export interface UserData extends Omit<PassportUser, 'id'> {
   isAdmin: boolean;
   lastRoadmapEditAt?: string;
 }
+
+export interface UserSliceState {
+  user: Omit<PassportUser, 'id'> | null;
+  theme: Theme | null;
+}
