@@ -462,9 +462,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <FormLabel className="ppc-modal-form-label">Additional Details</FormLabel>
             <TextField
               multiline
+              fullWidth
               placeholder="The course was pretty good."
               onChange={(e) => setContent(e.target.value)}
               value={content}
+              minRows={3}
               slotProps={{
                 htmlInput: {
                   maxLength: 500,

@@ -62,8 +62,12 @@
   }
 
   .additional-details {
+    .MuiInputBase-root {
+      padding: 0;
+    }
+
     textarea {
-      height: 90px;
+      resize: vertical;
     }
   }
 
