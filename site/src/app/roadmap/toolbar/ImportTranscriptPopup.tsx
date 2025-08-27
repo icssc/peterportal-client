@@ -20,7 +20,7 @@ import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Box, Button, FormControl, FormLabel, TextField } from '@mui/material';
+import { Box, Button, FormControl, FormLabel } from '@mui/material';
 
 interface TransferUnitDetails {
   date: string;
@@ -294,15 +294,11 @@ const ImportTranscriptPopup: FC = () => {
 
             <FormControl className="form-group">
               <FormLabel>Transcript File</FormLabel>
-              <TextField
+              <input
                 required
                 type="file"
                 name="transcript"
-                slotProps={{
-                  htmlInput: {
-                    accept: 'text/html',
-                  },
-                }}
+                accept="text/html"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const input = e.target as HTMLInputElement;
                   if (input.files && input.files[0]) {
@@ -313,35 +309,6 @@ const ImportTranscriptPopup: FC = () => {
               />
             </FormControl>
           </Box>
-          {/* <Form className="ppc-modal-form">
-            <Form.Group className="form-group">
-              Please upload an HTML copy of your unofficial transcript. To obtain this:
-              <ol>
-                <li>
-                  Go to{' '}
-                  <a href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
-                    Student Access
-                  </a>
-                </li>
-                <li>Navigate to "Unofficial Transcript"</li>
-                <li>Save the page (ctrl/cmd + s)</li>
-              </ol>
-            </Form.Group>
-            <Form.Group className="form-group">
-              <Form.Label className="ppc-modal-form-label">Transcript File</Form.Label>
-              <Form.Control
-                required
-                type="file"
-                name="transcript"
-                accept="text/html"
-                onInput={(e: React.FormEvent<HTMLInputElement>) => {
-                  const input = e.target as HTMLInputElement;
-                  setFile(input.files![0]);
-                  setFilePath(input.value);
-                }}
-              ></Form.Control>
-            </Form.Group>
-          </Form> */}
           <Button2 variant="primary" disabled={!file || busy} onClick={importHandler}>
             {busy ? 'Importing...' : 'Import'}
           </Button2>
