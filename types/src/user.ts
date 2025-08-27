@@ -23,4 +23,5 @@ export interface UserData extends Omit<PassportUser, 'id'> {
 export interface UserSliceState {
   user: Omit<PassportUser, 'id'> | null;
   theme: Theme | null;
+  isAdmin: boolean;
 }

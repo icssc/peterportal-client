@@ -22,11 +22,6 @@ const Profile = () => {
   const [tab, setTab] = useState<ProfileMenuTab>('default');
   const pathname = usePathname();
 
-  // const [name, setName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [picture, setPicture] = useState<string | undefined>(undefined);
-  // const isLoggedIn = useIsLoggedIn();
-
   const user = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
@@ -34,16 +29,6 @@ const Profile = () => {
       setTimeout(() => setTab('default'), 150); // popover transition time is 150ms
     }
   }, [show]);
-
-  useEffect(() => {
-    // if (isLoggedIn) {
-    //   trpc.users.get.query().then((user) => {
-    //     setName(user.name);
-    //     setEmail(user.email);
-    //     setPicture(user.picture);
-    //   });
-    // }
-  });
 
   if (!user) {
     return (

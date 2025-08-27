@@ -45,7 +45,11 @@ const AppProvider: FC<AppProviderProps> = ({ children, user }) => {
   );
 
   const appContent = wrapInPostHogIfNeeded(baseContent);
-  const store = generateStore({ user, theme: user?.theme ?? 'system' });
+  const store = generateStore({
+    user,
+    theme: user?.theme ?? 'system',
+    isAdmin: user?.isAdmin ?? false,
+  });
 
   return <Provider store={store}>{appContent}</Provider>;
 };

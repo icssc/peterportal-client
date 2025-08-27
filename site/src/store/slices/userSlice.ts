@@ -5,6 +5,7 @@ import { UserSliceState } from '@peterportal/types';
 const initialState: UserSliceState = {
   user: null,
   theme: 'system',
+  isAdmin: false,
 };
 
 export const userSlice = createSlice({
