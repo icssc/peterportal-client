@@ -1,7 +1,7 @@
 import { useState, useEffect, FC, useCallback, useRef } from 'react';
 import './SearchModule.scss';
-// import Form from 'react-bootstrap/Form';
-// import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SearchIndex, SearchResultData } from '../../types/types';
@@ -12,7 +12,6 @@ import { setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
 
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, FormControl, IconButton, InputAdornment, TextField } from '@mui/material';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -95,40 +94,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   return (
     <div className="search-module">
-      <Box className="form-group">
-        <FormControl className="form-group">
-          <TextField
-            className="search-bar"
-            aria-label="search"
-            type="search"
-            placeholder={placeholder}
-            onChange={(e) => searchAfterTimeout(e.target.value)}
-            defaultValue={search.query}
-            autoCorrect="off"
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      className="input-group-text"
-                      onClick={() => searchImmediately(searchQuery)}
-                      edge="end"
-                      size="small"
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </FormControl>
-        {/* <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
-            <SearchIcon />
-          </button> */}
-      </Box>
-
-      {/* <Form.Group className="form-group">
+      <Form.Group className="form-group">
         <InputGroup>
           <Form.Control
             className="search-bar"
@@ -143,7 +109,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             <SearchIcon />
           </button>
         </InputGroup>
-      </Form.Group> */}
+      </Form.Group>
     </div>
   );
 };
