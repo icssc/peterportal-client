@@ -19,7 +19,6 @@ import {
 import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
-// import StarRating from './StarRating';
 import Select2 from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -30,6 +29,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   MenuItem,
   Rating,
@@ -78,7 +78,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
-  // const [showFormErrors, setShowFormErrors] = useState(false);
+  const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
@@ -124,7 +124,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         closeForm();
       }
 
-      // setShowFormErrors(false);
+      setShowFormErrors(false);
     }
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +145,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setContent(reviewToEdit?.content ?? '');
     setCaptchaToken('');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
-    // setShowFormErrors(false);
+    setShowFormErrors(false);
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
@@ -178,7 +178,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.stopPropagation();
 
     if (!valid) {
-      // setShowFormErrors(true);
+      setShowFormErrors(true);
       return;
     }
 
@@ -218,7 +218,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in course context, select a professor
   const professorSelect = courseProp && (
-    <FormControl className="form-group">
+    <FormControl className="form-group" error={showFormErrors && !professor}>
       <FormLabel>Professor</FormLabel>
       <Select
         name="professor"
@@ -246,13 +246,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Select>
-      {/* <Form.Control.Feedback type="invalid">Missing professor</Form.Control.Feedback> */}
+      {showFormErrors && !professor && <FormHelperText>Missing professor</FormHelperText>}
     </FormControl>
   );
 
   // if in professor context, select a course
   const courseSelect = professorProp && (
-    <FormControl className="form-group">
+    <FormControl className="form-group" error={showFormErrors && !course}>
       <FormLabel>Course Taken</FormLabel>
       <Select
         name="course"
@@ -281,7 +281,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Select>
-      {/* <Form.Control.Feedback type="invalid">Missing course</Form.Control.Feedback> */}
+      {showFormErrors && !course && <FormHelperText>Missing course</FormHelperText>}
     </FormControl>
   );
 
@@ -304,7 +304,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
         <Box component="form" noValidate onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
-            <FormControl className="form-group">
+            <FormControl className="form-group" error={showFormErrors && !yearTaken}>
               <FormLabel className="ppc-modal-form-label">Year</FormLabel>
               <Select
                 name="year"
@@ -323,9 +323,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   </MenuItem>
                 ))}
               </Select>
-              {/* <Form.Control.Feedback type="invalid">Missing year</Form.Control.Feedback> */}
+              {showFormErrors && !yearTaken && <FormHelperText>Missing year</FormHelperText>}
             </FormControl>
-            <FormControl className="form-group">
+            <FormControl className="form-group" error={showFormErrors && !quarterTaken}>
               <FormLabel className="ppc-modal-form-label">Quarter</FormLabel>
               <Select
                 name="quarter"
@@ -344,7 +344,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   </MenuItem>
                 ))}
               </Select>
-              {/* <Form.Control.Feedback type="invalid">Missing quarter</Form.Control.Feedback> */}
+              {showFormErrors && !quarterTaken && <FormHelperText>Missing quarter</FormHelperText>}
             </FormControl>
           </div>
 
@@ -352,7 +352,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           {courseSelect}
 
           <div className="grade-difficulty-row">
-            <FormControl className="form-group">
+            <FormControl className="form-group" error={showFormErrors && !gradeReceived}>
               <FormLabel className="ppc-modal-form-label">Grade</FormLabel>
               <Select
                 name="grade"
@@ -366,13 +366,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   Select
                 </MenuItem>
                 {grades.map((grade) => (
-                  <MenuItem key={grade}>{grade}</MenuItem>
+                  <MenuItem key={grade} value={grade}>
+                    {grade}
+                  </MenuItem>
                 ))}
               </Select>
-              {/* <Form.Control.Feedback type="invalid">Missing grade</Form.Control.Feedback> */}
+              {showFormErrors && !gradeReceived && <FormHelperText>Missing grade</FormHelperText>}
             </FormControl>
 
-            <FormControl className="form-group">
+            <FormControl className="form-group" error={showFormErrors && !difficulty}>
               <FormLabel className="ppc-modal-form-label">Difficulty</FormLabel>
               <Select
                 name="difficulty"
@@ -386,23 +388,26 @@ const ReviewForm: FC<ReviewFormProps> = ({
                   Select
                 </MenuItem>
                 {[1, 2, 3, 4, 5].map((difficulty) => (
-                  <MenuItem key={difficulty}>{difficulty}</MenuItem>
+                  <MenuItem key={difficulty} value={difficulty}>
+                    {difficulty}
+                  </MenuItem>
                 ))}
               </Select>
-              {/* <Form.Control.Feedback type="invalid">Missing difficulty</Form.Control.Feedback> */}
+              {showFormErrors && !difficulty && <FormHelperText>Missing difficulty</FormHelperText>}
             </FormControl>
           </div>
 
-          <FormControl className="form-group">
+          <FormControl className="form-group" error={showFormErrors && !rating}>
             <FormLabel className="ppc-modal-form-label">Rating</FormLabel>
             <Rating
+              className={showFormErrors && !rating ? 'rating-error' : ''}
               size="large"
               defaultValue={3}
               onChange={(_, newValue) => {
-                setRating(newValue!);
+                setRating(newValue ?? 0);
               }}
             />
-            {/* <StarRating rating={rating} setRating={setRating} />  */}
+            {showFormErrors && !rating && <FormHelperText>Missing rating</FormHelperText>}
           </FormControl>
 
           <FormControl className="form-group">

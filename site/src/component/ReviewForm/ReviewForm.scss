@@ -35,7 +35,6 @@
 
   .MuiRating-sizeLarge {
     font-size: 44px;
-
     .MuiRating-iconEmpty {
       color: white;
     }
@@ -45,6 +44,10 @@
     .MuiRating-iconHover {
       opacity: 0.6;
     }
+  }
+
+  .rating-error .MuiRating-iconEmpty {
+    color: red;
   }
 
   .ppc-combobox {
