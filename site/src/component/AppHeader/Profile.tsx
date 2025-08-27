@@ -13,6 +13,7 @@ import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
+import Image from 'next/image';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -49,7 +50,7 @@ const Profile = () => {
   const DefaultTab = (
     <>
       <div className="profile-popover__header">
-        <img src={picture} alt={name} width="50" height="50" />
+        <Image src={picture} alt={name} width="50" height="50" />
         <div>
           <h1 title={name}>{name}</h1>
           <h2 title={email}>{email}</h2>
@@ -163,7 +164,7 @@ const Profile = () => {
       >
         {({ ref, ...triggerHandler }) => (
           <button {...triggerHandler} className="profile-button">
-            <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
+            <Image ref={ref} src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
           </button>
         )}
       </OverlayTrigger>
