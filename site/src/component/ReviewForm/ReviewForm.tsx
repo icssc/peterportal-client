@@ -19,13 +19,23 @@ import {
 import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
-import StarRating from './StarRating';
+// import StarRating from './StarRating';
 import Select2 from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
-import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  MenuItem,
+  Rating,
+  Select,
+  TextField,
+} from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface ReviewFormProps extends ReviewProps {
@@ -385,7 +395,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           <FormControl className="form-group">
             <FormLabel className="ppc-modal-form-label">Rating</FormLabel>
-            <StarRating rating={rating} setRating={setRating} /> {/** @todo migrate to Rating */}
+            <Rating
+              size="large"
+              defaultValue={3}
+              onChange={(_, newValue) => {
+                setRating(newValue!);
+              }}
+            />
+            {/* <StarRating rating={rating} setRating={setRating} />  */}
           </FormControl>
 
           <FormControl className="form-group">

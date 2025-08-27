@@ -33,6 +33,20 @@
     }
   }
 
+  .MuiRating-sizeLarge {
+    font-size: 44px;
+
+    .MuiRating-iconEmpty {
+      color: white;
+    }
+    .MuiRating-iconFilled {
+      color: var(--blue-primary);
+    }
+    .MuiRating-iconHover {
+      opacity: 0.6;
+    }
+  }
+
   .ppc-combobox {
     .ppc-combobox__menu {
       margin-top: 0;
