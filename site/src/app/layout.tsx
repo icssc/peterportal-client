@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await serverTrpc.users.get.query().catch(() => null);
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -38,7 +38,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" content="#ffffff" />
         <title>PeterPortal</title>
       </head>
-      <body>
+      <body data-theme={user?.theme} suppressHydrationWarning>
+        <script src="/theme-script.js"></script>
         <AppProvider user={user}>
           <div id="root">
             <AppHeader />

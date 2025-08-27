@@ -5,26 +5,62 @@ import { Theme } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
 import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material';
+import { useAppSelector } from '../../store/hooks';
+
+function shouldPreloadDark(preference: Theme | null, hookIsDarkMode: boolean) {
+  if (preference === 'dark') return true;
+  if (preference === 'light') return false;
+
+  if (typeof document === 'undefined') return hookIsDarkMode;
+  return document.body.dataset.theme === 'dark';
+}
+
+/**
+ * Checks whether a react hook media query has the correct result. Because the useMediaQuery
+ * always returns false before everything loads, the hook will sometimes be wrong when rendering the page.
+ *
+ * We still want to use the hook because after it loads, its value will always be correct, and it triggers
+ * a rerender as intended when the system theme changes.
+ *
+ * @param isDark The value to check consistency with true system dark
+ * @returns Whether the theoretical and actual value match
+ */
+function isThemeMismatched(preference: Theme | null, isDark: boolean) {
+  if (preference === 'dark' && !isDark) return true;
+  if (preference === 'light' && isDark) return true;
+
+  const isSystemPreference = preference !== 'light' && preference !== 'dark';
+  if (!isSystemPreference) return false;
+
+  const trueSystemDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return trueSystemDark !== isDark;
+}
 
 const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
+  const preloadedPreference = useAppSelector((state) => state.user.theme);
+
   const isLoggedIn = useIsLoggedIn();
   const isSystemDark = useMediaQuery('(prefers-color-scheme: dark)');
 
+  const preloadedDark = shouldPreloadDark(preloadedPreference, isSystemDark);
+
   // default darkMode to local or system preferences
   /** @todo see if there's a way to make it so loading on first render (via localStorage) doesn't get overridden */
-  const [themePreference, setThemePreference] = useState<Theme | null>(null);
-  const [darkMode, setDarkMode] = useState(isSystemDark);
+  const [themePreference, setThemePreference] = useState<Theme | null>(preloadedPreference);
+  const [darkMode, setDarkMode] = useState<boolean>(preloadedDark);
+  const isMismatched = isThemeMismatched(themePreference, darkMode);
 
-  // either preferences or system change can trigger a recomputation of whether we are in dark mode
+  // either preferences or system change can trigger recomputation of whether we are in dark mode
   useEffect(() => {
     const fallbackToSystem = !themePreference || themePreference === 'system';
     setDarkMode(fallbackToSystem ? isSystemDark : themePreference === 'dark');
   }, [themePreference, isSystemDark]);
 
   useEffect(() => {
-    // Theme styling is controlled by data-theme attribute on body being set to light or dark
+    if (isMismatched) return;
+    // PeterPortal styling is controlled by the data-theme attribute on body
     document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
+  }, [isMismatched, darkMode]);
 
   /**
    * Sets and stores the new theme preference
@@ -45,9 +81,6 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
       setThemePreference((localStorage.getItem('theme') ?? null) as Theme | null);
       return;
     }
-    trpc.users.get.query().then((res) => {
-      if (res.theme) setThemePreference(res.theme);
-    });
   }, [isLoggedIn, setThemePreference]);
 
   const muiTheme = createTheme({ palette: { mode: darkMode ? 'dark' : 'light' } });
