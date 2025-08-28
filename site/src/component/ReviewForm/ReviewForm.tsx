@@ -305,7 +305,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <Box component="form" noValidate onSubmit={submitForm} className="ppc-modal-form">
           <div className="year-quarter-row">
             <FormControl className="form-group" error={showFormErrors && !yearTaken}>
-              <FormLabel className="ppc-modal-form-label">Year</FormLabel>
+              <FormLabel>Year</FormLabel>
               <Select
                 name="year"
                 id="year"
@@ -326,7 +326,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               {showFormErrors && !yearTaken && <FormHelperText>Missing year</FormHelperText>}
             </FormControl>
             <FormControl className="form-group" error={showFormErrors && !quarterTaken}>
-              <FormLabel className="ppc-modal-form-label">Quarter</FormLabel>
+              <FormLabel>Quarter</FormLabel>
               <Select
                 name="quarter"
                 id="quarter"
@@ -353,7 +353,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           <div className="grade-difficulty-row">
             <FormControl className="form-group" error={showFormErrors && !gradeReceived}>
-              <FormLabel className="ppc-modal-form-label">Grade</FormLabel>
+              <FormLabel>Grade</FormLabel>
               <Select
                 name="grade"
                 id="grade"
@@ -375,7 +375,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </FormControl>
 
             <FormControl className="form-group" error={showFormErrors && !difficulty}>
-              <FormLabel className="ppc-modal-form-label">Difficulty</FormLabel>
+              <FormLabel>Difficulty</FormLabel>
               <Select
                 name="difficulty"
                 id="difficulty"
@@ -398,7 +398,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </div>
 
           <FormControl className="form-group" error={showFormErrors && !rating}>
-            <FormLabel className="ppc-modal-form-label">Rating</FormLabel>
+            <FormLabel>Rating</FormLabel>
             <Rating
               className={showFormErrors && !rating ? 'rating-error' : ''}
               size="large"
@@ -411,30 +411,47 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </FormControl>
 
           <FormControl className="form-group">
-            <FormLabel className="ppc-modal-form-label">Course Details</FormLabel>
+            <FormLabel>Course Details</FormLabel>
 
             <FormControlLabel
               label="Would Take Again"
               control={
-                <Checkbox id="takeAgain" checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />
+                <Checkbox
+                  id="takeAgain"
+                  checked={!!takeAgain}
+                  onChange={(e) => setTakeAgain(e.target.checked)}
+                  icon={<span className="ppc-checkbox" />}
+                />
               }
             ></FormControlLabel>
 
             <FormControlLabel
               label="Requires Textbook"
-              control={<Checkbox id="textbook" checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
+              control={
+                <Checkbox
+                  id="textbook"
+                  checked={!!textbook}
+                  onChange={(e) => setTextbook(e.target.checked)}
+                  icon={<span className="ppc-checkbox" />}
+                />
+              }
             />
 
             <FormControlLabel
               label="Mandatory Attendance"
               control={
-                <Checkbox id="attendance" checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />
+                <Checkbox
+                  id="attendance"
+                  checked={!!attendance}
+                  onChange={(e) => setAttendance(e.target.checked)}
+                  icon={<span className="ppc-checkbox" />}
+                />
               }
             />
           </FormControl>
 
           <FormControl className="form-group">
-            <FormLabel className="ppc-modal-form-label">Tags</FormLabel>
+            <FormLabel>Tags</FormLabel>
             <Select2 /** @todo migrate this to a MUI component? */
               isMulti
               options={tags.map((tag) => ({ label: tag, value: tag }))}
@@ -459,7 +476,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </FormControl>
 
           <FormControl className="form-group additional-details">
-            <FormLabel className="ppc-modal-form-label">Additional Details</FormLabel>
+            <FormLabel>Additional Details</FormLabel>
             <TextField
               multiline
               fullWidth
@@ -488,7 +505,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
           <FormControl className="anonymous-checkbox form-group">
             <FormControlLabel
               label="Post as Anonymous"
-              control={<Checkbox id="anonymous" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
+              control={
+                <Checkbox
+                  id="anonymous"
+                  checked={anonymous}
+                  onChange={(e) => setAnonymous(e.target.checked)}
+                  icon={<span className="ppc-checkbox" />}
+                />
+              }
             />
           </FormControl>
 

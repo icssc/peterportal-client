@@ -271,7 +271,7 @@ const RoadmapMultiplan: FC = () => {
         <Modal.Body>
           <Box component="form" noValidate className="ppc-modal-form">
             <FormControl className="form-group">
-              <FormLabel className="ppc-modal-form-label">Roadmap Name</FormLabel>
+              <FormLabel>Roadmap Name</FormLabel>
               <TextField
                 required
                 type="text"
