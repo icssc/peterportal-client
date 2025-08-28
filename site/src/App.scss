@@ -197,8 +197,6 @@ a {
 
 .ppc-modal {
   font-size: 18px;
-  display: flex;
-  flex-direction: column;
 
   .modal-header {
     align-items: center;
@@ -284,11 +282,6 @@ a {
       width: 1.2em;
       height: 1.2em;
       transition: background-color 0.2s;
-    }
-
-    .MuiFormGroup-root {
-      display: flex;
-      gap: 8px 12px;
     }
   }
 
