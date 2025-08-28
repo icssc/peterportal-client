@@ -75,25 +75,6 @@ const ReportForm: FC<ReportFormProps> = (props) => {
             Submit Report
           </Button>
         </Box>
-        {/* <Form noValidate onSubmit={submitReport}>
-          <Form.Label className="ppc-modal-form-label">Review Content</Form.Label>
-          <p className="reported-review-content">
-            <i>{props.reviewContent}</i>
-          </p>
-
-          <Form.Group className="form-group">
-            <Form.Label>Why are you reporting this review?</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Enter a reason..."
-              minLength={1}
-              maxLength={500}
-              onChange={(e) => setReason(e.target.value)}
-              value={reason}
-              rows={4}
-            />
-          </Form.Group>
-        </Form> */}
       </Modal.Body>
     </Modal>
   );
