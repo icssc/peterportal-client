@@ -278,20 +278,17 @@ const ImportTranscriptPopup: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Box component="form" noValidate className="ppc-modal-form">
-            <FormControl className="form-group">
-              Please upload an HTML copy of your unofficial transcript. To obtain this:
-              <ol>
-                <li>
-                  Go to{' '}
-                  <a href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
-                    Student Access
-                  </a>
-                </li>
-                <li>Navigate to "Unofficial Transcript"</li>
-                <li>Save the page (ctrl/cmd + s)</li>
-              </ol>
-            </FormControl>
-
+            Please upload an HTML copy of your unofficial transcript. To obtain this:
+            <ol>
+              <li>
+                Go to{' '}
+                <a href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
+                  Student Access
+                </a>
+              </li>
+              <li>Navigate to "Unofficial Transcript"</li>
+              <li>Save the page (ctrl/cmd + s)</li>
+            </ol>
             <FormControl className="form-group">
               <FormLabel>Transcript File</FormLabel>
               <input
