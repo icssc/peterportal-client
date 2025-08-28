@@ -362,7 +362,7 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
 
   // should never reach here
-  console.error('unrecognized prerequisite structure');
+  console.warn('unrecognized prerequisite structure');
   return new Set();
 };
 

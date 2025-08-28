@@ -1,3 +1,4 @@
+export * from './admin';
 export * from './course';
 export * from './courseRequirements';
 export * from './grades';

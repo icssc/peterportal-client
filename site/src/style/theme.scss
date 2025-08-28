@@ -35,6 +35,9 @@
   .form-control:focus {
     color: var(--text);
     background-color: var(--overlay2);
+    &::placeholder {
+      color: #8888;
+    }
   }
 
   .form-control {

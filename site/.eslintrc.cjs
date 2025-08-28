@@ -10,12 +10,12 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
     'prettier',
+    'plugin:@next/next/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   plugins: ['react', 'react-refresh'],
   rules: {
-    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react/no-unescaped-entities': 'off',
     'no-console': ['warn', { allow: ['warn', 'error'] }],
   },

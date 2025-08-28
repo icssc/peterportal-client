@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+'use client';
+import { useEffect, useRef, useState } from 'react';
+
 import { CSSTransition } from 'react-transition-group';
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import './Sidebar.scss';
+import Image from 'next/image';
 
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
@@ -18,12 +20,17 @@ import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const SideBar = () => {
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
   const isLoggedIn = useIsLoggedIn();
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const pathname = usePathname();
+  const sidebarRef = useRef(null);
+  const overlayRef = useRef(null);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -42,9 +49,9 @@ const SideBar = () => {
     <div className="sidebar-links">
       <ul>
         <li>
-          <NavLink
-            to="/"
-            className={({ isActive }) => (isActive || location.pathname === '/search/courses' ? 'sidebar-active' : '')}
+          <Link
+            href="/"
+            className={pathname === '/' || pathname === '/search/courses' ? 'sidebar-active' : ''}
             onClick={closeSidebar}
           >
             <div>
@@ -52,12 +59,12 @@ const SideBar = () => {
             </div>
             <span className="full-name">Course Catalog</span>
             <span>Courses</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink
-            to="/search/professors"
-            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+          <Link
+            href="/search/professors"
+            className={pathname === '/search/professors' ? 'sidebar-active' : ''}
             onClick={closeSidebar}
           >
             <div>
@@ -65,27 +72,23 @@ const SideBar = () => {
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
-          </NavLink>
+          </Link>
         </li>
         <li>
-          <NavLink
-            to="/roadmap"
-            className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
-            onClick={closeSidebar}
-          >
+          <Link href="/roadmap" className={pathname === '/roadmap' ? 'sidebar-active' : ''} onClick={closeSidebar}>
             <div>
               <MapOutlinedIcon className="sidebar-icon" />
             </div>
             <span className="full-name">Peter's Roadmap</span>
             <span>Roadmap</span>
-          </NavLink>
+          </Link>
         </li>
         {isAdmin && (
           <>
             <li>
-              <NavLink
-                to="/admin/verify"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+              <Link
+                href="/admin/verify"
+                className={pathname === '/admin/verify' ? 'sidebar-active' : ''}
                 onClick={closeSidebar}
               >
                 <div>
@@ -93,12 +96,12 @@ const SideBar = () => {
                 </div>
                 <span className="full-name">Verify Reviews</span>
                 <span>Verification</span>
-              </NavLink>
+              </Link>
             </li>
             <li>
-              <NavLink
-                to="/admin/reports"
-                className={({ isActive }) => (isActive ? 'sidebar-active' : '')}
+              <Link
+                href="/admin/reports"
+                className={pathname === '/admin/reports' ? 'sidebar-active' : ''}
                 onClick={closeSidebar}
               >
                 <div>
@@ -106,7 +109,7 @@ const SideBar = () => {
                 </div>
                 <span className="full-name">View Reports</span>
                 <span>Reports</span>
-              </NavLink>
+              </Link>
             </li>{' '}
           </>
         )}
@@ -117,14 +120,14 @@ const SideBar = () => {
   return (
     <>
       <div className="sidebar mini">{links}</div>
-      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        <UIOverlay zIndex={399} onClick={closeSidebar}></UIOverlay>
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit nodeRef={overlayRef}>
+        <UIOverlay zIndex={399} onClick={closeSidebar} ref={overlayRef}></UIOverlay>
       </CSSTransition>
-      <CSSTransition in={showSidebar} timeout={500} unmountOnExit>
-        <div className="sidebar">
+      <CSSTransition in={showSidebar} timeout={500} unmountOnExit nodeRef={sidebarRef}>
+        <div className="sidebar" ref={sidebarRef}>
           {/* Close Button */}
           <div className="button-container">
-            <img alt="PeterPortal" src={Logo} height="32" />
+            <Image alt="PeterPortal" src={Logo} height="32" />
             <IconButton onClick={closeSidebar} className="sidebar-close">
               <CloseIcon />
             </IconButton>

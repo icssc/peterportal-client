@@ -1,14 +1,15 @@
+'use client';
 import { useState, useEffect, FC, useContext } from 'react';
-import { Link } from 'react-router-dom';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
+import Image from 'next/image';
 import './AppHeader.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import trpc from '../../trpc';
-import { Button, Popover } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 import ThemeContext from '../../style/theme-context';
 
@@ -16,6 +17,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import SmsIcon from '@mui/icons-material/Sms';
 import { IconButton } from '@mui/material';
+import Link from 'next/link';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -37,7 +39,7 @@ const AppHeader: FC = () => {
   };
 
   const popover = (
-    <Popover.Content>
+    <div className="popover-body">
       <h4>Beta Disclaimer</h4>
       <p>
         Please note that this is a beta version of PeterPortal, which is still undergoing development. Some content on
@@ -67,7 +69,7 @@ const AppHeader: FC = () => {
           <SmsIcon /> Feedback
         </Button>
       </div>
-    </Popover.Content>
+    </div>
   );
 
   return (
@@ -82,8 +84,8 @@ const AppHeader: FC = () => {
 
         {/* Logo */}
         <div className="navbar-logo">
-          <Link to={'/'}>
-            <img alt="PeterPortal" id="peterportal-logo" src={Logo}></img>
+          <Link href="/">
+            <Image alt="PeterPortal" id="peterportal-logo" src={Logo} />
           </Link>
         </div>
 

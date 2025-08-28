@@ -4,11 +4,12 @@ import GradeDist from '../GradeDist/GradeDist';
 import Button from 'react-bootstrap/Button';
 import Carousel from 'react-multi-carousel';
 import searching from '../../asset/searching.webp';
+import Image from 'next/image';
 
 import { useAppSelector } from '../../store/hooks';
 import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
 import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface InfoData {
   title: string;
@@ -41,7 +42,7 @@ const SearchPopup: FC<SearchPopupProps> = (props) => {
     return (
       <div className="side-panel search-popup">
         <div className="search-popup-missing">
-          <img style={{ width: '80%' }} src={searching} alt="searching" />
+          <Image alt="searching" src={searching.src} width={searching.width} height={searching.height} />
           <p>Click on a {props.searchType} card to view more information!</p>
         </div>
       </div>
@@ -75,7 +76,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
       <div className="search-popup-header">
         <h2 className="search-popup-id">
           {props.name}
-          <Link to={`/${props.searchType}/${props.id}`}>
+          <Link href={`/${props.searchType}/${props.id}`}>
             <Button type="button" className="search-popup-more btn btn-outline-primary">
               More Information
             </Button>
@@ -116,7 +117,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
                     </span>
                     <span className="search-popup-carousel-max-score">/ 5.0</span>
                   </div>
-                  <Link to={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
+                  <Link href={`/${props.searchType === 'course' ? 'professor' : 'course'}/${score.id}`}>
                     <span className="search-popup-professor-name" title={score.name}>
                       {score.name.split(' ').map((part, idx) => {
                         const isTooLong = part.length > 13;

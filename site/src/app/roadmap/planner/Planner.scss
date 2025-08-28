@@ -1,0 +1,24 @@
+@use '../../../globals.scss';
+
+.planner {
+  $planner-gap: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: $planner-gap;
+  position: relative;
+  padding: 0;
+
+  .years {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: auto;
+    gap: $planner-gap;
+  }
+
+  padding: 0;
+  .roadmap-header {
+    top: 0px;
+  }
+}
