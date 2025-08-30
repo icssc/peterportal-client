@@ -15,8 +15,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
  */
 
 export const createServerSideTrpcCaller = (headers: Record<string, string>) => {
-  const appRootUrl = 'http://localhost:3000';
-  const trpcUrl = appRootUrl + '/api/trpc';
+  const trpcUrl = process.env.BACKEND_ROOT_URL + '/trpc';
   return createTRPCProxyClient<AppRouter>({ links: [httpBatchLink({ url: trpcUrl, headers })] });
 };
 
