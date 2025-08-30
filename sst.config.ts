@@ -99,6 +99,8 @@ enum AWSPolicyId {
   CachingDisabled = '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
   // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
   AllViewerExceptHostHeader = 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
+  // The existing cache policy for PeterPortal's Next.js builds
+  OrgNextjsCachePolicy = '658327ea-f89d-4fab-a63d-7e88639e58f6',
 }
 
 /**
@@ -144,6 +146,7 @@ function createNextJsApplication(
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
     },
+    cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
     domain: getDomainConfig(),
     path: './site',
     transform: {
