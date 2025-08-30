@@ -100,7 +100,7 @@ enum AWSPolicyId {
   // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html
   AllViewerExceptHostHeader = 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
   // The existing cache policy for PeterPortal's Next.js builds
-  OrgNextjsCachePolicy = '658327ea-f89d-4fab-a63d-7e88639e58f6',
+  OrgNextjsCachePolicy = '0fddd706-8cdb-4835-bf8c-3202baed7dac',
 }
 
 /**
