@@ -39,6 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <title>PeterPortal</title>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-script.js"></script>
       </head>
       <body>
