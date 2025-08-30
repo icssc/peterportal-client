@@ -7,6 +7,8 @@ import {
   QuarterName,
 } from '@peterportal/types';
 
+export * from './roadmap.ts';
+
 export interface ScoreData {
   name: string;
   avgRating: number;
