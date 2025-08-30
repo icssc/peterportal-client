@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import AdminPage from '../AdminPage';
+import Reports from './Reports';
 
 const Page: FC = () => {
-  return <AdminPage activeTab="reports" />;
+  return <Reports />;
 };
 
 export default Page;
