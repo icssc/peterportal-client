@@ -12,7 +12,7 @@ function shouldPreloadDark(preference: Theme | null, hookIsDarkMode: boolean) {
   if (preference === 'light') return false;
 
   if (typeof document === 'undefined') return hookIsDarkMode;
-  return document.body.dataset.theme === 'dark';
+  return document.documentElement.dataset.theme === 'dark';
 }
 
 /**
@@ -59,7 +59,7 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     if (isMismatched) return;
     // PeterPortal styling is controlled by the data-theme attribute on body
-    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
   }, [isMismatched, darkMode]);
 
   /**
@@ -83,11 +83,19 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [isLoggedIn, setThemePreference]);
 
-  const muiTheme = createTheme({ palette: { mode: darkMode ? 'dark' : 'light' } });
+  const muiTheme = createTheme({
+    cssVariables: { colorSchemeSelector: '[data-theme=%s]' },
+    colorSchemes: {
+      dark: { palette: { mode: 'dark' } },
+      light: { palette: { mode: 'light' } },
+    },
+  });
 
   return (
     <ThemeContext.Provider value={{ darkMode, usingSystemTheme: themePreference === 'system', setTheme }}>
-      <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
+      <ThemeProvider theme={muiTheme} defaultMode={preloadedDark ? 'dark' : 'light'}>
+        {children}
+      </ThemeProvider>
     </ThemeContext.Provider>
   );
 };
