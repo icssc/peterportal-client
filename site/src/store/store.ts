@@ -22,17 +22,14 @@ const reducer = {
   user: userReducer,
 };
 
-export const store = configureStore({ reducer });
-
 export function generateStore(user: UserSliceState) {
   return configureStore({
     reducer,
     preloadedState: { user },
   });
 }
-// type StoreType = ReturnType<typeof generateStore>;
+type StoreType = ReturnType<typeof generateStore>;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
-// Inferred type
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<StoreType['getState']>;
+export type AppDispatch = StoreType['dispatch'];

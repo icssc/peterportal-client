@@ -46,7 +46,6 @@ const Profile = () => {
 
   const { name, email, picture } = user;
 
-  /** @todo change to <Image/> once we get user data to be server-rendered */
   const DefaultTab = (
     <>
       <div className="profile-popover__header">
