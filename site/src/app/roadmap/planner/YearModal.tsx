@@ -98,7 +98,7 @@ const YearModal: FC<YearModalProps> = (props) => {
                   e.preventDefault();
                 }
               }}
-              error={validated} // helper text?
+              error={validated}
               slotProps={{
                 htmlInput: {
                   maxLength: 35,

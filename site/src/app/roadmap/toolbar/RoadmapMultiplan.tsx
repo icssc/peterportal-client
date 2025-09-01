@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   addRoadmapPlan,
@@ -204,7 +204,15 @@ const RoadmapMultiplan: FC = () => {
           <h2>New Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Box component="form" noValidate className="ppc-modal-form">
+          <Box
+            component="form"
+            noValidate
+            className="ppc-modal-form"
+            onSubmit={(e) => {
+              e.preventDefault(); // prevent submitting form (reloads the page)
+              handleSubmitNewPlan();
+            }}
+          >
             <FormControl className="form-group">
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
@@ -213,10 +221,6 @@ const RoadmapMultiplan: FC = () => {
                 name="roadmap_name"
                 value={newPlanName}
                 onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
-                }}
                 slotProps={{
                   htmlInput: {
                     maxLength: 35,
@@ -225,33 +229,11 @@ const RoadmapMultiplan: FC = () => {
                 placeholder={defaultPlan.name}
               />
             </FormControl>
+
+            <Button2 type="submit" variant="primary">
+              Create Roadmap
+            </Button2>
           </Box>
-          {/* <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
-              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
-                }}
-                maxLength={35}
-                placeholder={defaultPlan.name}
-              ></Form.Control>
-            </Form.Group>
-          </Form> */}
-          <Button2
-            variant="primary"
-            onClick={() => {
-              handleSubmitNewPlan();
-            }}
-          >
-            Create Roadmap
-          </Button2>
         </Modal.Body>
       </Modal>
 
@@ -269,7 +251,15 @@ const RoadmapMultiplan: FC = () => {
           <h2>Edit Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Box component="form" noValidate className="ppc-modal-form">
+          <Box
+            component="form"
+            noValidate
+            className="ppc-modal-form"
+            onSubmit={(e) => {
+              e.preventDefault(); // prevent submitting form (reloads the page)
+              modifyPlanName();
+            }}
+          >
             <FormControl className="form-group">
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
@@ -278,10 +268,6 @@ const RoadmapMultiplan: FC = () => {
                 name="roadmap_name"
                 value={newPlanName}
                 onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
-                }}
                 slotProps={{
                   htmlInput: {
                     maxLength: 35,
@@ -290,33 +276,11 @@ const RoadmapMultiplan: FC = () => {
                 placeholder={defaultPlan.name}
               />
             </FormControl>
+
+            <Button2 type="submit" variant="primary">
+              Save Roadmap
+            </Button2>
           </Box>
-          {/* <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
-              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
-                }}
-                maxLength={35}
-                placeholder={defaultPlan.name}
-              ></Form.Control>
-            </Form.Group>
-          </Form> */}
-          <Button2
-            variant="primary"
-            onClick={() => {
-              modifyPlanName();
-            }}
-          >
-            Save Roadmap
-          </Button2>
         </Modal.Body>
       </Modal>
 
