@@ -452,7 +452,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           <FormControl className="form-group">
             <FormLabel>Tags</FormLabel>
-            <Select2 /** @todo migrate this to a MUI component? */
+            <Select2
               isMulti
               options={tags.map((tag) => ({ label: tag, value: tag }))}
               value={selectedTags.map((tag) => ({ label: tag, value: tag }))}

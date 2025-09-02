@@ -150,8 +150,9 @@ const ImportZot4PlanPopup: FC = () => {
               <Select
                 onChange={(ev) => setStudentYear(ev.target.value)}
                 value={studentYear}
+                /** @todo Remove after migration to MUI Modal. This temporarily prevents z-indexing issues due to the lack of a MUI Portal. */
                 MenuProps={{
-                  disablePortal: true, // prevents z-indexing issues while using bootstrap modal; can probably be removed after modal is migrated
+                  disablePortal: true,
                 }}
               >
                 <MenuItem value="1">1st year</MenuItem>
