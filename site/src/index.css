@@ -60,8 +60,7 @@ code {
   --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
-/* User theme is not accessible to :root, so we override them in body */
-body[data-theme='dark'] {
+:root[data-theme='dark'] {
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
   --red-primary: #ff3333;
