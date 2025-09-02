@@ -145,6 +145,7 @@ function createNextJsApplication(
     environment: {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
+      BACKEND_ROOT_URL: `https://${getDomainConfig().name}/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
     domain: getDomainConfig(),

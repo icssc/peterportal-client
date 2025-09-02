@@ -1,3 +1,4 @@
+'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
 import trpc from '../../../trpc';
 import ReviewItemGrid from '../../../component/ReviewItemGrid/ReviewItemGrid';

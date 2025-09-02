@@ -2,8 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import './Profile.scss';
-import trpc from '../../trpc';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -14,6 +12,8 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '../../store/hooks';
+import Image from 'next/image';
 
 type ProfileMenuTab = 'default' | 'theme';
 
@@ -23,10 +23,7 @@ const Profile = () => {
   const [tab, setTab] = useState<ProfileMenuTab>('default');
   const pathname = usePathname();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [picture, setPicture] = useState<string | undefined>(undefined);
-  const isLoggedIn = useIsLoggedIn();
+  const user = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
     if (!show) {
@@ -34,21 +31,25 @@ const Profile = () => {
     }
   }, [show]);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      trpc.users.get.query().then((user) => {
-        setName(user.name);
-        setEmail(user.email);
-        setPicture(user.picture);
-      });
-    }
-  });
+  if (!user) {
+    return (
+      <a href={`/api/users/auth/google`}>
+        <Button variant={darkMode ? 'dark' : 'light'}>
+          <span>
+            <ExitToAppIcon className="exit-icon" />
+          </span>
+          Log In
+        </Button>
+      </a>
+    );
+  }
 
-  /** @todo change to <Image/> once we get user data to be server-rendered */
+  const { name, email, picture } = user;
+
   const DefaultTab = (
     <>
       <div className="profile-popover__header">
-        <img src={picture} alt={name} width="50" height="50" />
+        <Image src={picture} alt={name} width="50" height="50" />
         <div>
           <h1 title={name}>{name}</h1>
           <h2 title={email}>{email}</h2>
@@ -141,45 +142,32 @@ const Profile = () => {
   );
 
   return (
-    <>
-      {isLoggedIn ? (
-        <div className="navbar-profile">
-          <OverlayTrigger
-            rootClose
-            trigger="click"
-            placement="bottom"
-            overlay={ProfilePopover}
-            show={show}
-            onToggle={setShow}
-            popperConfig={{
-              modifiers: [
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [-135, 8],
-                  },
-                },
-              ],
-            }}
-          >
-            {({ ref, ...triggerHandler }) => (
-              <button {...triggerHandler} className="profile-button">
-                <img ref={ref} src={picture} alt={name} className="navbar-profile-pic" />
-              </button>
-            )}
-          </OverlayTrigger>
-        </div>
-      ) : (
-        <a href={`/api/users/auth/google`}>
-          <Button variant={darkMode ? 'dark' : 'light'}>
-            <span>
-              <ExitToAppIcon className="exit-icon" />
-            </span>
-            Log In
-          </Button>
-        </a>
-      )}
-    </>
+    <div className="navbar-profile">
+      <OverlayTrigger
+        rootClose
+        trigger="click"
+        placement="bottom"
+        overlay={ProfilePopover}
+        show={show}
+        onToggle={setShow}
+        popperConfig={{
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [-135, 8],
+              },
+            },
+          ],
+        }}
+      >
+        {({ ref, ...triggerHandler }) => (
+          <button {...triggerHandler} className="profile-button">
+            <Image ref={ref} src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
+          </button>
+        )}
+      </OverlayTrigger>
+    </div>
   );
 };
 
