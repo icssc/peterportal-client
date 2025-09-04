@@ -230,3 +230,16 @@ describe('applyPlannerQuarterEdit', () => {
     expect(roadmapPlans).toEqual([expectedPlannerA, plannerB]);
   });
 });
+
+/** @todo write unit tests according to comments */
+describe.skip('restoreRevision', () => {
+  // All types can be covered throughout these tests
+
+  it('Undo a single revision correctly', () => {}); // quarter
+
+  it('Undo multiple revisions correctly', () => {}); // planner, year
+
+  it('Redo a single revision correctly', () => {}); // year
+
+  it('Redo multiple revisions correctly', () => {}); // quarter, planner
+});

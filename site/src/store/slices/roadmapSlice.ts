@@ -294,6 +294,8 @@ export const roadmapSlice = createSlice({
     setRoadmapLoading: (state, action: PayloadAction<boolean>) => {
       state.roadmapLoading = action.payload;
     },
+    // create a revision
+    // undo/redo (-1, +1)
   },
 });
 

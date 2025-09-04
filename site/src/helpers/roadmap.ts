@@ -4,12 +4,17 @@ import {
   FullPlannerChangeData,
   PlannerQuarterChangeData /* , PlannerYearChangeData */,
   PlannerYearChangeData,
+  RevisionDirection,
+  RevisionStack,
+  RoadmapRevision,
 } from '../types/roadmap';
 
 export const EMPTY_PLAN = {
   yearPlans: [],
   invalidCourses: [],
 };
+
+// Applying "revisions" to the roadmap
 
 export function applyFullPlannerEdit(
   plans: RoadmapPlan[],
@@ -89,3 +94,59 @@ export function applyQuarterEdit(
   // the only data you can change about a quarter is the courses
   yearToEdit.quarters[quarterIndex].courses = newData.courses;
 }
+
+// Creating revisions for the roadmap
+
+// Traversing the revision stack
+function getRevisionStack(history: RoadmapRevision[], start: number, end: number): RevisionStack {
+  // Track number of positions changed
+  const steps = end - start;
+  const first = Math.min(end, start) + 1;
+  const last = Math.max(end, start) + 1;
+  const direction: RevisionDirection = Math.sign(steps) === -1 ? 'undo' : 'redo';
+
+  // How edits are grouped has no effect on how we apply them, so flatten revisions into their edits
+  const edits = history.slice(first, last).flatMap((r) => r.edits.slice());
+
+  // Reverse the order if needed; undo starts with latest and redo starts with earliest
+  if (direction === 'undo') edits.reverse();
+
+  return { edits, direction };
+}
+
+function updatePlannerFromRevisionStack(planners: RoadmapPlan[], stack: RevisionStack) {
+  stack.edits.forEach((edit) => {
+    const oldKey = stack.direction === 'undo' ? 'after' : 'before';
+    const newKey = stack.direction === 'undo' ? 'before' : 'after';
+
+    switch (edit.type) {
+      case 'planner':
+        return applyFullPlannerEdit(planners, edit[oldKey], edit[newKey]);
+      case 'year':
+        return applyYearEdit(planners, edit.plannerId, edit[oldKey], edit[newKey]);
+      case 'quarter': {
+        return applyQuarterEdit(planners, edit.plannerId, edit.startYear, edit[oldKey], edit[newKey]);
+      }
+    }
+  });
+}
+
+/**
+ * Applies the provided revisions in-place on the planners argument
+ * @param start The index of the first revision to be applied
+ * @param end The index of the last revision to be applied
+ */
+export function restoreRevision(
+  planners: RoadmapPlan[],
+  revisionHistory: RoadmapRevision[],
+  start: number,
+  end: number,
+) {
+  const stack = getRevisionStack(revisionHistory, start, end);
+  updatePlannerFromRevisionStack(planners, stack);
+}
+
+// diffing
+
+// backend: tables
+// backend: applying diffs
