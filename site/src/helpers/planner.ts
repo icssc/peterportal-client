@@ -15,7 +15,7 @@ import {
   PrerequisiteTree,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
-import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
+import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
   CourseGQLData,
@@ -23,6 +23,7 @@ import {
   PlannerData,
   PlannerQuarterData,
   PlannerYearData,
+  RoadmapPlan,
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';

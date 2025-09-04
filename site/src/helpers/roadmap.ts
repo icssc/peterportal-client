@@ -1,11 +1,11 @@
 import { quarters } from '@peterportal/types';
-import { RoadmapPlan } from '../store/slices/roadmapSlice';
 import {
   FullPlannerChangeData,
   PlannerQuarterChangeData /* , PlannerYearChangeData */,
   PlannerYearChangeData,
   RevisionDirection,
   RevisionStack,
+  RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
 

@@ -6,11 +6,12 @@ import Header from '../toolbar/Header';
 import Year from './Year';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { useAppSelector } from '../../../store/hooks';
-import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../../store/slices/roadmapSlice';
+import { selectAllPlans, selectYearPlans } from '../../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { collapseAllPlanners, saveRoadmap } from '../../../helpers/planner';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import { RoadmapPlan } from '../../../types/roadmap';
 
 const Planner: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);

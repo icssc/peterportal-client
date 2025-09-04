@@ -1,5 +1,18 @@
-import { RoadmapPlan } from '../store/slices/roadmapSlice';
-import { PlannerQuarterData, PlannerYearData } from './types';
+import { InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from './types';
+
+// Client-side Roadmaps
+
+export interface RoadmapPlanState {
+  yearPlans: PlannerData;
+  /** Courses that do not meet their prerequisites */
+  invalidCourses: InvalidCourseData[];
+}
+
+export interface RoadmapPlan {
+  id?: number;
+  name: string;
+  content: RoadmapPlanState;
+}
 
 // Indvidual Changes
 export type FullPlannerChangeData = Omit<RoadmapPlan, 'content'> | null;

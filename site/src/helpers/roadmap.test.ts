@@ -1,7 +1,6 @@
-import { RoadmapPlan } from '../store/slices/roadmapSlice';
 import { applyFullPlannerEdit, applyQuarterEdit, applyYearEdit, EMPTY_PLAN } from './roadmap';
 import { deepCopy } from './util';
-import { PlannerYearChangeData } from '../types/roadmap';
+import { PlannerYearChangeData, RoadmapPlan } from '../types/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
 import { PlannerQuarterData } from '../types/types';
 

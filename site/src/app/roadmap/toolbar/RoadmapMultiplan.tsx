@@ -6,7 +6,6 @@ import {
   defaultPlan,
   deleteRoadmapPlan,
   initialPlanState,
-  RoadmapPlan,
   setPlanIndex,
   setPlanName,
 } from '../../../store/slices/roadmapSlice';
@@ -24,6 +23,7 @@ import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { Button, IconButton, Popover } from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { RoadmapPlan } from '../../../types/roadmap';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;

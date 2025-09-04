@@ -8,18 +8,13 @@ import {
   PlannerQuarterData,
   PlannerYearData,
   QuarterIdentifier,
+  RoadmapPlan,
+  RoadmapPlanState,
   YearIdentifier,
 } from '../../types/types';
 import type { RootState } from '../store';
 import spawnToast from '../../helpers/toastify';
 import { quarters } from '@peterportal/types';
-// Define a type for the slice state
-interface RoadmapPlanState {
-  // Store planner data
-  yearPlans: PlannerData;
-  // Store the location of invalid courses (do not meet prerequisites)
-  invalidCourses: InvalidCourseData[];
-}
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
@@ -27,21 +22,13 @@ export const initialPlanState: RoadmapPlanState = {
   invalidCourses: [],
 };
 
-/** added for multiple planner */
-// create roadmap plan object
-export interface RoadmapPlan {
-  id?: number;
+interface SetPlanNamePayload {
+  index: number;
   name: string;
-  content: RoadmapPlanState;
 }
 
 interface RoadmapPlanIdentifier {
   planIndex: number;
-}
-
-interface SetPlanNamePayload {
-  index: number;
-  name: string;
 }
 
 // default plan to display for uesr
