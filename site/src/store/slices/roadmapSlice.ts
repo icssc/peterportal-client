@@ -10,22 +10,19 @@ import {
   QuarterIdentifier,
   RoadmapPlan,
   RoadmapPlanState,
+  RoadmapRevision,
   YearIdentifier,
 } from '../../types/types';
 import type { RootState } from '../store';
 import spawnToast from '../../helpers/toastify';
 import { quarters } from '@peterportal/types';
+import { restoreRevision } from '../../helpers/roadmap';
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
   yearPlans: [defaultYear() as PlannerYearData],
   invalidCourses: [],
 };
-
-interface SetPlanNamePayload {
-  index: number;
-  name: string;
-}
 
 interface RoadmapPlanIdentifier {
   planIndex: number;
@@ -68,6 +65,11 @@ interface AddQuarterPayload {
   quarterData: PlannerQuarterData;
 }
 
+const baseRevision: RoadmapRevision = {
+  timestamp: Date.now(),
+  edits: [],
+};
+
 // onbeforeunload event listener
 const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
@@ -75,6 +77,8 @@ export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
     plans: [defaultPlan],
+    revisions: [baseRevision],
+    currentRevisionIndex: 0,
     currentPlanIndex: 0,
     /** Whether to alert the user of unsaved changes before leaving */
     unsavedChanges: false,
@@ -260,10 +264,6 @@ export const roadmapSlice = createSlice({
     setPlanIndex: (state, action: PayloadAction<number>) => {
       state.currentPlanIndex = action.payload;
     },
-    setPlanName: (state, action: PayloadAction<SetPlanNamePayload>) => {
-      const index = action.payload.index;
-      state.plans[index].name = action.payload.name;
-    },
     setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
       state.showSavedCourses = action.payload;
     },
@@ -282,7 +282,20 @@ export const roadmapSlice = createSlice({
       state.roadmapLoading = action.payload;
     },
     // create a revision
-    // undo/redo (-1, +1)
+    reviseRoadmap: (state, action: PayloadAction<RoadmapRevision>) => {
+      const currentIndex = state.currentRevisionIndex;
+      state.revisions.splice(currentIndex + 1, state.revisions.length, action.payload);
+      restoreRevision(state.plans, state.revisions, currentIndex, currentIndex + 1);
+      state.currentRevisionIndex++;
+    },
+    undoRoadmapRevision: (state) => {
+      restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex - 1);
+      state.currentRevisionIndex--;
+    },
+    redoRoadmapRevision: (state) => {
+      restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
+      state.currentRevisionIndex++;
+    },
   },
 });
 
@@ -309,10 +322,12 @@ export const {
   addRoadmapPlan,
   deleteRoadmapPlan,
   setPlanIndex,
-  setPlanName,
   setUnsavedChanges,
   setShowSavedCourses,
   setRoadmapLoading,
+  reviseRoadmap,
+  undoRoadmapRevision,
+  redoRoadmapRevision,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

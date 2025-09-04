@@ -5,6 +5,7 @@ import {
   PlannerYearChangeData,
   RevisionDirection,
   RevisionStack,
+  RoadmapEdit,
   RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
@@ -95,8 +96,6 @@ export function applyQuarterEdit(
   yearToEdit.quarters[quarterIndex].courses = newData.courses;
 }
 
-// Creating revisions for the roadmap
-
 // Traversing the revision stack
 function getRevisionStack(history: RoadmapRevision[], start: number, end: number): RevisionStack {
   // Track number of positions changed
@@ -144,6 +143,10 @@ export function restoreRevision(
 ) {
   const stack = getRevisionStack(revisionHistory, start, end);
   updatePlannerFromRevisionStack(planners, stack);
+}
+
+export function createRevision(edits: RoadmapEdit[]): RoadmapRevision {
+  return { timestamp: Date.now(), edits };
 }
 
 // diffing

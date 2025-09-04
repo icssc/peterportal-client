@@ -44,7 +44,7 @@ export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit;
 // Revisions have multiple changes
 
 export interface RoadmapRevision {
-  id: string;
+  timestamp: number;
   edits: RoadmapEdit[];
 }
 
