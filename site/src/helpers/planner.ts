@@ -148,26 +148,28 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
+type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap;
+
+export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
+  const emptyRoadmap: SavedRoadmap = {
+    planners: [
+      {
+        name: defaultPlan.name,
+        content: [defaultYear() as SavedPlannerYearData],
+      },
+    ],
+    transfers: [],
+  };
+
   let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
   try {
     localRoadmap = JSON.parse(localStorage.roadmap);
   } catch {
     /* ignore */
   }
-  const EMPTY_ROADMAP_STR = JSON.stringify({
-    planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
-    transfers: [],
-  } as Omit<SavedRoadmap, 'timestamp'>);
 
-  return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
+  return (localRoadmap ?? emptyRoadmap) as T;
 }
-
-export const loadRoadmap = async (isLoggedIn: boolean) => {
-  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
-  const localRoadmap = loadLocalRoadmap() as SavedRoadmap;
-  return { accountRoadmap, localRoadmap };
-};
 
 // Adding Multiplan
 function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
@@ -193,6 +195,7 @@ enum RoadmapVersionKey {
   SinglePlanner = '1',
   MultiPlanner = '2',
   RedesignedTransfers = '3',
+  RequiredIds = '4',
 }
 
 // Upgrading Transfers
@@ -233,12 +236,22 @@ async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadm
 /**
  * Function to upgrade a local roadmap. Gets called BEFORE user data is loaded
  */
-export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
-  const localRoadmap = loadLocalRoadmap();
+async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
+  const localRoadmap = readLocalRoadmap();
   const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
   const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
   return roadmapWithoutLegacyTransfers;
 }
+
+/**
+ * Loads the roadmap saved to local storage, where "load" is defined as reading, upgrading, then returning.
+ * @returns The local roadmap after performing any necessary upgrades
+ */
+export const loadRoadmap = async (isLoggedIn: boolean) => {
+  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
+  const localRoadmap = await upgradeLocalRoadmap();
+  return { accountRoadmap, localRoadmap };
+};
 
 export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
   const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };

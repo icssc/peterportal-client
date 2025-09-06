@@ -5,8 +5,8 @@ import {
   collapseAllPlanners,
   expandAllPlanners,
   loadRoadmap,
+  readLocalRoadmap,
   saveRoadmap,
-  upgradeLocalRoadmap,
   validatePlanner,
 } from '../../../helpers/planner';
 import { SavedPlannerData, SavedRoadmap } from '@peterportal/types';
@@ -33,12 +33,14 @@ import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 
 const PlannerLoader: FC = () => {
   const [showSyncModal, setShowSyncModal] = useState(false);
-  const [formatUpgraded, setFormatUpgraded] = useState(false);
   const userTransfersLoaded = useAppSelector((state) => state.transferCredits.dataLoadState === 'done');
   const transferred = useTransferredCredits();
   const allPlanData = useAppSelector(selectAllPlans);
   const currentPlanData = useAppSelector(selectYearPlans);
   const isLoggedIn = useIsLoggedIn();
+
+  const [intermediateLocalRoadmap, setIntermediateLocalRoadmap] = useState<SavedRoadmap | null>(null);
+  const [intermediateAccountRoadmap, setIntermediateAccountRoadmap] = useState<SavedRoadmap | null>(null);
 
   const dispatch = useAppDispatch();
 
@@ -54,22 +56,6 @@ const PlannerLoader: FC = () => {
     const other = await loadTransferredOther(false);
     return { courses, ap, ge, other };
   };
-
-  // hook to upgrade BEFORE loading the roadmap
-  useEffect(() => {
-    if (formatUpgraded) return;
-
-    upgradeLocalRoadmap().then(async (roadmap: SavedRoadmap) => {
-      // has legacy transfers => operation was not completed (because another upgrade is in progress)
-      if (roadmap.transfers.length) return;
-      setFormatUpgraded(true);
-      dispatch(setDataLoadState('loading'));
-    });
-  }, [dispatch, isLoggedIn, formatUpgraded]);
-
-  useEffect(() => {
-    dispatch(setRoadmapLoading(true));
-  }, [dispatch]);
 
   // Defaults to account if it exists because local can override it in a different helper
   const populateExistingRoadmap = useCallback(
@@ -102,11 +88,29 @@ const PlannerLoader: FC = () => {
   );
 
   useEffect(() => {
-    // don't load if format is not up to date or transfers are not loaded
-    if (!formatUpgraded || !userTransfersLoaded) return;
+    dispatch(setRoadmapLoading(true));
+  }, [dispatch]);
 
-    loadRoadmap(isLoggedIn).then(async ({ accountRoadmap, localRoadmap }) => {
-      await populateExistingRoadmap(accountRoadmap ?? localRoadmap);
+  // Read & upgrade the local roadmap, then trigger loading transfers
+  useEffect(() => {
+    if (intermediateAccountRoadmap || intermediateLocalRoadmap) return;
+
+    loadRoadmap(isLoggedIn).then(({ accountRoadmap, localRoadmap }) => {
+      setIntermediateAccountRoadmap(accountRoadmap);
+      setIntermediateLocalRoadmap(localRoadmap);
+      dispatch(setDataLoadState('loading'));
+    });
+  }, []);
+
+  // After transfers loaded, do roadmap conflict resolution
+  useEffect(() => {
+    // don't load if format is not up to date or transfers are not loaded
+    if (!userTransfersLoaded) return;
+
+    const accountRoadmap = intermediateAccountRoadmap!;
+    const localRoadmap = intermediateLocalRoadmap!;
+
+    populateExistingRoadmap(accountRoadmap ?? localRoadmap).then(() => {
       if (!isLoggedIn) return;
       const isLocalNewer = new Date(localRoadmap.timestamp ?? 0) > new Date(accountRoadmap?.timestamp ?? 0);
 
@@ -119,7 +123,7 @@ const PlannerLoader: FC = () => {
       // Logged in + doesn't exist => update everything
       saveRoadmapAndUpsertTransfers(localRoadmap.planners);
     });
-  }, [formatUpgraded, saveRoadmapAndUpsertTransfers, isLoggedIn, populateExistingRoadmap, userTransfersLoaded]);
+  }, [saveRoadmapAndUpsertTransfers, isLoggedIn, populateExistingRoadmap, userTransfersLoaded]);
 
   // Validate Courses on change
   useEffect(() => {
@@ -130,16 +134,15 @@ const PlannerLoader: FC = () => {
 
   // check roadmapStr (current planner) against localStorage planner
   useEffect(() => {
-    loadRoadmap(false).then(({ localRoadmap }) => {
-      // Remove timestamp and Plan IDs when comparing content
-      delete localRoadmap.timestamp;
-      localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content }));
-      dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
-    });
+    const localRoadmap = readLocalRoadmap<SavedRoadmap>();
+    // Remove timestamp and Plan IDs when comparing content
+    delete localRoadmap.timestamp;
+    localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content }));
+    dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
   }, [dispatch, roadmapStr]);
 
   const overrideAccountRoadmap = async () => {
-    const { localRoadmap } = await loadRoadmap(false);
+    const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
     await saveRoadmapAndUpsertTransfers(localRoadmap.planners);
