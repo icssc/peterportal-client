@@ -4,7 +4,6 @@ import {
   CourseGQLData,
   CourseIdentifier,
   InvalidCourseData,
-  PlannerData,
   PlannerQuarterData,
   PlannerYearData,
   QuarterIdentifier,
@@ -149,11 +148,6 @@ export const roadmapSlice = createSlice({
       const yearPlan = state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex];
       yearPlan.quarters.splice(action.payload.quarterIndex, 1);
     },
-    clearQuarter: (state, action: PayloadAction<QuarterIdentifier>) => {
-      const yearPlan = state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex];
-      const quarter = yearPlan.quarters[action.payload.quarterIndex];
-      quarter.courses = [];
-    },
     addYear: (state, action: PayloadAction<AddYearPayload>) => {
       const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
       const newYear = action.payload.yearData.startYear;
@@ -202,12 +196,6 @@ export const roadmapSlice = createSlice({
     deleteYear: (state, action: PayloadAction<YearIdentifier>) => {
       state.plans[state.currentPlanIndex].content.yearPlans.splice(action.payload.yearIndex, 1);
     },
-    clearYear: (state, action: PayloadAction<YearIdentifier>) => {
-      const yearPlan = state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex];
-      yearPlan.quarters.forEach((q) => {
-        q.courses = [];
-      });
-    },
     editName: (state, action: PayloadAction<EditNamePayload>) => {
       const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
       const newName = action.payload.name;
@@ -230,9 +218,6 @@ export const roadmapSlice = createSlice({
     },
     setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
       state.activeMissingPrerequisites = action.payload;
-    },
-    setYearPlans: (state, action: PayloadAction<PlannerData>) => {
-      state.plans[state.currentPlanIndex].content.yearPlans = action.payload;
     },
     setAllPlans: (state, action: PayloadAction<RoadmapPlan[]>) => {
       state.plans = action.payload;
@@ -298,8 +283,6 @@ export const {
   deleteCourse,
   addQuarter,
   deleteQuarter,
-  clearQuarter,
-  clearYear,
   addYear,
   editYear,
   editName,
@@ -307,7 +290,6 @@ export const {
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
-  setYearPlans,
   setAllPlans,
   setInvalidCourses,
   setShowSearch,
