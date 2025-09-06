@@ -66,7 +66,7 @@ const roadmapsRouter = router({
       .delete(transferredMisc)
       .where(eq(transferredMisc.userId, userId))
       .then(() => {
-        if (transfers.length > 0) {
+        if (transfers?.length) {
           return db
             .insert(transferredMisc)
             .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));

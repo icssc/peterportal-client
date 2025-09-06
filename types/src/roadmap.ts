@@ -47,7 +47,7 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 export const savedRoadmap = z.object({
   timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
-  transfers: z.array(legacyTransfer),
+  transfers: z.array(legacyTransfer).optional().describe('Used for legacy transfers only'),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;

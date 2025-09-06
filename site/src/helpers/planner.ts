@@ -191,21 +191,10 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
   }
 }
 
-enum RoadmapVersionKey {
-  SinglePlanner = '1',
-  MultiPlanner = '2',
-  RedesignedTransfers = '3',
-  RequiredIds = '4',
-}
-
 // Upgrading Transfers
 async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
-  // Avoid issues with double first render
-  if (!transfers.length || localStorage.roadmap__versionKey === RoadmapVersionKey.RedesignedTransfers) {
-    return false; // nothing to convert
-  }
+  if (!transfers.length) return false; // nothing to convert
 
-  localStorage.roadmap__versionKey = RoadmapVersionKey.RedesignedTransfers;
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
   const { courses, ap, other } = response;
 
@@ -226,21 +215,31 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Leg
  * @param roadmap The roadmap whose transfers to upgrade
  */
 async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
-  const legacyTransfers = roadmap.transfers;
-  const updatedRoadmap = { ...roadmap, transfers: [] };
+  const legacyTransfers = roadmap.transfers ?? [];
+  const updatedRoadmap = { ...roadmap };
+  delete updatedRoadmap.transfers;
   const complete = await saveUpgradedTransfers(updatedRoadmap, legacyTransfers);
   return complete ? updatedRoadmap : roadmap;
 }
 
+// Adding IDs to roadmaps
+function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
+  let nextId = Math.min(0, ...roadmap.planners.map((p) => p.id ?? 0)) - 1;
+  roadmap.planners.forEach((p) => {
+    if (p.id) return;
+    p.id = nextId;
+    nextId--;
+  });
+  return roadmap;
+}
+
 // Upgrading Entire Roadmap
-/**
- * Function to upgrade a local roadmap. Gets called BEFORE user data is loaded
- */
 async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
   const localRoadmap = readLocalRoadmap();
   const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
   const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
-  return roadmapWithoutLegacyTransfers;
+  const roadmapWithIds = addIdsToLocalRoadmap(roadmapWithoutLegacyTransfers);
+  return roadmapWithIds;
 }
 
 /**
