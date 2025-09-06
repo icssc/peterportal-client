@@ -80,8 +80,6 @@ const YearModal: FC<YearModalProps> = (props) => {
       name: name.trim(),
       quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
     });
-    setYear(placeholderYear);
-    setName(placeholderName);
   };
 
   return (

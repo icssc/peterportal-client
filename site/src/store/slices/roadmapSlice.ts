@@ -10,7 +10,6 @@ import {
   RoadmapRevision,
 } from '../../types/types';
 import type { RootState } from '../store';
-import spawnToast from '../../helpers/toastify';
 import { restoreRevision } from '../../helpers/roadmap';
 
 // Define the initial state using that type
@@ -32,11 +31,6 @@ export const defaultPlan: RoadmapPlan = {
 export interface MoveCoursePayload {
   from: CourseIdentifier;
   to: CourseIdentifier;
-}
-
-// Payload to pass in to add a year
-interface AddYearPayload {
-  yearData: PlannerYearData;
 }
 
 const baseRevision: RoadmapRevision = {
@@ -105,37 +99,6 @@ export const roadmapSlice = createSlice({
       const quarter = yearPlan.quarters[action.payload.quarterIndex];
       quarter.courses.splice(action.payload.courseIndex, 1);
     },
-    addYear: (state, action: PayloadAction<AddYearPayload>) => {
-      const currentYears = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.startYear);
-      const newYear = action.payload.yearData.startYear;
-      const currentNames = state.plans[state.currentPlanIndex].content.yearPlans.map((e) => e.name);
-      const newName = action.payload.yearData.name;
-      // if duplicate year
-      if (currentYears.includes(newYear)) {
-        spawnToast(
-          `${newYear}-${newYear + 1} has already been added as Year ${currentYears.indexOf(newYear) + 1}!`,
-          true,
-        );
-        return;
-      }
-      // if duplicate name
-      if (currentNames.includes(newName)) {
-        const year = state.plans[state.currentPlanIndex].content.yearPlans[currentNames.indexOf(newName)].startYear;
-        spawnToast(`${newName} already exists from ${year} - ${year + 1}!`, true);
-        return;
-      }
-
-      // check if where to put newYear
-      let index = currentYears.length;
-      for (let i = 0; i < currentYears.length; i++) {
-        if (currentYears[i] > newYear) {
-          index = i;
-          break;
-        }
-      }
-
-      state.plans[state.currentPlanIndex].content.yearPlans.splice(index, 0, action.payload.yearData);
-    },
     setActiveCourse: (state, action: PayloadAction<CourseGQLData | undefined>) => {
       state.activeCourse = action.payload;
     },
@@ -201,7 +164,6 @@ export const roadmapSlice = createSlice({
 export const {
   moveCourse,
   deleteCourse,
-  addYear,
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
