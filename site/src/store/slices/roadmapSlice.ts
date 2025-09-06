@@ -249,10 +249,6 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
-    /** added for multiple plans */
-    setRoadmapPlan: (state, action: PayloadAction<{ plans: RoadmapPlan[] }>) => {
-      state.plans = action.payload.plans;
-    },
     deleteRoadmapPlan: (state, action: PayloadAction<RoadmapPlanIdentifier>) => {
       state.plans.splice(action.payload.planIndex, 1);
       if (state.plans.length === 0) {
@@ -316,7 +312,6 @@ export const {
   setInvalidCourses,
   setShowSearch,
   setShowAddCourse,
-  setRoadmapPlan,
   deleteRoadmapPlan,
   setPlanIndex,
   setUnsavedChanges,
