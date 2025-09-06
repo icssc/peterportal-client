@@ -19,7 +19,7 @@ export const savedPlannerYearData = z.object({
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 
 export const savedPlannerData = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
 });

@@ -9,7 +9,7 @@ export interface RoadmapPlanState {
 }
 
 export interface RoadmapPlan {
-  id?: number;
+  id: number;
   name: string;
   content: RoadmapPlanState;
 }

@@ -30,6 +30,7 @@ interface RoadmapPlanIdentifier {
 
 // default plan to display for uesr
 export const defaultPlan: RoadmapPlan = {
+  id: -1,
   name: "Peter's Roadmap",
   content: initialPlanState,
 };
@@ -335,5 +336,9 @@ export const selectYearPlans = (state: RootState) =>
   state.roadmap.plans[state.roadmap.currentPlanIndex].content.yearPlans;
 
 export const selectAllPlans = (state: RootState) => state.roadmap.plans;
+
+export const getNextPlannerTempId = (state: RootState) => {
+  return Math.min(0, ...state.roadmap.plans.map((p) => p.id)) - 1;
+};
 
 export default roadmapSlice.reducer;

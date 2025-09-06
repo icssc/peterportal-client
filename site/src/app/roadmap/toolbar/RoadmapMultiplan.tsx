@@ -2,9 +2,9 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
-  addRoadmapPlan,
   defaultPlan,
   deleteRoadmapPlan,
+  getNextPlannerTempId,
   initialPlanState,
   reviseRoadmap,
   setPlanIndex,
@@ -24,7 +24,8 @@ import { Button, IconButton, Popover } from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
-import { updatePlannerName } from '../../../helpers/roadmapEdits';
+import { addPlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
+import { deepCopy } from '../../../helpers/util';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -70,20 +71,17 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap.plans);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const { name } = allPlans[currentPlanIndex];
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const duplicatePlan = (plan: RoadmapPlan) => {
     const newName = makeUniquePlanName(plan.name, allPlans);
-    dispatch(
-      addRoadmapPlan({
-        name: newName,
-        content: JSON.parse(JSON.stringify(plan.content)),
-      }),
-    );
-    const newIndex = allPlans.length;
-    dispatch(setPlanIndex(newIndex));
+    const yearPlans = deepCopy(plan.content.yearPlans);
+    const revision = addPlanner(nextPlanTempId, newName, yearPlans);
+    dispatch(reviseRoadmap(revision));
+    dispatch(setPlanIndex(allPlans.length));
   };
 
   const handleClose = (_?: object, reason?: string) => {
@@ -150,12 +148,15 @@ const RoadmapMultiplan: FC = () => {
   const [editIdx, setEditIdx] = useState(-1);
   const [delIdx, setDelIdx] = useState(-1);
   const [newPlanName, setNewPlanName] = useState(allPlans[currentPlanIndex].name);
+  const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const isDuplicateName = () => allPlans.find((p) => p.name === newPlanName);
 
   const name = allPlans[currentPlanIndex].name;
 
   const addNewPlan = (name: string) => {
-    dispatch(addRoadmapPlan({ name: name, content: initialPlanState }));
+    const yearPlans = deepCopy(initialPlanState.yearPlans);
+    const revision = addPlanner(nextPlanTempId, name, yearPlans);
+    dispatch(reviseRoadmap(revision));
   };
 
   const deleteCurrentPlan = () => {

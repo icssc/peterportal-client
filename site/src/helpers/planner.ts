@@ -101,7 +101,7 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
 
 export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
   return plans.map((p) => ({
-    ...(p.id ? { id: p.id } : {}),
+    id: p.id,
     name: p.name,
     content: collapsePlanner(p.content.yearPlans),
   }));
@@ -142,8 +142,9 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<RoadmapPlan[]> => {
   return await Promise.all(
     plans.map(async (p) => {
-      const content = await expandPlanner(p.content);
-      return { ...(p.id ? { id: p.id } : {}), name: p.name, content: { yearPlans: content, invalidCourses: [] } };
+      const yearPlans = await expandPlanner(p.content);
+      const planContent = { yearPlans, invalidCourses: [] };
+      return { id: p.id, name: p.name, content: planContent };
     }),
   );
 };
@@ -154,11 +155,11 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
   const emptyRoadmap: SavedRoadmap = {
     planners: [
       {
+        id: -1,
         name: defaultPlan.name,
         content: [defaultYear() as SavedPlannerYearData],
       },
     ],
-    transfers: [],
   };
 
   let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
@@ -181,6 +182,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
     return {
       planners: [
         {
+          id: -1,
           name: defaultPlan.name,
           content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
         },
@@ -253,7 +255,7 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
 };
 
 export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 
   const showMessage = showToasts ? spawnToast : (str: string) => str;

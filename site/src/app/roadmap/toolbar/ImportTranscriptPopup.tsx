@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
-import { addRoadmapPlan, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
+import { getNextPlannerTempId, reviseRoadmap, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
-import { BatchCourseData, PlannerQuarterData, PlannerYearData, RoadmapPlan } from '../../../types/types';
+import { BatchCourseData, PlannerQuarterData, PlannerYearData } from '../../../types/types';
 import { quarters } from '@peterportal/types';
 import { searchAPIResults } from '../../../helpers/util';
 import { markTransfersAsUnread } from '../../../helpers/transferCredits';
@@ -21,6 +21,7 @@ import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Button } from '@mui/material';
+import { addPlanner } from '../../../helpers/roadmapEdits';
 
 interface TransferUnitDetails {
   date: string;
@@ -190,6 +191,7 @@ const ImportTranscriptPopup: FC = () => {
   const [filePath, setFilePath] = useState('');
   const [busy, setBusy] = useState(false);
   const isLoggedIn = useIsLoggedIn();
+  const nextPlanTempId = useAppSelector(getNextPlannerTempId);
 
   const currentAps = useTransferredCredits().ap;
   // App selector instead of useTransferredCredits.courses here because
@@ -251,11 +253,9 @@ const ImportTranscriptPopup: FC = () => {
       }
 
       const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
-      const newPlan: RoadmapPlan = {
-        name: makeUniquePlanName(filename, allPlanData),
-        content: { yearPlans: Object.values(years), invalidCourses: [] },
-      };
-      dispatch(addRoadmapPlan(newPlan));
+      const planName = makeUniquePlanName(filename, allPlanData);
+      const revision = addPlanner(nextPlanTempId, planName, Object.values(years));
+      dispatch(reviseRoadmap(revision));
       dispatch(setPlanIndex(allPlanData.length));
 
       setShowModal(false);

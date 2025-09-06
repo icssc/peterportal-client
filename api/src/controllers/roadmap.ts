@@ -1,7 +1,7 @@
 import { router, userProcedure } from '../helpers/trpc';
 import { SavedPlannerData, savedRoadmap, SavedRoadmap } from '@peterportal/types';
 import { db } from '../db';
-import { planner, transferredMisc, user } from '../db/schema';
+import { planner, user } from '../db/schema';
 import { and, asc, eq, inArray, not } from 'drizzle-orm';
 
 const roadmapsRouter = router({
@@ -22,7 +22,6 @@ const roadmapsRouter = router({
     }
     const roadmap: SavedRoadmap = {
       planners: planners as SavedPlannerData[],
-      transfers: [],
       timestamp: timestamp[0].timestamp?.toISOString(),
     };
     return roadmap;
@@ -31,20 +30,20 @@ const roadmapsRouter = router({
    * Save a user's roadmap
    */
   save: userProcedure.input(savedRoadmap).mutation(async ({ input, ctx }) => {
-    const { planners, transfers, timestamp } = input;
+    const { planners, timestamp } = input;
     const userId = ctx.session.userId!;
 
     const plannerUpdates = planners
-      .filter((planner) => planner.id !== undefined)
+      .filter((planner) => planner.id >= 0)
       .map((plannerData) =>
         db
           .update(planner)
           .set({ name: plannerData.name, years: plannerData.content })
-          .where(eq(planner.id, plannerData.id!)),
+          .where(and(eq(planner.userId, userId), eq(planner.id, plannerData.id!))),
       );
 
     const newPlannersToAdd = planners
-      .filter((planner) => planner.id === undefined)
+      .filter((planner) => planner.id < 0)
       .map((planner) => ({ userId, name: planner.name, years: planner.content }));
 
     // Delete any existing planners that are not in the planners array (user removed them), then insert any new planners (to avoid race when deleting new ones)
@@ -62,28 +61,12 @@ const roadmapsRouter = router({
         }
       });
 
-    const replaceTransferredCourses = db
-      .delete(transferredMisc)
-      .where(eq(transferredMisc.userId, userId))
-      .then(() => {
-        if (transfers?.length) {
-          return db
-            .insert(transferredMisc)
-            .values(transfers.map((transfer) => ({ userId, courseName: transfer.name, units: transfer.units })));
-        }
-      });
-
     const updateLastEditTimestamp = db
       .update(user)
       .set({ lastRoadmapEditAt: new Date(timestamp!) })
       .where(eq(user.id, userId));
 
-    await Promise.all([
-      ...plannerUpdates,
-      plannerInsertionsAndDeletions,
-      replaceTransferredCourses,
-      updateLastEditTimestamp,
-    ]);
+    await Promise.all([...plannerUpdates, plannerInsertionsAndDeletions, updateLastEditTimestamp]);
   }),
 });
 

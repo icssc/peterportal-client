@@ -47,7 +47,6 @@ const PlannerLoader: FC = () => {
 
   const roadmapStr = JSON.stringify({
     planners: collapseAllPlanners(allPlanData).map((p) => ({ name: p.name, content: p.content })), // map to remove id attribute
-    transfers: [], // should be empty anyways once upgrade runs
   });
 
   const loadLocalTransfers = async () => {
@@ -146,7 +145,7 @@ const PlannerLoader: FC = () => {
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
     // Remove timestamp and Plan IDs when comparing content
     delete localRoadmap.timestamp;
-    localRoadmap.planners = localRoadmap.planners.map((p) => ({ name: p.name, content: p.content }));
+    localRoadmap.planners = localRoadmap.planners.map((p) => ({ ...p, timestamp: undefined }));
     dispatch(setUnsavedChanges(JSON.stringify(localRoadmap) !== roadmapStr));
   }, [dispatch, roadmapStr, initialAccountRoadmap]);
 

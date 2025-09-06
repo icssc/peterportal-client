@@ -10,10 +10,10 @@ import {
   RoadmapRevision,
 } from '../types/roadmap';
 
-export const EMPTY_PLAN = {
+export const createEmptyPlan = () => ({
   yearPlans: [],
   invalidCourses: [],
-};
+});
 
 // Applying "revisions" to the roadmap
 
@@ -25,7 +25,7 @@ export function applyFullPlannerEdit(
   if (!oldData && !newData) return;
 
   if (!oldData) {
-    plans.push({ ...newData!, content: { ...EMPTY_PLAN } });
+    plans.push({ ...newData!, content: createEmptyPlan() });
     return;
   }
 
