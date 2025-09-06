@@ -2,6 +2,7 @@ import { QuarterName } from '@peterportal/types';
 import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapRevision } from '../types/roadmap';
 import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
+import { deepCopy } from './util';
 
 // [action][Type][Property]
 // Examples:
@@ -115,4 +116,47 @@ export function addPlannerQuarter(plannerId: number, startYear: number, name: Qu
   };
 
   return createRevision([edit]);
+}
+
+interface ModifiedQuarter {
+  startYear: number;
+  quarter: PlannerQuarterData;
+  courseIndex?: number;
+}
+export function modifyQuarterCourse(
+  plannerId: number,
+  course: CourseGQLData,
+  removedFrom?: ModifiedQuarter,
+  addedTo?: ModifiedQuarter,
+) {
+  const edits: PlannerQuarterEdit[] = [];
+
+  if (removedFrom) {
+    edits.push({
+      type: 'quarter',
+      plannerId,
+      startYear: removedFrom.startYear,
+      before: deepCopy(removedFrom.quarter),
+      after: {
+        name: removedFrom.quarter.name,
+        courses: removedFrom.quarter.courses.filter((c) => c.id !== course.id),
+      },
+    });
+  }
+
+  if (addedTo) {
+    const coursesAfter = deepCopy(addedTo.quarter.courses);
+    const index = addedTo.courseIndex ?? coursesAfter.length;
+    coursesAfter.splice(index, 0, course);
+
+    edits.push({
+      type: 'quarter',
+      plannerId,
+      startYear: addedTo.startYear,
+      before: deepCopy(addedTo.quarter),
+      after: { name: addedTo.quarter.name, courses: coursesAfter },
+    });
+  }
+
+  return createRevision(edits);
 }

@@ -32,6 +32,8 @@ describe.skip('deletePlannerYear', () => {
 });
 
 describe.skip('modifyPlannerYear', () => {
+  it('Creates an empty revision when no details are changed', () => {});
+
   it('Creates a revision to only add quarters', () => {});
 
   it('Creates a revision to only remove quarters', () => {});
@@ -53,4 +55,14 @@ describe.skip('addPlannerQuarter', () => {
   it('Creates a revision to add a quarter with no courses', () => {});
 
   it('Creates a revision to add a quarter with courses', () => {});
+});
+
+describe.skip('modifyQuarterCourse', () => {
+  it('Creates an empty revision when no added/removed quarter are specified', () => {});
+
+  it('Creates a revision to add a course to a quarter', () => {});
+
+  it('Creates a revision to remove a course from a quarter', () => {});
+
+  it('Creates a revision to add and remove a quarter', () => {});
 });
