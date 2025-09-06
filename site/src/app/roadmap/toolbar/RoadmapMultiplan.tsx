@@ -3,7 +3,6 @@ import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   defaultPlan,
-  deleteRoadmapPlan,
   getNextPlannerTempId,
   initialPlanState,
   reviseRoadmap,
@@ -24,7 +23,7 @@ import { Button, IconButton, Popover } from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
-import { addPlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
+import { addPlanner, deletePlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
 import { deepCopy } from '../../../helpers/util';
 
 interface RoadmapSelectableItemProps {
@@ -161,8 +160,11 @@ const RoadmapMultiplan: FC = () => {
 
   const deleteCurrentPlan = () => {
     const newIndex = delIdx === currentPlanIndex ? 0 : currentPlanIndex - Number(delIdx < currentPlanIndex);
+    const planToDelete = allPlans[delIdx];
+    const yearPlans = deepCopy(planToDelete.content.yearPlans);
+    const revision = deletePlanner(planToDelete.id, planToDelete.name, yearPlans);
+    dispatch(reviseRoadmap(revision));
     dispatch(setPlanIndex(newIndex));
-    dispatch(deleteRoadmapPlan({ planIndex: delIdx }));
     setDelIdx(-1);
   };
 

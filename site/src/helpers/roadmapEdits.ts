@@ -1,5 +1,5 @@
 import { QuarterName } from '@peterportal/types';
-import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan } from '../types/roadmap';
+import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapRevision } from '../types/roadmap';
 import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 
@@ -7,6 +7,16 @@ import { createRevision } from './roadmap';
 // Examples:
 // addPlanner, removePlanner, updatePlannerName
 // addQuarter, removeQuarter, updateQuarterCourses
+
+function createInverseRevision(revision: RoadmapRevision) {
+  revision.edits.forEach((edit) => {
+    const before = edit.before;
+    edit.before = edit.after;
+    edit.after = before;
+  });
+  revision.edits.reverse();
+  return revision;
+}
 
 export function addPlanner(id: number, name: string, yearPlans?: PlannerYearData[]) {
   const plannerEdit: PlannerEdit = {
@@ -21,6 +31,10 @@ export function addPlanner(id: number, name: string, yearPlans?: PlannerYearData
     .flatMap((revision) => revision.edits);
 
   return createRevision([plannerEdit, ...otherEdits]);
+}
+
+export function deletePlanner(id: number, name: string, yearPlans?: PlannerYearData[]) {
+  return createInverseRevision(addPlanner(id, name, yearPlans));
 }
 
 export function updatePlannerName(current: RoadmapPlan, newName: string) {

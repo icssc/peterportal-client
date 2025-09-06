@@ -23,10 +23,6 @@ export const initialPlanState: RoadmapPlanState = {
   invalidCourses: [],
 };
 
-interface RoadmapPlanIdentifier {
-  planIndex: number;
-}
-
 // default plan to display for uesr
 export const defaultPlan: RoadmapPlan = {
   id: -1,
@@ -234,12 +230,6 @@ export const roadmapSlice = createSlice({
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
-    deleteRoadmapPlan: (state, action: PayloadAction<RoadmapPlanIdentifier>) => {
-      state.plans.splice(action.payload.planIndex, 1);
-      if (state.plans.length === 0) {
-        state.plans.push(defaultPlan);
-      }
-    },
     setPlanIndex: (state, action: PayloadAction<number>) => {
       state.currentPlanIndex = action.payload;
     },
@@ -294,7 +284,6 @@ export const {
   setInvalidCourses,
   setShowSearch,
   setShowAddCourse,
-  deleteRoadmapPlan,
   setPlanIndex,
   setUnsavedChanges,
   setShowSavedCourses,
