@@ -88,7 +88,7 @@ export function applyQuarterEdit(
 
   const quarterIndex = yearToEdit.quarters.findIndex((q) => q.name === oldData.name);
   if (!newData) {
-    yearToEdit.quarters.splice(quarterIndex);
+    yearToEdit.quarters.splice(quarterIndex, 1);
     return;
   }
 

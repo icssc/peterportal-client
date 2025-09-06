@@ -3,8 +3,8 @@ import { FC, useRef, useState } from 'react';
 import './Year.scss';
 import { Button, Modal, Form } from 'react-bootstrap';
 import Quarter from './Quarter';
-import { useAppDispatch } from '../../../store/hooks';
-import { addQuarter, editYear, editName, deleteYear, deleteQuarter } from '../../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { selectCurrentPlan, reviseRoadmap } from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
 
 import { PlannerYearData } from '../../../types/types';
@@ -14,6 +14,7 @@ import { Card, Collapse, Divider, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -65,9 +66,13 @@ interface DeleteYearModalProps {
 
 const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModalProps) => {
   const dispatch = useAppDispatch();
+  const currentPlan = useAppSelector(selectCurrentPlan);
+  const year = currentPlan.content.yearPlans[yearIndex];
+
   const handleDeleteYear = () => {
     setShow(false);
-    dispatch(deleteYear({ yearIndex }));
+    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.quarters);
+    dispatch(reviseRoadmap(revision));
   };
 
   return (
@@ -102,6 +107,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const yearContainerRef = useRef<HTMLDivElement>(null);
+  const plannerId = useAppSelector(selectCurrentPlan).id;
 
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
@@ -138,25 +144,18 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         setShow={setShowEditYear}
         saveHandler={({ startYear, name, quarters }) => {
           setShowEditYear(false);
-          if (startYear !== data.startYear) {
-            setPlaceholderYear(startYear);
-            dispatch(editYear({ startYear, index: yearIndex }));
-          }
-          if (name !== data.name) {
-            setPlaceholderName(name);
-            dispatch(editName({ name, index: yearIndex }));
-          }
+
           const existing = data.quarters;
-          let removed = 0;
-          existing.forEach(({ name }, index) => {
-            const remove = !quarters.find((q) => q.name === name);
-            // Increment removed because the index of the quarters will change
-            if (remove) dispatch(deleteQuarter({ yearIndex, quarterIndex: index - removed++ }));
+          const addedQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
+          const removedQuarters = existing.filter(({ name }) => !quarters.find((q) => q.name === name));
+
+          const revision = modifyPlannerYear(plannerId, data, {
+            newName: name,
+            newStartYear: startYear,
+            addedQuarters,
+            removedQuarters,
           });
-          const addQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
-          for (const { name } of addQuarters) {
-            dispatch(addQuarter({ startYear, quarterData: { name, courses: [] } }));
-          }
+          if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
         }}
         currentQuarters={data.quarters.map((q) => q.name)}
         type="edit"
