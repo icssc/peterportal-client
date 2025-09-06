@@ -69,6 +69,21 @@ const YearModal: FC<YearModalProps> = (props) => {
     setShow(false);
   };
 
+  const saveYear = () => {
+    if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
+      return setValidated(false);
+    }
+
+    setValidated(false);
+    saveHandler({
+      startYear: year,
+      name: name.trim(),
+      quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
+    });
+    setYear(placeholderYear);
+    setName(placeholderName);
+  };
+
   return (
     <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
       <Modal.Header closeButton>
@@ -120,24 +135,7 @@ const YearModal: FC<YearModalProps> = (props) => {
             {quarterCheckboxes}
           </Form.Group>
         </Form>
-        <Button
-          variant="primary"
-          onClick={() => {
-            if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
-              return setValidated(false);
-            }
-
-            setValidated(false);
-            setShow(false);
-            saveHandler({
-              startYear: year,
-              name: name.trim(),
-              quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
-            });
-            setYear(placeholderYear);
-            setName(placeholderName);
-          }}
-        >
+        <Button variant="primary" onClick={saveYear}>
           {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
         </Button>
       </Modal.Body>

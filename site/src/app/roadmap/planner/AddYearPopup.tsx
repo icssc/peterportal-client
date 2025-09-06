@@ -17,7 +17,10 @@ const AddYearPopup: FC = () => {
   const placeholderYear =
     currentPlanData.length === 0 ? new Date().getFullYear() : currentPlanData[currentPlanData.length - 1].startYear + 1;
 
-  const saveHandler = (yearData: PlannerYearData) => dispatch(addYear({ yearData }));
+  const saveHandler = (yearData: PlannerYearData) => {
+    dispatch(addYear({ yearData }));
+    setShowModal(false);
+  };
 
   return (
     <>

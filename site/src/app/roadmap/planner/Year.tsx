@@ -15,6 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
+import spawnToast from '../../../helpers/toastify';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -107,7 +108,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const yearContainerRef = useRef<HTMLDivElement>(null);
-  const plannerId = useAppSelector(selectCurrentPlan).id;
+  const currentPlan = useAppSelector(selectCurrentPlan);
 
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
@@ -143,13 +144,29 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         show={showEditYear}
         setShow={setShowEditYear}
         saveHandler={({ startYear, name, quarters }) => {
-          setShowEditYear(false);
-
           const existing = data.quarters;
           const addedQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
           const removedQuarters = existing.filter(({ name }) => !quarters.find((q) => q.name === name));
 
-          const revision = modifyPlannerYear(plannerId, data, {
+          const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
+            if (year === data || year.name !== name) return false;
+            spawnToast(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`, true);
+            return true;
+          });
+
+          if (hasNameConflict) return;
+
+          const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
+            if (year === data || year.startYear !== startYear) return false;
+            spawnToast(`Start year ${startYear} is already used by ${year.name}`, true);
+            return true;
+          });
+
+          if (hasStartYearConflict) return;
+
+          setShowEditYear(false);
+
+          const revision = modifyPlannerYear(currentPlan.id, data, {
             newName: name,
             newStartYear: startYear,
             addedQuarters,
