@@ -1,4 +1,4 @@
-import { applyFullPlannerEdit, applyQuarterEdit, applyYearEdit, EMPTY_PLAN } from './roadmap';
+import { applyFullPlannerEdit, applyQuarterEdit, applyYearEdit, createEmptyPlan } from './roadmap';
 import { deepCopy } from './util';
 import { PlannerYearChangeData, RoadmapPlan } from '../types/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -49,7 +49,7 @@ describe('applyFullPlannerEdit', () => {
 
   it('Adds a new blank plan when there is no old data', () => {
     applyFullPlannerEdit(roadmapPlans, null, { id: 3, name: 'after' });
-    expect(roadmapPlans).toEqual([plannerA, plannerB, { id: 3, name: 'after', content: EMPTY_PLAN }]);
+    expect(roadmapPlans).toEqual([plannerA, plannerB, { id: 3, name: 'after', content: createEmptyPlan() }]);
   });
 
   it('Removes a plan when there is no new data', () => {
