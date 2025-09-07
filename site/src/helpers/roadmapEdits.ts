@@ -3,6 +3,7 @@ import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapR
 import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
+import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
 
 // [action][Type][Property]
 // Examples:
@@ -118,20 +119,23 @@ export function addPlannerQuarter(plannerId: number, startYear: number, name: Qu
   return createRevision([edit]);
 }
 
-interface ModifiedQuarter {
+export interface ModifiedQuarter {
   startYear: number;
   quarter: PlannerQuarterData;
-  courseIndex?: number;
+  courseIndex: number;
 }
 export function modifyQuarterCourse(
   plannerId: number,
   course: CourseGQLData,
-  removedFrom?: ModifiedQuarter,
-  addedTo?: ModifiedQuarter,
+  removedFrom: ModifiedQuarter | null,
+  addedTo: ModifiedQuarter | null,
 ) {
   const edits: PlannerQuarterEdit[] = [];
 
   if (removedFrom) {
+    const coursesAfter = deepCopy(removedFrom.quarter.courses);
+    coursesAfter.splice(removedFrom.courseIndex!, 1);
+
     edits.push({
       type: 'quarter',
       plannerId,
@@ -139,24 +143,50 @@ export function modifyQuarterCourse(
       before: deepCopy(removedFrom.quarter),
       after: {
         name: removedFrom.quarter.name,
-        courses: removedFrom.quarter.courses.filter((c) => c.id !== course.id),
+        courses: coursesAfter,
       },
     });
   }
 
   if (addedTo) {
-    const coursesAfter = deepCopy(addedTo.quarter.courses);
-    const index = addedTo.courseIndex ?? coursesAfter.length;
+    // Remove course loading placeholders
+    const quarterCopy = deepCopy(addedTo.quarter);
+    quarterCopy.courses = addedTo.quarter.courses.filter((c) => c.id !== LOADING_COURSE_PLACEHOLDER.id);
+
+    const coursesAfter = deepCopy(quarterCopy.courses);
+    const index = addedTo.courseIndex;
     coursesAfter.splice(index, 0, course);
 
     edits.push({
       type: 'quarter',
       plannerId,
       startYear: addedTo.startYear,
-      before: deepCopy(addedTo.quarter),
+      before: quarterCopy,
       after: { name: addedTo.quarter.name, courses: coursesAfter },
     });
   }
 
   return createRevision(edits);
+}
+
+export function reorderQuarterCourse(
+  plannerId: number,
+  course: CourseGQLData,
+  oldIndex: number,
+  after: ModifiedQuarter,
+) {
+  const quarterCopy = deepCopy(after.quarter);
+
+  const coursesAfter = deepCopy(quarterCopy.courses);
+  coursesAfter.splice(oldIndex, 1);
+  coursesAfter.splice(after.courseIndex, 0, course);
+
+  const edit: PlannerQuarterEdit = {
+    type: 'quarter',
+    plannerId,
+    startYear: after.startYear,
+    before: quarterCopy,
+    after: { name: after.quarter.name, courses: coursesAfter },
+  };
+  return createRevision([edit]);
 }

@@ -65,4 +65,6 @@ describe.skip('modifyQuarterCourse', () => {
   it('Creates a revision to remove a course from a quarter', () => {});
 
   it('Creates a revision to add and remove a quarter', () => {});
+
+  it('Removes Loading Course Placeholders', () => {});
 });

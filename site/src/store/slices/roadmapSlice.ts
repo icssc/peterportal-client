@@ -4,6 +4,7 @@ import {
   CourseGQLData,
   CourseIdentifier,
   InvalidCourseData,
+  PlannerQuarterData,
   PlannerYearData,
   RoadmapPlan,
   RoadmapPlanState,
@@ -11,6 +12,7 @@ import {
 } from '../../types/types';
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
+import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
@@ -38,6 +40,13 @@ const baseRevision: RoadmapRevision = {
   edits: [],
 };
 
+interface SetActiveCoursePayload {
+  course: CourseGQLData;
+  startYear?: number;
+  quarter?: PlannerQuarterData;
+  courseIndex?: number;
+}
+
 // onbeforeunload event listener
 const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
 
@@ -58,11 +67,13 @@ export const roadmapSlice = createSlice({
     showAddCourse: false,
     showSavedCourses: true,
     /** Store the course data of the active dragging item */
-    activeCourse: undefined as CourseGQLData | undefined,
+    activeCourse: null as CourseGQLData | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
     activeCourseLoading: false,
     /** Store missing prerequisites for courses when adding on mobile */
     activeMissingPrerequisites: undefined as string[] | undefined,
+    /** Where the active course is being dragged from */
+    activeCourseDragSource: null as Omit<SetActiveCoursePayload, 'course'> | null,
     /** Whether the roadmap is loading */
     roadmapLoading: false,
   },
@@ -76,7 +87,7 @@ export const roadmapSlice = createSlice({
       const fromQuarter = action.payload.from.quarterIndex;
       const fromCourse = action.payload.from.courseIndex;
 
-      let removed: CourseGQLData | undefined;
+      let removed: CourseGQLData | null;
       // not from the searchbar
       if (fromYear != -1) {
         // remove course from list
@@ -99,8 +110,24 @@ export const roadmapSlice = createSlice({
       const quarter = yearPlan.quarters[action.payload.quarterIndex];
       quarter.courses.splice(action.payload.courseIndex, 1);
     },
-    setActiveCourse: (state, action: PayloadAction<CourseGQLData | undefined>) => {
-      state.activeCourse = action.payload;
+    /**
+     * Creates a loading placeholder in the specified position. This placeholder automatically gets
+     * removed when creating a revision to add a course to the user's roadmap.
+     */
+    createQuarterCourseLoadingPlaceholder: (state, action: PayloadAction<CourseIdentifier>) => {
+      const target = action.payload;
+      const yearPlans = state.plans[state.currentPlanIndex].content.yearPlans;
+      const quarter = yearPlans[target.yearIndex].quarters[target.quarterIndex];
+      quarter.courses.splice(target.courseIndex, 0, LOADING_COURSE_PLACEHOLDER);
+    },
+    setActiveCourse: (state, action: PayloadAction<SetActiveCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCourse = state.activeCourseDragSource = null;
+        return;
+      }
+      const { course, ...dragSource } = action.payload;
+      state.activeCourse = course;
+      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
       state.activeCourseLoading = action.payload;
@@ -164,6 +191,7 @@ export const roadmapSlice = createSlice({
 export const {
   moveCourse,
   deleteCourse,
+  createQuarterCourseLoadingPlaceholder,
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
