@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   selectAllPlans,
   selectYearPlans,
-  setAllPlans,
+  setInitialPlannerData,
   setInvalidCourses,
   setUnsavedChanges,
   setRoadmapLoading,
@@ -61,7 +61,7 @@ const PlannerLoader: FC = () => {
   const populateExistingRoadmap = useCallback(
     async (roadmap: SavedRoadmap) => {
       const planners = await expandAllPlanners(roadmap.planners);
-      dispatch(setAllPlans(planners));
+      dispatch(setInitialPlannerData(planners));
       dispatch(setRoadmapLoading(false));
     },
     [dispatch],
@@ -157,7 +157,7 @@ const PlannerLoader: FC = () => {
 
     // Update frontend state to show local data
     const planner = await expandAllPlanners(localRoadmap.planners);
-    dispatch(setAllPlans(planner));
+    dispatch(setInitialPlannerData(planner));
     setShowSyncModal(false);
   };
 

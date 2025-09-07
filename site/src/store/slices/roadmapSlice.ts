@@ -78,51 +78,10 @@ export const roadmapSlice = createSlice({
     roadmapLoading: false,
   },
   reducers: {
-    /**
-     * Creates a loading placeholder in the specified position. This placeholder automatically gets
-     * removed when creating a revision to add a course to the user's roadmap.
-     */
-    createQuarterCourseLoadingPlaceholder: (state, action: PayloadAction<CourseIdentifier>) => {
-      const target = action.payload;
-      const yearPlans = state.plans[state.currentPlanIndex].content.yearPlans;
-      const quarter = yearPlans[target.yearIndex].quarters[target.quarterIndex];
-      quarter.courses.splice(target.courseIndex, 0, LOADING_COURSE_PLACEHOLDER);
-    },
-    setActiveCourse: (state, action: PayloadAction<SetActiveCoursePayload | null>) => {
-      if (!action.payload) {
-        state.activeCourse = state.activeCourseDragSource = null;
-        return;
-      }
-      const { course, ...dragSource } = action.payload;
-      state.activeCourse = course;
-      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
-    },
-    setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
-      state.activeCourseLoading = action.payload;
-    },
-    setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
-      state.activeMissingPrerequisites = action.payload;
-    },
-    setAllPlans: (state, action: PayloadAction<RoadmapPlan[]>) => {
+    // Roadmap Window State
+
+    setInitialPlannerData: (state, action: PayloadAction<RoadmapPlan[]>) => {
       state.plans = action.payload;
-    },
-    setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
-      state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
-    },
-    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
-      state.showSearch = action.payload.show;
-      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
-        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
-      }
-    },
-    setShowAddCourse: (state, action: PayloadAction<boolean>) => {
-      state.showAddCourse = action.payload;
-    },
-    setPlanIndex: (state, action: PayloadAction<number>) => {
-      state.currentPlanIndex = action.payload;
-    },
-    setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
-      state.showSavedCourses = action.payload;
     },
     setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
       state.unsavedChanges = action.payload;
@@ -138,7 +97,9 @@ export const roadmapSlice = createSlice({
     setRoadmapLoading: (state, action: PayloadAction<boolean>) => {
       state.roadmapLoading = action.payload;
     },
-    // create a revision
+
+    // Modifying the Roadmap
+
     reviseRoadmap: (state, action: PayloadAction<RoadmapRevision>) => {
       const currentIndex = state.currentRevisionIndex;
       state.revisions.splice(currentIndex + 1, state.revisions.length, action.payload);
@@ -153,6 +114,55 @@ export const roadmapSlice = createSlice({
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
     },
+
+    // Intermediate States When Adding Courses
+
+    setActiveCourse: (state, action: PayloadAction<SetActiveCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCourse = state.activeCourseDragSource = null;
+        return;
+      }
+      const { course, ...dragSource } = action.payload;
+      state.activeCourse = course;
+      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
+    },
+    setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
+      state.activeCourseLoading = action.payload;
+    },
+    setActiveMissingPrerequisites: (state, action: PayloadAction<string[] | undefined>) => {
+      state.activeMissingPrerequisites = action.payload;
+    },
+    /**
+     * Creates a loading placeholder in the specified position. This placeholder automatically gets
+     * removed when creating a revision to add a course to the user's roadmap.
+     */
+    createQuarterCourseLoadingPlaceholder: (state, action: PayloadAction<CourseIdentifier>) => {
+      const target = action.payload;
+      const yearPlans = state.plans[state.currentPlanIndex].content.yearPlans;
+      const quarter = yearPlans[target.yearIndex].quarters[target.quarterIndex];
+      quarter.courses.splice(target.courseIndex, 0, LOADING_COURSE_PLACEHOLDER);
+    },
+    setInvalidCourses: (state, action: PayloadAction<InvalidCourseData[]>) => {
+      state.plans[state.currentPlanIndex].content.invalidCourses = action.payload;
+    },
+
+    // Controlling Visibility of UI Elements
+
+    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
+      state.showSearch = action.payload.show;
+      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
+        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
+      }
+    },
+    setShowAddCourse: (state, action: PayloadAction<boolean>) => {
+      state.showAddCourse = action.payload;
+    },
+    setPlanIndex: (state, action: PayloadAction<number>) => {
+      state.currentPlanIndex = action.payload;
+    },
+    setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
+      state.showSavedCourses = action.payload;
+    },
   },
 });
 
@@ -161,7 +171,7 @@ export const {
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
-  setAllPlans,
+  setInitialPlannerData,
   setInvalidCourses,
   setShowSearch,
   setShowAddCourse,
