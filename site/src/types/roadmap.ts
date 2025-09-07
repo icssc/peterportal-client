@@ -54,3 +54,31 @@ export interface RevisionStack {
   edits: RoadmapEdit[];
   direction: RevisionDirection;
 }
+
+// Save Instructions
+
+export type RoadmapEditIdentifier<T extends RoadmapEdit> = Omit<T, 'type' | 'before' | 'after'>;
+
+export type RoadmapSaveInstruction<T extends RoadmapEdit, Write extends boolean> = RoadmapEditIdentifier<T> &
+  (Write extends true ? { data: T['after'] } : { id: number });
+
+export interface PlannerQuarterDiffs {
+  updatedQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, true>[];
+}
+
+export interface PlannerYearDiffs extends PlannerQuarterDiffs {
+  deletedQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, false>[];
+  newQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, true>[];
+  updatedYears: RoadmapSaveInstruction<PlannerYearEdit, true>[];
+}
+
+export interface PlannerDiffs extends PlannerYearDiffs {
+  deletedYears: RoadmapSaveInstruction<PlannerYearEdit, false>[];
+  newYears: RoadmapSaveInstruction<PlannerYearEdit, true>[];
+  updatedPlanners: RoadmapSaveInstruction<PlannerEdit, true>[];
+}
+
+export interface RoadmapDiffs extends PlannerDiffs {
+  deletedPlanners: RoadmapSaveInstruction<PlannerEdit, false>[];
+  newPlanners: RoadmapSaveInstruction<PlannerEdit, true>[];
+}

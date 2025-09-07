@@ -242,3 +242,37 @@ describe.skip('restoreRevision', () => {
 
   it('Redo multiple revisions correctly', () => {}); // quarter, planner
 });
+
+describe.skip('compareRoadmaps', () => {
+  it('Returns empty change lists for identical roadmaps', () => {}); // do more than one comparison
+
+  it('Returns quarters that have had courses added', () => {});
+
+  it('Returns quarters that have had courses removed', () => {});
+
+  it('Returns quarters that have had courses reordered', () => {});
+
+  it('Returns quarters that are newly created', () => {});
+
+  it('Returns quarters that have been deleted', () => {});
+
+  it('Returns years that have been created with no quarters', () => {});
+
+  it('Returns years and quarters for years created with quarters', () => {});
+
+  it('Returns years that have been deleted', () => {});
+
+  it('Returns years that have had their name changed', () => {});
+
+  it('Returns years that have had their start year changed', () => {}); // equivalent of delete + create
+
+  it('Does not return years that have their quarters changed if their name/start year is the same', () => {});
+
+  it('Returns planners that are newly created', () => {});
+
+  it('Returns planners that have been deleted', () => {});
+
+  it('Returns planners that have had their names changed', () => {});
+
+  it('Does not return planner that have their years/quarters changed if the name is the same', () => {});
+});
