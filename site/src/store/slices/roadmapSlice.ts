@@ -78,38 +78,6 @@ export const roadmapSlice = createSlice({
     roadmapLoading: false,
   },
   reducers: {
-    // Use the PayloadAction type to declare the contents of `action.payload`
-    moveCourse: (state, action: PayloadAction<MoveCoursePayload>) => {
-      const toYear = action.payload.to.yearIndex;
-      const toQuarter = action.payload.to.quarterIndex;
-      const toCourse = action.payload.to.courseIndex;
-      const fromYear = action.payload.from.yearIndex;
-      const fromQuarter = action.payload.from.quarterIndex;
-      const fromCourse = action.payload.from.courseIndex;
-
-      let removed: CourseGQLData | null;
-      // not from the searchbar
-      if (fromYear != -1) {
-        // remove course from list
-        const courseList =
-          state.plans[state.currentPlanIndex].content.yearPlans[fromYear].quarters[fromQuarter].courses;
-        [removed] = courseList.splice(fromCourse, 1);
-      }
-      // from the searchbar
-      else {
-        // active course has the current dragging course
-        removed = state.activeCourse;
-      }
-
-      // add course to list
-      const courseList = state.plans[state.currentPlanIndex].content.yearPlans[toYear].quarters[toQuarter].courses;
-      courseList.splice(toCourse, 0, removed!);
-    },
-    deleteCourse: (state, action: PayloadAction<CourseIdentifier>) => {
-      const yearPlan = state.plans[state.currentPlanIndex].content.yearPlans[action.payload.yearIndex];
-      const quarter = yearPlan.quarters[action.payload.quarterIndex];
-      quarter.courses.splice(action.payload.courseIndex, 1);
-    },
     /**
      * Creates a loading placeholder in the specified position. This placeholder automatically gets
      * removed when creating a revision to add a course to the user's roadmap.
@@ -189,8 +157,6 @@ export const roadmapSlice = createSlice({
 });
 
 export const {
-  moveCourse,
-  deleteCourse,
   createQuarterCourseLoadingPlaceholder,
   setActiveCourse,
   setActiveCourseLoading,
