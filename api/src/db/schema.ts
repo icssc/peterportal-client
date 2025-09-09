@@ -85,8 +85,57 @@ export const planner = pgTable(
       .notNull(),
     name: text('name').notNull(),
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
+    shareId: text('share_id'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
+);
+
+export const plannerYear = pgTable(
+  'planner_year',
+  {
+    plannerId: integer('planner_id')
+      .references(() => planner.id)
+      .notNull(),
+    startYear: integer('start_year').notNull(),
+    name: text('year').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.plannerId, table.startYear] })],
+);
+
+export const plannerQuarter = pgTable(
+  'planner_quarter',
+  {
+    plannerId: integer('planner_id').notNull(),
+    startYear: integer('start_year').notNull(),
+    quarterName: text('quarter_name').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName] }),
+    foreignKey({
+      columns: [table.plannerId, table.startYear],
+      foreignColumns: [plannerYear.plannerId, plannerYear.startYear],
+    }),
+  ],
+);
+
+export const plannerCourse = pgTable(
+  'planner_course',
+  {
+    plannerId: integer('planner_id').notNull(),
+    startYear: integer('start_year').notNull(),
+    quarterName: text('quarter_name').notNull(),
+    courseId: text('course_id').notNull(),
+    index: integer('index').notNull(),
+    units: real('units'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName, table.courseId] }),
+    foreignKey({
+      columns: [table.plannerId, table.startYear, table.quarterName],
+      foreignColumns: [plannerQuarter.plannerId, plannerQuarter.startYear, plannerQuarter.quarterName],
+    }),
+    unique('planner_course_unique_index').on(table.plannerId, table.startYear, table.quarterName, table.index),
+  ],
 );
 
 export const plannerMajor = pgTable(

@@ -160,7 +160,7 @@ export function createRevision(edits: RoadmapEdit[]): RoadmapRevision {
   return { timestamp: Date.now(), edits };
 }
 
-// diffing
+// Comparing Roadmap States
 
 function findNotInOther<T>(otherList: T[], matchingKey: keyof T) {
   return (item: T) => !otherList.find((otherItem) => otherItem[matchingKey] === item[matchingKey]);
