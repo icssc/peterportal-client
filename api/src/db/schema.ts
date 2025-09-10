@@ -124,17 +124,16 @@ export const plannerCourse = pgTable(
     plannerId: integer('planner_id').notNull(),
     startYear: integer('start_year').notNull(),
     quarterName: text('quarter_name').notNull(),
-    courseId: text('course_id').notNull(),
     index: integer('index').notNull(),
+    courseId: text('course_id').notNull(),
     units: real('units'),
   },
   (table) => [
-    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName, table.courseId] }),
+    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName, table.index] }),
     foreignKey({
       columns: [table.plannerId, table.startYear, table.quarterName],
       foreignColumns: [plannerQuarter.plannerId, plannerQuarter.startYear, plannerQuarter.quarterName],
     }),
-    unique('planner_course_unique_index').on(table.plannerId, table.startYear, table.quarterName, table.index),
   ],
 );
 
