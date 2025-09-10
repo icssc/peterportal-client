@@ -2,7 +2,8 @@ import { router, userProcedure } from '../helpers/trpc';
 import { SavedPlannerData, savedRoadmap, SavedRoadmap } from '@peterportal/types';
 import { db } from '../db';
 import { planner, user } from '../db/schema';
-import { and, asc, eq, inArray, not } from 'drizzle-orm';
+import { and, eq, inArray, not } from 'drizzle-orm';
+import { queryGetPlanners } from '../helpers/roadmap';
 
 const roadmapsRouter = router({
   /**
@@ -10,11 +11,7 @@ const roadmapsRouter = router({
    */
   get: userProcedure.query(async ({ ctx }) => {
     const [planners, timestamp] = await Promise.all([
-      db
-        .select({ id: planner.id, name: planner.name, content: planner.years })
-        .from(planner)
-        .where(eq(planner.userId, ctx.session.userId!))
-        .orderBy(asc(planner.id)),
+      queryGetPlanners(eq(planner.userId, ctx.session.userId!)),
       db.select({ timestamp: user.lastRoadmapEditAt }).from(user).where(eq(user.id, ctx.session.userId!)),
     ]);
     if (planners.length === 0) {
