@@ -97,7 +97,7 @@ export const plannerYear = pgTable(
       .references(() => planner.id)
       .notNull(),
     startYear: integer('start_year').notNull(),
-    name: text('year').notNull(),
+    name: text('name').notNull(),
   },
   (table) => [primaryKey({ columns: [table.plannerId, table.startYear] })],
 );
