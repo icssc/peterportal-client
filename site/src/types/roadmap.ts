@@ -1,9 +1,9 @@
-import { InvalidCourseData, PlannerData, PlannerQuarterData, PlannerYearData } from './types';
+import { InvalidCourseData, PlannerQuarterData, PlannerYearData } from './types';
 
 // Client-side Roadmaps
 
 export interface RoadmapPlanState {
-  yearPlans: PlannerData;
+  yearPlans: PlannerYearData[];
   /** Courses that do not meet their prerequisites */
   invalidCourses: InvalidCourseData[];
 }

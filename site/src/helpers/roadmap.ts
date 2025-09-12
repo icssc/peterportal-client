@@ -162,6 +162,13 @@ export function createRevision(edits: RoadmapEdit[]): RoadmapRevision {
 
 // Comparing Roadmap States
 
+function removeContentKeys<T extends Exclude<RoadmapEdit['after'], null>>(dataContainer: T) {
+  if ('content' in dataContainer) return { ...dataContainer, content: undefined };
+  if ('quarters' in dataContainer) return { ...dataContainer, quarters: undefined };
+  if ('courses' in dataContainer) return { ...dataContainer, courses: undefined };
+  return dataContainer;
+}
+
 function findNotInOther<T>(otherList: T[], matchingKey: keyof T) {
   return (item: T) => !otherList.find((otherItem) => otherItem[matchingKey] === item[matchingKey]);
 }
@@ -188,13 +195,13 @@ function getDiffsAndPairs<EditType extends RoadmapEdit, C extends Exclude<EditTy
 ) {
   const removed: RoadmapSaveInstruction<EditType, false>[] = before
     .filter(findNotInOther(after, itemIdKey))
-    .map((year) => ({ ...parentIdentifier, id: year[itemIdKey] as number }));
+    .map((item) => ({ ...parentIdentifier, id: item[itemIdKey] as number }));
 
   const added: RoadmapSaveInstruction<EditType, true>[] = after
     .filter(findNotInOther(before, itemIdKey))
-    .map((year) => ({ ...parentIdentifier, data: year }));
+    .map((item) => ({ ...parentIdentifier, data: removeContentKeys(item) }));
 
-  const pairs = after.map((year) => [before.find((y) => y[itemIdKey] === year[itemIdKey]) ?? null, year] as const);
+  const pairs = after.map((item) => [before.find((x) => x[itemIdKey] === item[itemIdKey]) ?? null, item] as const);
 
   return { removed, added, pairs };
 }
