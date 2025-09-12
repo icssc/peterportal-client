@@ -1,17 +1,25 @@
-import { quarters } from '@peterportal/types';
+import {
+  PlannerDiffs,
+  PlannerQuarterDiffs,
+  PlannerYearDiffs,
+  quarters,
+  RoadmapDiffs,
+  RoadmapPlannerChange,
+  RoadmapPlannerQuarterChange,
+  PlannerQuarterDeletion,
+  RoadmapPlannerYearChange,
+  PlannerYearDeletion,
+} from '@peterportal/types';
 import {
   FullPlannerChangeData,
-  PlannerDiffs,
   PlannerEdit,
   PlannerQuarterChangeData,
-  PlannerQuarterDiffs,
   PlannerQuarterEdit,
   PlannerYearChangeData,
-  PlannerYearDiffs,
   PlannerYearEdit,
   RevisionDirection,
   RevisionStack,
-  RoadmapDiffs,
+  // RoadmapDiffs,
   RoadmapEdit,
   RoadmapEditIdentifier,
   RoadmapPlan,
@@ -299,13 +307,13 @@ export function compareRoadmaps(before: RoadmapPlan[], after: RoadmapPlan[]): Ro
     pairs: matchingPlanners,
   } = getDiffsAndPairs(before, after, 'id', roadmapEditsIdentifier);
 
-  const updatedPlanners: RoadmapSaveInstruction<PlannerEdit, true>[] = [];
-  const updatedYears: RoadmapSaveInstruction<PlannerYearEdit, true>[] = [];
-  const updatedQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, true>[] = [];
-  const newYears: RoadmapSaveInstruction<PlannerYearEdit, true>[] = [];
-  const newQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, true>[] = [];
-  const deletedYears: RoadmapSaveInstruction<PlannerYearEdit, false>[] = [];
-  const deletedQuarters: RoadmapSaveInstruction<PlannerQuarterEdit, false>[] = [];
+  const updatedPlanners: RoadmapPlannerChange[] = [];
+  const updatedYears: RoadmapPlannerYearChange[] = [];
+  const updatedQuarters: RoadmapPlannerQuarterChange[] = [];
+  const newYears: RoadmapPlannerYearChange[] = [];
+  const newQuarters: RoadmapPlannerQuarterChange[] = [];
+  const deletedYears: PlannerYearDeletion[] = [];
+  const deletedQuarters: PlannerQuarterDeletion[] = [];
 
   const plannerDiffs: PlannerDiffs = {
     deletedQuarters,
