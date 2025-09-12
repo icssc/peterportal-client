@@ -94,7 +94,7 @@ export const plannerYear = pgTable(
   'planner_year',
   {
     plannerId: integer('planner_id')
-      .references(() => planner.id)
+      .references(() => planner.id, { onDelete: 'cascade' })
       .notNull(),
     startYear: integer('start_year').notNull(),
     name: text('name').notNull(),
@@ -114,7 +114,7 @@ export const plannerQuarter = pgTable(
     foreignKey({
       columns: [table.plannerId, table.startYear],
       foreignColumns: [plannerYear.plannerId, plannerYear.startYear],
-    }),
+    }).onDelete('cascade'),
   ],
 );
 
@@ -133,7 +133,7 @@ export const plannerCourse = pgTable(
     foreignKey({
       columns: [table.plannerId, table.startYear, table.quarterName],
       foreignColumns: [plannerQuarter.plannerId, plannerQuarter.startYear, plannerQuarter.quarterName],
-    }),
+    }).onDelete('cascade'),
   ],
 );
 
@@ -142,7 +142,7 @@ export const plannerMajor = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     plannerId: integer('planner_id')
-      .references(() => planner.id)
+      .references(() => planner.id, { onDelete: 'cascade' })
       .notNull(),
     majorId: text('major_id').notNull(),
     specializationId: text('specialization_id'),
@@ -155,7 +155,7 @@ export const plannerMinor = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     plannerId: integer('planner_id')
-      .references(() => planner.id)
+      .references(() => planner.id, { onDelete: 'cascade' })
       .notNull(),
     minorId: text('minor_id'),
   },
