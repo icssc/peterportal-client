@@ -4,27 +4,23 @@ import {
   PlannerYearDiffs,
   quarters,
   RoadmapDiffs,
-  RoadmapPlannerChange,
-  RoadmapPlannerQuarterChange,
+  PlannerSaveInfo,
+  PlannerQuarterSaveInfo,
   PlannerQuarterDeletion,
-  RoadmapPlannerYearChange,
+  PlannerYearSaveInfo,
   PlannerYearDeletion,
+  RoadmapItemDeletion,
+  RoadmapSaveInfo,
 } from '@peterportal/types';
 import {
   FullPlannerChangeData,
-  PlannerEdit,
   PlannerQuarterChangeData,
-  PlannerQuarterEdit,
   PlannerYearChangeData,
-  PlannerYearEdit,
   RevisionDirection,
   RevisionStack,
-  // RoadmapDiffs,
   RoadmapEdit,
-  RoadmapEditIdentifier,
   RoadmapPlan,
   RoadmapRevision,
-  RoadmapSaveInstruction,
 } from '../types/roadmap';
 import { PlannerQuarterData, PlannerYearData } from '../types/types';
 import { deepCopy } from './util';
@@ -195,23 +191,25 @@ function findNotInOther<T>(otherList: T[], matchingKey: keyof T) {
  * plannerId of the planner and startYear of the year that contains quarters being compared.
  * @returns Lists of removed items, added items, and matching items based on the `before` and `after` lists
  */
-function getDiffsAndPairs<EditType extends RoadmapEdit, C extends Exclude<EditType['after'], null>>(
-  before: C[],
-  after: C[],
-  itemIdKey: keyof C,
-  parentIdentifier: RoadmapEditIdentifier<EditType>,
-) {
-  const removed: RoadmapSaveInstruction<EditType, false>[] = before
-    .filter(findNotInOther(after, itemIdKey))
-    .map((item) => ({ ...parentIdentifier, id: item[itemIdKey] as number }));
+function getDiffsAndPairs<
+  EditType extends RoadmapEdit,
+  C extends Exclude<EditType['after'], null>,
+  Del extends Omit<RoadmapItemDeletion, 'id'>,
+>(before: C[], after: C[], itemIdKey: keyof C, parentIdentifier: Del) {
+  type IdType = Del extends Omit<PlannerQuarterDeletion, 'id'> ? string : number;
+  type SaveType = Extract<RoadmapSaveInfo, Del & { data: Record<typeof itemIdKey, unknown> }>;
 
-  const added: RoadmapSaveInstruction<EditType, true>[] = after
+  const removed = before
+    .filter(findNotInOther(after, itemIdKey))
+    .map((item) => ({ ...parentIdentifier, id: item[itemIdKey] as IdType }));
+
+  const added: SaveType[] = after
     .filter(findNotInOther(before, itemIdKey))
-    .map((item) => ({ ...parentIdentifier, data: removeContentKeys(item) }));
+    .map((item) => ({ ...parentIdentifier, data: removeContentKeys(item) }) as SaveType);
 
   const pairs = after.map((item) => [before.find((x) => x[itemIdKey] === item[itemIdKey]) ?? null, item] as const);
 
-  return { removed, added, pairs };
+  return { removed, added, pairs, test: [] as SaveType[] };
 }
 
 /**
@@ -232,7 +230,7 @@ function comparePlannerQuarterPair(
     after.courses.every((course, index) => course.id === before.courses[index]?.id);
   if (hasSameCourses) return;
 
-  const quarterUpdate = { name: after.name, courses: after.courses };
+  const quarterUpdate = { name: after.name, courses: after.courses.map((c) => c.id) };
   plannerDiffs.updatedQuarters.push({ plannerId, startYear, data: quarterUpdate });
 }
 
@@ -248,7 +246,7 @@ function comparePlannerYearPair(
   plannerId: number,
   plannerDiffs: PlannerYearDiffs,
 ) {
-  const yearEditsIdentifier: RoadmapEditIdentifier<PlannerQuarterEdit> = { plannerId, startYear: after.startYear };
+  const yearEditsIdentifier = { plannerId, startYear: after.startYear };
   const { removed, added, pairs } = getDiffsAndPairs(
     before?.quarters ?? [],
     after.quarters,
@@ -279,7 +277,7 @@ function comparePlannerPair(before: RoadmapPlan | null, after: RoadmapPlan, plan
   const beforeYears = before?.content?.yearPlans ?? [];
   const afterYears = after.content.yearPlans;
 
-  const yearEditsIdentifier: RoadmapEditIdentifier<PlannerYearEdit> = { plannerId: after.id };
+  const yearEditsIdentifier = { plannerId: after.id };
   const { removed, added, pairs } = getDiffsAndPairs(beforeYears, afterYears, 'startYear', yearEditsIdentifier);
 
   pairs.forEach(([oldYear, newYear]) => comparePlannerYearPair(oldYear, newYear, after.id, plannerDiffs));
@@ -307,11 +305,11 @@ export function compareRoadmaps(before: RoadmapPlan[], after: RoadmapPlan[]): Ro
     pairs: matchingPlanners,
   } = getDiffsAndPairs(before, after, 'id', roadmapEditsIdentifier);
 
-  const updatedPlanners: RoadmapPlannerChange[] = [];
-  const updatedYears: RoadmapPlannerYearChange[] = [];
-  const updatedQuarters: RoadmapPlannerQuarterChange[] = [];
-  const newYears: RoadmapPlannerYearChange[] = [];
-  const newQuarters: RoadmapPlannerQuarterChange[] = [];
+  const updatedPlanners: PlannerSaveInfo[] = [];
+  const updatedYears: PlannerYearSaveInfo[] = [];
+  const updatedQuarters: PlannerQuarterSaveInfo[] = [];
+  const newYears: PlannerYearSaveInfo[] = [];
+  const newQuarters: PlannerQuarterSaveInfo[] = [];
   const deletedYears: PlannerYearDeletion[] = [];
   const deletedQuarters: PlannerQuarterDeletion[] = [];
 
