@@ -274,7 +274,7 @@ export const saveRoadmap = async (
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
 
-  await trpc.roadmaps.saveTest
+  await trpc.roadmaps.save
     .mutate(changes)
     .then(() => showMessage('Roadmap saved to your account!'))
     .catch(() => showMessage('Unable to save roadmap to your account'));

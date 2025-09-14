@@ -40,6 +40,7 @@ const PlannerLoader: FC = () => {
   const isRoadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
   const isLoggedIn = useIsLoggedIn();
 
+  const [roadmapLoaded, setRoadmapLoaded] = useState(false);
   const [initialLocalRoadmap, setInitialLocalRoadmap] = useState<SavedRoadmap | null>(null);
   const [initialAccountRoadmap, setInitialAccountRoadmap] = useState<SavedRoadmap | null>(null);
 
@@ -60,8 +61,9 @@ const PlannerLoader: FC = () => {
   // Defaults to account if it exists because local can override it in a different helper
   const populateExistingRoadmap = useCallback(
     async (roadmap: SavedRoadmap) => {
-      const planners = await expandAllPlanners(roadmap.planners);
-      dispatch(setInitialPlannerData(planners));
+      const plans = await expandAllPlanners(roadmap.planners);
+      const timestamp = new Date(roadmap.timestamp ?? Date.now()).getTime();
+      dispatch(setInitialPlannerData({ plans, timestamp }));
       dispatch(setRoadmapLoading(false));
     },
     [dispatch],
@@ -106,9 +108,11 @@ const PlannerLoader: FC = () => {
 
   // After transfers loaded, do roadmap conflict resolution
   useEffect(() => {
-    if (!userTransfersLoaded || !initialLocalRoadmap) return;
+    if (!userTransfersLoaded || !initialLocalRoadmap || roadmapLoaded) return;
 
     populateExistingRoadmap(initialAccountRoadmap ?? initialLocalRoadmap).then(() => {
+      setRoadmapLoaded(true);
+
       if (!isLoggedIn) return;
       const isLocalNewer =
         new Date(initialLocalRoadmap.timestamp ?? 0) > new Date(initialAccountRoadmap?.timestamp ?? 0);
@@ -129,6 +133,7 @@ const PlannerLoader: FC = () => {
     userTransfersLoaded,
     initialAccountRoadmap,
     initialLocalRoadmap,
+    roadmapLoaded,
   ]);
 
   // Validate Courses on change
@@ -154,10 +159,10 @@ const PlannerLoader: FC = () => {
 
     // Update the account roadmap using local data
     await saveRoadmapAndUpsertTransfers(localRoadmap.planners);
+    const roadmapWithIds = await loadRoadmap(true).then((res) => res.accountRoadmap!);
 
     // Update frontend state to show local data
-    const planner = await expandAllPlanners(localRoadmap.planners);
-    dispatch(setInitialPlannerData(planner));
+    populateExistingRoadmap(roadmapWithIds);
     setShowSyncModal(false);
   };
 

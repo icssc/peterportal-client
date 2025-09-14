@@ -1,8 +1,8 @@
 import { router, userProcedure } from '../helpers/trpc';
-import { RoadmapDiffs, roadmapDiffs, SavedPlannerData, savedRoadmap, SavedRoadmap } from '@peterportal/types';
+import { RoadmapDiffs, roadmapDiffs, SavedPlannerData, SavedRoadmap } from '@peterportal/types';
 import { db, TransactionType } from '../db';
 import { planner, user } from '../db/schema';
-import { and, count, eq, inArray, not } from 'drizzle-orm';
+import { and, count, eq, inArray } from 'drizzle-orm';
 import {
   createPlanners,
   createQuarters,
@@ -61,12 +61,11 @@ async function applyRoadmapChanges(input: RoadmapDiffs, userId: number) {
     performRoadmapDeletesAndUpdates(tx, input, userId);
 
     const plannerIdLookup = await createPlanners(tx, input.newPlanners, userId);
-    console.log(plannerIdLookup, input.newQuarters);
 
     // Update IDs in-place for newly-created planners. This guarantees that all
     // createYears and createQuarters data has the correct input before calling the function
     for (const toInsert of [...input.newYears, ...input.newQuarters]) {
-      if (toInsert.plannerId < 0) toInsert.plannerId = plannerIdLookup[toInsert.plannerId];
+      if (plannerIdLookup[toInsert.plannerId]) toInsert.plannerId = plannerIdLookup[toInsert.plannerId];
     }
 
     await createYears(tx, input.newYears);
@@ -95,49 +94,12 @@ const roadmapsRouter = router({
   /**
    * Save a user's roadmap
    */
-  save: userProcedure.input(savedRoadmap).mutation(async ({ input, ctx }) => {
-    const { planners, timestamp } = input;
+  save: userProcedure.input(roadmapDiffs).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId!;
 
-    const plannerUpdates = planners
-      .filter((planner) => planner.id >= 0)
-      .map((plannerData) =>
-        db
-          .update(planner)
-          .set({ name: plannerData.name, years: plannerData.content })
-          .where(and(eq(planner.userId, userId), eq(planner.id, plannerData.id!))),
-      );
-
-    const newPlannersToAdd = planners
-      .filter((planner) => planner.id < 0)
-      .map((planner) => ({ userId, name: planner.name, years: planner.content }));
-
-    // Delete any existing planners that are not in the planners array (user removed them), then insert any new planners (to avoid race when deleting new ones)
-    const plannerInsertionsAndDeletions = db
-      .delete(planner)
-      .where(
-        and(
-          eq(planner.userId, userId),
-          not(inArray(planner.id, planners.map((p) => p.id).filter((id) => id !== undefined) as number[])),
-        ),
-      )
-      .then(() => {
-        if (newPlannersToAdd.length > 0) {
-          return db.insert(planner).values(newPlannersToAdd);
-        }
-      });
-
-    const updateLastEditTimestamp = db
-      .update(user)
-      .set({ lastRoadmapEditAt: new Date(timestamp!) })
-      .where(eq(user.id, userId));
-
-    await Promise.all([...plannerUpdates, plannerInsertionsAndDeletions, updateLastEditTimestamp]);
-  }),
-  saveTest: userProcedure.input(roadmapDiffs).mutation(async ({ input, ctx }) => {
-    const userId = ctx.session.userId!;
-
-    await validatePlannerIds(input, userId);
+    // When `overwrite` is true, we're never updating/deleting planner data by their planner id;
+    // all new info gets written to the current user's account
+    if (!input.overwrite) await validatePlannerIds(input, userId);
     await applyRoadmapChanges(input, userId);
 
     await db.update(user).set({ lastRoadmapEditAt: new Date() }).where(eq(user.id, userId));

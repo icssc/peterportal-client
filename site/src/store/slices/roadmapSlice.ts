@@ -35,11 +35,6 @@ export interface MoveCoursePayload {
   to: CourseIdentifier;
 }
 
-const baseRevision: RoadmapRevision = {
-  timestamp: Date.now(),
-  edits: [],
-};
-
 interface SetActiveCoursePayload {
   course: CourseGQLData;
   startYear?: number;
@@ -54,7 +49,7 @@ export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
     plans: [defaultPlan],
-    revisions: [baseRevision],
+    revisions: [] as RoadmapRevision[],
     currentRevisionIndex: 0,
     /** The index of the revision where the user last saved the roadmap */
     savedRevisionIndex: 0,
@@ -77,13 +72,18 @@ export const roadmapSlice = createSlice({
     /** Where the active course is being dragged from */
     activeCourseDragSource: null as Omit<SetActiveCoursePayload, 'course'> | null,
     /** Whether the roadmap is loading */
-    roadmapLoading: false,
+    roadmapLoading: true,
   },
   reducers: {
     // Roadmap Window State
 
-    setInitialPlannerData: (state, action: PayloadAction<RoadmapPlan[]>) => {
-      state.plans = action.payload;
+    setInitialPlannerData: (state, action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number }>) => {
+      state.plans = action.payload.plans;
+      const revision: RoadmapRevision = {
+        timestamp: action.payload.timestamp ?? Date.now(),
+        edits: [],
+      };
+      state.revisions = [revision];
     },
     setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
       state.unsavedChanges = action.payload;

@@ -164,7 +164,11 @@ const transferCreditsRouter = router({
       if (input.ap.length) {
         const addApQuery = db
           .insert(transferredApExam)
-          .values(input.ap.map(appendUserId))
+          .values(
+            input.ap.map((ap) => {
+              return { ...appendUserId(ap), score: ap.score >= 1 ? ap.score : null };
+            }),
+          )
           .onConflictDoUpdate({
             target: [transferredApExam.userId, transferredApExam.examName],
             set: {
