@@ -56,6 +56,8 @@ export const roadmapSlice = createSlice({
     plans: [defaultPlan],
     revisions: [baseRevision],
     currentRevisionIndex: 0,
+    /** The index of the revision where the user last saved the roadmap */
+    savedRevisionIndex: 0,
     currentPlanIndex: 0,
     /** Whether to alert the user of unsaved changes before leaving */
     unsavedChanges: false,
@@ -113,6 +115,9 @@ export const roadmapSlice = createSlice({
     redoRoadmapRevision: (state) => {
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
+    },
+    setSavedRevisionIndex: (state, action: PayloadAction<number>) => {
+      state.savedRevisionIndex = action.payload;
     },
 
     // Intermediate States When Adding Courses
@@ -182,6 +187,7 @@ export const {
   reviseRoadmap,
   undoRoadmapRevision,
   redoRoadmapRevision,
+  setSavedRevisionIndex,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

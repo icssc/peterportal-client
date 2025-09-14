@@ -74,10 +74,6 @@ const plannerQuarterChangeIdentifier = z.object({
   startYear: z.number().int(),
 });
 
-export function roadmapDeletionOf<S extends z.ZodRawShape>(zodType: z.ZodObject<S>) {
-  return zodType.extend({ id: z.number().int() });
-}
-
 export type PlannerDeletion = z.infer<typeof plannerChangeIdentifier>;
 export type PlannerYearDeletion = z.infer<typeof plannerYearChangeIdentifier>;
 export type PlannerQuarterDeletion = z.infer<typeof plannerQuarterChangeIdentifier>;
@@ -119,6 +115,7 @@ const plannerDiffs = plannerYearDiffs.extend({
 export const roadmapDiffs = plannerDiffs.extend({
   deletedPlanners: z.array(plannerChangeIdentifier),
   newPlanners: z.array(roadmapPlannerChange),
+  overwrite: z.boolean().optional(),
 });
 
 export type PlannerQuarterDiffs = z.infer<typeof plannerQuarterDiffs>;

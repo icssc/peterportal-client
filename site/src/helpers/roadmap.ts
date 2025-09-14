@@ -11,6 +11,9 @@ import {
   PlannerYearDeletion,
   RoadmapItemDeletion,
   RoadmapSaveInfo,
+  SavedPlannerData,
+  SavedPlannerYearData,
+  SavedPlannerQuarterData,
 } from '@peterportal/types';
 import {
   FullPlannerChangeData,
@@ -22,7 +25,6 @@ import {
   RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
-import { PlannerQuarterData, PlannerYearData } from '../types/types';
 import { deepCopy } from './util';
 
 export const createEmptyPlan = () => ({
@@ -165,11 +167,11 @@ export function createRevision(edits: RoadmapEdit[]): RoadmapRevision {
 }
 
 // Comparing Roadmap States
+type CollapsedRoadmapItem = SavedPlannerData | SavedPlannerYearData | SavedPlannerQuarterData;
 
-function removeContentKeys<T extends Exclude<RoadmapEdit['after'], null>>(dataContainer: T) {
+function removeContentKeys<T extends CollapsedRoadmapItem>(dataContainer: T) {
   if ('content' in dataContainer) return { ...dataContainer, content: undefined };
   if ('quarters' in dataContainer) return { ...dataContainer, quarters: undefined };
-  if ('courses' in dataContainer) return { ...dataContainer, courses: undefined };
   return dataContainer;
 }
 
@@ -191,11 +193,12 @@ function findNotInOther<T>(otherList: T[], matchingKey: keyof T) {
  * plannerId of the planner and startYear of the year that contains quarters being compared.
  * @returns Lists of removed items, added items, and matching items based on the `before` and `after` lists
  */
-function getDiffsAndPairs<
-  EditType extends RoadmapEdit,
-  C extends Exclude<EditType['after'], null>,
-  Del extends Omit<RoadmapItemDeletion, 'id'>,
->(before: C[], after: C[], itemIdKey: keyof C, parentIdentifier: Del) {
+function getDiffsAndPairs<C extends CollapsedRoadmapItem, Del extends Omit<RoadmapItemDeletion, 'id'>>(
+  before: C[],
+  after: C[],
+  itemIdKey: keyof C,
+  parentIdentifier: Del,
+) {
   type IdType = Del extends Omit<PlannerQuarterDeletion, 'id'> ? string : number;
   type SaveType = Extract<RoadmapSaveInfo, Del & { data: Record<typeof itemIdKey, unknown> }>;
 
@@ -216,8 +219,8 @@ function getDiffsAndPairs<
  * Adds the quarter being compared to the `updatedQuarters` list if the courses do not match exactly
  */
 function comparePlannerQuarterPair(
-  before: PlannerQuarterData | null,
-  after: PlannerQuarterData,
+  before: SavedPlannerQuarterData | null,
+  after: SavedPlannerQuarterData,
   plannerId: number,
   startYear: number,
   plannerDiffs: PlannerQuarterDiffs,
@@ -226,11 +229,11 @@ function comparePlannerQuarterPair(
 
   /** @todo update logic here after adding support for variable units */
   const hasSameCourses =
-    before.courses.every((course, index) => course.id === after.courses[index]?.id) &&
-    after.courses.every((course, index) => course.id === before.courses[index]?.id);
+    before.courses.every((course, index) => course === after.courses[index]) &&
+    after.courses.every((course, index) => course === before.courses[index]);
   if (hasSameCourses) return;
 
-  const quarterUpdate = { name: after.name, courses: after.courses.map((c) => c.id) };
+  const quarterUpdate = { name: after.name, courses: after.courses };
   plannerDiffs.updatedQuarters.push({ plannerId, startYear, data: quarterUpdate });
 }
 
@@ -241,8 +244,8 @@ function comparePlannerQuarterPair(
  * will occur when we need to create new quarters for a "to-be-created" planner year.
  */
 function comparePlannerYearPair(
-  before: PlannerYearData | null,
-  after: PlannerYearData,
+  before: SavedPlannerYearData | null,
+  after: SavedPlannerYearData,
   plannerId: number,
   plannerDiffs: PlannerYearDiffs,
 ) {
@@ -273,9 +276,9 @@ function comparePlannerYearPair(
  * @param before The previous planner data, if it exists. A call to `comparePlannerPair` with `before = null`
  * must occur in order to create years for a planner that will exist after save (but has not been created yet).
  */
-function comparePlannerPair(before: RoadmapPlan | null, after: RoadmapPlan, plannerDiffs: PlannerDiffs) {
-  const beforeYears = before?.content?.yearPlans ?? [];
-  const afterYears = after.content.yearPlans;
+function comparePlannerPair(before: SavedPlannerData | null, after: SavedPlannerData, plannerDiffs: PlannerDiffs) {
+  const beforeYears = before?.content ?? [];
+  const afterYears = after.content;
 
   const yearEditsIdentifier = { plannerId: after.id };
   const { removed, added, pairs } = getDiffsAndPairs(beforeYears, afterYears, 'startYear', yearEditsIdentifier);
@@ -297,8 +300,8 @@ function comparePlannerPair(before: RoadmapPlan | null, after: RoadmapPlan, plan
  * updates using these changes should be performed as such: deletes from small (quarter) to large (planner),
  * then modifications from small to large, then creates from large to small.
  */
-export function compareRoadmaps(before: RoadmapPlan[], after: RoadmapPlan[]): RoadmapDiffs {
-  const roadmapEditsIdentifier: RoadmapEditIdentifier<PlannerEdit> = {};
+export function compareRoadmaps(before: SavedPlannerData[], after: SavedPlannerData[]): RoadmapDiffs {
+  const roadmapEditsIdentifier = {};
   const {
     removed: deletedPlanners,
     added: newPlanners,
@@ -331,6 +334,3 @@ export function compareRoadmaps(before: RoadmapPlan[], after: RoadmapPlan[]): Ro
     ...plannerDiffs,
   };
 }
-
-// backend: tables
-// backend: applying diffs

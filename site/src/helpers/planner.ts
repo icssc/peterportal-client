@@ -28,6 +28,7 @@ import {
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import spawnToast from './toastify';
+import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -254,19 +255,29 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
   return { accountRoadmap, localRoadmap };
 };
 
-export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
+function saveLocalRoadmap(planners: SavedPlannerData[]) {
   const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
+}
 
-  const showMessage = showToasts ? spawnToast : (str: string) => str;
+export const saveRoadmap = async (
+  isLoggedIn: boolean,
+  lastSavedPlanners: SavedPlannerData[] | null,
+  planners: SavedPlannerData[],
+  showToasts: boolean,
+) => {
+  saveLocalRoadmap(planners);
 
-  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Log in to save it to your account.';
-  if (!isLoggedIn) return showMessage(SAVED_LOCALLY_MESSAGE);
+  const showMessage = showToasts ? spawnToast : () => {};
+  if (!isLoggedIn) return showMessage('Roadmap saved locally! Log in to save it to your account');
 
-  await trpc.roadmaps.save
-    .mutate(roadmap)
+  const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
+  changes.overwrite = !lastSavedPlanners;
+
+  await trpc.roadmaps.saveTest
+    .mutate(changes)
     .then(() => showMessage('Roadmap saved to your account!'))
-    .catch(() => showMessage(SAVED_LOCALLY_MESSAGE));
+    .catch(() => showMessage('Unable to save roadmap to your account'));
 };
 
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {

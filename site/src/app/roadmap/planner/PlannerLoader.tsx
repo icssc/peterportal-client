@@ -70,8 +70,8 @@ const PlannerLoader: FC = () => {
   // save function will update localStorage (thus comparisons above will work) and account roadmap
   const saveRoadmapAndUpsertTransfers = useCallback(
     async (collapsedPlans: SavedPlannerData[]) => {
-      // Cannot be called before format is upgraded
-      await saveRoadmap(isLoggedIn, collapsedPlans, false);
+      // Cannot be called before format is upgraded from single to multi-planner
+      await saveRoadmap(isLoggedIn, null, collapsedPlans, false);
 
       // mark changes as saved to bypass alert on page leave
       dispatch(setUnsavedChanges(false));
