@@ -42,9 +42,6 @@ interface SetActiveCoursePayload {
   courseIndex?: number;
 }
 
-// onbeforeunload event listener
-const alertUnsaved = (event: BeforeUnloadEvent) => event.preventDefault();
-
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
@@ -84,17 +81,6 @@ export const roadmapSlice = createSlice({
         edits: [],
       };
       state.revisions = [revision];
-    },
-    setUnsavedChanges: (state, action: PayloadAction<boolean>) => {
-      state.unsavedChanges = action.payload;
-
-      // when there are unsaved changes, add event listener for alert on page leave
-      if (state.unsavedChanges) {
-        window.addEventListener('beforeunload', alertUnsaved);
-      } else {
-        // remove listener after saving changes
-        window.removeEventListener('beforeunload', alertUnsaved);
-      }
     },
     setRoadmapLoading: (state, action: PayloadAction<boolean>) => {
       state.roadmapLoading = action.payload;
@@ -181,7 +167,6 @@ export const {
   setShowSearch,
   setShowAddCourse,
   setPlanIndex,
-  setUnsavedChanges,
   setShowSavedCourses,
   setRoadmapLoading,
   reviseRoadmap,
