@@ -56,7 +56,7 @@ export function useReviseAndSaveRoadmap() {
   const [showToasts, setShowToasts] = useState(false);
 
   useEffect(() => {
-    if (currentRevision.timestamp !== expectedTimestamp) return;
+    if (currentRevision?.timestamp !== expectedTimestamp) return;
     // This save can only be triggered by a change in either the `currentRevision`
     // or a change in expectedTimestamp. The two are only the same when the following
     // sequence happens (in order):
@@ -66,7 +66,7 @@ export function useReviseAndSaveRoadmap() {
     // This proof is left as an exercise to the reader.
     setExpectedTimestamp(-1);
     saveRoadmap(showToasts);
-  }, [currentRevision.timestamp, expectedTimestamp, saveRoadmap, showToasts]);
+  }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap, showToasts]);
 
   const handler = (revision: RoadmapRevision, showToasts: boolean) => {
     setExpectedTimestamp(revision.timestamp);
