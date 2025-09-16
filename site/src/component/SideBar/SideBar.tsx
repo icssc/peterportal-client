@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { CSSTransition } from 'react-transition-group';
 import Logo from '../../asset/peterportal-banner-logo.svg';
@@ -9,8 +9,6 @@ import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '../..//store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Footer from '../Footer/Footer';
-import trpc from '../../trpc';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import UIOverlay from '../UIOverlay/UIOverlay';
 
 import ListAltRoundedIcon from '@mui/icons-material/ListAltRounded';
@@ -24,24 +22,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const SideBar = () => {
+  const isAdmin = useAppSelector((state) => state.user.isAdmin);
   const dispatch = useAppDispatch();
   const showSidebar = useAppSelector((state) => state.ui.sidebarOpen);
-  const isLoggedIn = useIsLoggedIn();
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
   const sidebarRef = useRef(null);
   const overlayRef = useRef(null);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      // useEffect's function is not allowed to be async, create async checkAdmin function within
-      const checkAdmin = async () => {
-        const { isAdmin } = await trpc.users.get.query();
-        setIsAdmin(isAdmin);
-      };
-      checkAdmin();
-    }
-  }, [isLoggedIn]);
 
   const closeSidebar = () => dispatch(setSidebarStatus(false));
 

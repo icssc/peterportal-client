@@ -3,8 +3,11 @@
 }
 
 .navbar-profile-pic {
-  height: 100%;
+  width: 36px;
+  height: 36px;
   border-radius: 100%;
+  white-space: normal;
+  color: inherit !important; // overwrite next.js default color for alt text
 
   &:hover {
     cursor: pointer;

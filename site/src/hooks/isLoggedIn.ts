@@ -1,7 +1,5 @@
-import { useCookies } from 'react-cookie';
+import { useAppSelector } from '../store/hooks';
 
 export function useIsLoggedIn() {
-  const [cookies] = useCookies(['user']);
-
-  return cookies.user !== undefined;
+  return useAppSelector((state) => !!state.user.user);
 }

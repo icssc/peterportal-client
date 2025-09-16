@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import AdminPage from '../AdminPage';
+import Verify from './Verify';
 
 const Page: FC = () => {
-  return <AdminPage activeTab="verify" />;
+  return <Verify />;
 };
 
 export default Page;
