@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import passport from 'passport';
-import { SESSION_LENGTH } from '../config/constants';
 import { PassportUser } from '@peterportal/types';
 import { db } from '../db';
 import { user } from '../db/schema';
@@ -25,9 +24,7 @@ async function successLogin(req: Request, res: Response) {
     .values({ googleId, name, email, picture })
     .onConflictDoUpdate({ target: user.googleId, set: { name, email, picture } })
     .returning();
-  res.cookie('user', true, {
-    maxAge: SESSION_LENGTH,
-  });
+
   req.session.userId = userData[0].id;
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
