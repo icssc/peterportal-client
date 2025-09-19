@@ -10,7 +10,7 @@
   &.mobile {
     @include globals.bottom-overlay(400);
   }
-
+  padding-bottom: 35px;
   transform: translateY(100%);
   transition: transform 0.3s;
   &.enter,
