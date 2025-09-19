@@ -1,35 +1,35 @@
 import './RequirementsListSelector.scss';
 import { FC } from 'react';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import SelectorGroup from '../../../component/SelectorGroup/SelectorGroup';
 
-interface ListSelectorProps {
-  text: RequirementsTabName;
-}
-const ListSelector: FC<ListSelectorProps> = ({ text }) => {
+const tabs = [
+  {
+    name: 'Major',
+  },
+  {
+    name: 'Minor',
+  },
+  {
+    name: 'GE',
+  },
+  {
+    name: 'Search',
+  },
+];
+const RequirementsListSelector: FC = () => {
   const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
   const dispatch = useAppDispatch();
-
-  const selected = selectedTab === text;
-  const selectTab = () => dispatch(setSelectedTab(text));
+  const selectTab = (text: string) => dispatch(setSelectedTab(text as RequirementsTabName));
 
   return (
-    <ToggleButton value={text} className="ppc-btn" selected={selected} onClick={selectTab}>
-      <span>{text}</span>
-    </ToggleButton>
-  );
-};
-
-const RequirementsListSelector: FC = () => {
-  return (
-    <ToggleButtonGroup className="requirements-list-selector">
-      <ListSelector text="Major" />
-      <ListSelector text="Minor" />
-      <ListSelector text="GE" />
-      <ListSelector text="Search" />
-    </ToggleButtonGroup>
+    <SelectorGroup
+      tabList={tabs}
+      selectedTab={selectedTab}
+      selectTab={selectTab}
+      className="requirements-list-selector"
+    ></SelectorGroup>
   );
 };
 
