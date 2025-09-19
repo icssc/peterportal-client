@@ -1,10 +1,11 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import './SelectorGroup.scss';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { SelectorGroupTab } from '../../types/types';
 
 interface SelectorGroupProps {
-  tabList: { name: string; icon?: ReactNode }[];
+  tabList: SelectorGroupTab[];
   selectedTab: string;
   className?: string;
   selectTab: (clickedTab: string) => void;
@@ -29,7 +30,7 @@ const SelectorButton: FC<{ name: string; icon?: React.ReactNode; selected: boole
  * optionally with icons.
  *
  * Props:
- * @param tabList - An array of objects representing the tabs. Each object has:
+ * @param tabList - An array of `SelectorGroupTab` representing the tabs. Each object has:
  *    - name: string → The label of the tab.
  *    - icon?: React.ReactNode → Optional JSX element to display next to the tab label.
  * @param selectedTab - string → The currently selected tab's name.
