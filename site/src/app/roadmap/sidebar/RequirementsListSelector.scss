@@ -1,34 +1,37 @@
 .requirements-list-selector {
-  background-color: #8886;
   display: flex;
-  gap: 1px;
   padding: 0;
-  border: 1px solid transparent;
-  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 12px;
   flex-shrink: 0;
+  .MuiToggleButtonGroup-grouped:first-of-type {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+  .MuiToggleButtonGroup-grouped:last-of-type {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
 
   button.ppc-btn {
     width: 100%;
     margin: 0;
-    outline: none;
-    border: none;
-    border-radius: 0;
     box-shadow: none;
     justify-content: center;
+    font: inherit;
     font-weight: bold;
     font-size: 14px;
     padding: 6px 12px;
-
+    text-transform: none;
     &:not([disabled]):not(.disabled):is(:focus, :active) {
       box-shadow: none;
     }
-    &:not(.btn-primary) {
+    &:not(.Mui-selected) {
       color: var(--blue-primary);
     }
-  }
-  button.ppc-btn.btn-primary:active {
-    background-color: var(--blue-primary);
+    &.Mui-selected {
+      background-color: var(--blue-primary);
+      color: white;
+    }
   }
 }
