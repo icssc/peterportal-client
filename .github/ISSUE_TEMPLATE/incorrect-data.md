@@ -8,10 +8,10 @@ assignees: ''
 ---
 
 > [!IMPORTANT]
-> PeterPortal currently sources its data from Anteater API, which is also maintained by ICSSC. 𝗜𝗳 𝘆𝗼𝘂 𝘀𝗲𝗹𝗲𝗰𝘁𝗲𝗱 𝘁𝗵𝗶𝘀 𝘁𝗲𝗺𝗽𝗹𝗮𝘁𝗲, 𝗰𝗵𝗮𝗻𝗴𝗲𝘀 𝗮𝗿𝗲 𝘆𝗼𝘂 𝘀𝗵𝗼𝘂𝗹𝗱 𝗳𝗶𝗹𝗲 𝗮𝗻 𝗶𝘀𝘀𝘂𝗲 𝗼𝗻 [𝘁𝗵𝗲𝗶𝗿 𝗿𝗲𝗽𝗼](https://github.com/icssc/anteater-api/issues) 𝗶𝗻𝘀𝘁𝗲𝗮𝗱 𝗼𝗳 𝗼𝗻 𝗣𝗲𝘁𝗲𝗿𝗣𝗼𝗿𝘁𝗮𝗹. You should only continue to fill out this template if data from the API is correct *and* PeterPortal is showing it incorrectly.
+> PeterPortal currently sources its data from Anteater API, which is also maintained by ICSSC. 𝗜𝗳 𝘆𝗼𝘂 𝘀𝗲𝗹𝗲𝗰𝘁𝗲𝗱 𝘁𝗵𝗶𝘀 𝘁𝗲𝗺𝗽𝗹𝗮𝘁𝗲, 𝗰𝗵𝗮𝗻𝗰𝗲𝘀 𝗮𝗿𝗲 𝘆𝗼𝘂 𝘀𝗵𝗼𝘂𝗹𝗱 𝗳𝗶𝗹𝗲 𝗮𝗻 𝗶𝘀𝘀𝘂𝗲 𝗼𝗻 [𝘁𝗵𝗲𝗶𝗿 𝗿𝗲𝗽𝗼](https://github.com/icssc/anteater-api/issues) 𝗶𝗻𝘀𝘁𝗲𝗮𝗱 𝗼𝗳 𝗼𝗻 𝗣𝗲𝘁𝗲𝗿𝗣𝗼𝗿𝘁𝗮𝗹. You should only continue to fill out this template if data from the API is correct *and* PeterPortal is showing it incorrectly.
 
 **Please confirm all of the following are true**
-- [ ] Any relevant Anteater API endpoints, i.e. [GET /courses/:id](https://anteaterapi.com/reference#tag/courses/get/v2/rest/courses/batch) for a course, return the data that you expect. If you are not sure how to check this, feel free to ask in the ICSSC Projects Discord server.
+- [ ] Any relevant Anteater API endpoint(s), i.e. [GET /courses/:id](https://anteaterapi.com/reference#tag/courses/get/v2/rest/courses/batch) for a course, return the data that you expect. If you are not sure how to check this, feel free to ask in the ICSSC Projects Discord server.
 - [ ] I have checked that there are no [Anteater API GitHub Issues](https://github.com/icssc/anteater-api/issues) for the same problem
 
 **Describe the bug**
