@@ -11,13 +11,22 @@ interface SelectorGroupProps {
   selectTab: (clickedTab: string) => void;
 }
 
-const SelectorButton: FC<{ name: string; icon?: React.ReactNode; selected: boolean; onClick: () => void }> = ({
-  name,
-  icon,
-  selected,
-  onClick,
-}) => (
-  <ToggleButton value={name} className="ppc-btn" selected={selected} onClick={onClick}>
+interface SelectorButtonProps {
+  name: string;
+  icon?: React.ReactNode;
+  selected: boolean;
+  onClick: () => void;
+}
+
+const SelectorButton: FC<SelectorButtonProps> = ({ name, icon, selected, onClick }) => (
+  <ToggleButton
+    value={name}
+    className="ppc-btn"
+    selected={selected}
+    onClick={onClick}
+    aria-label={name}
+    aria-pressed={selected}
+  >
     <div className="button-content">
       {icon}
       <span>{name}</span>
