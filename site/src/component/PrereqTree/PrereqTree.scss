@@ -216,4 +216,9 @@
   font-size: 14px;
   text-align: center;
   pointer-events: none;
+
+  @media (prefers-color-scheme: dark) {
+    --bs-popover-bg: var(--overlay1);
+    --bs-popover-border-color: var(--overlay3);
+  }
 }
