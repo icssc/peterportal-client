@@ -21,8 +21,8 @@ const phraseMapping = {
 };
 const Node: FC<NodeProps> = (props) => {
   const popover = (
-    <Popover id="tree-node-popover" className="tree-node-popover" placement="bottom">
-      <div className="popover-body">{props.content ? props.content : props.label}</div>
+    <Popover id="tree-node-popover" className="tree-node-popover popover-body" placement="bottom">
+      <div>{props.content ? props.content : props.label}</div>
     </Popover>
   );
   return (
