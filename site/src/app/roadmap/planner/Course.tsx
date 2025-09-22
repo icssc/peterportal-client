@@ -79,7 +79,7 @@ const Course: FC<CourseProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const insertCourseOnClick = () => {
-    dispatch(setActiveCourse(props.data));
+    dispatch(setActiveCourse({ course: props.data }));
     dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };

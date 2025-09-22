@@ -1,9 +1,9 @@
 import { TRPCError } from '@trpc/server';
 import { publicProcedure, router } from '../../helpers/trpc';
-import { db } from '../../db';
-import { planner, user } from '../../db/schema';
+import { user } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { queryGetPlanners } from '../../helpers/roadmap';
 
 const externalRoadmapsRouter = router({
   getByGoogleID: publicProcedure.input(z.object({ googleUserId: z.string() })).query(async ({ input, ctx }) => {
@@ -12,12 +12,7 @@ const externalRoadmapsRouter = router({
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
 
-    const planners = await db
-      .select({ name: planner.name, content: planner.years })
-      .from(planner)
-      .innerJoin(user, eq(planner.userId, user.id))
-      .where(eq(user.googleId, input.googleUserId))
-      .orderBy(planner.id);
+    const planners = await queryGetPlanners(eq(user.googleId, input.googleUserId));
 
     return planners;
   }),

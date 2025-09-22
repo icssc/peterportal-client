@@ -72,10 +72,10 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   useEffect(() => {
     if (!dragTimestamp) return;
     setLoading(true);
-    dispatch(setActiveCourse(LOADING_COURSE_PLACEHOLDER));
+    dispatch(setActiveCourse({ course: LOADING_COURSE_PLACEHOLDER }));
     dispatch(setActiveCourseLoading(true));
     loadFullData().then((res) => {
-      dispatch(setActiveCourse(res));
+      dispatch(setActiveCourse({ course: res }));
       dispatch(setActiveCourseLoading(false));
       setLoading(false);
     });
@@ -87,7 +87,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
     setLoading(true);
     const fullData = await loadFullData();
     const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData);
-    dispatch(setActiveCourse(fullData as CourseGQLData));
+    dispatch(setActiveCourse({ course: fullData as CourseGQLData }));
     dispatch(setActiveMissingPrerequisites(missingPrerequisites));
     dispatch(setShowAddCourse(true));
     setLoading(false);

@@ -7,6 +7,8 @@ import {
   QuarterName,
 } from '@peterportal/types';
 
+export * from './roadmap.ts';
+
 export interface ScoreData {
   name: string;
   avgRating: number;
@@ -33,6 +35,7 @@ export interface PlannerQuarterData {
   courses: CourseGQLData[];
 }
 
+/** @todo delete these identifier traits once everything is in revision */
 // Specify the location of a year
 export interface YearIdentifier {
   yearIndex: number;
