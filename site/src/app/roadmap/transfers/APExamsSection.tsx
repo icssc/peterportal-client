@@ -58,11 +58,7 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
 
 const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex = 0, options, onSelect }) => {
   return (
-    <select
-      value={selectedIndex ?? ''}
-      onChange={(event) => onSelect(Number(event.target.value))}
-      className="select-box"
-    >
+    <select value={selectedIndex} onChange={(event) => onSelect(Number(event.target.value))} className="select-box">
       <optgroup label="Options">
         {options.map((opt, i) => (
           <option key={i} value={i}>
@@ -112,7 +108,7 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
       const options = tree.OR.map(formatCourses);
       return (
         <span>
-          <RewardsSelect selectedIndex={selectedReward?.selectedIndex} options={options} onSelect={handleSelect} />
+          <RewardsSelect selectedIndex={selectedReward?.selectedIndex ?? 0} options={options} onSelect={handleSelect} />
         </span>
       );
     }

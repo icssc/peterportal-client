@@ -83,6 +83,8 @@ export const transferCreditsSlice = createSlice({
       );
       if (e) {
         e.selectedIndex = action.payload.selectedIndex;
+      } else {
+        state.selectedApRewards.push(action.payload);
       }
     },
     setAllTransferredGEs: (state, action: PayloadAction<TransferredGE[]>) => {
