@@ -22,7 +22,7 @@ import {
 import { useIsLoggedIn } from './isLoggedIn';
 import { TransferredGE, TransferredCourse, TransferredUncategorized, TransferredAPExam } from '@peterportal/types';
 
-/** A temporary function that returns the rewarded courses for an AP */
+/** Returns the rewarded courses for an AP */
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
 function selectedRewardCourses(courses: CourseTreeItem, selectedIndex: number): string[] {
   if (typeof courses === 'string') return [courses];
