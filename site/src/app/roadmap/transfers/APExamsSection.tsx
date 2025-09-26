@@ -89,6 +89,9 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
   };
 
   const renderTree = (tree: CoursesGrantedTree): React.ReactNode => {
+    if (tree === null) {
+      return <span>This exam does not clear any courses.</span>;
+    }
     if (typeof tree === 'string') {
       return <span>{tree}</span>;
     }
@@ -147,6 +150,20 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
   const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
 
   for (const reward of apiExamInfo?.rewards ?? []) {
+    if (score === 1 || score === 2) {
+      return (
+        <MenuTile
+          title={examName}
+          headerItems={selectBox}
+          units={units}
+          setUnits={updateUnits}
+          deleteFn={deleteFn}
+          unread={unread}
+        >
+          <Rewards examName={examName} coursesGranted={null} />
+        </MenuTile>
+      );
+    }
     if (!reward.acceptableScores.includes(score)) continue;
     const coursesGranted = reward.coursesGranted as CoursesGrantedTree;
     return (
