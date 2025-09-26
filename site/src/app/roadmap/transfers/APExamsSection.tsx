@@ -89,7 +89,7 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
   };
 
   const renderTree = (tree: CoursesGrantedTree): React.ReactNode => {
-    if (tree === null) {
+    if (tree === '') {
       return <span>This exam does not clear any courses.</span>;
     }
     if (typeof tree === 'string') {
@@ -160,7 +160,7 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
           deleteFn={deleteFn}
           unread={unread}
         >
-          <Rewards examName={examName} coursesGranted={null} />
+          <Rewards examName={examName} coursesGranted={''} />
         </MenuTile>
       );
     }

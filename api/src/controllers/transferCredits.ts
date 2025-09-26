@@ -7,6 +7,7 @@ import {
   zodTransferredAPExam,
   TransferredAPExam,
   zodTransferredUncategorized,
+  zodSelectedApReward,
 } from '@peterportal/types';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
@@ -112,25 +113,23 @@ const transferCreditsRouter = router({
       selectedIndex: reward.selectedIndex,
     }));
   }),
-  setSelectedAPReward: userProcedure
-    .input(z.object({ examName: z.string(), path: z.string(), selectedIndex: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.userId!;
-      const valuesDict = {
-        userId: userId,
-        examName: input.examName,
-        path: input.path,
-        selectedIndex: input.selectedIndex,
-      };
+  setSelectedAPReward: userProcedure.input(zodSelectedApReward).mutation(async ({ input, ctx }) => {
+    const userId = ctx.session.userId!;
+    const valuesDict = {
+      userId: userId,
+      examName: input.examName,
+      path: input.path,
+      selectedIndex: input.selectedIndex,
+    };
 
-      await db
-        .insert(selectedApReward)
-        .values(valuesDict)
-        .onConflictDoUpdate({
-          target: [selectedApReward.userId, selectedApReward.examName, selectedApReward.path],
-          set: { selectedIndex: valuesDict.selectedIndex },
-        });
-    }),
+    await db
+      .insert(selectedApReward)
+      .values(valuesDict)
+      .onConflictDoUpdate({
+        target: [selectedApReward.userId, selectedApReward.examName, selectedApReward.path],
+        set: { selectedIndex: valuesDict.selectedIndex },
+      });
+  }),
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db
       .select({

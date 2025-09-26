@@ -5,17 +5,12 @@ import {
   TransferredCourse,
   TransferredAPExam,
   TransferredUncategorized,
+  SelectedApReward,
 } from '@peterportal/types';
 
 type DataLoadingState = 'waiting' | 'loading' | 'done';
 
 export type TransferWithUnread<T> = T & { unread?: true };
-
-export interface SelectedApReward {
-  examName: string;
-  path: string;
-  selectedIndex: number;
-}
 
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
