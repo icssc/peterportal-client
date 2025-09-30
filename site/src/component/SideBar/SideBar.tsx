@@ -35,11 +35,7 @@ const SideBar = () => {
     <div className="sidebar-links">
       <ul>
         <li>
-          <Link
-            href="/"
-            className={pathname === '/' || pathname === '/search/courses' ? 'sidebar-active' : ''}
-            onClick={closeSidebar}
-          >
+          <Link href="/" className={pathname === '/search/courses' ? 'sidebar-active' : ''} onClick={closeSidebar}>
             <div>
               <ListAltRoundedIcon className="sidebar-icon" />
             </div>
@@ -61,7 +57,11 @@ const SideBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/roadmap" className={pathname === '/roadmap' ? 'sidebar-active' : ''} onClick={closeSidebar}>
+          <Link
+            href="/roadmap"
+            className={pathname == '/' || pathname === '/roadmap' ? 'sidebar-active' : ''}
+            onClick={closeSidebar}
+          >
             <div>
               <MapOutlinedIcon className="sidebar-icon" />
             </div>
