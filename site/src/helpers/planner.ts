@@ -315,17 +315,25 @@ interface ValidationInput<PreqrequisiteType> {
 const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
   const { prerequisite, taken, taking } = input;
 
-  //checking if the course has been taken(covers prereq and coreq)
-  const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
-  const previouslyComplete = taken.has(id);
+  //check if the prereq type is a course
+  if (prerequisite.prereqType === 'course') {
+    //checking if the course has been taken previously(covers prereq and coreq)
+    const id = prerequisite.courseId;
+    const previouslyComplete = taken.has(id);
 
-  // checking if the course is a coreq
-  if (prerequisite.coreq) {
-    const takingCorequisite = taking.has(id);
-    if (previouslyComplete || takingCorequisite) {
-      return new Set<string>();
+    // checking if the course is a coreq to take in the same quarter
+    if (prerequisite.coreq) {
+      const takingCorequisite = taking.has(id);
+      if (previouslyComplete || takingCorequisite) {
+        return new Set<string>();
+      }
     }
+    return previouslyComplete ? new Set<string>() : new Set([id]);
   }
+
+  //otherwise, it's an exam
+  const id = prerequisite.examName;
+  const previouslyComplete = taken.has(id);
   return previouslyComplete ? new Set<string>() : new Set([id]);
 };
 
