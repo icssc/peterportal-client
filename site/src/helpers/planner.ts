@@ -273,9 +273,9 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
       quarter.courses.forEach((course, courseIndex) => {
         if (!course.prerequisiteTree) return;
 
-        const { prerequisiteTree: prerequisite, corequisites: corequisite } = course;
+        const { prerequisiteTree: prerequisite } = course;
 
-        const incomplete = validatePrerequisites({ taken, prerequisite, taking, corequisite });
+        const incomplete = validatePrerequisites({ taken, prerequisite, taking });
         if (incomplete.size === 0) return;
 
         // prerequisite not fulfilled, has some required classes to take
@@ -310,8 +310,6 @@ interface ValidationInput<PreqrequisiteType> {
   prerequisite: PreqrequisiteType;
   /** The set of courses being taken in the same quarter */
   taking: Set<string>;
-  /** The corequisite text of the course, typically a single course name */
-  corequisite: string;
 }
 
 const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
