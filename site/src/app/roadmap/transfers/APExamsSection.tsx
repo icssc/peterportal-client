@@ -58,15 +58,17 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
 
 const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex = 0, options, onSelect }) => {
   return (
-    <select value={selectedIndex} onChange={(event) => onSelect(Number(event.target.value))} className="select-box">
-      <optgroup label="Options">
-        {options.map((opt, i) => (
-          <option key={i} value={i}>
-            {opt}
-          </option>
-        ))}
-      </optgroup>
-    </select>
+    <div className="select">
+      <select value={selectedIndex} onChange={(event) => onSelect(Number(event.target.value))} className="select-box">
+        <optgroup label="Options">
+          {options.map((opt, i) => (
+            <option key={i} value={i}>
+              {opt}
+            </option>
+          ))}
+        </optgroup>
+      </select>
+    </div>
   );
 };
 
@@ -129,16 +131,32 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
+  const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
 
   const selectBox = <ScoreSelection score={score} setScore={updateScore} />;
 
+  const getApplicableReward = useCallback(
+    (score: number) => {
+      for (const reward of apiExamInfo?.rewards ?? []) {
+        if (!reward.acceptableScores.includes(score)) continue;
+        return reward;
+      }
+      return null;
+    },
+    [apiExamInfo],
+  );
+
   const handleUpdate = useCallback(
     async (newScore: number, newUnits: number) => {
+      if (newScore != score) {
+        const reward = getApplicableReward(newScore);
+        newUnits = reward?.unitsGranted ?? 0;
+      }
       dispatch(updateUserExam({ examName, score: newScore, units: newUnits }));
       if (!isLoggedIn) return;
       trpc.transferCredits.updateUserAPExam.mutate({ examName, score: newScore, units: newUnits });
     },
-    [dispatch, examName, isLoggedIn],
+    [dispatch, examName, getApplicableReward, isLoggedIn, score],
   );
 
   const deleteFn = useCallback(() => {
@@ -147,38 +165,50 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
   }, [dispatch, examName, isLoggedIn]);
 
-  const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
+  const coursesGranted = (getApplicableReward(score)?.coursesGranted as CoursesGrantedTree) ?? '';
 
-  for (const reward of apiExamInfo?.rewards ?? []) {
-    if (score === 1 || score === 2) {
-      return (
-        <MenuTile
-          title={examName}
-          headerItems={selectBox}
-          units={units}
-          setUnits={updateUnits}
-          deleteFn={deleteFn}
-          unread={unread}
-        >
-          <Rewards examName={examName} coursesGranted={''} />
-        </MenuTile>
-      );
-    }
-    if (!reward.acceptableScores.includes(score)) continue;
-    const coursesGranted = reward.coursesGranted as CoursesGrantedTree;
-    return (
-      <MenuTile
-        title={examName}
-        headerItems={selectBox}
-        units={units}
-        setUnits={updateUnits}
-        deleteFn={deleteFn}
-        unread={unread}
-      >
-        <Rewards examName={examName} coursesGranted={coursesGranted} />
-      </MenuTile>
-    );
-  }
+  return (
+    <MenuTile
+      title={examName}
+      headerItems={selectBox}
+      units={units}
+      setUnits={updateUnits}
+      deleteFn={deleteFn}
+      unread={unread}
+    >
+      <Rewards examName={examName} coursesGranted={coursesGranted} />
+    </MenuTile>
+  );
+
+  // for (const reward of apiExamInfo?.rewards ?? []) {
+  //   if (score === 1 || score === 2) {
+  //     return (
+  //       <MenuTile
+  //         title={examName}
+  //         headerItems={selectBox}
+  //         units={units}
+  //         setUnits={updateUnits}
+  //         deleteFn={deleteFn}
+  //         unread={unread}
+  //       >
+  //         <Rewards examName={examName} coursesGranted={''} />
+  //       </MenuTile>
+  //     );
+  //   }
+  //   if (!reward.acceptableScores.includes(score)) continue;
+  //   const coursesGranted = reward.coursesGranted as CoursesGrantedTree;
+  //   return (
+  //     <MenuTile
+  //       title={examName}
+  //       headerItems={selectBox}
+  //       units={units}
+  //       setUnits={updateUnits}
+  //       deleteFn={deleteFn}
+  //       unread={unread}
+  //     >
+  //       <Rewards examName={examName} coursesGranted={coursesGranted} />
+  //     </MenuTile>
+  //   );
 };
 
 const APExamsSection: FC = () => {
