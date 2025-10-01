@@ -179,36 +179,6 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
       <Rewards examName={examName} coursesGranted={coursesGranted} />
     </MenuTile>
   );
-
-  // for (const reward of apiExamInfo?.rewards ?? []) {
-  //   if (score === 1 || score === 2) {
-  //     return (
-  //       <MenuTile
-  //         title={examName}
-  //         headerItems={selectBox}
-  //         units={units}
-  //         setUnits={updateUnits}
-  //         deleteFn={deleteFn}
-  //         unread={unread}
-  //       >
-  //         <Rewards examName={examName} coursesGranted={''} />
-  //       </MenuTile>
-  //     );
-  //   }
-  //   if (!reward.acceptableScores.includes(score)) continue;
-  //   const coursesGranted = reward.coursesGranted as CoursesGrantedTree;
-  //   return (
-  //     <MenuTile
-  //       title={examName}
-  //       headerItems={selectBox}
-  //       units={units}
-  //       setUnits={updateUnits}
-  //       deleteFn={deleteFn}
-  //       unread={unread}
-  //     >
-  //       <Rewards examName={examName} coursesGranted={coursesGranted} />
-  //     </MenuTile>
-  //   );
 };
 
 const APExamsSection: FC = () => {
