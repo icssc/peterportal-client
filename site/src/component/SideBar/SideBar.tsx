@@ -35,6 +35,19 @@ const SideBar = () => {
     <div className="sidebar-links">
       <ul>
         <li>
+          <Link
+            href="/roadmap"
+            className={pathname == '/' || pathname === '/roadmap' ? 'sidebar-active' : ''}
+            onClick={closeSidebar}
+          >
+            <div>
+              <MapOutlinedIcon className="sidebar-icon" />
+            </div>
+            <span className="full-name">Peter's Roadmap</span>
+            <span>Roadmap</span>
+          </Link>
+        </li>
+        <li>
           <Link href="/" className={pathname === '/search/courses' ? 'sidebar-active' : ''} onClick={closeSidebar}>
             <div>
               <ListAltRoundedIcon className="sidebar-icon" />
@@ -54,19 +67,6 @@ const SideBar = () => {
             </div>
             <span className="full-name">Professors</span>
             <span>Professors</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/roadmap"
-            className={pathname == '/' || pathname === '/roadmap' ? 'sidebar-active' : ''}
-            onClick={closeSidebar}
-          >
-            <div>
-              <MapOutlinedIcon className="sidebar-icon" />
-            </div>
-            <span className="full-name">Peter's Roadmap</span>
-            <span>Roadmap</span>
           </Link>
         </li>
         {isAdmin && (
