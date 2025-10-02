@@ -165,7 +165,7 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
   }, [dispatch, examName, isLoggedIn]);
 
-  const coursesGranted = (getApplicableReward(score)?.coursesGranted as CoursesGrantedTree) ?? '';
+  const coursesGranted = (getApplicableReward(score)?.coursesGranted ?? '') as CoursesGrantedTree;
 
   return (
     <MenuTile
