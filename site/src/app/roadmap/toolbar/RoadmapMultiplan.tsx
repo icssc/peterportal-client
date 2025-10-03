@@ -163,6 +163,11 @@ const RoadmapMultiplan: FC = () => {
     const planToDelete = allPlans[delIdx];
     const yearPlans = deepCopy(planToDelete.content.yearPlans);
     const revision = deletePlanner(planToDelete.id, planToDelete.name, yearPlans);
+    // Length of all plans is calculated BEFORE delete occurs
+    if (allPlans.length === 1) {
+      const recreateInitialPlan = addPlanner(nextPlanTempId, "Peter's Roadmap", deepCopy(initialPlanState.yearPlans));
+      revision.edits.push(...recreateInitialPlan.edits);
+    }
     dispatch(reviseRoadmap(revision));
     dispatch(setPlanIndex(newIndex));
     setDelIdx(-1);
