@@ -147,7 +147,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
         onAdd={addCourse} // add course, drag from another quarter
-        // onRemove={removeCourse} // remove, drag TO another quarter
         onSort={sortCourse} // drag within a quarter
         onEnd={() => {
           if (!activeCourseLoading) dispatch(setActiveCourse(null));

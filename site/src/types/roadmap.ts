@@ -14,7 +14,7 @@ export interface RoadmapPlan {
   content: RoadmapPlanState;
 }
 
-// Indvidual Changes
+// Individual Changes
 export type FullPlannerChangeData = Omit<RoadmapPlan, 'content'> | null;
 export interface PlannerEdit {
   type: 'planner';
@@ -40,8 +40,6 @@ export interface PlannerQuarterEdit {
 }
 
 export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit;
-
-// Revisions have multiple changes
 
 export interface RoadmapRevision {
   timestamp: number;
