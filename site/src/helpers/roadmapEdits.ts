@@ -20,13 +20,12 @@ function createInverseRevision(revision: RoadmapRevision) {
   return revision;
 }
 
-export function addPlanner(id: number, name: string, yearPlans?: PlannerYearData[]) {
+export function addPlanner(id: number, name: string, yearPlans: PlannerYearData[]) {
   const plannerEdit: PlannerEdit = {
     type: 'planner',
     before: null,
     after: { id, name },
   };
-  if (!yearPlans) return createRevision([plannerEdit]);
 
   const otherEdits = yearPlans
     .flatMap((year) => addPlannerYear(id, year.startYear, year.name, year.quarters))
@@ -35,7 +34,7 @@ export function addPlanner(id: number, name: string, yearPlans?: PlannerYearData
   return createRevision([plannerEdit, ...otherEdits]);
 }
 
-export function deletePlanner(id: number, name: string, yearPlans?: PlannerYearData[]) {
+export function deletePlanner(id: number, name: string, yearPlans: PlannerYearData[]) {
   return createInverseRevision(addPlanner(id, name, yearPlans));
 }
 
@@ -48,14 +47,13 @@ export function updatePlannerName(current: RoadmapPlan, newName: string) {
   return createRevision([edit]);
 }
 
-export function addPlannerYear(plannerId: number, startYear: number, name: string, quarters?: PlannerQuarterData[]) {
+export function addPlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
   const yearEdit: PlannerYearEdit = {
     type: 'year',
     plannerId,
     before: null,
     after: { name, startYear },
   };
-  if (!quarters) return createRevision([yearEdit]);
 
   const otherEdits = quarters
     .flatMap((quarter) => addPlannerQuarter(plannerId, startYear, quarter.name, quarter.courses))
@@ -64,7 +62,7 @@ export function addPlannerYear(plannerId: number, startYear: number, name: strin
   return createRevision([yearEdit, ...otherEdits]);
 }
 
-export function deletePlannerYear(plannerId: number, startYear: number, name: string, quarters?: PlannerQuarterData[]) {
+export function deletePlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
   return createInverseRevision(addPlannerYear(plannerId, startYear, name, quarters));
 }
 
