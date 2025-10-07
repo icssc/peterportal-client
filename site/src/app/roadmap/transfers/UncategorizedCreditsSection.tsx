@@ -39,13 +39,14 @@ const UncategorizedCreditInput: FC = () => {
   };
 
   const updateUnits = (newUnits: string) => {
-    if (newUnits === '' || /^\d*$/.test(newUnits)) {
+    if (newUnits === '' || /^\d*\.?\d*$/.test(newUnits)) {
       setUnits(newUnits);
     }
   };
 
   const handleSubmit = () => {
-    const newCredit: TransferredUncategorized = { name, units: parseInt(units) };
+    if (name.trim() === '' || units.trim() === '') return;
+    const newCredit: TransferredUncategorized = { name, units: parseFloat(units) };
     trpc.transferCredits.addUncategorizedCourse.mutate(newCredit);
     dispatch(addUncategorizedCourse(newCredit));
     setName('');
@@ -53,9 +54,9 @@ const UncategorizedCreditInput: FC = () => {
   };
 
   return (
-    <div className="">
+    <div>
       <input value={name} onChange={(event) => updateName(event.target.value)} />
-      <input value={units} onChange={(event) => updateUnits(event.target.value)} />
+      <input type="number" value={units} onChange={(event) => updateUnits(event.target.value)} />
       <button onClick={handleSubmit}>Add</button>
     </div>
   );
