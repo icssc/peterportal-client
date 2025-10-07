@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, useCallback, useRef } from 'react';
+import { useState, useEffect, FC, useRef, useMemo } from 'react';
 import './SearchModule.scss';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -34,50 +34,15 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fuzzySearch = useCallback(
-    async (query: string) => {
-      abortControllerRef.current?.abort();
-      const abortController = new AbortController();
-      abortControllerRef.current = abortController;
-      try {
-        const { count, results } = await trpc.search.get.query(
-          {
-            query,
-            take: NUM_RESULTS_PER_PAGE,
-            skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
-            resultType: index === 'courses' ? 'course' : 'instructor',
-          },
-          { signal: abortController.signal },
-        );
-        if (!abortController.signal.aborted) {
-          dispatch(
-            setResults({
-              index,
-              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
-              count,
-            }),
-          );
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Search error:', error);
-        }
-      }
-    },
-    [dispatch, index, search.pageNumber],
-  );
+  // fuzzySearch is defined after filter state/lookup tables so it can depend on them safely
 
   // Cleanup abort controller on unmount
   useEffect(() => {
+    const controller = abortControllerRef.current;
     return () => {
-      abortControllerRef.current?.abort();
+      controller?.abort();
     };
   }, []);
-
-  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
-  useEffect(() => {
-    fuzzySearch(search.query);
-  }, [search.query, fuzzySearch]);
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -138,11 +103,14 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   };
 
   // Lookup tables for mapping internal codes to user-friendly display names.
-  const levels: Record<string, string> = {
-    LowerDiv: 'Lower Division',
-    UpperDiv: 'Upper Division',
-    Graduate: 'Graduate',
-  };
+  const levels = useMemo<Record<string, string>>(
+    () => ({
+      LowerDiv: 'Lower Division',
+      UpperDiv: 'Upper Division',
+      Graduate: 'Graduate',
+    }),
+    [],
+  );
 
   const departments: Record<string, string> = {
     'AC ENG': 'Academic English and ESL',
@@ -288,18 +256,90 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     WRITING: 'Writing',
   };
 
-  const geCategories: Record<string, string> = {
-    'GE-1A': 'Lower Division Writing',
-    'GE-1B': 'Upper Division Writing',
-    'GE-2': 'Science and Technology',
-    'GE-3': 'Social and Behavioral Sciences',
-    'GE-4': 'Arts and Humanities',
-    'GE-5A': 'Quantitative Literacy',
-    'GE-5B': 'Formal Reasoning',
-    'GE-6': 'Language Other Than English',
-    'GE-7': 'Multicultural Studies',
-    'GE-8': 'International/Global Issues',
-  };
+  const geCategories = useMemo<Record<string, string>>(
+    () => ({
+      'GE-1A': 'Lower Division Writing',
+      'GE-1B': 'Upper Division Writing',
+      'GE-2': 'Science and Technology',
+      'GE-3': 'Social and Behavioral Sciences',
+      'GE-4': 'Arts and Humanities',
+      'GE-5A': 'Quantitative Literacy',
+      'GE-5B': 'Formal Reasoning',
+      'GE-6': 'Language Other Than English',
+      'GE-7': 'Multicultural Studies',
+      'GE-8': 'International/Global Issues',
+    }),
+    [],
+  );
+
+  // Run search when query, page, or filters change
+  useEffect(() => {
+    // Cancel any in-flight request
+    abortControllerRef.current?.abort();
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    const run = async () => {
+      try {
+        // Only apply filters for course searches
+        const selectedCourseLevelCodes = (() => {
+          if (index !== 'courses' || selectedLevels.length === 0) return undefined;
+          const entry = Object.entries(levels).find(([, label]) => label === selectedLevels.join(','));
+          return entry?.[0];
+        })();
+        const selectedGeCodes = (() => {
+          if (index !== 'courses' || selectedGECategories.length === 0) return undefined;
+          const entry = Object.entries(geCategories).find(([, label]) => label === selectedGECategories.join(','));
+          return entry?.[0];
+        })();
+        const departmentCodes =
+          index === 'courses' && selectedDepartments.length > 0 ? selectedDepartments.join(',') : undefined;
+
+        const base = {
+          query: search.query,
+          take: NUM_RESULTS_PER_PAGE,
+          skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
+          resultType: index === 'courses' ? 'course' : 'instructor',
+        } as const;
+        const payload = {
+          ...base,
+          ...(departmentCodes ? { department: departmentCodes } : {}),
+          ...(selectedCourseLevelCodes ? { courseLevel: selectedCourseLevelCodes } : {}),
+          ...(selectedGeCodes ? { ge: selectedGeCodes } : {}),
+        } as Parameters<typeof trpc.search.get.query>[0];
+
+        const { count, results } = await trpc.search.get.query(payload, { signal: abortController.signal });
+
+        if (!abortController.signal.aborted) {
+          dispatch(
+            setResults({
+              index,
+              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
+              count,
+            }),
+          );
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Search error:', error);
+        }
+      }
+    };
+
+    run();
+
+    // Re-run when query/page or any selected filter changes
+  }, [
+    dispatch,
+    geCategories,
+    index,
+    levels,
+    search.pageNumber,
+    search.query,
+    selectedDepartments,
+    selectedGECategories,
+    selectedLevels,
+  ]);
 
   return (
     <div className="search-module">
