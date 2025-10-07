@@ -1,22 +1,12 @@
 @use '../../../globals.scss';
 @use '../sidebar/SearchSidebar.scss';
 
-.transfers-menu {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  height: calc(100% - 72px);
+.transfers-menu-inner {
+  height: 0;
+  flex-grow: 1;
+  width: 100%;
 
-  &.mobile {
-    @include globals.bottom-overlay(400);
-  }
-
-  transform: translateY(100%);
-  transition: transform 0.3s;
-  &.enter,
-  &.enter-done {
-    transform: unset;
-  }
+  overflow: scroll;
 
   h3 {
     margin-bottom: 0;
@@ -28,11 +18,33 @@
   }
 }
 
+.transfers-menu {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0px;
+
+  &.mobile {
+    @include globals.bottom-overlay(400);
+    padding-bottom: 0px;
+  }
+
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  &.enter,
+  &.enter-done {
+    transform: unset;
+  }
+
+  display: flex;
+  flex-direction: column;
+}
+
 .toggle-transfers-button {
   @include globals.bottom-button();
-  position: fixed;
-  left: unset;
-  right: 0;
+
+  position: unset;
   width: globals.$roadmap-sidebar-width;
   &.mobile {
     width: 100%;
