@@ -15,10 +15,10 @@ const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncatego
   const { name, units, unread } = course;
   const dispatch = useAppDispatch();
 
-  const setUnits = (value: number) => {
-    const updatedCredit: TransferredUncategorized = { name, units: value };
-    // trpc.transferCredits.updateUncategorizedCourse.mutate(updatedCredit); // TODO add this (?)
-    dispatch(updateUncategorizedCourse(updatedCredit));
+  const setUnits = (newUnits: number) => {
+    const updatedCourse: TransferredUncategorized = { name, units: newUnits };
+    trpc.transferCredits.updateUncategorizedCourse.mutate(updatedCourse);
+    dispatch(updateUncategorizedCourse(updatedCourse));
   };
 
   const deleteFn = () => {
@@ -46,7 +46,7 @@ const UncategorizedCreditInput: FC = () => {
 
   const handleSubmit = () => {
     const newCredit: TransferredUncategorized = { name, units: parseInt(units) };
-    // trpc.transferCredits.addUncategorizedCourse.mutate(newCredit); // TODO add this (?)
+    trpc.transferCredits.addUncategorizedCourse.mutate(newCredit);
     dispatch(addUncategorizedCourse(newCredit));
     setName('');
     setUnits('');
