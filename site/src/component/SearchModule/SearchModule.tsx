@@ -77,6 +77,28 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     },
   };
 
+  // Custom styles for the MUI Select and Autocomplete components
+  const selectStyles = {
+    width: 300,
+    backgroundColor: 'var(--overlay1)',
+    borderColor: 'var(--overlay2)',
+    borderWidth: '1px',
+    borderRadius: '6px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderRadius: '6px', // Targets the outer 'fieldset' element
+    },
+  };
+  const autocompleteStyles = {
+    flexGrow: 1,
+    backgroundColor: 'var(--overlay1)',
+    borderColor: 'var(--overlay2)',
+    borderWidth: '1px',
+    borderRadius: '6px',
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderRadius: '6px', // Targets the outer 'fieldset' element
+    },
+  };
+
   // Keep track of selected options for the level and GE filters and handle changes
   const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
   const [selectedGECategories, setSelectedGECategories] = useState<string[]>([]);
@@ -108,6 +130,22 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       LowerDiv: 'Lower Division',
       UpperDiv: 'Upper Division',
       Graduate: 'Graduate',
+    }),
+    [],
+  );
+
+  const geCategories = useMemo<Record<string, string>>(
+    () => ({
+      'GE-1A': 'Lower Division Writing',
+      'GE-1B': 'Upper Division Writing',
+      'GE-2': 'Science and Technology',
+      'GE-3': 'Social and Behavioral Sciences',
+      'GE-4': 'Arts and Humanities',
+      'GE-5A': 'Quantitative Literacy',
+      'GE-5B': 'Formal Reasoning',
+      'GE-6': 'Language Other Than English',
+      'GE-7': 'Multicultural Studies',
+      'GE-8': 'International/Global Issues',
     }),
     [],
   );
@@ -256,22 +294,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     WRITING: 'Writing',
   };
 
-  const geCategories = useMemo<Record<string, string>>(
-    () => ({
-      'GE-1A': 'Lower Division Writing',
-      'GE-1B': 'Upper Division Writing',
-      'GE-2': 'Science and Technology',
-      'GE-3': 'Social and Behavioral Sciences',
-      'GE-4': 'Arts and Humanities',
-      'GE-5A': 'Quantitative Literacy',
-      'GE-5B': 'Formal Reasoning',
-      'GE-6': 'Language Other Than English',
-      'GE-7': 'Multicultural Studies',
-      'GE-8': 'International/Global Issues',
-    }),
-    [],
-  );
-
   // Run search when query, page, or filters change
   useEffect(() => {
     // Cancel any in-flight request
@@ -279,7 +301,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    const run = async () => {
+    const fuzzySearch = async () => {
       try {
         // Only apply filters for course searches
         const selectedCourseLevelCodes = (() => {
@@ -301,6 +323,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
           resultType: index === 'courses' ? 'course' : 'instructor',
         } as const;
+
         const payload = {
           ...base,
           ...(departmentCodes ? { department: departmentCodes } : {}),
@@ -326,7 +349,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       }
     };
 
-    run();
+    fuzzySearch();
 
     // Re-run when query/page or any selected filter changes
   }, [
@@ -360,7 +383,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         </InputGroup>
       </Form.Group>
       <div className="filter-group">
-        <FormControl sx={{ width: 300 }}>
+        <FormControl sx={selectStyles}>
           <Select
             id="level-select"
             multiple
@@ -385,7 +408,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
             ))}
           </Select>
         </FormControl>
-        <FormControl sx={{ width: 300 }}>
+        <FormControl sx={selectStyles}>
           <Select
             size="small"
             id="ge-category-select"
@@ -413,7 +436,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         <Autocomplete
           multiple
           size="small"
-          limitTags={2}
+          limitTags={1}
           id="multiple-limit-tags"
           options={Object.keys(departments)}
           value={selectedDepartments}
@@ -424,7 +447,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           renderInput={(params) => (
             <TextField {...params} placeholder={selectedDepartments.length === 0 ? 'Search departments...' : ''} />
           )}
-          sx={{ flexGrow: 1, height: 60 }}
+          sx={autocompleteStyles}
         />
       </div>
     </div>
