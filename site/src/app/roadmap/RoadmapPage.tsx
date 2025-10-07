@@ -18,13 +18,13 @@ const RoadmapPage: FC = () => {
     <>
       <div className="roadmap-page">
         <AddCoursePopup />
-        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
-          <Planner />
-        </div>
         <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
           <SearchSidebar sidebarRef={sidebarRef} />
         </CSSTransition>
         {isMobile && <TransferCreditsMenu />}
+        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+          <Planner />
+        </div>
       </div>
     </>
   );
