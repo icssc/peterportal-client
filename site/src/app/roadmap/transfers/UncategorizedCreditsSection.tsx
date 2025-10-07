@@ -4,6 +4,7 @@ import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
 import {
   addUncategorizedCourse,
+  updateUncategorizedCourse,
   removeUncategorizedCourse,
   TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
@@ -12,24 +13,29 @@ import { TransferredUncategorized } from '@peterportal/types';
 
 const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncategorized> }> = ({ course }) => {
   const { name, units, unread } = course;
-
   const dispatch = useAppDispatch();
+
+  const setUnits = (value: number) => {
+    const updatedCredit: TransferredUncategorized = { name, units: value };
+    // trpc.transferCredits.updateUncategorizedCourse.mutate(updatedCredit); // TODO add this (?)
+    dispatch(updateUncategorizedCourse(updatedCredit));
+  };
 
   const deleteFn = () => {
     trpc.transferCredits.removeUncategorizedCourse.mutate({ name, units });
     dispatch(removeUncategorizedCourse({ name, units }));
   };
 
-  return <MenuTile title={name ?? ''} units={units ?? 0} deleteFn={deleteFn} unread={unread} />;
+  return <MenuTile title={name ?? ''} units={units ?? 0} setUnits={setUnits} deleteFn={deleteFn} unread={unread} />;
 };
 
 const UncategorizedCreditInput: FC = () => {
   const dispatch = useAppDispatch();
-  const [itemName, setItemName] = useState('');
+  const [name, setName] = useState('');
   const [units, setUnits] = useState('');
 
-  const updateItemName = (newName: string) => {
-    setItemName(newName);
+  const updateName = (newName: string) => {
+    setName(newName);
   };
 
   const updateUnits = (newUnits: string) => {
@@ -39,14 +45,16 @@ const UncategorizedCreditInput: FC = () => {
   };
 
   const handleSubmit = () => {
-    dispatch(addUncategorizedCourse({ name: itemName, units: parseInt(units) }));
-    setItemName('');
+    const newCredit: TransferredUncategorized = { name, units: parseInt(units) };
+    // trpc.transferCredits.addUncategorizedCourse.mutate(newCredit); // TODO add this (?)
+    dispatch(addUncategorizedCourse(newCredit));
+    setName('');
     setUnits('');
   };
 
   return (
     <div className="">
-      <input value={itemName} onChange={(event) => updateItemName(event.target.value)} />
+      <input value={name} onChange={(event) => updateName(event.target.value)} />
       <input value={units} onChange={(event) => updateUnits(event.target.value)} />
       <button onClick={handleSubmit}>Add</button>
     </div>
@@ -59,8 +67,8 @@ const UncategorizedCreditsSection: FC = () => {
   return (
     <MenuSection title="Uncategorized Credits">
       <SectionDescription>
-        These items were not automatically recognized as a course or AP Exam. Add the equivalent course or AP Exam
-        manually, or leave these items as miscellaneous elective credits.
+        These items were not automatically recognized as a course or AP Exam. Add the equivalent item manually, or leave
+        these items as elective credits.
       </SectionDescription>
 
       {courses.map((course) => (
