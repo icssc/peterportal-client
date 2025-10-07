@@ -93,6 +93,9 @@ export const transferCreditsSlice = createSlice({
     setUncategorizedCourses: (state, action: PayloadAction<TransferredUncategorized[]>) => {
       state.uncategorizedCourses = action.payload;
     },
+    addUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
+      state.uncategorizedCourses.push(action.payload);
+    },
     removeUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
       state.uncategorizedCourses = state.uncategorizedCourses.filter(
         (course) => course.name !== action.payload.name || course.units !== action.payload.units,
@@ -130,6 +133,7 @@ export const {
   setAllTransferredGEs,
   setTransferredGE,
   setUncategorizedCourses,
+  addUncategorizedCourse,
   removeUncategorizedCourse,
   clearUnreadTransfers,
 } = transferCreditsSlice.actions;
