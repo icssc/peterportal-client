@@ -6,22 +6,15 @@
   flex-grow: 1;
   width: 100%;
 
+  padding: 16px 20px;
   overflow: scroll;
-
-  h3 {
-    margin-bottom: 0;
-    font-weight: 600;
-  }
-
-  .ppc-combobox__menu {
-    font-size: 14px;
-  }
 }
 
 .transfers-menu {
   position: absolute;
   left: 0;
   bottom: 0;
+
   overflow: hidden;
   padding: 0px;
 
@@ -35,6 +28,15 @@
   &.enter,
   &.enter-done {
     transform: unset;
+  }
+
+  h3 {
+    margin-bottom: 0;
+    font-weight: 600;
+  }
+
+  .ppc-combobox__menu {
+    font-size: 14px;
   }
 
   display: flex;
