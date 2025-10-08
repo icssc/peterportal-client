@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
+import { TextField, Button } from '@mui/material';
 import trpc from '../../../trpc';
 import {
   addUncategorizedCourse,
@@ -10,6 +11,7 @@ import {
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { TransferredUncategorized } from '@peterportal/types';
+import './UncategorizedCreditsSection.scss';
 
 const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncategorized> }> = ({ course }) => {
   const { name, units, unread } = course;
@@ -35,29 +37,57 @@ const UncategorizedCreditInput: FC = () => {
   const [units, setUnits] = useState('');
 
   const updateName = (newName: string) => {
-    setName(newName);
+    if (newName === '' || newName.length <= 20) {
+      setName(newName);
+    }
   };
 
   const updateUnits = (newUnits: string) => {
-    if (newUnits === '' || /^\d*\.?\d*$/.test(newUnits)) {
+    if (newUnits === '' || (parseFloat(newUnits) >= 0 && parseFloat(newUnits) < 1000)) {
       setUnits(newUnits);
     }
   };
 
   const handleSubmit = () => {
-    if (name.trim() === '' || units.trim() === '') return;
+    if (name === '' || units === '') {
+      return;
+    }
+
     const newCredit: TransferredUncategorized = { name, units: parseFloat(units) };
     trpc.transferCredits.addUncategorizedCourse.mutate(newCredit);
     dispatch(addUncategorizedCourse(newCredit));
+
     setName('');
     setUnits('');
   };
 
   return (
-    <div>
-      <input value={name} onChange={(event) => updateName(event.target.value)} />
-      <input type="number" value={units} onChange={(event) => updateUnits(event.target.value)} />
-      <button onClick={handleSubmit}>Add</button>
+    <div className="uncategorized-credit-input-row">
+      <TextField
+        className="name-input"
+        required
+        size="small"
+        type="text"
+        name="name"
+        placeholder="Add name..."
+        value={name}
+        onChange={(e) => updateName(e.target.value)}
+      />
+
+      <TextField
+        className="unit-input"
+        required
+        size="small"
+        type="number"
+        name="units"
+        placeholder="Units..."
+        value={units}
+        onChange={(e) => updateUnits(e.target.value)}
+      />
+
+      <Button variant="contained" onClick={handleSubmit}>
+        Add
+      </Button>
     </div>
   );
 };
