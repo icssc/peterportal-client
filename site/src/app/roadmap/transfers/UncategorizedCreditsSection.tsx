@@ -35,21 +35,29 @@ const UncategorizedCreditInput: FC = () => {
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const [units, setUnits] = useState('');
+  const [error, setError] = useState(false);
 
   const updateName = (newName: string) => {
     if (newName === '' || newName.length <= 20) {
       setName(newName);
+      setError(false);
+    } else {
+      setError(true);
     }
   };
 
   const updateUnits = (newUnits: string) => {
     if (newUnits === '' || (parseFloat(newUnits) >= 0 && parseFloat(newUnits) < 1000)) {
       setUnits(newUnits);
+      setError(false);
+    } else {
+      setError(true);
     }
   };
 
   const handleSubmit = () => {
     if (name === '' || units === '') {
+      setError(true);
       return;
     }
 
@@ -59,6 +67,7 @@ const UncategorizedCreditInput: FC = () => {
 
     setName('');
     setUnits('');
+    setError(false);
   };
 
   return (
@@ -72,6 +81,7 @@ const UncategorizedCreditInput: FC = () => {
         placeholder="Add name..."
         value={name}
         onChange={(e) => updateName(e.target.value)}
+        error={error}
       />
 
       <TextField
@@ -83,6 +93,7 @@ const UncategorizedCreditInput: FC = () => {
         placeholder="Units..."
         value={units}
         onChange={(e) => updateUnits(e.target.value)}
+        error={error}
       />
 
       <Button variant="contained" onClick={handleSubmit}>
