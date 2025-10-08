@@ -2,10 +2,6 @@
 @use '../sidebar/SearchSidebar.scss';
 
 .transfers-menu-inner {
-  height: 0;
-  flex-grow: 1;
-  width: 100%;
-
   padding: 16px 20px;
   overflow: scroll;
 }
@@ -38,15 +34,12 @@
   .ppc-combobox__menu {
     font-size: 14px;
   }
-
-  display: flex;
-  flex-direction: column;
 }
 
 .toggle-transfers-button {
   @include globals.bottom-button();
 
-  position: unset;
+  position: absolute;
   width: globals.$roadmap-sidebar-width;
   &.mobile {
     width: 100%;
