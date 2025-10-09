@@ -3,14 +3,8 @@
     max-width: 512px;
   }
 
-  textarea {
-    color: var(--text);
-    border-radius: var(--border-radius);
-    border: 2px solid #eaebf2;
-    padding: 1rem;
-    resize: none;
-    width: 100%;
-    display: block;
+  .MuiInputBase-root {
+    padding: 0;
   }
 
   p {
