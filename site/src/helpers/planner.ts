@@ -320,16 +320,17 @@ const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
 
   //decide whether coures or exam
   const id = prereqIsCourse ? prerequisite.courseId : prerequisite.examName;
+
+  // check if already done
   const previouslyComplete = taken.has(id);
+  if (previouslyComplete) return new Set<string>();
 
   // checking if the course is a coreq to take in the same quarter
-  if (prereqIsCourse && prerequisite.coreq) {
-    const takingCorequisite = taking.has(id);
-    if (previouslyComplete || takingCorequisite) {
-      return new Set<string>();
-    }
-  }
-  return previouslyComplete ? new Set<string>() : new Set([id]);
+  const isCoreq = prereqIsCourse && prerequisite.coreq;
+  if (isCoreq && taking.has(id)) return new Set<string>();
+
+  //the course hasn't been taken
+  return new Set([id]);
 };
 
 const validateAndPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
