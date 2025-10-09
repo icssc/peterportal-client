@@ -416,36 +416,19 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <FormControlLabel
               label="Would Take Again"
               control={
-                <Checkbox
-                  id="takeAgain"
-                  checked={!!takeAgain}
-                  onChange={(e) => setTakeAgain(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
+                <Checkbox id="takeAgain" checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />
               }
             ></FormControlLabel>
 
             <FormControlLabel
               label="Requires Textbook"
-              control={
-                <Checkbox
-                  id="textbook"
-                  checked={!!textbook}
-                  onChange={(e) => setTextbook(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
-              }
+              control={<Checkbox id="textbook" checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
             />
 
             <FormControlLabel
               label="Mandatory Attendance"
               control={
-                <Checkbox
-                  id="attendance"
-                  checked={!!attendance}
-                  onChange={(e) => setAttendance(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
+                <Checkbox id="attendance" checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />
               }
             />
           </FormControl>

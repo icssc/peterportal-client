@@ -1,5 +1,8 @@
 @use 'globals';
 
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 button {
   color: inherit;
 }
@@ -9,6 +12,29 @@ a {
   &:hover {
     text-decoration: underline;
   }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html > body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+  background: var(--background);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+#root {
+  position: relative;
+  height: 100%;
 }
 
 .app-body {

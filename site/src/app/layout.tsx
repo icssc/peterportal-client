@@ -6,7 +6,6 @@ import 'toastify-js/src/toastify.css';
 import '../style/theme.scss';
 import '../globals.scss';
 import '../App.scss';
-import '../index.css';
 
 import AppHeader from '../component/AppHeader/AppHeader';
 import ChangelogModal from '../component/ChangelogModal/ChangelogModal';
