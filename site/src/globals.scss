@@ -1,4 +1,11 @@
 :root {
+  --background: var(--gray-blue);
+  --overlay1: #fff;
+  --overlay2: var(--gray-blue);
+  --overlay3: #fff;
+  --text: #212529;
+  --text-secondary: #606166;
+
   --blue-primary: #2484c6;
   --blue-secondary: #5babe1;
   --blue-tertiary: #a0ceee;
@@ -34,7 +41,17 @@
   --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
+// each overlay is about 5% brighter than the previous
+// roughly following: https://m2.material.io/design/color/dark-theme.html
 :root[data-theme='dark'] {
+  --background: #121212;
+  --overlay1: #1e1e1e;
+  --overlay2: #292929;
+  --overlay3: #363636;
+  --text: #fff;
+  --text-secondary: #99999f;
+  color-scheme: dark;
+
   --blue-secondary: #185680;
   --blue-tertiary: #0b293c;
   --red-primary: #ff3333;
