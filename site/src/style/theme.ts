@@ -1,41 +1,70 @@
-import { createTheme } from '@mui/material';
+import { createTheme, PaletteOptions } from '@mui/material';
+
+const palette: PaletteOptions = {
+  primary: {
+    main: 'var(--blue-primary)', // blue-primary
+    // contrastText: '#fff',
+  },
+  secondary: {
+    main: 'var(--blue-secondary)',
+    // dark: 'var(--blue-primary)', // dark blue-secondary
+  },
+  error: {
+    main: 'var(--red-primary)', // red-primary
+    // dark: 'var(--blue-secondary)', // dark red-primary
+  },
+  warning: {
+    main: 'var(--orange-secondary)', // orange-secondary
+  },
+  success: {
+    main: 'var(--green-primary)', // green-primary
+  },
+  background: {
+    default: 'var(--background)',
+    paper: 'var(--overlay1)',
+  },
+  text: {
+    primary: 'var(--text)',
+    secondary: 'var(--text-secondary)',
+  },
+};
 
 export const muiTheme = createTheme({
-  cssVariables: { colorSchemeSelector: '[data-theme=%s]' },
-  // colorSchemes: {
-  //   dark: { palette: { mode: 'dark' } },
-  //   light: { palette: { mode: 'light' } },
-  // },
-  palette: {
-    primary: {
-      main: 'var(--blue-primary)', // blue-primary
-      // contrastText: '#fff',
-    },
-    secondary: {
-      main: 'var(--blue-secondary)',
-      // dark: 'var(--blue-primary)', // dark blue-secondary
-    },
-    error: {
-      main: 'var(--red-primary)', // red-primary
-      // dark: 'var(--blue-secondary)', // dark red-primary
-    },
-    warning: {
-      main: 'var(--orange-secondary)', // orange-secondary
-    },
-    success: {
-      main: 'var(--green-primary)', // green-primary
-    },
-    background: {
-      default: 'var(--background)',
-      paper: 'var(--overlay1)',
-    },
-    text: {
-      primary: 'var(--text)',
-      secondary: 'var(--text-secondary',
-    },
+  cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
+  colorSchemes: {
+    dark: { palette: { mode: 'dark', ...palette } },
+    light: { palette: { mode: 'light', ...palette } },
   },
   typography: {
     fontFamily: ['Roboto', 'Open Sans'].join(','),
   },
-  components: {},
+  components: {
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          width: '32px',
+          height: '32px',
+          margin: '-8px',
+
+          '&.Mui-checked': {
+            '& > input': {
+              margin: '0px',
+              top: '9px',
+              appearance: 'none',
+              left: '9px',
+              width: 'calc(100% - 18px)',
+              height: 'calc(100% - 18px)',
+              background: 'white',
+              zIndex: '0',
+              borderRadius: '4px',
+              opacity: '1',
+            },
+            '& > svg': {
+              zIndex: '1',
+            },
+          },
+        },
+      },
+    },
+  },
 });

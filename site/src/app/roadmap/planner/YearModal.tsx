@@ -57,7 +57,11 @@ const YearModal: FC<YearModalProps> = (props) => {
             name={`quarter-checkbox-${q.id}`}
             value={q.id}
             aria-label={quarterDisplayNames[q.id]}
-            // icon={<span className="ppc-checkbox" />}
+            // sx={{
+            //   '&.Mui-checked': {
+            //     color: 'red'
+            //   }
+            // }}
           />
         }
       />
