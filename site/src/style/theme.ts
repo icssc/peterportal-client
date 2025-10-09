@@ -2,30 +2,40 @@ import { createTheme } from '@mui/material';
 
 export const muiTheme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]' },
-  colorSchemes: {
-    dark: { palette: { mode: 'dark' } },
-    light: { palette: { mode: 'light' } },
-  },
+  // colorSchemes: {
+  //   dark: { palette: { mode: 'dark' } },
+  //   light: { palette: { mode: 'light' } },
+  // },
   palette: {
     primary: {
-      main: '#2484c6', // blue-primary
+      main: 'var(--blue-primary)', // blue-primary
+      // contrastText: '#fff',
     },
     secondary: {
-      main: '#5babe1', // blue-secondary
-      dark: '#185680', // dark blue-secondary
+      main: 'var(--blue-secondary)',
+      // dark: 'var(--blue-primary)', // dark blue-secondary
     },
     error: {
-      main: '#ce0000', // red-primary
-      dark: '#ff3333', // dark red-primary
+      main: 'var(--red-primary)', // red-primary
+      // dark: 'var(--blue-secondary)', // dark red-primary
     },
     warning: {
-      main: '#ecad6d', // orange-secondary
+      main: 'var(--orange-secondary)', // orange-secondary
     },
     success: {
-      main: '#008000', // green-primary
+      main: 'var(--green-primary)', // green-primary
+    },
+    background: {
+      default: 'var(--background)',
+      paper: 'var(--overlay1)',
+    },
+    text: {
+      primary: 'var(--text)',
+      secondary: 'var(--text-secondary',
     },
   },
   typography: {
     fontFamily: ['Roboto', 'Open Sans'].join(','),
   },
+  components: {},
 });

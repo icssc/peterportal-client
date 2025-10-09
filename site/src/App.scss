@@ -240,9 +240,9 @@ a {
     margin-bottom: 8px;
   }
 
-  .Mui-checked .MuiSvgIcon-root {
-    color: var(--blue-primary);
-  }
+  // .Mui-checked .MuiSvgIcon-root {
+  //   color: var(--blue-primary);
+  // }
 
   .form-group {
     display: flex;
@@ -360,16 +360,16 @@ a {
   }
 }
 
-.ppc-checkbox {
-  /** @todo integrate into MUI theme */
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  background-color: var(--overlay1);
-  border-radius: 4px;
-  border: 1px solid var(--overlay3);
-  position: relative;
-}
+// .ppc-checkbox {
+//   /** @todo integrate into MUI theme */
+//   display: inline-block;
+//   width: 22px;
+//   height: 22px;
+//   background-color: var(--overlay1);
+//   border-radius: 4px;
+//   border: 1px solid var(--overlay3);
+//   position: relative;
+// }
 
 .ui-overlay {
   position: fixed;
