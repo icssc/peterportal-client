@@ -29,7 +29,7 @@ const palette: PaletteOptions = {
   },
 };
 
-export const muiTheme = createTheme({
+export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
   colorSchemes: {
     dark: { palette: { mode: 'dark', ...palette } },
@@ -38,6 +38,9 @@ export const muiTheme = createTheme({
   typography: {
     fontFamily: ['Roboto', 'Open Sans'].join(','),
   },
+});
+
+theme = createTheme(theme, {
   components: {
     MuiCheckbox: {
       styleOverrides: {
@@ -63,6 +66,25 @@ export const muiTheme = createTheme({
               zIndex: '1',
             },
           },
+        },
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          fontSize: '18px',
+          fontWeight: '600',
+          marginBottom: '8px',
+          color: theme.palette.text.primary,
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          fontSize: '16px',
+          // padding: '5px 10px',
+          backgroundColor: theme.palette.background.paper,
         },
       },
     },
