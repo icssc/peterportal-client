@@ -1,0 +1,47 @@
+.course-summary {
+  .result-page-section {
+    margin-inline: auto;
+  }
+
+  .summary-columns {
+    display: flex;
+    gap: 20px;
+  }
+
+  .summary-column:first-child {
+    max-width: 400px;
+  }
+
+  h4 {
+    font-size: 20px;
+  }
+
+  .summary-prerequisites {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .prerequisite-line {
+    color: var(--text-secondary);
+    margin-top: 4px;
+
+    .icon {
+      transform: scale(0.9);
+      display: inline-block;
+      transform-origin: 100% 0;
+    }
+    .icon-complete {
+      color: var(--green-primary);
+    }
+    .icon-incomplete {
+      color: var(--red-primary);
+    }
+  }
+
+  .course-tags {
+    display: flex;
+    font-weight: 500;
+    gap: 10px;
+  }
+}

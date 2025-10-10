@@ -10,6 +10,7 @@ import {
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
 import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
+import { ReactNode } from 'react';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -148,4 +149,13 @@ export function pluralize(count: number, pluralText: string = 's', singularText:
 
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
   return `${course.department} ${course.courseNumber}`;
+}
+
+export function addDelimiter(items: ReactNode[], between: ReactNode, last?: ReactNode) {
+  const lastIdx = items.length - 1;
+  last ??= between;
+  return items.flatMap((item, idx) => {
+    if (idx === lastIdx) return [item];
+    return [item, idx === lastIdx - 1 ? last : between];
+  });
 }
