@@ -289,7 +289,7 @@ const ImportTranscriptPopup: FC = () => {
               <li>Navigate to "Unofficial Transcript"</li>
               <li>Save the page (ctrl/cmd + s)</li>
             </ol>
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Transcript File</FormLabel>
               <input
                 required

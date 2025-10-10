@@ -125,7 +125,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               placeholder={placeholderYear.toString()}
             />
           </FormControl>
-          <FormControl className="form-group">
+          <FormControl>
             <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}
           </FormControl>

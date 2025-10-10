@@ -213,7 +213,7 @@ const RoadmapMultiplan: FC = () => {
               handleSubmitNewPlan();
             }}
           >
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
                 required
@@ -260,7 +260,7 @@ const RoadmapMultiplan: FC = () => {
               modifyPlanName();
             }}
           >
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
                 required
@@ -299,7 +299,7 @@ const RoadmapMultiplan: FC = () => {
         </Modal.Header>
         <Modal.Body>
           <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
+            <Form.Group>
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>
