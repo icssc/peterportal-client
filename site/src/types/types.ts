@@ -6,6 +6,7 @@ import {
   ProfessorPreview,
   QuarterName,
 } from '@peterportal/types';
+import { ReactNode } from 'react';
 
 export interface ScoreData {
   name: string;
@@ -83,3 +84,8 @@ export interface BatchProfessorData {
 }
 
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];
+
+export type SelectorGroupTab = {
+  name: string;
+  icon?: ReactNode;
+};
