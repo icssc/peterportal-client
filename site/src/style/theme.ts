@@ -117,5 +117,14 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: theme.palette.text.secondary,
+          },
+        },
+      },
+    },
   },
 });
