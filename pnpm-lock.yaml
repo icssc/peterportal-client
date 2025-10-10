@@ -193,9 +193,6 @@ importers:
       react-bootstrap:
         specifier: ^2.10.10
         version: 2.10.10(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-bootstrap-range-slider:
-        specifier: ^3.0.8
-        version: 3.0.8(react-bootstrap@2.10.10(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-cookie:
         specifier: ^7.2.2
         version: 7.2.2(react@18.3.1)
@@ -4475,13 +4472,6 @@ packages:
     resolution: {integrity: sha512-bCpkbm9JiAuMGhkqoAiC0lLkb40DJ0HOEJIku+9JDjxX3Rcs+ztEOG13wbrOskt3n2DTrjshhaQ/iay+SnGg5Q==}
     peerDependencies:
       react: '>=16.4.1'
-
-  react-bootstrap-range-slider@3.0.8:
-    resolution: {integrity: sha512-FpDd1J1BW23jNN3fXmpy5nNDJ3PwMZ2/0dNse9RORwQ/z2rmpMQp/g6iNRpW6SjQkLKyGeNHyctK6dP+3zUXQA==}
-    peerDependencies:
-      react: '>=17.0.0'
-      react-bootstrap: '>=1.0.0'
-      react-dom: '>=17.0.0'
 
   react-bootstrap@2.10.10:
     resolution: {integrity: sha512-gMckKUqn8aK/vCnfwoBpBVFUGT9SVQxwsYrp9yDHt0arXMamxALerliKBxr1TPbntirK/HGrUAHYbAeQTa9GHQ==}
@@ -10267,14 +10257,6 @@ snapshots:
       hoist-non-react-statics: 3.3.2
       prop-types: 15.8.1
       react: 18.3.1
-
-  react-bootstrap-range-slider@3.0.8(react-bootstrap@2.10.10(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      classnames: 2.5.1
-      prop-types: 15.8.1
-      react: 18.3.1
-      react-bootstrap: 2.10.10(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-dom: 18.3.1(react@18.3.1)
 
   react-bootstrap@2.10.10(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
