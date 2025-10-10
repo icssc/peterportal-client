@@ -2,22 +2,19 @@ import { createTheme, PaletteOptions } from '@mui/material';
 
 const palette: PaletteOptions = {
   primary: {
-    main: 'var(--blue-primary)', // blue-primary
-    // contrastText: '#fff',
+    main: 'var(--blue-primary)',
   },
   secondary: {
     main: 'var(--blue-secondary)',
-    // dark: 'var(--blue-primary)', // dark blue-secondary
   },
   error: {
-    main: 'var(--red-primary)', // red-primary
-    // dark: 'var(--blue-secondary)', // dark red-primary
+    main: 'var(--red-primary)',
   },
   warning: {
-    main: 'var(--orange-secondary)', // orange-secondary
+    main: 'var(--orange-secondary)',
   },
   success: {
-    main: 'var(--green-primary)', // green-primary
+    main: 'var(--green-primary)',
   },
   background: {
     default: 'var(--background)',
@@ -38,6 +35,7 @@ export let theme = createTheme({
   typography: {
     fontFamily: ['Roboto', 'Open Sans'].join(','),
   },
+  spacing: 4,
 });
 
 theme = createTheme(theme, {
@@ -74,7 +72,7 @@ theme = createTheme(theme, {
         root: {
           fontSize: '18px',
           fontWeight: '600',
-          marginBottom: '8px',
+          marginBottom: theme.spacing(2),
           color: theme.palette.text.primary,
         },
       },
@@ -84,7 +82,7 @@ theme = createTheme(theme, {
         root: {
           display: 'flex',
           flexDirection: 'column',
-          marginBottom: '8px',
+          marginBottom: theme.spacing(2),
           '& .MuiInputBase-input': {
             padding: '5px 10px',
           },
