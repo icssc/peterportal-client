@@ -385,6 +385,10 @@ body hr {
 }
 
 // general bootstrap overwrites. bg/border color may need further customization per component
+.table {
+  color: var(--text);
+}
+
 [data-theme='dark'] {
   .list-group-item,
   .modal-content,

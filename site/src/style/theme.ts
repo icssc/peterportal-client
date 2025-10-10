@@ -74,6 +74,9 @@ theme = createTheme(theme, {
           fontWeight: '600',
           marginBottom: theme.spacing(2),
           color: theme.palette.text.primary,
+          '&.Mui-focused': {
+            color: 'inherit',
+          },
         },
       },
     },
