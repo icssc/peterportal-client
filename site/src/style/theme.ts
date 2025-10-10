@@ -72,7 +72,7 @@ theme = createTheme(theme, {
         root: {
           fontSize: '18px',
           fontWeight: '600',
-          marginBottom: theme.spacing(2),
+          marginBottom: theme.spacing(1),
           color: theme.palette.text.primary,
           '&.Mui-focused': {
             color: 'inherit',
@@ -85,9 +85,12 @@ theme = createTheme(theme, {
         root: {
           display: 'flex',
           flexDirection: 'column',
-          marginBottom: theme.spacing(2),
+          marginBottom: theme.spacing(4),
+          '&:last-child': {
+            marginBottom: 0,
+          },
           '& .MuiInputBase-input': {
-            padding: '5px 10px',
+            padding: '7px 12px',
           },
           '& .MuiFormControlLabel-root': {
             display: 'flex',
@@ -120,7 +123,7 @@ theme = createTheme(theme, {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          '&:hover .MuiOutlinedInput-notchedOutline': {
+          '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.text.secondary,
           },
         },

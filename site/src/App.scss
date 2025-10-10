@@ -138,7 +138,7 @@ code {
   }
 }
 
-.ppc-popover {
+div.ppc-popover {
   border-radius: 8px;
   padding: 0px;
   box-shadow: none;
@@ -150,18 +150,18 @@ code {
   -webkit-filter: $filter;
   border: none;
 
-  .popover-body {
+  div.popover-body {
     border-radius: 8px;
     padding: 16px;
   }
 
-  .popover-arrow {
+  div.popover-arrow {
     z-index: -1;
     &::before {
       display: none;
     }
   }
-  .popover-arrow::after {
+  div.popover-arrow::after {
     position: absolute;
     border: 8px solid transparent;
     border-width: 12px 16px;
@@ -170,7 +170,7 @@ code {
   }
   &[data-popper-placement='bottom'] {
     top: -24px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       left: 0;
       bottom: 0;
       top: 10px;
@@ -181,14 +181,14 @@ code {
   }
   &[data-popper-placement='left-start'] {
     margin-inline: 8px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       left: -2px;
       border-left-color: var(--overlay1);
     }
   }
   &[data-popper-placement='right-start'] {
     margin-inline: 8px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       right: -2px;
       border-right-color: var(--overlay1);
     }
@@ -199,24 +199,24 @@ code {
   }
 }
 
-.bs-popover-left {
+div.bs-popover-left {
   margin-right: 20px;
 
-  .arrow::after,
-  .arrow::before {
+  div.arrow::after,
+  div.arrow::before {
     left: -1px;
   }
 }
 
-.ppc-popover.bs-popover-right {
+div.ppc-popover.bs-popover-right {
   margin-left: 20px;
   margin-top: 4px !important;
 }
 
-.ppc-popover.bs-popover-bottom {
+div.ppc-popover.bs-popover-bottom {
   margin-top: 48px;
-  .arrow::after,
-  .arrow::before {
+  div.arrow::after,
+  div.arrow::before {
     left: 2px;
   }
 }
@@ -464,23 +464,23 @@ body hr {
   }
 }
 
-.popover {
+div.popover {
   background-color: var(--overlay1);
 }
-.popover-body {
+div.popover-body {
   background-color: var(--overlay1);
   color: var(--text);
 }
-.bs-popover-top > .arrow::after {
+div.bs-popover-top > div.arrow::after {
   border-top-color: var(--overlay1);
 }
-.bs-popover-bottom > .arrow::after {
+div.bs-popover-bottom > div.arrow::after {
   border-bottom-color: var(--overlay1);
 }
-.bs-popover-left > .arrow::after {
+div.bs-popover-left > div.arrow::after {
   border-left-color: var(--overlay1);
 }
-.bs-popover-right > .arrow::after {
+div.bs-popover-right > div.arrow::after {
   border-right-color: var(--overlay1);
 }
 // end bootstrap overwrites
