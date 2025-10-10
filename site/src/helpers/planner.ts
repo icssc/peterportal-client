@@ -273,7 +273,7 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
       quarter.courses.forEach((course, courseIndex) => {
         if (!course.prerequisiteTree) return;
 
-        const { prerequisiteTree: prerequisite } = course;
+        const prerequisite = course.prerequisiteTree;
 
         const incomplete = validatePrerequisites({ taken, prerequisite, taking });
         if (incomplete.size === 0) return;
