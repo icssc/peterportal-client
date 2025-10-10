@@ -3,10 +3,9 @@ import type { Metadata } from 'next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import 'toastify-js/src/toastify.css';
-import '../style/theme.scss';
+// import '../style/theme.scss';
 import '../globals.scss';
 import '../App.scss';
-import '../index.css';
 
 import AppHeader from '../component/AppHeader/AppHeader';
 import ChangelogModal from '../component/ChangelogModal/ChangelogModal';

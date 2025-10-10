@@ -55,7 +55,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
           <FormLabel>Why are you reporting this review?</FormLabel>
 
-          <FormControl className="form-group">
+          <FormControl>
             <TextField
               placeholder="Enter a reason..."
               multiline

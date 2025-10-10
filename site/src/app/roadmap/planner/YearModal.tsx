@@ -57,7 +57,6 @@ const YearModal: FC<YearModalProps> = (props) => {
             name={`quarter-checkbox-${q.id}`}
             value={q.id}
             aria-label={quarterDisplayNames[q.id]}
-            icon={<span className="ppc-checkbox" />}
           />
         }
       />
@@ -83,8 +82,8 @@ const YearModal: FC<YearModalProps> = (props) => {
         <h2>{title}</h2>
       </Modal.Header>
       <Modal.Body>
-        <Box component="form" noValidate className="ppc-modal-form">
-          <FormControl className="form-group">
+        <Box component="form" noValidate>
+          <FormControl>
             <FormLabel>Name</FormLabel>
             <TextField
               required
@@ -108,7 +107,7 @@ const YearModal: FC<YearModalProps> = (props) => {
             />
           </FormControl>
 
-          <FormControl className="form-group">
+          <FormControl>
             <FormLabel>Start Year</FormLabel>
             <TextField
               required
@@ -126,7 +125,7 @@ const YearModal: FC<YearModalProps> = (props) => {
               placeholder={placeholderYear.toString()}
             />
           </FormControl>
-          <FormControl className="form-group">
+          <FormControl>
             <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}
           </FormControl>
