@@ -79,11 +79,39 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          flexDirection: 'column',
+          marginBottom: '8px',
+          '& .MuiInputBase-input': {
+            padding: '5px 10px',
+          },
+          '& .MuiFormControlLabel-root': {
+            display: 'flex',
+            alignItems: 'center',
+            paddingBlock: '2px',
+            margin: '0',
+          },
+          '& .MuiFormControlLabel-label': {
+            marginLeft: '10px',
+            fontSize: '18px',
+          },
+          'input[type="file"]': {
+            fontSize: '16px',
+          },
+          '> img': {
+            width: '100%',
+            height: 'auto',
+          },
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         input: {
           fontSize: '16px',
-          // padding: '5px 10px',
           backgroundColor: theme.palette.background.paper,
         },
       },

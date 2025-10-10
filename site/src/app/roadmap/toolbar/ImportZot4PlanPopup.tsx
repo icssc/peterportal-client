@@ -106,8 +106,8 @@ const ImportZot4PlanPopup: FC = () => {
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
         <Modal.Body>
-          <Box component="form" noValidate className="ppc-modal-form">
-            <FormControl className="form-group">
+          <Box component="form" noValidate>
+            <FormControl>
               <p>
                 To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
@@ -124,7 +124,7 @@ const ImportZot4PlanPopup: FC = () => {
               />
             </FormControl>
 
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Schedule Name</FormLabel>
               <TextField
                 type="text"
@@ -145,7 +145,7 @@ const ImportZot4PlanPopup: FC = () => {
               )}
             </FormControl>
 
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>I am currently a...</FormLabel>
               <Select
                 onChange={(ev) => setStudentYear(ev.target.value)}
