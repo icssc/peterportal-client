@@ -273,9 +273,9 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
       quarter.courses.forEach((course, courseIndex) => {
         if (!course.prerequisiteTree) return;
 
-        const { prerequisiteTree: prerequisite, corequisites: corequisite } = course;
+        const prerequisite = course.prerequisiteTree;
 
-        const incomplete = validatePrerequisites({ taken, prerequisite, taking, corequisite });
+        const incomplete = validatePrerequisites({ taken, prerequisite, taking });
         if (incomplete.size === 0) return;
 
         // prerequisite not fulfilled, has some required classes to take
@@ -310,18 +310,26 @@ interface ValidationInput<PreqrequisiteType> {
   prerequisite: PreqrequisiteType;
   /** The set of courses being taken in the same quarter */
   taking: Set<string>;
-  /** The corequisite text of the course, typically a single course name */
-  corequisite: string;
 }
 
 const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
-  const { prerequisite, taken, taking, corequisite } = input;
-  const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
+  const { prerequisite, taken, taking } = input;
 
+  //checking prereq type (coures and exam)
+  const prereqIsCourse = prerequisite.prereqType === 'course';
+
+  //decide whether coures or exam
+  const id = prereqIsCourse ? prerequisite.courseId : prerequisite.examName;
+
+  // check if already done
   const previouslyComplete = taken.has(id);
-  const takingCorequisite = corequisite.trim() === id && taking.has(id);
+  if (previouslyComplete) return new Set<string>();
 
-  if (previouslyComplete || takingCorequisite) return new Set<string>();
+  // checking if the course is a coreq to take in the same quarter
+  const isCoreq = prereqIsCourse && prerequisite.coreq;
+  if (isCoreq && taking.has(id)) return new Set<string>();
+
+  //the course hasn't been taken
   return new Set([id]);
 };
 
