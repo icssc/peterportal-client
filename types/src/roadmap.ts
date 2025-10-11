@@ -19,7 +19,7 @@ export const savedPlannerYearData = z.object({
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 
 export const savedPlannerData = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
 });
@@ -47,7 +47,7 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 export const savedRoadmap = z.object({
   timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
-  transfers: z.array(legacyTransfer),
+  transfers: z.array(legacyTransfer).optional().describe('Used for legacy transfers only'),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
@@ -57,3 +57,68 @@ export interface LegacyRoadmap {
   transfers: LegacyTransfer[];
   timestamp?: string;
 }
+
+// Roadmap Diffs
+const plannerChangeIdentifier = z.object({
+  id: z.number(),
+});
+
+const plannerYearChangeIdentifier = z.object({
+  id: z.number(),
+  plannerId: z.number().int(),
+});
+
+const plannerQuarterChangeIdentifier = z.object({
+  id: z.string(),
+  plannerId: z.number().int(),
+  startYear: z.number().int(),
+});
+
+export type PlannerDeletion = z.infer<typeof plannerChangeIdentifier>;
+export type PlannerYearDeletion = z.infer<typeof plannerYearChangeIdentifier>;
+export type PlannerQuarterDeletion = z.infer<typeof plannerQuarterChangeIdentifier>;
+export type RoadmapItemDeletion = PlannerDeletion | PlannerYearDeletion | PlannerQuarterDeletion;
+
+const roadmapPlannerChange = z.object({
+  data: z.object({ id: z.number().int(), name: z.string().max(35) }),
+});
+
+const plannerYearSaveInfo = plannerYearChangeIdentifier.omit({ id: true }).extend({
+  data: z.object({ startYear: z.number().int(), name: z.string().max(35) }),
+});
+
+const plannerQuarterSaveInfo = plannerQuarterChangeIdentifier.omit({ id: true }).extend({
+  data: z.object({ name: z.string().max(35), courses: z.array(z.string()) }),
+});
+
+export type PlannerSaveInfo = z.infer<typeof roadmapPlannerChange>;
+export type PlannerYearSaveInfo = z.infer<typeof plannerYearSaveInfo>;
+export type PlannerQuarterSaveInfo = z.infer<typeof plannerQuarterSaveInfo>;
+export type RoadmapSaveInfo = PlannerSaveInfo | PlannerYearSaveInfo | PlannerQuarterSaveInfo;
+
+const plannerQuarterDiffs = z.object({
+  updatedQuarters: z.array(plannerQuarterSaveInfo),
+});
+
+const plannerYearDiffs = plannerQuarterDiffs.extend({
+  deletedQuarters: z.array(plannerQuarterChangeIdentifier),
+  newQuarters: z.array(plannerQuarterSaveInfo),
+  updatedYears: z.array(plannerYearSaveInfo),
+});
+
+const plannerDiffs = plannerYearDiffs.extend({
+  deletedYears: z.array(plannerYearChangeIdentifier),
+  newYears: z.array(plannerYearSaveInfo),
+  updatedPlanners: z.array(roadmapPlannerChange),
+});
+
+export const roadmapDiffs = plannerDiffs.extend({
+  deletedPlanners: z.array(plannerChangeIdentifier),
+  newPlanners: z.array(roadmapPlannerChange),
+  overwrite: z.boolean().optional(),
+});
+
+export type PlannerQuarterDiffs = z.infer<typeof plannerQuarterDiffs>;
+export type PlannerYearDiffs = z.infer<typeof plannerYearDiffs>;
+export type PlannerDiffs = z.infer<typeof plannerDiffs>;
+export type RoadmapDiffs = z.infer<typeof roadmapDiffs>;

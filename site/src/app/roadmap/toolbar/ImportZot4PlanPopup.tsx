@@ -2,10 +2,10 @@
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
 import { Button as Button2, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, addRoadmapPlan } from '../../../store/slices/roadmapSlice.ts';
+import { setPlanIndex, selectAllPlans, getNextPlannerTempId } from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
-import { collapseAllPlanners, expandAllPlanners, makeUniquePlanName, saveRoadmap } from '../../../helpers/planner.ts';
+import { expandAllPlanners, makeUniquePlanName } from '../../../helpers/planner.ts';
 import { markTransfersAsUnread } from '../../../helpers/transferCredits.ts';
 import spawnToast from '../../../helpers/toastify.ts';
 import helpImage from '../../../asset/zot4plan-import-help.png';
@@ -17,6 +17,8 @@ import Image from 'next/image';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Button } from '@mui/material';
+import { addPlanner } from '../../../helpers/roadmapEdits.ts';
+import { useReviseAndSaveRoadmap } from '../../../hooks/planner.ts';
 
 const ImportZot4PlanPopup: FC = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +29,8 @@ const ImportZot4PlanPopup: FC = () => {
   const [busy, setBusy] = useState(false);
   const allPlanData = useAppSelector(selectAllPlans);
   const apExams = useTransferredCredits().ap;
+  const nextPlanTempId = useAppSelector(getNextPlannerTempId);
+  const reviseAndSaveRoadmap = useReviseAndSaveRoadmap();
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
@@ -34,6 +38,7 @@ const ImportZot4PlanPopup: FC = () => {
       const { savedRoadmap, apExams: z4pApExams } = await trpc.zot4PlanImport.getScheduleFormatted.query({
         scheduleName: schedName,
         studentYear: currYear,
+        temporaryId: nextPlanTempId,
       });
 
       // Combine added AP exams with AP exams from Zot4Plan; ignore any exams that were already added
@@ -76,12 +81,9 @@ const ImportZot4PlanPopup: FC = () => {
         spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
       }
       expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
-      const updatedPlans = [...allPlanData, expandedPlanners[0]];
-      dispatch(addRoadmapPlan(expandedPlanners[0]));
-      dispatch(setPlanIndex(updatedPlans.length - 1));
-
-      const collapsed = collapseAllPlanners(updatedPlans);
-      await saveRoadmap(isLoggedIn, collapsed, true);
+      const revision = addPlanner(nextPlanTempId, expandedPlanners[0].name, expandedPlanners[0].content.yearPlans);
+      reviseAndSaveRoadmap(revision, true);
+      dispatch(setPlanIndex(allPlanData.length));
     } catch (err) {
       // Notify the user
       spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
