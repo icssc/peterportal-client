@@ -10,6 +10,7 @@
     text-align: center;
     justify-content: center;
   }
+
   .form-group {
     margin-bottom: 0;
   }
@@ -21,6 +22,17 @@
   font-size: 16px;
 }
 
+.filter-group {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+p.filter-placeholder {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 [data-theme='dark'] {
   .search-bar,
   .search-bar:focus,
@@ -29,6 +41,7 @@
     background-color: var(--overlay1);
     border-color: var(--overlay2);
   }
+
   .search-bar:focus {
     border-color: #80bdff;
   }
