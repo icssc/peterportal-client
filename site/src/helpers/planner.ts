@@ -15,7 +15,7 @@ import {
   PrerequisiteTree,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
-import { RoadmapPlan, defaultPlan } from '../store/slices/roadmapSlice';
+import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
   CourseGQLData,
@@ -23,10 +23,12 @@ import {
   PlannerData,
   PlannerQuarterData,
   PlannerYearData,
+  RoadmapPlan,
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import spawnToast from './toastify';
+import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -100,7 +102,7 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
 
 export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] => {
   return plans.map((p) => ({
-    ...(p.id ? { id: p.id } : {}),
+    id: p.id,
     name: p.name,
     content: collapsePlanner(p.content.yearPlans),
   }));
@@ -141,32 +143,35 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<RoadmapPlan[]> => {
   return await Promise.all(
     plans.map(async (p) => {
-      const content = await expandPlanner(p.content);
-      return { ...(p.id ? { id: p.id } : {}), name: p.name, content: { yearPlans: content, invalidCourses: [] } };
+      const yearPlans = await expandPlanner(p.content);
+      const planContent = { yearPlans, invalidCourses: [] };
+      return { id: p.id, name: p.name, content: planContent };
     }),
   );
 };
 
-function loadLocalRoadmap(): SavedRoadmap | LegacyRoadmap {
+type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap;
+
+export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
+  const emptyRoadmap: SavedRoadmap = {
+    planners: [
+      {
+        id: -1,
+        name: defaultPlan.name,
+        content: [defaultYear() as SavedPlannerYearData],
+      },
+    ],
+  };
+
   let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
   try {
     localRoadmap = JSON.parse(localStorage.roadmap);
   } catch {
     /* ignore */
   }
-  const EMPTY_ROADMAP_STR = JSON.stringify({
-    planners: [{ name: defaultPlan.name, content: [defaultYear()] }],
-    transfers: [],
-  } as Omit<SavedRoadmap, 'timestamp'>);
 
-  return localRoadmap ?? JSON.parse(EMPTY_ROADMAP_STR);
+  return (localRoadmap ?? emptyRoadmap) as T;
 }
-
-export const loadRoadmap = async (isLoggedIn: boolean) => {
-  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
-  const localRoadmap = loadLocalRoadmap() as SavedRoadmap;
-  return { accountRoadmap, localRoadmap };
-};
 
 // Adding Multiplan
 function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
@@ -178,6 +183,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
     return {
       planners: [
         {
+          id: -1,
           name: defaultPlan.name,
           content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
         },
@@ -188,20 +194,10 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
   }
 }
 
-enum RoadmapVersionKey {
-  SinglePlanner = '1',
-  MultiPlanner = '2',
-  RedesignedTransfers = '3',
-}
-
 // Upgrading Transfers
 async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
-  // Avoid issues with double first render
-  if (!transfers.length || localStorage.roadmap__versionKey === RoadmapVersionKey.RedesignedTransfers) {
-    return false; // nothing to convert
-  }
+  if (!transfers.length) return false; // nothing to convert
 
-  localStorage.roadmap__versionKey = RoadmapVersionKey.RedesignedTransfers;
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
   const { courses, ap, other } = response;
 
@@ -222,36 +218,66 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Leg
  * @param roadmap The roadmap whose transfers to upgrade
  */
 async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
-  const legacyTransfers = roadmap.transfers;
-  const updatedRoadmap = { ...roadmap, transfers: [] };
+  const legacyTransfers = roadmap.transfers ?? [];
+  const updatedRoadmap = { ...roadmap };
+  delete updatedRoadmap.transfers;
   const complete = await saveUpgradedTransfers(updatedRoadmap, legacyTransfers);
   return complete ? updatedRoadmap : roadmap;
 }
 
-// Upgrading Entire Roadmap
-/**
- * Function to upgrade a local roadmap. Gets called BEFORE user data is loaded
- */
-export async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
-  const localRoadmap = loadLocalRoadmap();
-  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
-  const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
-  return roadmapWithoutLegacyTransfers;
+// Adding IDs to roadmaps
+function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
+  let nextId = Math.min(0, ...roadmap.planners.map((p) => p.id ?? 0)) - 1;
+  roadmap.planners.forEach((p) => {
+    if (p.id) return;
+    p.id = nextId;
+    nextId--;
+  });
+  return roadmap;
 }
 
-export const saveRoadmap = async (isLoggedIn: boolean, planners: SavedPlannerData[], showToasts: boolean = true) => {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, transfers: [] };
+// Upgrading Entire Roadmap
+async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
+  const localRoadmap = readLocalRoadmap();
+  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
+  const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
+  const roadmapWithIds = addIdsToLocalRoadmap(roadmapWithoutLegacyTransfers);
+  return roadmapWithIds;
+}
+
+/**
+ * Loads the roadmap saved to local storage, where "load" is defined as reading, upgrading, then returning.
+ * @returns The local roadmap after performing any necessary upgrades
+ */
+export const loadRoadmap = async (isLoggedIn: boolean) => {
+  const accountRoadmap = isLoggedIn ? ((await trpc.roadmaps.get.query()) ?? null) : null;
+  const localRoadmap = await upgradeLocalRoadmap();
+  return { accountRoadmap, localRoadmap };
+};
+
+function saveLocalRoadmap(planners: SavedPlannerData[]) {
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
+}
 
-  const showMessage = showToasts ? spawnToast : (str: string) => str;
+export const saveRoadmap = async (
+  isLoggedIn: boolean,
+  lastSavedPlanners: SavedPlannerData[] | null,
+  planners: SavedPlannerData[],
+  showToasts: boolean,
+) => {
+  saveLocalRoadmap(planners);
 
-  const SAVED_LOCALLY_MESSAGE = 'Roadmap saved locally! Log in to save it to your account.';
-  if (!isLoggedIn) return showMessage(SAVED_LOCALLY_MESSAGE);
+  const showMessage = showToasts ? spawnToast : () => {};
+  if (!isLoggedIn) return showMessage('Roadmap saved locally! Log in to save it to your account');
+
+  const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
+  changes.overwrite = !lastSavedPlanners;
 
   await trpc.roadmaps.save
-    .mutate(roadmap)
+    .mutate(changes)
     .then(() => showMessage('Roadmap saved to your account!'))
-    .catch(() => showMessage(SAVED_LOCALLY_MESSAGE));
+    .catch(() => showMessage('Unable to save roadmap to your account'));
 };
 
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
@@ -273,9 +299,9 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
       quarter.courses.forEach((course, courseIndex) => {
         if (!course.prerequisiteTree) return;
 
-        const { prerequisiteTree: prerequisite, corequisites: corequisite } = course;
+        const prerequisite = course.prerequisiteTree;
 
-        const incomplete = validatePrerequisites({ taken, prerequisite, taking, corequisite });
+        const incomplete = validatePrerequisites({ taken, prerequisite, taking });
         if (incomplete.size === 0) return;
 
         // prerequisite not fulfilled, has some required classes to take
@@ -310,18 +336,26 @@ interface ValidationInput<PreqrequisiteType> {
   prerequisite: PreqrequisiteType;
   /** The set of courses being taken in the same quarter */
   taking: Set<string>;
-  /** The corequisite text of the course, typically a single course name */
-  corequisite: string;
 }
 
 const validateCoursePrerequisite = (input: ValidationInput<Prerequisite>) => {
-  const { prerequisite, taken, taking, corequisite } = input;
-  const id = prerequisite.prereqType === 'course' ? prerequisite.courseId : prerequisite.examName;
+  const { prerequisite, taken, taking } = input;
 
+  //checking prereq type (coures and exam)
+  const prereqIsCourse = prerequisite.prereqType === 'course';
+
+  //decide whether coures or exam
+  const id = prereqIsCourse ? prerequisite.courseId : prerequisite.examName;
+
+  // check if already done
   const previouslyComplete = taken.has(id);
-  const takingCorequisite = corequisite.trim() === id && taking.has(id);
+  if (previouslyComplete) return new Set<string>();
 
-  if (previouslyComplete || takingCorequisite) return new Set<string>();
+  // checking if the course is a coreq to take in the same quarter
+  const isCoreq = prereqIsCourse && prerequisite.coreq;
+  if (isCoreq && taking.has(id)) return new Set<string>();
+
+  //the course hasn't been taken
   return new Set([id]);
 };
 
