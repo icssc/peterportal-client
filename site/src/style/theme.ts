@@ -32,9 +32,6 @@ export let theme = createTheme({
     dark: { palette: { mode: 'dark', ...palette } },
     light: { palette: { mode: 'light', ...palette } },
   },
-  typography: {
-    fontFamily: ['Roboto', 'Open Sans'].join(','),
-  },
   spacing: 4,
 });
 
