@@ -31,11 +31,12 @@ const UncategorizedMenuTile: FC<{ course: TransferWithUnread<TransferredUncatego
   return <MenuTile title={name ?? ''} units={units ?? 0} setUnits={setUnits} deleteFn={deleteFn} unread={unread} />;
 };
 
-const UncategorizedCreditInput: FC = () => {
+const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUncategorized>[] }> = ({ courses }) => {
   const dispatch = useAppDispatch();
   const [name, setName] = useState('');
   const [units, setUnits] = useState('');
   const [error, setError] = useState(false);
+  const existingCourseNames = courses.map((course) => course.name);
 
   const updateName = (newName: string) => {
     if (newName === '' || newName.length <= 20) {
@@ -56,7 +57,7 @@ const UncategorizedCreditInput: FC = () => {
   };
 
   const handleSubmit = () => {
-    if (name === '' || units === '') {
+    if (name === '' || units === '' || existingCourseNames.includes(name)) {
       setError(true);
       return;
     }
@@ -117,7 +118,7 @@ const UncategorizedCreditsSection: FC = () => {
         <UncategorizedMenuTile key={`${course.name}-${course.units}`} course={course} />
       ))}
 
-      <UncategorizedCreditInput />
+      <UncategorizedCreditInput courses={courses} />
     </MenuSection>
   );
 };
