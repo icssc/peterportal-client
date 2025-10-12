@@ -48,7 +48,11 @@ const SideBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/" className={pathname === '/search/courses' ? 'sidebar-active' : ''} onClick={closeSidebar}>
+          <Link
+            href="/search/courses"
+            className={pathname === '/search/courses' ? 'sidebar-active' : ''}
+            onClick={closeSidebar}
+          >
             <div>
               <ListAltRoundedIcon className="sidebar-icon" />
             </div>
