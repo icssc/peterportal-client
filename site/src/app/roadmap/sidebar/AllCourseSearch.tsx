@@ -24,7 +24,7 @@ const AllCourseSearch: FC = () => {
   const shownCourses = deepCopy(showSavedCourses ? savedCourses : results) as CourseGQLData[];
   const setDraggedItem = (event: SortableEvent) => {
     const course = shownCourses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
+    dispatch(setActiveCourse({ course }));
   };
 
   const clearedCourses = useClearedCourses();
