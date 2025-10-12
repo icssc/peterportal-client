@@ -126,5 +126,21 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiRating: {
+      styleOverrides: {
+        sizeLarge: {
+          fontSize: '44px',
+        },
+        iconEmpty: {
+          color: 'white',
+        },
+        iconFilled: {
+          color: theme.palette.primary.main,
+        },
+        iconHover: {
+          opacity: '0.6',
+        },
+      },
+    },
   },
 });
