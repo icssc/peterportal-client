@@ -107,10 +107,10 @@ const UncategorizedCreditsSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
 
   return (
-    <MenuSection title="Uncategorized Credits">
+    <MenuSection title="Elective Credits">
       <SectionDescription>
-        These items were not automatically recognized as a course or AP Exam. Add the equivalent item manually, or leave
-        these items as elective credits.
+        Elective credits count towards your total units but will not clear prerequisites. If an item should clear
+        prerequisites, consider adding its UCI equivalent in the Courses or AP Exams section instead.
       </SectionDescription>
 
       {courses.map((course) => (
