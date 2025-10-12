@@ -112,8 +112,10 @@ const convertIntoSavedPlanner = (
   originalScheduleYears: Zot4PlanYears,
   scheduleName: string,
   startYear: number,
+  temporaryId: number,
 ): SavedPlannerData => {
   const converted: SavedPlannerData = {
+    id: temporaryId,
     name: scheduleName,
     content: [],
   };
@@ -178,13 +180,11 @@ const convertIntoSavedRoadmap = (
   originalSchedule: Zot4PlanSchedule,
   scheduleName: string,
   startYear: number,
+  temporaryId: number,
 ): SavedRoadmap => {
   // Convert the individual components
-  const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear);
-  const res: SavedRoadmap = {
-    planners: [convertedPlanner],
-    transfers: [],
-  };
+  const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear, temporaryId);
+  const res: SavedRoadmap = { planners: [convertedPlanner] };
   return res;
 };
 
@@ -194,13 +194,14 @@ const zot4PlanImportRouter = router({
    * and labeled with years based on the current year and the student's year
    */
   getScheduleFormatted: publicProcedure
-    .input(z.object({ scheduleName: z.string(), studentYear: z.string() }))
+    .input(z.object({ scheduleName: z.string(), studentYear: z.string(), temporaryId: z.number().max(-1) }))
     .query(async ({ input, ctx }) => {
       const originalScheduleRaw = await getFromZot4Plan(input.scheduleName);
       const savedRoadmap = convertIntoSavedRoadmap(
         originalScheduleRaw,
         input.scheduleName,
         getStartYear(input.studentYear),
+        input.temporaryId,
       );
       const apExams = await getApExamsFromZot4Plan(originalScheduleRaw);
       await db.insert(zot4PlanImports).values({ scheduleId: input.scheduleName, userId: ctx.session.userId });

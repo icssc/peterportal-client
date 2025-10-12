@@ -7,16 +7,23 @@ import {
   zodTransferredAPExam,
   TransferredAPExam,
   zodTransferredUncategorized,
+  zodSelectedApReward,
 } from '@peterportal/types';
 import { publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { db } from '../db';
-import { transferredApExam, transferredGe } from '../db/schema';
+import { selectedApReward, transferredApExam, transferredGe } from '../db/schema';
 import { APExam } from '@peterportal/types';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { transferredCourse } from '../db/schema';
 import { transferredMisc } from '../db/schema';
 import { organizeLegacyTransfers } from '../helpers/transferCredits';
+
+interface selectedReward {
+  examName: string;
+  path: string;
+  selectedIndex: number;
+}
 
 const transferCreditsRouter = router({
   getTransferredCourses: userProcedure.query(async ({ ctx }) => {
@@ -88,6 +95,40 @@ const transferCreditsRouter = router({
       .update(transferredApExam)
       .set({ score: score, units: units })
       .where(and(eq(transferredApExam.userId, userId), eq(transferredApExam.examName, examName)));
+  }),
+  getSelectedAPRewards: userProcedure.query(async ({ ctx }): Promise<selectedReward[]> => {
+    const userId = ctx.session.userId!;
+
+    const res = await db
+      .select({
+        examName: selectedApReward.examName,
+        path: selectedApReward.path,
+        selectedIndex: selectedApReward.selectedIndex,
+      })
+      .from(selectedApReward)
+      .where(eq(selectedApReward.userId, userId));
+    return res.map((reward) => ({
+      examName: reward.examName,
+      path: reward.path,
+      selectedIndex: reward.selectedIndex,
+    }));
+  }),
+  setSelectedAPReward: userProcedure.input(zodSelectedApReward).mutation(async ({ input, ctx }) => {
+    const userId = ctx.session.userId!;
+    const valuesDict = {
+      userId: userId,
+      examName: input.examName,
+      path: input.path,
+      selectedIndex: input.selectedIndex,
+    };
+
+    await db
+      .insert(selectedApReward)
+      .values(valuesDict)
+      .onConflictDoUpdate({
+        target: [selectedApReward.userId, selectedApReward.examName, selectedApReward.path],
+        set: { selectedIndex: valuesDict.selectedIndex },
+      });
   }),
   getTransferredGEs: userProcedure.query(async ({ ctx }): Promise<TransferredGE[]> => {
     const response = await db
@@ -164,7 +205,11 @@ const transferCreditsRouter = router({
       if (input.ap.length) {
         const addApQuery = db
           .insert(transferredApExam)
-          .values(input.ap.map(appendUserId))
+          .values(
+            input.ap.map((ap) => {
+              return { ...appendUserId(ap), score: ap.score >= 1 ? ap.score : null };
+            }),
+          )
           .onConflictDoUpdate({
             target: [transferredApExam.userId, transferredApExam.examName],
             set: {

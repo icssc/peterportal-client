@@ -19,6 +19,13 @@ export const zodTransferredAPExam = z.object({
 });
 export type TransferredAPExam = z.infer<typeof zodTransferredAPExam>;
 
+export const zodSelectedApReward = z.object({
+  examName: z.string(),
+  path: z.string(),
+  selectedIndex: z.number(),
+});
+export type SelectedApReward = z.infer<typeof zodSelectedApReward>;
+
 export const zodTransferredGE = z.object({
   geName: z.enum(ALL_GE_NAMES),
   numberOfCourses: z.number(),
