@@ -77,19 +77,6 @@ const YearModal: FC<YearModalProps> = (props) => {
     setShow(false);
   };
 
-  const saveYear = () => {
-    if (name === '' || year < 1000 || year > 9999 || Number.isNaN(year)) {
-      return setValidated(false);
-    }
-
-    setValidated(false);
-    saveHandler({
-      startYear: year,
-      name: name.trim(),
-      quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
-    });
-  };
-
   return (
     <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
       <Modal.Header closeButton>

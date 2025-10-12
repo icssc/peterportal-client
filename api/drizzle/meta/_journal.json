@@ -99,34 +99,6 @@
       "when": 1749922490915,
       "tag": "0013_modern_rhino",
       "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "7",
-      "when": 1757460943143,
-      "tag": "0014_condemned_switch",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "7",
-      "when": 1757462398645,
-      "tag": "0015_classy_vision",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "7",
-      "when": 1757468157009,
-      "tag": "0016_clear_iron_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 17,
-      "version": "7",
-      "when": 1757696396716,
-      "tag": "0017_romantic_scream",
-      "breakpoints": true
     }
   ]
 }

@@ -85,56 +85,8 @@ export const planner = pgTable(
       .notNull(),
     name: text('name').notNull(),
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
-    shareId: text('share_id'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
-);
-
-export const plannerYear = pgTable(
-  'planner_year',
-  {
-    plannerId: integer('planner_id')
-      .references(() => planner.id, { onDelete: 'cascade' })
-      .notNull(),
-    startYear: integer('start_year').notNull(),
-    name: text('name').notNull(),
-  },
-  (table) => [primaryKey({ columns: [table.plannerId, table.startYear] })],
-);
-
-export const plannerQuarter = pgTable(
-  'planner_quarter',
-  {
-    plannerId: integer('planner_id').notNull(),
-    startYear: integer('start_year').notNull(),
-    quarterName: text('quarter_name').notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName] }),
-    foreignKey({
-      columns: [table.plannerId, table.startYear],
-      foreignColumns: [plannerYear.plannerId, plannerYear.startYear],
-    }).onDelete('cascade'),
-  ],
-);
-
-export const plannerCourse = pgTable(
-  'planner_course',
-  {
-    plannerId: integer('planner_id').notNull(),
-    startYear: integer('start_year').notNull(),
-    quarterName: text('quarter_name').notNull(),
-    index: integer('index').notNull(),
-    courseId: text('course_id').notNull(),
-    units: real('units'),
-  },
-  (table) => [
-    primaryKey({ columns: [table.plannerId, table.startYear, table.quarterName, table.index] }),
-    foreignKey({
-      columns: [table.plannerId, table.startYear, table.quarterName],
-      foreignColumns: [plannerQuarter.plannerId, plannerQuarter.startYear, plannerQuarter.quarterName],
-    }).onDelete('cascade'),
-  ],
 );
 
 export const plannerMajor = pgTable(
@@ -142,7 +94,7 @@ export const plannerMajor = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     plannerId: integer('planner_id')
-      .references(() => planner.id, { onDelete: 'cascade' })
+      .references(() => planner.id)
       .notNull(),
     majorId: text('major_id').notNull(),
     specializationId: text('specialization_id'),
@@ -155,7 +107,7 @@ export const plannerMinor = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     plannerId: integer('planner_id')
-      .references(() => planner.id, { onDelete: 'cascade' })
+      .references(() => planner.id)
       .notNull(),
     minorId: text('minor_id'),
   },

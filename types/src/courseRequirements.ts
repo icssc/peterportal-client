@@ -1,7 +1,7 @@
 import { components, operations } from './generated/anteater-api-types';
 
 export type GEName =
-  operations['rawGrades']['responses'][200]['content']['application/json']['data'][number]['geCategories'][number];
+  operations['apExams']['responses'][200]['content']['application/json']['data'][number]['rewards'][number]['geCategories'][number];
 
 export type GETitle =
   operations['courseById']['responses'][200]['content']['application/json']['data']['geList'][number];

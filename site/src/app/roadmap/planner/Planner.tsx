@@ -6,14 +6,23 @@ import Header from '../toolbar/Header';
 import Year from './Year';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { useAppSelector } from '../../../store/hooks';
-import { selectYearPlans } from '../../../store/slices/roadmapSlice';
+import { RoadmapPlan, selectAllPlans, selectYearPlans } from '../../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
+import { collapseAllPlanners, saveRoadmap } from '../../../helpers/planner';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 const Planner: FC = () => {
+  const allPlanData = useAppSelector(selectAllPlans);
   const currentPlanData = useAppSelector(selectYearPlans);
   const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
   const transferred = useTransferredCredits();
+  const isLoggedIn = useIsLoggedIn();
+
+  const handleSave = async (plans?: RoadmapPlan[]) => {
+    const collapsed = collapseAllPlanners(plans?.length ? plans : allPlanData);
+    saveRoadmap(isLoggedIn, collapsed, true);
+  };
 
   const calculatePlannerOverviewStats = () => {
     let unitCount = 0;
@@ -39,7 +48,12 @@ const Planner: FC = () => {
   return (
     <div className="planner">
       <PlannerLoader />
-      <Header courseCount={courseCount} unitCount={unitCount} missingPrerequisites={new Set()} />
+      <Header
+        courseCount={courseCount}
+        unitCount={unitCount}
+        saveRoadmap={handleSave}
+        missingPrerequisites={new Set()}
+      />
       {roadmapLoading ? (
         <LoadingSpinner />
       ) : (

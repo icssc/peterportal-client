@@ -10,8 +10,6 @@ import {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
-  setSelectedApRewards,
-  updateSelectedApReward,
   TransferWithUnread,
 } from '../../../store/slices/transferCreditsSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -28,13 +26,19 @@ interface APExamOption {
   label: string;
 }
 
-interface RewardsSelectProps {
-  selectedIndex: number | undefined;
-  options: string[];
-  onSelect: (selected: number) => void;
-}
-
 type CoursesGrantedTree = string | { AND: CoursesGrantedTree[] } | { OR: CoursesGrantedTree[] };
+
+function formatCourses(tree: CoursesGrantedTree): string {
+  if (typeof tree === 'string') return tree;
+
+  const isAnd = 'AND' in tree;
+  const children = isAnd ? tree.AND : (tree as { OR: CoursesGrantedTree[] }).OR;
+  const connector = isAnd ? ', ' : ' or ';
+
+  const formatted = children.map(formatCourses);
+
+  return formatted.join(connector);
+}
 
 const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   return (
@@ -56,107 +60,25 @@ const ScoreSelection: FC<ScoreSelectionProps> = ({ score, setScore }) => {
   );
 };
 
-const RewardsSelect: FC<RewardsSelectProps> = ({ selectedIndex = 0, options, onSelect }) => {
-  return (
-    <div className="select">
-      <select value={selectedIndex} onChange={(event) => onSelect(Number(event.target.value))} className="select-box">
-        <optgroup label="Options">
-          {options.map((opt, i) => (
-            <option key={i} value={i}>
-              {opt}
-            </option>
-          ))}
-        </optgroup>
-      </select>
-    </div>
-  );
-};
-
-const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({ examName, coursesGranted }) => {
-  const selectedApRewards = useAppSelector((state) => state.transferCredits.selectedApRewards);
-  const selectedReward = selectedApRewards.find((reward) => reward.examName === examName);
-  const dispatch = useAppDispatch();
-
-  const handleSelect = (selectedIndex: number) => {
-    // path column to be removed in a future PR
-    dispatch(updateSelectedApReward({ examName, path: '', selectedIndex }));
-    trpc.transferCredits.setSelectedAPReward.mutate({ examName, path: '', selectedIndex });
-  };
-
-  const formatCourses = (tree: CoursesGrantedTree): string => {
-    if (typeof tree === 'string') return tree;
-    if ('AND' in tree) return tree.AND.map(formatCourses).join(', ');
-    if ('OR' in tree) return tree.OR.map(formatCourses).join(' or ');
-    return 'This exam does not clear any courses.';
-  };
-
-  const renderTree = (tree: CoursesGrantedTree): React.ReactNode => {
-    if (tree === '') {
-      return <span>This exam does not clear any courses.</span>;
-    }
-    if (typeof tree === 'string') {
-      return <span>{tree}</span>;
-    }
-    if ('AND' in tree && tree.AND.length > 0) {
-      return (
-        <span>
-          {tree.AND.map((subtree, idx) => (
-            <span key={idx}>
-              {renderTree(subtree)}
-              {idx < tree.AND.length - 1 && ' and '}
-            </span>
-          ))}
-        </span>
-      );
-    }
-    if ('OR' in tree) {
-      const options = tree.OR.map(formatCourses);
-      return (
-        <span>
-          <RewardsSelect selectedIndex={selectedReward?.selectedIndex ?? 0} options={options} onSelect={handleSelect} />
-        </span>
-      );
-    }
-    return <div>This exam does not clear any courses.</div>;
-  };
-
-  return <div className="rewards">{renderTree(coursesGranted)}</div>;
-};
-
 const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({ exam }) => {
   const { examName, score, units, unread } = exam;
 
   const updateScore = (value: number) => handleUpdate(value, units);
   const updateUnits = (value: number) => handleUpdate(score, value);
+
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
-  const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
 
   const selectBox = <ScoreSelection score={score} setScore={updateScore} />;
 
-  const getApplicableReward = useCallback(
-    (score: number) => {
-      for (const reward of apiExamInfo?.rewards ?? []) {
-        if (!reward.acceptableScores.includes(score)) continue;
-        return reward;
-      }
-      return null;
-    },
-    [apiExamInfo],
-  );
-
   const handleUpdate = useCallback(
     async (newScore: number, newUnits: number) => {
-      if (newScore != score) {
-        const reward = getApplicableReward(newScore);
-        newUnits = reward?.unitsGranted ?? 0;
-      }
       dispatch(updateUserExam({ examName, score: newScore, units: newUnits }));
       if (!isLoggedIn) return;
       trpc.transferCredits.updateUserAPExam.mutate({ examName, score: newScore, units: newUnits });
     },
-    [dispatch, examName, getApplicableReward, isLoggedIn, score],
+    [dispatch, examName, isLoggedIn],
   );
 
   const deleteFn = useCallback(() => {
@@ -165,7 +87,16 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
     trpc.transferCredits.deleteUserAPExam.mutate(examName);
   }, [dispatch, examName, isLoggedIn]);
 
-  const coursesGranted = (getApplicableReward(score)?.coursesGranted ?? '') as CoursesGrantedTree;
+  const apiExamInfo = apExamInfo.find((exam) => exam.fullName === examName);
+  let message = '';
+
+  for (const reward of apiExamInfo?.rewards ?? []) {
+    if (!reward.acceptableScores.includes(score)) continue;
+    const { coursesGranted } = reward;
+    const formatted = formatCourses(coursesGranted as CoursesGrantedTree);
+    if (formatted) message += `${message ? '\n' : ''}${formatted}`;
+    break;
+  }
 
   return (
     <MenuTile
@@ -176,7 +107,7 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
       deleteFn={deleteFn}
       unread={unread}
     >
-      <Rewards examName={examName} coursesGranted={coursesGranted} />
+      <p>{message ? 'Clears ' + message : 'This exam does not clear any courses'}</p>
     </MenuTile>
   );
 };
@@ -190,13 +121,6 @@ const APExamsSection: FC = () => {
   const [examName, setExamName] = useState<string | null>(null);
   const [score, setScore] = useState<number | null>(null);
 
-  // Set selected rewards
-  useEffect(() => {
-    trpc.transferCredits.getSelectedAPRewards.query().then((rewards) => {
-      dispatch(setSelectedApRewards(rewards));
-    });
-  }, [dispatch]);
-
   // Save AP Exam to store
   useEffect(() => {
     if (!examName || !score) return;
@@ -207,7 +131,6 @@ const APExamsSection: FC = () => {
       dispatch(addUserAPExam({ examName, score, units }));
       if (isLoggedIn) trpc.transferCredits.addUserAPExam.mutate({ examName, score, units });
     }
-
     // Remove exam from select options
     setExamName(null);
     setScore(null);

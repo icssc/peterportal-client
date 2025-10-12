@@ -30,6 +30,3 @@ site/build/
 .open-next
 .next
 tsconfig.tsbuildinfo
-
-# Jest
-site/coverage

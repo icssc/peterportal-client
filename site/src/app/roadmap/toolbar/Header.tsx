@@ -1,5 +1,5 @@
 'use client';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { pluralize } from '../../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
@@ -11,25 +11,17 @@ import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup } from '@mui/material';
-import { useSaveRoadmap } from '../../../hooks/planner';
 
 interface HeaderProps {
   courseCount: number;
   unitCount: number;
   missingPrerequisites: Set<string>;
+  saveRoadmap: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
-  const saveRoadmap = useSaveRoadmap();
+const Header: FC<HeaderProps> = ({ courseCount, unitCount, saveRoadmap }) => {
   const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
-
-  const [saveInProgress, setSaveInProgress] = useState(false);
-
-  const handleSave = () => {
-    setSaveInProgress(true);
-    saveRoadmap(true).finally(() => setSaveInProgress(false));
-  };
 
   const toggleTransfers = () => {
     if (showTransfers) {
@@ -64,13 +56,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
             Transfer Credits
             <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
-          <Button
-            variant="text"
-            className="header-btn"
-            startIcon={<SaveIcon />}
-            loading={saveInProgress}
-            onClick={handleSave}
-          >
+          <Button variant="text" className="header-btn" startIcon={<SaveIcon />} onClick={saveRoadmap}>
             Save
           </Button>
         </ButtonGroup>

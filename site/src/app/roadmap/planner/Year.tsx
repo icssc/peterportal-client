@@ -3,8 +3,8 @@ import { FC, useRef, useState } from 'react';
 import './Year.scss';
 import { Button, Modal } from 'react-bootstrap';
 import Quarter from './Quarter';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { selectCurrentPlan, reviseRoadmap } from '../../../store/slices/roadmapSlice';
+import { useAppDispatch } from '../../../store/hooks';
+import { addQuarter, editYear, editName, deleteYear, deleteQuarter } from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
 
 import { PlannerYearData } from '../../../types/types';
@@ -14,8 +14,6 @@ import { Box, Card, Collapse, Divider, FormControl, IconButton } from '@mui/mate
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
-import spawnToast from '../../../helpers/toastify';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -67,13 +65,9 @@ interface DeleteYearModalProps {
 
 const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModalProps) => {
   const dispatch = useAppDispatch();
-  const currentPlan = useAppSelector(selectCurrentPlan);
-  const year = currentPlan.content.yearPlans[yearIndex];
-
   const handleDeleteYear = () => {
     setShow(false);
-    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.quarters);
-    dispatch(reviseRoadmap(revision));
+    dispatch(deleteYear({ yearIndex }));
   };
 
   return (
@@ -109,7 +103,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const yearContainerRef = useRef<HTMLDivElement>(null);
-  const currentPlan = useAppSelector(selectCurrentPlan);
 
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
@@ -145,35 +138,26 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         show={showEditYear}
         setShow={setShowEditYear}
         saveHandler={({ startYear, name, quarters }) => {
-          const existing = data.quarters;
-          const addedQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
-          const removedQuarters = existing.filter(({ name }) => !quarters.find((q) => q.name === name));
-
-          const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
-            if (year === data || year.name !== name) return false;
-            spawnToast(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`, true);
-            return true;
-          });
-
-          if (hasNameConflict) return;
-
-          const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
-            if (year === data || year.startYear !== startYear) return false;
-            spawnToast(`Start year ${startYear} is already used by ${year.name}`, true);
-            return true;
-          });
-
-          if (hasStartYearConflict) return;
-
           setShowEditYear(false);
-
-          const revision = modifyPlannerYear(currentPlan.id, data, {
-            newName: name,
-            newStartYear: startYear,
-            addedQuarters,
-            removedQuarters,
+          if (startYear !== data.startYear) {
+            setPlaceholderYear(startYear);
+            dispatch(editYear({ startYear, index: yearIndex }));
+          }
+          if (name !== data.name) {
+            setPlaceholderName(name);
+            dispatch(editName({ name, index: yearIndex }));
+          }
+          const existing = data.quarters;
+          let removed = 0;
+          existing.forEach(({ name }, index) => {
+            const remove = !quarters.find((q) => q.name === name);
+            // Increment removed because the index of the quarters will change
+            if (remove) dispatch(deleteQuarter({ yearIndex, quarterIndex: index - removed++ }));
           });
-          if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+          const addQuarters = quarters.filter(({ name }) => !existing.find((q) => q.name === name));
+          for (const { name } of addQuarters) {
+            dispatch(addQuarter({ startYear, quarterData: { name, courses: [] } }));
+          }
         }}
         currentQuarters={data.quarters.map((q) => q.name)}
         type="edit"

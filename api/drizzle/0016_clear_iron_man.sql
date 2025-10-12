@@ -1,1 +1,0 @@
-ALTER TABLE "planner_year" RENAME COLUMN "year" TO "name";
