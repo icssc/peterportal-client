@@ -190,6 +190,7 @@ const ImportTranscriptPopup: FC = () => {
   const [filePath, setFilePath] = useState('');
   const [busy, setBusy] = useState(false);
   const isLoggedIn = useIsLoggedIn();
+  const nextPlanTempId = useAppSelector(getNextPlannerTempId);
 
   const currentAps = useTransferredCredits().ap;
   // App selector instead of useTransferredCredits.courses here because
@@ -251,11 +252,9 @@ const ImportTranscriptPopup: FC = () => {
       }
 
       const filename = filePath.replace(/.*(\\|\/)|\.[^.]*$/g, '');
-      const newPlan: RoadmapPlan = {
-        name: makeUniquePlanName(filename, allPlanData),
-        content: { yearPlans: Object.values(years), invalidCourses: [] },
-      };
-      dispatch(addRoadmapPlan(newPlan));
+      const planName = makeUniquePlanName(filename, allPlanData);
+      const revision = addPlanner(nextPlanTempId, planName, Object.values(years));
+      dispatch(reviseRoadmap(revision));
       dispatch(setPlanIndex(allPlanData.length));
 
       setShowModal(false);
