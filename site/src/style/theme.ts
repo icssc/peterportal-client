@@ -3,9 +3,11 @@ import { createTheme, PaletteOptions } from '@mui/material';
 const palette: PaletteOptions = {
   primary: {
     main: 'var(--blue-primary)',
+    mainChannel: 'var(--blue-primary)',
   },
   secondary: {
     main: 'var(--blue-secondary)',
+    mainChannel: 'var(--blue-secondary)',
   },
   error: {
     main: 'var(--red-primary)',
@@ -18,7 +20,9 @@ const palette: PaletteOptions = {
   },
   background: {
     default: 'var(--background)',
+    defaultChannel: 'var(--background)',
     paper: 'var(--overlay1)',
+    paperChannel: 'var(--overlay1)',
   },
   text: {
     primary: 'var(--text)',
