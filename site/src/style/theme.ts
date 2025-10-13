@@ -1,13 +1,25 @@
 import { createTheme, PaletteOptions } from '@mui/material';
 
+declare module '@mui/material/styles' {
+  interface SimplePaletteColorOptions {
+    mainChannel?: string;
+  }
+  interface TypeBackground {
+    defaultChannel?: string;
+    paperChannel?: string;
+  }
+}
+
+const blankChannelToken = '255 255 255';
+
 const palette: PaletteOptions = {
   primary: {
     main: 'var(--blue-primary)',
-    mainChannel: 'var(--blue-primary)',
+    mainChannel: blankChannelToken,
   },
   secondary: {
     main: 'var(--blue-secondary)',
-    mainChannel: 'var(--blue-secondary)',
+    mainChannel: blankChannelToken,
   },
   error: {
     main: 'var(--red-primary)',
@@ -20,9 +32,9 @@ const palette: PaletteOptions = {
   },
   background: {
     default: 'var(--background)',
-    defaultChannel: 'var(--background)',
+    defaultChannel: blankChannelToken,
     paper: 'var(--overlay1)',
-    paperChannel: 'var(--overlay1)',
+    paperChannel: blankChannelToken,
   },
   text: {
     primary: 'var(--text)',
