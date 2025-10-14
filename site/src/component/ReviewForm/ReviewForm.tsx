@@ -302,7 +302,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </Modal.Header>
       <Modal.Body>
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
-        <Box component="form" noValidate onSubmit={submitForm} className="ppc-modal-form">
+        <Box component="form" noValidate onSubmit={submitForm}>
           <div className="year-quarter-row">
             <FormControl error={showFormErrors && !yearTaken}>
               <FormLabel>Year</FormLabel>

@@ -278,15 +278,6 @@ div.ppc-popover.bs-popover-bottom {
   color: var(--blue-accent);
 }
 
-[data-theme='dark'] {
-  .ppc-modal-form {
-    .form-control,
-    .form-control:focus {
-      background-color: var(--overlay1);
-    }
-  }
-}
-
 .ppc-dropdown-btn {
   width: 192px;
   min-width: fit-content;

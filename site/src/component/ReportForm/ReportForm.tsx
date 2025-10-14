@@ -47,7 +47,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <h2>Report Review</h2>
       </Modal.Header>
       <Modal.Body>
-        <Box component="form" noValidate className="ppc-modal-form" onSubmit={submitReport}>
+        <Box component="form" noValidate onSubmit={submitReport}>
           <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
             <i>{props.reviewContent}</i>

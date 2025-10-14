@@ -277,7 +277,7 @@ const ImportTranscriptPopup: FC = () => {
           <h2>Import from Transcript</h2>
         </Modal.Header>
         <Modal.Body>
-          <Box component="form" noValidate className="ppc-modal-form">
+          <Box component="form" noValidate>
             Please upload an HTML copy of your unofficial transcript. To obtain this:
             <ol>
               <li>
