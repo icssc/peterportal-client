@@ -1,21 +1,46 @@
 import { createTheme, PaletteOptions } from '@mui/material';
 
-const lightPalette: PaletteOptions = {
-  mode: 'light',
+const sharedColors = {
   primary: {
     main: '#2484c6',
   },
-  secondary: {
-    main: '#5babe1',
-  },
-  error: {
-    main: '#ce0000',
+  accent: {
+    main: '#74d1f6',
   },
   warning: {
     main: '#ecad6d',
   },
   success: {
     main: 'green',
+  },
+  misc: {
+    yellow: '#f5d77f',
+    red: '#e7966d',
+    midGray: '#8d8d8d',
+    grayBlue: '#f5f6fc',
+    ringRoadWhite: '#ffffff',
+    gradeDistP: '#4ab486',
+    gradeDistNp: '#e36436',
+    springQuarter: '#ffc7df',
+  },
+};
+
+const lightPalette: PaletteOptions = {
+  mode: 'light',
+  ...sharedColors,
+  secondary: {
+    main: '#5babe1',
+  },
+  tertiary: {
+    main: '#a0ceee',
+  },
+  error: {
+    main: '#ce0000',
+  },
+  overlay: {
+    overlay1: '#fff',
+    overlay2: 'var(--mui-palette-misc-grayBlue)',
+    overlay3: '#fff',
   },
   background: {
     default: '#f5f6fc',
@@ -25,24 +50,30 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
+  misc: {
+    ...sharedColors.misc,
+    green: '#87c587',
+  },
 };
 
+// each overlay is about 5% brighter than the previous
+// roughly following: https://m2.material.io/design/color/dark-theme.html
 const darkPalette: PaletteOptions = {
   mode: 'dark',
-  primary: {
-    main: '#2484c6',
-  },
+  ...sharedColors,
   secondary: {
     main: '#185680',
+  },
+  tertiary: {
+    main: '#0b293c',
   },
   error: {
     main: '#ff3333',
   },
-  warning: {
-    main: '#ecad6d',
-  },
-  success: {
-    main: 'green',
+  overlay: {
+    overlay1: '#1e1e1e',
+    overlay2: '#292929',
+    overlay3: '#363636',
   },
   background: {
     default: '#121212',
@@ -51,6 +82,10 @@ const darkPalette: PaletteOptions = {
   text: {
     primary: '#fff',
     secondary: '#99999f',
+  },
+  misc: {
+    ...sharedColors.misc,
+    green: '#295629',
   },
 };
 

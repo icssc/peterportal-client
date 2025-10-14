@@ -1,27 +1,27 @@
 :root {
   --background: var(--mui-palette-background-default);
-  --overlay1: #fff;
-  --overlay2: var(--gray-blue);
-  --overlay3: #fff;
+  --overlay1: var(--mui-palette-overlay-overlay1);
+  --overlay2: var(--mui-palette-overlay-overlay2);
+  --overlay3: var(--mui-palette-overlay-overlay3);
   --text: var(--mui-palette-text-primary);
   --text-secondary: var(--mui-palette-text-secondary);
 
   --blue-primary: var(--mui-palette-primary-main);
   --blue-secondary: var(--mui-palette-secondary-main);
-  --blue-tertiary: #a0ceee;
-  --blue-accent: #74d1f6;
+  --blue-tertiary: var(--mui-palette-tertiary-main);
+  --blue-accent: var(--mui-palette-accent-main);
 
   --green-primary: var(--mui-palette-success-main);
   --red-primary: var(--mui-palette-error-main);
 
-  --green-secondary: #87c587;
-  --yellow-secondary: #f5d77f;
+  --green-secondary: var(--mui-palette-misc-green);
+  --yellow-secondary: var(--mui-palette-misc-yellow);
   --orange-secondary: var(--mui-palette-warning-main);
-  --red-secondary: #e7966d;
+  --red-secondary: var(--mui-palette-misc-red);
 
-  --mid-gray: #8d8d8d;
-  --gray-blue: #f5f6fc;
-  --ring-road-white: #ffffff;
+  --mid-gray: var(--mui-palette-misc-midGray);
+  --gray-blue: var(--mui-palette-misc-grayBlue);
+  --ring-road-white: var(--mui-palette-misc-ringRoadWhite);
 
   /* Unlike the secondary colors above, these secondary-light colors
   aren't overridden by the dark mode variants defined in the body
@@ -32,30 +32,17 @@
   --orange-secondary-light: var(--orange-secondary);
   --red-secondary-light: var(--red-secondary);
 
-  --gradedist-p: #4ab486;
-  --gradedist-np: #e36436;
-  --spring-quarter: #ffc7df;
+  --gradedist-p: var(--mui-palette-misc-gradeDistP);
+  --gradedist-np: var(--mui-palette-misc-gradeDistNp);
+  --spring-quarter: var(--mui-palette-misc-springQuarter);
 
   --border-radius: 8px;
   --border-primary: rgba(96, 97, 102, 0.5);
   --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
-// each overlay is about 5% brighter than the previous
-// roughly following: https://m2.material.io/design/color/dark-theme.html
 :root[data-theme='dark'] {
-  --background: var(--mui-palette-background-default);
-  --overlay1: #1e1e1e;
-  --overlay2: #292929;
-  --overlay3: #363636;
-  --text: var(--mui-palette-text-primary);
-  --text-secondary: var(--mui-palette-text-secondary);
   color-scheme: dark;
-
-  --blue-secondary: var(--mui-palette-secondary-main);
-  --blue-tertiary: #0b293c;
-  --red-primary: var(--mui-palette-error-main);
-  --green-secondary: #295629;
 
   --border-secondary: rgba(255, 255, 255, 0.12);
 }
