@@ -1,6 +1,6 @@
 .uncategorized-credit-input-row {
   display: flex;
-  align-items: center;
+  align-items: top;
   gap: 12px;
 
   .name-input {
@@ -9,5 +9,9 @@
 
   .unit-input {
     width: 30%;
+  }
+
+  .submit-button {
+    height: 40px;
   }
 }

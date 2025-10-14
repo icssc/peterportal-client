@@ -36,29 +36,35 @@ const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUnca
   const [name, setName] = useState('');
   const [units, setUnits] = useState('');
   const [error, setError] = useState(false);
+  const [errorText, setErrorText] = useState('');
   const existingCourseNames = courses.map((course) => course.name);
 
   const updateName = (newName: string) => {
-    if (newName === '' || newName.length <= 20) {
+    if (newName.length <= 20) {
       setName(newName);
       setError(false);
+      setErrorText('');
     } else {
       setError(true);
+      setErrorText('Name is too long');
     }
   };
 
   const updateUnits = (newUnits: string) => {
-    if (newUnits === '' || (parseFloat(newUnits) >= 0 && parseFloat(newUnits) < 1000)) {
+    if (newUnits == '' || (parseFloat(newUnits) >= 0 && parseFloat(newUnits) < 1000)) {
       setUnits(newUnits);
       setError(false);
+      setErrorText('');
     } else {
       setError(true);
+      setErrorText('');
     }
   };
 
   const handleSubmit = () => {
-    if (name === '' || units === '' || existingCourseNames.includes(name)) {
+    if (existingCourseNames.includes(name)) {
       setError(true);
+      setErrorText('Item already exists');
       return;
     }
 
@@ -69,6 +75,7 @@ const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUnca
     setName('');
     setUnits('');
     setError(false);
+    setErrorText('');
   };
 
   return (
@@ -83,6 +90,7 @@ const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUnca
         value={name}
         onChange={(e) => updateName(e.target.value)}
         error={error}
+        helperText={errorText}
       />
 
       <TextField
@@ -97,7 +105,12 @@ const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUnca
         error={error}
       />
 
-      <Button variant="contained" onClick={handleSubmit}>
+      <Button
+        className="submit-button"
+        variant="contained"
+        disabled={name === '' || units === ''}
+        onClick={handleSubmit}
+      >
         Add
       </Button>
     </div>
