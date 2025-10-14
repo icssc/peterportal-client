@@ -1,40 +1,64 @@
 import { createTheme, PaletteOptions } from '@mui/material';
 
-const palette: PaletteOptions = {
+const lightPalette: PaletteOptions = {
+  mode: 'light',
   primary: {
-    main: 'var(--blue-primary)',
-    mainChannel: 'var(--blue-primary)',
+    main: '#2484c6',
   },
   secondary: {
-    main: 'var(--blue-secondary)',
-    mainChannel: 'var(--blue-secondary)',
+    main: '#5babe1',
   },
   error: {
-    main: 'var(--red-primary)',
+    main: '#ce0000',
   },
   warning: {
-    main: 'var(--orange-secondary)',
+    main: '#ecad6d',
   },
   success: {
-    main: 'var(--green-primary)',
+    main: 'green',
   },
   background: {
-    default: 'var(--background)',
-    defaultChannel: 'var(--background)',
-    paper: 'var(--overlay1)',
-    paperChannel: 'var(--overlay1)',
+    default: '#f5f6fc',
+    paper: '#fff',
   },
   text: {
-    primary: 'var(--text)',
-    secondary: 'var(--text-secondary)',
+    primary: '#212529',
+    secondary: '#606166',
+  },
+};
+
+const darkPalette: PaletteOptions = {
+  mode: 'dark',
+  primary: {
+    main: '#2484c6',
+  },
+  secondary: {
+    main: '#185680',
+  },
+  error: {
+    main: '#ff3333',
+  },
+  warning: {
+    main: '#ecad6d',
+  },
+  success: {
+    main: 'green',
+  },
+  background: {
+    default: '#121212',
+    paper: '#1e1e1e',
+  },
+  text: {
+    primary: '#fff',
+    secondary: '#99999f',
   },
 };
 
 export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
   colorSchemes: {
-    dark: { palette: { mode: 'dark', ...palette } },
-    light: { palette: { mode: 'light', ...palette } },
+    dark: { palette: { ...darkPalette } },
+    light: { palette: { ...lightPalette } },
   },
   spacing: 4,
 });
@@ -74,7 +98,7 @@ theme = createTheme(theme, {
           fontSize: '18px',
           fontWeight: '600',
           marginBottom: theme.spacing(1),
-          color: theme.palette.text.primary,
+          color: 'var(--mui-palette-text-primary)',
           '&.Mui-focused': {
             color: 'inherit',
           },
@@ -117,7 +141,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         input: {
           fontSize: '16px',
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor: 'var(--mui-palette-background-paper)',
         },
       },
     },
@@ -125,7 +149,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
-            borderColor: theme.palette.text.secondary,
+            borderColor: 'var(--mui-palette-text-secondary)',
           },
         },
       },
@@ -139,7 +163,7 @@ theme = createTheme(theme, {
           color: 'white',
         },
         iconFilled: {
-          color: theme.palette.primary.main,
+          color: 'var(--mui-palette-primary-main)',
         },
         iconHover: {
           opacity: '0.6',

@@ -1,23 +1,23 @@
 :root {
-  --background: var(--gray-blue);
+  --background: var(--mui-palette-background-default);
   --overlay1: #fff;
   --overlay2: var(--gray-blue);
   --overlay3: #fff;
-  --text: #212529;
-  --text-secondary: #606166;
+  --text: var(--mui-palette-text-primary);
+  --text-secondary: var(--mui-palette-text-secondary);
 
-  --blue-primary: #2484c6;
-  --blue-secondary: #5babe1;
+  --blue-primary: var(--mui-palette-primary-main);
+  --blue-secondary: var(--mui-palette-secondary-main);
   --blue-tertiary: #a0ceee;
   --blue-accent: #74d1f6;
 
-  --green-primary: green;
-  --red-primary: #ce0000;
+  --green-primary: var(--mui-palette-success-main);
+  --red-primary: var(--mui-palette-error-main);
 
   --green-secondary: #87c587;
   --yellow-secondary: #f5d77f;
   --orange-secondary: #ecad6d;
-  --red-secondary: #e7966d;
+  --red-secondary: var(--mui-palette-warning-main);
 
   --mid-gray: #8d8d8d;
   --gray-blue: #f5f6fc;
@@ -44,17 +44,17 @@
 // each overlay is about 5% brighter than the previous
 // roughly following: https://m2.material.io/design/color/dark-theme.html
 :root[data-theme='dark'] {
-  --background: #121212;
+  --background: var(--mui-palette-background-default);
   --overlay1: #1e1e1e;
   --overlay2: #292929;
   --overlay3: #363636;
-  --text: #fff;
-  --text-secondary: #99999f;
+  --text: var(--mui-palette-text-primary);
+  --text-secondary: var(--mui-palette-text-secondary);
   color-scheme: dark;
 
-  --blue-secondary: #185680;
+  --blue-secondary: var(--mui-palette-secondary-main);
   --blue-tertiary: #0b293c;
-  --red-primary: #ff3333;
+  --red-primary: var(--mui-palette-error-main);
   --green-secondary: #295629;
 
   --border-secondary: rgba(255, 255, 255, 0.12);
