@@ -68,25 +68,24 @@ theme = createTheme(theme, {
     MuiCheckbox: {
       styleOverrides: {
         root: {
-          width: '32px',
-          height: '32px',
-          margin: '-8px',
-
+          width: 32,
+          height: 32,
+          margin: -8,
           '&.Mui-checked': {
             '& > input': {
-              margin: '0px',
-              top: '9px',
+              margin: 0,
+              top: 9,
               appearance: 'none',
-              left: '9px',
+              left: 9,
               width: 'calc(100% - 18px)',
               height: 'calc(100% - 18px)',
               background: 'white',
-              zIndex: '0',
-              borderRadius: '4px',
-              opacity: '1',
+              zIndex: 0,
+              borderRadius: 4,
+              opacity: 1,
             },
             '& > svg': {
-              zIndex: '1',
+              zIndex: 1,
             },
           },
         },
@@ -95,8 +94,8 @@ theme = createTheme(theme, {
     MuiFormLabel: {
       styleOverrides: {
         root: {
-          fontSize: '18px',
-          fontWeight: '600',
+          fontSize: 18,
+          fontWeight: 600,
           marginBottom: theme.spacing(1),
           color: 'var(--mui-palette-text-primary)',
           '&.Mui-focused': {
@@ -120,15 +119,15 @@ theme = createTheme(theme, {
           '& .MuiFormControlLabel-root': {
             display: 'flex',
             alignItems: 'center',
-            paddingBlock: '2px',
-            margin: '0',
+            paddingBlock: 2,
+            margin: 0,
           },
           '& .MuiFormControlLabel-label': {
-            marginLeft: '10px',
-            fontSize: '18px',
+            marginLeft: 10,
+            fontSize: 18,
           },
           'input[type="file"]': {
-            fontSize: '16px',
+            fontSize: 16,
           },
           '> img': {
             width: '100%',
@@ -140,7 +139,7 @@ theme = createTheme(theme, {
     MuiInputBase: {
       styleOverrides: {
         input: {
-          fontSize: '16px',
+          fontSize: 16,
           backgroundColor: 'var(--mui-palette-background-paper)',
         },
       },
@@ -157,7 +156,7 @@ theme = createTheme(theme, {
     MuiRating: {
       styleOverrides: {
         sizeLarge: {
-          fontSize: '44px',
+          fontSize: 44,
         },
         iconEmpty: {
           color: 'white',
@@ -166,7 +165,7 @@ theme = createTheme(theme, {
           color: 'var(--mui-palette-primary-main)',
         },
         iconHover: {
-          opacity: '0.6',
+          opacity: 0.6,
         },
       },
     },
