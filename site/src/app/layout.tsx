@@ -19,7 +19,6 @@ import { Roboto, Open_Sans } from 'next/font/google';
 const roboto = Roboto({
   subsets: ['latin'],
   variable: '--font-roboto',
-  weight: ['100', '300', '400', '500', '700', '900'],
   style: ['normal', 'italic'],
   display: 'swap',
 });
@@ -27,7 +26,6 @@ const roboto = Roboto({
 const open_sans = Open_Sans({
   subsets: ['latin'],
   variable: '--font-open-sans',
-  weight: ['300', '400', '500', '700'],
   display: 'swap',
 });
 
