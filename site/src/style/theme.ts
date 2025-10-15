@@ -14,15 +14,25 @@ const sharedColors = {
     main: 'green',
   },
   misc: {
-    yellow: '#f5d77f',
-    red: '#e7966d',
     midGray: '#8d8d8d',
-    gradeDistP: '#4ab486',
-    gradeDistNp: '#e36436',
   },
   gradeDist: {
     pass: '#4ab486',
     noPass: '#e36436',
+  },
+  green: {
+    primary: 'green',
+  },
+  yellow: {
+    primary: 'yellow',
+    secondary: '#f5d77f',
+  },
+  orange: {
+    primary: 'orange',
+    secondary: '#ecad6d',
+  },
+  red: {
+    secondary: '#e7966d',
   },
 };
 
@@ -51,9 +61,13 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  misc: {
-    ...sharedColors.misc,
-    green: '#87c587',
+  green: {
+    ...sharedColors.green,
+    secondary: '#87c587',
+  },
+  red: {
+    primary: '#ce0000',
+    ...sharedColors.red,
   },
 };
 
@@ -84,9 +98,13 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
-  misc: {
-    ...sharedColors.misc,
-    green: '#295629',
+  green: {
+    ...sharedColors.green,
+    secondary: '#295629',
+  },
+  red: {
+    primary: '#ff3333',
+    ...sharedColors.red,
   },
 };
 

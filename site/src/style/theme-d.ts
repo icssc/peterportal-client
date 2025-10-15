@@ -10,14 +10,27 @@ declare module '@mui/material/styles' {
       overlay3: string;
     };
     misc: {
-      green: string;
-      yellow: string;
-      red: string;
       midGray: string;
     };
     gradeDist: {
       pass: string;
       noPass: string;
+    };
+    green: {
+      primary: string;
+      secondary: string;
+    };
+    yellow: {
+      primary: string;
+      secondary: string;
+    };
+    orange: {
+      primary: string;
+      secondary: string;
+    };
+    red: {
+      primary: string;
+      secondary: string;
     };
   }
   interface PaletteOptions {
@@ -29,18 +42,27 @@ declare module '@mui/material/styles' {
       overlay3?: string;
     };
     misc?: {
-      green?: string;
-      yellow?: string;
-      red?: string;
       midGray?: string;
-      // grayBlue?: string;
-      // ringRoadWhite?: string;
-      gradeDistP?: string;
-      gradeDistNp?: string;
     };
     gradeDist?: {
       pass?: string;
       noPass: string;
+    };
+    green?: {
+      primary?: string;
+      secondary?: string;
+    };
+    yellow?: {
+      primary?: string;
+      secondary?: string;
+    };
+    orange?: {
+      primary?: string;
+      secondary?: string;
+    };
+    red?: {
+      primary?: string;
+      secondary?: string;
     };
   }
 }
