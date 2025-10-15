@@ -23,7 +23,7 @@ const roboto = Roboto({
   display: 'swap',
 });
 
-const open_sans = Open_Sans({
+const openSans = Open_Sans({
   subsets: ['latin'],
   variable: '--font-open-sans',
   display: 'swap',
@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang="en"
       data-theme={user?.theme}
-      className={`${roboto.variable} ${open_sans.variable}`}
+      className={`${roboto.variable} ${openSans.variable}`}
       suppressHydrationWarning
     >
       <head>

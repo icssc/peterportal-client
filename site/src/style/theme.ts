@@ -1,6 +1,6 @@
 import { createTheme, PaletteOptions } from '@mui/material';
 
-const sharedColors = {
+const sharedTokens = {
   primary: {
     main: '#2484c6',
   },
@@ -32,7 +32,7 @@ const sharedColors = {
 
 const lightPalette: PaletteOptions = {
   mode: 'light',
-  ...sharedColors,
+  ...sharedTokens,
   secondary: {
     main: '#5babe1',
   },
@@ -53,12 +53,12 @@ const lightPalette: PaletteOptions = {
     secondary: '#606166',
   },
   green: {
-    ...sharedColors.green,
+    ...sharedTokens.green,
     secondary: '#87c587',
   },
   red: {
     primary: '#ce0000',
-    ...sharedColors.red,
+    ...sharedTokens.red,
   },
 };
 
@@ -66,7 +66,7 @@ const lightPalette: PaletteOptions = {
 // roughly following: https://m2.material.io/design/color/dark-theme.html
 const darkPalette: PaletteOptions = {
   mode: 'dark',
-  ...sharedColors,
+  ...sharedTokens,
   secondary: {
     main: '#185680',
   },
@@ -87,12 +87,12 @@ const darkPalette: PaletteOptions = {
     secondary: '#99999f',
   },
   green: {
-    ...sharedColors.green,
+    ...sharedTokens.green,
     secondary: '#295629',
   },
   red: {
     primary: '#ff3333',
-    ...sharedColors.red,
+    ...sharedTokens.red,
   },
 };
 
