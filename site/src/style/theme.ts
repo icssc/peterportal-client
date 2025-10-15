@@ -213,7 +213,7 @@ theme = createTheme(theme, {
           fontSize: 44,
         },
         iconEmpty: {
-          color: 'white',
+          color: 'var(--mui-palette-text-primary)',
         },
         iconFilled: {
           color: 'var(--mui-palette-primary-main)',
