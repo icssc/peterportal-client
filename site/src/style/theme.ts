@@ -17,11 +17,12 @@ const sharedColors = {
     yellow: '#f5d77f',
     red: '#e7966d',
     midGray: '#8d8d8d',
-    grayBlue: '#f5f6fc',
-    ringRoadWhite: '#ffffff',
     gradeDistP: '#4ab486',
     gradeDistNp: '#e36436',
-    springQuarter: '#ffc7df',
+  },
+  gradeDist: {
+    pass: '#4ab486',
+    noPass: '#e36436',
   },
 };
 
@@ -39,7 +40,7 @@ const lightPalette: PaletteOptions = {
   },
   overlay: {
     overlay1: '#fff',
-    overlay2: 'var(--mui-palette-misc-grayBlue)',
+    overlay2: '#f5f6fc',
     overlay3: '#fff',
   },
   background: {

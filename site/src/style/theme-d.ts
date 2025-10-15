@@ -14,11 +14,10 @@ declare module '@mui/material/styles' {
       yellow: string;
       red: string;
       midGray: string;
-      grayBlue: string;
-      ringRoadWhite: string;
-      gradeDistP: string;
-      gradeDistNp: string;
-      springQuarter: string;
+    };
+    gradeDist: {
+      pass: string;
+      noPass: string;
     };
   }
   interface PaletteOptions {
@@ -34,11 +33,14 @@ declare module '@mui/material/styles' {
       yellow?: string;
       red?: string;
       midGray?: string;
-      grayBlue?: string;
-      ringRoadWhite?: string;
+      // grayBlue?: string;
+      // ringRoadWhite?: string;
       gradeDistP?: string;
       gradeDistNp?: string;
-      springQuarter?: string;
+    };
+    gradeDist?: {
+      pass?: string;
+      noPass: string;
     };
   }
 }

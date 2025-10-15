@@ -2,7 +2,7 @@
 
 .roadmap-header {
   border-radius: var(--border-radius);
-  color: var(--ring-road-white);
+  color: white;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -102,7 +102,7 @@
 .header-btn:hover,
 .header-btn:focus {
   background-color: transparent;
-  color: var(--ring-road-white);
+  color: white;
 }
 
 .header-icon {
