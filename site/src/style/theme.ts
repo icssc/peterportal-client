@@ -7,12 +7,6 @@ const sharedColors = {
   accent: {
     main: '#74d1f6',
   },
-  warning: {
-    main: '#ecad6d',
-  },
-  success: {
-    main: 'green',
-  },
   misc: {
     midGray: '#8d8d8d',
   },
@@ -44,9 +38,6 @@ const lightPalette: PaletteOptions = {
   },
   tertiary: {
     main: '#a0ceee',
-  },
-  error: {
-    main: '#ce0000',
   },
   overlay: {
     overlay1: '#fff',
@@ -82,9 +73,6 @@ const darkPalette: PaletteOptions = {
   tertiary: {
     main: '#0b293c',
   },
-  error: {
-    main: '#ff3333',
-  },
   overlay: {
     overlay1: '#1e1e1e',
     overlay2: '#292929',
@@ -118,6 +106,17 @@ export let theme = createTheme({
 });
 
 theme = createTheme(theme, {
+  palette: {
+    success: {
+      main: theme.palette.green.primary,
+    },
+    error: {
+      main: theme.palette.red.secondary,
+    },
+    warning: {
+      main: theme.palette.orange.secondary,
+    },
+  },
   components: {
     MuiCheckbox: {
       styleOverrides: {
