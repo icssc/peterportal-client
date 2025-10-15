@@ -14,6 +14,23 @@ import AppProvider from '../component/AppProvider/AppProvider';
 import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
+import { Roboto, Open_Sans } from 'next/font/google';
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  variable: '--font-roboto',
+  weight: ['100', '300', '400', '500', '700', '900'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+});
+
+const open_sans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-open-sans',
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   description:
     'A web application for course discovery and planning at UCI, featuring an enhanced catalogue and a 4-year planner.',
@@ -25,7 +42,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await serverTrpc.users.get.query().catch(() => null);
 
   return (
-    <html lang="en" data-theme={user?.theme} suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme={user?.theme}
+      className={`${roboto.variable} ${open_sans.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <meta name="color-scheme" content="dark light" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
