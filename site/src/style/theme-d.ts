@@ -4,6 +4,7 @@ declare module '@mui/material/styles' {
   interface Palette {
     tertiary: Palette['primary'];
     accent: Palette['primary'];
+    danger: Palette['primary'];
     overlay: {
       overlay1: string;
       overlay2: string;
@@ -36,6 +37,7 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     tertiary?: PaletteOptions['primary'];
     accent?: PaletteOptions['primary'];
+    danger?: PaletteOptions['primary'];
     overlay?: {
       overlay1?: string;
       overlay2?: string;
