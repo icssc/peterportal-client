@@ -96,27 +96,24 @@ const darkPalette: PaletteOptions = {
   },
 };
 
+const makeExtendedPalette = (base: PaletteOptions) => ({
+  ...base,
+  success: { main: base.green!.primary! },
+  danger: { main: base.red!.primary! },
+  error: { main: base.red!.secondary! },
+  warning: { main: base.orange!.secondary! },
+});
+
 export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
   colorSchemes: {
-    dark: { palette: { ...darkPalette } },
-    light: { palette: { ...lightPalette } },
+    light: { palette: makeExtendedPalette(lightPalette) },
+    dark: { palette: makeExtendedPalette(darkPalette) },
   },
   spacing: 4,
 });
 
 theme = createTheme(theme, {
-  palette: {
-    success: {
-      main: theme.palette.green.primary,
-    },
-    error: {
-      main: theme.palette.red.secondary,
-    },
-    warning: {
-      main: theme.palette.orange.secondary,
-    },
-  },
   components: {
     MuiButton: {
       defaultProps: {
