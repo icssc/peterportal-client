@@ -171,7 +171,7 @@
   }
 
   &.completed {
-    background-color: var(--gray-blue);
+    background-color: var(--overlay2);
     outline: 1.5px solid var(--text-secondary);
     outline-offset: -1.5px;
     color: var(--text-secondary);
@@ -190,7 +190,7 @@
   height: 20px;
   border-radius: 20px;
   background-color: var(--text-secondary);
-  color: var(--gray-blue);
+  color: var(--overlay2);
   display: flex;
   justify-content: center;
   align-items: center;

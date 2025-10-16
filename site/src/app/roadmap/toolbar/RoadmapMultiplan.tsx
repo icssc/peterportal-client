@@ -220,13 +220,12 @@ const RoadmapMultiplan: FC = () => {
           <Box
             component="form"
             noValidate
-            className="ppc-modal-form"
             onSubmit={(e) => {
               e.preventDefault(); // prevent submitting form (reloads the page)
               handleSubmitNewPlan();
             }}
           >
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
                 required
@@ -267,13 +266,12 @@ const RoadmapMultiplan: FC = () => {
           <Box
             component="form"
             noValidate
-            className="ppc-modal-form"
             onSubmit={(e) => {
               e.preventDefault(); // prevent submitting form (reloads the page)
               modifyPlanName();
             }}
           >
-            <FormControl className="form-group">
+            <FormControl>
               <FormLabel>Roadmap Name</FormLabel>
               <TextField
                 required
@@ -311,8 +309,8 @@ const RoadmapMultiplan: FC = () => {
           <h2>Delete Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
+          <Form noValidate>
+            <Form.Group>
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>
