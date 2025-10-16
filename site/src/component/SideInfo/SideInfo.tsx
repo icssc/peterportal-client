@@ -5,8 +5,8 @@ import './SideInfo.scss';
 import Badge from 'react-bootstrap/Badge';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { Button } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -165,6 +165,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           <h2>Average Rating</h2>
           <div className="side-info-buttons">
             {/* Dropdown to select specific course/professor */}
+            {/* @todo: make this select? */}
             <DropdownButton
               title={selectedReview}
               variant="secondary"
@@ -186,7 +187,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
             {/* Add a review */}
             <Button
-              variant="primary"
               onClick={() => {
                 dispatch(toggleFormStatus());
               }}

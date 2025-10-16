@@ -16,10 +16,10 @@ const UnverifiedReview: FC<UnverifiedReviewProps> = ({ review, onDelete, onVerif
   return (
     <ReviewCard review={review}>
       <div className="verification-buttons">
-        <Button className="ppc-mui-button" variant="text" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
+        <Button variant="neutral" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
           Delete
         </Button>
-        <Button className="ppc-mui-button primary-button" variant="text" onClick={onVerify} startIcon={<CheckIcon />}>
+        <Button onClick={onVerify} startIcon={<CheckIcon />}>
           Verify
         </Button>
       </div>

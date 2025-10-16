@@ -99,7 +99,7 @@ const darkPalette: PaletteOptions = {
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
   success: { main: base.green!.primary! },
-  danger: { main: base.red!.primary! },
+  danger: { main: base.red!.primary!, contrastText: '#fff' },
   error: { main: base.red!.secondary! },
   warning: { main: base.orange!.secondary! },
 });
@@ -115,6 +115,25 @@ export let theme = createTheme({
 
 theme = createTheme(theme, {
   components: {
+    MuiButton: {
+      defaultProps: {
+        variant: 'contained',
+        disableElevation: true,
+      },
+      variants: [
+        {
+          props: { variant: 'neutral' }, // @todo: consider making this a color
+          style: {
+            backgroundColor: '#e0e0e0',
+            '[data-theme="dark"] &': {
+              // @todo: not do this lol
+              backgroundColor: '#606166',
+            },
+            color: 'var(--mui-palette-text-primary)',
+          },
+        },
+      ],
+    },
     MuiCheckbox: {
       styleOverrides: {
         root: {

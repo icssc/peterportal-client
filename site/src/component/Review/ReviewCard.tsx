@@ -8,7 +8,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
@@ -20,7 +20,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { IconButton, Card, Skeleton } from '@mui/material';
+import { Button, IconButton, Card, Skeleton } from '@mui/material';
 import Link from 'next/link';
 
 interface AuthorEditButtonsProps {
@@ -68,12 +68,16 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         </Modal.Header>
         <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={() => deleteReview(review.id!)}>
-            Delete
-          </Button>
+          <div className="delete-buttons">
+            <Button variant="neutral" onClick={() => setShowDeleteModal(false)}>
+              {' '}
+              {/* @todo: this maybe should not be neutral or neutral should be a color rather than a variant */}
+              Cancel
+            </Button>
+            <Button color="danger" onClick={() => deleteReview(review.id!)}>
+              Delete
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
       <ReviewForm
