@@ -9,7 +9,7 @@ import {
   setPlanIndex,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { Form, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
 import spawnToast from '../../../helpers/toastify';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
@@ -242,9 +242,7 @@ const RoadmapMultiplan: FC = () => {
               />
             </FormControl>
 
-            <Button2 type="submit" variant="primary">
-              Create Roadmap
-            </Button2>
+            <Button type="submit">Create Roadmap</Button>
           </Box>
         </Modal.Body>
       </Modal>
@@ -288,9 +286,7 @@ const RoadmapMultiplan: FC = () => {
               />
             </FormControl>
 
-            <Button2 type="submit" variant="primary">
-              Save Roadmap
-            </Button2>
+            <Button type="submit">Save Roadmap</Button>
           </Box>
         </Modal.Body>
       </Modal>
@@ -314,14 +310,14 @@ const RoadmapMultiplan: FC = () => {
               <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
             </Form.Group>
           </Form>
-          <Button2
-            variant="danger"
+          <Button
+            color="error"
             onClick={() => {
               deleteCurrentPlan();
             }}
           >
             I am sure
-          </Button2>
+          </Button>
         </Modal.Body>
       </Modal>
     </MultiplanDropdown>

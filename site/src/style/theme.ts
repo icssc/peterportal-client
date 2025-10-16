@@ -118,6 +118,11 @@ theme = createTheme(theme, {
     },
   },
   components: {
+    MuiButton: {
+      defaultProps: {
+        variant: 'contained',
+      },
+    },
     MuiCheckbox: {
       styleOverrides: {
         root: {
