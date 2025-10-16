@@ -1,7 +1,7 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Button as Button2, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, getNextPlannerTempId } from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
@@ -164,9 +164,9 @@ const ImportZot4PlanPopup: FC = () => {
               </Select>
             </FormControl>
 
-            <Button2 variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
+            <Button disabled={busy || scheduleName.length < 8} onClick={handleImport}>
               {busy ? 'Importing...' : 'Import and Save'}
-            </Button2>
+            </Button>
           </Box>
         </Modal.Body>
       </Modal>

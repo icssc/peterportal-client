@@ -99,7 +99,7 @@ const darkPalette: PaletteOptions = {
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
   success: { main: base.green!.primary! },
-  danger: { main: base.red!.primary! },
+  danger: { main: base.red!.primary!, contrastText: '#fff' },
   error: { main: base.red!.secondary! },
   warning: { main: base.orange!.secondary! },
 });

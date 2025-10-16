@@ -1,4 +1,5 @@
 import '@mui/material/styles';
+import '@mui/material/Button';
 
 declare module '@mui/material/styles' {
   interface Palette {
@@ -66,5 +67,11 @@ declare module '@mui/material/styles' {
       primary?: string;
       secondary?: string;
     };
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    danger: true;
   }
 }

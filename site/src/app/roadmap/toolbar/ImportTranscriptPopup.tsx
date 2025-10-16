@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { Button as Button2, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { getNextPlannerTempId, reviseRoadmap, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
@@ -305,9 +305,9 @@ const ImportTranscriptPopup: FC = () => {
                 }}
               />
             </FormControl>
-            <Button2 variant="primary" disabled={!file || busy} onClick={importHandler}>
+            <Button disabled={!file || busy} onClick={importHandler}>
               {busy ? 'Importing...' : 'Import'}
-            </Button2>
+            </Button>
           </Box>
         </Modal.Body>
       </Modal>
