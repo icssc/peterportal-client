@@ -74,4 +74,7 @@ declare module '@mui/material/Button' {
   interface ButtonPropsColorOverrides {
     danger: true;
   }
+  interface ButtonPropsVariantOverrides {
+    neutral: true;
+  }
 }

@@ -3,4 +3,13 @@
   flex-direction: row;
   gap: 12px;
   margin: 0px 8px;
+
+  .MuiButton-root {
+    display: inline-flex;
+    height: 29px;
+    font-size: 13px;
+    white-space: nowrap;
+
+    padding: 0px 12px;
+  }
 }
