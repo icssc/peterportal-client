@@ -164,8 +164,8 @@ const ImportZot4PlanPopup: FC = () => {
               </Select>
             </FormControl>
 
-            <Button disabled={busy || scheduleName.length < 8} onClick={handleImport}>
-              {busy ? 'Importing...' : 'Import and Save'}
+            <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+              Import and Save
             </Button>
           </Box>
         </Modal.Body>

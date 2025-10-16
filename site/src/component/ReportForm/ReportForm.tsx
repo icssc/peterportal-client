@@ -70,7 +70,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
             />
           </FormControl>
 
-          <Button type="submit" disabled={!reason.length || busy}>
+          <Button type="submit" disabled={!reason.length} loading={busy}>
             Submit Report
           </Button>
         </Box>

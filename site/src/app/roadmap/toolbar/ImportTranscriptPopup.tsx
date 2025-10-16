@@ -305,8 +305,8 @@ const ImportTranscriptPopup: FC = () => {
                 }}
               />
             </FormControl>
-            <Button disabled={!file || busy} onClick={importHandler}>
-              {busy ? 'Importing...' : 'Import'}
+            <Button disabled={!file} loading={busy} onClick={importHandler}>
+              Import
             </Button>
           </Box>
         </Modal.Body>
