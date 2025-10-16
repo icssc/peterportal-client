@@ -26,6 +26,8 @@ const roboto = Roboto({
 const openSans = Open_Sans({
   subsets: ['latin'],
   variable: '--font-open-sans',
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   display: 'swap',
 });
 
