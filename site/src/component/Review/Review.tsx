@@ -6,7 +6,8 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import ThemeContext from '../../style/theme-context';
@@ -214,7 +215,7 @@ const Review: FC<ReviewProps> = (props) => {
               ))}
             </div>
           )}
-          <Button variant="primary" className="add-review-button" onClick={openReviewForm}>
+          <Button className="add-review-button" onClick={openReviewForm}>
             <AddIcon /> Add Review
           </Button>
         </div>
