@@ -159,6 +159,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
+        <h4>Recent Offerings</h4>
         {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
 
         <div className="side-info-ratings">
