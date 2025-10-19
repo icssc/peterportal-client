@@ -1,5 +1,5 @@
-import SearchPage from './search/SearchPage';
+import RoadmapPage from './roadmap/RoadmapPage';
 
 export default function Page() {
-  return <SearchPage index="courses" />;
+  return <RoadmapPage />;
 }
