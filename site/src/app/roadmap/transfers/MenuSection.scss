@@ -6,6 +6,7 @@
 
   h4 {
     margin-bottom: 0;
+    text-align: left;
   }
 
   .section-description {
@@ -16,5 +17,17 @@
 
   .section-description a {
     color: var(--blue-primary);
+  }
+
+  button.header-tab {
+    background: none;
+    border: none;
+    font: inherit;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 6px;
+    overflow: visible;
+    padding: 0 0.5px;
   }
 }
