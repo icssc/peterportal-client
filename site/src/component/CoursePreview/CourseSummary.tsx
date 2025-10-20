@@ -15,11 +15,11 @@ import { addDelimiter, getCourseTags } from '../../helpers/util';
 const CourseTags: FC<{ course: CourseGQLData }> = ({ course }) => {
   const tags = getCourseTags(course);
   return (
-    <p className="course-tags">
+    <div className="course-tags">
       {tags.map((tag) => (
         <Chip label={tag} key={tag} />
       ))}
-    </p>
+    </div>
   );
 };
 

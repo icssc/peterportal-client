@@ -7,17 +7,20 @@
   flex-direction: column;
   gap: $planner-gap;
   position: relative;
-  padding: 0;
+  overflow: auto;
+  height: 100%;
+
+  @include globals.outer-padding();
 
   .years {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: fit-content;
     overflow: auto;
     gap: $planner-gap;
+    flex-shrink: 0;
   }
 
-  padding: 0;
   .roadmap-header {
     top: 0px;
   }

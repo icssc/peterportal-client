@@ -28,10 +28,8 @@ a {
   box-sizing: border-box;
 
   .main-wrapper {
-    padding: 36px;
-    @media (max-width: globals.$mobile-cutoff) {
-      padding: 20px 24px;
-    }
+    position: relative;
+    @include globals.outer-padding();
   }
 }
 

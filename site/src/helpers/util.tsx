@@ -73,7 +73,7 @@ export async function searchAPIResults<T extends SearchIndex>(
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
 
-function transformCourseGQL(data: CourseAAPIResponse) {
+export function transformCourseGQL(data: CourseAAPIResponse) {
   // create copy to override fields with lookups
   const course = { ...data } as unknown as CourseGQLData;
   course.instructors = Object.fromEntries(data.instructors.map((instructor) => [instructor.ucinetid, instructor]));

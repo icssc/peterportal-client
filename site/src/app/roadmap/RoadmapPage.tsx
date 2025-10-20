@@ -8,11 +8,14 @@ import AddCoursePopup from './planner/AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
 import { CSSTransition } from 'react-transition-group';
 import TransferCreditsMenu from './transfers/TransferCreditsMenu';
+import CoursePreview from '../../component/CoursePreview/CoursePreview';
 
 const RoadmapPage: FC = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
   const sidebarRef = useRef(null);
+
+  const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
 
   return (
     <>
@@ -24,6 +27,7 @@ const RoadmapPage: FC = () => {
         {isMobile && <TransferCreditsMenu />}
         <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
           <Planner />
+          {previewCourseId && <CoursePreview courseId={previewCourseId} />}
         </div>
       </div>
     </>
