@@ -30,4 +30,10 @@
     overflow: visible;
     padding: 0 0.5px;
   }
+
+  .section-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 }

@@ -1,11 +1,10 @@
 import './MenuSection.scss';
 import { FC, ReactNode, useState } from 'react';
-
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
 
 export const SectionDescription: FC<{ children: ReactNode }> = ({ children }) => {
-  return <p className="section-description">{children}</p>;
+  return <p className="section-description a">{children}</p>;
 };
 
 interface MenuSectionProps {
@@ -24,7 +23,7 @@ const MenuSection: FC<MenuSectionProps> = ({ title, children }) => {
         <ExpandMore expanded={open} onClick={toggleExpand} />
       </button>
       <Collapse in={open} unmountOnExit>
-        {children}
+        <div className="section-content">{children}</div>
       </Collapse>
     </div>
   );
