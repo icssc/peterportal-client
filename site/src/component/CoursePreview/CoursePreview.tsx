@@ -49,35 +49,34 @@ function useCourseData(courseId: string) {
 }
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
-  const course = data;
-  if (course.id === LOADING_COURSE_PLACEHOLDER.id) {
+  if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
 
   return (
     <div className="preview-body">
-      <ResultPageSection title={course.title}>
-        <CourseSummary course={course} />
+      <ResultPageSection title={data.title}>
+        <CourseSummary course={data} />
       </ResultPageSection>
 
       <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist course={course} />
+        <GradeDist course={data} />
       </ResultPageSection>
 
       <ResultPageSection title="🌲 Prerequisite Tree">
-        <PrereqTree key={course.id} {...course} />
+        <PrereqTree key={data.id} {...data} />
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">
         <Schedule
-          key={course.id}
-          courseID={course.department + ' ' + course.courseNumber}
-          termsOffered={sortTerms(course.terms)}
+          key={data.id}
+          courseID={data.department + ' ' + data.courseNumber}
+          termsOffered={sortTerms(data.terms)}
         />
       </ResultPageSection>
 
       <ResultPageSection title="💬 Reviews">
-        <Review key={course.id} course={course} terms={sortTerms(course.terms)} />
+        <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
       </ResultPageSection>
     </div>
   );
