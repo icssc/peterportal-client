@@ -1,9 +1,9 @@
 import './CourseSummary.scss';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import { CourseGQLData } from '../../types/types';
 import { CoursePreview, PrerequisiteNode } from '@peterportal/types';
-import { Button, Chip } from '@mui/material';
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
@@ -11,6 +11,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { addDelimiter, getCourseTags } from '../../helpers/util';
+import PrereqTree from '../PrereqTree/PrereqTree';
 
 const CourseTags: FC<{ course: CourseGQLData }> = ({ course }) => {
   const tags = getCourseTags(course);
@@ -140,6 +141,27 @@ const CourseDependentText: FC<{ courseName: string; dependents: CoursePreview[] 
   );
 };
 
+const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button startIcon={<AccountTreeIcon />} variant="contained" onClick={() => setOpen(true)}>
+        Full Prerequisite Tree
+      </Button>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
+        <DialogTitle>🌲 Prerequisite Tree</DialogTitle>
+        <DialogContent>
+          <PrereqTree {...course} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
 const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
   // description, units, division,
   return (
@@ -159,9 +181,7 @@ const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
             courseName={`${course.department} ${course.courseNumber}`}
             dependents={Object.values(course.dependents)}
           />
-          <Button startIcon={<AccountTreeIcon />} variant="contained">
-            Full Prerequisite Tree
-          </Button>
+          <PrerequisiteTreeDialog course={course} />
         </div>
       </div>
     </div>

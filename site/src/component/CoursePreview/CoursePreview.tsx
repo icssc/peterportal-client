@@ -2,7 +2,6 @@ import './CoursePreview.scss';
 import { FC, useEffect, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
-import PrereqTree from '../PrereqTree/PrereqTree';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
@@ -62,10 +61,6 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
 
       <ResultPageSection title="📊 Grade Distribution">
         <GradeDist course={data} />
-      </ResultPageSection>
-
-      <ResultPageSection title="🌲 Prerequisite Tree">
-        <PrereqTree key={data.id} {...data} />
       </ResultPageSection>
 
       <ResultPageSection title="🗓️ Schedule of Classes">

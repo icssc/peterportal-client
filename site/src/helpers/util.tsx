@@ -162,5 +162,5 @@ export function addDelimiter(items: ReactNode[], between: ReactNode, last?: Reac
 
 export function checkModalOpen() {
   /** @todo update when getting rid of bootstrap modals */
-  return !!document.querySelector('body > .ppc-modal');
+  return !!document.querySelector('body > :is(.MuiModal-root, .ppc-modal)');
 }
