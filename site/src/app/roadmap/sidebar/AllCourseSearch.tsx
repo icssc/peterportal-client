@@ -53,7 +53,6 @@ const AllCourseSearch: FC = () => {
                 data={course}
                 key={i}
                 addMode={isMobile ? 'tap' : 'drag'}
-                openPopoverLeft={true}
                 requiredCourses={missingPrerequisites}
               />
             );

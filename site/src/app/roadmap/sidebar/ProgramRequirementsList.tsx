@@ -107,7 +107,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   return (
     <div className={className} {...tappableCourseProps} style={{ fontSize }}>
       <SourceOverlay completedBy={completedBy} />
-      <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
+      <CourseNameAndInfo data={courseData} popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && (
         <div className="spinner">
           <LoadingSpinner />
