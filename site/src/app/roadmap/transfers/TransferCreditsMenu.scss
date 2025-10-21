@@ -4,6 +4,8 @@
 .transfers-menu-inner {
   padding: 16px 20px;
   overflow: scroll;
+
+  padding-bottom: 56px;
 }
 
 .transfers-menu {
@@ -18,7 +20,6 @@
     @include globals.bottom-overlay(400);
     padding-bottom: 0px;
   }
-  padding-bottom: 56px;
   transform: translateY(100%);
   transition: transform 0.3s;
   &.enter,
