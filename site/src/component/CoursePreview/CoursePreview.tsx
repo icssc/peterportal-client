@@ -83,6 +83,12 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
 
   const closePreview = () => dispatch(setPreviewedCourse(''));
 
+  const copyCourseLink = () => {
+    const url = new URL('/course/' + courseId, location.origin).toString();
+    navigator.clipboard.writeText(url);
+    spawnToast('Copied course URL to clipboard!');
+  };
+
   return (
     <div className="course-preview">
       <Paper className="preview-header" variant="outlined">
@@ -101,7 +107,14 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
             </>
           )}
         </p>
-        <Button variant="contained" color="inherit" startIcon={<IosShareIcon />} size="small" disableElevation>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<IosShareIcon />}
+          size="small"
+          disableElevation
+          onClick={copyCourseLink}
+        >
           Share
         </Button>
         <CourseBookmarkButton course={courseData} disabled={isLoading} />
