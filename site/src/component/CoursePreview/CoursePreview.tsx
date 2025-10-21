@@ -6,19 +6,20 @@ import PrereqTree from '../PrereqTree/PrereqTree';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { sortTerms, transformCourseGQL } from '../../helpers/util';
+import { checkModalOpen, sortTerms, transformCourseGQL } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { CourseGQLData } from '../../types/types';
-import { Button, IconButton, Paper } from '@mui/material';
+import { Button, IconButton, Paper, Tooltip } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import IosShareIcon from '@mui/icons-material/IosShare';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
 import Twemoji from 'react-twemoji';
+
+import CloseIcon from '@mui/icons-material/Close';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 /** @todo make this a shared hook to read and write to global cache after that's created  */
 function useCourseData(courseId: string) {
@@ -96,12 +97,27 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
     spawnToast('Copied course URL to clipboard!');
   };
 
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      const modified = event.altKey || event.shiftKey || event.ctrlKey || event.metaKey;
+      if (event.key !== 'Escape' || modified) return;
+      if (checkModalOpen()) return;
+      event.preventDefault();
+      closePreview();
+    };
+
+    document.body.addEventListener('keydown', listener);
+    return () => document.body.removeEventListener('keydown', listener);
+  });
+
   return (
     <div className="course-preview">
       <Paper className="preview-header" variant="outlined">
-        <IconButton onClick={closePreview}>
-          <ArrowBackIcon />
-        </IconButton>
+        <Tooltip title="Exit Preview (Esc)">
+          <IconButton onClick={closePreview}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
         <p className="preview-title">
           {isLoading ? (
             `Loading ${courseId}...`

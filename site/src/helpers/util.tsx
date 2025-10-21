@@ -159,3 +159,8 @@ export function addDelimiter(items: ReactNode[], between: ReactNode, last?: Reac
     return [item, idx === lastIdx - 1 ? last : between];
   });
 }
+
+export function checkModalOpen() {
+  /** @todo update when getting rid of bootstrap modals */
+  return !!document.querySelector('body > .ppc-modal');
+}
