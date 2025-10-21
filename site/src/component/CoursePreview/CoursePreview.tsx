@@ -23,9 +23,17 @@ import Twemoji from 'react-twemoji';
 /** @todo make this a shared hook to read and write to global cache after that's created  */
 function useCourseData(courseId: string) {
   const [fullCourseData, setFullCourseData] = useState(LOADING_COURSE_PLACEHOLDER);
+  const [loadTrigger, setLoadTrigger] = useState(false);
+
+  useEffect(() => {
+    // Use a stateful trigger to avoid sending two requests as a result of double first render
+    setLoadTrigger(true);
+  }, [courseId]);
 
   /** @todo read from global cache */
   useEffect(() => {
+    if (!loadTrigger) return;
+    setLoadTrigger(false);
     setFullCourseData(LOADING_COURSE_PLACEHOLDER);
     trpc.courses.get
       .query({ courseID: courseId })
@@ -35,7 +43,7 @@ function useCourseData(courseId: string) {
       .catch(() => {
         spawnToast('There was an error loading this course', true);
       });
-  }, [courseId]);
+  }, [courseId, loadTrigger]);
 
   return fullCourseData;
 }
