@@ -18,6 +18,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
+import Twemoji from 'react-twemoji';
 
 /** @todo make this a shared hook to read and write to global cache after that's created  */
 function useCourseData(courseId: string) {
@@ -46,7 +47,7 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   }
 
   return (
-    <>
+    <div className="preview-body">
       <ResultPageSection title={course.title}>
         <CourseSummary course={course} />
       </ResultPageSection>
@@ -70,7 +71,7 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
       <ResultPageSection title="💬 Reviews">
         <Review key={course.id} course={course} terms={sortTerms(course.terms)} />
       </ResultPageSection>
-    </>
+    </div>
   );
 };
 
@@ -105,7 +106,9 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
         </Button>
         <CourseBookmarkButton course={courseData} disabled={isLoading} />
       </Paper>
-      <CoursePreviewContent data={courseData} />
+      <Twemoji options={{ className: 'twemoji' }}>
+        <CoursePreviewContent data={courseData} />
+      </Twemoji>
     </div>
   );
 };
