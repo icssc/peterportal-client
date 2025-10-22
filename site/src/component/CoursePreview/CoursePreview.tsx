@@ -11,7 +11,7 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { CourseGQLData } from '../../types/types';
-import { Button, IconButton, Paper, Tooltip } from '@mui/material';
+import { Button, Fade, IconButton, Paper, Tooltip, useTheme } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
@@ -84,7 +84,16 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
 
-  const closePreview = () => dispatch(setPreviewedCourse(''));
+  const [open, setOpen] = useState(true);
+  const theme = useTheme();
+  const transitionTime = theme.transitions.duration.shortest;
+
+  const closePreview = () => {
+    setOpen(false);
+    setTimeout(() => {
+      dispatch(setPreviewedCourse(''));
+    }, transitionTime);
+  };
 
   const copyCourseLink = () => {
     const url = new URL('/course/' + courseId, location.origin).toString();
@@ -106,41 +115,43 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
   });
 
   return (
-    <div className="course-preview">
-      <Paper className="preview-header" variant="outlined">
-        <Tooltip title="Exit Preview (Esc)">
-          <IconButton onClick={closePreview}>
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
-        <p className="preview-title">
-          {isLoading ? (
-            `Loading ${courseId}...`
-          ) : (
-            <>
-              Previewing{' '}
-              <b>
-                {courseData.department} {courseData.courseNumber}
-              </b>
-            </>
-          )}
-        </p>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<IosShareIcon />}
-          size="small"
-          disableElevation
-          onClick={copyCourseLink}
-        >
-          Share
-        </Button>
-        <CourseBookmarkButton course={courseData} disabled={isLoading} />
-      </Paper>
-      <Twemoji options={{ className: 'twemoji' }}>
-        <CoursePreviewContent data={courseData} />
-      </Twemoji>
-    </div>
+    <Fade in={open} timeout={{ enter: 0, exit: transitionTime }}>
+      <div className="course-preview">
+        <Paper className="preview-header" variant="outlined">
+          <Tooltip title="Exit Preview (Esc)">
+            <IconButton onClick={closePreview}>
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+          <p className="preview-title">
+            {isLoading ? (
+              `Loading ${courseId}...`
+            ) : (
+              <>
+                Previewing{' '}
+                <b>
+                  {courseData.department} {courseData.courseNumber}
+                </b>
+              </>
+            )}
+          </p>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<IosShareIcon />}
+            size="small"
+            disableElevation
+            onClick={copyCourseLink}
+          >
+            Share
+          </Button>
+          <CourseBookmarkButton course={courseData} disabled={isLoading} />
+        </Paper>
+        <Twemoji options={{ className: 'twemoji' }}>
+          <CoursePreviewContent data={courseData} />
+        </Twemoji>
+      </div>
+    </Fade>
   );
 };
 

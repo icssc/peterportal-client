@@ -18,19 +18,17 @@ const RoadmapPage: FC = () => {
   const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
 
   return (
-    <>
-      <div className="roadmap-page">
-        <AddCoursePopup />
-        <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
-          <SearchSidebar sidebarRef={sidebarRef} />
-        </CSSTransition>
-        {isMobile && <TransferCreditsMenu />}
-        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
-          <Planner />
-          {previewCourseId && <CoursePreview courseId={previewCourseId} />}
-        </div>
+    <div className="roadmap-page">
+      <AddCoursePopup />
+      <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
+        <SearchSidebar sidebarRef={sidebarRef} />
+      </CSSTransition>
+      {isMobile && <TransferCreditsMenu />}
+      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+        <Planner />
+        {previewCourseId && <CoursePreview courseId={previewCourseId} />}
       </div>
-    </>
+    </div>
   );
 };
 
