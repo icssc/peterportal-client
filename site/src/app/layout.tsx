@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await serverTrpc.users.get.query().catch(() => null);
 
   return (
-    <html lang="en" data-theme={user?.theme} className={`${roboto.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme={user?.theme} className={roboto.variable} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="dark light" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

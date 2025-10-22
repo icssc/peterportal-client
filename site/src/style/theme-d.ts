@@ -1,10 +1,11 @@
 import '@mui/material/styles';
+import { PaletteColor, PaletteColorOptions } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
   interface Palette {
-    tertiary: Palette['primary'];
-    accent: Palette['primary'];
-    danger: Palette['primary'];
+    tertiary: PaletteColor;
+    accent: PaletteColor;
+    danger: PaletteColor;
     overlay: {
       overlay1: string;
       overlay2: string;
@@ -35,9 +36,9 @@ declare module '@mui/material/styles' {
     };
   }
   interface PaletteOptions {
-    tertiary?: PaletteOptions['primary'];
-    accent?: PaletteOptions['primary'];
-    danger?: PaletteOptions['primary'];
+    tertiary?: PaletteColorOptions;
+    accent?: PaletteColorOptions;
+    danger?: PaletteColorOptions;
     overlay?: {
       overlay1?: string;
       overlay2?: string;
