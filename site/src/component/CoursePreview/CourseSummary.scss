@@ -1,4 +1,6 @@
 .course-summary {
+  container: course-summary / inline-size;
+
   .result-page-section {
     margin-inline: auto;
   }
@@ -10,6 +12,16 @@
 
   .summary-column:first-child {
     max-width: 400px;
+  }
+
+  @container course-summary (width < 800px) {
+    .summary-columns {
+      flex-direction: column;
+    }
+
+    .summary-column:first-child {
+      max-width: none;
+    }
   }
 
   h4 {
