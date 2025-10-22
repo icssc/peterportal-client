@@ -10,23 +10,23 @@ const sharedTokens = {
   misc: {
     midGray: '#8d8d8d',
   },
-  gradeDist: {
+  chart: {
+    red: {
+      secondary: '#e7966d',
+    },
+    orange: {
+      primary: 'orange',
+      secondary: '#ecad6d',
+    },
+    yellow: {
+      primary: 'yellow',
+      secondary: '#f5d77f',
+    },
+    green: {
+      primary: 'green',
+    },
     pass: '#4ab486',
     noPass: '#e36436',
-  },
-  green: {
-    primary: 'green',
-  },
-  yellow: {
-    primary: 'yellow',
-    secondary: '#f5d77f',
-  },
-  orange: {
-    primary: 'orange',
-    secondary: '#ecad6d',
-  },
-  red: {
-    secondary: '#e7966d',
   },
 };
 
@@ -52,13 +52,16 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  green: {
-    ...sharedTokens.green,
-    secondary: '#87c587',
-  },
-  red: {
-    primary: '#ce0000',
-    ...sharedTokens.red,
+  chart: {
+    ...sharedTokens.chart,
+    green: {
+      ...sharedTokens.chart.green,
+      secondary: '#87c587',
+    },
+    red: {
+      primary: '#ce0000',
+      ...sharedTokens.chart.red,
+    },
   },
 };
 
@@ -86,22 +89,25 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
-  green: {
-    ...sharedTokens.green,
-    secondary: '#295629',
-  },
-  red: {
-    primary: '#ff3333',
-    ...sharedTokens.red,
+  chart: {
+    ...sharedTokens.chart,
+    green: {
+      ...sharedTokens.chart.green,
+      secondary: '#295629',
+    },
+    red: {
+      primary: '#ff3333',
+      ...sharedTokens.chart.red,
+    },
   },
 };
 
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
-  success: { main: base.green!.primary! },
-  danger: { main: base.red!.primary! },
-  error: { main: base.red!.secondary! },
-  warning: { main: base.orange!.secondary! },
+  success: { main: base.chart!.green!.primary! },
+  danger: { main: base.chart!.red!.primary! },
+  error: { main: base.chart!.red!.secondary! },
+  warning: { main: base.chart!.orange!.secondary! },
 });
 
 export let theme = createTheme({

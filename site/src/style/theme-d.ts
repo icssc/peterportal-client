@@ -2,6 +2,11 @@ import '@mui/material/styles';
 import { PaletteColor, PaletteColorOptions } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
+  interface TwoToneColor {
+    primary: string;
+    secondary: string;
+  }
+
   interface Palette {
     tertiary: PaletteColor;
     accent: PaletteColor;
@@ -14,27 +19,16 @@ declare module '@mui/material/styles' {
     misc: {
       midGray: string;
     };
-    gradeDist: {
+    chart: {
+      red: TwoToneColor;
+      orange: TwoToneColor;
+      yellow: TwoToneColor;
+      green: TwoToneColor;
       pass: string;
       noPass: string;
     };
-    green: {
-      primary: string;
-      secondary: string;
-    };
-    yellow: {
-      primary: string;
-      secondary: string;
-    };
-    orange: {
-      primary: string;
-      secondary: string;
-    };
-    red: {
-      primary: string;
-      secondary: string;
-    };
   }
+
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
     accent?: PaletteColorOptions;
@@ -47,25 +41,13 @@ declare module '@mui/material/styles' {
     misc?: {
       midGray?: string;
     };
-    gradeDist?: {
+    chart?: {
+      red?: Partial<TwoToneColor>;
+      orange?: Partial<TwoToneColor>;
+      yellow?: Partial<TwoToneColor>;
+      green?: Partial<TwoToneColor>;
       pass?: string;
       noPass: string;
-    };
-    green?: {
-      primary?: string;
-      secondary?: string;
-    };
-    yellow?: {
-      primary?: string;
-      secondary?: string;
-    };
-    orange?: {
-      primary?: string;
-      secondary?: string;
-    };
-    red?: {
-      primary?: string;
-      secondary?: string;
     };
   }
 }
