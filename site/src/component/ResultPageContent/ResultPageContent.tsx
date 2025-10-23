@@ -17,7 +17,7 @@ export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children 
 };
 
 interface ResultPageContentProps {
-  sideInfo?: ReactNode;
+  sideInfo: ReactNode;
   children: ReactNode;
 }
 export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, children }) => {

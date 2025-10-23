@@ -163,7 +163,6 @@ const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
 };
 
 const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
-  // description, units, division,
   return (
     <div className="course-summary">
       <p>{course.description}</p>
