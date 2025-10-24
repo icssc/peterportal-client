@@ -19,35 +19,18 @@
     font-style: italic;
   }
 
-  .form-check-input {
-    border: 1px solid rgba(136, 136, 136, 0.4);
-  }
-
   .year-quarter-row,
   .grade-difficulty-row {
     display: flex;
     gap: 16px;
 
-    > .form-group {
+    > .MuiFormControl-root {
       flex: 1;
     }
   }
 
-  .MuiRating-sizeLarge {
-    font-size: 44px;
-    .MuiRating-iconEmpty {
-      color: white;
-    }
-    .MuiRating-iconFilled {
-      color: var(--blue-primary);
-    }
-    .MuiRating-iconHover {
-      opacity: 0.6;
-    }
-  }
-
   .rating-error .MuiRating-iconEmpty {
-    color: red;
+    color: var(--mui-palette-error-main);
   }
 
   .ppc-combobox {

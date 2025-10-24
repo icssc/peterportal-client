@@ -218,7 +218,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in course context, select a professor
   const professorSelect = courseProp && (
-    <FormControl className="form-group" error={showFormErrors && !professor}>
+    <FormControl error={showFormErrors && !professor}>
       <FormLabel>Professor</FormLabel>
       <Select
         name="professor"
@@ -252,7 +252,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in professor context, select a course
   const courseSelect = professorProp && (
-    <FormControl className="form-group" error={showFormErrors && !course}>
+    <FormControl error={showFormErrors && !course}>
       <FormLabel>Course Taken</FormLabel>
       <Select
         name="course"
@@ -302,9 +302,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </Modal.Header>
       <Modal.Body>
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
-        <Box component="form" noValidate onSubmit={submitForm} className="ppc-modal-form">
+        <Box component="form" noValidate onSubmit={submitForm}>
           <div className="year-quarter-row">
-            <FormControl className="form-group" error={showFormErrors && !yearTaken}>
+            <FormControl error={showFormErrors && !yearTaken}>
               <FormLabel>Year</FormLabel>
               <Select
                 name="year"
@@ -325,7 +325,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               </Select>
               {showFormErrors && !yearTaken && <FormHelperText>Missing year</FormHelperText>}
             </FormControl>
-            <FormControl className="form-group" error={showFormErrors && !quarterTaken}>
+            <FormControl error={showFormErrors && !quarterTaken}>
               <FormLabel>Quarter</FormLabel>
               <Select
                 name="quarter"
@@ -352,7 +352,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           {courseSelect}
 
           <div className="grade-difficulty-row">
-            <FormControl className="form-group" error={showFormErrors && !gradeReceived}>
+            <FormControl error={showFormErrors && !gradeReceived}>
               <FormLabel>Grade</FormLabel>
               <Select
                 name="grade"
@@ -374,7 +374,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               {showFormErrors && !gradeReceived && <FormHelperText>Missing grade</FormHelperText>}
             </FormControl>
 
-            <FormControl className="form-group" error={showFormErrors && !difficulty}>
+            <FormControl error={showFormErrors && !difficulty}>
               <FormLabel>Difficulty</FormLabel>
               <Select
                 name="difficulty"
@@ -397,7 +397,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </FormControl>
           </div>
 
-          <FormControl className="form-group" error={showFormErrors && !rating}>
+          <FormControl error={showFormErrors && !rating}>
             <FormLabel>Rating</FormLabel>
             <Rating
               className={showFormErrors && !rating ? 'rating-error' : ''}
@@ -410,47 +410,26 @@ const ReviewForm: FC<ReviewFormProps> = ({
             {showFormErrors && !rating && <FormHelperText>Missing rating</FormHelperText>}
           </FormControl>
 
-          <FormControl className="form-group">
+          <FormControl>
             <FormLabel>Course Details</FormLabel>
 
             <FormControlLabel
               label="Would Take Again"
-              control={
-                <Checkbox
-                  id="takeAgain"
-                  checked={!!takeAgain}
-                  onChange={(e) => setTakeAgain(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
-              }
+              control={<Checkbox checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />}
             ></FormControlLabel>
 
             <FormControlLabel
               label="Requires Textbook"
-              control={
-                <Checkbox
-                  id="textbook"
-                  checked={!!textbook}
-                  onChange={(e) => setTextbook(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
-              }
+              control={<Checkbox checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
             />
 
             <FormControlLabel
               label="Mandatory Attendance"
-              control={
-                <Checkbox
-                  id="attendance"
-                  checked={!!attendance}
-                  onChange={(e) => setAttendance(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
-              }
+              control={<Checkbox checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />}
             />
           </FormControl>
 
-          <FormControl className="form-group">
+          <FormControl>
             <FormLabel>Tags</FormLabel>
             <Select2
               isMulti
@@ -475,7 +454,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </FormControl>
 
-          <FormControl className="form-group additional-details">
+          <FormControl className="additional-details">
             <FormLabel>Additional Details</FormLabel>
             <TextField
               multiline
@@ -502,17 +481,10 @@ const ReviewForm: FC<ReviewFormProps> = ({
             </div>
           )}
 
-          <FormControl className="anonymous-checkbox form-group">
+          <FormControl className="anonymous-checkbox">
             <FormControlLabel
               label="Post as Anonymous"
-              control={
-                <Checkbox
-                  id="anonymous"
-                  checked={anonymous}
-                  onChange={(e) => setAnonymous(e.target.checked)}
-                  icon={<span className="ppc-checkbox" />}
-                />
-              }
+              control={<Checkbox checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
             />
           </FormControl>
 

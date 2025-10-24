@@ -4,11 +4,34 @@ button {
   color: inherit;
 }
 
-a {
+body a {
   text-decoration: none;
   &:hover {
     text-decoration: underline;
   }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html > body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+  background: var(--background);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+#root {
+  position: relative;
+  height: 100%;
 }
 
 .app-body {
@@ -81,7 +104,7 @@ a {
   margin: 4px;
 
   &.btn-primary {
-    color: var(--ring-road-white);
+    color: white;
     border-color: var(--blue-primary);
     background-color: var(--blue-primary);
     &:hover,
@@ -112,7 +135,7 @@ a {
   }
 }
 
-.ppc-popover {
+div.ppc-popover {
   border-radius: 8px;
   padding: 0px;
   box-shadow: none;
@@ -124,18 +147,18 @@ a {
   -webkit-filter: $filter;
   border: none;
 
-  .popover-body {
+  div.popover-body {
     border-radius: 8px;
     padding: 16px;
   }
 
-  .popover-arrow {
+  div.popover-arrow {
     z-index: -1;
     &::before {
       display: none;
     }
   }
-  .popover-arrow::after {
+  div.popover-arrow::after {
     position: absolute;
     border: 8px solid transparent;
     border-width: 12px 16px;
@@ -144,7 +167,7 @@ a {
   }
   &[data-popper-placement='bottom'] {
     top: -24px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       left: 0;
       bottom: 0;
       top: 10px;
@@ -155,14 +178,14 @@ a {
   }
   &[data-popper-placement='left-start'] {
     margin-inline: 8px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       left: -2px;
       border-left-color: var(--overlay1);
     }
   }
   &[data-popper-placement='right-start'] {
     margin-inline: 8px !important;
-    .popover-arrow::after {
+    div.popover-arrow::after {
       right: -2px;
       border-right-color: var(--overlay1);
     }
@@ -173,24 +196,24 @@ a {
   }
 }
 
-.bs-popover-left {
+div.bs-popover-left {
   margin-right: 20px;
 
-  .arrow::after,
-  .arrow::before {
+  div.arrow::after,
+  div.arrow::before {
     left: -1px;
   }
 }
 
-.ppc-popover.bs-popover-right {
+div.ppc-popover.bs-popover-right {
   margin-left: 20px;
   margin-top: 4px !important;
 }
 
-.ppc-popover.bs-popover-bottom {
+div.ppc-popover.bs-popover-bottom {
   margin-top: 48px;
-  .arrow::after,
-  .arrow::before {
+  div.arrow::after,
+  div.arrow::before {
     left: 2px;
   }
 }
@@ -233,58 +256,6 @@ a {
     overflow: hidden;
   }
 
-  .MuiFormLabel-root {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .Mui-checked .MuiSvgIcon-root {
-    color: var(--blue-primary);
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 16px;
-
-    .MuiInputBase-input {
-      font-size: 16px;
-      padding: 5px 10px;
-      background-color: var(--overlay1);
-    }
-
-    input[type='file'] {
-      font-size: 16px;
-    }
-
-    > img {
-      width: 100%;
-      height: auto;
-    }
-
-    .MuiFormControlLabel-root {
-      display: flex;
-      align-items: center;
-      padding-block: 2px;
-      margin: 0;
-    }
-
-    .MuiFormControlLabel-label {
-      margin-left: 10px;
-      font-size: 18px;
-    }
-
-    .MuiCheckbox-root {
-      padding: 0;
-      margin: 0;
-      width: 1.2em;
-      height: 1.2em;
-      transition: background-color 0.2s;
-    }
-  }
-
   a {
     color: #1b76b4;
   }
@@ -302,15 +273,6 @@ a {
 
 [data-theme='dark'] .ppc-modal a {
   color: var(--blue-accent);
-}
-
-[data-theme='dark'] {
-  .ppc-modal-form {
-    .form-control,
-    .form-control:focus {
-      background-color: var(--overlay1);
-    }
-  }
 }
 
 .ppc-dropdown-btn {
@@ -360,17 +322,6 @@ a {
   }
 }
 
-.ppc-checkbox {
-  /** @todo integrate into MUI theme */
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  background-color: var(--overlay1);
-  border-radius: 4px;
-  border: 1px solid var(--overlay3);
-  position: relative;
-}
-
 .ui-overlay {
   position: fixed;
   inset: 0;
@@ -412,9 +363,6 @@ a {
 body hr {
   opacity: 1;
 }
-.form-group {
-  margin-bottom: 16px;
-}
 
 // monkey patch for recaptcha border bug
 .g-recaptcha {
@@ -423,3 +371,104 @@ body hr {
   height: 76px;
   border-radius: 4px;
 }
+
+// general bootstrap overwrites. bg/border color may need further customization per component
+.table {
+  color: var(--text);
+}
+
+[data-theme='dark'] {
+  .list-group-item,
+  .modal-content,
+  .dropdown-menu,
+  .dropdown-item,
+  .form-control,
+  .form-control:focus {
+    color: var(--text);
+    background-color: var(--overlay2);
+    &::placeholder {
+      color: #8888;
+    }
+  }
+
+  .form-control {
+    border-color: var(--overlay3);
+  }
+
+  .form-control:focus {
+    border-color: #86bbfb !important;
+  }
+
+  .custom-control-label::before {
+    background-color: var(--overlay3);
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--overlay3);
+  }
+
+  .btn-outline-primary {
+    color: #0f83ff;
+    border-color: #0f83ff;
+
+    &:hover,
+    &:focus {
+      color: white;
+    }
+
+    &:hover {
+      border-color: #007bff;
+    }
+
+    &:focus {
+      border-color: #2767d4;
+    }
+  }
+
+  .close {
+    color: var(--text);
+    text-shadow: none;
+  }
+
+  .page-link {
+    background-color: var(--overlay1);
+    border-color: var(--overlay2);
+
+    &:hover,
+    &:focus {
+      background-color: var(--overlay2);
+      color: #1284ff;
+    }
+  }
+
+  .page-item.active .page-link:hover {
+    background-color: #1284ff;
+    color: #fff;
+  }
+
+  .page-item.disabled .page-link {
+    background-color: var(--overlay1);
+    border-color: var(--overlay2);
+  }
+}
+
+div.popover {
+  background-color: var(--overlay1);
+}
+div.popover-body {
+  background-color: var(--overlay1);
+  color: var(--text);
+}
+div.bs-popover-top > div.arrow::after {
+  border-top-color: var(--overlay1);
+}
+div.bs-popover-bottom > div.arrow::after {
+  border-bottom-color: var(--overlay1);
+}
+div.bs-popover-left > div.arrow::after {
+  border-left-color: var(--overlay1);
+}
+div.bs-popover-right > div.arrow::after {
+  border-right-color: var(--overlay1);
+}
+// end bootstrap overwrites
