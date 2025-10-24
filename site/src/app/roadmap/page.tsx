@@ -1,5 +1,5 @@
-import RoadmapPage from './RoadmapPage';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  return <RoadmapPage />;
+  redirect('/');
 }

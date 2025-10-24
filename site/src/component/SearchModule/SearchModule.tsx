@@ -73,7 +73,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
-    if (location.pathname === '/roadmap') {
+    if (location.pathname === '/') {
       dispatch(setShowSavedCourses(!query));
     }
     if (query && query !== search.query) {
