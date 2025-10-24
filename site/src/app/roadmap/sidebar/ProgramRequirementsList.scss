@@ -127,9 +127,8 @@
     margin-block: 2px;
   }
 
-  input[type='checkbox'] {
+  .MuiCheckbox-root {
     position: relative;
-    border: 1px solid #8886;
     margin: 0;
     flex-shrink: 0;
   }
