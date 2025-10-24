@@ -29,10 +29,6 @@
     max-width: 100% - $base-percent;
   }
 
-  .result-page-body {
-    padding: 32px;
-  }
-
   .side-info {
     max-height: 100%;
     max-width: $side-info-width;
@@ -43,36 +39,14 @@
   }
 
   .result-page-section {
-    background-color: var(--overlay1);
-    border-radius: var(--border-radius);
-    max-width: 1000px;
     margin: 0 32px 32px $gap;
-
-    @include globals.card-padding;
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    h2 {
-      font-size: 24px;
-      margin-bottom: 16px;
-      &:first-child {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-      }
-    }
-
-    .twemoji {
-      width: 1.25em;
-    }
   }
 
   .result-page-body {
     max-height: 100%;
     overflow: auto;
     margin-top: 0;
-    padding-inline: 0;
+    padding: 32px 0;
   }
 
   @media only screen and (max-width: 1300px) {
@@ -100,5 +74,31 @@
     .result-page-section {
       margin: 0 0 16px;
     }
+  }
+}
+
+.result-page-section {
+  background-color: var(--overlay1);
+  border-radius: var(--border-radius);
+  max-width: 1000px;
+  margin-bottom: 32px;
+
+  @include globals.card-padding;
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    &:first-child {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+  }
+
+  .twemoji {
+    width: 1.25em;
   }
 }
