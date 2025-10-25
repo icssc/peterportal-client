@@ -10,7 +10,7 @@ import { pluralize } from '../../../helpers/util';
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
 
-import { Box, Card, Collapse, Divider, FormControl, IconButton } from '@mui/material';
+import { Box, Card, Collapse, Divider, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
@@ -83,9 +83,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
       </Modal.Header>
       <Modal.Body>
         <Box component="form" noValidate>
-          <FormControl>
-            <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
-          </FormControl>
+          <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
 
           <Button variant="danger" onClick={handleDeleteYear}>
             I am sure

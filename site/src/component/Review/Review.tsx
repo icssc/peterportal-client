@@ -6,12 +6,13 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Button, Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import ThemeContext from '../../style/theme-context';
 
 import AddIcon from '@mui/icons-material/Add';
+import { Box, Checkbox, FormControlLabel } from '@mui/material';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -146,7 +147,7 @@ const Review: FC<ReviewProps> = (props) => {
     const selectedCourseOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
 
     return (
-      <>
+      <Box>
         <div className="reviews">
           <div className="sort-filter-menu">
             <div className="sort-dropdown">
@@ -195,18 +196,20 @@ const Review: FC<ReviewProps> = (props) => {
                 </DropdownButton>
               </div>
             )}
+
             <div className="verified-only-checkbox">
-              <Form>
-                <Form.Check
-                  type="checkbox"
-                  label="Show verified reviews only"
-                  id="Show verified reviews only"
-                  checked={showOnlyVerifiedReviews}
-                  onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
-                />
-              </Form>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showOnlyVerifiedReviews}
+                    onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+                  />
+                }
+                label="Show verified reviews only"
+              />
             </div>
           </div>
+
           {sortedReviews.length !== 0 && (
             <div className="reviewcards">
               {sortedReviews.map((review) => (
@@ -219,7 +222,7 @@ const Review: FC<ReviewProps> = (props) => {
           </Button>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />
-      </>
+      </Box>
     );
   }
 };
