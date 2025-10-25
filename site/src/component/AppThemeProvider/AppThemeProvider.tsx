@@ -4,8 +4,9 @@ import ThemeContext from '../../style/theme-context';
 import { Theme } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import trpc from '../../trpc';
-import { createTheme, ThemeProvider, useMediaQuery } from '@mui/material';
+import { ThemeProvider, useMediaQuery } from '@mui/material';
 import { useAppSelector } from '../../store/hooks';
+import { theme } from '../../style/theme';
 
 function shouldPreloadDark(preference: Theme | null, hookIsDarkMode: boolean) {
   if (preference === 'dark') return true;
@@ -83,17 +84,9 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [isLoggedIn, setThemePreference]);
 
-  const muiTheme = createTheme({
-    cssVariables: { colorSchemeSelector: '[data-theme=%s]' },
-    colorSchemes: {
-      dark: { palette: { mode: 'dark' } },
-      light: { palette: { mode: 'light' } },
-    },
-  });
-
   return (
     <ThemeContext.Provider value={{ darkMode, usingSystemTheme: themePreference === 'system', setTheme }}>
-      <ThemeProvider theme={muiTheme} defaultMode={preloadedDark ? 'dark' : 'light'}>
+      <ThemeProvider theme={theme} defaultMode={preloadedDark ? 'dark' : 'light'}>
         {children}
       </ThemeProvider>
     </ThemeContext.Provider>

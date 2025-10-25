@@ -29,7 +29,7 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Collapse } from '@mui/material';
+import { Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 
 interface SourceOverlayProps {
@@ -282,13 +282,7 @@ const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
     <div className={className}>
       <label>
         <b>{data.label}</b>
-        <input
-          type="checkbox"
-          name={'marker-' + storeKey}
-          className="form-check-input"
-          checked={complete}
-          onChange={(e) => setComplete(e.target.checked)}
-        />
+        <Checkbox name={'marker-' + storeKey} checked={complete} onChange={(e) => setComplete(e.target.checked)} />
       </label>
     </div>
   );
