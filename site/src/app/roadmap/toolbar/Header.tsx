@@ -10,7 +10,7 @@ import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Paper } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
 
 interface HeaderProps {
@@ -49,7 +49,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
     uncategorizedCourses.some((course) => course.unread);
 
   return (
-    <div className="roadmap-header">
+    <Paper className="roadmap-header">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
@@ -75,7 +75,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           </Button>
         </ButtonGroup>
       </div>
-    </div>
+    </Paper>
   );
 };
 

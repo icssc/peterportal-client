@@ -1,13 +1,18 @@
 @use '../../../globals.scss';
 
 .planner {
+  .roadmap-header {
+    top: 0px;
+  }
+}
+
+.planner-contents {
   $planner-gap: 24px;
 
   display: flex;
   flex-direction: column;
   gap: $planner-gap;
   position: relative;
-  overflow: auto;
   height: 100%;
 
   @include globals.outer-padding();
@@ -19,9 +24,5 @@
     overflow: auto;
     gap: $planner-gap;
     flex-shrink: 0;
-  }
-
-  .roadmap-header {
-    top: 0px;
   }
 }
