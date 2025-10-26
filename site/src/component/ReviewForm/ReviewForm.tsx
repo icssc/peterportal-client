@@ -415,21 +415,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
             <FormControlLabel
               label="Would Take Again"
-              control={
-                <Checkbox id="takeAgain" checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />
-              }
+              control={<Checkbox checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />}
             ></FormControlLabel>
 
             <FormControlLabel
               label="Requires Textbook"
-              control={<Checkbox id="textbook" checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
+              control={<Checkbox checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
             />
 
             <FormControlLabel
               label="Mandatory Attendance"
-              control={
-                <Checkbox id="attendance" checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />
-              }
+              control={<Checkbox checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />}
             />
           </FormControl>
 
@@ -488,7 +484,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           <FormControl className="anonymous-checkbox">
             <FormControlLabel
               label="Post as Anonymous"
-              control={<Checkbox id="anonymous" checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
+              control={<Checkbox checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
             />
           </FormControl>
 

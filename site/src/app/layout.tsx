@@ -14,19 +14,11 @@ import AppProvider from '../component/AppProvider/AppProvider';
 import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
-import { Roboto, Open_Sans } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 
 const roboto = Roboto({
   subsets: ['latin'],
   variable: '--font-roboto',
-  style: ['normal', 'italic'],
-  display: 'swap',
-});
-
-const openSans = Open_Sans({
-  subsets: ['latin'],
-  variable: '--font-open-sans',
-  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
   display: 'swap',
 });
@@ -42,12 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await serverTrpc.users.get.query().catch(() => null);
 
   return (
-    <html
-      lang="en"
-      data-theme={user?.theme}
-      className={`${roboto.variable} ${openSans.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" data-theme={user?.theme} className={roboto.variable} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="dark light" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

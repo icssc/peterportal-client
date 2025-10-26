@@ -13,6 +13,7 @@ import { ReviewData } from '@peterportal/types';
 import ThemeContext from '../../style/theme-context';
 
 import AddIcon from '@mui/icons-material/Add';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -196,18 +197,20 @@ const Review: FC<ReviewProps> = (props) => {
                 </DropdownButton>
               </div>
             )}
+
             <div className="verified-only-checkbox">
-              <Form>
-                <Form.Check
-                  type="checkbox"
-                  label="Show verified reviews only"
-                  id="Show verified reviews only"
-                  checked={showOnlyVerifiedReviews}
-                  onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
-                />
-              </Form>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showOnlyVerifiedReviews}
+                    onChange={() => setShowOnlyVerifiedReviews((state) => !state)}
+                  />
+                }
+                label="Show verified reviews only"
+              />
             </div>
           </div>
+
           {sortedReviews.length !== 0 && (
             <div className="reviewcards">
               {sortedReviews.map((review) => (

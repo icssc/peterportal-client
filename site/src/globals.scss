@@ -11,13 +11,13 @@
   --blue-tertiary: var(--mui-palette-tertiary-main);
   --blue-accent: var(--mui-palette-accent-main);
 
-  --green-primary: var(--mui-palette-green-primary);
-  --red-primary: var(--mui-palette-red-primary);
+  --green-primary: var(--mui-palette-chart-green-primary);
+  --red-primary: var(--mui-palette-chart-red-primary);
 
-  --green-secondary: var(--mui-palette-green-secondary);
-  --yellow-secondary: var(--mui-palette-yellow-secondary);
-  --orange-secondary: var(--mui-palette-orange-secondary);
-  --red-secondary: var(--mui-palette-red-secondary);
+  --green-secondary: var(--mui-palette-chart-green-secondary);
+  --yellow-secondary: var(--mui-palette-chart-yellow-secondary);
+  --orange-secondary: var(--mui-palette-chart-orange-secondary);
+  --red-secondary: var(--mui-palette-chart-red-secondary);
 
   --mid-gray: var(--mui-palette-misc-midGray);
 
@@ -30,8 +30,8 @@
   --orange-secondary-light: var(--orange-secondary);
   --red-secondary-light: var(--red-secondary);
 
-  --gradedist-p: var(--mui-palette-gradeDist-pass);
-  --gradedist-np: var(--mui-palette-gradeDist-noPass);
+  --gradedist-p: var(--mui-palette-chart-pass);
+  --gradedist-np: var(--mui-palette-chart-noPass);
 
   --border-radius: 8px;
   --border-primary: rgba(96, 97, 102, 0.5);

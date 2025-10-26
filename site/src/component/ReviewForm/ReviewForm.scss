@@ -30,7 +30,7 @@
   }
 
   .rating-error .MuiRating-iconEmpty {
-    color: red;
+    color: var(--mui-palette-error-main);
   }
 
   .ppc-combobox {

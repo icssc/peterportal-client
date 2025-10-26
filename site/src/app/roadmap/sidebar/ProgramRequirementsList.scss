@@ -4,7 +4,7 @@
 @mixin highlight-group() {
   background: var(--overlay2);
   margin: 4px -2px 8px;
-  padding: 4px 6px;
+  padding: 4px 6px 4px 12px;
   border-radius: 4px;
 }
 
@@ -127,9 +127,9 @@
     margin-block: 2px;
   }
 
-  input[type='checkbox'] {
+  .MuiCheckbox-root {
+    // @todo: see if there's a way to get rid of this
     position: relative;
-    border: 1px solid #8886;
     margin: 0;
     flex-shrink: 0;
   }
