@@ -159,6 +159,17 @@ const transferCreditsRouter = router({
       .where(eq(transferredMisc.userId, ctx.session.userId!));
     return courses;
   }),
+  addUncategorizedCourse: userProcedure.input(zodTransferredUncategorized).mutation(async ({ ctx, input }) => {
+    await db
+      .insert(transferredMisc)
+      .values({ courseName: input.name, units: input.units, userId: ctx.session.userId! });
+  }),
+  updateUncategorizedCourse: userProcedure.input(zodTransferredUncategorized).mutation(async ({ ctx, input }) => {
+    await db
+      .update(transferredMisc)
+      .set({ units: input.units })
+      .where(and(eq(transferredMisc.userId, ctx.session.userId!), eq(transferredMisc.courseName, input.name ?? '')));
+  }),
   removeUncategorizedCourse: userProcedure.input(zodTransferredUncategorized).mutation(async ({ ctx, input }) => {
     const conditions = [eq(transferredMisc.userId, ctx.session.userId!)];
 
