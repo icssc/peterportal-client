@@ -53,7 +53,14 @@ const AddYearPopup: FC = () => {
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
-      <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
+      <Button
+        variant="contained"
+        color="inherit"
+        disableElevation
+        className="header-btn"
+        onClick={() => setShowModal(true)}
+        startIcon={<AddIcon />}
+      >
         <span>Add Year</span>
       </Button>
     </>

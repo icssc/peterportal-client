@@ -1,35 +1,23 @@
 @use '../../../globals.scss';
 
-.roadmap-header {
-  border-radius: var(--border-radius);
-  color: var(--ring-road-white);
+.MuiPaper-root.roadmap-header {
+  z-index: 2;
+  font-size: 14px;
+
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   align-items: center;
-  padding: 8px;
-  position: sticky;
-  top: 36px;
-  z-index: 2;
-  font-size: 14px;
 
-  &::before {
-    content: ' ';
-    position: absolute;
-    top: -64px;
-    left: 0;
-    height: 80px;
-    background-color: var(--background);
-    width: 100%;
-  }
-  &::after {
-    content: ' ';
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    background: linear-gradient(to right, var(--blue-primary), var(--blue-accent));
-    border-radius: inherit;
-  }
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-width: 0 0 2px 0;
+  border-radius: 0;
+  padding: 12px 16px 12px 12px;
+  gap: 4px;
+
   > * {
     position: relative;
     z-index: 1;
@@ -42,28 +30,17 @@
   .planner-left {
     display: flex;
     flex-wrap: wrap;
-    padding: 8px;
+    padding: 4px;
     align-items: center;
     gap: 8px 12px;
     z-index: 2;
   }
 
-  .btn-group button {
-    white-space: nowrap;
-    padding-inline: 8px;
-    @media (max-width: 900px) {
-      font-size: 13px;
-      margin: 0;
-      padding: 6px;
-
-      .MuiSvgIcon-root {
-        font-size: 18px;
-        margin-right: 4px;
-      }
-    }
-  }
-
   .planner-actions {
+    .MuiButtonGroup-root {
+      gap: 10px;
+    }
+
     padding-right: 2px;
 
     span.MuiButton-startIcon {
@@ -97,12 +74,6 @@
 #course-count,
 #unit-count {
   font-weight: bold;
-}
-
-.header-btn:hover,
-.header-btn:focus {
-  background-color: transparent;
-  color: var(--ring-road-white);
 }
 
 .header-icon {

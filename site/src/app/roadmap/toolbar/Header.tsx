@@ -49,7 +49,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
     uncategorizedCourses.some((course) => course.unread);
 
   return (
-    <Paper className="roadmap-header">
+    <Paper className="roadmap-header" variant="outlined">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
@@ -58,14 +58,23 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
         </span>
       </div>
       <div className="planner-actions">
-        <ButtonGroup>
+        <ButtonGroup className="planner-action-buttons">
           <AddYearPopup />
-          <Button variant="text" className="header-btn" startIcon={<SwapHorizOutlinedIcon />} onClick={toggleTransfers}>
+          <Button
+            variant="contained"
+            color="inherit"
+            disableElevation
+            className="header-btn"
+            startIcon={<SwapHorizOutlinedIcon />}
+            onClick={toggleTransfers}
+          >
             Transfer Credits
             <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
           <Button
-            variant="text"
+            variant="contained"
+            color="inherit"
+            disableElevation
             className="header-btn"
             startIcon={<SaveIcon />}
             loading={saveInProgress}
