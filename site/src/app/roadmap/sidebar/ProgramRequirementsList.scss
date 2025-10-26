@@ -4,7 +4,7 @@
 @mixin highlight-group() {
   background: var(--overlay2);
   margin: 4px -2px 8px;
-  padding: 4px 6px;
+  padding: 4px 6px 4px 12px;
   border-radius: 4px;
 }
 

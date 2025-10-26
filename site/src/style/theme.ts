@@ -105,8 +105,7 @@ const darkPalette: PaletteOptions = {
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
   success: { main: base.chart!.green!.primary! },
-  danger: { main: base.chart!.red!.primary! },
-  error: { main: base.chart!.red!.secondary! },
+  error: { main: base.chart!.red!.primary! },
   warning: { main: base.chart!.orange!.secondary! },
 });
 
