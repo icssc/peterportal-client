@@ -311,7 +311,7 @@ const RoadmapMultiplan: FC = () => {
             </Form.Group>
           </Form>
           <Button
-            color="danger"
+            color="error"
             onClick={() => {
               deleteCurrentPlan();
             }}

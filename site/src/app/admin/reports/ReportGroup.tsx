@@ -57,7 +57,7 @@ const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) =>
           {review.courseId} {review.professorId}
         </h3>
         <div className="edit-buttons">
-          <Button variant="neutral" onClick={onDeny} startIcon={<PersonRemoveIcon />}>
+          <Button color="neutral" onClick={onDeny} startIcon={<PersonRemoveIcon />}>
             Ignore
           </Button>
           <Button onClick={onAccept} startIcon={<DeleteIcon />}>

@@ -87,7 +87,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
             <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
           </FormControl>
 
-          <Button color="danger" onClick={handleDeleteYear}>
+          <Button color="error" onClick={handleDeleteYear}>
             I am sure
           </Button>
         </Box>

@@ -6,7 +6,7 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Dropdown, DropdownButton, Form } from 'react-bootstrap';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { Button } from '@mui/material';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';

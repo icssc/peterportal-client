@@ -16,7 +16,7 @@ const UnverifiedReview: FC<UnverifiedReviewProps> = ({ review, onDelete, onVerif
   return (
     <ReviewCard review={review}>
       <div className="verification-buttons">
-        <Button variant="neutral" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
+        <Button color="neutral" onClick={onDelete} startIcon={<DeleteForeverIcon />}>
           Delete
         </Button>
         <Button onClick={onVerify} startIcon={<CheckIcon />}>
