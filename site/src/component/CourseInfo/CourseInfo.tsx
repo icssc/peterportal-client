@@ -3,7 +3,7 @@ import { CourseGQLData } from '../../types/types';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
-import RecentOfferingsTooltip from '../RecentOfferingsTooltip/RecentOfferingsTooltip';
+import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -75,8 +75,8 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
     <>
       {course.terms && course.terms.length > 0 && (
         <div className="quarter-offerings-section">
-          <b>Previous Offerings:</b>
-          <RecentOfferingsTooltip terms={course.terms} />
+          <b>Recent Offerings:</b>
+          <RecentOfferingsTable terms={course.terms} size="thin" />
         </div>
       )}
     </>
