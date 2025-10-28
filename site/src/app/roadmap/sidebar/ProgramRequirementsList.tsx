@@ -86,7 +86,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   const insertCourseOnClick = async () => {
     setLoading(true);
     const fullData = await loadFullData();
-    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData);
+    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData.prerequisiteTree);
     dispatch(setActiveCourse({ course: fullData as CourseGQLData }));
     dispatch(setActiveMissingPrerequisites(missingPrerequisites));
     dispatch(setShowAddCourse(true));

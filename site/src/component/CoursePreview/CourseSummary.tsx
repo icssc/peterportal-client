@@ -66,9 +66,12 @@ const PrereqItemText: FC<{ item: PrerequisiteNode; wrapInParens?: boolean }> = (
 const CoursePrequisiteLine: FC<{ item: PrerequisiteNode }> = ({ item }) => {
   const clearedCourses = useClearedCourses();
 
-  // temp until coreq check in validate is not needed
-  const partialCourse = { prerequisiteTree: { AND: [item] }, corequisites: '' } as CourseGQLData;
-  const complete = !getMissingPrerequisites(clearedCourses, partialCourse);
+  let complete = !getMissingPrerequisites(clearedCourses, { AND: [item] });
+  if ('NOT' in item) {
+    // if we are NOT missing any disallowed prerequisites, that means they are in the planner
+    const forbiddenCoursesPresent = !getMissingPrerequisites(clearedCourses, { OR: item.NOT });
+    complete = !forbiddenCoursesPresent;
+  }
 
   return (
     <li className="prerequisite-line">
