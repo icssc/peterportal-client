@@ -4,7 +4,8 @@ import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
-import spawnToast from '../../helpers/toastify';
+import Toast from '../../helpers/toast';
+import { AlertColor } from '@mui/material';
 import { Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
@@ -17,15 +18,26 @@ interface ReportFormProps {
 const ReportForm: FC<ReportFormProps> = (props) => {
   const [reason, setReason] = useState<string>('');
   const [busy, setBusy] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const postReport = async (report: ReportSubmission) => {
     setBusy(true);
     try {
       await trpc.reports.add.mutate(report);
-      spawnToast('Your report has been submitted successfully');
+      setToastMsg('Your report has been submitted successfully');
+      setToastSeverity('success');
+      setShowToast(true);
       props.closeForm();
     } catch {
-      spawnToast('Unable to submit review', true);
+      setToastMsg('Unable to submit review');
+      setToastSeverity('error');
+      setShowToast(true);
     } finally {
       setBusy(false);
     }
@@ -33,7 +45,12 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
   const submitReport = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (reason.length === 0) return spawnToast('Report reason must not be empty', true);
+    if (reason.length === 0) {
+      setToastMsg('Report reason must not be empty');
+      setToastSeverity('success');
+      setShowToast(true);
+      return;
+    }
 
     const report = { reviewId: props.reviewId, reason };
     postReport(report);
@@ -76,6 +93,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
           </Button>
         </Box>
       </Modal.Body>
+      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 };

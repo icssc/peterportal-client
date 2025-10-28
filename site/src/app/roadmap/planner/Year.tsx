@@ -15,7 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
-import spawnToast from '../../../helpers/toastify';
+import Toast from '../../../helpers/toast';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -108,6 +108,12 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const yearContainerRef = useRef<HTMLDivElement>(null);
   const currentPlan = useAppSelector(selectCurrentPlan);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
@@ -149,7 +155,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.name !== name) return false;
-            spawnToast(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`, true);
+            setToastMsg(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`);
+            setShowToast(true);
             return true;
           });
 
@@ -157,7 +164,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.startYear !== startYear) return false;
-            spawnToast(`Start year ${startYear} is already used by ${year.name}`, true);
+            setToastMsg(`Start year ${startYear} is already used by ${year.name}!`);
+            setShowToast(true);
             return true;
           });
 
@@ -192,6 +200,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           })}
         </Card>
       </Collapse>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </Card>
   );
 };

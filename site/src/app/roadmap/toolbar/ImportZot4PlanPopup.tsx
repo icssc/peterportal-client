@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
 import { expandAllPlanners, makeUniquePlanName } from '../../../helpers/planner.ts';
 import { markTransfersAsUnread } from '../../../helpers/transferCredits.ts';
-import spawnToast from '../../../helpers/toastify.ts';
+import Toast from '../../../helpers/toast';
 import helpImage from '../../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../../hooks/transferCredits.ts';
@@ -31,6 +31,12 @@ const ImportZot4PlanPopup: FC = () => {
   const apExams = useTransferredCredits().ap;
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const reviseAndSaveRoadmap = useReviseAndSaveRoadmap();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const obtainImportedRoadmap = async (schedName: string, currYear: string) => {
     // Get the result
@@ -65,7 +71,8 @@ const ImportZot4PlanPopup: FC = () => {
       const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
       // Check for validity: length and invalid course names
       if (expandedPlanners.length < 1) {
-        spawnToast('The schedule "' + schedName + '" could not be imported', true);
+        setToastMsg('The schedule "' + schedName + '" could not be imported');
+        setShowToast(true);
         return;
       }
       // Unknown (undefined) course names will crash PeterPortal if loaded, so remove them
@@ -78,7 +85,8 @@ const ImportZot4PlanPopup: FC = () => {
         }
       }
       if (problemCount > 0) {
-        spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
+        setToastMsg('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)');
+        setShowToast(true);
       }
       expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
       const revision = addPlanner(nextPlanTempId, expandedPlanners[0].name, expandedPlanners[0].content.yearPlans);
@@ -86,7 +94,8 @@ const ImportZot4PlanPopup: FC = () => {
       dispatch(setPlanIndex(allPlanData.length));
     } catch (err) {
       // Notify the user
-      spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
+      setToastMsg('The schedule "' + schedName + '" could not be retrieved');
+      setShowToast(true);
     }
   };
 
@@ -174,6 +183,7 @@ const ImportZot4PlanPopup: FC = () => {
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </>
   );
 };

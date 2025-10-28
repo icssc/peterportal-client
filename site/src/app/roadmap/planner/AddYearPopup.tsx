@@ -16,7 +16,7 @@ const AddYearPopup: FC = () => {
   const plannerYears = currentPlan.content.yearPlans;
   const dispatch = useAppDispatch();
   const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('Default');
+  const [toastMsg, setToastMsg] = useState('');
 
   const handleClose = () => {
     setShowToast(false);
@@ -50,6 +50,7 @@ const AddYearPopup: FC = () => {
 
   return (
     <>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       <YearModal
         show={showModal}
         setShow={setShowModal}
@@ -64,7 +65,6 @@ const AddYearPopup: FC = () => {
       <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
         <span>Add Year</span>
       </Button>
-      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </>
   );
 };

@@ -13,7 +13,7 @@ import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import spawnToast from '../../helpers/toastify';
+import Toast from '../../helpers/toast';
 import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
@@ -103,6 +103,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
@@ -196,7 +202,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const vote = async (newVote: number) => {
     if (!isLoggedIn) {
-      spawnToast('You must be logged in to vote.', true);
+      setToastMsg('You must be logged in to vote.');
+      setShowToast(true);
       return;
     }
     updateScore(newVote);
@@ -328,6 +335,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
           closeForm={() => setReportFormOpen(false)}
         />
       </div>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </Card>
   );
 };

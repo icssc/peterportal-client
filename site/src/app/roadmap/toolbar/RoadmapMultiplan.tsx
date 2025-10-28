@@ -11,7 +11,7 @@ import {
 import './RoadmapMultiplan.scss';
 import { Button as Button2, Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
-import spawnToast from '../../../helpers/toastify';
+import Toast from '../../../helpers/toast';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -149,6 +149,12 @@ const RoadmapMultiplan: FC = () => {
   const [newPlanName, setNewPlanName] = useState(allPlans[currentPlanIndex].name);
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const isDuplicateName = () => allPlans.find((p) => p.name === newPlanName);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const name = allPlans[currentPlanIndex].name;
 
@@ -174,8 +180,16 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      setToastMsg('Name cannot be empty');
+      setShowToast(true);
+      return;
+    }
+    if (isDuplicateName()) {
+      setToastMsg('A plan with that name already exists');
+      setShowToast(true);
+      return;
+    }
     setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.length;
@@ -183,8 +197,16 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      setToastMsg('Name cannot be empty');
+      setShowToast(true);
+      return;
+    }
+    if (isDuplicateName()) {
+      setToastMsg('A plan with that name already exists');
+      setShowToast(true);
+      return;
+    }
 
     const plannerToUpdate = allPlans[editIdx];
     const revision = updatePlannerName(plannerToUpdate, newPlanName);
@@ -323,6 +345,7 @@ const RoadmapMultiplan: FC = () => {
           </Box>
         </Modal.Body>
       </Modal>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </MultiplanDropdown>
   );
 };

@@ -16,7 +16,8 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import spawnToast from '../../helpers/toastify';
+import Toast from '../../helpers/toast';
+import { AlertColor } from '@mui/material';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select2 from 'react-select';
@@ -80,6 +81,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
@@ -120,7 +128,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
       // form opened
       // if not logged in, close the form
       if (!isLoggedIn) {
-        spawnToast('You must be logged in to add a review!', true);
+        setToastMsg('You must be logged in to add a review!');
+        setToastSeverity('error');
+        setShowToast(true);
         closeForm();
       }
 
@@ -154,14 +164,20 @@ const ReviewForm: FC<ReviewFormProps> = ({
       if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
         dispatch(editReview(review as EditReviewSubmission));
-        spawnToast('Your review has been edited successfully!');
+        setToastMsg('Your review has been edited successfully!');
+        setToastSeverity('success');
+        setShowToast(true);
       } else {
         const res = await trpc.reviews.add.mutate(review);
         dispatch(addReview(res));
-        spawnToast('Your review has been submitted successfully!');
+        setToastMsg('Your review has been submitted successfully!');
+        setToastSeverity('success');
+        setShowToast(true);
       }
     } catch (e) {
-      spawnToast((e as Error).message, true);
+      setToastMsg((e as Error).message);
+      setToastSeverity('error');
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +200,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     // for new reviews: check if CAPTCHA is completed
     if (!editing && !captchaToken) {
-      spawnToast('Please complete the CAPTCHA', true);
+      setToastMsg('Please complete the CAPTCHA');
+      setToastSeverity('error');
+      setShowToast(true);
       return;
     }
 
@@ -493,6 +511,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </Button>
         </Box>
       </Modal.Body>
+      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 
