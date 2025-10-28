@@ -29,7 +29,7 @@ const CourseRestriction: FC<{ restriction: string }> = ({ restriction }) => {
     <>
       <h4>Restrictions</h4>
       <p>
-        <i>{restriction}</i>
+        <i>{restriction || 'There are no restrictions for this course.'}</i>
       </p>
       {/* Restriction Tags are term-specific and needs a WebSoC query */}
     </>
@@ -96,9 +96,7 @@ const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree'] }
   return (
     <>
       <h4>Prerequisites</h4>
-      <p>
-        <b>{listLabel}</b>
-      </p>
+      <p>{items.length > 0 ? <b>{listLabel}</b> : 'This course has no prerequisites.'}</p>
       <ul className="summary-prerequisites">
         {items.map((requirement, idx) => (
           <CoursePrequisiteLine key={idx} item={requirement} />
@@ -146,6 +144,12 @@ const CourseDependentText: FC<{ courseName: string; dependents: CoursePreview[] 
 
 const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
   const [open, setOpen] = useState(false);
+
+  const tree = course.prerequisiteTree;
+  const hasNoDependents = Object.keys(course.dependents).length === 0;
+  const hasNoPrereqs = !tree.AND?.length && !tree.OR?.length && !tree.NOT?.length;
+
+  if (hasNoDependents && hasNoPrereqs) return null;
 
   return (
     <>
