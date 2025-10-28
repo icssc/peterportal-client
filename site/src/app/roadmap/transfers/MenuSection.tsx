@@ -4,7 +4,7 @@ import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
 
 export const SectionDescription: FC<{ children: ReactNode }> = ({ children }) => {
-  return <p className="section-description a">{children}</p>;
+  return <p className="section-description">{children}</p>;
 };
 
 interface MenuSectionProps {
