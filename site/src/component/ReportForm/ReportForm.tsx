@@ -1,11 +1,11 @@
 import React, { FC, useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import spawnToast from '../../helpers/toastify';
+import { Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -47,28 +47,34 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <h2>Report Review</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate onSubmit={submitReport}>
-          <Form.Label className="ppc-modal-form-label">Review Content</Form.Label>
+        <Box component="form" noValidate onSubmit={submitReport}>
+          <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
             <i>{props.reviewContent}</i>
           </p>
 
-          <Form.Group className="form-group">
-            <Form.Label>Why are you reporting this review?</Form.Label>
-            <Form.Control
-              as="textarea"
+          <FormLabel>Why are you reporting this review?</FormLabel>
+
+          <FormControl>
+            <TextField
               placeholder="Enter a reason..."
-              minLength={1}
-              maxLength={500}
+              multiline
+              slotProps={{
+                htmlInput: {
+                  minLength: 1,
+                  maxLength: 500,
+                },
+              }}
               onChange={(e) => setReason(e.target.value)}
               value={reason}
               rows={4}
             />
-          </Form.Group>
+          </FormControl>
+
           <Button variant="primary" type="submit" disabled={!reason.length || busy}>
             Submit Report
           </Button>
-        </Form>
+        </Box>
       </Modal.Body>
     </Modal>
   );
