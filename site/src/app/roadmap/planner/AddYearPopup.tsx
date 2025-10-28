@@ -8,13 +8,19 @@ import { PlannerYearData } from '../../../types/types';
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 import { addPlannerYear } from '../../../helpers/roadmapEdits';
-import spawnToast from '../../../helpers/toastify';
+import Toast from '../../../helpers/toast';
 
 const AddYearPopup: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const plannerYears = currentPlan.content.yearPlans;
   const dispatch = useAppDispatch();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('Default');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const placeholderName = 'Year ' + (plannerYears.length + 1);
   const placeholderYear =
@@ -24,14 +30,16 @@ const AddYearPopup: FC = () => {
     const { startYear, name, quarters } = yearData;
     const startYearConflict = plannerYears.find((year) => year.startYear === startYear);
     if (startYearConflict) {
-      spawnToast(`Start year ${startYear} is already used by ${startYearConflict.name}!`, true);
+      setToastMsg(`Start year ${startYear} is already used by ${startYearConflict.name}!`);
+      setShowToast(true);
       return;
     }
 
     const nameConflict = plannerYears.find((year) => year.name === name);
     if (nameConflict) {
       const conflictYear = nameConflict.startYear;
-      spawnToast(`The name "${name}" is already used for ${conflictYear}-${conflictYear + 1}!`, true);
+      setToastMsg(`The name "${name}" is already used for ${conflictYear}-${conflictYear + 1}!`);
+      setShowToast(true);
       return;
     }
 
@@ -56,6 +64,7 @@ const AddYearPopup: FC = () => {
       <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
         <span>Add Year</span>
       </Button>
+      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </>
   );
 };
