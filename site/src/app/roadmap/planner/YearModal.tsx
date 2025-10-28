@@ -1,8 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../../types/types';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
+import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -36,6 +37,7 @@ const YearModal: FC<YearModalProps> = (props) => {
   const [year, setYear] = useState(placeholderYear);
 
   const [quarters, setQuarters] = useState<YearPopupQuarter[]>(quarterValues(currentQuarters));
+
   const quarterCheckboxes = quarters.map((q, i) => {
     const handleClick = (i: number) => {
       const newQuarters = quarters.slice();
@@ -43,15 +45,20 @@ const YearModal: FC<YearModalProps> = (props) => {
       setQuarters(newQuarters);
     };
     return (
-      <Form.Check
+      <FormControlLabel
+        className="quarter-label"
         key={q.id}
-        type="checkbox"
-        id={'quarter-checkbox-' + q.id}
         label={quarterDisplayNames[q.id]}
-        value={q.id}
-        // Prop must be assigned a value that is not undefined
-        checked={q.checked ?? false}
-        onChange={() => handleClick(i)}
+        control={
+          <Checkbox
+            className="quarter-checkbox"
+            checked={q.checked ?? false}
+            onChange={() => handleClick(i)}
+            name={`quarter-checkbox-${q.id}`}
+            value={q.id}
+            aria-label={quarterDisplayNames[q.id]}
+          />
+        }
       />
     );
   });
@@ -88,10 +95,10 @@ const YearModal: FC<YearModalProps> = (props) => {
         <h2>{title}</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate validated={validated} className="ppc-modal-form">
-          <Form.Group className="form-group">
-            <Form.Label className="ppc-modal-form-label">Name</Form.Label>
-            <Form.Control
+        <Box component="form" noValidate>
+          <FormControl>
+            <FormLabel>Name</FormLabel>
+            <TextField
               required
               type="text"
               name="name"
@@ -103,39 +110,43 @@ const YearModal: FC<YearModalProps> = (props) => {
                   e.preventDefault();
                 }
               }}
-              maxLength={35}
+              error={validated}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 35,
+                },
+              }}
               placeholder={placeholderName}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group className="form-group">
-            <Form.Label className="ppc-modal-form-label">Start Year</Form.Label>
-            <Form.Control
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Start Year</FormLabel>
+            <TextField
               required
               type="number"
               name="year"
               value={year}
-              onChange={(e) => {
-                setYear(parseInt(e.target.value));
+              onChange={(e) => setYear(parseInt(e.target.value))}
+              error={validated}
+              slotProps={{
+                htmlInput: {
+                  min: 1000,
+                  max: 9999,
+                },
               }}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                // prevent submitting form (reloads the page)
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                }
-              }}
-              min={1000}
-              max={9999}
               placeholder={placeholderYear.toString()}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group className="form-group">
-            <Form.Label>Include Quarters</Form.Label>
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}
-          </Form.Group>
-        </Form>
-        <Button variant="primary" onClick={saveYear}>
-          {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
-        </Button>
+          </FormControl>
+
+          <Button variant="primary" onClick={saveYear}>
+            {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
+          </Button>
+        </Box>
       </Modal.Body>
     </Modal>
   );
