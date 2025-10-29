@@ -10,10 +10,10 @@
   overflow: auto;
   height: 100%;
 
-  .years {
-    @include globals.outer-padding();
-
+  section.years {
+    padding: 36px;
     padding-top: 0px;
+    padding-bottom: $planner-gap;
 
     display: flex;
     flex-direction: column;
