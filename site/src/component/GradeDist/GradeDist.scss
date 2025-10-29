@@ -1,7 +1,3 @@
-.MuiInputBase-root .MuiInputBase-input {
-  padding: 8px 10px;
-}
-
 .gradedist-module-container {
   width: 100%;
   display: flex;
@@ -22,6 +18,12 @@
   padding: 10px 20px 0px;
   gap: 16px;
   width: 100%;
+}
+.gradedist-filter {
+  .MuiInputBase-root .MuiInputBase-input {
+    padding: 8px 10px;
+    background-color: var(--overlay1);
+  }
 }
 
 #grade-dist-label {

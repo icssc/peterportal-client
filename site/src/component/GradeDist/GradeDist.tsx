@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -6,8 +6,6 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
 import { MenuItem, Select } from '@mui/material';
 
 interface GradeDistProps {
@@ -39,8 +37,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -169,10 +165,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
-  const selectedProfCourseName =
-    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
-
   const optionsRow = (
     <div className="gradedist-menu">
       {props.minify && (
@@ -180,17 +172,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           <Select
             value={chartType || ''}
             onChange={(e) => setChartType(e.target.value as ChartTypes)}
+            renderValue={() => 'Chart Type'}
             displayEmpty
-            // renderValue={(value) => {
-            //   if (value === 'bar') {
-            //     return 'Chart Type';
-            //   }
-            //   return value === 'pie' ? 'Pie' : 'Bar';
-            // }}
           >
-            {/* <MenuItem value="" disabled>
-              Chart Type
-            </MenuItem> */}
             <MenuItem key="bar" value="bar">
               Bar
             </MenuItem>
@@ -198,51 +182,31 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               Pie
             </MenuItem>
           </Select>
-
-          <DropdownButton
-            className="ppc-dropdown-btn"
-            title="Chart Type"
-            variant={buttonVariant}
-            onSelect={(value) => setChartType(value as ChartTypes)}
-          >
-            <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
-            <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
-          </DropdownButton>
         </div>
       )}
 
       <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={selectedProfCourseName}
-          variant={buttonVariant}
-          onSelect={updateProfCourse}
-        >
+        <Select value={profCourseSelectedValue} onChange={(e) => updateProfCourse(e.target.value)} displayEmpty>
           {profCourseOptions?.map((q) => {
             return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
+              <MenuItem key={q.value} value={q.value}>
                 {q.text}
-              </Dropdown.Item>
+              </MenuItem>
             );
           })}
-        </DropdownButton>
+        </Select>
       </div>
 
       <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={selectedQuarterName}
-          variant={buttonVariant}
-          onSelect={(value) => setCurrentQuarter(value!)}
-        >
+        <Select value={currentQuarter} onChange={(e) => setCurrentQuarter(e.target.value)} displayEmpty>
           {quarterEntries?.map((q) => {
             return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
+              <MenuItem key={q.value} value={q.value}>
                 {q.text}
-              </Dropdown.Item>
+              </MenuItem>
             );
           })}
-        </DropdownButton>
+        </Select>
       </div>
     </div>
   );
@@ -258,7 +222,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
         <div className="chart-container">
-          {((props.minify && chartType == 'bar') || !props.minify) && (
+          {(!chartType || (props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
               <Chart {...graphProps} />
             </div>
