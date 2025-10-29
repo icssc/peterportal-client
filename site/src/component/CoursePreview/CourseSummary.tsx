@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import { CourseGQLData } from '../../types/types';
 import { CoursePreview, PrerequisiteNode } from '@peterportal/types';
-import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip } from '@mui/material';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
@@ -73,11 +73,24 @@ const CoursePrequisiteLine: FC<{ item: PrerequisiteNode }> = ({ item }) => {
     complete = !forbiddenCoursesPresent;
   }
 
+  let title = 'You have completed this prerequisite';
+  if (!complete) {
+    title = 'NOT' in item ? 'Your roadmap contains one of these disallowed courses' : 'This prerequisite is incomplete';
+  }
+
+  const offset = [0, -8];
+  const modifiers = [{ name: 'offset', options: { offset } }];
+  const slotProps = { popper: { modifiers } };
+
+  const icon = (
+    <Tooltip title={title} placement="left" slotProps={slotProps}>
+      {complete ? <CheckIcon /> : <WarningAmberIcon />}
+    </Tooltip>
+  );
+
   return (
     <li className="prerequisite-line">
-      <span className={'icon ' + (complete ? 'icon-complete' : 'icon-incomplete')}>
-        {complete ? <CheckIcon /> : <WarningAmberIcon />}
-      </span>{' '}
+      <span className={'icon ' + (complete ? 'icon-complete' : 'icon-incomplete')}>{icon}</span>{' '}
       <PrereqItemText item={item} />
     </li>
   );
@@ -96,7 +109,9 @@ const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree'] }
   return (
     <>
       <h4>Prerequisites</h4>
-      <p>{items.length > 0 ? <b>{listLabel}</b> : 'This course has no prerequisites.'}</p>
+      <p className="summary-prerequisite-type">
+        {items.length > 0 ? <b>{listLabel}</b> : 'This course has no prerequisites.'}
+      </p>
       <ul className="summary-prerequisites">
         {items.map((requirement, idx) => (
           <CoursePrequisiteLine key={idx} item={requirement} />
