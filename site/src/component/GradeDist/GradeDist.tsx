@@ -8,6 +8,7 @@ import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import ThemeContext from '../../style/theme-context';
+import { MenuItem, Select } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -176,6 +177,28 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     <div className="gradedist-menu">
       {props.minify && (
         <div className="gradedist-filter">
+          <Select
+            value={chartType || ''}
+            onChange={(e) => setChartType(e.target.value as ChartTypes)}
+            displayEmpty
+            // renderValue={(value) => {
+            //   if (value === 'bar') {
+            //     return 'Chart Type';
+            //   }
+            //   return value === 'pie' ? 'Pie' : 'Bar';
+            // }}
+          >
+            {/* <MenuItem value="" disabled>
+              Chart Type
+            </MenuItem> */}
+            <MenuItem key="bar" value="bar">
+              Bar
+            </MenuItem>
+            <MenuItem key="pie" value="pie">
+              Pie
+            </MenuItem>
+          </Select>
+
           <DropdownButton
             className="ppc-dropdown-btn"
             title="Chart Type"

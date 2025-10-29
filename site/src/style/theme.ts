@@ -230,5 +230,15 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          disablePortal: true,
+          PaperProps: {
+            style: { maxHeight: '25vh' }, // @todo: use this value?
+          },
+        },
+      },
+    },
   },
 });

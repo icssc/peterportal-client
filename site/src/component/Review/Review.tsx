@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import ReviewCard from './ReviewCard';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
@@ -6,11 +6,9 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { Button } from '@mui/material';
+import { Button, MenuItem, Select } from '@mui/material';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
-import ThemeContext from '../../style/theme-context';
 
 import AddIcon from '@mui/icons-material/Add';
 import { Checkbox, FormControlLabel } from '@mui/material';
@@ -34,8 +32,6 @@ const Review: FC<ReviewProps> = (props) => {
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
@@ -122,7 +118,7 @@ const Review: FC<ReviewProps> = (props) => {
       { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
       { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
     ];
-    const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text;
+    // const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text;
 
     const professorOptions = [{ text: 'All Professors', value: '' }].concat(
       Object.keys(props.course?.instructors ?? {})
@@ -144,15 +140,25 @@ const Review: FC<ReviewProps> = (props) => {
         .filter(({ value }) => reviewFreq.get(value))
         .sort((a, b) => a.text.localeCompare(b.text)),
     );
-    const selectedProfessorOptionText = professorOptions.find((opt) => opt.value === filterOption)?.text;
-    const selectedCourseOptionText = courseOptions.find((opt) => opt.value === filterOption)?.text;
 
     return (
       <>
         <div className="reviews">
           <div className="sort-filter-menu">
             <div className="sort-dropdown">
-              <DropdownButton
+              <Select
+                value={sortingOption.toString()}
+                onChange={(e) => setSortingOption(parseInt(e.target.value as string) as SortingOption)}
+                displayEmpty
+              >
+                {reviewSortOptions.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {opt.text}
+                  </MenuItem>
+                ))}
+              </Select>
+
+              {/* <DropdownButton
                 className="ppc-dropdown-btn"
                 title={selectedSortOptionText}
                 variant={buttonVariant}
@@ -163,11 +169,19 @@ const Review: FC<ReviewProps> = (props) => {
                     {opt.text}
                   </Dropdown.Item>
                 ))}
-              </DropdownButton>
+              </DropdownButton> */}
             </div>
             {props.course && (
               <div className="filter-dropdown">
-                <DropdownButton
+                <Select value={filterOption} onChange={(e) => setFilterOption(e.target.value)} displayEmpty>
+                  {professorOptions.map((opt) => (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.text}
+                    </MenuItem>
+                  ))}
+                </Select>
+
+                {/* <DropdownButton
                   className="ppc-dropdown-btn"
                   title={selectedProfessorOptionText ?? 'Select Professor...'}
                   variant={buttonVariant}
@@ -178,12 +192,20 @@ const Review: FC<ReviewProps> = (props) => {
                       {opt.text}
                     </Dropdown.Item>
                   ))}
-                </DropdownButton>
+                </DropdownButton> */}
               </div>
             )}
             {props.professor && (
               <div className="filter-dropdown">
-                <DropdownButton
+                <Select value={filterOption} onChange={(e) => setFilterOption(e.target.value)} displayEmpty>
+                  {courseOptions.map((opt) => (
+                    <MenuItem key={opt.value} value={opt.value}>
+                      {opt.text}
+                    </MenuItem>
+                  ))}
+                </Select>
+
+                {/* <DropdownButton
                   className="ppc-dropdown-btn"
                   title={selectedCourseOptionText ?? 'Select Course...'}
                   variant={buttonVariant}
@@ -194,7 +216,7 @@ const Review: FC<ReviewProps> = (props) => {
                       {opt.text}
                     </Dropdown.Item>
                   ))}
-                </DropdownButton>
+                </DropdownButton> */}
               </div>
             )}
 

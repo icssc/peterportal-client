@@ -3,10 +3,8 @@ import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
 import Badge from 'react-bootstrap/Badge';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Link from 'next/link';
-import { Button } from '@mui/material';
+import { Button, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -166,25 +164,24 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           <h2>Average Rating</h2>
           <div className="side-info-buttons">
             {/* Dropdown to select specific course/professor */}
-            {/* @todo: make this select? */}
-            <DropdownButton
-              title={selectedReview}
-              variant="secondary"
-              onSelect={(e) => {
-                setSelectedReview(e as string);
+            <Select
+              value={selectedReview}
+              onChange={(e) => {
+                setSelectedReview(e.target.value as string);
               }}
+              displayEmpty
             >
               {sortedReviews.map((key, index) => (
-                <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                <MenuItem key={`side-info-dropdown-${index}`} value={key}>
                   {props.searchType == 'course' &&
                     (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                   {props.searchType == 'professor' &&
                     (props.professor?.courses[key]
                       ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
                       : key)}
-                </Dropdown.Item>
+                </MenuItem>
               ))}
-            </DropdownButton>
+            </Select>
 
             {/* Add a review */}
             <Button
