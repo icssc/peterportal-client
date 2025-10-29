@@ -49,7 +49,7 @@ const RecentOfferings: FC<RecentOfferingsProps> = (props) => {
 
   return (
     <div className="recent-offerings">
-      <h2>Recent Offerings</h2>
+      {props.terms.length > 0 && <h2>Recent Offerings</h2>}
 
       <table className="ppc-table recent-offerings-table">
         <thead>
