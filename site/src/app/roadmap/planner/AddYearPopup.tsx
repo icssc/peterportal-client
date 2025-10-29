@@ -56,6 +56,7 @@ const AddYearPopup: FC = () => {
       <Button
         variant="contained"
         color="inherit"
+        size="small"
         disableElevation
         className="header-btn"
         onClick={() => setShowModal(true)}

@@ -63,6 +63,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           <Button
             variant="contained"
             color="inherit"
+            size="small"
             disableElevation
             className="header-btn"
             startIcon={<SwapHorizOutlinedIcon />}
@@ -74,6 +75,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           <Button
             variant="contained"
             color="inherit"
+            size="small"
             disableElevation
             className="header-btn"
             startIcon={<SaveIcon />}
