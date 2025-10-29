@@ -18,7 +18,6 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
-  CourseGQLData,
   InvalidCourseData,
   PlannerData,
   PlannerQuarterData,
@@ -385,8 +384,8 @@ const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<Prer
 };
 
 /**
- * Returns the set of prerequisites and corequisites of a course that need to be taken but are missing
- * @returns A set of all the prerequisites and corequisites that are missing
+ * Returns the set of prerequisites of a course that need to be taken but are missing
+ * @returns A set of all the prerequisites that are missing
  */
 const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
   // base case is just a course
@@ -400,12 +399,11 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   return new Set();
 };
 
-export const getMissingPrerequisites = (clearedCourses: Set<string>, course: CourseGQLData) => {
+export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisite: PrerequisiteTree) => {
   const input = {
-    prerequisite: course.prerequisiteTree,
+    prerequisite,
     taken: clearedCourses,
     taking: new Set<string>(),
-    corequisite: course.corequisites,
   };
 
   const missingPrerequisites = Array.from(validatePrerequisites(input));

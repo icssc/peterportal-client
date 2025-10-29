@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import { CourseGQLData } from '../../types/types';
 import { CoursePreview, PrerequisiteNode } from '@peterportal/types';
-import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip } from '@mui/material';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
@@ -29,7 +29,7 @@ const CourseRestriction: FC<{ restriction: string }> = ({ restriction }) => {
     <>
       <h4>Restrictions</h4>
       <p>
-        <i>{restriction}</i>
+        <i>{restriction || 'There are no restrictions for this course.'}</i>
       </p>
       {/* Restriction Tags are term-specific and needs a WebSoC query */}
     </>
@@ -66,15 +66,31 @@ const PrereqItemText: FC<{ item: PrerequisiteNode; wrapInParens?: boolean }> = (
 const CoursePrequisiteLine: FC<{ item: PrerequisiteNode }> = ({ item }) => {
   const clearedCourses = useClearedCourses();
 
-  // temp until coreq check in validate is not needed
-  const partialCourse = { prerequisiteTree: { AND: [item] }, corequisites: '' } as CourseGQLData;
-  const complete = !getMissingPrerequisites(clearedCourses, partialCourse);
+  let complete = !getMissingPrerequisites(clearedCourses, { AND: [item] });
+  if ('NOT' in item) {
+    // if we are NOT missing any disallowed prerequisites, that means they are in the planner
+    const forbiddenCoursesPresent = !getMissingPrerequisites(clearedCourses, { OR: item.NOT });
+    complete = !forbiddenCoursesPresent;
+  }
+
+  let title = 'You have completed this prerequisite';
+  if (!complete) {
+    title = 'NOT' in item ? 'Your roadmap contains one of these disallowed courses' : 'This prerequisite is incomplete';
+  }
+
+  const offset = [0, -8];
+  const modifiers = [{ name: 'offset', options: { offset } }];
+  const slotProps = { popper: { modifiers } };
+
+  const icon = (
+    <Tooltip title={title} placement="left" slotProps={slotProps}>
+      {complete ? <CheckIcon /> : <WarningAmberIcon />}
+    </Tooltip>
+  );
 
   return (
     <li className="prerequisite-line">
-      <span className={'icon ' + (complete ? 'icon-complete' : 'icon-incomplete')}>
-        {complete ? <CheckIcon /> : <WarningAmberIcon />}
-      </span>{' '}
+      <span className={'icon ' + (complete ? 'icon-complete' : 'icon-incomplete')}>{icon}</span>{' '}
       <PrereqItemText item={item} />
     </li>
   );
@@ -93,8 +109,8 @@ const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree'] }
   return (
     <>
       <h4>Prerequisites</h4>
-      <p>
-        <b>{listLabel}</b>
+      <p className="summary-prerequisite-type">
+        {items.length > 0 ? <b>{listLabel}</b> : 'This course has no prerequisites.'}
       </p>
       <ul className="summary-prerequisites">
         {items.map((requirement, idx) => (
@@ -143,6 +159,12 @@ const CourseDependentText: FC<{ courseName: string; dependents: CoursePreview[] 
 
 const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
   const [open, setOpen] = useState(false);
+
+  const tree = course.prerequisiteTree;
+  const hasNoDependents = Object.keys(course.dependents).length === 0;
+  const hasNoPrereqs = !tree.AND?.length && !tree.OR?.length && !tree.NOT?.length;
+
+  if (hasNoDependents && hasNoPrereqs) return null;
 
   return (
     <>
