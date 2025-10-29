@@ -14,7 +14,7 @@
   width: 100%;
   border-width: 0 0 2px 0;
   border-radius: 0;
-  padding: 12px 16px 12px 12px;
+  padding: 12px 16px;
   gap: 4px;
 
   > * {
@@ -29,7 +29,7 @@
   .planner-left {
     display: flex;
     flex-wrap: wrap;
-    padding: 2.75px 4px;
+    padding: 2.75px 0px;
     align-items: center;
     gap: 8px 12px;
     z-index: 2;
