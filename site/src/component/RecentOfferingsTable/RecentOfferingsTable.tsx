@@ -78,7 +78,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
     trpc.schedule.currentQuarter.query().then((data) => setCurrentTerm(data));
   }, []);
 
-  if (terms.length === 0) return null;
+  if (offerings.length === 0) return null;
 
   return (
     <div className="recent-offerings">
