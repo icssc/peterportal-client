@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import './SearchPopup.scss';
 import GradeDist from '../GradeDist/GradeDist';
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 import Carousel from 'react-multi-carousel';
 import searching from '../../asset/searching.webp';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { useAppSelector } from '../../store/hooks';
 import { selectCourse, selectProfessor } from '../../store/slices/popupSlice';
 import { CourseGQLData, ProfessorGQLData, SearchType, ScoreData } from '../../types/types';
 import Link from 'next/link';
+import { Button } from '@mui/material';
 
 interface InfoData {
   title: string;
@@ -77,9 +78,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
         <h2 className="search-popup-id">
           {props.name}
           <Link href={`/${props.searchType}/${props.id}`}>
-            <Button type="button" className="search-popup-more btn btn-outline-primary">
-              More Information
-            </Button>
+            <Button variant="outlined">More Information</Button>
           </Link>
         </h2>
         <h5 className="search-popup-title">{props.title}</h5>

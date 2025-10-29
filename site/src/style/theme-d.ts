@@ -10,7 +10,6 @@ declare module '@mui/material/styles' {
   interface Palette {
     tertiary: PaletteColor;
     accent: PaletteColor;
-    neutral: PaletteColor;
     overlay: {
       overlay1: string;
       overlay2: string;
@@ -32,7 +31,6 @@ declare module '@mui/material/styles' {
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
     accent?: PaletteColorOptions;
-    neutral?: PaletteColorOptions;
     overlay?: {
       overlay1?: string;
       overlay2?: string;
@@ -49,11 +47,5 @@ declare module '@mui/material/styles' {
       pass?: string;
       noPass: string;
     };
-  }
-}
-
-declare module '@mui/material/Button' {
-  interface ButtonPropsColorOverrides {
-    neutral: true;
   }
 }

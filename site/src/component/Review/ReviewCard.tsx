@@ -69,9 +69,7 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
         <Modal.Footer>
           <div className="delete-buttons">
-            <Button color="neutral" onClick={() => setShowDeleteModal(false)}>
-              {' '}
-              {/* @todo: this maybe should not be neutral or neutral should be a color rather than a variant */}
+            <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
               Cancel
             </Button>
             <Button color="error" onClick={() => deleteReview(review.id!)}>

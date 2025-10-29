@@ -1,6 +1,4 @@
-import { createTheme, PaletteOptions, SimplePaletteColorOptions } from '@mui/material';
-
-const baseTheme = createTheme();
+import { createTheme, PaletteOptions } from '@mui/material';
 
 const sharedTokens = {
   primary: {
@@ -41,9 +39,6 @@ const lightPalette: PaletteOptions = {
   tertiary: {
     main: '#a0ceee',
   },
-  neutral: {
-    main: '#e0e0e0',
-  },
   overlay: {
     overlay1: '#fff',
     overlay2: '#f5f6fc',
@@ -81,9 +76,6 @@ const darkPalette: PaletteOptions = {
   tertiary: {
     main: '#0b293c',
   },
-  neutral: {
-    main: '#606166',
-  },
   overlay: {
     overlay1: '#1e1e1e',
     overlay2: '#292929',
@@ -110,22 +102,12 @@ const darkPalette: PaletteOptions = {
   },
 };
 
-const makeExtendedPalette = (base: PaletteOptions) => {
-  const neutral = base.neutral as SimplePaletteColorOptions;
-
-  const augmentedNeutral = baseTheme.palette.augmentColor({
-    color: { main: neutral.main },
-    name: 'neutral',
-  });
-
-  return {
-    ...base,
-    success: { main: base.chart!.green!.primary! },
-    error: { main: base.chart!.red!.primary! },
-    warning: { main: base.chart!.orange!.secondary! },
-    neutral: { ...augmentedNeutral, contrastText: base.text!.primary! },
-  };
-};
+const makeExtendedPalette = (base: PaletteOptions) => ({
+  ...base,
+  success: { main: base.chart!.green!.primary! },
+  error: { main: base.chart!.red!.primary! },
+  warning: { main: base.chart!.orange!.secondary! },
+});
 
 export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
