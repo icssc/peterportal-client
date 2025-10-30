@@ -10,7 +10,7 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 type RecentOfferingsTableSize = 'thin' | 'wide';
 
-export function parseOfferings(terms: string[]) {
+function parseOfferings(terms: string[]) {
   const offerings: { [academicYear: string]: boolean[] } = {};
 
   for (const term of terms) {
