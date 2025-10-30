@@ -12,7 +12,7 @@ import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus } from '../../store/slices/reviewSlice';
 
-import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+import RecentOfferingsTable, { parseOfferings } from '../RecentOfferingsTable/RecentOfferingsTable';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -159,8 +159,12 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
-        <h4>Recent Offerings</h4>
-        {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
+        {props.terms && parseOfferings(props.terms).length > 0 && (
+          <>
+            <h4>Recent Offerings</h4>
+            <RecentOfferingsTable terms={props.terms} size="wide" />
+          </>
+        )}
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
