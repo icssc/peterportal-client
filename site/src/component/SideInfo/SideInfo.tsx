@@ -159,7 +159,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
-        {props.terms && (
+        {props.terms && props.terms.length > 0 && (
           <>
             <h4>Recent Offerings</h4>
             <RecentOfferingsTable terms={props.terms} size="wide" />
