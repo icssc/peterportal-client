@@ -58,7 +58,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
         </span>
       </div>
       <div className="planner-actions">
-        <ButtonGroup className="planner-action-buttons">
+        <ButtonGroup>
           <AddYearPopup />
           <Button
             variant="contained"
