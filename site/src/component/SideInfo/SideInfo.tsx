@@ -163,7 +163,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
           <div className="side-info-buttons">
-            {/* Dropdown to select specific course/professor */}
             <Select
               value={selectedReview}
               onChange={(e) => {
@@ -183,7 +182,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
               ))}
             </Select>
 
-            {/* Add a review */}
             <Button
               onClick={() => {
                 dispatch(toggleFormStatus());
@@ -194,7 +192,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
           {hasReviews && (
             <>
-              {/* Show stats of selected course/professor */}
               {selectedReview && (
                 <>
                   <div className="side-info-selected-based">Based on {count} reviews</div>

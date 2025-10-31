@@ -162,18 +162,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
             ))}
           </Select>
         ) : (
-          // <DropdownButton
-          //   className="ppc-dropdown-btn"
-          //   title={selectedQuarter ?? currentQuarter}
-          //   variant={darkMode ? 'dark' : 'light'}
-          //   onSelect={(value) => setSelectedQuarter(value!)}
-          // >
-          //   {termOptions.map((opt) => (
-          //     <Dropdown.Item key={opt.value} eventKey={opt.value}>
-          //       {opt.text}
-          //     </Dropdown.Item>
-          //   ))}
-          // </DropdownButton>
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
         <div className="table-wrapper">

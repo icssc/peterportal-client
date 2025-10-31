@@ -63,6 +63,11 @@
       }
     }
 
+    .MuiInputBase-root .MuiInputBase-input {
+      background-color: var(--overlay2);
+      width: 150px;
+    }
+
     .twemoji {
       width: 1.25em;
     }

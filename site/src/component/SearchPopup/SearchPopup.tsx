@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import './SearchPopup.scss';
 import GradeDist from '../GradeDist/GradeDist';
-// import Button from 'react-bootstrap/Button';
 import Carousel from 'react-multi-carousel';
 import searching from '../../asset/searching.webp';
 import Image from 'next/image';

@@ -157,19 +157,6 @@ const Review: FC<ReviewProps> = (props) => {
                   </MenuItem>
                 ))}
               </Select>
-
-              {/* <DropdownButton
-                className="ppc-dropdown-btn"
-                title={selectedSortOptionText}
-                variant={buttonVariant}
-                onSelect={(value) => setSortingOption(parseInt(value!) as SortingOption)}
-              >
-                {reviewSortOptions.map((opt) => (
-                  <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                    {opt.text}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton> */}
             </div>
             {props.course && (
               <div className="filter-dropdown">
@@ -180,19 +167,6 @@ const Review: FC<ReviewProps> = (props) => {
                     </MenuItem>
                   ))}
                 </Select>
-
-                {/* <DropdownButton
-                  className="ppc-dropdown-btn"
-                  title={selectedProfessorOptionText ?? 'Select Professor...'}
-                  variant={buttonVariant}
-                  onSelect={(value) => setFilterOption(value!)}
-                >
-                  {professorOptions.map((opt) => (
-                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                      {opt.text}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton> */}
               </div>
             )}
             {props.professor && (
@@ -204,19 +178,6 @@ const Review: FC<ReviewProps> = (props) => {
                     </MenuItem>
                   ))}
                 </Select>
-
-                {/* <DropdownButton
-                  className="ppc-dropdown-btn"
-                  title={selectedCourseOptionText ?? 'Select Course...'}
-                  variant={buttonVariant}
-                  onSelect={(value) => setFilterOption(value!)}
-                >
-                  {courseOptions.map((opt) => (
-                    <Dropdown.Item key={opt.value} eventKey={opt.value}>
-                      {opt.text}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton> */}
               </div>
             )}
 
