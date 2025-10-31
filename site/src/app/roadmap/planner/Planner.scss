@@ -9,8 +9,11 @@
   position: relative;
   overflow: auto;
   height: 100%;
+  padding: 36px;
 
-  @include globals.outer-padding();
+  @media (max-width: globals.$mobile-cutoff) {
+    padding: 16px;
+  }
 
   .years {
     display: flex;

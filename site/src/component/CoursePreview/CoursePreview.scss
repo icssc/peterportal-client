@@ -1,3 +1,5 @@
+@use '../../globals.scss';
+
 .course-preview {
   position: absolute;
   inset: 0;
@@ -40,5 +42,9 @@
     height: 100%;
     overflow: auto;
     padding: 24px;
+
+    @media (max-width: globals.$mobile-cutoff) {
+      padding: 16px;
+    }
   }
 }
