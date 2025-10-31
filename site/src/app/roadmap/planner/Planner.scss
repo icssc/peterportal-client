@@ -11,14 +11,11 @@
   height: 100%;
 
   section.years {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-inline: 24px;
     @media (max-width: globals.$mobile-cutoff) {
-      padding-left: 16px;
-      padding-right: 16px;
+      padding-inline: 16px;
     }
-    padding-top: 0px;
-    padding-bottom: $planner-gap;
+    padding-block: 0 $planner-gap;
 
     display: flex;
     flex-direction: column;
