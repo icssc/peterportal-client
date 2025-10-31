@@ -11,7 +11,12 @@
   height: 100%;
 
   section.years {
-    padding: 36px;
+    padding-left: 24px;
+    padding-right: 24px;
+    @media (max-width: globals.$mobile-cutoff) {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
     padding-top: 0px;
     padding-bottom: $planner-gap;
 
