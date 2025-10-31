@@ -14,6 +14,7 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -27,6 +28,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
+  const dispatch = useAppDispatch();
   const [allowTouchClick, setAllowTouchClick] = useState(false);
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
@@ -37,7 +39,9 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 
   const handleLinkClick = (event: React.MouseEvent) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
-    if (isTouchEvent && !allowTouchClick) event.preventDefault();
+    event.preventDefault();
+    if (isTouchEvent && !allowTouchClick) return;
+    dispatch(setPreviewedCourse(courseID));
   };
 
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;

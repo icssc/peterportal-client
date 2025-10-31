@@ -12,13 +12,14 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface CourseProp {
   course: CourseGQLData;
+  disabled?: boolean;
 }
 
-export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
+export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
   const courseIsSaved = isCourseSaved(course);
   return (
-    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)}>
+    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
       {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </IconButton>
   );
