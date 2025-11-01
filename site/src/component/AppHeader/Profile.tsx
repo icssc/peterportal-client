@@ -34,8 +34,8 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <a href={`/api/users/auth/google`}>
-        <Button startIcon={<ExitToAppIcon />} color="primary">
+      <a href={`/api/users/auth/google`} className="login-button">
+        <Button startIcon={<ExitToAppIcon />} color="inherit">
           Log In
         </Button>
       </a>

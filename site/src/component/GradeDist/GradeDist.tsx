@@ -170,10 +170,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       {props.minify && (
         <div className="gradedist-filter">
           <Select
-            value={chartType || ''}
+            value={chartType}
             onChange={(e) => setChartType(e.target.value as ChartTypes)}
             renderValue={() => 'Chart Type'}
-            displayEmpty
           >
             <MenuItem key="bar" value="bar">
               Bar
@@ -186,7 +185,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       )}
 
       <div className="gradedist-filter">
-        <Select value={profCourseSelectedValue} onChange={(e) => updateProfCourse(e.target.value)} displayEmpty>
+        <Select value={profCourseSelectedValue} onChange={(e) => updateProfCourse(e.target.value)}>
           {profCourseOptions?.map((q) => {
             return (
               <MenuItem key={q.value} value={q.value}>
@@ -198,7 +197,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       </div>
 
       <div className="gradedist-filter">
-        <Select value={currentQuarter} onChange={(e) => setCurrentQuarter(e.target.value)} displayEmpty>
+        <Select value={currentQuarter} onChange={(e) => setCurrentQuarter(e.target.value)}>
           {quarterEntries?.map((q) => {
             return (
               <MenuItem key={q.value} value={q.value}>
@@ -222,7 +221,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
         <div className="chart-container">
-          {(!chartType || (props.minify && chartType == 'bar') || !props.minify) && (
+          {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
               <Chart {...graphProps} />
             </div>

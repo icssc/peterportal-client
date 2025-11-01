@@ -152,7 +152,13 @@ const Schedule: FC<ScheduleProps> = (props) => {
           <Select
             value={selectedQuarter ?? currentQuarter}
             onChange={(e) => setSelectedQuarter(e.target.value)}
-            displayEmpty
+            renderValue={(selected) => {
+              if (!selected) {
+                // Nothing selected yet — show fallback text
+                return 'Loading...';
+              }
+              return selected;
+            }}
           >
             {termOptions.map((opt) => (
               <MenuItem key={opt.value} value={opt.value}>

@@ -168,7 +168,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
               onChange={(e) => {
                 setSelectedReview(e.target.value as string);
               }}
-              displayEmpty
             >
               {sortedReviews.map((key, index) => (
                 <MenuItem key={`side-info-dropdown-${index}`} value={key}>

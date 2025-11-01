@@ -488,8 +488,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </FormControl>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+          <Button type="submit" loading={isSubmitting}>
+            Submit Review
           </Button>
         </Box>
       </Modal.Body>

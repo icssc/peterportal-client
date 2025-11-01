@@ -21,8 +21,9 @@ import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { Box, Button, FormControl, FormLabel, styled } from '@mui/material';
+import { Box, Button, FormControl, FormLabel } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits';
+import { VisuallyHiddenInput } from '../../../helpers/styling';
 
 interface TransferUnitDetails {
   date: string;
@@ -45,18 +46,6 @@ interface TranscriptQuarter {
   name: string;
   courses: TranscriptCourse[];
 }
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
 
 function toCourseID(course: TranscriptCourse) {
   return (course.dept + course.code).replace(/\s/g, '');
@@ -323,11 +312,10 @@ const ImportTranscriptPopup: FC = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const input = e.target as HTMLInputElement;
                       if (input.files && input.files[0]) {
-                        const path = input.value;
-                        const nameFromPath = path.replace(/.*(\\|\/)/, '');
+                        const inputFileLabel = input.value.replace(/.*(\\|\/)/, ''); // strip fakepath
                         setFile(input.files![0]);
                         setFilePath(input.value);
-                        setFileLabel(nameFromPath);
+                        setFileLabel(inputFileLabel);
                       }
                     }}
                   />

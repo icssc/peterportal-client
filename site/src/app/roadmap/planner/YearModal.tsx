@@ -143,9 +143,8 @@ const YearModal: FC<YearModalProps> = (props) => {
             {quarterCheckboxes}
           </FormControl>
 
+          {/* @todo: Should be able to remove disableElevation and variant after conversion to MUI Modal */}
           <Button variant="contained" onClick={saveYear} disableElevation>
-            {' '}
-            {/* @todo: should be able to remove disableElevation and variant after conversion to MUI Modal */}
             {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
           </Button>
         </Box>

@@ -148,7 +148,6 @@ const Review: FC<ReviewProps> = (props) => {
               <Select
                 value={sortingOption.toString()}
                 onChange={(e) => setSortingOption(parseInt(e.target.value as string) as SortingOption)}
-                displayEmpty
               >
                 {reviewSortOptions.map((opt) => (
                   <MenuItem key={opt.value} value={opt.value}>
