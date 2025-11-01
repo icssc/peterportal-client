@@ -240,7 +240,7 @@ theme = createTheme(theme, {
         MenuProps: {
           disablePortal: true,
           PaperProps: {
-            style: { maxHeight: '25vh' }, // @todo: use this value?
+            style: { maxHeight: '25vh' },
           },
         },
       },
