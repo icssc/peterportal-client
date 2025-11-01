@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import './Profile.scss';
 
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
@@ -34,10 +35,7 @@ const Profile = () => {
   if (!user) {
     return (
       <a href={`/api/users/auth/google`}>
-        <Button variant={darkMode ? 'dark' : 'light'}>
-          <span>
-            <ExitToAppIcon className="exit-icon" />
-          </span>
+        <Button startIcon={<ExitToAppIcon />} color="primary">
           Log In
         </Button>
       </a>

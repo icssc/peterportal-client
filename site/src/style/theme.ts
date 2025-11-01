@@ -199,6 +199,11 @@ theme = createTheme(theme, {
     },
     MuiInputBase: {
       styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
+          },
+        },
         input: {
           fontSize: 16,
           backgroundColor: 'var(--mui-palette-background-paper)',

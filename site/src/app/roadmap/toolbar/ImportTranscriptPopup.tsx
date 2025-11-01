@@ -312,6 +312,7 @@ const ImportTranscriptPopup: FC = () => {
                   variant="outlined"
                   tabIndex={-1}
                   startIcon={<CloudUploadIcon />}
+                  size="small"
                 >
                   Browse files
                   <VisuallyHiddenInput
@@ -332,7 +333,7 @@ const ImportTranscriptPopup: FC = () => {
                   />
                 </Button>
 
-                <div className="file-path">{fileLabel}</div>
+                <div className="file-path">{fileLabel || 'No file selected.'}</div>
               </div>
             </FormControl>
             <Button disabled={!file} loading={busy} onClick={importHandler}>

@@ -170,7 +170,7 @@ const ImportZot4PlanPopup: FC = () => {
           </Box>
         </Modal.Body>
       </Modal>
-      <Button variant="text" className="ppc-btn" onClick={() => setShowModal(true)}>
+      <Button variant="text" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>
