@@ -120,6 +120,12 @@ export let theme = createTheme({
 
 theme = createTheme(theme, {
   components: {
+    MuiButton: {
+      defaultProps: {
+        variant: 'contained',
+        disableElevation: true,
+      },
+    },
     MuiCheckbox: {
       styleOverrides: {
         root: {
@@ -193,6 +199,11 @@ theme = createTheme(theme, {
     },
     MuiInputBase: {
       styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
+          },
+        },
         input: {
           fontSize: 16,
           backgroundColor: 'var(--mui-palette-background-paper)',
@@ -221,6 +232,16 @@ theme = createTheme(theme, {
         },
         iconHover: {
           opacity: 0.6,
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          disablePortal: true,
+          PaperProps: {
+            style: { maxHeight: '25vh' },
+          },
         },
       },
     },

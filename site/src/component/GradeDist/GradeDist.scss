@@ -19,6 +19,12 @@
   gap: 16px;
   width: 100%;
 }
+.gradedist-filter {
+  .MuiInputBase-root .MuiInputBase-input {
+    background-color: var(--overlay1);
+    width: 150px;
+  }
+}
 
 #grade-dist-label {
   margin: '0';

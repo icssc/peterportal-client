@@ -57,15 +57,10 @@ const ReportGroup: FC<ReportGroupProps> = ({ reportGroup, onAccept, onDeny }) =>
           {review.courseId} {review.professorId}
         </h3>
         <div className="edit-buttons">
-          <Button className="ppc-mui-button" variant="text" onClick={onDeny} startIcon={<PersonRemoveIcon />}>
+          <Button color="inherit" onClick={onDeny} startIcon={<PersonRemoveIcon />}>
             Ignore
           </Button>
-          <Button
-            className="ppc-mui-button primary-button"
-            variant="text"
-            onClick={onAccept}
-            startIcon={<DeleteIcon />}
-          >
+          <Button onClick={onAccept} startIcon={<DeleteIcon />}>
             Accept Report
           </Button>
         </div>

@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../../types/types';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
-import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
+import { Button, Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -143,7 +143,8 @@ const YearModal: FC<YearModalProps> = (props) => {
             {quarterCheckboxes}
           </FormControl>
 
-          <Button variant="primary" onClick={saveYear}>
+          {/* @todo: Should be able to remove disableElevation and variant after conversion to MUI Modal */}
+          <Button variant="contained" onClick={saveYear} disableElevation>
             {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
           </Button>
         </Box>

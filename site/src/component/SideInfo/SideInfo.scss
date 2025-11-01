@@ -30,6 +30,10 @@
   > *:not(:last-child) {
     margin-bottom: 20px;
   }
+
+  .MuiInputBase-root .MuiInputBase-input {
+    background-color: var(--overlay2);
+  }
 }
 
 .side-info-overview {

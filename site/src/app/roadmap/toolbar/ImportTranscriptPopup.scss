@@ -3,22 +3,9 @@
     margin-top: 8px;
   }
 
-  input[type='file'] {
-    display: block;
-    color: var(--text);
-    background-color: var(--overlay1);
-    border: 1px solid var(--overlay3);
-    border-radius: 0.375rem;
-
-    &::file-selector-button {
-      border: none;
-      padding: 5px 10px;
-      color: black;
-      background-color: white;
-      margin-right: 12px;
-      &:hover {
-        background-color: #f5f5f5;
-      }
-    }
+  .transcript-upload {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import { Button, Stack } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -193,12 +194,13 @@ const PlannerLoader: FC = () => {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={overrideAccountRoadmap}>
-          This Device
-        </Button>
-        <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-          My Account
-        </Button>
+        <Stack direction="row" spacing={2}>
+          {/* @todo: When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
+          <Button onClick={overrideAccountRoadmap}>This Device</Button>
+          <Button color="inherit" onClick={() => setShowSyncModal(false)}>
+            My Account
+          </Button>
+        </Stack>
       </Modal.Footer>
     </Modal>
   );

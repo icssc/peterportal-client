@@ -9,7 +9,7 @@
   margin-bottom: 12px;
   flex-shrink: 0;
 
-  button.ppc-btn {
+  button {
     width: 100%;
     margin: 0;
     outline: none;
@@ -21,6 +21,16 @@
     font-size: 14px;
     padding: 6px 12px;
 
+    &.btn-primary {
+      color: white;
+      border-color: var(--blue-primary);
+      background-color: var(--blue-primary);
+      &:hover,
+      &:focus {
+        background-color: var(--blue-primary);
+      }
+    }
+
     &:not([disabled]):not(.disabled):is(:focus, :active) {
       box-shadow: none;
     }
@@ -28,7 +38,7 @@
       color: var(--blue-primary);
     }
   }
-  button.ppc-btn.btn-primary:active {
+  button.btn-primary:active {
     background-color: var(--blue-primary);
   }
 }

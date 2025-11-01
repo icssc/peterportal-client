@@ -25,6 +25,13 @@
       gap: 12px;
       align-items: center;
       height: 24px;
+      .MuiButton-root {
+        display: inline-flex;
+        height: 29px;
+        font-size: 13px;
+        white-space: nowrap;
+        padding: 0px 12px;
+      }
     }
   }
 
