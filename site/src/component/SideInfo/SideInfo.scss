@@ -1,10 +1,5 @@
 @use '../../globals';
 
-.MuiInputBase-root .MuiInputBase-input {
-  background-color: var(--overlay2);
-  padding: 8px 10px;
-}
-
 .side-info {
   width: 100%;
   height: fit-content;
@@ -41,6 +36,11 @@
   > *:not(:last-child) {
     margin-bottom: 20px;
   }
+
+  .MuiInputBase-root .MuiInputBase-input {
+    background-color: var(--overlay2);
+    padding: 8px 10px;
+  }
 }
 
 .side-info-overview {
@@ -68,11 +68,6 @@
   display: flex;
   gap: 8px;
   margin-top: 12px;
-
-  // .MuiInputBase-input {
-  //   padding: 8px 10px;
-  //   // background-color: var(--overlay2);
-  // }
 }
 
 .side-info-selected-based {

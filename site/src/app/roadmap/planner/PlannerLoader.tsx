@@ -195,7 +195,6 @@ const PlannerLoader: FC = () => {
       </Modal.Body>
       <Modal.Footer>
         <Stack direction="row" spacing={2}>
-          {' '}
           {/* When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
           <Button onClick={overrideAccountRoadmap}>This Device</Button>
           <Button color="inherit" onClick={() => setShowSyncModal(false)}>

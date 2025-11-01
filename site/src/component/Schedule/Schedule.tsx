@@ -38,7 +38,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const [currentQuarter, setCurrentQuarter] = useState<string>('');
   const [selectedQuarter, setSelectedQuarter] = useState<string>('');
-  // const { darkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     // get the current quarter used in websoc

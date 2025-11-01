@@ -118,7 +118,6 @@ const Review: FC<ReviewProps> = (props) => {
       { text: 'Top Reviews', value: SortingOption.TOP_REVIEWS },
       { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
     ];
-    // const selectedSortOptionText = reviewSortOptions.find((x) => x.value === sortingOption)?.text;
 
     const professorOptions = [{ text: 'All Professors', value: '' }].concat(
       Object.keys(props.course?.instructors ?? {})
