@@ -97,23 +97,6 @@ code {
   }
 }
 
-.ppc-btn {
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  margin: 4px;
-
-  &.btn-primary {
-    color: white;
-    border-color: var(--blue-primary);
-    background-color: var(--blue-primary);
-    &:hover,
-    &:focus {
-      background-color: var(--blue-primary);
-    }
-  }
-}
-
 div.ppc-popover {
   border-radius: 8px;
   padding: 0px;
