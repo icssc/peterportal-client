@@ -48,7 +48,7 @@ const AppHeader: FC = () => {
       <div className="feedback">
         <Button
           color="inherit"
-          href="https://github.com/icssc-projects/peterportal-client/issues/new"
+          href="https://github.com/icssc/peterportal-client/issues/new/choose"
           target="_blank"
           rel="noopener noreferrer"
           startIcon={<GitHubIcon />}

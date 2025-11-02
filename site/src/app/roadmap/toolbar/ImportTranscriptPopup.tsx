@@ -268,6 +268,16 @@ const ImportTranscriptPopup: FC = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const inputFileLabel = input.value.replace(/.*(\\|\/)/, ''); // strip fakepath
+      setFile(input.files![0]);
+      setFilePath(input.value);
+      setFileLabel(inputFileLabel);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -309,15 +319,7 @@ const ImportTranscriptPopup: FC = () => {
                     type="file"
                     name="transcript"
                     accept="text/html"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const input = e.target as HTMLInputElement;
-                      if (input.files && input.files[0]) {
-                        const inputFileLabel = input.value.replace(/.*(\\|\/)/, ''); // strip fakepath
-                        setFile(input.files![0]);
-                        setFilePath(input.value);
-                        setFileLabel(inputFileLabel);
-                      }
-                    }}
+                    onChange={handleFileChange}
                   />
                 </Button>
 

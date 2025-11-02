@@ -165,6 +165,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
+  const selectedProfCourseName =
+    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
+  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+
   const optionsRow = (
     <div className="gradedist-menu">
       {props.minify && (
@@ -185,7 +189,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       )}
 
       <div className="gradedist-filter">
-        <Select value={profCourseSelectedValue} onChange={(e) => updateProfCourse(e.target.value)}>
+        <Select
+          value={profCourseSelectedValue}
+          onChange={(e) => updateProfCourse(e.target.value)}
+          renderValue={() => {
+            return selectedProfCourseName;
+          }}
+          displayEmpty
+        >
           {profCourseOptions?.map((q) => {
             return (
               <MenuItem key={q.value} value={q.value}>
@@ -197,7 +208,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       </div>
 
       <div className="gradedist-filter">
-        <Select value={currentQuarter} onChange={(e) => setCurrentQuarter(e.target.value)}>
+        <Select
+          value={currentQuarter}
+          onChange={(e) => setCurrentQuarter(e.target.value)}
+          renderValue={() => {
+            return selectedQuarterName;
+          }}
+          displayEmpty
+        >
           {quarterEntries?.map((q) => {
             return (
               <MenuItem key={q.value} value={q.value}>
