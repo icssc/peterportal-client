@@ -152,8 +152,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
           <Select
             value={selectedQuarter ?? currentQuarter}
             onChange={(e) => setSelectedQuarter(e.target.value)}
-            renderValue={(selected) => {
-              return selected;
+            renderValue={() => {
+              return selectedQuarter;
             }}
           >
             {termOptions.map((opt) => (
