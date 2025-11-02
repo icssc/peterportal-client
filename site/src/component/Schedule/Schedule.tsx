@@ -153,10 +153,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
             value={selectedQuarter ?? currentQuarter}
             onChange={(e) => setSelectedQuarter(e.target.value)}
             renderValue={(selected) => {
-              if (!selected) {
-                // Nothing selected yet — show fallback text
-                return 'Loading...';
-              }
               return selected;
             }}
           >
