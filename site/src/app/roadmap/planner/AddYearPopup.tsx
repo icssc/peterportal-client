@@ -10,7 +10,11 @@ import { Button } from '@mui/material';
 import { addPlannerYear } from '../../../helpers/roadmapEdits';
 import spawnToast from '../../../helpers/toastify';
 
-const AddYearPopup: FC = () => {
+interface AddYearProps {
+  buttonSize: 'small' | 'xsmall';
+}
+
+const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
   const [showModal, setShowModal] = useState(false);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const plannerYears = currentPlan.content.yearPlans;
@@ -56,7 +60,7 @@ const AddYearPopup: FC = () => {
       <Button
         variant="contained"
         color="inherit"
-        size="small"
+        size={buttonSize}
         disableElevation
         className="header-btn"
         onClick={() => setShowModal(true)}

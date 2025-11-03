@@ -120,6 +120,25 @@ export let theme = createTheme({
 
 theme = createTheme(theme, {
   components: {
+    MuiButton: {
+      variants: [
+        {
+          props: { size: 'xsmall' },
+          style: {
+            height: '24px',
+            fontSize: '11px',
+            // fontFamily: "Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+            // fontWeight: '600',
+            '& .MuiButton-startIcon': {
+              marginRight: 4,
+            },
+            '& .MuiButton-startIcon .MuiSvgIcon-root': {
+              fontSize: '18px',
+            },
+          },
+        },
+      ],
+    },
     MuiCheckbox: {
       styleOverrides: {
         root: {

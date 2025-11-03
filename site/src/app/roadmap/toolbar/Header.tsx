@@ -10,7 +10,7 @@ import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Button, ButtonGroup, Paper } from '@mui/material';
+import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
 
 interface HeaderProps {
@@ -43,6 +43,9 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
   const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
 
+  const shrinkButtons = useMediaQuery('(max-width: 900px)');
+  const buttonSize = shrinkButtons ? 'xsmall' : 'small';
+
   const hasUnreadTransfers =
     transferredCourses.some((course) => course.unread) ||
     userAPExams.some((ap) => ap.unread) ||
@@ -59,11 +62,11 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       </div>
       <div className="planner-actions">
         <ButtonGroup>
-          <AddYearPopup />
+          <AddYearPopup buttonSize={buttonSize} />
           <Button
             variant="contained"
             color="inherit"
-            size="small"
+            size={buttonSize}
             disableElevation
             className="header-btn"
             startIcon={<SwapHorizOutlinedIcon />}
@@ -75,7 +78,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           <Button
             variant="contained"
             color="inherit"
-            size="small"
+            size={buttonSize}
             disableElevation
             className="header-btn"
             startIcon={<SaveIcon />}
