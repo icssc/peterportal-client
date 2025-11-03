@@ -24,6 +24,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    min-height: 66px; // fix to the natural height
     border-width: 0 0 2px 0;
     border-radius: 0;
     display: flex;

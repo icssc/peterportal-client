@@ -9,22 +9,19 @@
   position: relative;
   overflow: auto;
   height: 100%;
-  padding: 36px;
 
-  @media (max-width: globals.$mobile-cutoff) {
-    padding: 16px;
-  }
+  section.years {
+    padding-inline: 36px;
+    @media (max-width: globals.$mobile-cutoff) {
+      padding-inline: 16px;
+    }
+    padding-block: 0 $planner-gap;
 
-  .years {
     display: flex;
     flex-direction: column;
     height: fit-content;
     overflow: auto;
     gap: $planner-gap;
     flex-shrink: 0;
-  }
-
-  .roadmap-header {
-    top: 0px;
   }
 }
