@@ -15,6 +15,7 @@
   // fix to the natural height of the course preview header, which is slightly taller
   // than the natural height of the roadmap header
   min-height: 66px;
+  flex-shrink: 0;
   border-width: 0 0 2px 0;
   border-radius: 0;
   padding: 12px 16px;
