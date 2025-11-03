@@ -21,6 +21,7 @@
 }
 .gradedist-filter {
   .MuiInputBase-root .MuiInputBase-input {
+    // @todo: try to get rid of this, likely through a variant
     background-color: var(--overlay1);
     width: 150px;
   }
