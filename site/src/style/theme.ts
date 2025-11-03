@@ -127,8 +127,6 @@ theme = createTheme(theme, {
           style: {
             height: '24px',
             fontSize: '11px',
-            // fontFamily: "Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
-            // fontWeight: '600',
             '& .MuiButton-startIcon': {
               marginRight: 4,
             },
