@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { Button as Button2, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { getNextPlannerTempId, reviseRoadmap, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
@@ -20,8 +20,10 @@ import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Box, Button, FormControl, FormLabel } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits';
+import { VisuallyHiddenInput } from '../../../helpers/styling';
 
 interface TransferUnitDetails {
   date: string;
@@ -189,6 +191,7 @@ const ImportTranscriptPopup: FC = () => {
   const allPlanData = useAppSelector(selectAllPlans);
   const [file, setFile] = useState<Blob | null>(null);
   const [filePath, setFilePath] = useState('');
+  const [fileLabel, setFileLabel] = useState('');
   const [busy, setBusy] = useState(false);
   const isLoggedIn = useIsLoggedIn();
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
@@ -265,6 +268,16 @@ const ImportTranscriptPopup: FC = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const inputFileLabel = input.value.replace(/.*(\\|\/)/, ''); // strip fakepath
+      setFile(input.files![0]);
+      setFilePath(input.value);
+      setFileLabel(inputFileLabel);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -291,23 +304,31 @@ const ImportTranscriptPopup: FC = () => {
             </ol>
             <FormControl>
               <FormLabel>Transcript File</FormLabel>
-              <input
-                required
-                type="file"
-                name="transcript"
-                accept="text/html"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const input = e.target as HTMLInputElement;
-                  if (input.files && input.files[0]) {
-                    setFile(input.files![0]);
-                    setFilePath(input.value);
-                  }
-                }}
-              />
+              <div className="transcript-upload">
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="outlined"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  size="small"
+                >
+                  Browse files
+                  <VisuallyHiddenInput
+                    required
+                    type="file"
+                    name="transcript"
+                    accept="text/html"
+                    onChange={handleFileChange}
+                  />
+                </Button>
+
+                <div className="file-path">{fileLabel || 'No file selected.'}</div>
+              </div>
             </FormControl>
-            <Button2 variant="primary" disabled={!file || busy} onClick={importHandler}>
-              {busy ? 'Importing...' : 'Import'}
-            </Button2>
+            <Button disabled={!file} loading={busy} onClick={importHandler}>
+              Import
+            </Button>
           </Box>
         </Modal.Body>
       </Modal>
