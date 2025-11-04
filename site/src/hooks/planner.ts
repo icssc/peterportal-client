@@ -31,22 +31,35 @@ export function useSaveRoadmap() {
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
 
-  const handler = async (showToasts: boolean) => {
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
+
+  const handler = async () => {
     // generate before and after from the current state
     const lastSavedRoadmapPlans = deepCopy(planners);
     restoreRevision(lastSavedRoadmapPlans, revisions, currIdx, lastSaveIdx);
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, showToasts);
+    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+    if (res && isLoggedIn) {
+      setToastMsg('Roadmap saved to your account!');
+      setToastSeverity('success');
+    } else if (res && !isLoggedIn) {
+      setToastMsg('Roadmap saved locally! Log in to save it to your account');
+      setToastSeverity('success');
+    } else if (!res) {
+      setToastMsg('Unable to save roadmap to your account');
+      setToastSeverity('error');
+    }
     dispatch(setSavedRevisionIndex(currIdx));
   };
 
-  return handler;
+  return { handler, toastMsg, toastSeverity };
 }
 
 export function useReviseAndSaveRoadmap() {
-  const saveRoadmap = useSaveRoadmap();
+  const { handler: saveRoadmap } = useSaveRoadmap();
   const dispatch = useAppDispatch();
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -65,7 +78,7 @@ export function useReviseAndSaveRoadmap() {
     // No other revision or expectedTimestamp should cause the two values to be the same
     // This proof is left as an exercise to the reader.
     setExpectedTimestamp(-1);
-    saveRoadmap(showToasts);
+    saveRoadmap();
   }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap, showToasts]);
 
   const handler = (revision: RoadmapRevision, showToasts: boolean) => {

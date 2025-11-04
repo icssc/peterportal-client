@@ -12,6 +12,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
+import Toast from '../../../helpers/toast';
+import { AlertColor } from '@mui/material';
 
 interface HeaderProps {
   courseCount: number;
@@ -20,15 +22,21 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
-  const saveRoadmap = useSaveRoadmap();
+  const { handler: saveRoadmap, toastMsg, toastSeverity } = useSaveRoadmap();
   const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
+
+  const [showToast, setShowToast] = useState(false);
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const [saveInProgress, setSaveInProgress] = useState(false);
 
   const handleSave = () => {
     setSaveInProgress(true);
-    saveRoadmap(true).finally(() => setSaveInProgress(false));
+    saveRoadmap().finally(() => setSaveInProgress(false));
+    setShowToast(true);
   };
 
   const toggleTransfers = () => {
@@ -75,6 +83,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           </Button>
         </ButtonGroup>
       </div>
+      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
     </div>
   );
 };

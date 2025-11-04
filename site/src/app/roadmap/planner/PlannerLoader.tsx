@@ -30,6 +30,8 @@ import trpc from '../../../trpc';
 import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
+import Toast from '../../../helpers/toast';
+import { AlertColor } from '@mui/material';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -70,6 +72,14 @@ const PlannerLoader: FC = () => {
   const [initialLocalRoadmap, setInitialLocalRoadmap] = useState<SavedRoadmap | null>(null);
   const [initialAccountRoadmap, setInitialAccountRoadmap] = useState<SavedRoadmap | null>(null);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
+
   const dispatch = useAppDispatch();
 
   const loadLocalTransfers = async () => {
@@ -95,7 +105,22 @@ const PlannerLoader: FC = () => {
   const saveRoadmapAndUpsertTransfers = useCallback(
     async (collapsedPlans: SavedPlannerData[]) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      await saveRoadmap(isLoggedIn, null, collapsedPlans, false);
+      const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
+
+      console.log('saveRoadmapAndUpsertTransfers');
+      if (res && isLoggedIn) {
+        setToastMsg('Roadmap saved to your account!');
+        setToastSeverity('success');
+        setShowToast(true);
+      } else if (res && !isLoggedIn) {
+        setToastMsg('Roadmap saved locally! Log in to save it to your account');
+        setToastSeverity('success');
+        setShowToast(true);
+      } else if (!res) {
+        setToastMsg('Unable to save roadmap to your account');
+        setToastSeverity('error');
+        setShowToast(true);
+      }
 
       // upsert transfers
       const { courses, ap, ge, other } = await loadLocalTransfers();
@@ -175,32 +200,35 @@ const PlannerLoader: FC = () => {
   };
 
   return (
-    <Modal
-      show={showSyncModal}
-      onHide={() => {
-        setShowSyncModal(false);
-      }}
-      className="ppc-modal"
-      centered
-    >
-      <Modal.Header closeButton>
-        <h2>Roadmap Out of Sync</h2>
-      </Modal.Header>
-      <Modal.Body>
-        <p>
-          This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
-          your roadmap from?
-        </p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={overrideAccountRoadmap}>
-          This Device
-        </Button>
-        <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-          My Account
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <>
+      <Modal
+        show={showSyncModal}
+        onHide={() => {
+          setShowSyncModal(false);
+        }}
+        className="ppc-modal"
+        centered
+      >
+        <Modal.Header closeButton>
+          <h2>Roadmap Out of Sync</h2>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
+            load your roadmap from?
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={overrideAccountRoadmap}>
+            This Device
+          </Button>
+          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+            My Account
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
+    </>
   );
 };
 
