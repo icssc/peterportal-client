@@ -22,7 +22,6 @@
 
 #profile-popover {
   font-size: 1rem;
-  padding: 1em;
   background-color: var(--overlay1);
   border-radius: var(--border-radius);
   border: 1px solid var(--background);
@@ -76,24 +75,19 @@
     height: 50px;
     border-radius: 100%;
   }
+}
 
-  button {
-    border: none;
-    background: none;
-    font-size: 20px;
-    line-height: 1em;
-    padding: 0 0.5em;
-    border-radius: var(--border-radius);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    span {
-      font-size: 18px;
-    }
+.profile-popover__theme-section {
+  h4 {
+    font-size: 22px;
+    font-weight: bold;
   }
 
-  button:hover {
-    background-color: var(--overlay2);
+  hr {
+    height: 1px;
+    border: none;
+    background-color: #8886;
+    margin: 4px 0;
   }
 }
 
@@ -110,24 +104,12 @@
     gap: 4px;
     align-items: center;
   }
-  li svg.bi {
-    width: 18px;
-    height: 18px;
-  }
-
   a {
     color: var(--text);
   }
-
-  button {
-    border: none;
-    background: none;
-    width: 100%;
-  }
 }
 
-.profile-popover__link,
-.theme-popover__link {
+.profile-popover__link {
   display: flex;
   gap: 10px;
   padding: 10px;
@@ -138,21 +120,6 @@
   }
 }
 
-.profile-popover__link.active,
-.theme-popover__link.active {
-  color: var(--blue-primary);
-}
-
-i.login-icon {
-  margin-right: 0.75em;
-}
-
-.theme-button:hover,
-.theme-popover__link:hover {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.login-button {
-  color: var(--text);
+.exit-icon {
+  font-size: 20px;
 }
