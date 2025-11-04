@@ -1,5 +1,5 @@
 import './CoursePreview.scss';
-import { FC, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -11,7 +11,7 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import trpc from '../../trpc';
 import spawnToast from '../../helpers/toastify';
 import { CourseGQLData } from '../../types/types';
-import { Button, Fade, IconButton, Paper, Tooltip, useTheme } from '@mui/material';
+import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
@@ -47,6 +47,32 @@ function useCourseData(courseId: string) {
 
   return fullCourseData;
 }
+
+interface PreviewTitleProps {
+  isLoading: boolean;
+  courseId: string;
+  courseData: CourseGQLData;
+}
+const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }) => {
+  const wrapContent = (content: ReactNode) => <p className="preview-title">{content}</p>;
+  const shortenText = useMediaQuery('(max-width: 480px)');
+
+  if (isLoading) {
+    const loadingText = shortenText ? 'Loading...' : `Loading ${courseId}...`;
+    return wrapContent(loadingText);
+  }
+
+  const formattedCourseId = (
+    <b>
+      {courseData.department} {courseData.courseNumber}
+    </b>
+  );
+  if (shortenText) {
+    return wrapContent(formattedCourseId);
+  }
+
+  return wrapContent(<>Previewing {formattedCourseId}</>);
+};
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
@@ -123,18 +149,7 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
               <CloseIcon />
             </IconButton>
           </Tooltip>
-          <p className="preview-title">
-            {isLoading ? (
-              `Loading ${courseId}...`
-            ) : (
-              <>
-                Previewing{' '}
-                <b>
-                  {courseData.department} {courseData.courseNumber}
-                </b>
-              </>
-            )}
-          </p>
+          <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
           <Button
             variant="contained"
             color="inherit"
