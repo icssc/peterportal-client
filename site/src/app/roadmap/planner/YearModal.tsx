@@ -1,9 +1,21 @@
 import React, { FC, useState } from 'react';
-import { Modal } from 'react-bootstrap';
+// import { Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../../types/types';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
-import { Button, Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
+import {
+  Button,
+  Box,
+  Dialog,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  TextField,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -89,12 +101,13 @@ const YearModal: FC<YearModalProps> = (props) => {
     });
   };
 
+  // @todo: when hiding theres a delay that shows resetting the form
+
   return (
-    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
-      <Modal.Header closeButton>
-        <h2>{title}</h2>
-      </Modal.Header>
-      <Modal.Body>
+    // @todo: define maxWidth and fullWidth in theme?
+    <Dialog open={show!} onClose={handleHide} maxWidth="xs" fullWidth>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>
         <Box component="form" noValidate>
           <FormControl>
             <FormLabel>Name</FormLabel>
@@ -142,14 +155,14 @@ const YearModal: FC<YearModalProps> = (props) => {
             <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}
           </FormControl>
-
-          {/* @todo: Should be able to remove disableElevation and variant after conversion to MUI Modal */}
-          <Button variant="contained" onClick={saveYear} disableElevation>
-            {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
-          </Button>
         </Box>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" onClick={saveYear}>
+          {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
