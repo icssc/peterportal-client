@@ -41,6 +41,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
     event.preventDefault();
     if (isTouchEvent && !allowTouchClick) return;
+    if (isMobile && showSearch) return;
     dispatch(setPreviewedCourse(courseID));
   };
 
