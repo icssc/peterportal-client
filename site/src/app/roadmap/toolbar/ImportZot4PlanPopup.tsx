@@ -1,7 +1,6 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, getNextPlannerTempId } from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
@@ -16,7 +15,19 @@ import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Box, Button, FormControl, FormLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits.ts';
 import { useReviseAndSaveRoadmap } from '../../../hooks/planner.ts';
 
@@ -103,12 +114,14 @@ const ImportZot4PlanPopup: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal">
-        <Modal.Header closeButton>
-          <h2>Import Schedule from Zot4Plan</h2>
-        </Modal.Header>
-        <Modal.Body>
+      {/* <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal"> */}
+      <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Import Schedule from Zot4Plan</DialogTitle>
+        <DialogContent>
           <Box component="form" noValidate>
+            {/* @todo: consider adding cancel button*/}
+            {/* @todo: style inputs */}
+
             <FormControl>
               <p>
                 To add your{' '}
@@ -163,13 +176,14 @@ const ImportZot4PlanPopup: FC = () => {
                 <MenuItem value="4">4th year</MenuItem>
               </Select>
             </FormControl>
-
-            <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
-              Import and Save
-            </Button>
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+            Import and Save
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Button variant="text" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>

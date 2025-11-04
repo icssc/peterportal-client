@@ -1,6 +1,5 @@
 import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { Modal } from 'react-bootstrap';
 import { getNextPlannerTempId, reviseRoadmap, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
@@ -21,9 +20,10 @@ import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { Box, Button, FormControl, FormLabel } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits';
 import { VisuallyHiddenInput } from '../../../helpers/styling';
+import Link from 'next/link';
 
 interface TransferUnitDetails {
   date: string;
@@ -280,58 +280,55 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Modal
+      {/* <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
         centered
         className="ppc-modal multiplan-modal transcript-form"
-      >
-        <Modal.Header closeButton>
-          <h2>Import from Transcript</h2>
-        </Modal.Header>
-        <Modal.Body>
+      > */}
+      <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Import from Transcript</DialogTitle>
+        <DialogContent>
           <Box component="form" noValidate>
             Please upload an HTML copy of your unofficial transcript. To obtain this:
             <ol>
               <li>
                 Go to{' '}
-                <a href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
+                <Link href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
                   Student Access
-                </a>
+                </Link>
               </li>
               <li>Navigate to "Unofficial Transcript"</li>
               <li>Save the page (ctrl/cmd + s)</li>
             </ol>
             <FormControl>
               <FormLabel>Transcript File</FormLabel>
-              <div className="transcript-upload">
-                <Button
-                  component="label"
-                  role={undefined}
-                  variant="outlined"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                  size="small"
-                >
-                  Browse files
-                  <VisuallyHiddenInput
-                    required
-                    type="file"
-                    name="transcript"
-                    accept="text/html"
-                    onChange={handleFileChange}
-                  />
-                </Button>
-
-                <div className="file-path">{fileLabel || 'No file selected.'}</div>
-              </div>
+              <Button
+                component="label"
+                role={undefined}
+                variant="outlined"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+                size="small"
+              >
+                {fileLabel || 'Browse files'}
+                <VisuallyHiddenInput
+                  required
+                  type="file"
+                  name="transcript"
+                  accept="text/html"
+                  onChange={handleFileChange}
+                />
+              </Button>
             </FormControl>
-            <Button disabled={!file} loading={busy} onClick={importHandler}>
-              Import
-            </Button>
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" disabled={!file} loading={busy} onClick={importHandler}>
+            Import
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Button variant="text" onClick={() => setShowModal(true)}>
         <DescriptionIcon />
         <span>Student Transcript</span>

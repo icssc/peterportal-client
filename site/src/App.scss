@@ -9,6 +9,7 @@ body a {
   &:hover {
     text-decoration: underline;
   }
+  color: var(--blue-accent); // hmm?
 }
 
 html,
