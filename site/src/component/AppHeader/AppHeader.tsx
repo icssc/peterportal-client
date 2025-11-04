@@ -20,7 +20,7 @@ import Link from 'next/link';
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const { week } = useCurrentWeek();
+  const { currentWeek } = useCurrentWeek();
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -88,7 +88,7 @@ const AppHeader: FC = () => {
             </PPCOverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
-            {week}
+            {currentWeek}
           </p>
           <Profile />
         </div>

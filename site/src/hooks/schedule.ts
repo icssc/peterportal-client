@@ -1,16 +1,29 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchCurrentWeek } from '../store/slices/scheduleSlice';
+import { fetchCurrentWeek, fetchCurrentQuarter } from '../store/slices/scheduleSlice';
 
 export function useCurrentWeek() {
   const dispatch = useAppDispatch();
-  const week = useAppSelector((state) => state.schedule.currentWeek);
+  const currentWeek = useAppSelector((state) => state.schedule.currentWeek);
 
   useEffect(() => {
-    if (!week) {
+    if (!currentWeek) {
       dispatch(fetchCurrentWeek());
     }
-  }, [week, dispatch]);
+  }, [currentWeek, dispatch]);
 
-  return { week };
+  return { currentWeek };
+}
+
+export function useCurrentQuarter() {
+  const dispatch = useAppDispatch();
+  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
+
+  useEffect(() => {
+    if (!currentQuarter) {
+      dispatch(fetchCurrentQuarter());
+    }
+  }, [currentQuarter, dispatch]);
+
+  return { currentQuarter };
 }
