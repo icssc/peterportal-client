@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -29,7 +29,6 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const dispatch = useAppDispatch();
-  const [allowTouchClick, setAllowTouchClick] = useState(false);
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
 
@@ -38,9 +37,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
   const handleLinkClick = (event: React.MouseEvent) => {
-    const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
     event.preventDefault();
-    if (isTouchEvent && !allowTouchClick) return;
     if (isMobile && showSearch) return;
     dispatch(setPreviewedCourse(courseID));
   };
@@ -52,8 +49,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       popoverContent={popoverContent}
       placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
-      setAllowSecondaryTap={setAllowTouchClick}
-      disabled={isMobile && showSearch}
+      disabled={isMobile}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
