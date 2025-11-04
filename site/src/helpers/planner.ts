@@ -266,14 +266,11 @@ export const saveRoadmap = async (
 ) => {
   saveLocalRoadmap(planners);
 
-  // const showMessage = showToasts ? spawnToast : () => {};
-  // if (!isLoggedIn) return showMessage('Roadmap saved locally! Log in to save it to your account');
   if (!isLoggedIn) return true;
 
   let res = false;
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
-  // probably return true or false, then wherever we call saveRoadmap, render message based on success or failed promise
   await trpc.roadmaps.save
     .mutate(changes)
     .then(() => {
@@ -282,7 +279,6 @@ export const saveRoadmap = async (
     .catch(() => {
       res = false;
     });
-  console.log(res);
   return res;
 };
 

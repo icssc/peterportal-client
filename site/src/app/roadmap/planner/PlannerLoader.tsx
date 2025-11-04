@@ -106,8 +106,6 @@ const PlannerLoader: FC = () => {
     async (collapsedPlans: SavedPlannerData[]) => {
       // Cannot be called before format is upgraded from single to multi-planner
       const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
-
-      console.log('saveRoadmapAndUpsertTransfers');
       if (res && isLoggedIn) {
         setToastMsg('Roadmap saved to your account!');
         setToastSeverity('success');
