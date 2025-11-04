@@ -30,6 +30,11 @@
   > *:not(:last-child) {
     margin-bottom: 20px;
   }
+
+  .MuiInputBase-root .MuiInputBase-input {
+    // @todo: create a variant to apply the background color
+    background-color: var(--overlay2);
+  }
 }
 
 .side-info-overview {

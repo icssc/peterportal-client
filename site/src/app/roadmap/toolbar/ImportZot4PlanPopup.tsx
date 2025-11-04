@@ -1,7 +1,7 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Button as Button2, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { setPlanIndex, selectAllPlans, getNextPlannerTempId } from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
@@ -164,13 +164,13 @@ const ImportZot4PlanPopup: FC = () => {
               </Select>
             </FormControl>
 
-            <Button2 variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
-              {busy ? 'Importing...' : 'Import and Save'}
-            </Button2>
+            <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+              Import and Save
+            </Button>
           </Box>
         </Modal.Body>
       </Modal>
-      <Button variant="text" className="ppc-btn" onClick={() => setShowModal(true)}>
+      <Button variant="text" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>

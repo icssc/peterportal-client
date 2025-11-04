@@ -18,7 +18,7 @@ const ListSelector: FC<ListSelectorProps> = ({ text }) => {
   const selectTab = () => dispatch(setSelectedTab(text));
 
   return (
-    <Button variant={variant} className="ppc-btn" onClick={selectTab}>
+    <Button variant={variant} onClick={selectTab}>
       <span>{text}</span>
     </Button>
   );
