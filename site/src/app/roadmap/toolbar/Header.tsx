@@ -13,7 +13,6 @@ import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
 import Toast from '../../../helpers/toast';
-import { AlertColor } from '@mui/material';
 
 interface HeaderProps {
   courseCount: number;
@@ -83,7 +82,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           </Button>
         </ButtonGroup>
       </div>
-      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </div>
   );
 };

@@ -16,7 +16,6 @@ import {
   tags,
 } from '@peterportal/types';
 import Toast from '../../helpers/toast';
-import { AlertColor } from '@mui/material';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select2 from 'react-select';
@@ -511,7 +510,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </Button>
         </Box>
       </Modal.Body>
-      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 

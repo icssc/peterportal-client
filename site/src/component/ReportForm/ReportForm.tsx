@@ -4,7 +4,6 @@ import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import Toast from '../../helpers/toast';
-import { AlertColor } from '@mui/material';
 import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
@@ -92,7 +91,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
           </Button>
         </Box>
       </Modal.Body>
-      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 };

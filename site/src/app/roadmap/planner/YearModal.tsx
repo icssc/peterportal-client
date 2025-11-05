@@ -5,7 +5,6 @@ import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
 import { Button, Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
 import Toast from '../../../helpers/toast';
-import { AlertColor } from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -100,12 +99,7 @@ const YearModal: FC<YearModalProps> = (props) => {
 
   return (
     <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
-      <Toast
-        text={toastProps.msg}
-        severity={toastProps.severity as AlertColor}
-        showToast={showToast}
-        onClose={handleClose}
-      />
+      <Toast text={toastProps.msg} severity={toastProps.severity} showToast={showToast} onClose={handleClose} />
       <Modal.Header closeButton>
         <h2>{title}</h2>
       </Modal.Header>

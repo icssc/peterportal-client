@@ -32,7 +32,6 @@ import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
 import Toast from '../../../helpers/toast';
-import { AlertColor } from '@mui/material';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -225,7 +224,7 @@ const PlannerLoader: FC = () => {
           </Button>
         </Stack>
       </Modal.Footer>
-      <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 };
