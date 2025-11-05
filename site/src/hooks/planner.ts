@@ -66,7 +66,6 @@ export function useReviseAndSaveRoadmap() {
   const currentRevision = revisions[currIdx];
 
   const [expectedTimestamp, setExpectedTimestamp] = useState(-1);
-  const [showToasts, setShowToasts] = useState(false);
 
   useEffect(() => {
     if (currentRevision?.timestamp !== expectedTimestamp) return;
@@ -79,11 +78,10 @@ export function useReviseAndSaveRoadmap() {
     // This proof is left as an exercise to the reader.
     setExpectedTimestamp(-1);
     saveRoadmap();
-  }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap, showToasts]);
+  }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap]);
 
-  const handler = (revision: RoadmapRevision, showToasts: boolean) => {
+  const handler = (revision: RoadmapRevision) => {
     setExpectedTimestamp(revision.timestamp);
-    setShowToasts(showToasts);
     dispatch(reviseRoadmap(revision));
   };
 

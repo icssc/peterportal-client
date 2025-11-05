@@ -90,7 +90,7 @@ const ImportZot4PlanPopup: FC = () => {
       }
       expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
       const revision = addPlanner(nextPlanTempId, expandedPlanners[0].name, expandedPlanners[0].content.yearPlans);
-      reviseAndSaveRoadmap(revision, true);
+      reviseAndSaveRoadmap(revision);
       dispatch(setPlanIndex(allPlanData.length));
     } catch (err) {
       // Notify the user

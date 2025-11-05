@@ -4,6 +4,8 @@ import { PlannerYearData } from '../../../types/types';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
 import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
+import Toast from '../../../helpers/toast';
+import { AlertColor } from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -18,6 +20,7 @@ interface YearModalProps {
   type: 'add' | 'edit';
   saveHandler: (x: PlannerYearData) => void;
   currentQuarters: QuarterName[];
+  toastProps: { msg: string; severity: string };
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {
@@ -30,13 +33,18 @@ const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quart
 };
 
 const YearModal: FC<YearModalProps> = (props) => {
-  const { placeholderName, placeholderYear, show, setShow, type, saveHandler, currentQuarters } = props;
+  const { placeholderName, placeholderYear, show, setShow, type, saveHandler, currentQuarters, toastProps } = props;
   const [validated, setValidated] = useState(false);
 
   const [name, setName] = useState(placeholderName);
   const [year, setYear] = useState(placeholderYear);
 
   const [quarters, setQuarters] = useState<YearPopupQuarter[]>(quarterValues(currentQuarters));
+
+  const [showToast, setShowToast] = useState(false);
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const quarterCheckboxes = quarters.map((q, i) => {
     const handleClick = (i: number) => {
@@ -87,10 +95,17 @@ const YearModal: FC<YearModalProps> = (props) => {
       name: name.trim(),
       quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
     });
+    if (toastProps.msg) setShowToast(true);
   };
 
   return (
     <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
+      <Toast
+        text={toastProps.msg}
+        severity={toastProps.severity as AlertColor}
+        showToast={showToast}
+        onClose={handleClose}
+      />
       <Modal.Header closeButton>
         <h2>{title}</h2>
       </Modal.Header>

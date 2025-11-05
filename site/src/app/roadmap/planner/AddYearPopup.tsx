@@ -8,19 +8,14 @@ import { PlannerYearData } from '../../../types/types';
 import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 import { addPlannerYear } from '../../../helpers/roadmapEdits';
-import Toast from '../../../helpers/toast';
 
 const AddYearPopup: FC = () => {
   const [showModal, setShowModal] = useState(false);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const plannerYears = currentPlan.content.yearPlans;
   const dispatch = useAppDispatch();
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
 
-  const handleClose = () => {
-    setShowToast(false);
-  };
+  const [toastMsg, setToastMsg] = useState('');
 
   const placeholderName = 'Year ' + (plannerYears.length + 1);
   const placeholderYear =
@@ -31,7 +26,6 @@ const AddYearPopup: FC = () => {
     const startYearConflict = plannerYears.find((year) => year.startYear === startYear);
     if (startYearConflict) {
       setToastMsg(`Start year ${startYear} is already used by ${startYearConflict.name}!`);
-      setShowToast(true);
       return;
     }
 
@@ -39,7 +33,6 @@ const AddYearPopup: FC = () => {
     if (nameConflict) {
       const conflictYear = nameConflict.startYear;
       setToastMsg(`The name "${name}" is already used for ${conflictYear}-${conflictYear + 1}!`);
-      setShowToast(true);
       return;
     }
 
@@ -50,7 +43,6 @@ const AddYearPopup: FC = () => {
 
   return (
     <>
-      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       <YearModal
         show={showModal}
         setShow={setShowModal}
@@ -61,6 +53,7 @@ const AddYearPopup: FC = () => {
         currentQuarters={['Fall', 'Winter', 'Spring']}
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
+        toastProps={{ msg: toastMsg, severity: 'error' }}
       />
       <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
         <span>Add Year</span>

@@ -15,7 +15,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
-import Toast from '../../../helpers/toast';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -108,12 +107,8 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const [placeholderName, setPlaceholderName] = useState(data.name);
   const yearContainerRef = useRef<HTMLDivElement>(null);
   const currentPlan = useAppSelector(selectCurrentPlan);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
 
-  const handleClose = () => {
-    setShowToast(false);
-  };
+  const [toastMsg, setToastMsg] = useState('');
 
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
@@ -156,7 +151,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.name !== name) return false;
             setToastMsg(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`);
-            setShowToast(true);
             return true;
           });
 
@@ -165,7 +159,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.startYear !== startYear) return false;
             setToastMsg(`Start year ${startYear} is already used by ${year.name}!`);
-            setShowToast(true);
             return true;
           });
 
@@ -183,6 +176,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         }}
         currentQuarters={data.quarters.map((q) => q.name)}
         type="edit"
+        toastProps={{ msg: toastMsg, severity: 'error' }}
       />
       <DeleteYearModal show={showDeleteYear} setShow={setShowDeleteYear} yearName={data.name} yearIndex={yearIndex} />
       <Collapse in={showContent} timeout="auto" unmountOnExit>
@@ -200,7 +194,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           })}
         </Card>
       </Collapse>
-      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </Card>
   );
 };
