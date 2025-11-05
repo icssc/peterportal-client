@@ -269,6 +269,7 @@ const RoadmapMultiplan: FC = () => {
             </Button2>
           </Box>
         </Modal.Body>
+        <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       </Modal>
 
       {/* Edit Roadmap Modal */}
@@ -315,6 +316,7 @@ const RoadmapMultiplan: FC = () => {
             </Button2>
           </Box>
         </Modal.Body>
+        <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       </Modal>
 
       {/* Delete Roadmap Modal */}
@@ -345,7 +347,6 @@ const RoadmapMultiplan: FC = () => {
           </Box>
         </Modal.Body>
       </Modal>
-      <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
     </MultiplanDropdown>
   );
 };
