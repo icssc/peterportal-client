@@ -3,10 +3,10 @@ import { FC } from 'react';
 import './RecentOfferingsTable.scss';
 import { QuarterName } from '@peterportal/types';
 import { sortTerms } from '../../helpers/util';
-import { useCurrentQuarter } from '../../hooks/schedule';
 
 import CheckIcon from '@mui/icons-material/Check';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { useAppSelector } from '../../store/hooks';
 
 type RecentOfferingsTableSize = 'thin' | 'wide';
 
@@ -71,7 +71,7 @@ interface RecentOfferingsTableProps {
 }
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
-  const currentQuarter = useCurrentQuarter();
+  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const offerings = parseOfferings(terms);
 
   if (terms.length === 0) return null;

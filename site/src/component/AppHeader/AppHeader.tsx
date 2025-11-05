@@ -7,7 +7,6 @@ import './AppHeader.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
-import { useCurrentWeek } from '../../hooks/schedule';
 import Profile from './Profile';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 
@@ -20,7 +19,7 @@ import Link from 'next/link';
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const currentWeek = useCurrentWeek();
+  const currentWeek = useAppSelector((state) => state.schedule.currentWeek);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
