@@ -71,7 +71,7 @@ interface RecentOfferingsTableProps {
 }
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
-  const { currentQuarter } = useCurrentQuarter();
+  const currentQuarter = useCurrentQuarter();
   const offerings = parseOfferings(terms);
 
   if (terms.length === 0) return null;

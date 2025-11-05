@@ -20,7 +20,7 @@ import Link from 'next/link';
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const { currentWeek } = useCurrentWeek();
+  const currentWeek = useCurrentWeek();
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));

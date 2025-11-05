@@ -15,7 +15,7 @@ export function useCurrentWeek() {
     });
   }, [currentWeek, dispatch]);
 
-  return { currentWeek };
+  return currentWeek;
 }
 
 export function useCurrentQuarter() {
@@ -29,5 +29,5 @@ export function useCurrentQuarter() {
     });
   }, [currentQuarter, dispatch]);
 
-  return { currentQuarter };
+  return currentQuarter;
 }
