@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import trpc from '../../trpc';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface ScheduleState {
   currentWeek: string;
@@ -11,16 +10,6 @@ const initialState: ScheduleState = {
   currentQuarter: '',
 };
 
-// export const fetchCurrentWeek = createAsyncThunk('schedule/fetchCurrentWeek', async () => {
-//   const res = await trpc.schedule.currentWeek.query();
-//   return res.display.split(' • ')[0];
-// });
-
-export const fetchCurrentQuarter = createAsyncThunk('schedule/fetchCurrentQuarter', async () => {
-  const res = await trpc.schedule.currentQuarter.query();
-  return res;
-});
-
 export const scheduleSlice = createSlice({
   name: 'schedule',
   initialState,
@@ -28,17 +17,12 @@ export const scheduleSlice = createSlice({
     setCurrentWeek: (state, action: PayloadAction<string>) => {
       state.currentWeek = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    // builder.addCase(fetchCurrentWeek.fulfilled, (state, action) => {
-    //   state.currentWeek = action.payload;
-    // });
-    builder.addCase(fetchCurrentQuarter.fulfilled, (state, action) => {
+    setCurrentQuarter: (state, action: PayloadAction<string>) => {
       state.currentQuarter = action.payload;
-    });
+    },
   },
 });
 
-export const { setCurrentWeek } = scheduleSlice.actions;
+export const { setCurrentWeek, setCurrentQuarter } = scheduleSlice.actions;
 
 export default scheduleSlice.reducer;
