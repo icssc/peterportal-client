@@ -1,12 +1,11 @@
 import React, { FC, useState } from 'react';
-import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import Toast from '../../helpers/toast';
 import { AlertColor } from '@mui/material';
-import { Box, FormControl, FormLabel, TextField } from '@mui/material';
+import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -88,7 +87,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
             />
           </FormControl>
 
-          <Button variant="primary" type="submit" disabled={!reason.length || busy}>
+          <Button type="submit" disabled={!reason.length} loading={busy}>
             Submit Report
           </Button>
         </Box>

@@ -1,6 +1,7 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import { Button, Stack } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -198,35 +199,34 @@ const PlannerLoader: FC = () => {
   };
 
   return (
-    <>
-      <Modal
-        show={showSyncModal}
-        onHide={() => {
-          setShowSyncModal(false);
-        }}
-        className="ppc-modal"
-        centered
-      >
-        <Modal.Header closeButton>
-          <h2>Roadmap Out of Sync</h2>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            This device's saved roadmap has newer changes than the one saved to your account. Where would you like to
-            load your roadmap from?
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={overrideAccountRoadmap}>
-            This Device
-          </Button>
-          <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
+    <Modal
+      show={showSyncModal}
+      onHide={() => {
+        setShowSyncModal(false);
+      }}
+      className="ppc-modal"
+      centered
+    >
+      <Modal.Header closeButton>
+        <h2>Roadmap Out of Sync</h2>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
+          your roadmap from?
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Stack direction="row" spacing={2}>
+          {/* @todo: When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
+          <Button onClick={overrideAccountRoadmap}>This Device</Button>
+          <Button color="inherit" onClick={() => setShowSyncModal(false)}>
             My Account
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </Stack>
+      </Modal.Footer>
       <Toast text={toastMsg} severity={toastSeverity as AlertColor} showToast={showToast} onClose={handleClose} />
-    </>
+    </Modal>
   );
 };
 

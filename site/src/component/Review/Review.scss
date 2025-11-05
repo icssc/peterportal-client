@@ -3,13 +3,8 @@
   flex-direction: column;
 }
 .add-review-button {
-  padding: 6px 16px;
-  font-weight: bold;
-  margin: 8px auto 0;
-  background-color: var(--blue-primary);
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  width: auto;
+  align-self: center;
 }
 
 // sort and filter reviews

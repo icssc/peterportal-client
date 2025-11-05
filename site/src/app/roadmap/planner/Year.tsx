@@ -1,7 +1,7 @@
 'use client';
 import { FC, useRef, useState } from 'react';
 import './Year.scss';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import Quarter from './Quarter';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { selectCurrentPlan, reviseRoadmap } from '../../../store/slices/roadmapSlice';
@@ -10,7 +10,7 @@ import { pluralize } from '../../../helpers/util';
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
 
-import { Box, Card, Collapse, Divider, IconButton } from '@mui/material';
+import { Button, Box, Card, Collapse, Divider, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
@@ -84,7 +84,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
         <Box component="form" noValidate>
           <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
 
-          <Button variant="danger" onClick={handleDeleteYear}>
+          <Button color="error" onClick={handleDeleteYear}>
             I am sure
           </Button>
         </Box>

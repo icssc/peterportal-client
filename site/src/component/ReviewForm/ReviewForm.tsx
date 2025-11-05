@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import { addReview, editReview } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
@@ -26,6 +25,7 @@ import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import {
+  Button,
   Box,
   Checkbox,
   FormControl,
@@ -506,8 +506,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </FormControl>
 
-          <Button type="submit" variant="primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+          <Button type="submit" loading={isSubmitting}>
+            Submit Review
           </Button>
         </Box>
       </Modal.Body>

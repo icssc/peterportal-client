@@ -3,10 +3,8 @@ import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
 import Badge from 'react-bootstrap/Badge';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { Button, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -159,35 +157,35 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         </div>
 
-        <h4>Recent Offerings</h4>
-        {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
+        {props.terms && props.terms.length > 0 && (
+          <>
+            <h4>Recent Offerings</h4>
+            <RecentOfferingsTable terms={props.terms} size="wide" />
+          </>
+        )}
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
           <div className="side-info-buttons">
-            {/* Dropdown to select specific course/professor */}
-            <DropdownButton
-              title={selectedReview}
-              variant="secondary"
-              onSelect={(e) => {
-                setSelectedReview(e as string);
+            <Select
+              value={selectedReview}
+              onChange={(e) => {
+                setSelectedReview(e.target.value as string);
               }}
             >
               {sortedReviews.map((key, index) => (
-                <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                <MenuItem key={`side-info-dropdown-${index}`} value={key}>
                   {props.searchType == 'course' &&
                     (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                   {props.searchType == 'professor' &&
                     (props.professor?.courses[key]
                       ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
                       : key)}
-                </Dropdown.Item>
+                </MenuItem>
               ))}
-            </DropdownButton>
+            </Select>
 
-            {/* Add a review */}
             <Button
-              variant="primary"
               onClick={() => {
                 dispatch(toggleFormStatus());
               }}
@@ -197,7 +195,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
           {hasReviews && (
             <>
-              {/* Show stats of selected course/professor */}
               {selectedReview && (
                 <>
                   <div className="side-info-selected-based">Based on {count} reviews</div>

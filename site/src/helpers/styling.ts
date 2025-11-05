@@ -1,3 +1,4 @@
+import { styled } from '@mui/material';
 import { type Theme } from '@nivo/core';
 
 export const tooltipStyle: Theme = {
@@ -13,6 +14,18 @@ export const tooltipStyle: Theme = {
     },
   },
 };
+
+export const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 export const getChartTheme = (darkMode: boolean): Theme => {
   return {

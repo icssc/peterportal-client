@@ -9,7 +9,7 @@ import {
   setPlanIndex,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button as Button2, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
 import Toast from '../../../helpers/toast';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
@@ -264,9 +264,7 @@ const RoadmapMultiplan: FC = () => {
               />
             </FormControl>
 
-            <Button2 type="submit" variant="primary">
-              Create Roadmap
-            </Button2>
+            <Button type="submit">Create Roadmap</Button>
           </Box>
         </Modal.Body>
         <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
@@ -311,9 +309,7 @@ const RoadmapMultiplan: FC = () => {
               />
             </FormControl>
 
-            <Button2 type="submit" variant="primary">
-              Save Roadmap
-            </Button2>
+            <Button type="submit">Save Roadmap</Button>
           </Box>
         </Modal.Body>
         <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
@@ -336,14 +332,14 @@ const RoadmapMultiplan: FC = () => {
           <Box component="form" noValidate>
             <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
 
-            <Button2
-              variant="danger"
+            <Button
+              color="error"
               onClick={() => {
                 deleteCurrentPlan();
               }}
             >
               I am sure
-            </Button2>
+            </Button>
           </Box>
         </Modal.Body>
       </Modal>
