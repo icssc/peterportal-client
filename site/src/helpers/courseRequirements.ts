@@ -129,12 +129,38 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
   return computedRequirements;
 }
 
-export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
+/**
+ * Flattens requirements to prevent deep nesting.
+ * Preserves the titles of the top-level categories by default.
+ *
+ * ```typescript
+ *
+ *   requirements = flattenSingletonGroups(requirements);
+ *
+ * ```
+ *
+ * @param requirements Nested requirements to flatten.
+ * @param doPreserveTopLevelLabels If labels of highest-level categories should not be changed. Defaults to true.
+ * @returns Flattened requirements.
+ */
+export function flattenSingletonGroups(
+  requirements: ProgramRequirement[],
+  doPreserveTopLevelLabels = true,
+): ProgramRequirement[] {
   const res = requirements.flatMap((r) => {
-    if (r.requirementType !== 'Group') return r;
-    if (r.requirementCount !== r.requirements.length) return r;
-    return flattenSingletonGroups(r.requirements);
+    if (r.requirementType !== 'Group' || r.requirementCount !== r.requirements.length || r.requirementCount > 1) {
+      return r;
+    }
+    return flattenSingletonGroups(r.requirements, false);
   });
+  if (doPreserveTopLevelLabels) {
+    for (let i = 0; i < res.length; i++) {
+      res[i] = {
+        ...res[i],
+        label: requirements[i].label,
+      };
+    }
+  }
   return res;
 }
 
