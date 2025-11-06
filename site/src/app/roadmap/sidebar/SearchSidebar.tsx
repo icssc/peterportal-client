@@ -6,39 +6,16 @@ import { setShowSearch } from '../../../store/slices/roadmapSlice';
 import { Ref, useEffect, useRef } from 'react';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
 
-import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
-
-import RequirementsListSelector from './RequirementsListSelector';
-import AllCourseSearch from './AllCourseSearch';
-import MajorSelector from './MajorSelector';
-import MinorSelector from './MinorSelector';
-import GERequiredCourseList from './GERequiredCourseList';
 import TransferCreditsMenu from '../transfers/TransferCreditsMenu';
 import { loadMarkerCompletion } from '../../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import { initializeCompletedMarkers } from '../../../store/slices/courseRequirementsSlice';
-
-const CloseRoadmapSearchButton = () => {
-  const isMobile = useIsMobile();
-  const dispatch = useAppDispatch();
-  const { year, quarter } = useNamedAcademicTerm();
-
-  if (!isMobile) return <></>;
-
-  const closeSearch = () => dispatch(setShowSearch({ show: false }));
-
-  return (
-    <button className="fixed" onClick={closeSearch}>
-      Cancel Selecting for {quarter} {year}
-    </button>
-  );
-};
+import CourseCatalog from './CourseCatalog';
 
 const SearchSidebar = ({ sidebarRef }: { sidebarRef: Ref<HTMLDivElement> }) => {
   const isMobile = useIsMobile();
   const isLoggedIn = useIsLoggedIn();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
-  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
   const overlayRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
@@ -60,16 +37,7 @@ const SearchSidebar = ({ sidebarRef }: { sidebarRef: Ref<HTMLDivElement> }) => {
   return (
     <>
       {isMobile && showSearch && <UIOverlay onClick={closeSearch} zIndex={449} ref={overlayRef} />}
-      <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
-        <RequirementsListSelector />
-
-        {selectedCourseList === 'Major' && <MajorSelector />}
-        {selectedCourseList === 'Minor' && <MinorSelector />}
-        {selectedCourseList === 'GE' && <GERequiredCourseList />}
-        {selectedCourseList === 'Search' && <AllCourseSearch />}
-
-        <CloseRoadmapSearchButton />
-      </div>
+      <CourseCatalog isMobile={isMobile} sidebarRef={sidebarRef} />
       {!isMobile && <TransferCreditsMenu />}
     </>
   );
