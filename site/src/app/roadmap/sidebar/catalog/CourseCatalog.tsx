@@ -29,16 +29,11 @@ const CloseRoadmapSearchButton = () => {
   );
 };
 
-interface CourseCatalogProps {
-  isMobile?: boolean;
-  sidebarRef?: Ref<HTMLDivElement>;
-}
-
-const CourseCatalog: FC<CourseCatalogProps> = ({ isMobile, sidebarRef }) => {
+export const CourseCatalogContent = () => {
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
 
   return (
-    <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
+    <>
       <RequirementsListSelector />
 
       {selectedCourseList === 'Major' && <MajorSelector />}
@@ -48,6 +43,19 @@ const CourseCatalog: FC<CourseCatalogProps> = ({ isMobile, sidebarRef }) => {
       {selectedCourseList === 'Search' && <SavedAndSearch />}
 
       <CloseRoadmapSearchButton />
+    </>
+  );
+};
+
+interface CourseCatalogProps {
+  isMobile?: boolean;
+  sidebarRef?: Ref<HTMLDivElement>;
+}
+
+const CourseCatalog: FC<CourseCatalogProps> = ({ isMobile, sidebarRef }) => {
+  return (
+    <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
+      <CourseCatalogContent />
     </div>
   );
 };

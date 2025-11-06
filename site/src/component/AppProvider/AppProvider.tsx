@@ -8,9 +8,11 @@ import AppThemeProvider from '../AppThemeProvider/AppThemeProvider';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { UserData } from '@peterportal/types';
+import { useLoadCompletedMarkers } from '../../hooks/courseRequirements';
 
 const UserDataLoader: FC = () => {
   useLoadSavedCourses();
+  useLoadCompletedMarkers();
   return null;
 };
 

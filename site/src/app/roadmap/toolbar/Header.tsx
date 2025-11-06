@@ -1,6 +1,6 @@
 'use client';
 import { FC, useState } from 'react';
-import { pluralize } from '../../../helpers/util';
+import { pluralize, useIsMobile } from '../../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from '../planner/AddYearPopup';
@@ -12,6 +12,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
+import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 
 interface HeaderProps {
   courseCount: number;
@@ -22,6 +23,7 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const saveRoadmap = useSaveRoadmap();
   const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
   const [saveInProgress, setSaveInProgress] = useState(false);
@@ -39,17 +41,10 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
     dispatch(setShowTransfersMenu(!showTransfers));
   };
 
-  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
-
   const shrinkButtons = useMediaQuery('(max-width: 900px)');
   const buttonSize = shrinkButtons ? 'xsmall' : 'small';
 
-  const hasUnreadTransfers =
-    transferredCourses.some((course) => course.unread) ||
-    userAPExams.some((ap) => ap.unread) ||
-    uncategorizedCourses.some((course) => course.unread);
+  const hasUnreadTransfers = useHasUnreadTransfers();
 
   return (
     <Paper className="roadmap-header" variant="outlined">
@@ -63,18 +58,20 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       <div className="planner-actions">
         <ButtonGroup>
           <AddYearPopup buttonSize={buttonSize} />
-          <Button
-            variant="contained"
-            color="inherit"
-            size={buttonSize}
-            disableElevation
-            className="header-btn"
-            startIcon={<SwapHorizOutlinedIcon />}
-            onClick={toggleTransfers}
-          >
-            Transfer Credits
-            <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
-          </Button>
+          {isMobile && (
+            <Button
+              variant="contained"
+              color="inherit"
+              size={buttonSize}
+              disableElevation
+              className="header-btn"
+              startIcon={<SwapHorizOutlinedIcon />}
+              onClick={toggleTransfers}
+            >
+              Add Credits
+              <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
+            </Button>
+          )}
           <Button
             variant="contained"
             color="inherit"
