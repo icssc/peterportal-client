@@ -10,7 +10,11 @@ import { Button } from '@mui/material';
 import { addPlannerYear } from '../../../helpers/roadmapEdits';
 import spawnToast from '../../../helpers/toastify';
 
-const AddYearPopup: FC = () => {
+interface AddYearProps {
+  buttonSize: 'small' | 'xsmall';
+}
+
+const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
   const [showModal, setShowModal] = useState(false);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const plannerYears = currentPlan.content.yearPlans;
@@ -53,7 +57,15 @@ const AddYearPopup: FC = () => {
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
       />
-      <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
+      <Button
+        variant="contained"
+        color="inherit"
+        size={buttonSize}
+        disableElevation
+        className="header-btn"
+        onClick={() => setShowModal(true)}
+        startIcon={<AddIcon />}
+      >
         <span>Add Year</span>
       </Button>
     </>

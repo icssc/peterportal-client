@@ -1,6 +1,8 @@
 @use '../../globals.scss';
 
 .search-module {
+  z-index: 100;
+
   button {
     font: inherit;
     padding: 0;
@@ -9,9 +11,6 @@
     width: 40px;
     text-align: center;
     justify-content: center;
-  }
-  .form-group {
-    margin-bottom: 0;
   }
 }
 
@@ -29,6 +28,7 @@
     background-color: var(--overlay1);
     border-color: var(--overlay2);
   }
+
   .search-bar:focus {
     border-color: #80bdff;
   }
