@@ -1,3 +1,4 @@
+import './SavedAndSearch.scss';
 import { FC } from 'react';
 import SearchModule from '../../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';

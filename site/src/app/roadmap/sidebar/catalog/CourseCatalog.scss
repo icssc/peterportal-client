@@ -1,0 +1,5 @@
+@use '../../../../globals';
+
+.search-sidebar.mobile {
+  @include globals.bottom-overlay(450);
+}

@@ -32,6 +32,19 @@ export const ToggleTransfersButton: FC = () => {
   );
 };
 
+export const TransferMenuContent = () => {
+  return (
+    <div className="transfers-menu-inner">
+      <h3>Transfer Credits</h3>
+
+      <CoursesSection />
+      <APExamsSection />
+      <GESection />
+      <UncategorizedCreditsSection />
+    </div>
+  );
+};
+
 const TransferCreditsMenu: FC = () => {
   const isMobile = useIsMobile();
   const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
@@ -58,14 +71,7 @@ const TransferCreditsMenu: FC = () => {
       {isMobile && <UIOverlay onClick={closeMenu} zIndex={399} ref={overlayRef} />}
       <CSSTransition in={show} timeout={500} unmountOnExit nodeRef={sidebarRef}>
         <div className={`side-panel transfers-menu ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
-          <div className="transfers-menu-inner">
-            <h3>Transfer Credits</h3>
-
-            <CoursesSection />
-            <APExamsSection />
-            <GESection />
-            <UncategorizedCreditsSection />
-          </div>
+          <TransferMenuContent />
           <ToggleTransfersButton />
         </div>
       </CSSTransition>
