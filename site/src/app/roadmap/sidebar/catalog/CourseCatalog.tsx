@@ -2,7 +2,6 @@
 // ...
 
 import './CourseCatalog.scss';
-import { FC, Ref } from 'react';
 import { useIsMobile } from '../../../../helpers/util';
 import { useNamedAcademicTerm } from '../../../../hooks/namedAcademicTerm';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -33,7 +32,7 @@ export const CourseCatalogContent = () => {
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
 
   return (
-    <>
+    <div className="course-catalog">
       <RequirementsListSelector />
 
       {selectedCourseList === 'Major' && <MajorSelector />}
@@ -43,21 +42,6 @@ export const CourseCatalogContent = () => {
       {selectedCourseList === 'Search' && <SavedAndSearch />}
 
       <CloseRoadmapSearchButton />
-    </>
-  );
-};
-
-interface CourseCatalogProps {
-  isMobile?: boolean;
-  sidebarRef?: Ref<HTMLDivElement>;
-}
-
-const CourseCatalog: FC<CourseCatalogProps> = ({ isMobile, sidebarRef }) => {
-  return (
-    <div className={`side-panel search-sidebar ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
-      <CourseCatalogContent />
     </div>
   );
 };
-
-export default CourseCatalog;

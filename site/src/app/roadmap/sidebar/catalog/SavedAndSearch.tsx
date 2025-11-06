@@ -45,7 +45,7 @@ const SavedAndSearch: FC = () => {
           list={shownCourses}
           onStart={setDraggedItem}
           disabled={isMobile}
-          className={'search-body' + (isMobile ? ' disabled' : '')}
+          className={'roadmap-search-results' + (isMobile ? ' disabled' : '')}
         >
           {shownCourses.map((course, i) => {
             const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
