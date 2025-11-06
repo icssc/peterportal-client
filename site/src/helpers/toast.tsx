@@ -3,7 +3,7 @@ import { Snackbar, SnackbarContent } from '@mui/material';
 
 interface ToastProps {
   text: string;
-  severity: string;
+  severity: 'error' | 'success' | 'info';
   showToast: boolean;
   onClose: () => void;
 }

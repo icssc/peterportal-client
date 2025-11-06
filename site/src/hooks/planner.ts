@@ -32,7 +32,7 @@ export function useSaveRoadmap() {
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
 
   const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState('info');
+  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
 
   const handler = async () => {
     // generate before and after from the current state

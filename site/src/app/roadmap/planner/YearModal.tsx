@@ -19,7 +19,7 @@ interface YearModalProps {
   type: 'add' | 'edit';
   saveHandler: (x: PlannerYearData) => void;
   currentQuarters: QuarterName[];
-  toastProps: { msg: string; severity: string };
+  toastProps: { msg: string; severity: 'error' | 'success' | 'info' };
 }
 
 const quarterValues: (selectedQuarters: string[]) => YearPopupQuarter[] = (quarterIds: string[]) => {

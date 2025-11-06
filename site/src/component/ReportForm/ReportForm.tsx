@@ -18,7 +18,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   const [busy, setBusy] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState('info');
+  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
 
   const handleClose = () => {
     setShowToast(false);
