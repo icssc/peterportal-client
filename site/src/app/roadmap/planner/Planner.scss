@@ -12,9 +12,6 @@
 
   section.years {
     padding-inline: 36px;
-    @media (max-width: globals.$mobile-cutoff) {
-      padding-inline: 16px;
-    }
     padding-block: 0 $planner-gap;
 
     display: flex;
@@ -23,5 +20,9 @@
     overflow: auto;
     gap: $planner-gap;
     flex-shrink: 0;
+
+    @media (max-width: globals.$mobile-cutoff) {
+      padding-inline: 16px;
+    }
   }
 }

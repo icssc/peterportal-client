@@ -1,8 +1,6 @@
 @use '../../../globals.scss';
 
 .transfers-menu {
-  // transform: translateY(100%);
-  // transition: transform 0.3s;
   &.enter,
   &.enter-done {
     transform: unset;
@@ -20,9 +18,4 @@
 
 .toggle-transfers-button {
   @include globals.bottom-button();
-
-  // width: globals.$roadmap-sidebar-width;
-  // &.mobile {
-  //   width: 100%;
-  // }
 }
