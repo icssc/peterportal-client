@@ -13,9 +13,11 @@ import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
+import { setShowSearch } from '../../store/slices/roadmapSlice';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -32,6 +34,10 @@ const AppHeader: FC = () => {
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
+  };
+
+  const toggleSearch = () => {
+    dispatch(setShowSearch({ show: true }));
   };
 
   const popover = (
@@ -75,6 +81,10 @@ const AppHeader: FC = () => {
           {/* Hamburger Menu */}
           <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
             <MenuIcon className="navbar-menu-icon" />
+          </IconButton>
+          {/* Search */}
+          <IconButton onClick={toggleSearch}>
+            <SearchIcon />
           </IconButton>
         </div>
 
