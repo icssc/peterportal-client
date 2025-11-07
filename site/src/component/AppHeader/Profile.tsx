@@ -1,9 +1,10 @@
 import { useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { Button } from '@mui/material';
+import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import './Profile.scss';
 
+import Link from '@mui/material/Link';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
@@ -12,7 +13,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 import GradingIcon from '@mui/icons-material/Grading';
 import FlagIcon from '@mui/icons-material/Flag';
-import Link from 'next/link';
+import Divider from '@mui/material/Divider';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
@@ -66,58 +67,61 @@ const Profile = () => {
         <div className="profile-popover__theme-section">
           <h4>Theme</h4>
           <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-          <hr />
+          <Divider />
         </div>
-        <div className="profile-popover__links">
-          <ul>
-            <li>
-              <Link
-                className={'profile-popover__link' + (pathname === '/reviews' ? ' active' : '')}
-                href="/reviews"
-                onClick={() => setShow(false)}
-              >
+        <List className="profile-popover__links">
+          <ListItem>
+            <ListItemButton
+              className={'profile-popover__link' + (pathname === '/reviews' ? ' active' : '')}
+              href="/reviews"
+              onClick={() => setShow(false)}
+              component={Link}
+            >
+              <ListItemIcon>
                 <StickyNote2OutlinedIcon />
-                Your Reviews
-              </Link>
-            </li>
-            {isAdmin && (
-              <>
-                <li>
-                  <Link
-                    className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
-                    href="/admin/verify"
-                    onClick={() => setShow(false)}
-                  >
+              </ListItemIcon>
+              <ListItemText primary="Your Reviews" />
+            </ListItemButton>
+          </ListItem>
+          {isAdmin && (
+            <>
+              <ListItem>
+                <ListItemButton
+                  className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
+                  href="/admin/verify"
+                  onClick={() => setShow(false)}
+                  component={Link}
+                >
+                  <ListItemIcon>
                     <GradingIcon />
-                    Verify Reviews
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
-                    href="/admin/reports"
-                    onClick={() => setShow(false)}
-                  >
+                  </ListItemIcon>
+                  <ListItemText primary="Verify Reviews" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem>
+                <ListItemButton
+                  className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
+                  href="/admin/reports"
+                  onClick={() => setShow(false)}
+                  component={Link}
+                >
+                  <ListItemIcon>
                     <FlagIcon />
-                    View Reports
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
-        <div className="profile-popover__links">
-          <ul>
-            <li>
-              <a href={'/api/users/auth/logout'} className="profile-popover__link">
-                <div>
-                  <LogoutIcon />
-                </div>
-                Log Out
-              </a>
-            </li>
-          </ul>
-        </div>
+                  </ListItemIcon>
+                  <ListItemText primary="View Reports" />
+                </ListItemButton>
+              </ListItem>
+            </>
+          )}
+          <ListItem>
+            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover__link" component={Link}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Log Out" />
+            </ListItemButton>
+          </ListItem>
+        </List>
       </div>
     </Popover>
   );

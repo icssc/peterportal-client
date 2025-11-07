@@ -78,45 +78,31 @@
 }
 
 .profile-popover__theme-section {
-  h4 {
-    font-size: 22px;
-    font-weight: bold;
+  .MuiDivider-root {
+    margin: 4px 0 0;
   }
 
-  hr {
-    height: 1px;
-    border: none;
-    background-color: #8886;
-    margin: 4px 0;
+  h4 {
+    font-size: 20px;
   }
 }
 
 .profile-popover__links {
-  ul {
-    list-style: none;
+  .MuiListItem-root {
     padding: 0;
-    margin: 0;
-    font-size: 16px;
   }
 
-  li div {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-  a {
-    color: var(--text);
-  }
-}
+  .MuiListItemButton-root {
+    padding: 10px;
+    border-radius: var(--border-radius);
 
-.profile-popover__link {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-  border-radius: var(--border-radius);
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
-  &:hover {
-    background-color: var(--overlay2);
+  .MuiListItemIcon-root {
+    min-width: 32px;
   }
 }
 
