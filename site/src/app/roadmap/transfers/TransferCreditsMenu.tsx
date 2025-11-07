@@ -56,7 +56,10 @@ export const MobileCreditsMenu: FC = () => {
     if (!isMobile) dispatch(setShowTransfersMenu(false));
   }, [dispatch, isMobile]);
 
-  const closeMenu = () => dispatch(setShowTransfersMenu(false));
+  const closeMenu = () => {
+    dispatch(clearUnreadTransfers());
+    dispatch(setShowTransfersMenu(false));
+  };
 
   return (
     <MobilePopup show={show} className="transfers-menu" onClose={closeMenu}>

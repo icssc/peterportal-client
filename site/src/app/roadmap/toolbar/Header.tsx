@@ -6,11 +6,10 @@ import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
-import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
+import { Badge, Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 
@@ -59,18 +58,19 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
         <ButtonGroup>
           <AddYearPopup buttonSize={buttonSize} />
           {isMobile && (
-            <Button
-              variant="contained"
-              color="inherit"
-              size={buttonSize}
-              disableElevation
-              className="header-btn"
-              startIcon={<SwapHorizOutlinedIcon />}
-              onClick={toggleTransfers}
-            >
-              Add Credits
-              <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
-            </Button>
+            <Badge color="error" variant="dot" invisible={!hasUnreadTransfers}>
+              <Button
+                variant="contained"
+                color="inherit"
+                size={buttonSize}
+                disableElevation
+                className="header-btn"
+                startIcon={<SwapHorizOutlinedIcon />}
+                onClick={toggleTransfers}
+              >
+                Add Credits
+              </Button>
+            </Badge>
           )}
           <Button
             variant="contained"
