@@ -24,6 +24,7 @@ const DesktopRoadmapSidebar = () => {
       setHasSeenCredits(true);
     } else {
       if (hasSeenCredits) dispatch(clearUnreadTransfers());
+      setHasSeenCredits(false);
     }
   }, [dispatch, hasSeenCredits, selectedIndex]);
 
