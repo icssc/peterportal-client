@@ -11,6 +11,7 @@ import GERequiredCourseList from './GERequiredCourseList';
 import MajorSelector from './MajorSelector';
 import MinorSelector from './MinorSelector';
 import RequirementsListSelector from './RequirementsListSelector';
+import SavedCourseList from './SavedCourses';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -38,7 +39,7 @@ export const CourseCatalogContent = () => {
       {selectedCourseList === 'Major' && <MajorSelector />}
       {selectedCourseList === 'Minor' && <MinorSelector />}
       {selectedCourseList === 'GE' && <GERequiredCourseList />}
-      {selectedCourseList === 'Saved' && <SavedAndSearch /> /** @todo v2 saved tab */}
+      {selectedCourseList === 'Saved' && <SavedCourseList />}
       {selectedCourseList === 'Search' && <SavedAndSearch />}
 
       <CloseRoadmapSearchButton />
