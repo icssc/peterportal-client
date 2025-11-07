@@ -1,18 +1,18 @@
 import './SavedAndSearch.scss';
 import { FC } from 'react';
-import SearchModule from '../../../../component/SearchModule/SearchModule';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { useSavedCourses } from '../../../../hooks/savedCourses';
-import { CourseGQLData } from '../../../../types/types';
-import { deepCopy, useIsMobile } from '../../../../helpers/util';
+import SearchModule from '../../../component/SearchModule/SearchModule';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useSavedCourses } from '../../../hooks/savedCourses';
+import { CourseGQLData } from '../../../types/types';
+import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { setActiveCourse } from '../../../../store/slices/roadmapSlice';
-import { getMissingPrerequisites } from '../../../../helpers/planner';
-import { courseSearchSortable } from '../../../../helpers/sortable';
-import Course from '../../planner/Course';
-import LoadingSpinner from '../../../../component/LoadingSpinner/LoadingSpinner';
-import NoResults from '../../../../component/NoResults/NoResults';
-import { useClearedCourses } from '../../../../hooks/planner';
+import { setActiveCourse } from '../../../store/slices/roadmapSlice';
+import { getMissingPrerequisites } from '../../../helpers/planner';
+import { courseSearchSortable } from '../../../helpers/sortable';
+import Course from '../planner/Course';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import NoResults from '../../../component/NoResults/NoResults';
+import { useClearedCourses } from '../../../hooks/planner';
 
 const SavedAndSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);

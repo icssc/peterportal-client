@@ -2,15 +2,15 @@
 // ...
 
 import './CourseCatalog.scss';
-import { useIsMobile } from '../../../../helpers/util';
-import { useNamedAcademicTerm } from '../../../../hooks/namedAcademicTerm';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { setShowSearch } from '../../../../store/slices/roadmapSlice';
-import SavedAndSearch from './SavedAndSearch';
-import GERequiredCourseList from '../GERequiredCourseList';
-import MajorSelector from '../MajorSelector';
-import MinorSelector from '../MinorSelector';
-import RequirementsListSelector from '../RequirementsListSelector';
+import { useIsMobile } from '../../../helpers/util';
+import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { setShowSearch } from '../../../store/slices/roadmapSlice';
+import SavedAndSearch from '../search/SavedAndSearch';
+import GERequiredCourseList from './GERequiredCourseList';
+import MajorSelector from './MajorSelector';
+import MinorSelector from './MinorSelector';
+import RequirementsListSelector from './RequirementsListSelector';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();

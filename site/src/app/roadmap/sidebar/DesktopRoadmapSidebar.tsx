@@ -1,13 +1,13 @@
 import './DesktopRoadmapSidebar.scss';
 import { Tab, Tabs } from '@mui/material';
-import { CourseCatalogContent } from './catalog/CourseCatalog';
+import { CourseCatalogContent } from '../catalog/CourseCatalog';
 import { useState } from 'react';
 
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SearchIcon from '@mui/icons-material/Search';
 import { TransferMenuContent } from '../transfers/TransferCreditsMenu';
-import SavedAndSearch from './catalog/SavedAndSearch';
+import SavedAndSearch from '../search/SavedAndSearch';
 // import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 
 const DesktopRoadmapSidebar = () => {

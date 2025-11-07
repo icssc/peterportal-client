@@ -1,9 +1,9 @@
 'use client';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { setShowSearch } from '../../../../store/slices/roadmapSlice';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { setShowSearch } from '../../../store/slices/roadmapSlice';
 import { CourseCatalogContent } from './CourseCatalog';
-import MobilePopup from '../../MobilePopup';
+import MobilePopup from '../MobilePopup';
 
 const MobileCourseCatalog = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);

@@ -2,7 +2,7 @@
 import { FC } from 'react';
 import './RoadmapPage.scss';
 import Planner from './planner/Planner';
-import MobileCourseCatalog from './sidebar/catalog/MobileCourseCatalog';
+import MobileCourseCatalog from './catalog/MobileCourseCatalog';
 import { useAppSelector } from '../../store/hooks';
 import AddCoursePopup from './planner/AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
