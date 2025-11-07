@@ -8,29 +8,25 @@ interface PPCOverlayTriggerProps extends Omit<OverlayTriggerProps, 'overlay'> {
   popoverContent: ReactNode;
   children: React.ReactElement;
   popupListener?: (open: boolean) => void;
-  setAllowSecondaryTap?: (allow: boolean) => void;
   disabled?: boolean;
 }
 
 const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = (props) => {
-  const { setAllowSecondaryTap, popupListener, popoverContent, children, disabled, ...passedProps } = props;
+  const { popupListener, popoverContent, children, disabled, ...passedProps } = props;
   const [showInfoPopover, setShowInfoPopover] = useState(false);
   const [showPopoverTimeout, setShowPopoverTimeout] = useState(0);
 
   const POPOVER_DELAY = 80;
-  const TOUCH_DELAY = 120;
 
   const showPopover = () => {
     setShowInfoPopover(true);
     popupListener?.(true);
     clearTimeout(showPopoverTimeout);
     setShowPopoverTimeout(0);
-    setTimeout(() => setAllowSecondaryTap?.(true), TOUCH_DELAY);
   };
 
   const hidePopover = () => {
     setShowInfoPopover(false);
-    setAllowSecondaryTap?.(false);
     popupListener?.(false);
     clearTimeout(showPopoverTimeout);
     setShowPopoverTimeout(0);
