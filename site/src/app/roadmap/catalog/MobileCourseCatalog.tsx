@@ -2,7 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowSearch } from '../../../store/slices/roadmapSlice';
-import { CourseCatalogContent } from './CourseCatalog';
+import { CourseCatalog } from './CourseCatalog';
 import MobilePopup from '../MobilePopup';
 import { useEffect } from 'react';
 import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
@@ -27,7 +27,7 @@ const MobileCourseCatalog = () => {
 
   return (
     <MobilePopup show={showSearch} onClose={closeSearch}>
-      <CourseCatalogContent />
+      <CourseCatalog />
     </MobilePopup>
   );
 };

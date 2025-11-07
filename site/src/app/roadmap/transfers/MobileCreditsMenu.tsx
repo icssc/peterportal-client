@@ -1,0 +1,30 @@
+import { FC, useEffect } from 'react';
+import { useIsMobile } from '../../../helpers/util';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { clearUnreadTransfers, setShowTransfersMenu } from '../../../store/slices/transferCreditsSlice';
+import TransferCreditsMenu, { ToggleTransfersButton } from './TransferCreditsMenu';
+import MobilePopup from '../MobilePopup';
+
+export const MobileCreditsMenu: FC = () => {
+  const isMobile = useIsMobile();
+  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+
+  const dispatch = useAppDispatch();
+
+  /** @todo move out of global state since this will no longer be conditionally rendered */
+  useEffect(() => {
+    if (!isMobile) dispatch(setShowTransfersMenu(false));
+  }, [dispatch, isMobile]);
+
+  const closeMenu = () => {
+    dispatch(clearUnreadTransfers());
+    dispatch(setShowTransfersMenu(false));
+  };
+
+  return (
+    <MobilePopup show={show} className="transfers-menu" onClose={closeMenu}>
+      <TransferCreditsMenu />
+      <ToggleTransfersButton />
+    </MobilePopup>
+  );
+};

@@ -1,6 +1,3 @@
-// The "Catalog Tab" of the 3 tabs
-// ...
-
 import './CourseCatalog.scss';
 import { useIsMobile } from '../../../helpers/util';
 import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
@@ -29,7 +26,7 @@ const CloseRoadmapSearchButton = () => {
   );
 };
 
-export const CourseCatalogContent = () => {
+export const CourseCatalog = () => {
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
 
   return (

@@ -1,13 +1,13 @@
 'use client';
 import './DesktopRoadmapSidebar.scss';
 import { Badge, Tab, Tabs } from '@mui/material';
-import { CourseCatalogContent } from '../catalog/CourseCatalog';
+import { CourseCatalog } from '../catalog/CourseCatalog';
 import { useEffect, useState } from 'react';
 
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SearchIcon from '@mui/icons-material/Search';
-import { TransferMenuContent } from '../transfers/TransferCreditsMenu';
+import { TransferCreditsMenu } from '../transfers/TransferCreditsMenu';
 import SavedAndSearch from '../search/SavedAndSearch';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 import { useAppDispatch } from '../../../store/hooks';
@@ -49,8 +49,8 @@ const DesktopRoadmapSidebar = () => {
       </Tabs>
 
       <div className="sidebar-content">
-        {selectedIndex === 0 && <TransferMenuContent />}
-        {selectedIndex === 1 && <CourseCatalogContent />}
+        {selectedIndex === 0 && <TransferCreditsMenu />}
+        {selectedIndex === 1 && <CourseCatalog />}
         {selectedIndex === 2 && <SavedAndSearch />}
       </div>
     </div>

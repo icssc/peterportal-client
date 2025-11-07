@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import './TransferCreditsMenu.scss';
 import { useIsMobile } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -8,8 +8,6 @@ import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
-import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
-import MobilePopup from '../MobilePopup';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
@@ -31,7 +29,7 @@ export const ToggleTransfersButton: FC = () => {
   );
 };
 
-export const TransferMenuContent = () => {
+export const TransferCreditsMenu = () => {
   return (
     <div>
       <h3>Add Course Credits</h3>
@@ -44,27 +42,4 @@ export const TransferMenuContent = () => {
   );
 };
 
-export const MobileCreditsMenu: FC = () => {
-  const isMobile = useIsMobile();
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
-  useLoadTransferredCredits();
-
-  const dispatch = useAppDispatch();
-
-  /** @todo move out of global state since this will no longer be conditionally rendered */
-  useEffect(() => {
-    if (!isMobile) dispatch(setShowTransfersMenu(false));
-  }, [dispatch, isMobile]);
-
-  const closeMenu = () => {
-    dispatch(clearUnreadTransfers());
-    dispatch(setShowTransfersMenu(false));
-  };
-
-  return (
-    <MobilePopup show={show} className="transfers-menu" onClose={closeMenu}>
-      <TransferMenuContent />
-      <ToggleTransfersButton />
-    </MobilePopup>
-  );
-};
+export default TransferCreditsMenu;
