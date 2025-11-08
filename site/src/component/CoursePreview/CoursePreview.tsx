@@ -9,12 +9,12 @@ import { checkModalOpen, sortTerms, transformCourseGQL } from '../../helpers/uti
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import trpc from '../../trpc';
-import spawnToast from '../../helpers/toastify';
 import { CourseGQLData } from '../../types/types';
 import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
+import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -24,6 +24,8 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 function useCourseData(courseId: string) {
   const [fullCourseData, setFullCourseData] = useState(LOADING_COURSE_PLACEHOLDER);
   const [loadTrigger, setLoadTrigger] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // Use a stateful trigger to avoid sending two requests as a result of double first render
@@ -41,9 +43,12 @@ function useCourseData(courseId: string) {
         setFullCourseData(transformCourseGQL(course));
       })
       .catch(() => {
-        spawnToast('There was an error loading this course', true);
+        // spawnToast('There was an error loading this course', true);
+        dispatch(setToastMsg('Copied course URL to clipboard!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       });
-  }, [courseId, loadTrigger]);
+  }, [courseId, dispatch, loadTrigger]);
 
   return fullCourseData;
 }
@@ -124,7 +129,13 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
   const copyCourseLink = () => {
     const url = new URL('/course/' + courseId, location.origin).toString();
     navigator.clipboard.writeText(url);
-    spawnToast('Copied course URL to clipboard!');
+    // spawnToast('Copied course URL to clipboard!');
+    // setToastMsg('Copied course URL to clipboard!');
+    // setToastSeverity('success');
+    // setShowToast(true);
+    dispatch(setToastMsg('Copied course URL to clipboard!'));
+    dispatch(setToastSeverity('success'));
+    dispatch(setShowToast(true));
   };
 
   useEffect(() => {

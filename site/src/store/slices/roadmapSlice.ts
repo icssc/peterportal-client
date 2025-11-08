@@ -70,6 +70,9 @@ export const roadmapSlice = createSlice({
     activeCourseDragSource: null as Omit<SetActiveCoursePayload, 'course'> | null,
     /** Whether the roadmap is loading */
     roadmapLoading: true,
+    toastMsg: '',
+    toastSeverity: 'info' as 'info' | 'success' | 'error',
+    showToast: false,
   },
   reducers: {
     // Roadmap Window State
@@ -154,6 +157,15 @@ export const roadmapSlice = createSlice({
     setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
       state.showSavedCourses = action.payload;
     },
+    setToastMsg: (state, action: PayloadAction<string>) => {
+      state.toastMsg = action.payload;
+    },
+    setToastSeverity: (state, action: PayloadAction<'info' | 'success' | 'error'>) => {
+      state.toastSeverity = action.payload;
+    },
+    setShowToast: (state, action: PayloadAction<boolean>) => {
+      state.showToast = action.payload;
+    },
   },
 });
 
@@ -173,6 +185,9 @@ export const {
   undoRoadmapRevision,
   redoRoadmapRevision,
   setSavedRevisionIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
