@@ -25,6 +25,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
 import { addPlanner, deletePlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
 import { deepCopy } from '../../../helpers/util';
+import { theme } from '../../../style/theme';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -94,8 +95,11 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
       <Button
         className="dropdown-button"
         variant="outlined"
+        color="inherit"
         onClick={() => setShowDropdown(!showDropdown)}
         endIcon={<ArrowDropDownIcon />}
+        /** @todo potentially add this override to the theme as a variant */
+        sx={{ borderColor: theme.palette.text.secondary }}
       >
         {name}
       </Button>

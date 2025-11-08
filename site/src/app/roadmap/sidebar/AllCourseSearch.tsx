@@ -47,13 +47,12 @@ const AllCourseSearch: FC = () => {
           className={'search-body' + (isMobile ? ' disabled' : '')}
         >
           {shownCourses.map((course, i) => {
-            const missingPrerequisites = getMissingPrerequisites(clearedCourses, course);
+            const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
             return (
               <Course
                 data={course}
                 key={i}
                 addMode={isMobile ? 'tap' : 'drag'}
-                openPopoverLeft={true}
                 requiredCourses={missingPrerequisites}
               />
             );

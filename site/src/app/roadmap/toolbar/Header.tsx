@@ -10,7 +10,7 @@ import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
 import Toast from '../../../helpers/toast';
 
@@ -50,13 +50,16 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
   const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
 
+  const shrinkButtons = useMediaQuery('(max-width: 900px)');
+  const buttonSize = shrinkButtons ? 'xsmall' : 'small';
+
   const hasUnreadTransfers =
     transferredCourses.some((course) => course.unread) ||
     userAPExams.some((ap) => ap.unread) ||
     uncategorizedCourses.some((course) => course.unread);
 
   return (
-    <div className="roadmap-header">
+    <Paper className="roadmap-header" variant="outlined">
       <div className="planner-left">
         <RoadmapMultiplan />
         <span id="planner-stats">
@@ -66,13 +69,24 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       </div>
       <div className="planner-actions">
         <ButtonGroup>
-          <AddYearPopup />
-          <Button variant="text" className="header-btn" startIcon={<SwapHorizOutlinedIcon />} onClick={toggleTransfers}>
+          <AddYearPopup buttonSize={buttonSize} />
+          <Button
+            variant="contained"
+            color="inherit"
+            size={buttonSize}
+            disableElevation
+            className="header-btn"
+            startIcon={<SwapHorizOutlinedIcon />}
+            onClick={toggleTransfers}
+          >
             Transfer Credits
             <UnreadDot show={hasUnreadTransfers} displayFullNewText={false} />
           </Button>
           <Button
-            variant="text"
+            variant="contained"
+            color="inherit"
+            size={buttonSize}
+            disableElevation
             className="header-btn"
             startIcon={<SaveIcon />}
             loading={saveInProgress}
@@ -83,7 +97,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
         </ButtonGroup>
       </div>
       <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
-    </div>
+    </Paper>
   );
 };
 

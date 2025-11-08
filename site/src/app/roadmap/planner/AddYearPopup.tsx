@@ -9,7 +9,11 @@ import AddIcon from '@mui/icons-material/Add';
 import { Button } from '@mui/material';
 import { addPlannerYear } from '../../../helpers/roadmapEdits';
 
-const AddYearPopup: FC = () => {
+interface AddYearProps {
+  buttonSize: 'small' | 'xsmall';
+}
+
+const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
   const [showModal, setShowModal] = useState(false);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const plannerYears = currentPlan.content.yearPlans;
@@ -55,7 +59,15 @@ const AddYearPopup: FC = () => {
         key={'add-year-' + placeholderYear}
         toastProps={{ msg: toastMsg, severity: 'error' }}
       />
-      <Button variant="text" className="header-btn" onClick={() => setShowModal(true)} startIcon={<AddIcon />}>
+      <Button
+        variant="contained"
+        color="inherit"
+        size={buttonSize}
+        disableElevation
+        className="header-btn"
+        onClick={() => setShowModal(true)}
+        startIcon={<AddIcon />}
+      >
         <span>Add Year</span>
       </Button>
     </>

@@ -1,16 +1,25 @@
 @use '../../../globals.scss';
 @use '../sidebar/SearchSidebar.scss';
 
+.transfers-menu-inner {
+  padding: 16px 20px;
+  overflow: scroll;
+
+  padding-bottom: 56px;
+}
+
 .transfers-menu {
-  position: fixed;
-  right: 0;
+  position: absolute;
+  left: 0;
   bottom: 0;
-  height: calc(100% - 72px);
+
+  overflow: hidden;
+  padding: 0px;
 
   &.mobile {
     @include globals.bottom-overlay(400);
+    padding-bottom: 0px;
   }
-  padding-bottom: 56px;
   transform: translateY(100%);
   transition: transform 0.3s;
   &.enter,
@@ -30,9 +39,8 @@
 
 .toggle-transfers-button {
   @include globals.bottom-button();
-  position: fixed;
-  left: unset;
-  right: 0;
+
+  position: absolute;
   width: globals.$roadmap-sidebar-width;
   &.mobile {
     width: 100%;
