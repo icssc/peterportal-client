@@ -43,7 +43,6 @@ function useCourseData(courseId: string) {
         setFullCourseData(transformCourseGQL(course));
       })
       .catch(() => {
-        // spawnToast('There was an error loading this course', true);
         dispatch(setToastMsg('Copied course URL to clipboard!'));
         dispatch(setToastSeverity('success'));
         dispatch(setShowToast(true));
@@ -129,10 +128,6 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
   const copyCourseLink = () => {
     const url = new URL('/course/' + courseId, location.origin).toString();
     navigator.clipboard.writeText(url);
-    // spawnToast('Copied course URL to clipboard!');
-    // setToastMsg('Copied course URL to clipboard!');
-    // setToastSeverity('success');
-    // setShowToast(true);
     dispatch(setToastMsg('Copied course URL to clipboard!'));
     dispatch(setToastSeverity('success'));
     dispatch(setShowToast(true));
