@@ -4,7 +4,13 @@ import './Year.scss';
 import { Modal } from 'react-bootstrap';
 import Quarter from './Quarter';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { selectCurrentPlan, reviseRoadmap } from '../../../store/slices/roadmapSlice';
+import {
+  selectCurrentPlan,
+  reviseRoadmap,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
+} from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
 
 import { PlannerYearData } from '../../../types/types';
@@ -108,8 +114,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const yearContainerRef = useRef<HTMLDivElement>(null);
   const currentPlan = useAppSelector(selectCurrentPlan);
 
-  const [toastMsg, setToastMsg] = useState('');
-
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
     setPlaceholderName(data.name);
@@ -150,7 +154,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.name !== name) return false;
-            setToastMsg(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`);
+            dispatch(setToastMsg(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`));
+            dispatch(setToastSeverity('error'));
+            dispatch(setShowToast(true));
             return true;
           });
 
@@ -158,7 +164,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.startYear !== startYear) return false;
-            setToastMsg(`Start year ${startYear} is already used by ${year.name}!`);
+            dispatch(setToastMsg(`Start year ${startYear} is already used by ${year.name}!`));
+            dispatch(setToastSeverity('error'));
+            dispatch(setShowToast(true));
             return true;
           });
 
@@ -176,7 +184,6 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
         }}
         currentQuarters={data.quarters.map((q) => q.name)}
         type="edit"
-        toastProps={{ msg: toastMsg, severity: 'error' }}
       />
       <DeleteYearModal show={showDeleteYear} setShow={setShowDeleteYear} yearName={data.name} yearIndex={yearIndex} />
       <Collapse in={showContent} timeout="auto" unmountOnExit>

@@ -7,11 +7,13 @@ import {
   initialPlanState,
   reviseRoadmap,
   setPlanIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
 import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
-import Toast from '../../../helpers/toast';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -153,12 +155,6 @@ const RoadmapMultiplan: FC = () => {
   const [newPlanName, setNewPlanName] = useState(allPlans[currentPlanIndex].name);
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const isDuplicateName = () => allPlans.find((p) => p.name === newPlanName);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-
-  const handleClose = () => {
-    setShowToast(false);
-  };
 
   const name = allPlans[currentPlanIndex].name;
 
@@ -185,13 +181,15 @@ const RoadmapMultiplan: FC = () => {
 
   const handleSubmitNewPlan = () => {
     if (!newPlanName) {
-      setToastMsg('Name cannot be empty');
-      setShowToast(true);
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
       return;
     }
     if (isDuplicateName()) {
-      setToastMsg('A plan with that name already exists');
-      setShowToast(true);
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
       return;
     }
     setShowAddPlan(false);
@@ -202,13 +200,15 @@ const RoadmapMultiplan: FC = () => {
 
   const modifyPlanName = () => {
     if (!newPlanName) {
-      setToastMsg('Name cannot be empty');
-      setShowToast(true);
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
       return;
     }
     if (isDuplicateName()) {
-      setToastMsg('A plan with that name already exists');
-      setShowToast(true);
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
       return;
     }
 
@@ -271,7 +271,6 @@ const RoadmapMultiplan: FC = () => {
             <Button type="submit">Create Roadmap</Button>
           </Box>
         </Modal.Body>
-        <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       </Modal>
 
       {/* Edit Roadmap Modal */}
@@ -316,7 +315,6 @@ const RoadmapMultiplan: FC = () => {
             <Button type="submit">Save Roadmap</Button>
           </Box>
         </Modal.Body>
-        <Toast text={toastMsg} severity={'error'} showToast={showToast} onClose={handleClose} />
       </Modal>
 
       {/* Delete Roadmap Modal */}

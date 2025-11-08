@@ -7,12 +7,10 @@ import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import UnreadDot from '../../../component/UnreadDot/UnreadDot';
-
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useSaveRoadmap } from '../../../hooks/planner';
-import Toast from '../../../helpers/toast';
 
 interface HeaderProps {
   courseCount: number;
@@ -21,21 +19,15 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
-  const { handler: saveRoadmap, toastMsg, toastSeverity } = useSaveRoadmap();
+  const { handler: saveRoadmap } = useSaveRoadmap();
   const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
-
-  const [showToast, setShowToast] = useState(false);
-  const handleClose = () => {
-    setShowToast(false);
-  };
 
   const [saveInProgress, setSaveInProgress] = useState(false);
 
   const handleSave = () => {
     setSaveInProgress(true);
     saveRoadmap().finally(() => setSaveInProgress(false));
-    setShowToast(true);
   };
 
   const toggleTransfers = () => {
@@ -96,7 +88,6 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           </Button>
         </ButtonGroup>
       </div>
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Paper>
   );
 };

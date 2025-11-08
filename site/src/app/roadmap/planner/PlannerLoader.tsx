@@ -17,6 +17,9 @@ import {
   setInitialPlannerData,
   setInvalidCourses,
   setRoadmapLoading,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
@@ -31,7 +34,6 @@ import trpc from '../../../trpc';
 import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
-import Toast from '../../../helpers/toast';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -72,14 +74,6 @@ const PlannerLoader: FC = () => {
   const [initialLocalRoadmap, setInitialLocalRoadmap] = useState<SavedRoadmap | null>(null);
   const [initialAccountRoadmap, setInitialAccountRoadmap] = useState<SavedRoadmap | null>(null);
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
-
-  const handleClose = () => {
-    setShowToast(false);
-  };
-
   const dispatch = useAppDispatch();
 
   const loadLocalTransfers = async () => {
@@ -107,13 +101,13 @@ const PlannerLoader: FC = () => {
       // Cannot be called before format is upgraded from single to multi-planner
       const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
       if (res && isLoggedIn) {
-        setToastMsg('Roadmap saved to your account!');
-        setToastSeverity('success');
-        setShowToast(true);
+        dispatch(setToastMsg('Roadmap saved to your account!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       } else if (res && !isLoggedIn) {
         setToastMsg('Roadmap saved locally! Log in to save it to your account');
-        setToastSeverity('success');
-        setShowToast(true);
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       } else if (!res) {
         setToastMsg('Unable to save roadmap to your account');
         setToastSeverity('error');
@@ -224,7 +218,6 @@ const PlannerLoader: FC = () => {
           </Button>
         </Stack>
       </Modal.Footer>
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 };

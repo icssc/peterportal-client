@@ -8,6 +8,7 @@ import { RoadmapRevision } from '../types/roadmap';
 import { reviseRoadmap, setSavedRevisionIndex } from '../store/slices/roadmapSlice';
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
+import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();
@@ -31,9 +32,6 @@ export function useSaveRoadmap() {
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
 
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
-
   const handler = async () => {
     // generate before and after from the current state
     const lastSavedRoadmapPlans = deepCopy(planners);
@@ -43,19 +41,22 @@ export function useSaveRoadmap() {
 
     const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
     if (res && isLoggedIn) {
-      setToastMsg('Roadmap saved to your account!');
-      setToastSeverity('success');
+      dispatch(setToastMsg('Roadmap saved to your account!'));
+      dispatch(setToastSeverity('success'));
+      dispatch(setShowToast(true));
     } else if (res && !isLoggedIn) {
-      setToastMsg('Roadmap saved locally! Log in to save it to your account');
-      setToastSeverity('success');
+      dispatch(setToastMsg('Roadmap saved locally! Log in to save it to your account'));
+      dispatch(setToastSeverity('success'));
+      dispatch(setShowToast(true));
     } else if (!res) {
-      setToastMsg('Unable to save roadmap to your account');
-      setToastSeverity('error');
+      dispatch(setToastMsg('Unable to save roadmap to your account'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
     }
     dispatch(setSavedRevisionIndex(currIdx));
   };
 
-  return { handler, toastMsg, toastSeverity };
+  return { handler };
 }
 
 export function useReviseAndSaveRoadmap() {

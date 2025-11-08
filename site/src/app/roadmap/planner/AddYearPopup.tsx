@@ -2,7 +2,13 @@
 import { FC, useState } from 'react';
 import './AddYearPopup.scss';
 import YearModal from './YearModal';
-import { reviseRoadmap, selectCurrentPlan } from '../../../store/slices/roadmapSlice';
+import {
+  reviseRoadmap,
+  selectCurrentPlan,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
+} from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { PlannerYearData } from '../../../types/types';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,8 +25,6 @@ const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
   const plannerYears = currentPlan.content.yearPlans;
   const dispatch = useAppDispatch();
 
-  const [toastMsg, setToastMsg] = useState('');
-
   const placeholderName = 'Year ' + (plannerYears.length + 1);
   const placeholderYear =
     plannerYears.length === 0 ? new Date().getFullYear() : plannerYears[plannerYears.length - 1].startYear + 1;
@@ -29,14 +33,18 @@ const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
     const { startYear, name, quarters } = yearData;
     const startYearConflict = plannerYears.find((year) => year.startYear === startYear);
     if (startYearConflict) {
-      setToastMsg(`Start year ${startYear} is already used by ${startYearConflict.name}!`);
+      dispatch(setToastMsg(`Start year ${startYear} is already used by ${startYearConflict.name}!`));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
       return;
     }
 
     const nameConflict = plannerYears.find((year) => year.name === name);
     if (nameConflict) {
       const conflictYear = nameConflict.startYear;
-      setToastMsg(`The name "${name}" is already used for ${conflictYear}-${conflictYear + 1}!`);
+      dispatch(setToastMsg(`The name "${name}" is already used for ${conflictYear}-${conflictYear + 1}!`));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
       return;
     }
 
@@ -57,7 +65,6 @@ const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
         currentQuarters={['Fall', 'Winter', 'Spring']}
         // When the year changes, this will force default values to reset
         key={'add-year-' + placeholderYear}
-        toastProps={{ msg: toastMsg, severity: 'error' }}
       />
       <Button
         variant="contained"
