@@ -92,7 +92,12 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => course.id);
+      savedQuarter.courses = quarter.courses.map((course) => {
+        if (course.units !== undefined) {
+          return { courseId: course.id, units: course.units };
+        }
+        return course.id;
+      });
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -111,11 +116,12 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  let courses: string[] = [];
-  // get all courses in the planner
+  const courses: string[] = [];
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
-      courses = courses.concat(quarter.courses);
+      quarter.courses.forEach((course) => {
+        courses.push(typeof course === 'string' ? course : course.courseId);
+      });
     }),
   );
   // get the course data for all courses
@@ -127,15 +133,34 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
   return new Promise((resolve) => {
     const planner: PlannerData = [];
+    const invalidCourseIds: string[] = [];
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
-        quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
+        //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
+        quarter.courses = savedQuarter.courses
+          .map((course) => {
+            const courseId = typeof course === 'string' ? course : course.courseId;
+            if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
+              if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
+              return null;
+            }
+            const courseData = courseLookup[courseId];
+            if (typeof course === 'object' && course.units !== undefined) {
+              return { ...courseData, units: course.units };
+            }
+            return courseData;
+          })
+          .filter((course): course is CourseGQLData => course !== null);
         year.quarters.push(quarter);
       });
       planner.push(year);
     });
+    if (invalidCourseIds.length > 0) {
+      const uniqueIds = [...new Set(invalidCourseIds)];
+      spawnToast(`Removed ${uniqueIds.length} invalid course${uniqueIds.length === 1 ? '' : 's'} from roadmap`, true);
+    }
     resolve(planner);
   });
 };
