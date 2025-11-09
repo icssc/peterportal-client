@@ -1,10 +1,19 @@
 import React, { FC, useState } from 'react';
 import './ReportForm.scss';
-import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import Toast, { ToastSeverity } from '../../helpers/toast';
-import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
+import {
+  Button,
+  Box,
+  FormControl,
+  FormLabel,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -57,11 +66,18 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   const resetForm = () => setReason('');
 
   return (
-    <Modal show={props.showForm} onShow={resetForm} onHide={props.closeForm} centered className="ppc-modal report-form">
-      <Modal.Header closeButton>
-        <h2>Report Review</h2>
-      </Modal.Header>
-      <Modal.Body>
+    <Dialog
+      open={props.showForm}
+      slotProps={{
+        transition: {
+          onEntered: resetForm,
+        },
+      }}
+      onClose={props.closeForm}
+      fullWidth
+    >
+      <DialogTitle>Report Review</DialogTitle>
+      <DialogContent>
         <Box component="form" noValidate onSubmit={submitReport}>
           <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
@@ -85,14 +101,18 @@ const ReportForm: FC<ReportFormProps> = (props) => {
               rows={4}
             />
           </FormControl>
-
-          <Button type="submit" disabled={!reason.length} loading={busy}>
-            Submit Report
-          </Button>
         </Box>
-      </Modal.Body>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={props.closeForm}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={!reason.length} loading={busy}>
+          Submit Report
+        </Button>
+      </DialogActions>
       <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
-    </Modal>
+    </Dialog>
   );
 };
 
