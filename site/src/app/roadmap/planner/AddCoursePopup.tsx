@@ -1,6 +1,6 @@
 'use client';
 import { FC } from 'react';
-import Modal from 'react-bootstrap/Modal';
+// import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { reviseRoadmap, selectCurrentPlan, setShowAddCourse, setShowSearch } from '../../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
@@ -15,7 +15,7 @@ import {
   PreviousOfferingsRow,
 } from '../../../component/CourseInfo/CourseInfo';
 
-import { IconButton } from '@mui/material';
+import { DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { modifyQuarterCourse } from '../../../helpers/roadmapEdits';
 
@@ -64,7 +64,7 @@ const AddCoursePopup: FC = () => {
   return (
     <>
       <div className={contentClassName}>
-        <Modal.Header>
+        <DialogTitle>
           <h2>
             {department} {courseNumber}
           </h2>
@@ -76,8 +76,8 @@ const AddCoursePopup: FC = () => {
           <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
           </IconButton>
-        </Modal.Header>
-        <Modal.Body>
+        </DialogTitle>
+        <DialogContent>
           <CourseDescription course={activeCourse} />
           {activeMissingPrerequisites ? (
             <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
@@ -85,11 +85,12 @@ const AddCoursePopup: FC = () => {
             <PrerequisiteText course={activeCourse} />
           )}
           <PreviousOfferingsRow course={activeCourse} />
-        </Modal.Body>
+        </DialogContent>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
         </button>
       </div>
+
       {overlay}
     </>
   );

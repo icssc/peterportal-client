@@ -13,48 +13,54 @@
     @include globals.bottom-button();
   }
 
-  .modal-header,
-  .modal-body {
+  .MuiDialogTitle-root,
+  .MuiDialogContent-root {
     padding: 16px;
   }
 
-  .modal-dialog {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    max-width: 100%;
-    .modal-content {
-      border-radius: 8px 8px 0 0;
-    }
-  }
+  // .MuiDialogBase-root {
+  //   position: fixed;
+  //   bottom: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: auto;
+  //   margin: 0;
+  //   max-width: 100%;
+  //   .modal-content {
+  //     border-radius: 8px 8px 0 0;
+  //   }
+  // }
 
-  .modal-header {
+  .MuiDialogTitle-root {
+    display: flex;
+    align-items: center;
     gap: 8px;
-    padding-bottom: 0;
+    padding-bottom: 16px;
     .spacer {
       margin-left: auto;
     }
-  }
 
-  h2,
-  .unit-count {
-    font-size: 20px;
+    h2,
+    .unit-count {
+      font-size: 20px;
+    }
+
+    .unit-count {
+      font-weight: normal;
+    }
+
+    .close-button {
+      margin: -2px 4px -4px 0;
+      &.MuiButtonBase-root {
+        width: 32px;
+        height: 32px;
+      }
+    }
   }
 
   button.MuiButtonBase-root {
     padding: 4px;
     margin: -6px -2px -8px;
-  }
-
-  .close-button {
-    margin: -2px 4px -4px 0;
-    &.MuiButtonBase-root {
-      width: 32px;
-      height: 32px;
-    }
   }
 
   .quarter-offerings-section {
