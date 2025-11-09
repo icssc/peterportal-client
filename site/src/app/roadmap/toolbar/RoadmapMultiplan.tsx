@@ -7,11 +7,13 @@ import {
   initialPlanState,
   reviseRoadmap,
   setPlanIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
 import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
-import spawnToast from '../../../helpers/toastify';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -178,8 +180,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
     setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.length;
@@ -187,8 +199,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
 
     const plannerToUpdate = allPlans[editIdx];
     const revision = updatePlannerName(plannerToUpdate, newPlanName);
