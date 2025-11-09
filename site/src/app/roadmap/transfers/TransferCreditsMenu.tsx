@@ -31,7 +31,7 @@ export const ToggleTransfersButton: FC = () => {
 
 export const TransferCreditsMenu = () => {
   return (
-    <div>
+    <div className="transfers-menu">
       <h3>Add Course Credits</h3>
 
       <CoursesSection />

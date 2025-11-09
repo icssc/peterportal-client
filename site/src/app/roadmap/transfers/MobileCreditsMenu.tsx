@@ -22,7 +22,7 @@ export const MobileCreditsMenu: FC = () => {
   };
 
   return (
-    <MobilePopup show={show} className="transfers-menu" onClose={closeMenu}>
+    <MobilePopup show={show} onClose={closeMenu}>
       <TransferCreditsMenu />
       <ToggleTransfersButton />
     </MobilePopup>

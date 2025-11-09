@@ -4,7 +4,7 @@ import { Badge, Tab, Tabs } from '@mui/material';
 import { CourseCatalog } from '../catalog/CourseCatalog';
 import { useEffect, useState } from 'react';
 
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SearchIcon from '@mui/icons-material/Search';
 import { TransferCreditsMenu } from '../transfers/TransferCreditsMenu';
@@ -37,7 +37,7 @@ const DesktopRoadmapSidebar = () => {
         variant="fullWidth"
       >
         <Tab
-          icon={<CompareArrowsIcon />}
+          icon={<SwapHorizOutlinedIcon />}
           iconPosition="start"
           label={
             <Badge variant="dot" color="error" invisible={!hasUnreadTransfers} className="unread-badge">
