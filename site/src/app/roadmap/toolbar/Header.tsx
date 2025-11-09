@@ -5,7 +5,7 @@ import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
+import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
@@ -21,7 +21,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const saveRoadmap = useSaveRoadmap();
-  const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const showTransfers = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
@@ -37,7 +37,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       // After closing the menu, clear all the unread markers
       dispatch(clearUnreadTransfers());
     }
-    dispatch(setShowTransfersMenu(!showTransfers));
+    dispatch(setShowMobileCreditsMenu(!showTransfers));
   };
 
   const shrinkButtons = useMediaQuery('(max-width: 900px)');

@@ -3,7 +3,7 @@ import { FC } from 'react';
 import './TransferCreditsMenu.scss';
 import { useIsMobile } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
+import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
@@ -11,7 +11,7 @@ import UncategorizedCreditsSection from './UncategorizedCreditsSection';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const show = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const dispatch = useAppDispatch();
 
   const toggleMenu = () => {
@@ -19,7 +19,7 @@ export const ToggleTransfersButton: FC = () => {
       // After closing the menu, clear all the unread markers
       dispatch(clearUnreadTransfers());
     }
-    dispatch(setShowTransfersMenu(!show));
+    dispatch(setShowMobileCreditsMenu(!show));
   };
 
   return (
