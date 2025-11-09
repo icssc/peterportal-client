@@ -109,48 +109,44 @@ const YearModal: FC<YearModalProps> = (props) => {
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate>
-          <FormControl>
-            <FormLabel>Name</FormLabel>
-            <TextField
-              required
-              type="text"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                // prevent submitting form (reloads the page)
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                }
-              }}
-              error={validated}
-              slotProps={{
-                htmlInput: {
-                  maxLength: 35,
-                },
-              }}
-              placeholder={placeholderName}
-            />
-          </FormControl>
+          <TextField
+            variant="standard"
+            label="Name"
+            type="text"
+            name="name" //@todo: probably remove this
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              // prevent submitting form (reloads the page)
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            error={validated}
+            slotProps={{
+              htmlInput: {
+                maxLength: 35,
+              },
+            }}
+            placeholder={placeholderName}
+          />
 
-          <FormControl>
-            <FormLabel>Start Year</FormLabel>
-            <TextField
-              required
-              type="number"
-              name="year"
-              value={year}
-              onChange={(e) => setYear(parseInt(e.target.value))}
-              error={validated}
-              slotProps={{
-                htmlInput: {
-                  min: 1000,
-                  max: 9999,
-                },
-              }}
-              placeholder={placeholderYear.toString()}
-            />
-          </FormControl>
+          <TextField
+            variant="standard"
+            label="Year"
+            type="number"
+            name="year"
+            value={year}
+            onChange={(e) => setYear(parseInt(e.target.value))}
+            error={validated}
+            slotProps={{
+              htmlInput: {
+                min: 1000,
+                max: 9999,
+              },
+            }}
+            placeholder={placeholderYear.toString()}
+          />
           <FormControl>
             <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}

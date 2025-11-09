@@ -151,26 +151,25 @@ const ImportZot4PlanPopup: FC = () => {
               />
             </FormControl>
 
-            <FormControl>
-              <FormLabel>Schedule Name</FormLabel>
-              <TextField
-                type="text"
-                placeholder="Exact Zot4Plan schedule name"
-                onChange={(e) => setScheduleName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                  }
-                }}
-              />
-              {scheduleName.length > 0 && scheduleName.length < 8 && (
-                <span className="import-schedule-warning">
-                  <WarningAmberIcon className="import-schedule-icon" />
-                  No Zot4Plan schedule name contains less than 8 characters
-                </span>
-              )}
-            </FormControl>
+            <TextField
+              variant="outlined"
+              label="Schedule Name"
+              type="text"
+              placeholder="Exact Zot4Plan schedule name"
+              onChange={(e) => setScheduleName(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                // prevent submitting form (reloads the page)
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                }
+              }}
+            />
+            {scheduleName.length > 0 && scheduleName.length < 8 && (
+              <span className="import-schedule-warning">
+                <WarningAmberIcon className="import-schedule-icon" />
+                No Zot4Plan schedule name contains less than 8 characters
+              </span>
+            )}
 
             <FormControl>
               <FormLabel>I am currently a...</FormLabel>

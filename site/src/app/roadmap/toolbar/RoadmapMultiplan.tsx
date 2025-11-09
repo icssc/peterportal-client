@@ -12,7 +12,6 @@ import {
   setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-// import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
@@ -26,8 +25,6 @@ import {
   Button,
   Dialog,
   IconButton,
-  FormControl,
-  FormLabel,
   Popover,
   TextField,
   DialogTitle,
@@ -264,22 +261,20 @@ const RoadmapMultiplan: FC = () => {
               handleSubmitNewPlan();
             }}
           >
-            <FormControl>
-              <FormLabel>Roadmap Name</FormLabel>
-              <TextField
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                slotProps={{
-                  htmlInput: {
-                    maxLength: 35,
-                  },
-                }}
-                placeholder={defaultPlan.name}
-              />
-            </FormControl>
+            <TextField
+              variant="standard"
+              label="Roadmap Name"
+              type="text"
+              name="roadmap_name"
+              value={newPlanName}
+              onChange={(e) => setNewPlanName(e.target.value)}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 35,
+                },
+              }}
+              placeholder={defaultPlan.name}
+            />
           </Box>
         </DialogContent>
         <DialogActions>
@@ -315,22 +310,20 @@ const RoadmapMultiplan: FC = () => {
               modifyPlanName();
             }}
           >
-            <FormControl>
-              <FormLabel>Roadmap Name</FormLabel>
-              <TextField
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                slotProps={{
-                  htmlInput: {
-                    maxLength: 35,
-                  },
-                }}
-                placeholder={defaultPlan.name}
-              />
-            </FormControl>
+            <TextField
+              variant="standard"
+              label="Roadmap Name"
+              type="text"
+              name="roadmap_name"
+              value={newPlanName}
+              onChange={(e) => setNewPlanName(e.target.value)}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 35,
+                },
+              }}
+              placeholder={defaultPlan.name}
+            />
           </Box>
         </DialogContent>
         <DialogActions>
