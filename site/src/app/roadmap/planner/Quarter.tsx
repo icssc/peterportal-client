@@ -171,6 +171,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
+              openPopoverLeft
             />
           );
         })}

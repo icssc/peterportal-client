@@ -5,9 +5,8 @@ import changelogImage from '../../asset/roadmap-default.png';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 
-const DESCRIPTION =
-  "Peter's Roadmap is now the default page! You can still access course and professor search via the left sidebar.";
-const LAST_UPDATED = '9/29/2025';
+const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
+const LAST_UPDATED = '11/03/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);

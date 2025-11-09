@@ -3,7 +3,13 @@ import { FC, useRef, useState } from 'react';
 import './Year.scss';
 import Quarter from './Quarter';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { selectCurrentPlan, reviseRoadmap } from '../../../store/slices/roadmapSlice';
+import {
+  selectCurrentPlan,
+  reviseRoadmap,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
+} from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
 
 import { PlannerYearData } from '../../../types/types';
@@ -25,7 +31,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { deletePlannerYear, modifyPlannerYear } from '../../../helpers/roadmapEdits';
-import spawnToast from '../../../helpers/toastify';
 
 interface YearTitleProps {
   year: PlannerYearData;
@@ -158,7 +163,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasNameConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.name !== name) return false;
-            spawnToast(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`, true);
+            dispatch(setToastMsg(`The name "${name}" is already used for ${year.startYear}-${year.startYear + 1}!`));
+            dispatch(setToastSeverity('error'));
+            dispatch(setShowToast(true));
             return true;
           });
 
@@ -166,7 +173,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           const hasStartYearConflict = !!currentPlan.content.yearPlans.find((year) => {
             if (year === data || year.startYear !== startYear) return false;
-            spawnToast(`Start year ${startYear} is already used by ${year.name}`, true);
+            dispatch(setToastMsg(`Start year ${startYear} is already used by ${year.name}!`));
+            dispatch(setToastSeverity('error'));
+            dispatch(setShowToast(true));
             return true;
           });
 

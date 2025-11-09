@@ -35,11 +35,7 @@ const SideBar = () => {
     <div className="sidebar-links">
       <ul>
         <li>
-          <Link
-            href="/roadmap"
-            className={pathname == '/' || pathname === '/roadmap' ? 'sidebar-active' : ''}
-            onClick={closeSidebar}
-          >
+          <Link href="/" className={pathname == '/' ? 'sidebar-active' : ''} onClick={closeSidebar}>
             <div>
               <MapOutlinedIcon className="sidebar-icon" />
             </div>

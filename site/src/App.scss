@@ -52,10 +52,8 @@ code {
   box-sizing: border-box;
 
   .main-wrapper {
-    padding: 36px;
-    @media (max-width: globals.$mobile-cutoff) {
-      padding: 20px 24px;
-    }
+    position: relative;
+    @include globals.outer-padding();
   }
 }
 
@@ -74,6 +72,10 @@ code {
   flex-direction: column;
   flex-shrink: 0;
   padding: 16px 20px;
+
+  // prevents child element z index escaping (i.e. any child of this element
+  // may not appear above any element outside of the .program-requirements element)
+  z-index: 0;
 
   .search-body {
     display: flex;
