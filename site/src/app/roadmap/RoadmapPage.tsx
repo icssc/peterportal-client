@@ -10,7 +10,6 @@ import { CSSTransition } from 'react-transition-group';
 import TransferCreditsMenu from './transfers/TransferCreditsMenu';
 import CoursePreview from '../../component/CoursePreview/CoursePreview';
 import { setShowToast } from '../../store/slices/roadmapSlice';
-
 import Toast from '../../helpers/toast';
 
 const RoadmapPage: FC = () => {
