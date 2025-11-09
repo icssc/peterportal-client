@@ -8,9 +8,11 @@ h3.saved-courses-title {
 .roadmap-search-results {
   $header-font-size: 14px;
 
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: fit-content;
+  justify-items: stretch;
+  height: fit-content;
   overflow: auto;
   gap: 8px;
   margin-top: 8px;
@@ -51,13 +53,6 @@ h3.saved-courses-title {
   .course :is(.course-and-info) {
     display: contents;
   }
-
-  display: grid;
-  grid-auto-flow: row;
-  grid-auto-rows: fit-content;
-  justify-items: stretch;
-  gap: 8px;
-  height: fit-content;
 
   &:not(.disabled) .course {
     cursor: grab;
