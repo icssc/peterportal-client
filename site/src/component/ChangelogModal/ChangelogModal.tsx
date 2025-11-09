@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import Modal from 'react-bootstrap/Modal';
 import changelogImage from '../../asset/roadmap-default.png';
 import Image from 'next/image';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 
 const DESCRIPTION =
   "Peter's Roadmap is now the default page! You can still access course and professor search via the left sidebar.";
@@ -29,22 +29,23 @@ const ChangelogModal = () => {
   };
 
   return (
-    <Modal className="ppc-modal changelog-modal" show={showModal} centered onHide={closeModal}>
-      <Modal.Header closeButton>
-        <h2>
-          What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
-        </h2>
-      </Modal.Header>
+    <Dialog open={showModal} onClose={closeModal} className="changelog-modal">
+      <DialogTitle>
+        What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
+      </DialogTitle>
+      <DialogContent>
+        <p className="modal-body">{DESCRIPTION}</p>
+        <Image
+          className="modal-img"
+          src={changelogImage.src}
+          width={changelogImage.width}
+          height={changelogImage.height}
+          alt="Screenshot or gif of new changes"
+        />
+      </DialogContent>
+    </Dialog>
 
-      <p className="modal-body">{DESCRIPTION}</p>
-      <Image
-        className="modal-img"
-        src={changelogImage.src}
-        width={changelogImage.width}
-        height={changelogImage.height}
-        alt="Screenshot or gif of new changes"
-      />
-    </Modal>
+    // </Modal>
   );
 };
 
