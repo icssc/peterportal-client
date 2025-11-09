@@ -3,7 +3,7 @@ import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
-import Toast from '../../helpers/toast';
+import Toast, { ToastSeverity } from '../../helpers/toast';
 import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
@@ -18,7 +18,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
   const [busy, setBusy] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
+  const [toastSeverity, setToastSeverity] = useState<ToastSeverity>('info');
 
   const handleClose = () => {
     setShowToast(false);
@@ -45,7 +45,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     e.preventDefault();
     if (reason.length === 0) {
       setToastMsg('Report reason must not be empty');
-      setToastSeverity('success');
+      setToastSeverity('error');
       setShowToast(true);
       return;
     }
