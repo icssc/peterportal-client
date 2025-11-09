@@ -2,7 +2,7 @@ import './CourseCatalog.scss';
 import { useIsMobile } from '../../../helpers/util';
 import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowSearch } from '../../../store/slices/roadmapSlice';
+import { hideMobileCatalog } from '../../../store/slices/roadmapSlice';
 import SavedAndSearch from '../search/SavedAndSearch';
 import GERequiredCourseList from './GERequiredCourseList';
 import MajorSelector from './MajorSelector';
@@ -17,7 +17,7 @@ const CloseRoadmapSearchButton = () => {
 
   if (!isMobile) return <></>;
 
-  const closeSearch = () => dispatch(setShowSearch({ show: false }));
+  const closeSearch = () => dispatch(hideMobileCatalog());
 
   return (
     <button className="fixed" onClick={closeSearch}>

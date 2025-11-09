@@ -11,7 +11,6 @@ export const MobileCreditsMenu: FC = () => {
 
   const dispatch = useAppDispatch();
 
-  /** @todo move out of global state since this will no longer be conditionally rendered */
   useEffect(() => {
     if (!isMobile) dispatch(setShowMobileCreditsMenu(false));
   }, [dispatch, isMobile]);

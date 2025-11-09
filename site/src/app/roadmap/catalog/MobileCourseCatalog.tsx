@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowSearch } from '../../../store/slices/roadmapSlice';
+import { hideMobileCatalog } from '../../../store/slices/roadmapSlice';
 import { CourseCatalog } from './CourseCatalog';
 import MobilePopup from '../MobilePopup';
 import { useEffect } from 'react';
@@ -9,13 +9,13 @@ import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 import { useIsMobile } from '../../../helpers/util';
 
 const MobileCourseCatalog = () => {
-  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
   /** @todo move out of global state since this will no longer be conditionally rendered */
-  const closeSearch = () => dispatch(setShowSearch({ show: false }));
+  const closeSearch = () => dispatch(hideMobileCatalog());
 
   useEffect(() => {
     if (isMobile && selectedCourseList === 'Saved') {

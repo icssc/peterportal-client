@@ -12,8 +12,6 @@
   top: 0;
   left: 0;
   width: 100%;
-  // fix to the natural height of the course preview header, which is slightly taller
-  // than the natural height of the roadmap header
   min-height: globals.$roadmap-toolbar-height;
   flex-shrink: 0;
   border-width: 0 0 2px 0;
