@@ -254,19 +254,6 @@ const RoadmapMultiplan: FC = () => {
         onClose={() => setShowAddPlan(false)}
         fullWidth
       >
-        {/* <Modal
-        show={showAddPlan}
-        onShow={() => {
-          setShowAddPlan(true);
-          const planCount = allPlans?.length ?? 0;
-          let newIdx = planCount + 1;
-          while (allPlans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
-          setNewPlanName(`Roadmap ${newIdx}`);
-        }}
-        onHide={() => setShowAddPlan(false)}
-        centered
-        className="ppc-modal multiplan-modal"
-      > */}
         <DialogTitle>New Roadmap</DialogTitle>
         <DialogContent>
           <Box
@@ -296,24 +283,16 @@ const RoadmapMultiplan: FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="text" type="submit" onClick={() => handleSubmitNewPlan()}>
+          <Button variant="text" color="inherit" onClick={() => setShowAddPlan(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => handleSubmitNewPlan()}>
             Create Roadmap
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* </Modal> */}
-
       {/* Edit Roadmap Modal */}
-      {/* <Modal
-        show={editIdx !== -1}
-        onShow={() => {
-          setNewPlanName(allPlans[editIdx].name);
-        }}
-        onHide={() => setEditIdx(-1)}
-        centered
-        className="ppc-modal multiplan-modal"
-      > */}
       <Dialog
         open={editIdx !== -1}
         slotProps={{
@@ -355,23 +334,16 @@ const RoadmapMultiplan: FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="text" type="submit" onClick={() => modifyPlanName()}>
+          <Button variant="text" color="inherit" onClick={() => setEditIdx(-1)}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => modifyPlanName()}>
             Save Roadmap
           </Button>
         </DialogActions>
       </Dialog>
-      {/* </Modal> */}
 
       {/* Delete Roadmap Modal */}
-      {/* <Modal
-        show={delIdx !== -1}
-        onShow={() => {
-          setNewPlanName(allPlans[delIdx].name);
-        }}
-        onHide={() => setDelIdx(-1)}
-        centered
-        className="ppc-modal multiplan-modal"
-      > */}
       <Dialog
         open={delIdx !== -1}
         slotProps={{
@@ -391,11 +363,13 @@ const RoadmapMultiplan: FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="text" color="error" onClick={() => deleteCurrentPlan()}>
+          <Button variant="text" color="inherit" onClick={() => setDelIdx(-1)}>
+            Cancel
+          </Button>
+          <Button color="error" onClick={() => deleteCurrentPlan()}>
             I am sure
           </Button>
         </DialogActions>
-        {/* </Modal> */}
       </Dialog>
     </MultiplanDropdown>
   );

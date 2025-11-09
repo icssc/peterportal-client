@@ -324,7 +324,10 @@ const ImportTranscriptPopup: FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="text" disabled={!file} loading={busy} onClick={importHandler}>
+          <Button variant="text" color="inherit" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button disabled={!file} loading={busy} onClick={importHandler}>
             Import
           </Button>
         </DialogActions>

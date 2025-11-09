@@ -191,7 +191,10 @@ const ImportZot4PlanPopup: FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button variant="text" disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+          <Button variant="text" color="inherit" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
             Import and Save
           </Button>
         </DialogActions>

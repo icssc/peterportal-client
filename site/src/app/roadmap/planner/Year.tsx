@@ -92,7 +92,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
   };
 
   return (
-    <Dialog open={show!} onClose={() => setShow(false)}>
+    <Dialog open={show!} onClose={() => setShow(false)} fullWidth>
       <DialogTitle>Delete Year</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate>
@@ -100,7 +100,10 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="text" color="error" onClick={handleDeleteYear}>
+        <Button variant="text" color="inherit" onClick={() => setShow(false)}>
+          Cancel
+        </Button>
+        <Button color="error" onClick={handleDeleteYear}>
           I am sure
         </Button>
       </DialogActions>

@@ -43,8 +43,6 @@ const ChangelogModal = () => {
         />
       </DialogContent>
     </Dialog>
-
-    // </Modal>
   );
 };
 
