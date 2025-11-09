@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Modal from 'react-bootstrap/Modal';
-import { addReview, editReview } from '../../store/slices/reviewSlice';
+import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
@@ -15,7 +15,6 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import Toast from '../../helpers/toast';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select2 from 'react-select';
@@ -80,13 +79,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState('');
-  const [toastSeverity, setToastSeverity] = useState<'error' | 'success' | 'info'>('info');
-
-  const handleClose = () => {
-    setShowToast(false);
-  };
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
@@ -127,9 +119,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
       // form opened
       // if not logged in, close the form
       if (!isLoggedIn) {
-        setToastMsg('You must be logged in to add a review!');
-        setToastSeverity('error');
-        setShowToast(true);
+        dispatch(setToastMsg('You must be logged in to add a review!'));
+        dispatch(setToastSeverity('error'));
+        dispatch(setShowToast(true));
         closeForm();
       }
 
@@ -163,20 +155,20 @@ const ReviewForm: FC<ReviewFormProps> = ({
       if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
         dispatch(editReview(review as EditReviewSubmission));
-        setToastMsg('Your review has been edited successfully!');
-        setToastSeverity('success');
-        setShowToast(true);
+        dispatch(setToastMsg('Your review has been edited successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       } else {
         const res = await trpc.reviews.add.mutate(review);
         dispatch(addReview(res));
-        setToastMsg('Your review has been submitted successfully!');
-        setToastSeverity('success');
-        setShowToast(true);
+        dispatch(setToastMsg('Your review has been submitted successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       }
     } catch (e) {
-      setToastMsg((e as Error).message);
-      setToastSeverity('error');
-      setShowToast(true);
+      dispatch(setToastMsg((e as Error).message));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
     } finally {
       setIsSubmitting(false);
     }
@@ -199,9 +191,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     // for new reviews: check if CAPTCHA is completed
     if (!editing && !captchaToken) {
-      setToastMsg('Please complete the CAPTCHA');
-      setToastSeverity('error');
-      setShowToast(true);
+      dispatch(setToastMsg('Please complete the CAPTCHA'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
       return;
     }
 
@@ -510,7 +502,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </Button>
         </Box>
       </Modal.Body>
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 

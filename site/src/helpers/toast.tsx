@@ -1,9 +1,11 @@
 import { FC } from 'react';
 import { Snackbar, SnackbarContent } from '@mui/material';
 
+export type ToastSeverity = 'error' | 'success' | 'info';
+
 interface ToastProps {
   text: string;
-  severity: 'error' | 'success' | 'info';
+  severity: ToastSeverity;
   showToast: boolean;
   onClose: () => void;
 }

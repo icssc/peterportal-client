@@ -13,6 +13,7 @@ import {
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
+import { ToastSeverity } from '../../helpers/toast';
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
@@ -71,7 +72,7 @@ export const roadmapSlice = createSlice({
     /** Whether the roadmap is loading */
     roadmapLoading: true,
     toastMsg: '',
-    toastSeverity: 'info' as 'info' | 'success' | 'error',
+    toastSeverity: 'info' as ToastSeverity,
     showToast: false,
   },
   reducers: {
@@ -160,7 +161,7 @@ export const roadmapSlice = createSlice({
     setToastMsg: (state, action: PayloadAction<string>) => {
       state.toastMsg = action.payload;
     },
-    setToastSeverity: (state, action: PayloadAction<'info' | 'success' | 'error'>) => {
+    setToastSeverity: (state, action: PayloadAction<ToastSeverity>) => {
       state.toastSeverity = action.payload;
     },
     setShowToast: (state, action: PayloadAction<boolean>) => {
