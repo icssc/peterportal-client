@@ -56,7 +56,7 @@ export const roadmapSlice = createSlice({
     /** Selected quarter and year for adding a course on mobile */
     currentYearAndQuarter: null as { year: number; quarter: number } | null,
     /** Whether to show the search bar on mobile */
-    showSearch: false,
+    showMobileCatalog: false,
     /** Whether to show the add course modal on mobile */
     showAddCourse: false,
     showSavedCourses: true,
@@ -139,11 +139,12 @@ export const roadmapSlice = createSlice({
 
     // Controlling Visibility of UI Elements
 
-    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
-      state.showSearch = action.payload.show;
-      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
-        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
-      }
+    hideMobileCatalog: (state) => {
+      state.showMobileCatalog = false;
+    },
+    showMobileCatalog: (state, action: PayloadAction<{ year: number; quarter: number }>) => {
+      state.showMobileCatalog = true;
+      state.currentYearAndQuarter = action.payload;
     },
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
@@ -164,7 +165,8 @@ export const {
   setActiveMissingPrerequisites,
   setInitialPlannerData,
   setInvalidCourses,
-  setShowSearch,
+  hideMobileCatalog,
+  showMobileCatalog,
   setShowAddCourse,
   setPlanIndex,
   setShowSavedCourses,

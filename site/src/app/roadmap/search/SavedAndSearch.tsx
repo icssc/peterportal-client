@@ -1,3 +1,4 @@
+import './SavedAndSearch.scss';
 import { FC } from 'react';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -13,7 +14,7 @@ import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 
-const AllCourseSearch: FC = () => {
+const SavedAndSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
   const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
   const { savedCourses } = useSavedCourses();
@@ -44,7 +45,7 @@ const AllCourseSearch: FC = () => {
           list={shownCourses}
           onStart={setDraggedItem}
           disabled={isMobile}
-          className={'search-body' + (isMobile ? ' disabled' : '')}
+          className={'roadmap-search-results' + (isMobile ? ' disabled' : '')}
         >
           {shownCourses.map((course, i) => {
             const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
@@ -63,4 +64,4 @@ const AllCourseSearch: FC = () => {
   );
 };
 
-export default AllCourseSearch;
+export default SavedAndSearch;
