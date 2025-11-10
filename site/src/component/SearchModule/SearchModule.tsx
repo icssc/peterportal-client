@@ -1,10 +1,11 @@
-import { useState, useEffect, FC, useRef, useMemo } from 'react';
+import { useState, useEffect, FC, useRef } from 'react';
 import './SearchModule.scss';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SearchIndex, SearchResultData } from '../../types/types';
+import { FilterOptions, stringifySearchFilters } from '../../helpers/searchFilters.ts';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
@@ -12,14 +13,7 @@ import { setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
 
 import SearchIcon from '@mui/icons-material/Search';
-import CheckIcon from '@mui/icons-material/Check';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import { Icon } from '@mui/material';
+import SearchFilters from '../SearchFilters/SearchFilters.tsx';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -34,7 +28,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // fuzzySearch is defined after filter state/lookup tables so it can depend on them safely
+  // fuzzySearch is defined after filter state so it can depend on them safely
 
   // Cleanup abort controller on unmount
   useEffect(() => {
@@ -54,6 +48,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       setPendingRequest(null);
     }
   };
+
   const searchAfterTimeout = (query: string) => {
     setSearchQuery(query);
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -65,233 +60,15 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
-  // Set the height of the tag selector based on the number of tags
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
-
-  // Custom styles for the MUI Select and Autocomplete components
-  const selectStyles = {
-    width: 300,
-    backgroundColor: 'var(--overlay1)',
-    borderColor: 'var(--overlay2)',
-    borderWidth: '1px',
-    borderRadius: '6px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderRadius: '6px', // Targets the outer 'fieldset' element
-    },
-  };
-  const autocompleteStyles = {
-    flexGrow: 1,
-    backgroundColor: 'var(--overlay1)',
-    borderColor: 'var(--overlay2)',
-    borderWidth: '1px',
-    borderRadius: '6px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderRadius: '6px', // Targets the outer 'fieldset' element
-    },
-  };
-
   // Keep track of selected options for the level and GE filters and handle changes
-  const [selectedLevels, setSelectedLevels] = useState<string[]>([]);
-  const [selectedGECategories, setSelectedGECategories] = useState<string[]>([]);
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    levels: [],
+    geCategories: [],
+    departments: [],
+  });
 
-  const handleLevelSelection = (event: SelectChangeEvent<typeof selectedLevels>) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedLevels(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  const handleGeCategorySelection = (event: SelectChangeEvent<typeof selectedGECategories>) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedGECategories(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-  };
-
-  // Lookup tables for mapping internal codes to user-friendly display names.
-  const levels = useMemo<Record<string, string>>(
-    () => ({
-      LowerDiv: 'Lower Division',
-      UpperDiv: 'Upper Division',
-      Graduate: 'Graduate',
-    }),
-    [],
-  );
-
-  const geCategories = useMemo<Record<string, string>>(
-    () => ({
-      'GE-1A': 'Lower Division Writing',
-      'GE-1B': 'Upper Division Writing',
-      'GE-2': 'Science and Technology',
-      'GE-3': 'Social and Behavioral Sciences',
-      'GE-4': 'Arts and Humanities',
-      'GE-5A': 'Quantitative Literacy',
-      'GE-5B': 'Formal Reasoning',
-      'GE-6': 'Language Other Than English',
-      'GE-7': 'Multicultural Studies',
-      'GE-8': 'International/Global Issues',
-    }),
-    [],
-  );
-
-  const departments: Record<string, string> = {
-    'AC ENG': 'Academic English and ESL',
-    AFAM: 'African American Studies',
-    ANATOMY: 'Anatomy and Neurobiology',
-    ANESTH: 'Anesthesiology',
-    ANTHRO: 'Anthropology',
-    ARABIC: 'Arabic',
-    ARMN: 'Armenian',
-    ART: 'Art',
-    'ART HIS': 'Art History',
-    ARTS: 'Arts',
-    ARTSHUM: 'Arts and Humanities',
-    ASIANAM: 'Asian American Studies',
-    BANA: 'Business Analytics',
-    BATS: 'Biomedical and Translational Science',
-    'BIO SCI': 'Biological Sciences',
-    BIOCHEM: 'Biological Chemistry',
-    BME: 'Biomedical Engineering',
-    CAMPREC: 'Campus Recreation',
-    CBE: 'Chemical and Biomolecular Engineering',
-    CEM: 'Community and Environmental Medicine',
-    'CHC/LAT': 'Chicano Latino',
-    CHEM: 'Chemistry',
-    CHINESE: 'Chinese',
-    CLASSIC: 'Classics',
-    'CLT&THY': 'Culture & Theory',
-    COGS: 'Cognitive Sciences',
-    'COM LIT': 'Comparative Literature',
-    COMPSCI: 'Computer Science',
-    CRITISM: 'Criticism',
-    'CRM/LAW': 'Criminology, Law and Society',
-    CSE: 'Computer Science and Engineering',
-    DANCE: 'Dance',
-    DERM: 'Dermatology',
-    'DEV BIO': 'Developmental and Cell Biology',
-    DRAMA: 'Drama',
-    EARTHSS: 'Earth System Science',
-    EAS: 'East Asian Studies',
-    'ECO EVO': 'Ecology and Evolutionary Biology',
-    ECON: 'Economics',
-    ECPS: 'Embedded and Cyber-Physical Systems',
-    'ED AFF': 'Educational Affairs (Sch of Med)',
-    EDUC: 'Education',
-    EECS: 'Electrical Engineering & Computer Science',
-    EHS: 'Environmental Health Sciences',
-    ENGLISH: 'English',
-    ENGR: 'Engineering',
-    ENGRCEE: 'Engineering, Civil and Environmental',
-    ENGRMAE: 'Engineering, Mechanical and Aerospace',
-    EPIDEM: 'Epidemiology',
-    'ER MED': 'Emergency Medicine',
-    'EURO ST': 'European Studies',
-    'FAM MED': 'Family Medicine',
-    FIN: 'Finance',
-    'FLM&MDA': 'Film and Media Studies',
-    FRENCH: 'French',
-    GDIM: 'Game Design and Interactive Media',
-    'GEN&SEX': 'Gender and Sexuality Studies',
-    GERMAN: 'German',
-    'GLBL ME': 'Global Middle East Studies',
-    GLBLCLT: 'Global Cultures',
-    GREEK: 'Greek',
-    HEBREW: 'Hebrew',
-    HINDI: 'Hindi',
-    HISTORY: 'History',
-    HUMAN: 'Humanities',
-    HUMARTS: 'Humanities and Arts',
-    'I&C SCI': 'Information and Computer Science',
-    IN4MATX: 'Informatics',
-    INNO: 'Masters of Innovation and Entrepreneurship',
-    'INT MED': 'Internal Medicine',
-    'INTL ST': 'International Studies',
-    IRAN: 'Iranian',
-    ITALIAN: 'Italian',
-    JAPANSE: 'Japanese',
-    KOREAN: 'Korean',
-    LATIN: 'Latin',
-    LAW: 'Law',
-    'LIT JRN': 'Literary Journalism',
-    LPS: 'Logic and Philosophy of Science',
-    LSCI: 'Language Science',
-    'M&MG': 'Microbiology and Molecular Genetics',
-    MATH: 'Mathematics',
-    MED: 'Medicine',
-    'MED ED': 'Medical Education',
-    'MED HUM': 'Medical Humanities',
-    MGMT: 'Management',
-    'MGMT EP': 'Executive MBA',
-    'MGMT FE': 'Fully Employed MBA',
-    'MGMT HC': 'Health Care MBA',
-    MGMTMBA: 'Management MBA',
-    MGMTPHD: 'Management PhD',
-    'MIC BIO': 'Microbiology',
-    'MOL BIO': 'Molecular Biology and Biochemistry',
-    MPAC: 'Accounting',
-    MSE: 'Materials Science and Engineering',
-    MUSIC: 'Music',
-    'NET SYS': 'Networked Systems',
-    NEURBIO: 'Neurobiology and Behavior',
-    NEUROL: 'Neurology',
-    'NUR SCI': 'Nursing Science',
-    'OB/GYN': 'Obstetrics and Gynecology',
-    OPHTHAL: 'Ophthalmology',
-    PATH: 'Pathology and Laboratory Medicine',
-    'PED GEN': 'Pediatrics Genetics',
-    PEDS: 'Pediatrics',
-    PERSIAN: 'Persian',
-    PHARM: 'Medical Pharmacology',
-    PHILOS: 'Philosophy',
-    PHRMSCI: 'Pharmaceutical Sciences',
-    'PHY SCI': 'Physical Science',
-    PHYSICS: 'Physics',
-    PHYSIO: 'Physiology and Biophysics',
-    PLASTIC: 'Plastic Surgery',
-    'PM&R': 'Physical Medicine and Rehabilitation',
-    'POL SCI': 'Political Science',
-    PORTUG: 'Portuguese',
-    PSCI: 'Psychological Science',
-    PSYCH: 'Psychology',
-    'PUB POL': 'Public Policy',
-    PUBHLTH: 'Public Health',
-    RADIO: 'Radiology',
-    'REL STD': 'Religious Studies',
-    ROTC: "Reserve Officers' Training Corps",
-    RUSSIAN: 'Russian',
-    'SOC SCI': 'Social Science',
-    SOCECOL: 'Social Ecology',
-    SOCIOL: 'Sociology',
-    SPANISH: 'Spanish',
-    SPPS: 'Social Policy & Public Service',
-    STATS: 'Statistics',
-    SURGERY: 'Surgery',
-    SWE: 'Software Engineering',
-    TAGALOG: 'Tagalog',
-    TOX: 'Toxicology',
-    UCDC: 'UC Washington DC',
-    'UNI AFF': 'University Affairs',
-    'UNI STU': 'University Studies',
-    UPPP: 'Urban Planning and Public Policy',
-    VIETMSE: 'Vietnamese',
-    'VIS STD': 'Visual Studies',
-    WRITING: 'Writing',
+  const updateSelectedFilters = (newFilters: FilterOptions) => {
+    setFilterOptions(newFilters);
   };
 
   // Run search when query, page, or filters change
@@ -303,19 +80,8 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
     const fuzzySearch = async () => {
       try {
-        // Only apply filters for course searches
-        const selectedCourseLevelCodes = (() => {
-          if (index !== 'courses' || selectedLevels.length === 0) return undefined;
-          const entry = Object.entries(levels).find(([, label]) => label === selectedLevels.join(','));
-          return entry?.[0];
-        })();
-        const selectedGeCodes = (() => {
-          if (index !== 'courses' || selectedGECategories.length === 0) return undefined;
-          const entry = Object.entries(geCategories).find(([, label]) => label === selectedGECategories.join(','));
-          return entry?.[0];
-        })();
-        const departmentCodes =
-          index === 'courses' && selectedDepartments.length > 0 ? selectedDepartments.join(',') : undefined;
+        const { stringifiedLevels, stringifiedGeCategories, stringifiedDepartments } =
+          stringifySearchFilters(filterOptions);
 
         const base = {
           query: search.query,
@@ -326,9 +92,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
         const payload = {
           ...base,
-          ...(departmentCodes ? { department: departmentCodes } : {}),
-          ...(selectedCourseLevelCodes ? { courseLevel: selectedCourseLevelCodes } : {}),
-          ...(selectedGeCodes ? { ge: selectedGeCodes } : {}),
+          ...(index === 'courses' && stringifiedDepartments ? { department: stringifiedDepartments } : {}),
+          ...(index === 'courses' && stringifiedLevels ? { courseLevel: stringifiedLevels } : {}),
+          ...(index === 'courses' && stringifiedGeCategories ? { ge: stringifiedGeCategories } : {}),
         } as Parameters<typeof trpc.search.get.query>[0];
 
         const { count, results } = await trpc.search.get.query(payload, { signal: abortController.signal });
@@ -352,17 +118,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     fuzzySearch();
 
     // Re-run when query/page or any selected filter changes
-  }, [
-    dispatch,
-    geCategories,
-    index,
-    levels,
-    search.pageNumber,
-    search.query,
-    selectedDepartments,
-    selectedGECategories,
-    selectedLevels,
-  ]);
+  }, [dispatch, index, search.pageNumber, search.query, filterOptions]);
 
   return (
     <div className="search-module">
@@ -382,74 +138,9 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           </button>
         </InputGroup>
       </Form.Group>
-      <div className="filter-group">
-        <FormControl sx={selectStyles}>
-          <Select
-            id="level-select"
-            multiple
-            value={selectedLevels}
-            onChange={handleLevelSelection}
-            displayEmpty
-            renderValue={(selected) => {
-              return selected.length === 0 ? (
-                <p className="filter-placeholder">Filter by course level...</p>
-              ) : (
-                selected.join(', ')
-              );
-            }}
-            MenuProps={MenuProps}
-            size="small"
-          >
-            {Object.keys(levels).map((key) => (
-              <MenuItem key={key} value={levels[key]}>
-                {selectedLevels.includes(levels[key]) ? <CheckIcon /> : <span style={{ width: 24 }}></span>}
-                <ListItemText primary={levels[key]} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl sx={selectStyles}>
-          <Select
-            size="small"
-            id="ge-category-select"
-            multiple
-            value={selectedGECategories}
-            onChange={handleGeCategorySelection}
-            displayEmpty
-            renderValue={(selected) => {
-              return selected.length === 0 ? (
-                <p className="filter-placeholder">Filter by GE category...</p>
-              ) : (
-                selected.join(', ')
-              );
-            }}
-            MenuProps={MenuProps}
-          >
-            {Object.keys(geCategories).map((key) => (
-              <MenuItem key={key} value={geCategories[key]}>
-                {selectedGECategories.includes(geCategories[key]) ? <CheckIcon /> : <Icon />}
-                <ListItemText primary={`${key}: ${geCategories[key]}`} />
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Autocomplete
-          multiple
-          size="small"
-          limitTags={1}
-          id="multiple-limit-tags"
-          options={Object.keys(departments)}
-          value={selectedDepartments}
-          onChange={(_event, newValue) => {
-            setSelectedDepartments(newValue);
-          }}
-          getOptionLabel={(option) => departments[option]}
-          renderInput={(params) => (
-            <TextField {...params} placeholder={selectedDepartments.length === 0 ? 'Search departments...' : ''} />
-          )}
-          sx={autocompleteStyles}
-        />
-      </div>
+      {index === 'courses' && (
+        <SearchFilters selectedFilters={filterOptions} updateSelectedFilters={updateSelectedFilters} />
+      )}
     </div>
   );
 };
