@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
 import Modal from 'react-bootstrap/Modal';
-import { addReview, editReview } from '../../store/slices/reviewSlice';
+import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
 import ThemeContext from '../../style/theme-context';
@@ -15,7 +15,6 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import spawnToast from '../../helpers/toastify';
 import trpc from '../../trpc';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Select2 from 'react-select';
@@ -120,7 +119,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
       // form opened
       // if not logged in, close the form
       if (!isLoggedIn) {
-        spawnToast('You must be logged in to add a review!', true);
+        dispatch(setToastMsg('You must be logged in to add a review!'));
+        dispatch(setToastSeverity('error'));
+        dispatch(setShowToast(true));
         closeForm();
       }
 
@@ -154,14 +155,20 @@ const ReviewForm: FC<ReviewFormProps> = ({
       if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
         dispatch(editReview(review as EditReviewSubmission));
-        spawnToast('Your review has been edited successfully!');
+        dispatch(setToastMsg('Your review has been edited successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       } else {
         const res = await trpc.reviews.add.mutate(review);
         dispatch(addReview(res));
-        spawnToast('Your review has been submitted successfully!');
+        dispatch(setToastMsg('Your review has been submitted successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
       }
     } catch (e) {
-      spawnToast((e as Error).message, true);
+      dispatch(setToastMsg((e as Error).message));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +191,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     // for new reviews: check if CAPTCHA is completed
     if (!editing && !captchaToken) {
-      spawnToast('Please complete the CAPTCHA', true);
+      dispatch(setToastMsg('Please complete the CAPTCHA'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
       return;
     }
 
