@@ -106,7 +106,7 @@ export default class Pie extends Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: getCssVariable('--blue-secondary-light'),
+        color: getCssVariable('--chart-blue-secondary'),
       },
       {
         id: 'B',

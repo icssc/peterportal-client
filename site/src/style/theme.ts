@@ -11,6 +11,9 @@ const sharedTokens = {
     midGray: '#8d8d8d',
   },
   chart: {
+    blue: {
+      secondary: '#5babe1',
+    },
     red: {
       secondary: '#e7966d',
     },
@@ -91,10 +94,10 @@ const darkPalette: PaletteOptions = {
   },
   chart: {
     ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
-      secondary: '#295629',
-    },
+    green: sharedTokens.chart.green, //{
+    //   ...sharedTokens.chart.green,
+    //   // secondary: '#295629',
+    // },
     red: {
       primary: '#ff3333',
       ...sharedTokens.chart.red,
