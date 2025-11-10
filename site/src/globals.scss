@@ -51,6 +51,13 @@ $sidebar-width-closed: 72px;
 $roadmap-sidebar-width: 368px;
 $mui-transition-time: 268ms;
 
+@mixin outer-padding {
+  padding: 36px;
+  @media (max-width: $mobile-cutoff) {
+    padding: 20px 24px;
+  }
+}
+
 @mixin card-padding {
   padding: 24px 28px;
   @media (max-width: $mobile-cutoff) {
