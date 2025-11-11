@@ -59,7 +59,6 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
 
   // Custom styles for the MUI Select and Autocomplete components
   const selectStyles = {
-    width: 300,
     backgroundColor: 'var(--overlay1)',
     borderColor: 'var(--overlay2)',
     borderWidth: '1px',
@@ -68,6 +67,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
       borderRadius: '6px', // Targets the outer 'fieldset' element
     },
   };
+
   const autocompleteStyles = {
     flexGrow: 1,
     backgroundColor: 'var(--overlay1)',
@@ -77,6 +77,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
     '& .MuiOutlinedInput-notchedOutline': {
       borderRadius: '6px', // Targets the outer 'fieldset' element
     },
+    width: 'fit-content',
   };
   // #endregion
 
@@ -90,11 +91,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
           onChange={handleLevelSelection}
           displayEmpty
           renderValue={(selected) => {
-            return selected.length === 0 ? (
-              <p className="filter-placeholder">Filter by course level...</p>
-            ) : (
-              selected.join(', ')
-            );
+            return selected.length === 0 ? <p className="filter-placeholder">Level</p> : selected.join(', ');
           }}
           MenuProps={MenuProps}
           size="small"
@@ -116,11 +113,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
           onChange={handleGeCategorySelection}
           displayEmpty
           renderValue={(selected) => {
-            return selected.length === 0 ? (
-              <p className="filter-placeholder">Filter by GE category...</p>
-            ) : (
-              selected.join(', ')
-            );
+            return selected.length === 0 ? <p className="filter-placeholder">GE</p> : selected.join(', ');
           }}
           MenuProps={MenuProps}
         >
@@ -149,7 +142,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={selectedFilters.departments.length === 0 ? 'Search departments...' : ''}
+            placeholder={selectedFilters.departments.length === 0 ? 'Department' : 'Type to add more'}
           />
         )}
         sx={autocompleteStyles}

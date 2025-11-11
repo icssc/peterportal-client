@@ -22,17 +22,6 @@
   font-size: 16px;
 }
 
-.filter-group {
-  display: flex;
-  gap: 8px;
-  padding-top: 8px;
-}
-
-p.filter-placeholder {
-  color: var(--text-secondary);
-  margin: 0;
-}
-
 [data-theme='dark'] {
   .search-bar,
   .search-bar:focus,
