@@ -1,16 +1,11 @@
 @use '../../globals';
 
 .review-form-modal {
-  .modal-dialog {
-    width: 350px;
+  .MuiDialog-paper {
     display: flex;
     flex-direction: column;
     margin: auto;
     overflow-y: auto;
-  }
-
-  .modal-header {
-    font-weight: bold;
   }
 
   .editing-notice {

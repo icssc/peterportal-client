@@ -189,9 +189,9 @@ theme = createTheme(theme, {
           '&:last-child': {
             marginBottom: 0,
           },
-          // '& .MuiInputBase-input': {
-          //   padding: '7px 12px',
-          // },
+          '& .MuiInputBase-input': {
+            padding: '7px 12px',
+          },
           '& .MuiFormControlLabel-root': {
             display: 'flex',
             alignItems: 'center',
@@ -212,19 +212,19 @@ theme = createTheme(theme, {
         },
       },
     },
-    // MuiInputBase: {
-    //   styleOverrides: {
-    //     root: {
-    //       '& .MuiInputBase-input': {
-    //         padding: '8px 10px',
-    //       },
-    //     },
-    //     input: {
-    //       fontSize: 16,
-    //       backgroundColor: 'var(--mui-palette-background-paper)',
-    //     },
-    //   },
-    // },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
+          },
+        },
+        input: {
+          fontSize: 16,
+          backgroundColor: 'var(--mui-palette-background-paper)',
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {

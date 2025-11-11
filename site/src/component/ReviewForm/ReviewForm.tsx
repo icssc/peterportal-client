@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import Modal from 'react-bootstrap/Modal';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
@@ -34,6 +33,10 @@ import {
   Rating,
   Select,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -305,11 +308,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }
 
   const reviewForm = (
-    <Modal show={show} onHide={closeForm} centered className="ppc-modal review-form-modal">
-      <Modal.Header closeButton>
+    <Dialog open={show} onClose={closeForm} className="review-form-modal">
+      <DialogTitle>
         {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
-      </Modal.Header>
-      <Modal.Body>
+      </DialogTitle>
+      <DialogContent>
         {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
         <Box component="form" noValidate onSubmit={submitForm}>
           <div className="year-quarter-row">
@@ -496,13 +499,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
               control={<Checkbox checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
             />
           </FormControl>
-
-          <Button type="submit" loading={isSubmitting}>
-            Submit Review
-          </Button>
         </Box>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={closeForm}>
+          Cancel
+        </Button>
+        <Button type="submit" loading={isSubmitting}>
+          Submit Review
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 
   return reviewForm;
