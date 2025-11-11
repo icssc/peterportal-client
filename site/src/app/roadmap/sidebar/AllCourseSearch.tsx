@@ -17,6 +17,7 @@ const AllCourseSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
   const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
   const { savedCourses } = useSavedCourses();
+  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
@@ -31,8 +32,12 @@ const AllCourseSearch: FC = () => {
 
   return (
     <>
-      <SearchModule index="courses" />
-      <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
+      {!showFullscreenSearch && (
+        <>
+          <SearchModule index="courses" />
+          <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
+        </>
+      )}
 
       {searchInProgress ? (
         <LoadingSpinner />

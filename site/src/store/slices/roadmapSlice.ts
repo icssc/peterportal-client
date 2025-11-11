@@ -57,6 +57,8 @@ export const roadmapSlice = createSlice({
     currentYearAndQuarter: null as { year: number; quarter: number } | null,
     /** Whether to show the search bar on mobile */
     showSearch: false,
+    /** Whether to show the fullscreen search page on mobile */
+    showFullscreenSearch: false,
     /** Whether to show the add course modal on mobile */
     showAddCourse: false,
     showSavedCourses: true,
@@ -139,8 +141,13 @@ export const roadmapSlice = createSlice({
 
     // Controlling Visibility of UI Elements
 
-    setShowSearch: (state, action: PayloadAction<{ show: boolean; year?: number; quarter?: number }>) => {
-      state.showSearch = action.payload.show;
+    setShowSearch: (
+      state,
+      action: PayloadAction<{ show: boolean; year?: number; quarter?: number; fullscreen?: boolean }>,
+    ) => {
+      if (action.payload.fullscreen) state.showFullscreenSearch = action.payload.show;
+      else state.showSearch = action.payload.show;
+
       if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
         state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
       }

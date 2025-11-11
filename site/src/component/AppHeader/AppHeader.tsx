@@ -9,25 +9,33 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
+import SearchModule from '../SearchModule/SearchModule';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
+import { useIsMobile } from '../../helpers/util';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
+  const isMobile = useIsMobile();
+  const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   };
 
-  const toggleSearch = () => {
-    dispatch(setShowSearch({ show: true }));
+  const showFullscreenSearch = () => {
+    dispatch(setShowSearch({ show: true, fullscreen: true }));
+  };
+  const closeFullscreenSearch = () => {
+    dispatch(setShowSearch({ show: false, fullscreen: true }));
   };
 
   const popover = (
@@ -64,6 +72,24 @@ const AppHeader: FC = () => {
     </div>
   );
 
+  if (isMobile && isShowFullscreenSearch)
+    return (
+      <header className="navbar">
+        <div className="navbar-nav">
+          <div className="navbar-left">
+            <IconButton onClick={closeFullscreenSearch}>
+              <ArrowLeftIcon />
+            </IconButton>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <div style={{ flex: 1 }}>
+              <SearchModule index="courses" />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+
   return (
     <header className="navbar">
       <div className="navbar-nav">
@@ -73,9 +99,11 @@ const AppHeader: FC = () => {
             <MenuIcon className="navbar-menu-icon" />
           </IconButton>
           {/* Search */}
-          <IconButton onClick={toggleSearch}>
-            <SearchIcon />
-          </IconButton>
+          {isMobile && (
+            <IconButton onClick={showFullscreenSearch}>
+              <SearchIcon />
+            </IconButton>
+          )}
         </div>
 
         {/* Logo */}
