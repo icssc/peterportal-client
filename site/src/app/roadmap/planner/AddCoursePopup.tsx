@@ -1,6 +1,5 @@
 'use client';
 import { FC } from 'react';
-// import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { reviseRoadmap, selectCurrentPlan, setShowAddCourse, setShowSearch } from '../../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';

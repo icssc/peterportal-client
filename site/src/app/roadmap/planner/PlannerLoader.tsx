@@ -1,7 +1,6 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
-import { Button, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -192,33 +191,30 @@ const PlannerLoader: FC = () => {
   };
 
   return (
-    <Modal
-      show={showSyncModal}
-      onHide={() => {
+    <Dialog
+      open={showSyncModal}
+      onClose={() => {
         setShowSyncModal(false);
       }}
-      className="ppc-modal"
-      centered
     >
-      <Modal.Header closeButton>
-        <h2>Roadmap Out of Sync</h2>
-      </Modal.Header>
-      <Modal.Body>
-        <p>
+      <DialogTitle>Roadmap Out of Sync</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
           This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
           your roadmap from?
-        </p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Stack direction="row" spacing={2}>
-          {/* @todo: When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
-          <Button onClick={overrideAccountRoadmap}>This Device</Button>
-          <Button color="inherit" onClick={() => setShowSyncModal(false)}>
-            My Account
-          </Button>
-        </Stack>
-      </Modal.Footer>
-    </Modal>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        {' '}
+        {/* @todo: consider different button variants */}
+        <Button color="inherit" onClick={overrideAccountRoadmap}>
+          This Device
+        </Button>
+        <Button variant="contained" onClick={() => setShowSyncModal(false)}>
+          My Account
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

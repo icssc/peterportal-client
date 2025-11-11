@@ -280,12 +280,6 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      {/* <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        centered
-        className="ppc-modal multiplan-modal transcript-form"
-      > */}
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Import from Transcript</DialogTitle>
         <DialogContent>

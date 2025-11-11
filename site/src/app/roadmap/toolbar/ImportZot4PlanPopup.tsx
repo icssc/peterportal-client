@@ -126,12 +126,10 @@ const ImportZot4PlanPopup: FC = () => {
 
   return (
     <>
-      {/* <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal"> */}
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Import Schedule from Zot4Plan</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>
-            {/* @todo: consider adding cancel button*/}
             {/* @todo: style inputs */}
 
             <FormControl>
@@ -173,14 +171,7 @@ const ImportZot4PlanPopup: FC = () => {
 
             <FormControl>
               <FormLabel>I am currently a...</FormLabel>
-              <Select
-                onChange={(ev) => setStudentYear(ev.target.value)}
-                value={studentYear}
-                /** @todo Remove after migration to MUI Modal. This temporarily prevents z-indexing issues due to the lack of a MUI Portal. */
-                MenuProps={{
-                  disablePortal: true,
-                }}
-              >
+              <Select onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
                 <MenuItem value="1">1st year</MenuItem>
                 <MenuItem value="2">2nd year</MenuItem>
                 <MenuItem value="3">3rd year</MenuItem>
