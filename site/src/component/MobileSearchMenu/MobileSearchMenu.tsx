@@ -1,9 +1,9 @@
 'use client';
 import { FC } from 'react';
-import AllCourseSearch from '../../app/roadmap/sidebar/AllCourseSearch';
+import SearchHitContainer from '../SearchHitContainer/SearchHitContainer';
 
 const MobileSearchMenu: FC = () => {
-  return <AllCourseSearch />;
+  return <SearchHitContainer index="courses" />;
 };
 
 export default MobileSearchMenu;
