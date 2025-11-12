@@ -6,14 +6,13 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
-import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
+import { selectReviews, setReviews, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Modal } from 'react-bootstrap';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import spawnToast from '../../helpers/toastify';
 import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 
@@ -200,7 +199,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const vote = async (newVote: number) => {
     if (!isLoggedIn) {
-      spawnToast('You must be logged in to vote.', true);
+      dispatch(setToastMsg('You must be logged in to vote.'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
       return;
     }
     updateScore(newVote);

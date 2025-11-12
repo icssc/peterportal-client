@@ -6,7 +6,6 @@ import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
-
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
@@ -20,16 +19,16 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
-  const saveRoadmap = useSaveRoadmap();
   const showTransfers = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const isMobile = useIsMobile();
+  const { handler: saveRoadmap } = useSaveRoadmap();
   const dispatch = useAppDispatch();
 
   const [saveInProgress, setSaveInProgress] = useState(false);
 
   const handleSave = () => {
     setSaveInProgress(true);
-    saveRoadmap(true).finally(() => setSaveInProgress(false));
+    saveRoadmap().finally(() => setSaveInProgress(false));
   };
 
   const toggleTransfers = () => {

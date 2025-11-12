@@ -7,14 +7,17 @@ import { PostHogProvider } from 'posthog-js/react';
 import AppThemeProvider from '../AppThemeProvider/AppThemeProvider';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
+import { useSetSchedule } from '../../hooks/schedule';
 import { UserData } from '@peterportal/types';
 import { useLoadCompletedMarkers } from '../../hooks/courseRequirements';
 import { useLoadTransferredCredits } from '../../hooks/transferCredits';
+import PlannerLoader from '../../app/roadmap/planner/PlannerLoader';
 
 const UserDataLoader: FC = () => {
   useLoadSavedCourses();
   useLoadCompletedMarkers();
   useLoadTransferredCredits();
+  useSetSchedule();
   return null;
 };
 
@@ -44,7 +47,10 @@ const AppProvider: FC<AppProviderProps> = ({ children, user }) => {
   const baseContent = (
     <>
       <UserDataLoader />
-      <AppThemeProvider>{children}</AppThemeProvider>
+      <AppThemeProvider>
+        <PlannerLoader />
+        {children}
+      </AppThemeProvider>
     </>
   );
 
