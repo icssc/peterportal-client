@@ -9,6 +9,7 @@ import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { useSetSchedule } from '../../hooks/schedule';
 import { UserData } from '@peterportal/types';
+import PlannerLoader from '../../app/roadmap/planner/PlannerLoader';
 
 const UserDataLoader: FC = () => {
   useLoadSavedCourses();
@@ -42,7 +43,10 @@ const AppProvider: FC<AppProviderProps> = ({ children, user }) => {
   const baseContent = (
     <>
       <UserDataLoader />
-      <AppThemeProvider>{children}</AppThemeProvider>
+      <AppThemeProvider>
+        <PlannerLoader />
+        {children}
+      </AppThemeProvider>
     </>
   );
 
