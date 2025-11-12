@@ -7,7 +7,6 @@
   padding: 12px;
   position: relative;
   margin: 4px;
-  color: var(--blue-primary);
 
   &.roadmap-course {
     display: grid;
@@ -38,13 +37,12 @@
 
   .course-and-info {
     grid-area: B;
-    a {
-      color: inherit;
-    }
   }
 
   .name {
     font-weight: bold;
+    text-decoration: underline;
+    color: var(--blue-primary);
   }
 
   .warning-container {
@@ -135,9 +133,15 @@ button.course-delete-btn {
       margin: 0;
     }
     .title {
-      font-size: 12px;
-      font-style: italic;
+      font-size: 14px;
+      font-weight: bold;
       margin-top: 0;
+      display: inline;
+      float: left;
+    }
+    .description {
+      display: inline;
+      float: left;
     }
     .units {
       order: 2;
@@ -146,6 +150,9 @@ button.course-delete-btn {
       &::before {
         content: '• ';
       }
+    }
+    .courseLabels {
+      color: aqua; //needs to be changed but kept for distinction
     }
 
     .course-card-top {
