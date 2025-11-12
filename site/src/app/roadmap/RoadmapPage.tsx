@@ -16,21 +16,19 @@ const RoadmapPage: FC = () => {
   const showFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
   const isMobile = useIsMobile();
   const sidebarRef = useRef(null);
-  const fullscreenSearchRef = useRef(null);
 
   const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
 
   const fullscreenActive = isMobile && showFullscreenSearch;
 
+  if (fullscreenActive) return <MobileSearchMenu />;
+
   return (
-    <div className={`roadmap-page ${fullscreenActive ? 'fullscreen-search-active' : ''}`}>
+    <div className={`roadmap-page`}>
       <AddCoursePopup />
       <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
         <SearchSidebar sidebarRef={sidebarRef} />
       </CSSTransition>
-      <div ref={fullscreenSearchRef} className={`fullscreen-search ${fullscreenActive ? 'visible' : ''}`}>
-        <MobileSearchMenu />
-      </div>
       {isMobile && <TransferCreditsMenu />}
       <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} aria-hidden={fullscreenActive}>
         <Planner />
