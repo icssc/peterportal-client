@@ -13,6 +13,7 @@ import {
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
+import { ToastSeverity } from '../../helpers/toast';
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
@@ -56,12 +57,11 @@ export const roadmapSlice = createSlice({
     /** Selected quarter and year for adding a course on mobile */
     currentYearAndQuarter: null as { year: number; quarter: number } | null,
     /** Whether to show the search bar on mobile */
-    showSearch: false,
-    /** Whether to show the fullscreen search page on mobile */
-    showFullscreenSearch: false,
+    showMobileCatalog: false,
     /** Whether to show the add course modal on mobile */
     showAddCourse: false,
     showSavedCourses: true,
+    showMobileFullscreenSearch: false,
     /** Store the course data of the active dragging item */
     activeCourse: null as CourseGQLData | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
@@ -72,6 +72,9 @@ export const roadmapSlice = createSlice({
     activeCourseDragSource: null as Omit<SetActiveCoursePayload, 'course'> | null,
     /** Whether the roadmap is loading */
     roadmapLoading: true,
+    toastMsg: '',
+    toastSeverity: 'info' as ToastSeverity,
+    showToast: false,
   },
   reducers: {
     // Roadmap Window State
@@ -141,16 +144,15 @@ export const roadmapSlice = createSlice({
 
     // Controlling Visibility of UI Elements
 
-    setShowSearch: (
-      state,
-      action: PayloadAction<{ show: boolean; year?: number; quarter?: number; fullscreen?: boolean }>,
-    ) => {
-      if (action.payload.fullscreen) state.showFullscreenSearch = action.payload.show;
-      else state.showSearch = action.payload.show;
-
-      if (action.payload.year !== undefined && action.payload.quarter !== undefined) {
-        state.currentYearAndQuarter = { year: action.payload.year, quarter: action.payload.quarter };
-      }
+    hideMobileCatalog: (state) => {
+      state.showMobileCatalog = false;
+    },
+    showMobileCatalog: (state, action: PayloadAction<{ year: number; quarter: number }>) => {
+      state.showMobileCatalog = true;
+      state.currentYearAndQuarter = action.payload;
+    },
+    setShowMobileFullscreenSearch: (state, action: PayloadAction<boolean>) => {
+      state.showMobileFullscreenSearch = action.payload;
     },
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
@@ -160,6 +162,15 @@ export const roadmapSlice = createSlice({
     },
     setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
       state.showSavedCourses = action.payload;
+    },
+    setToastMsg: (state, action: PayloadAction<string>) => {
+      state.toastMsg = action.payload;
+    },
+    setToastSeverity: (state, action: PayloadAction<ToastSeverity>) => {
+      state.toastSeverity = action.payload;
+    },
+    setShowToast: (state, action: PayloadAction<boolean>) => {
+      state.showToast = action.payload;
     },
   },
 });
@@ -171,7 +182,9 @@ export const {
   setActiveMissingPrerequisites,
   setInitialPlannerData,
   setInvalidCourses,
-  setShowSearch,
+  hideMobileCatalog,
+  showMobileCatalog,
+  setShowMobileFullscreenSearch,
   setShowAddCourse,
   setPlanIndex,
   setShowSavedCourses,
@@ -180,6 +193,9 @@ export const {
   undoRoadmapRevision,
   redoRoadmapRevision,
   setSavedRevisionIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

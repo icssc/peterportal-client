@@ -26,7 +26,6 @@ import {
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
-import spawnToast from './toastify';
 import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {
@@ -263,20 +262,23 @@ export const saveRoadmap = async (
   isLoggedIn: boolean,
   lastSavedPlanners: SavedPlannerData[] | null,
   planners: SavedPlannerData[],
-  showToasts: boolean,
 ) => {
   saveLocalRoadmap(planners);
 
-  const showMessage = showToasts ? spawnToast : () => {};
-  if (!isLoggedIn) return showMessage('Roadmap saved locally! Log in to save it to your account');
+  if (!isLoggedIn) return true;
 
+  let res = false;
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
-
   await trpc.roadmaps.save
     .mutate(changes)
-    .then(() => showMessage('Roadmap saved to your account!'))
-    .catch(() => showMessage('Unable to save roadmap to your account'));
+    .then(() => {
+      res = true;
+    })
+    .catch(() => {
+      res = false;
+    });
+  return res;
 };
 
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {

@@ -1,36 +1,50 @@
 'use client';
-import { FC, useRef } from 'react';
+import { FC } from 'react';
 import './RoadmapPage.scss';
 import Planner from './planner/Planner';
-import SearchSidebar from './sidebar/SearchSidebar';
-import { useAppSelector } from '../../store/hooks';
+import MobileCourseCatalog from './catalog/MobileCourseCatalog';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import AddCoursePopup from './planner/AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
-import { CSSTransition } from 'react-transition-group';
-import TransferCreditsMenu from './transfers/TransferCreditsMenu';
 import CoursePreview from '../../component/CoursePreview/CoursePreview';
+import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
+import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
+import { setShowToast } from '../../store/slices/roadmapSlice';
+import Toast from '../../helpers/toast';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 
 const RoadmapPage: FC = () => {
-  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
-  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
   const isMobile = useIsMobile();
-  const sidebarRef = useRef(null);
 
   const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
+
+  const dispatch = useAppDispatch();
+
+  const toastMsg = useAppSelector((state) => state.roadmap.toastMsg);
+  const toastSeverity = useAppSelector((state) => state.roadmap.toastSeverity);
+  const showToast = useAppSelector((state) => state.roadmap.showToast);
+  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+
+  const handleClose = () => {
+    dispatch(setShowToast(false));
+  };
 
   const fullscreenActive = isMobile && showFullscreenSearch;
 
   if (fullscreenActive) return <MobileSearchMenu />;
 
   return (
-    <div className={`roadmap-page`}>
+    <div className="roadmap-page">
+      {!isMobile && <DesktopRoadmapSidebar />}
+
+      {/* Mobile Popup Menus */}
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
       <AddCoursePopup />
-      <CSSTransition in={!isMobile || showSearch} timeout={500} unmountOnExit nodeRef={sidebarRef}>
-        <SearchSidebar sidebarRef={sidebarRef} />
-      </CSSTransition>
-      {isMobile && <TransferCreditsMenu />}
-      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} aria-hidden={fullscreenActive}>
+      <MobileCourseCatalog />
+      <MobileCreditsMenu />
+
+      {/* Main Planner View */}
+      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
         <Planner />
         {previewCourseId && <CoursePreview courseId={previewCourseId} />}
       </div>

@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import ThemeContext from '../../../style/theme-context';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import { useIsMobile } from '../../../helpers/util';
 
 interface ListSelectorProps {
   text: RequirementsTabName;
@@ -25,12 +26,15 @@ const ListSelector: FC<ListSelectorProps> = ({ text }) => {
 };
 
 const RequirementsListSelector: FC = () => {
+  const isMobile = useIsMobile();
+  const lastTab = isMobile ? 'Search' : 'Saved';
+
   return (
     <div className="requirements-list-selector">
       <ListSelector text="Major" />
       <ListSelector text="Minor" />
       <ListSelector text="GE" />
-      <ListSelector text="Search" />
+      <ListSelector text={lastTab} /> {/** @todo resolve merge conflict with MUI sidebar */}
     </div>
   );
 };

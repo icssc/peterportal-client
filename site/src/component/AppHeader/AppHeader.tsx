@@ -19,25 +19,25 @@ import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
-import { setShowSearch } from '../../store/slices/roadmapSlice';
+import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
   const isMobile = useIsMobile();
-  const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
-  const isRoadmapPage = usePathname() == '/roadmap';
+  const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+  const isRoadmapPage = usePathname() == '/';
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   };
 
   const showFullscreenSearch = () => {
-    dispatch(setShowSearch({ show: true, fullscreen: true }));
+    dispatch(setShowMobileFullscreenSearch(true));
   };
   const closeFullscreenSearch = () => {
-    dispatch(setShowSearch({ show: false, fullscreen: true }));
+    dispatch(setShowMobileFullscreenSearch(false));
   };
 
   const popover = (
@@ -74,7 +74,7 @@ const AppHeader: FC = () => {
     </div>
   );
 
-  if (isMobile && isShowFullscreenSearch)
+  if (isMobile && isShowFullscreenSearch && isRoadmapPage)
     return (
       <header className="navbar">
         <div className="navbar-nav">
