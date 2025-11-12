@@ -20,12 +20,14 @@ import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
 import { setShowSearch } from '../../store/slices/roadmapSlice';
+import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
   const isMobile = useIsMobile();
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showFullscreenSearch);
+  const isRoadmapPage = usePathname() == '/roadmap';
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -99,7 +101,7 @@ const AppHeader: FC = () => {
             <MenuIcon className="navbar-menu-icon" />
           </IconButton>
           {/* Search */}
-          {isMobile && (
+          {isMobile && isRoadmapPage && (
             <IconButton onClick={showFullscreenSearch}>
               <SearchIcon />
             </IconButton>
