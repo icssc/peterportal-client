@@ -11,6 +11,7 @@ import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
 import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
 import { setShowToast } from '../../store/slices/roadmapSlice';
 import Toast from '../../helpers/toast';
+import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -22,10 +23,15 @@ const RoadmapPage: FC = () => {
   const toastMsg = useAppSelector((state) => state.roadmap.toastMsg);
   const toastSeverity = useAppSelector((state) => state.roadmap.toastSeverity);
   const showToast = useAppSelector((state) => state.roadmap.showToast);
+  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
   const handleClose = () => {
     dispatch(setShowToast(false));
   };
+
+  const fullscreenActive = isMobile && showFullscreenSearch;
+
+  if (fullscreenActive) return <MobileSearchMenu />;
 
   return (
     <div className="roadmap-page">

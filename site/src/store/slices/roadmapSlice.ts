@@ -61,6 +61,7 @@ export const roadmapSlice = createSlice({
     /** Whether to show the add course modal on mobile */
     showAddCourse: false,
     showSavedCourses: true,
+    showMobileFullscreenSearch: false,
     /** Store the course data of the active dragging item */
     activeCourse: null as CourseGQLData | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
@@ -150,6 +151,9 @@ export const roadmapSlice = createSlice({
       state.showMobileCatalog = true;
       state.currentYearAndQuarter = action.payload;
     },
+    setShowMobileFullscreenSearch: (state, action: PayloadAction<boolean>) => {
+      state.showMobileFullscreenSearch = action.payload;
+    },
     setShowAddCourse: (state, action: PayloadAction<boolean>) => {
       state.showAddCourse = action.payload;
     },
@@ -180,6 +184,7 @@ export const {
   setInvalidCourses,
   hideMobileCatalog,
   showMobileCatalog,
+  setShowMobileFullscreenSearch,
   setShowAddCourse,
   setPlanIndex,
   setShowSavedCourses,

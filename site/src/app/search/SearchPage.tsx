@@ -6,8 +6,6 @@ import CoursePopup from './CoursePopup';
 import ProfessorPopup from './ProfessorPopup';
 import SearchModule from '../../component/SearchModule/SearchModule';
 import SearchHitContainer from '../../component/SearchHitContainer/SearchHitContainer';
-import CourseHitItem from './CourseHitItem';
-import ProfessorHitItem from './ProfessorHitItem';
 
 import { SearchIndex } from '../../types/types';
 
@@ -21,7 +19,7 @@ const SearchPage: FC<{ index: SearchIndex }> = ({ index }) => {
       <div className="search-wrapper">
         <div className="search-list">
           <SearchModule index={index} />
-          <SearchHitContainer index={index} CourseHitItem={CourseHitItem} ProfessorHitItem={ProfessorHitItem} />
+          <SearchHitContainer index={index} />
         </div>
         {index == 'courses' && <CoursePopup />}
         {index == 'professors' && <ProfessorPopup />}

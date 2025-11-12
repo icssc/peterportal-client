@@ -9,20 +9,35 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
+import SearchModule from '../SearchModule/SearchModule';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
+import { useIsMobile } from '../../helpers/util';
+import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const currentWeek = useAppSelector((state) => state.schedule.currentWeek);
+  const isMobile = useIsMobile();
+  const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+  const isRoadmapPage = usePathname() == '/';
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
+  };
+
+  const showFullscreenSearch = () => {
+    dispatch(setShowMobileFullscreenSearch(true));
+  };
+  const closeFullscreenSearch = () => {
+    dispatch(setShowMobileFullscreenSearch(false));
   };
 
   const popover = (
@@ -59,6 +74,24 @@ const AppHeader: FC = () => {
     </div>
   );
 
+  if (isMobile && isShowFullscreenSearch && isRoadmapPage)
+    return (
+      <header className="navbar">
+        <div className="navbar-nav">
+          <div className="navbar-left">
+            <IconButton onClick={closeFullscreenSearch}>
+              <ArrowLeftIcon />
+            </IconButton>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
+            <div style={{ flex: 1 }}>
+              <SearchModule index="courses" />
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+
   return (
     <header className="navbar">
       <div className="navbar-nav">
@@ -67,6 +100,12 @@ const AppHeader: FC = () => {
           <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
             <MenuIcon className="navbar-menu-icon" />
           </IconButton>
+          {/* Search */}
+          {isMobile && isRoadmapPage && (
+            <IconButton onClick={showFullscreenSearch}>
+              <SearchIcon />
+            </IconButton>
+          )}
         </div>
 
         {/* Logo */}
@@ -76,7 +115,6 @@ const AppHeader: FC = () => {
           </Link>
         </div>
 
-        {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
             <PPCOverlayTrigger popoverContent={popover} placement="bottom">
@@ -86,9 +124,6 @@ const AppHeader: FC = () => {
               </div>
             </PPCOverlayTrigger>
           </div>
-          <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
-            {currentWeek}
-          </p>
           <Profile />
         </div>
       </div>
