@@ -24,7 +24,7 @@ const AllCourseSearch: FC = () => {
   const shownCourses = deepCopy(showSavedCourses ? savedCourses : results) as CourseGQLData[];
   const setDraggedItem = (event: SortableEvent) => {
     const course = shownCourses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
+    dispatch(setActiveCourse({ course }));
   };
 
   const clearedCourses = useClearedCourses();
@@ -47,13 +47,12 @@ const AllCourseSearch: FC = () => {
           className={'search-body' + (isMobile ? ' disabled' : '')}
         >
           {shownCourses.map((course, i) => {
-            const missingPrerequisites = getMissingPrerequisites(clearedCourses, course);
+            const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
             return (
               <Course
                 data={course}
                 key={i}
                 addMode={isMobile ? 'tap' : 'drag'}
-                openPopoverLeft={true}
                 requiredCourses={missingPrerequisites}
               />
             );

@@ -1,6 +1,8 @@
 @use '../../globals.scss';
 
 .search-module {
+  z-index: 100;
+
   button {
     font: inherit;
     padding: 0;

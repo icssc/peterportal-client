@@ -1,12 +1,13 @@
-import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.scss';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
+import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
+
+import { MenuItem, Select } from '@mui/material';
 
 interface ScheduleProps {
   courseID?: string;
@@ -37,18 +38,8 @@ function getMeetingsString(section: Section) {
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
-  const [currentQuarter, setCurrentQuarter] = useState<string>('');
-  const [selectedQuarter, setSelectedQuarter] = useState<string>('');
-  const { darkMode } = useContext(ThemeContext);
-
-  useEffect(() => {
-    // get the current quarter used in websoc
-    trpc.schedule.currentQuarter.query().then((data) => {
-      // use it as the default in the dropdown
-      setCurrentQuarter(data);
-      setSelectedQuarter(data);
-    });
-  }, []);
+  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
+  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
 
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
@@ -151,18 +142,19 @@ const Schedule: FC<ScheduleProps> = (props) => {
     return (
       <div>
         {props.termsOffered ? (
-          <DropdownButton
-            className="ppc-dropdown-btn"
-            title={selectedQuarter ?? currentQuarter}
-            variant={darkMode ? 'dark' : 'light'}
-            onSelect={(value) => setSelectedQuarter(value!)}
+          <Select
+            value={selectedQuarter ?? currentQuarter}
+            onChange={(e) => setSelectedQuarter(e.target.value)}
+            renderValue={() => {
+              return selectedQuarter;
+            }}
           >
             {termOptions.map((opt) => (
-              <Dropdown.Item key={opt.value} eventKey={opt.value}>
+              <MenuItem key={opt.value} value={opt.value}>
                 {opt.text}
-              </Dropdown.Item>
+              </MenuItem>
             ))}
-          </DropdownButton>
+          </Select>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}

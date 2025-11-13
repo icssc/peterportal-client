@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/transfer-credits.webp';
+import changelogImage from '../../asset/course-preview.png';
 import Image from 'next/image';
 
-const DESCRIPTION = 'Transferred courses are now easier to add, and AP Exams now clear prerequisites!';
-const LAST_UPDATED = '5/16/2025';
+const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
+const LAST_UPDATED = '11/03/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);

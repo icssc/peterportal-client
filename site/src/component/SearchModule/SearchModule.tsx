@@ -40,7 +40,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
-    if (location.pathname === '/roadmap') {
+    if (location.pathname === '/') {
       dispatch(setShowSavedCourses(!query));
     }
     if (query && query !== search.query) {
@@ -122,7 +122,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
 
   return (
     <div className="search-module">
-      <Form.Group className="form-group">
+      <Form.Group>
         <InputGroup>
           <Form.Control
             className="search-bar"

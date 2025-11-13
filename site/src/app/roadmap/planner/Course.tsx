@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -14,6 +14,7 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -27,7 +28,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
-  const [allowTouchClick, setAllowTouchClick] = useState(false);
+  const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
 
@@ -36,8 +37,9 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
   const handleLinkClick = (event: React.MouseEvent) => {
-    const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
-    if (isTouchEvent && !allowTouchClick) event.preventDefault();
+    event.preventDefault();
+    if (isMobile && showSearch) return;
+    dispatch(setPreviewedCourse(courseID));
   };
 
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
@@ -47,8 +49,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       popoverContent={popoverContent}
       placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
-      setAllowSecondaryTap={setAllowTouchClick}
-      disabled={isMobile && showSearch}
+      disabled={isMobile}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
@@ -79,7 +80,7 @@ const Course: FC<CourseProps> = (props) => {
   const dispatch = useAppDispatch();
 
   const insertCourseOnClick = () => {
-    dispatch(setActiveCourse(props.data));
+    dispatch(setActiveCourse({ course: props.data }));
     dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };

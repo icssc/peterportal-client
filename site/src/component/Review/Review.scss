@@ -3,13 +3,8 @@
   flex-direction: column;
 }
 .add-review-button {
-  padding: 6px 16px;
-  font-weight: bold;
-  margin: 8px auto 0;
-  background-color: var(--blue-primary);
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  width: auto;
+  align-self: center;
 }
 
 // sort and filter reviews
@@ -27,17 +22,13 @@
 .verified-only-checkbox {
   display: flex;
   align-items: center;
-  width: 100%;
-  white-space: nowrap;
-}
-.reviews .form-check-input {
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  &:hover {
-    border-color: rgba(34, 36, 38, 0.35);
+  flex-basis: 100%;
+
+  .MuiFormControlLabel-root {
+    margin-left: 0;
+    margin-right: 0;
+    gap: 0.5rem;
   }
-}
-[data-theme='dark'] .reviews .form-check-input {
-  border: 1px solid var(--overlay3);
 }
 
 // The list of ReviewCards that appears on course/professors pages

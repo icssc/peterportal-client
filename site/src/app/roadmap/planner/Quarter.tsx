@@ -4,13 +4,13 @@ import { quarterDisplayNames } from '../../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
-  deleteCourse,
-  moveCourse,
-  MoveCoursePayload,
+  createQuarterCourseLoadingPlaceholder,
+  reviseRoadmap,
+  selectCurrentPlan,
   setActiveCourse,
   setShowSearch,
 } from '../../../store/slices/roadmapSlice';
-import { PlannerQuarterData } from '../../../types/types';
+import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
 import './Quarter.scss';
 
 import Course from './Course';
@@ -19,6 +19,7 @@ import { quarterSortable } from '../../../helpers/sortable';
 
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Button, Card } from '@mui/material';
+import { ModifiedQuarter, modifyQuarterCourse, reorderQuarterCourse } from '../../../helpers/roadmapEdits';
 
 interface QuarterProps {
   yearIndex: number;
@@ -34,10 +35,13 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   );
   const quarterContainerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const [moveCourseTrigger, setMoveCourseTrigger] = useState<MoveCoursePayload | null>(null);
+  const [moveCourseTrigger, setMoveCourseTrigger] = useState<CourseIdentifier | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
-  const isDragging = activeCourse !== undefined;
+  const activeCourseDraggedFrom = useAppSelector((state) => state.roadmap.activeCourseDragSource);
+  const isDragging = activeCourse !== null;
+  const currentPlan = useAppSelector(selectCurrentPlan);
+  const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
 
   const calculateQuarterStats = () => {
     let unitCount = 0;
@@ -55,44 +59,67 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
 
   const removeCourseAt = useCallback(
     (index: number) => {
-      dispatch(deleteCourse({ courseIndex: index, quarterIndex, yearIndex }));
+      const quarterToRemove = { startYear, quarter: data, courseIndex: index };
+      const revision = modifyQuarterCourse(currentPlan.id, data.courses[index], quarterToRemove, null);
+      dispatch(reviseRoadmap(revision));
     },
-    [dispatch, quarterIndex, yearIndex],
+    [currentPlan.id, data, dispatch, startYear],
   );
-  const removeCourse = (event: SortableEvent) => removeCourseAt(event.oldIndex!);
+
   const addCourse = async (event: SortableEvent) => {
-    const movePayload = {
-      from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
-      to: { yearIndex, quarterIndex, courseIndex: event.newIndex! },
+    const target = { yearIndex, quarterIndex, courseIndex: event.newIndex! };
+    if (activeCourseLoading) {
+      dispatch(createQuarterCourseLoadingPlaceholder(target));
+      setMoveCourseTrigger(target);
+      return;
+    }
+
+    const sourceQuarter = (activeCourseDraggedFrom ?? null) as ModifiedQuarter | null;
+    const addToQuarter: ModifiedQuarter = {
+      startYear,
+      quarter: data,
+      courseIndex: event.newIndex!,
     };
-    if (activeCourseLoading) setMoveCourseTrigger(movePayload);
-    else dispatch(moveCourse(movePayload));
+    const revision = modifyQuarterCourse(currentPlan.id, activeCourse!, sourceQuarter, addToQuarter);
+    dispatch(reviseRoadmap(revision));
   };
+
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
-    const movePayload = {
-      from: { yearIndex, quarterIndex, courseIndex: event.oldDraggableIndex! },
-      to: { yearIndex, quarterIndex, courseIndex: event.newDraggableIndex! },
-    };
-    dispatch(moveCourse(movePayload));
+    const quarterToChange = { startYear, quarter: data, courseIndex: event.newIndex! };
+    const revision = reorderQuarterCourse(currentPlan.id, activeCourse!, event.oldIndex!, quarterToChange);
+    dispatch(reviseRoadmap(revision));
   };
 
   useEffect(() => {
-    if (!moveCourseTrigger) return; // nothing to add
-    if (activeCourseLoading) {
-      dispatch(moveCourse(moveCourseTrigger));
-      return; // course to add hasn't loaded yet
-    }
+    if (!moveCourseTrigger || activeCourseLoading) return; // nothing to add
 
-    removeCourseAt(moveCourseTrigger.to.courseIndex);
+    const addToQuarter: ModifiedQuarter = {
+      startYear,
+      quarter: data,
+      courseIndex: moveCourseTrigger.courseIndex,
+    };
+    const revision = modifyQuarterCourse(currentPlan.id, activeCourse!, null, addToQuarter);
+    dispatch(reviseRoadmap(revision));
+
     setMoveCourseTrigger(null);
-    dispatch(moveCourse(moveCourseTrigger));
-    dispatch(setActiveCourse(undefined));
-  }, [dispatch, moveCourseTrigger, activeCourseLoading, removeCourseAt]);
+    dispatch(setActiveCourse(null));
+  }, [
+    dispatch,
+    moveCourseTrigger,
+    activeCourseLoading,
+    quarterIndex,
+    yearIndex,
+    startYear,
+    data,
+    currentPlan.id,
+    activeCourse,
+  ]);
 
   const setDraggedItem = (event: SortableEvent) => {
     const course = data.courses[event.oldIndex!];
-    dispatch(setActiveCourse(course));
+    // set data for which quarter it's being dragged from
+    dispatch(setActiveCourse({ course, startYear, quarter: data, courseIndex: event.oldIndex! }));
   };
 
   return (
@@ -119,13 +146,10 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         list={coursesCopy}
         className={`quarter-course-list ${isDragging ? 'dropzone-active' : ''}`}
         onStart={setDraggedItem}
-        onAdd={addCourse}
-        onRemove={removeCourse}
-        onSort={sortCourse}
+        onAdd={addCourse} // add course, drag from another quarter
+        onSort={sortCourse} // drag within a quarter
         onEnd={() => {
-          if (!activeCourseLoading) {
-            dispatch(setActiveCourse(undefined));
-          }
+          if (!activeCourseLoading) dispatch(setActiveCourse(null));
         }}
         {...quarterSortable}
       >
@@ -147,6 +171,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
+              openPopoverLeft
             />
           );
         })}

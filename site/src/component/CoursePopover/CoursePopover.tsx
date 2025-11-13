@@ -30,7 +30,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
     );
   }
 
-  requiredCourses = getMissingPrerequisites(clearedCourses, course);
+  requiredCourses = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (

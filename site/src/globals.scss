@@ -1,9 +1,62 @@
+:root {
+  --background: var(--mui-palette-background-default);
+  --overlay1: var(--mui-palette-overlay-overlay1);
+  --overlay2: var(--mui-palette-overlay-overlay2);
+  --overlay3: var(--mui-palette-overlay-overlay3);
+  --text: var(--mui-palette-text-primary);
+  --text-secondary: var(--mui-palette-text-secondary);
+
+  --blue-primary: var(--mui-palette-primary-main);
+  --blue-secondary: var(--mui-palette-secondary-main);
+  --blue-tertiary: var(--mui-palette-tertiary-main);
+  --blue-accent: var(--mui-palette-accent-main);
+
+  --green-primary: var(--mui-palette-chart-green-primary);
+  --red-primary: var(--mui-palette-chart-red-primary);
+
+  --green-secondary: var(--mui-palette-chart-green-secondary);
+  --yellow-secondary: var(--mui-palette-chart-yellow-secondary);
+  --orange-secondary: var(--mui-palette-chart-orange-secondary);
+  --red-secondary: var(--mui-palette-chart-red-secondary);
+
+  --mid-gray: var(--mui-palette-misc-midGray);
+
+  /* Unlike the secondary colors above, these secondary-light colors
+  aren't overridden by the dark mode variants defined in the body
+  below, since these are defined at the root, not in the body */
+  --blue-secondary-light: var(--blue-secondary);
+  --green-secondary-light: var(--green-secondary);
+  --yellow-secondary-light: var(--yellow-secondary);
+  --orange-secondary-light: var(--orange-secondary);
+  --red-secondary-light: var(--red-secondary);
+
+  --gradedist-p: var(--mui-palette-chart-pass);
+  --gradedist-np: var(--mui-palette-chart-noPass);
+
+  --border-radius: 8px;
+  --border-primary: rgba(96, 97, 102, 0.5);
+  --border-secondary: rgba(0, 0, 0, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --border-secondary: rgba(255, 255, 255, 0.12);
+}
+
 $mobile-cutoff: 800px;
 $sidebar-width-open: 300px;
 $sidebar-width-closed: 72px;
 
 $roadmap-sidebar-width: 368px;
 $mui-transition-time: 268ms;
+
+@mixin outer-padding {
+  padding: 36px;
+  @media (max-width: $mobile-cutoff) {
+    padding: 20px 24px;
+  }
+}
 
 @mixin card-padding {
   padding: 24px 28px;
