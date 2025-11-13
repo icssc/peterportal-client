@@ -27,6 +27,7 @@ import {
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
+import spawnToast from './toastify';
 import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {
@@ -110,14 +111,21 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  const courses = savedPlanner.flatMap((year) => year.quarters.flatMap((quarter) => quarter.courses));
-
+  let courses: string[] = [];
+  // get all courses in the planner
+  savedPlanner.forEach((year) =>
+    year.quarters.forEach((quarter) => {
+      courses = courses.concat(quarter.courses);
+    }),
+  );
+  // get the course data for all courses
   let courseLookup: BatchCourseData = {};
+  // only send request if there are courses
   if (courses.length > 0) {
     courseLookup = await searchAPIResults('courses', courses);
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const planner: PlannerData = [];
     const invalidCourseIds: string[] = [];
 
@@ -125,18 +133,19 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
 
       savedYear.quarters.forEach((savedQuarter) => {
-        const quarterCourses = savedQuarter.courses
+        const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
+
+        //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
+        quarter.courses = savedQuarter.courses
           .map((courseId) => {
-            const course = courseLookup[courseId];
-            if (!course) {
-              invalidCourseIds.push(courseId);
+            if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
+              if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
               return null;
             }
-            return course;
+            return courseLookup[courseId];
           })
           .filter((course): course is CourseGQLData => course !== null);
 
-        const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: quarterCourses };
         year.quarters.push(quarter);
       });
 
@@ -145,8 +154,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
     if (invalidCourseIds.length > 0) {
       const uniqueIds = [...new Set(invalidCourseIds)];
-      reject(new Error(`Unable to load the following courses: ${uniqueIds.join(', ')}`));
-      return;
+      spawnToast(`Removed ${uniqueIds.length} invalid course${uniqueIds.length === 1 ? '' : 's'} from roadmap`, true);
     }
 
     resolve(planner);
