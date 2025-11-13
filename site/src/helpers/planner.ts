@@ -21,6 +21,7 @@ import {
   CourseGQLData,
   InvalidCourseData,
   PlannerData,
+  PlannerCourseData,
   PlannerQuarterData,
   PlannerYearData,
   RoadmapPlan,
@@ -92,12 +93,7 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => {
-        if (course.units !== undefined) {
-          return { courseId: course.id, units: course.units };
-        }
-        return course.id;
-      });
+      savedQuarter.courses = quarter.courses.map((course) => course.id);
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -152,7 +148,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
             }
             return courseData;
           })
-          .filter((course): course is CourseGQLData => course !== null);
+          .filter((course): course is PlannerCourseData => course !== null);
         year.quarters.push(quarter);
       });
       planner.push(year);
