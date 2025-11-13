@@ -17,6 +17,9 @@ import {
   setInitialPlannerData,
   setInvalidCourses,
   setRoadmapLoading,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
@@ -96,7 +99,20 @@ const PlannerLoader: FC = () => {
   const saveRoadmapAndUpsertTransfers = useCallback(
     async (collapsedPlans: SavedPlannerData[]) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      await saveRoadmap(isLoggedIn, null, collapsedPlans, false);
+      const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
+      if (res && isLoggedIn) {
+        dispatch(setToastMsg('Roadmap saved to your account!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      } else if (res && !isLoggedIn) {
+        setToastMsg('Roadmap saved locally! Log in to save it to your account');
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      } else if (!res) {
+        setToastMsg('Unable to save roadmap to your account');
+        setToastSeverity('error');
+        setShowToast(true);
+      }
 
       // upsert transfers
       const { courses, ap, ge, other } = await loadLocalTransfers();

@@ -8,9 +8,11 @@ import { Button, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import { toggleFormStatus, setShowToast } from '../../store/slices/reviewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+
+import Toast from '../../helpers/toast';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -76,6 +78,14 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   const [highestReview, setHighestReview] = useState('');
   const [lowestReview, setLowestReview] = useState('');
   const [selectedReview, setSelectedReview] = useState('');
+
+  const toastMsg = useAppSelector((state) => state.review.toastMsg);
+  const toastSeverity = useAppSelector((state) => state.review.toastSeverity);
+  const showToast = useAppSelector((state) => state.review.showToast);
+
+  const handleClose = () => {
+    dispatch(setShowToast(false));
+  };
 
   useEffect(() => {
     const newAverageReviews: { [key: string]: AverageReview } = {};
@@ -275,6 +285,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         )}
       </div>
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </div>
   );
 };
