@@ -73,7 +73,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
   };
 
   const autocompleteStyles = {
-    flexGrow: 1,
+    // flexGrow: 1,
     backgroundColor: 'var(--overlay1)',
     borderColor: 'var(--overlay2)',
     borderWidth: '1px',
@@ -89,16 +89,16 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
     <div className="filter-group">
       <FormControl sx={selectStyles}>
         <Select
+          size="xsmall"
           id="level-select"
           multiple
           value={selectedFilters.levels}
           onChange={handleLevelSelection}
           displayEmpty
           renderValue={(selected) => {
-            return selected.length === 0 ? <p className="filter-placeholder">Level</p> : selected.join(', ');
+            return <p className="filter-value">{selected.length === 0 ? 'Level' : selected.join(', ')}</p>;
           }}
           MenuProps={MenuProps}
-          size="small"
         >
           {Object.keys(levels).map((key) => (
             <MenuItem key={key} value={levels[key]}>
@@ -110,14 +110,14 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
       </FormControl>
       <FormControl sx={selectStyles}>
         <Select
-          size="small"
+          size="xsmall"
           id="ge-category-select"
           multiple
           value={selectedFilters.geCategories}
           onChange={handleGeCategorySelection}
           displayEmpty
           renderValue={(selected) => {
-            return selected.length === 0 ? <p className="filter-placeholder">GE</p> : selected.join(', ');
+            return <p className="filter-value">{selected.length === 0 ? 'GE' : selected.join(', ')}</p>;
           }}
           MenuProps={MenuProps}
         >
@@ -131,7 +131,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
       </FormControl>
       <Autocomplete
         multiple
-        size="small"
+        size="xsmall"
         limitTags={1}
         id="multiple-limit-tags"
         options={Object.keys(departments)}
@@ -142,13 +142,12 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
             departments: newValue,
           });
         }}
-        getOptionLabel={(option) => departments[option]}
+        getOptionLabel={(option) => option}
+        renderOption={(props, option) => <li {...props}>{departments[option]}</li>}
         renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder={selectedFilters.departments.length === 0 ? 'Department' : 'Type to add more'}
-          />
+          <TextField {...params} placeholder={selectedFilters.departments.length === 0 ? 'Department' : ''} />
         )}
+        clearIcon={null}
         sx={autocompleteStyles}
       />
     </div>

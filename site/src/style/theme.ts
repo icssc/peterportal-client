@@ -118,24 +118,24 @@ export let theme = createTheme({
   spacing: 4,
 });
 
+const xsmall = {
+  props: { size: 'xsmall' },
+  style: {
+    height: '24px',
+    fontSize: '11px',
+    '& .MuiButton-startIcon': {
+      marginRight: 4,
+    },
+    '& .MuiButton-startIcon .MuiSvgIcon-root': {
+      fontSize: '18px',
+    },
+  },
+};
+
 theme = createTheme(theme, {
   components: {
     MuiButton: {
-      variants: [
-        {
-          props: { size: 'xsmall' },
-          style: {
-            height: '24px',
-            fontSize: '11px',
-            '& .MuiButton-startIcon': {
-              marginRight: 4,
-            },
-            '& .MuiButton-startIcon .MuiSvgIcon-root': {
-              fontSize: '18px',
-            },
-          },
-        },
-      ],
+      variants: [xsmall],
       defaultProps: {
         variant: 'contained',
         disableElevation: true,
@@ -259,6 +259,10 @@ theme = createTheme(theme, {
           },
         },
       },
+      variants: [xsmall],
+    },
+    MuiAutocomplete: {
+      variants: [xsmall],
     },
   },
 });
