@@ -27,7 +27,6 @@ import {
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
-import spawnToast from './toastify';
 import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {
@@ -111,46 +110,45 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  const courses: string[] = [];
-  savedPlanner.forEach((year) =>
-    year.quarters.forEach((quarter) => {
-      quarter.courses.forEach((courseId) => {
-        courses.push(courseId);
-      });
-    }),
-  );
-  // get the course data for all courses
+  const courses = savedPlanner.flatMap((year) => year.quarters.flatMap((quarter) => quarter.courses));
+
   let courseLookup: BatchCourseData = {};
-  // only send request if there are courses
   if (courses.length > 0) {
     courseLookup = await searchAPIResults('courses', courses);
   }
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const planner: PlannerData = [];
     const invalidCourseIds: string[] = [];
+
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
+
       savedYear.quarters.forEach((savedQuarter) => {
-        const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
-        //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
-        quarter.courses = savedQuarter.courses
+        const quarterCourses = savedQuarter.courses
           .map((courseId) => {
-            if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
-              if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
+            const course = courseLookup[courseId];
+            if (!course) {
+              invalidCourseIds.push(courseId);
               return null;
             }
-            return courseLookup[courseId];
+            return course;
           })
           .filter((course): course is CourseGQLData => course !== null);
+
+        const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: quarterCourses };
         year.quarters.push(quarter);
       });
+
       planner.push(year);
     });
+
     if (invalidCourseIds.length > 0) {
       const uniqueIds = [...new Set(invalidCourseIds)];
-      spawnToast(`Removed ${uniqueIds.length} invalid course${uniqueIds.length === 1 ? '' : 's'} from roadmap`, true);
+      reject(new Error(`Unable to load the following courses: ${uniqueIds.join(', ')}`));
+      return;
     }
+
     resolve(planner);
   });
 };
@@ -279,20 +277,23 @@ export const saveRoadmap = async (
   isLoggedIn: boolean,
   lastSavedPlanners: SavedPlannerData[] | null,
   planners: SavedPlannerData[],
-  showToasts: boolean,
 ) => {
   saveLocalRoadmap(planners);
 
-  const showMessage = showToasts ? spawnToast : () => {};
-  if (!isLoggedIn) return showMessage('Roadmap saved locally! Log in to save it to your account');
+  if (!isLoggedIn) return true;
 
+  let res = false;
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
-
   await trpc.roadmaps.save
     .mutate(changes)
-    .then(() => showMessage('Roadmap saved to your account!'))
-    .catch(() => showMessage('Unable to save roadmap to your account'));
+    .then(() => {
+      res = true;
+    })
+    .catch(() => {
+      res = false;
+    });
+  return res;
 };
 
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
@@ -400,8 +401,8 @@ const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<Prer
 };
 
 /**
- * Returns the set of prerequisites and corequisites of a course that need to be taken but are missing
- * @returns A set of all the prerequisites and corequisites that are missing
+ * Returns the set of prerequisites of a course that need to be taken but are missing
+ * @returns A set of all the prerequisites that are missing
  */
 const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
   // base case is just a course
@@ -415,12 +416,11 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   return new Set();
 };
 
-export const getMissingPrerequisites = (clearedCourses: Set<string>, course: CourseGQLData) => {
+export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisite: PrerequisiteTree) => {
   const input = {
-    prerequisite: course.prerequisiteTree,
+    prerequisite,
     taken: clearedCourses,
     taking: new Set<string>(),
-    corequisite: course.corequisites,
   };
 
   const missingPrerequisites = Array.from(validatePrerequisites(input));
