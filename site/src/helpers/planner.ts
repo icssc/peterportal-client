@@ -21,7 +21,6 @@ import {
   CourseGQLData,
   InvalidCourseData,
   PlannerData,
-  PlannerCourseData,
   PlannerQuarterData,
   PlannerYearData,
   RoadmapPlan,
@@ -115,8 +114,8 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
   const courses: string[] = [];
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
-      quarter.courses.forEach((course) => {
-        courses.push(typeof course === 'string' ? course : course.courseId);
+      quarter.courses.forEach((courseId) => {
+        courses.push(courseId);
       });
     }),
   );
@@ -136,19 +135,14 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
         //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
         quarter.courses = savedQuarter.courses
-          .map((course) => {
-            const courseId = typeof course === 'string' ? course : course.courseId;
+          .map((courseId) => {
             if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
               if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
               return null;
             }
-            const courseData = courseLookup[courseId];
-            if (typeof course === 'object' && course.units !== undefined) {
-              return { ...courseData, units: course.units };
-            }
-            return courseData;
+            return courseLookup[courseId];
           })
-          .filter((course): course is PlannerCourseData => course !== null);
+          .filter((course): course is CourseGQLData => course !== null);
         year.quarters.push(quarter);
       });
       planner.push(year);
