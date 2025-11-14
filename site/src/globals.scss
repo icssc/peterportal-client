@@ -11,26 +11,21 @@
   --blue-tertiary: var(--mui-palette-tertiary-main);
   --blue-accent: var(--mui-palette-accent-main);
 
-  --chart-blue-secondary: var(--mui-palette-chart-blue-secondary);
-  --chart-green-secondary: var(--mui-palette-chart-green-graph);
-  --green-primary: var(--mui-palette-chart-green-primary);
-  --red-primary: var(--mui-palette-chart-red-primary);
+  --green-primary: var(--mui-palette-misc-green-primary);
+  --red-primary: var(--mui-palette-misc-red-primary);
 
-  --green-secondary: var(--mui-palette-chart-green-secondary);
-  --yellow-secondary: var(--mui-palette-chart-yellow-secondary);
-  --orange-secondary: var(--mui-palette-chart-orange-secondary);
-  --red-secondary: var(--mui-palette-chart-red-secondary);
+  --green-secondary: var(--mui-palette-misc-green-secondary);
+  --yellow-secondary: var(--mui-palette-misc-yellow-secondary);
+  --orange-secondary: var(--mui-palette-misc-orange-secondary);
+  --red-secondary: var(--mui-palette-misc-red-secondary);
 
   --mid-gray: var(--mui-palette-misc-midGray);
 
-  /* Unlike the secondary colors above, these secondary-light colors
-  aren't overridden by the dark mode variants defined in the body
-  below, since these are defined at the root, not in the body */
-  --blue-secondary-light: var(--blue-secondary);
-  --green-secondary-light: var(--green-secondary);
-  --yellow-secondary-light: var(--yellow-secondary);
-  --orange-secondary-light: var(--orange-secondary);
-  --red-secondary-light: var(--red-secondary);
+  --chart-blue: var(--mui-palette-chart-blue);
+  --chart-green: var(--mui-palette-chart-green);
+  --chart-yellow: var(--mui-palette-chart-yellow);
+  --chart-red: var(--mui-palette-chart-red);
+  --chart-orange: var(--mui-palette-chart-orange);
 
   --gradedist-p: var(--mui-palette-chart-pass);
   --gradedist-np: var(--mui-palette-chart-noPass);

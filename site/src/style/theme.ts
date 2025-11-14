@@ -9,12 +9,8 @@ const sharedTokens = {
   },
   misc: {
     midGray: '#8d8d8d',
-  },
-  chart: {
-    blue: {
-      secondary: '#5babe1',
-    },
     red: {
+      primary: '#ce0000',
       secondary: '#e7966d',
     },
     orange: {
@@ -27,8 +23,15 @@ const sharedTokens = {
     },
     green: {
       primary: 'green',
-      graph: '#87c587',
+      secondary: '#87c587',
     },
+  },
+  chart: {
+    blue: '#5babe1',
+    red: '#e7966d',
+    orange: '#ecad6d',
+    yellow: '#f5d77f',
+    green: '#87c587',
     pass: '#4ab486',
     noPass: '#e36436',
   },
@@ -56,17 +59,6 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  chart: {
-    ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
-      secondary: '#87c587',
-    },
-    red: {
-      primary: '#ce0000',
-      ...sharedTokens.chart.red,
-    },
-  },
 };
 
 // each overlay is about 5% brighter than the previous
@@ -93,24 +85,33 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
-  chart: {
-    ...sharedTokens.chart,
+  misc: {
+    ...sharedTokens.misc,
     green: {
-      ...sharedTokens.chart.green,
+      ...sharedTokens.misc.green,
       secondary: '#295629',
     },
     red: {
+      ...sharedTokens.misc.red,
       primary: '#ff3333',
-      ...sharedTokens.chart.red,
+      secondary: '#e83434ff', // TODO put an actual color here
+    },
+    yellow: {
+      ...sharedTokens.misc.yellow,
+      secondary: '#daa811ff', // TODO put an actual color here
+    },
+    orange: {
+      ...sharedTokens.misc.orange,
+      secondary: '#e67b10ff', // TODO put an actual color here
     },
   },
 };
 
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
-  success: { main: base.chart!.green!.primary! },
-  error: { main: base.chart!.red!.primary! },
-  warning: { main: base.chart!.orange!.secondary! },
+  success: { main: base.misc!.green!.primary! },
+  error: { main: base.misc!.red!.primary! },
+  warning: { main: base.misc!.orange!.secondary! },
 });
 
 export let theme = createTheme({
