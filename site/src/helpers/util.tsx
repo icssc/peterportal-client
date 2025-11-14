@@ -29,6 +29,18 @@ export function getCourseTags(course: CourseGQLData) {
   });
   return tags;
 }
+//helper function to return GEs in the form of "GE: II, III"
+export function getGEs(course: CourseGQLData): string {
+  const { geList } = course;
+  const numerals = geList
+    .map((ge) => {
+      const match = ge.match(/^GE ([IVX]+[a-b]?)/i);
+      return match ? match[1] : null;
+    })
+    .filter(Boolean) as string[];
+
+  return `GE ${numerals.join(', ')}`;
+}
 
 // helper function to search 1 result from course/professor page
 export async function searchAPIResult<T extends SearchType>(

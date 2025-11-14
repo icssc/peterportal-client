@@ -5,7 +5,7 @@ import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/Re
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
-import { useIsMobile, pluralize } from '../../../helpers/util';
+import { useIsMobile, pluralize, getGEs } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -75,8 +75,9 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, geList, description, minUnits, maxUnits, terms } = props.data;
+  const { title, courseLevel, description, minUnits, maxUnits, terms } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
+  const GeData = getGEs(props.data);
 
   const dispatch = useAppDispatch();
 
@@ -100,27 +101,26 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-          </span>
+          <CourseBookmarkButton course={props.data} />
         </div>
-        {onDelete ? (
+        {onDelete && (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
             <DeleteOutlineIcon className="course-delete-icon" />
           </IconButton>
-        ) : (
-          <div className="course-tooltip">
-            <RecentOfferingsTooltip terms={terms} />
-          </div>
         )}
       </div>
       <div className="course-info">
         <div className="title">{title}: </div>
         <div className="description">{description.slice(0, 70)}...</div>
         <div className="courseLabels">
-          <div className="courseLevel">{courseLevel}</div>
-          <div className="ge">{geList}</div>
-          <CourseBookmarkButton course={props.data} />
+          <span className="units">
+            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
+          </span>
+          <div className="courseLevel">{courseLevel.slice(0, 9)}</div>
+          <div className="ge">{GeData}</div>
+          <div className="course-tooltip">
+            <RecentOfferingsTooltip terms={terms} />
+          </div>
         </div>
       </div>
     </div>

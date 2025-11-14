@@ -141,18 +141,18 @@ button.course-delete-btn {
     }
     .description {
       display: inline;
-      float: left;
+      float: none;
     }
-    .units {
-      order: 2;
-      margin-left: 5px;
-      font-size: $header-font-size;
-      &::before {
-        content: '• ';
-      }
-    }
+
     .courseLabels {
-      color: aqua; //needs to be changed but kept for distinction
+      display: flex;
+      align-items: center;
+    }
+
+    .courseLabels > *:not(:last-child)::after {
+      content: '•';
+      margin: 0 6px;
+      color: var(--text-secondary);
     }
 
     .course-card-top {
