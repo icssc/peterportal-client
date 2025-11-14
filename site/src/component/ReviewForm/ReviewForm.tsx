@@ -471,10 +471,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <TextField
               multiline
               fullWidth
+              variant="outlined"
               placeholder="The course was pretty good."
               onChange={(e) => setContent(e.target.value)}
               value={content}
-              minRows={3}
+              rows={3}
               slotProps={{
                 htmlInput: {
                   maxLength: 500,

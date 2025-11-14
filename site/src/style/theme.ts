@@ -167,19 +167,6 @@ theme = createTheme(theme, {
         },
       },
     },
-    // MuiFormLabel: {
-    //   styleOverrides: {
-    //     root: {
-    //       fontSize: 18,
-    //       fontWeight: 600,
-    //       marginBottom: theme.spacing(1),
-    //       color: 'var(--mui-palette-text-primary)',
-    //       '&.Mui-focused': {
-    //         color: 'inherit',
-    //       },
-    //     },
-    //   },
-    // },
     MuiFormControl: {
       styleOverrides: {
         root: {
@@ -188,9 +175,6 @@ theme = createTheme(theme, {
           marginBottom: theme.spacing(4),
           '&:last-child': {
             marginBottom: 0,
-          },
-          '& .MuiInputBase-input': {
-            padding: '7px 12px',
           },
           '& .MuiFormControlLabel-root': {
             display: 'flex',
@@ -214,14 +198,10 @@ theme = createTheme(theme, {
     },
     MuiInputBase: {
       styleOverrides: {
-        root: {
+        multiline: {
           '& .MuiInputBase-input': {
             padding: '8px 10px',
           },
-        },
-        input: {
-          fontSize: 16,
-          backgroundColor: 'var(--mui-palette-background-paper)',
         },
       },
     },
@@ -256,6 +236,13 @@ theme = createTheme(theme, {
           disablePortal: true,
           PaperProps: {
             style: { maxHeight: '25vh' },
+          },
+        },
+      },
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
           },
         },
       },

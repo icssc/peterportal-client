@@ -205,9 +205,7 @@ const PlannerLoader: FC = () => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        {' '}
-        {/* @todo: consider different button variants */}
-        <Button color="inherit" onClick={overrideAccountRoadmap}>
+        <Button color="inherit" variant="text" onClick={overrideAccountRoadmap}>
           This Device
         </Button>
         <Button variant="contained" onClick={() => setShowSyncModal(false)}>
