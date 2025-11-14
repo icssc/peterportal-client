@@ -17,12 +17,18 @@ declare module '@mui/material/styles' {
     };
     misc: {
       midGray: string;
-    };
-    chart: {
+      blue: TwoToneColor;
       red: TwoToneColor;
       orange: TwoToneColor;
       yellow: TwoToneColor;
       green: TwoToneColor;
+    };
+    chart: {
+      blue: string;
+      red: string;
+      orange: string;
+      yellow: string;
+      green: string;
       pass: string;
       noPass: string;
     };
@@ -38,12 +44,17 @@ declare module '@mui/material/styles' {
     };
     misc?: {
       midGray?: string;
-    };
-    chart?: {
+      blue?: Partial<TwoToneColor>;
       red?: Partial<TwoToneColor>;
       orange?: Partial<TwoToneColor>;
       yellow?: Partial<TwoToneColor>;
       green?: Partial<TwoToneColor>;
+    };
+    chart?: {
+      red?: string;
+      orange?: string;
+      yellow?: string;
+      green?: string;
       pass?: string;
       noPass: string;
     };
