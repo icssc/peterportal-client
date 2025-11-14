@@ -37,6 +37,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  DialogContentText,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -313,8 +314,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
       </DialogTitle>
       <DialogContent>
-        {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
         <Box component="form" noValidate onSubmit={submitForm}>
+          {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
           <div className="year-quarter-row">
             <FormControl error={showFormErrors && !yearTaken}>
               <FormLabel>Year</FormLabel>

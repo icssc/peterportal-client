@@ -6,12 +6,14 @@
     flex-direction: column;
     margin: auto;
     overflow-y: auto;
+    max-width: 350px;
   }
 
   .editing-notice {
     margin-top: -16px;
     font-size: 12px;
     font-style: italic;
+    // color: white;
   }
 
   .year-quarter-row,
@@ -34,8 +36,21 @@
       border-radius: 0 0 8px 8px;
       overflow: hidden;
     }
+
     .ppc-combobox__menu-list {
       padding: 0;
+    }
+
+    .ppc-combobox__control {
+      background-color: inherit;
+    }
+
+    .ppc-combobox__value-container {
+      background-color: inherit;
+    }
+
+    .ppc-combobox__multi-value {
+      background-color: var(--overlay2);
     }
   }
 
