@@ -13,6 +13,7 @@ import {
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
+import { ToastSeverity } from '../../helpers/toast';
 
 // Define the initial state using that type
 export const initialPlanState: RoadmapPlanState = {
@@ -70,6 +71,9 @@ export const roadmapSlice = createSlice({
     activeCourseDragSource: null as Omit<SetActiveCoursePayload, 'course'> | null,
     /** Whether the roadmap is loading */
     roadmapLoading: true,
+    toastMsg: '',
+    toastSeverity: 'info' as ToastSeverity,
+    showToast: false,
   },
   reducers: {
     // Roadmap Window State
@@ -154,6 +158,15 @@ export const roadmapSlice = createSlice({
     setShowSavedCourses: (state, action: PayloadAction<boolean>) => {
       state.showSavedCourses = action.payload;
     },
+    setToastMsg: (state, action: PayloadAction<string>) => {
+      state.toastMsg = action.payload;
+    },
+    setToastSeverity: (state, action: PayloadAction<ToastSeverity>) => {
+      state.toastSeverity = action.payload;
+    },
+    setShowToast: (state, action: PayloadAction<boolean>) => {
+      state.showToast = action.payload;
+    },
   },
 });
 
@@ -173,6 +186,9 @@ export const {
   undoRoadmapRevision,
   redoRoadmapRevision,
   setSavedRevisionIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

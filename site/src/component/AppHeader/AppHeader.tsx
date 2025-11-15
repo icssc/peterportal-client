@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, FC } from 'react';
+import { FC } from 'react';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import Image from 'next/image';
@@ -8,7 +8,6 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import trpc from '../../trpc';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -20,15 +19,7 @@ import Link from 'next/link';
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const [week, setWeek] = useState('');
-
-  useEffect(() => {
-    // Get the current week data
-    trpc.schedule.currentWeek.query().then((res) => {
-      /** @todo make this less code-smelly */
-      setWeek(res.display.split(' • ')[0]);
-    });
-  }, []);
+  const currentWeek = useAppSelector((state) => state.schedule.currentWeek);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -96,7 +87,7 @@ const AppHeader: FC = () => {
             </PPCOverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
-            {week}
+            {currentWeek}
           </p>
           <Profile />
         </div>

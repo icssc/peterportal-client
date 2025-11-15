@@ -1,7 +1,6 @@
 'use client';
 import { FC } from 'react';
 import './Planner.scss';
-import PlannerLoader from './PlannerLoader';
 import Header from '../toolbar/Header';
 import Year from './Year';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
@@ -38,7 +37,6 @@ const Planner: FC = () => {
 
   return (
     <div className="planner">
-      <PlannerLoader />
       <Header courseCount={courseCount} unitCount={unitCount} missingPrerequisites={new Set()} />
       {roadmapLoading ? (
         <LoadingSpinner />
