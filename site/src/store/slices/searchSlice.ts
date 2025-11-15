@@ -9,7 +9,6 @@ interface SearchData {
   pageNumber: number;
   results: SearchResultData;
   count: number;
-  searchInProgress: boolean;
 }
 
 export const searchSlice = createSlice({
@@ -21,7 +20,6 @@ export const searchSlice = createSlice({
       pageNumber: 0,
       results: [],
       count: 0,
-      searchInProgress: false,
     } as SearchData,
     courseLevels: [] as string[],
     courseGeCategories: [] as string[],
@@ -32,14 +30,13 @@ export const searchSlice = createSlice({
       pageNumber: 0,
       results: [],
       count: 0,
-      searchInProgress: false,
     } as SearchData,
+    searchInProgress: false,
   },
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     setQuery: (state, action: PayloadAction<{ index: SearchIndex; query: SearchData['query'] }>) => {
       state[action.payload.index].query = action.payload.query;
-      state[action.payload.index].searchInProgress = true;
     },
     setPageNumber: (state, action: PayloadAction<{ index: SearchIndex; pageNumber: SearchData['pageNumber'] }>) => {
       state[action.payload.index].pageNumber = action.payload.pageNumber;
@@ -48,7 +45,7 @@ export const searchSlice = createSlice({
       state,
       action: PayloadAction<{ index: SearchIndex; results: SearchData['results']; count: SearchData['count'] }>,
     ) => {
-      state[action.payload.index].searchInProgress = false;
+      state.searchInProgress = false;
       state[action.payload.index].results = action.payload.results;
       state[action.payload.index].count = action.payload.count;
       if (state[action.payload.index].lastQuery !== state[action.payload.index].query) {
@@ -62,6 +59,9 @@ export const searchSlice = createSlice({
       state.courseGeCategories = geCategories;
       state.courseLevels = levels;
     },
+    setSearchStarted: (state) => {
+      state.searchInProgress = true;
+    },
   },
 });
 
@@ -72,6 +72,6 @@ export const selectCourseFilters = createSelector(
   (departments, geCategories, levels) => ({ departments, geCategories, levels }),
 );
 
-export const { setQuery, setPageNumber, setResults, setCourseFilters } = searchSlice.actions;
+export const { setQuery, setPageNumber, setResults, setCourseFilters, setSearchStarted } = searchSlice.actions;
 
 export default searchSlice.reducer;

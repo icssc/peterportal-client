@@ -5,9 +5,9 @@ export interface FilterOptions {
 }
 
 interface StringifiedFilterOptions {
-  stringifiedLevels: string;
-  stringifiedGeCategories: string;
-  stringifiedDepartments: string;
+  stringifiedLevels?: string;
+  stringifiedGeCategories?: string;
+  stringifiedDepartments?: string;
 }
 
 export const levels: Record<string, string> = {
@@ -31,9 +31,10 @@ export const geCategories: Record<string, string> = {
 
 export function stringifySearchFilters(filters: FilterOptions): StringifiedFilterOptions {
   return {
-    stringifiedLevels: Object.entries(levels).find(([, label]) => label === filters.levels.join(','))?.[0] || '',
-    stringifiedGeCategories:
-      Object.entries(geCategories).find(([, label]) => label === filters.geCategories.join(','))?.[0] || '',
-    stringifiedDepartments: filters.departments.length > 0 ? filters.departments.join(',') : '',
-  } as StringifiedFilterOptions;
+    stringifiedLevels: Object.entries(levels).find(([, label]) => label === filters.levels.join(','))?.[0],
+    stringifiedGeCategories: Object.entries(geCategories).find(
+      ([, label]) => label === filters.geCategories.join(','),
+    )?.[0],
+    stringifiedDepartments: filters.departments.length > 0 ? filters.departments.join(',') : undefined,
+  };
 }

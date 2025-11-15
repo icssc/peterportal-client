@@ -1,18 +1,15 @@
-import { useState, useEffect, FC, useRef } from 'react';
+import { useState, FC } from 'react';
 import './SearchModule.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { SearchIndex, SearchResultData } from '../../types/types';
-import { stringifySearchFilters } from '../../helpers/searchFilters.ts';
-import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
+import { SearchIndex } from '../../types/types';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
-import trpc from '../../trpc.ts';
-import { selectCourseFilters, setQuery, setResults } from '../../store/slices/searchSlice';
-import { transformGQLData } from '../../helpers/util';
+import { setQuery } from '../../store/slices/searchSlice';
 
 import { InputAdornment, IconButton, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import SearchFilters from '../SearchFilters/SearchFilters.tsx';
+import { useSearchTrigger } from '../../hooks/search.ts';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -23,20 +20,9 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
-  const filterOptions = useAppSelector(selectCourseFilters);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  // fuzzySearch is defined after filter state so it can depend on them safely
-
-  // Cleanup abort controller on unmount
-  useEffect(() => {
-    const controller = abortControllerRef.current;
-    return () => {
-      controller?.abort();
-    };
-  }, []);
+  useSearchTrigger(index);
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -59,55 +45,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const coursePlaceholder = 'Search for a course...';
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
-
-  // Run search when query, page, or filters change
-  useEffect(() => {
-    // Cancel any in-flight request
-    abortControllerRef.current?.abort();
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
-    const fuzzySearch = async () => {
-      try {
-        const { stringifiedLevels, stringifiedGeCategories, stringifiedDepartments } =
-          stringifySearchFilters(filterOptions);
-
-        const base = {
-          query: search.query,
-          take: NUM_RESULTS_PER_PAGE,
-          skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
-          resultType: index === 'courses' ? 'course' : 'instructor',
-        } as const;
-
-        const payload = {
-          ...base,
-          ...(index === 'courses' && stringifiedDepartments ? { department: stringifiedDepartments } : {}),
-          ...(index === 'courses' && stringifiedLevels ? { courseLevel: stringifiedLevels } : {}),
-          ...(index === 'courses' && stringifiedGeCategories ? { ge: stringifiedGeCategories } : {}),
-        } as Parameters<typeof trpc.search.get.query>[0];
-
-        const { count, results } = await trpc.search.get.query(payload, { signal: abortController.signal });
-
-        if (!abortController.signal.aborted) {
-          dispatch(
-            setResults({
-              index,
-              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
-              count,
-            }),
-          );
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Search error:', error);
-        }
-      }
-    };
-
-    fuzzySearch();
-
-    // Re-run when query/page or any selected filter changes
-  }, [dispatch, index, search.pageNumber, search.query, filterOptions]);
 
   const endAdornment = (
     <InputAdornment position="end">
