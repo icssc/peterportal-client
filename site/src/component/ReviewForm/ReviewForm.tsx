@@ -36,7 +36,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   DialogContentText,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -312,10 +311,10 @@ const ReviewForm: FC<ReviewFormProps> = ({
     <Dialog open={show} onClose={closeForm} className="review-form-modal">
       <DialogTitle>
         {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
+        {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
       </DialogTitle>
       <DialogContent>
         <Box component="form" noValidate onSubmit={submitForm}>
-          {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
           <div className="year-quarter-row">
             <FormControl error={showFormErrors && !yearTaken}>
               <FormLabel>Year</FormLabel>
@@ -462,8 +461,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
               placeholder="Select up to 3 tags"
               closeMenuOnSelect={false}
               theme={(t) => comboboxTheme(t, darkMode)}
-              className="ppc-combobox"
-              classNamePrefix="ppc-combobox"
+              className="tag-select"
+              classNamePrefix="tag-select"
             />
           </FormControl>
 
@@ -471,12 +470,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <FormLabel>Additional Details</FormLabel>
             <TextField
               multiline
-              fullWidth
               variant="outlined"
               placeholder="The course was pretty good."
               onChange={(e) => setContent(e.target.value)}
               value={content}
-              rows={3}
+              minRows={2}
               slotProps={{
                 htmlInput: {
                   maxLength: 500,
@@ -502,15 +500,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </FormControl>
         </Box>
+        <div className="review-form-actions">
+          {' '}
+          {/* Using this over FormActions since we don't want actions to be sticky over the form */}
+          <Button variant="text" color="inherit" onClick={closeForm}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={isSubmitting}>
+            Submit Review
+          </Button>
+        </div>
       </DialogContent>
-      <DialogActions>
-        <Button variant="text" color="inherit" onClick={closeForm}>
-          Cancel
-        </Button>
-        <Button type="submit" loading={isSubmitting}>
-          Submit Review
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 

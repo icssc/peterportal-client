@@ -196,11 +196,11 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiInputBase: {
+    MuiFormLabel: {
       styleOverrides: {
-        multiline: {
-          '& .MuiInputBase-input': {
-            padding: '8px 10px',
+        root: {
+          '&.Mui-focused': {
+            color: 'var(--mui-palette-text-secondary)',
           },
         },
       },
@@ -208,6 +208,9 @@ theme = createTheme(theme, {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          "[data-theme='dark'] &.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: 'var(--mui-palette-accent-main)',
+          },
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
           },

@@ -2,18 +2,17 @@
 
 .review-form-modal {
   .MuiDialog-paper {
+    width: 350px;
     display: flex;
     flex-direction: column;
     margin: auto;
     overflow-y: auto;
-    max-width: 350px;
   }
 
-  .editing-notice {
-    margin-top: -16px;
+  .MuiDialogContentText-root {
+    margin-top: 4px;
     font-size: 12px;
     font-style: italic;
-    // color: white;
   }
 
   .year-quarter-row,
@@ -30,37 +29,42 @@
     color: var(--mui-palette-error-main);
   }
 
-  .ppc-combobox {
-    .ppc-combobox__menu {
+  .tag-select {
+    .tag-select__menu {
       margin-top: 0;
       border-radius: 0 0 8px 8px;
       overflow: hidden;
     }
 
-    .ppc-combobox__menu-list {
+    .tag-select__menu-list {
       padding: 0;
     }
 
-    .ppc-combobox__control {
+    .tag-select__control {
       background-color: inherit;
     }
 
-    .ppc-combobox__value-container {
+    .tag-select__control--is-focused {
+      border-color: var(--mui-palette-accent-main);
+    }
+
+    .tag-select__value-container {
       background-color: inherit;
     }
 
-    .ppc-combobox__multi-value {
+    .tag-select__multi-value {
       background-color: var(--overlay2);
-    }
-  }
-
-  .additional-details {
-    textarea {
-      resize: vertical;
     }
   }
 
   .anonymous-checkbox {
     margin-top: 16px;
+  }
+
+  .review-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
   }
 }
