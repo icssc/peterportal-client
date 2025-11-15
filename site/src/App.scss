@@ -183,63 +183,6 @@ div.ppc-popover.bs-popover-bottom {
   }
 }
 
-.ppc-modal {
-  font-size: 18px;
-
-  .modal-header {
-    align-items: center;
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  .modal-content {
-    border: none;
-    background-color: var(--overlay2);
-    padding: 4px 8px 8px;
-    max-height: 100%;
-    overflow: auto;
-    margin-block: 32px;
-  }
-  .modal-dialog {
-    max-width: 400px;
-    margin: auto;
-    width: calc(100% - 32px);
-    max-height: 100%;
-  }
-  .modal-footer {
-    border-top: none;
-    justify-content: flex-start;
-  }
-  h2 {
-    margin-bottom: 0;
-    font-size: 25px;
-    font-weight: 600;
-  }
-  button.close {
-    margin: -4px -4px;
-    padding: 4px 8px;
-    font-size: 32px;
-    overflow: hidden;
-  }
-
-  a {
-    color: #1b76b4;
-  }
-  button.btn-primary {
-    border-color: var(--blue-primary);
-    background-color: var(--blue-primary);
-  }
-
-  [data-theme='dark'] & .btn-close {
-    opacity: 1;
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-[data-theme='dark'] .ppc-modal a {
-  color: var(--blue-accent);
-}
-
 .ppc-table {
   thead tr {
     background-color: var(--overlay2);
