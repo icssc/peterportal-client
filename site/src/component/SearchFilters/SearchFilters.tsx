@@ -12,8 +12,9 @@ import { Icon } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-import { FilterOptions, levels, geCategories } from '../../helpers/searchFilters.ts';
+import { FilterOptions, levels } from '../../helpers/searchFilters.ts';
 import { selectCourseFilters, setCourseFilters } from '../../store/slices/searchSlice.ts';
+import { GE_TITLE_MAP } from '../../helpers/courseRequirements.ts';
 
 const SearchFilters: FC = () => {
   const departments = useAppSelector((state) => state.departments.departments);
@@ -24,7 +25,7 @@ const SearchFilters: FC = () => {
     dispatch(setCourseFilters(newFilters));
   };
 
-  const handleLevelSelection = (event: SelectChangeEvent<typeof selectedFilters.levels>) => {
+  const handleLevelSelection = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
@@ -37,7 +38,7 @@ const SearchFilters: FC = () => {
     });
   };
 
-  const handleGeCategorySelection = (event: SelectChangeEvent<typeof selectedFilters.geCategories>) => {
+  const handleGeCategorySelection = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
@@ -123,10 +124,10 @@ const SearchFilters: FC = () => {
           }}
           MenuProps={MenuProps}
         >
-          {Object.keys(geCategories).map((key) => (
+          {Object.entries(GE_TITLE_MAP).map(([key, value]) => (
             <MenuItem key={key} value={key}>
               {selectedFilters.geCategories.includes(key) ? <CheckIcon /> : <Icon />}
-              <ListItemText primary={`${key}: ${geCategories[key]}`} />
+              <ListItemText primary={value} />
             </MenuItem>
           ))}
         </Select>
