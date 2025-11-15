@@ -28,7 +28,7 @@ const SearchResults = ({
 
   if (index === 'courses') {
     return (results as CourseGQLData[]).map((course, i) => {
-      const requiredCourses = getMissingPrerequisites(clearedCourses, course);
+      const requiredCourses = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
       return <CourseHitItem key={course.id} index={i} {...course} requiredCourses={requiredCourses} />;
     });
   } else {

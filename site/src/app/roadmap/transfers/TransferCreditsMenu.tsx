@@ -57,13 +57,15 @@ const TransferCreditsMenu: FC = () => {
     <>
       {isMobile && <UIOverlay onClick={closeMenu} zIndex={399} ref={overlayRef} />}
       <CSSTransition in={show} timeout={500} unmountOnExit nodeRef={sidebarRef}>
-        <div className={`side-panel search-sidebar transfers-menu ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
-          <h3>Transfer Credits</h3>
+        <div className={`side-panel transfers-menu ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
+          <div className="transfers-menu-inner">
+            <h3>Transfer Credits</h3>
 
-          <CoursesSection />
-          <APExamsSection />
-          <GESection />
-          <UncategorizedCreditsSection />
+            <CoursesSection />
+            <APExamsSection />
+            <GESection />
+            <UncategorizedCreditsSection />
+          </div>
           <ToggleTransfersButton />
         </div>
       </CSSTransition>

@@ -2,12 +2,11 @@
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/roadmap-default.png';
+import changelogImage from '../../asset/course-preview.png';
 import Image from 'next/image';
 
-const DESCRIPTION =
-  "Peter's Roadmap is now the default page! You can still access course and professor search via the left sidebar.";
-const LAST_UPDATED = '9/29/2025';
+const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
+const LAST_UPDATED = '11/03/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
