@@ -1,7 +1,5 @@
 import { useState, useEffect, FC, useRef } from 'react';
 import './SearchModule.scss';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SearchIndex, SearchResultData } from '../../types/types';
@@ -12,6 +10,7 @@ import trpc from '../../trpc.ts';
 import { selectCourseFilters, setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
 
+import { InputAdornment, IconButton, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import SearchFilters from '../SearchFilters/SearchFilters.tsx';
 
@@ -110,24 +109,27 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     // Re-run when query/page or any selected filter changes
   }, [dispatch, index, search.pageNumber, search.query, filterOptions]);
 
+  const endAdornment = (
+    <InputAdornment position="end">
+      <IconButton aria-label="Search" onClick={() => searchImmediately(searchQuery)}>
+        <SearchIcon />
+      </IconButton>
+    </InputAdornment>
+  );
+
   return (
     <div className="search-module">
-      <Form.Group>
-        <InputGroup>
-          <Form.Control
-            className="search-bar"
-            aria-label="search"
-            type="search"
-            placeholder={placeholder}
-            onChange={(e) => searchAfterTimeout(e.target.value)}
-            defaultValue={search.query}
-            autoCorrect="off"
-          />
-          <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
-            <SearchIcon />
-          </button>
-        </InputGroup>
-      </Form.Group>
+      <TextField
+        variant="outlined"
+        className="search-bar"
+        aria-label="search"
+        type="text"
+        placeholder={placeholder}
+        onChange={(e) => searchAfterTimeout(e.target.value)}
+        defaultValue={search.query}
+        autoCorrect="off"
+        slotProps={{ input: { endAdornment, className: 'input-wrapper' } }}
+      />
       {index === 'courses' && <SearchFilters />}
     </div>
   );
