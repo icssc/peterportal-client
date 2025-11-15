@@ -78,6 +78,8 @@ const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, description, minUnits, maxUnits, terms } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
   const GeData = getGEs(props.data);
+  const parsed_description = description.slice(0, 70); //find a better way to parse this data
+  const parsed_courseLevel = courseLevel.slice(0, 9);
 
   const dispatch = useAppDispatch();
 
@@ -89,7 +91,9 @@ const Course: FC<CourseProps> = (props) => {
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
-
+  //align the drag handle on the left center of the course component
+  //fix the misaligment with the title and description
+  //after finishing search results the course component needs to be fixed when in the planner
   return (
     <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
       <div className="course-drag-handle">
@@ -111,12 +115,12 @@ const Course: FC<CourseProps> = (props) => {
       </div>
       <div className="course-info">
         <div className="title">{title}: </div>
-        <div className="description">{description.slice(0, 70)}...</div>
+        <div className="description"> {parsed_description}...</div>
         <div className="courseLabels">
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
-          <div className="courseLevel">{courseLevel.slice(0, 9)}</div>
+          <div className="courseLevel">{parsed_courseLevel}</div>
           <div className="ge">{GeData}</div>
           <div className="course-tooltip">
             <RecentOfferingsTooltip terms={terms} />
