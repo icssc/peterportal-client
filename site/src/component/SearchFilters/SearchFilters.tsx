@@ -122,8 +122,8 @@ const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelected
           MenuProps={MenuProps}
         >
           {Object.keys(geCategories).map((key) => (
-            <MenuItem key={key} value={geCategories[key]}>
-              {selectedFilters.geCategories.includes(geCategories[key]) ? <CheckIcon /> : <Icon />}
+            <MenuItem key={key} value={key}>
+              {selectedFilters.geCategories.includes(key) ? <CheckIcon /> : <Icon />}
               <ListItemText primary={`${key}: ${geCategories[key]}`} />
             </MenuItem>
           ))}
