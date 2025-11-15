@@ -26,6 +26,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  DialogContentText,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -96,7 +97,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
       <DialogTitle>Delete Year</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate>
-          <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
+          <DialogContentText>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</DialogContentText>
         </Box>
       </DialogContent>
       <DialogActions>

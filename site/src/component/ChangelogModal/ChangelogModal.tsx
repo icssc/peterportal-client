@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import changelogImage from '../../asset/roadmap-default.png';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
 const LAST_UPDATED = '11/03/2025';
@@ -33,7 +33,7 @@ const ChangelogModal = () => {
         What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
       </DialogTitle>
       <DialogContent>
-        <p className="modal-body">{DESCRIPTION}</p>
+        <DialogContentText>{DESCRIPTION}</DialogContentText>
         <Image
           className="modal-img"
           src={changelogImage.src}

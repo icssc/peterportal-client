@@ -156,7 +156,7 @@ const YearModal: FC<YearModalProps> = (props) => {
         <Button variant="text" color="inherit" onClick={handleHide}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={saveYear}>
+        <Button variant="contained" disableElevation onClick={saveYear}>
           {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
         </Button>
       </DialogActions>

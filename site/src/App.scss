@@ -5,11 +5,11 @@ button {
 }
 
 body a {
+  color: var(--blue-accent);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
   }
-  color: var(--blue-accent); // hmm?
 }
 
 html,

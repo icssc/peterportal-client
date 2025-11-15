@@ -130,8 +130,6 @@ const ImportZot4PlanPopup: FC = () => {
         <DialogTitle>Import Schedule from Zot4Plan</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>
-            {/* @todo: style inputs */}
-
             <FormControl>
               <p>
                 To add your{' '}

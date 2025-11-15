@@ -30,6 +30,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  DialogContentText,
 } from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -352,7 +353,7 @@ const RoadmapMultiplan: FC = () => {
         <DialogTitle>Delete Roadmap</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>
-            <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
+            <DialogContentText>Are you sure you want to delete the roadmap "{newPlanName}"?</DialogContentText>
           </Box>
         </DialogContent>
         <DialogActions>

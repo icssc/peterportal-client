@@ -280,7 +280,7 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
+      <Dialog className="transcript-form" open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Import from Transcript</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>

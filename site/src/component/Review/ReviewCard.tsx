@@ -18,7 +18,17 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Button, IconButton, Card, Skeleton, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  Card,
+  Skeleton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+} from '@mui/material';
 import Link from 'next/link';
 
 interface AuthorEditButtonsProps {
@@ -62,7 +72,11 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
       </IconButton>
       <Dialog open={showDeleteModal} onClose={() => setShowDeleteModal(false)} fullWidth>
         <DialogTitle>Delete Review</DialogTitle>
-        <DialogContent>Deleting a review will remove it permanently. Are you sure you want to proceed?</DialogContent>
+        <DialogContent>
+          <DialogContentText>
+            Deleting a review will remove it permanently. Are you sure you want to proceed?
+          </DialogContentText>
+        </DialogContent>
         <DialogActions>
           <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
             Cancel
