@@ -499,17 +499,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
               control={<Checkbox checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
             />
           </FormControl>
+
+          <div className="review-form-actions">
+            {/* Using this over FormActions since we don't want actions to be sticky over the form */}
+            <Button variant="text" color="inherit" onClick={closeForm}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={isSubmitting}>
+              Submit Review
+            </Button>
+          </div>
         </Box>
-        <div className="review-form-actions">
-          {' '}
-          {/* Using this over FormActions since we don't want actions to be sticky over the form */}
-          <Button variant="text" color="inherit" onClick={closeForm}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={isSubmitting}>
-            Submit Review
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );

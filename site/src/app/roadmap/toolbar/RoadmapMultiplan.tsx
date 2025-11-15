@@ -77,9 +77,16 @@ interface MultiplanDropdownProps {
   setEditIndex: (index: number) => void;
   setDeleteIndex: (index: number) => void;
   handleCreate: () => void;
+  setNewPlanName: (name: string) => void;
   children?: ReactNode;
 }
-const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex, setDeleteIndex, handleCreate }) => {
+const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
+  children,
+  setEditIndex,
+  setDeleteIndex,
+  setNewPlanName,
+  handleCreate,
+}) => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap.plans);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
@@ -100,6 +107,16 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
     const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
     if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
     setShowDropdown(false);
+  };
+
+  const editHandler = (index: number) => {
+    setEditIndex(index);
+    setNewPlanName(allPlans[index].name);
+  };
+
+  const deleteHandler = (index: number) => {
+    setDeleteIndex(index);
+    setNewPlanName(allPlans[index].name);
   };
 
   return (
@@ -132,9 +149,9 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
               dispatch(setPlanIndex(index));
               handleClose();
             }}
-            editHandler={() => setEditIndex(index)}
+            editHandler={() => editHandler(index)}
             duplicateHandler={() => duplicatePlan(plan)}
-            deleteHandler={() => setDeleteIndex(index)}
+            deleteHandler={() => deleteHandler(index)}
           />
         ))}
         <div className="separator-label">
@@ -233,25 +250,25 @@ const RoadmapMultiplan: FC = () => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
 
+  const openHandler = () => {
+    setShowAddPlan(true);
+
+    const planCount = allPlans?.length ?? 0;
+    let newIdx = planCount + 1;
+    while (allPlans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
+
+    setNewPlanName(`Roadmap ${newIdx}`);
+  };
+
   return (
-    <MultiplanDropdown handleCreate={() => setShowAddPlan(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
+    <MultiplanDropdown
+      handleCreate={openHandler}
+      setEditIndex={setEditIdx}
+      setDeleteIndex={setDelIdx}
+      setNewPlanName={setNewPlanName}
+    >
       {/* Create Roadmap Modal */}
-      <Dialog
-        open={showAddPlan}
-        slotProps={{
-          transition: {
-            onEntered: () => {
-              setShowAddPlan(true);
-              const planCount = allPlans?.length ?? 0;
-              let newIdx = planCount + 1;
-              while (allPlans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
-              setNewPlanName(`Roadmap ${newIdx}`);
-            },
-          },
-        }}
-        onClose={() => setShowAddPlan(false)}
-        fullWidth
-      >
+      <Dialog open={showAddPlan} onClose={() => setShowAddPlan(false)} fullWidth>
         <DialogTitle>New Roadmap</DialogTitle>
         <DialogContent>
           <Box
@@ -289,18 +306,7 @@ const RoadmapMultiplan: FC = () => {
       </Dialog>
 
       {/* Edit Roadmap Modal */}
-      <Dialog
-        open={editIdx !== -1}
-        slotProps={{
-          transition: {
-            onEntered: () => {
-              setNewPlanName(allPlans[editIdx].name);
-            },
-          },
-        }}
-        onClose={() => setEditIdx(-1)}
-        fullWidth
-      >
+      <Dialog open={editIdx !== -1} onClose={() => setEditIdx(-1)} fullWidth>
         <DialogTitle>Edit Roadmap</DialogTitle>
         <DialogContent>
           <Box
@@ -338,18 +344,7 @@ const RoadmapMultiplan: FC = () => {
       </Dialog>
 
       {/* Delete Roadmap Modal */}
-      <Dialog
-        open={delIdx !== -1}
-        slotProps={{
-          transition: {
-            onEntered: () => {
-              setNewPlanName(allPlans[delIdx].name);
-            },
-          },
-        }}
-        onClose={() => setDelIdx(-1)}
-        fullWidth
-      >
+      <Dialog open={delIdx !== -1} onClose={() => setDelIdx(-1)} fullWidth>
         <DialogTitle>Delete Roadmap</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>

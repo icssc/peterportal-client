@@ -53,23 +53,11 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     postReport(report);
   };
 
-  const resetForm = () => setReason('');
-
   return (
-    <Dialog
-      className="report-form"
-      open={props.showForm}
-      slotProps={{
-        transition: {
-          onEntered: resetForm,
-        },
-      }}
-      onClose={props.closeForm}
-      fullWidth
-    >
+    <Dialog className="report-form" open={props.showForm} onClose={props.closeForm} fullWidth>
       <DialogTitle>Report Review</DialogTitle>
       <DialogContent>
-        <Box component="form" noValidate onSubmit={submitReport}>
+        <Box component="form" noValidate onSubmit={submitReport} id="report-form">
           <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
             <i>
@@ -101,7 +89,7 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <Button variant="text" color="inherit" onClick={props.closeForm}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!reason.length} loading={busy}>
+        <Button type="submit" form="report-form" disabled={!reason.length} loading={busy}>
           Submit Report
         </Button>
       </DialogActions>
