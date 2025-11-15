@@ -5,11 +5,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { SearchIndex, SearchResultData } from '../../types/types';
-import { FilterOptions, stringifySearchFilters } from '../../helpers/searchFilters.ts';
+import { stringifySearchFilters } from '../../helpers/searchFilters.ts';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
 import trpc from '../../trpc.ts';
-import { setQuery, setResults } from '../../store/slices/searchSlice';
+import { selectCourseFilters, setQuery, setResults } from '../../store/slices/searchSlice';
 import { transformGQLData } from '../../helpers/util';
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -24,6 +24,7 @@ interface SearchModuleProps {
 const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
+  const filterOptions = useAppSelector(selectCourseFilters);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -59,17 +60,6 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const coursePlaceholder = 'Search for a course...';
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
-
-  // Keep track of selected options for the level and GE filters and handle changes
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    levels: [],
-    geCategories: [],
-    departments: [],
-  });
-
-  const updateSelectedFilters = (newFilters: FilterOptions) => {
-    setFilterOptions(newFilters);
-  };
 
   // Run search when query, page, or filters change
   useEffect(() => {
@@ -138,9 +128,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
           </button>
         </InputGroup>
       </Form.Group>
-      {index === 'courses' && (
-        <SearchFilters selectedFilters={filterOptions} updateSelectedFilters={updateSelectedFilters} />
-      )}
+      {index === 'courses' && <SearchFilters />}
     </div>
   );
 };

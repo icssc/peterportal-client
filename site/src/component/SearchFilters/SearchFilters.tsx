@@ -10,17 +10,19 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { Icon } from '@mui/material';
 
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 import { FilterOptions, levels, geCategories } from '../../helpers/searchFilters.ts';
+import { selectCourseFilters, setCourseFilters } from '../../store/slices/searchSlice.ts';
 
-interface SearchFiltersProps {
-  selectedFilters: FilterOptions;
-  updateSelectedFilters: (value: FilterOptions) => void;
-}
-
-const SearchFilters: FC<SearchFiltersProps> = ({ selectedFilters, updateSelectedFilters }) => {
+const SearchFilters: FC = () => {
   const departments = useAppSelector((state) => state.departments.departments);
+  const selectedFilters = useAppSelector(selectCourseFilters);
+  const dispatch = useAppDispatch();
+
+  const updateSelectedFilters = (newFilters: FilterOptions) => {
+    dispatch(setCourseFilters(newFilters));
+  };
 
   const handleLevelSelection = (event: SelectChangeEvent<typeof selectedFilters.levels>) => {
     const {

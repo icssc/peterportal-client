@@ -4,7 +4,7 @@ export interface FilterOptions {
   departments: string[];
 }
 
-export interface StringifiedFilterOptions {
+interface StringifiedFilterOptions {
   stringifiedLevels: string;
   stringifiedGeCategories: string;
   stringifiedDepartments: string;

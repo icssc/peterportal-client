@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SearchIndex, SearchResultData } from '../../types/types';
+import { FilterOptions } from '../../helpers/searchFilters';
+import { RootState } from '../store';
 
 interface SearchData {
   query: string;
@@ -10,36 +12,29 @@ interface SearchData {
   searchInProgress: boolean;
 }
 
-// Define a type for the slice state
-interface SearchState {
-  courses: SearchData;
-  professors: SearchData;
-}
-
-// Define the initial state using that type
-const initialState: SearchState = {
-  courses: {
-    query: '',
-    lastQuery: '',
-    pageNumber: 0,
-    results: [],
-    count: 0,
-    searchInProgress: false,
-  },
-  professors: {
-    query: '',
-    lastQuery: '',
-    pageNumber: 0,
-    results: [],
-    count: 0,
-    searchInProgress: false,
-  },
-};
-
 export const searchSlice = createSlice({
   name: 'search',
-  // `createSlice` will infer the state type from the `initialState` argument
-  initialState,
+  initialState: {
+    courses: {
+      query: '',
+      lastQuery: '',
+      pageNumber: 0,
+      results: [],
+      count: 0,
+      searchInProgress: false,
+    } as SearchData,
+    courseLevels: [] as string[],
+    courseGeCategories: [] as string[],
+    courseDepartments: [] as string[],
+    professors: {
+      query: '',
+      lastQuery: '',
+      pageNumber: 0,
+      results: [],
+      count: 0,
+      searchInProgress: false,
+    } as SearchData,
+  },
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     setQuery: (state, action: PayloadAction<{ index: SearchIndex; query: SearchData['query'] }>) => {
@@ -61,9 +56,22 @@ export const searchSlice = createSlice({
         state[action.payload.index].lastQuery = state[action.payload.index].query;
       }
     },
+    setCourseFilters: (state, action: PayloadAction<FilterOptions>) => {
+      const { departments, geCategories, levels } = action.payload;
+      state.courseDepartments = departments;
+      state.courseGeCategories = geCategories;
+      state.courseLevels = levels;
+    },
   },
 });
 
-export const { setQuery, setPageNumber, setResults } = searchSlice.actions;
+export const selectCourseFilters = createSelector(
+  (state: RootState) => state.search.courseDepartments,
+  (state: RootState) => state.search.courseGeCategories,
+  (state: RootState) => state.search.courseLevels,
+  (departments, geCategories, levels) => ({ departments, geCategories, levels }),
+);
+
+export const { setQuery, setPageNumber, setResults, setCourseFilters } = searchSlice.actions;
 
 export default searchSlice.reducer;
