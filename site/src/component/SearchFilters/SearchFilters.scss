@@ -5,29 +5,37 @@
   flex-wrap: wrap;
   gap: 8px;
   padding-top: 8px;
+
+  .filter-form-control {
+    margin-bottom: 0;
+  }
+
+  .dept-select {
+    border-color: oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
+  }
 }
 
-p.filter-placeholder {
-  color: var(--text-secondary);
-  margin: 0;
-}
+// p.filter-placeholder {
+//   color: var(--text-secondary);
+//   margin: 0;
+// }
 
 /* Hacky way to override default MUI styling; MUI applies defaults with high selector specificity */
-div.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot {
-  padding: 4px 40px 4px 10px;
-}
+// div.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot {
+//   padding: 4px 40px 4px 10px;
+// }
 
-input#multiple-limit-tags.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.MuiAutocomplete-input.MuiAutocomplete-inputFocused {
-  font-size: 11px;
-  padding: 0;
-}
+// input#multiple-limit-tags.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.MuiAutocomplete-input.MuiAutocomplete-inputFocused {
+//   font-size: 11px;
+//   padding: 0;
+// }
 
-.MuiInputBase-sizeSmall.MuiInputBase-adornedStart.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-tzga38-MuiInputBase-root-MuiOutlinedInput-root {
-  padding-right: 6px;
-}
+// .MuiInputBase-sizeSmall.MuiInputBase-adornedStart.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot.css-tzga38-MuiInputBase-root-MuiOutlinedInput-root {
+//   padding-right: 6px;
+// }
 
-.filter-value {
-  margin-top: 3px;
-  margin-bottom: 0px;
-  font-size: 11px;
-}
+// .filter-value {
+//   margin-top: 3px;
+//   margin-bottom: 0px;
+//   font-size: 11px;
+// }

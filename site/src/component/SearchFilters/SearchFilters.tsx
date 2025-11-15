@@ -6,9 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import { Icon } from '@mui/material';
+import { Icon, MenuProps } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
@@ -51,46 +49,81 @@ const SearchFilters: FC = () => {
     });
   };
 
+  const handleDepartmentSelection = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    const valueArray = typeof value === 'string' ? value.split(',') : value;
+
+    updateSelectedFilters({ ...selectedFilters, departments: valueArray });
+  };
+
   // #region MUI Filter Styles
   // Set the height of the tag selector based on the number of tags
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
+  // const ITEM_HEIGHT = 48;
+  // const ITEM_PADDING_TOP = 8;
+  const MenuProps: Partial<MenuProps> = {
+    anchorOrigin: { horizontal: 'left', vertical: 'bottom' },
+    transformOrigin: { vertical: 'top', horizontal: 'left' },
     PaperProps: {
       style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
+        // maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        // width: 250,
       },
     },
   };
 
   // Custom styles for the MUI Select and Autocomplete components
-  const selectStyles = {
-    backgroundColor: 'var(--overlay1)',
-    borderColor: 'var(--overlay2)',
-    borderWidth: '1px',
-    borderRadius: '6px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderRadius: '6px', // Targets the outer 'fieldset' element
-    },
-  };
+  // const selectStyles = {
+  //   backgroundColor: 'var(--overlay1)',
+  //   borderColor: 'var(--overlay2)',
+  //   borderWidth: '1px',
+  //   borderRadius: '6px',
+  //   '& .MuiOutlinedInput-notchedOutline': {
+  //     borderRadius: '6px', // Targets the outer 'fieldset' element
+  //   },
+  // };
 
-  const autocompleteStyles = {
-    // flexGrow: 1,
-    backgroundColor: 'var(--overlay1)',
-    borderColor: 'var(--overlay2)',
-    borderWidth: '1px',
-    borderRadius: '6px',
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderRadius: '6px', // Targets the outer 'fieldset' element
-    },
-    width: 'fit-content',
-  };
+  // const autocompleteStyles = {
+  //   // flexGrow: 1,
+  //   backgroundColor: 'var(--overlay1)',
+  //   borderColor: 'var(--overlay2)',
+  //   borderWidth: '1px',
+  //   borderRadius: '6px',
+  //   '& .MuiOutlinedInput-notchedOutline': {
+  //     borderRadius: '6px', // Targets the outer 'fieldset' element
+  //   },
+  //   width: 'fit-content',
+  // };
   // #endregion
+
+  function DepartmentSelect() {
+    return (
+      <Select
+        size="xsmall"
+        displayEmpty
+        multiple
+        value={selectedFilters.departments}
+        MenuProps={MenuProps}
+        onChange={handleDepartmentSelection}
+        renderValue={(selected) => {
+          return selected.length === 0 ? 'Departments' : selected.join(', ');
+        }}
+      >
+        {/* <TextField variant="filled" placeholder="Enter a department..." /> */}
+        {Object.entries(departments).map(([code, name]) => (
+          <MenuItem key={code} value={name}>
+            {selectedFilters.departments.includes(code) ? <CheckIcon /> : <Icon />}
+            <ListItemText primary={name} />
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  }
 
   return (
     <div className="filter-group">
-      <FormControl sx={selectStyles}>
+      <FormControl className="filter-form-control">
         <Select
           size="xsmall"
           id="level-select"
@@ -98,10 +131,21 @@ const SearchFilters: FC = () => {
           value={selectedFilters.levels}
           onChange={handleLevelSelection}
           displayEmpty
+          variant="outlined"
           renderValue={(selected) => {
-            return <p className="filter-value">{selected.length === 0 ? 'Level' : selected.join(', ')}</p>;
+            return selected.length === 0 ? 'Level' : selected.join(', ');
+            // return <p className="filter-value">{selected.length === 0 ? 'Level' : selected.join(', ')}</p>;
           }}
-          MenuProps={MenuProps}
+          MenuProps={{
+            anchorOrigin: {
+              horizontal: 'left',
+              vertical: 'bottom',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+          }}
         >
           {Object.keys(levels).map((key) => (
             <MenuItem key={key} value={levels[key]}>
@@ -111,7 +155,7 @@ const SearchFilters: FC = () => {
           ))}
         </Select>
       </FormControl>
-      <FormControl sx={selectStyles}>
+      <FormControl className="filter-form-control">
         <Select
           size="xsmall"
           id="ge-category-select"
@@ -120,7 +164,8 @@ const SearchFilters: FC = () => {
           onChange={handleGeCategorySelection}
           displayEmpty
           renderValue={(selected) => {
-            return <p className="filter-value">{selected.length === 0 ? 'GE' : selected.join(', ')}</p>;
+            return selected.length === 0 ? 'GE' : selected.join(', ');
+            // return <p className="filter-value">{selected.length === 0 ? 'GE' : selected.join(', ')}</p>;
           }}
           MenuProps={MenuProps}
         >
@@ -132,7 +177,8 @@ const SearchFilters: FC = () => {
           ))}
         </Select>
       </FormControl>
-      <Autocomplete
+      <DepartmentSelect />
+      {/* <Autocomplete
         multiple
         size="xsmall"
         limitTags={1}
@@ -152,7 +198,7 @@ const SearchFilters: FC = () => {
         )}
         clearIcon={null}
         sx={autocompleteStyles}
-      />
+      /> */}
     </div>
   );
 };

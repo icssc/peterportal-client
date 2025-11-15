@@ -129,6 +129,18 @@ const xsmall = {
     '& .MuiButton-startIcon .MuiSvgIcon-root': {
       fontSize: '18px',
     },
+    '& .MuiInputBase-input': {
+      padding: '4px 10px 4px 10px',
+      height: '24px',
+      boxSizing: 'border-box',
+      fontSize: 'inherit',
+    },
+    '& > div.MuiSelect-select.MuiInputBase-input': {
+      paddingRight: '28px',
+    },
+    '& .MuiSvgIcon-root': {
+      right: '2px',
+    },
   },
 };
 
