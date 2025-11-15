@@ -129,12 +129,31 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
   return computedRequirements;
 }
 
-export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
+/**
+ * Flattens requirements to prevent deep nesting.
+ * Preserves the titles of the top-level categories by default.
+ *
+ * @param requirements Nested requirements to flatten.
+ * @param preserveOuterLabels If labels of highest-level categories should not be changed. Defaults to true.
+ * @returns Flattened requirements.
+ */
+export function flattenSingletonGroups(
+  requirements: ProgramRequirement[],
+  preserveOuterLabels = true,
+): ProgramRequirement[] {
   const res = requirements.flatMap((r) => {
-    if (r.requirementType !== 'Group') return r;
-    if (r.requirementCount !== r.requirements.length) return r;
-    return flattenSingletonGroups(r.requirements);
+    if (r.requirementType !== 'Group' || r.requirementCount !== r.requirements.length || r.requirementCount > 1) {
+      return r;
+    }
+    return flattenSingletonGroups(r.requirements, false);
   });
+  if (preserveOuterLabels) {
+    // Map to new objects since we Can't modify label directly because it's read-only
+    return res.map((r, i) => ({
+      ...r,
+      label: requirements[i].label,
+    }));
+  }
   return res;
 }
 
