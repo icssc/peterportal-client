@@ -1,7 +1,6 @@
 'use client';
 import { FC, useRef, useState } from 'react';
 import './Year.scss';
-import { Modal } from 'react-bootstrap';
 import Quarter from './Quarter';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
@@ -16,7 +15,19 @@ import { pluralize } from '../../../helpers/util';
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
 
-import { Button, Box, Card, Collapse, Divider, IconButton } from '@mui/material';
+import {
+  Button,
+  Box,
+  Dialog,
+  Card,
+  Collapse,
+  Divider,
+  IconButton,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
@@ -64,7 +75,7 @@ const YearStats = ({ year }: YearStatsProps) => {
 };
 
 interface DeleteYearModalProps {
-  show?: boolean;
+  show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   yearName: string;
   yearIndex: number;
@@ -82,20 +93,22 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
   };
 
   return (
-    <Modal show={show} onHide={() => setShow(false)} centered className="ppc-modal">
-      <Modal.Header closeButton>
-        <h2>Delete Year</h2>
-      </Modal.Header>
-      <Modal.Body>
+    <Dialog open={show} onClose={() => setShow(false)} fullWidth>
+      <DialogTitle>Delete Year</DialogTitle>
+      <DialogContent>
         <Box component="form" noValidate>
-          <p>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</p>
-
-          <Button color="error" onClick={handleDeleteYear}>
-            I am sure
-          </Button>
+          <DialogContentText>Are you sure you want to delete {yearName || `Year ${yearIndex}`}?</DialogContentText>
         </Box>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={() => setShow(false)}>
+          Cancel
+        </Button>
+        <Button color="error" onClick={handleDeleteYear}>
+          I am sure
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
