@@ -7,7 +7,6 @@ import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import UnreadDot from '../../../component/UnreadDot/UnreadDot';
-
 import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
@@ -20,7 +19,7 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
-  const saveRoadmap = useSaveRoadmap();
+  const { handler: saveRoadmap } = useSaveRoadmap();
   const showTransfers = useAppSelector((state) => state.transferCredits.showTransfersMenu);
   const dispatch = useAppDispatch();
 
@@ -28,7 +27,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
 
   const handleSave = () => {
     setSaveInProgress(true);
-    saveRoadmap(true).finally(() => setSaveInProgress(false));
+    saveRoadmap().finally(() => setSaveInProgress(false));
   };
 
   const toggleTransfers = () => {

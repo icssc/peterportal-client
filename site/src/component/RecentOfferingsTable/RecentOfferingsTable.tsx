@@ -1,12 +1,12 @@
 'use client';
-import { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 import './RecentOfferingsTable.scss';
 import { QuarterName } from '@peterportal/types';
-import trpc from '../../trpc';
 import { sortTerms } from '../../helpers/util';
 
 import CheckIcon from '@mui/icons-material/Check';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { useAppSelector } from '../../store/hooks';
 
 type RecentOfferingsTableSize = 'thin' | 'wide';
 
@@ -71,12 +71,8 @@ interface RecentOfferingsTableProps {
 }
 
 const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) => {
-  const [currentTerm, setCurrentTerm] = useState('');
+  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const offerings = parseOfferings(terms);
-
-  useEffect(() => {
-    trpc.schedule.currentQuarter.query().then((data) => setCurrentTerm(data));
-  }, []);
 
   if (terms.length === 0) return null;
 
@@ -100,7 +96,7 @@ const RecentOfferingsTable: FC<RecentOfferingsTableProps> = ({ terms, size }) =>
                 <td key={index} className="recent-offerings-quarter">
                   {offered ? (
                     <CheckIcon />
-                  ) : isFutureTerm(currentTerm, academicYear, index) ? (
+                  ) : isFutureTerm(currentQuarter, academicYear, index) ? (
                     <QuestionMarkIcon className="question-mark" />
                   ) : null}
                 </td>
