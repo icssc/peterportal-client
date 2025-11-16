@@ -85,11 +85,11 @@ const darkPalette: PaletteOptions = {
     secondary: '#99999f',
   },
   reviews: {
-    blue: '#316384', // TODO: pick a better color
+    blue: '#41779b',
     green: '#295629',
-    red: '#e83434ff',
-    yellow: '#daa811ff',
-    orange: '#e67b10ff',
+    red: '#b7523e',
+    yellow: '#c49e3e',
+    orange: '#c47e38',
   },
   misc: {
     ...sharedTokens.misc,
