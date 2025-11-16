@@ -8,6 +8,7 @@ import { RoadmapRevision } from '../types/roadmap';
 import { reviseRoadmap, setSavedRevisionIndex } from '../store/slices/roadmapSlice';
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
+import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();
@@ -31,29 +32,41 @@ export function useSaveRoadmap() {
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
 
-  const handler = async (showToasts: boolean) => {
+  const handler = async () => {
     // generate before and after from the current state
     const lastSavedRoadmapPlans = deepCopy(planners);
     restoreRevision(lastSavedRoadmapPlans, revisions, currIdx, lastSaveIdx);
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, showToasts);
+    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+    if (res && isLoggedIn) {
+      dispatch(setToastMsg('Roadmap saved to your account!'));
+      dispatch(setToastSeverity('success'));
+      dispatch(setShowToast(true));
+    } else if (res && !isLoggedIn) {
+      dispatch(setToastMsg('Roadmap saved locally! Log in to save it to your account'));
+      dispatch(setToastSeverity('success'));
+      dispatch(setShowToast(true));
+    } else if (!res) {
+      dispatch(setToastMsg('Unable to save roadmap to your account'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
+    }
     dispatch(setSavedRevisionIndex(currIdx));
   };
 
-  return handler;
+  return { handler };
 }
 
 export function useReviseAndSaveRoadmap() {
-  const saveRoadmap = useSaveRoadmap();
+  const { handler: saveRoadmap } = useSaveRoadmap();
   const dispatch = useAppDispatch();
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const currentRevision = revisions[currIdx];
 
   const [expectedTimestamp, setExpectedTimestamp] = useState(-1);
-  const [showToasts, setShowToasts] = useState(false);
 
   useEffect(() => {
     if (currentRevision?.timestamp !== expectedTimestamp) return;
@@ -65,12 +78,11 @@ export function useReviseAndSaveRoadmap() {
     // No other revision or expectedTimestamp should cause the two values to be the same
     // This proof is left as an exercise to the reader.
     setExpectedTimestamp(-1);
-    saveRoadmap(showToasts);
-  }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap, showToasts]);
+    saveRoadmap();
+  }, [currentRevision?.timestamp, expectedTimestamp, saveRoadmap]);
 
-  const handler = (revision: RoadmapRevision, showToasts: boolean) => {
+  const handler = (revision: RoadmapRevision) => {
     setExpectedTimestamp(revision.timestamp);
-    setShowToasts(showToasts);
     dispatch(reviseRoadmap(revision));
   };
 
