@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
 import changelogImage from '../../asset/course-preview.png';
 import Image from 'next/image';
-import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
 const LAST_UPDATED = '11/03/2025';
@@ -42,6 +42,11 @@ const ChangelogModal = () => {
           alt="Screenshot or gif of new changes"
         />
       </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={closeModal}>
+          Close
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
