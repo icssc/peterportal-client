@@ -21,7 +21,7 @@ import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme } from '@peterportal/types';
 
 interface AdminProfileLinksProps {
-  pathname: string;
+  pathname: string | null;
   onClose: () => void;
 }
 
