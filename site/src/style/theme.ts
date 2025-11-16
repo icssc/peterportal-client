@@ -9,22 +9,10 @@ const sharedTokens = {
   },
   misc: {
     midGray: '#8d8d8d',
-    red: {
-      primary: '#ce0000',
-      secondary: '#e7966d',
-    },
-    orange: {
-      primary: 'orange',
-      secondary: '#ecad6d',
-    },
-    yellow: {
-      primary: 'yellow',
-      secondary: '#f5d77f',
-    },
-    green: {
+    success: {
       primary: 'green',
-      secondary: '#87c587',
     },
+    error: '#ce0000',
   },
   chart: {
     blue: '#5babe1',
@@ -59,6 +47,17 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
+  reviews: {
+    ...sharedTokens.chart,
+  },
+  misc: {
+    ...sharedTokens.misc,
+    success: {
+      ...sharedTokens.misc.success,
+      secondary: sharedTokens.chart.green,
+    },
+    warning: sharedTokens.chart.orange,
+  },
 };
 
 // each overlay is about 5% brighter than the previous
@@ -85,33 +84,29 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
+  reviews: {
+    blue: '#316384', // TODO: pick a better color
+    green: '#295629',
+    red: '#e83434ff',
+    yellow: '#daa811ff',
+    orange: '#e67b10ff',
+  },
   misc: {
     ...sharedTokens.misc,
-    green: {
-      ...sharedTokens.misc.green,
+    success: {
+      ...sharedTokens.misc.success,
       secondary: '#295629',
     },
-    red: {
-      ...sharedTokens.misc.red,
-      primary: '#ff3333',
-      secondary: '#e83434ff', // TODO put an actual color here
-    },
-    yellow: {
-      ...sharedTokens.misc.yellow,
-      secondary: '#daa811ff', // TODO put an actual color here
-    },
-    orange: {
-      ...sharedTokens.misc.orange,
-      secondary: '#e67b10ff', // TODO put an actual color here
-    },
+    error: '#ff3333',
+    warning: sharedTokens.chart.orange,
   },
 };
 
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
-  success: { main: base.misc!.green!.primary! },
-  error: { main: base.misc!.red!.primary! },
-  warning: { main: base.misc!.orange!.secondary! },
+  success: { main: base.misc!.success!.primary! },
+  error: { main: base.misc!.error! },
+  warning: { main: base.misc!.warning! },
 });
 
 export let theme = createTheme({

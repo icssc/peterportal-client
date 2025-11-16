@@ -11,15 +11,18 @@
   --blue-tertiary: var(--mui-palette-tertiary-main);
   --blue-accent: var(--mui-palette-accent-main);
 
-  --green-primary: var(--mui-palette-misc-green-primary);
+  --green-primary: var(--mui-palette-misc-success-primary);
   --red-primary: var(--mui-palette-misc-red-primary);
 
-  --green-secondary: var(--mui-palette-misc-green-secondary);
-  --yellow-secondary: var(--mui-palette-misc-yellow-secondary);
-  --orange-secondary: var(--mui-palette-misc-orange-secondary);
-  --red-secondary: var(--mui-palette-misc-red-secondary);
+  --green-secondary: var(--mui-palette-misc-success-secondary);
 
   --mid-gray: var(--mui-palette-misc-midGray);
+
+  --review-blue: var(--mui-palette-reviews-blue);
+  --review-green: var(--mui-palette-reviews-green);
+  --review-red: var(--mui-palette-reviews-red);
+  --review-yellow: var(--mui-palette-reviews-yellow);
+  --review-orange: var(--mui-palette-reviews-orange);
 
   --chart-blue: var(--mui-palette-chart-blue);
   --chart-green: var(--mui-palette-chart-green);
