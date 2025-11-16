@@ -253,35 +253,6 @@ body hr {
 }
 
 [data-theme='dark'] {
-  .list-group-item,
-  .modal-content,
-  .dropdown-menu,
-  .dropdown-item,
-  .form-control,
-  .form-control:focus {
-    color: var(--text);
-    background-color: var(--overlay2);
-    &::placeholder {
-      color: #8888;
-    }
-  }
-
-  .form-control {
-    border-color: var(--overlay3);
-  }
-
-  .form-control:focus {
-    border-color: #86bbfb !important;
-  }
-
-  .custom-control-label::before {
-    background-color: var(--overlay3);
-  }
-
-  .dropdown-item:hover {
-    background-color: var(--overlay3);
-  }
-
   .btn-outline-primary {
     color: #0f83ff;
     border-color: #0f83ff;
