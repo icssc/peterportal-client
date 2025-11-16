@@ -106,6 +106,14 @@
   }
 }
 
+.profile-popover__link.active {
+  color: var(--blue-primary);
+
+  .MuiListItemIcon-root {
+    color: var(--blue-primary);
+  }
+}
+
 .login-button {
   color: var(--text);
 }

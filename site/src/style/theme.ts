@@ -260,12 +260,5 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiListItemIcon: {
-      styleOverrides: {
-        root: {
-          color: 'var(--text)',
-        },
-      },
-    },
   },
 });

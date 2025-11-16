@@ -4,7 +4,7 @@ import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import './Profile.scss';
 
-import Link from '@mui/material/Link';
+import Link from 'next/link';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
@@ -18,6 +18,45 @@ import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
+import { Theme } from '@peterportal/types';
+
+interface AdminProfileLinksProps {
+  pathname: string;
+  onClose: () => void;
+}
+
+const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
+  return (
+    <>
+      <ListItem>
+        <ListItemButton
+          className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
+          href="/admin/verify"
+          onClick={onClose}
+          component={Link}
+        >
+          <ListItemIcon>
+            <GradingIcon />
+          </ListItemIcon>
+          <ListItemText primary="Verify Reviews" />
+        </ListItemButton>
+      </ListItem>
+      <ListItem>
+        <ListItemButton
+          className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
+          href="/admin/reports"
+          onClick={onClose}
+          component={Link}
+        >
+          <ListItemIcon>
+            <FlagIcon />
+          </ListItemIcon>
+          <ListItemText primary="View Reports" />
+        </ListItemButton>
+      </ListItem>
+    </>
+  );
+};
 
 const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
@@ -45,13 +84,13 @@ const Profile = () => {
     { value: 'dark', label: 'Dark', icon: <DarkModeIcon /> },
   ];
 
-  const getCurrentTheme = (): string => {
+  const getCurrentTheme = (): Theme => {
     if (usingSystemTheme) return 'system';
     return darkMode ? 'dark' : 'light';
   };
 
   const handleThemeChange = (tab: string) => {
-    setTheme(tab as 'light' | 'system' | 'dark');
+    setTheme(tab as Theme);
   };
 
   const ProfilePopover = (
@@ -83,38 +122,9 @@ const Profile = () => {
               <ListItemText primary="Your Reviews" />
             </ListItemButton>
           </ListItem>
-          {isAdmin && (
-            <>
-              <ListItem>
-                <ListItemButton
-                  className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
-                  href="/admin/verify"
-                  onClick={() => setShow(false)}
-                  component={Link}
-                >
-                  <ListItemIcon>
-                    <GradingIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Verify Reviews" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem>
-                <ListItemButton
-                  className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
-                  href="/admin/reports"
-                  onClick={() => setShow(false)}
-                  component={Link}
-                >
-                  <ListItemIcon>
-                    <FlagIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="View Reports" />
-                </ListItemButton>
-              </ListItem>
-            </>
-          )}
+          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={() => setShow(false)} />}
           <ListItem>
-            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover__link" component={Link}>
+            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover__link" component="a">
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
