@@ -100,11 +100,8 @@ const YearModal: FC<YearModalProps> = (props) => {
     });
   };
 
-  // @todo: when hiding theres a delay that shows resetting the form
-
   return (
-    // @todo: define maxWidth and fullWidth in theme?
-    <Dialog open={show!} onClose={handleHide} maxWidth="xs" fullWidth>
+    <Dialog open={show} onClose={handleHide} maxWidth="xs" fullWidth>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate>
@@ -112,7 +109,6 @@ const YearModal: FC<YearModalProps> = (props) => {
             variant="standard"
             label="Name"
             type="text"
-            name="name" //@todo: probably remove this
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e: React.KeyboardEvent) => {
@@ -134,7 +130,6 @@ const YearModal: FC<YearModalProps> = (props) => {
             variant="standard"
             label="Year"
             type="number"
-            name="year"
             value={year}
             onChange={(e) => setYear(parseInt(e.target.value))}
             error={validated}

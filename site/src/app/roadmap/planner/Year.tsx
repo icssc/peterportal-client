@@ -75,7 +75,7 @@ const YearStats = ({ year }: YearStatsProps) => {
 };
 
 interface DeleteYearModalProps {
-  show?: boolean;
+  show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   yearName: string;
   yearIndex: number;
@@ -93,7 +93,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
   };
 
   return (
-    <Dialog open={show!} onClose={() => setShow(false)} fullWidth>
+    <Dialog open={show} onClose={() => setShow(false)} fullWidth>
       <DialogTitle>Delete Year</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate>

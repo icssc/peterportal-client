@@ -103,22 +103,6 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
     dispatch(setPlanIndex(allPlans.length));
   };
 
-  const handleClose = (_?: object, reason?: string) => {
-    const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
-    if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
-    setShowDropdown(false);
-  };
-
-  const editHandler = (index: number) => {
-    setEditIndex(index);
-    setNewPlanName(allPlans[index].name);
-  };
-
-  const deleteHandler = (index: number) => {
-    setDeleteIndex(index);
-    setNewPlanName(allPlans[index].name);
-  };
-
   return (
     <div ref={containerRef}>
       <Button
@@ -138,7 +122,7 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
         anchorReference="anchorEl"
         anchorEl={containerRef.current}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        onClose={handleClose}
+        onClose={() => setShowDropdown(false)}
       >
         {allPlans.map((plan, index) => (
           <RoadmapSelectableItem
@@ -147,11 +131,17 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
             index={index}
             clickHandler={() => {
               dispatch(setPlanIndex(index));
-              handleClose();
+              setShowDropdown(false);
             }}
-            editHandler={() => editHandler(index)}
+            editHandler={() => {
+              setEditIndex(index);
+              setNewPlanName(allPlans[index].name);
+            }}
             duplicateHandler={() => duplicatePlan(plan)}
-            deleteHandler={() => deleteHandler(index)}
+            deleteHandler={() => {
+              setDeleteIndex(index);
+              setNewPlanName(allPlans[index].name);
+            }}
           />
         ))}
         <div className="separator-label">
@@ -283,7 +273,6 @@ const RoadmapMultiplan: FC = () => {
               variant="standard"
               label="Roadmap Name"
               type="text"
-              name="roadmap_name"
               value={newPlanName}
               onChange={(e) => setNewPlanName(e.target.value)}
               slotProps={{
@@ -321,7 +310,6 @@ const RoadmapMultiplan: FC = () => {
               variant="standard"
               label="Roadmap Name"
               type="text"
-              name="roadmap_name"
               value={newPlanName}
               onChange={(e) => setNewPlanName(e.target.value)}
               slotProps={{

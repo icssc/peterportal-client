@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import changelogImage from '../../asset/roadmap-default.png';
+import changelogImage from '../../asset/course-preview.png';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
