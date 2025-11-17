@@ -56,6 +56,24 @@
     grid-area: C;
   }
 
+  .courseLabels {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+
+  .courseLabels > * {
+    white-space: nowrap;
+  }
+
+  .courseLabels > *:not(:last-child)::after {
+    content: '•';
+    margin: 0 6px;
+    color: var(--text-secondary);
+    white-space: pre;
+  }
+
   .units {
     margin-left: auto;
   }
@@ -118,41 +136,68 @@ button.course-delete-btn {
   $header-font-size: 14px;
 
   .course {
-    display: flex;
+    display: grid;
     border-radius: 8px;
     flex-direction: column;
     justify-content: center;
-    gap: 0;
+    grid-template-areas: 'A B' 'A C';
+    grid-template-columns: min-content auto;
+    grid-template-rows: repeat(2, min-content);
     width: calc(100% - 4px);
     margin: 2px;
     padding: 6px 12px;
-    box-shadow: 0 0 2px 0 var(--blue-primary);
+    box-shadow: 0 0 2px 0 #60616680;
+    align-items: center;
 
+    .course-drag-handle {
+      grid-area: A;
+      grid-row: 1 / -1;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      position: relative;
+      left: -6px;
+    }
+
+    .course-card-top {
+      grid-area: B;
+      margin-bottom: -4px;
+
+      & .MuiSvgIcon-root {
+        font-size: 20px;
+      }
+    }
+
+    .course-info {
+      grid-area: C;
+      overflow: hidden;
+      font-size: 14px;
+
+      .title {
+        font-size: 14px;
+        font-weight: bold;
+        display: inline;
+      }
+      .description {
+        display: inline;
+        float: none;
+      }
+
+      .course-labels {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+      }
+
+      .course-labels > *:not(:last-child)::after {
+        content: '•';
+        margin: 0 6px;
+        color: var(--text-secondary);
+      }
+    }
     .name {
       font-size: $header-font-size;
       margin: 0;
-    }
-    .title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-top: 0;
-      display: inline;
-      float: left;
-    }
-    .description {
-      display: inline;
-      float: none;
-    }
-
-    .courseLabels {
-      display: flex;
-      align-items: center;
-    }
-
-    .courseLabels > *:not(:last-child)::after {
-      content: '•';
-      margin: 0 6px;
-      color: var(--text-secondary);
     }
 
     .course-card-top {

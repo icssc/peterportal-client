@@ -91,9 +91,10 @@ const Course: FC<CourseProps> = (props) => {
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
-  //align the drag handle on the left center of the course component
-  //fix the misaligment with the title and description
+
   //after finishing search results the course component needs to be fixed when in the planner
+  // fix spacing for course lables
+  // drag handle is the only one that should be dragged
   return (
     <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
       <div className="course-drag-handle">
@@ -116,7 +117,7 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-info">
         <div className="title">{title}: </div>
         <div className="description"> {parsed_description}...</div>
-        <div className="courseLabels">
+        <div className="course-labels">
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
           </span>
