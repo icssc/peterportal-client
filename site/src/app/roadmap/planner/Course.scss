@@ -22,6 +22,7 @@
       cursor: grab;
       user-select: none;
       -webkit-user-select: none;
+
       &:active {
         cursor: grabbing;
       }
@@ -147,7 +148,7 @@ button.course-delete-btn {
     margin: 2px;
     padding: 6px 12px;
     box-shadow: 0 0 2px 0 #60616680;
-    align-items: center;
+    // align-items: center;
 
     .course-drag-handle {
       grid-area: A;
@@ -185,15 +186,16 @@ button.course-delete-btn {
 
       .course-labels {
         display: flex;
-        align-items: center;
+        justify-content: left;
         font-weight: 500;
+        gap: 6px;
       }
 
-      .course-labels > *:not(:last-child)::after {
-        content: '•';
-        margin: 0 6px;
-        color: var(--text-secondary);
-      }
+      // .course-labels > *:not(:last-child)::after {
+      //   content: '•';
+      //   margin: 0 6px;
+      //   color: var(--text-secondary);
+      // }
     }
     .name {
       font-size: $header-font-size;
@@ -216,7 +218,7 @@ button.course-delete-btn {
     gap: 8px;
     height: fit-content;
 
-    &:not(.disabled) .course {
+    &:not(.disabled) .course-drag-handle {
       cursor: grab;
       user-select: none;
       -webkit-user-select: none;

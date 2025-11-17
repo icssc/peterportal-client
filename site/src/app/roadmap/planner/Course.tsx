@@ -78,7 +78,12 @@ const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, description, minUnits, maxUnits, terms } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
   const GeData = getGEs(props.data);
-  const parsed_description = description.slice(0, 70); //find a better way to parse this data
+
+  const titleWords = title.split(' ').length;
+  const desiredLength = 12 - titleWords;
+
+  const parsedDescription = description.split(' ').slice(0, desiredLength).join(' ');
+  // const parsedDescription = description.slice(0, 70); //find a better way to parse this data
   const parsed_courseLevel = courseLevel.slice(0, 9);
 
   const dispatch = useAppDispatch();
@@ -116,13 +121,19 @@ const Course: FC<CourseProps> = (props) => {
       </div>
       <div className="course-info">
         <div className="title">{title}: </div>
-        <div className="description"> {parsed_description}...</div>
+        <div className="description"> {parsedDescription}...</div>
         <div className="course-labels">
           <span className="units">
             {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
+            {' • '}
           </span>
-          <div className="courseLevel">{parsed_courseLevel}</div>
+
+          <div className="courseLevel">
+            {parsed_courseLevel}
+            {' • '}
+          </div>
           <div className="ge">{GeData}</div>
+
           <div className="course-tooltip">
             <RecentOfferingsTooltip terms={terms} />
           </div>
