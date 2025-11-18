@@ -23,7 +23,6 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits';
 import { VisuallyHiddenInput } from '../../../helpers/styling';
-import Link from 'next/link';
 
 interface TransferUnitDetails {
   date: string;
@@ -288,32 +287,36 @@ const ImportTranscriptPopup: FC = () => {
             <ol>
               <li>
                 Go to{' '}
-                <Link href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
+                <a href="https://www.reg.uci.edu/access/student/transcript/?seg=U" target="_blank" rel="noreferrer">
                   Student Access
-                </Link>
+                </a>
               </li>
               <li>Navigate to "Unofficial Transcript"</li>
               <li>Save the page (ctrl/cmd + s)</li>
             </ol>
             <FormControl>
               <FormLabel>Transcript File</FormLabel>
-              <Button
-                component="label"
-                role={undefined}
-                variant="outlined"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-                size="small"
-              >
-                {fileLabel || 'Browse files'}
-                <VisuallyHiddenInput
-                  required
-                  type="file"
-                  name="transcript"
-                  accept="text/html"
-                  onChange={handleFileChange}
-                />
-              </Button>
+              <div className="transcript-upload">
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="outlined"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  size="small"
+                >
+                  Browse files
+                  <VisuallyHiddenInput
+                    required
+                    type="file"
+                    name="transcript"
+                    accept="text/html"
+                    onChange={handleFileChange}
+                  />
+                </Button>
+
+                <div className="file-path">{fileLabel || 'No file selected.'}</div>
+              </div>
             </FormControl>
           </Box>
         </DialogContent>
