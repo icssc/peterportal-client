@@ -9,8 +9,9 @@ import roadmapReducer from './slices/roadmapSlice';
 import searchReducer from './slices/searchSlice';
 import transferCreditsReducer from './slices/transferCreditsSlice';
 import userReducer from './slices/userSlice';
-import { UserSliceState } from '@peterportal/types';
+import scheduleReducer from './slices/scheduleSlice';
 import courseCatalogReducer from './slices/courseCatalogSlice';
+import { UserSliceState } from '@peterportal/types';
 
 const reducer = {
   coursePreview: coursePreviewReducer,
@@ -23,6 +24,7 @@ const reducer = {
   search: searchReducer,
   transferCredits: transferCreditsReducer,
   user: userReducer,
+  schedule: scheduleReducer,
   courseCatalog: courseCatalogReducer,
 };
 
