@@ -29,7 +29,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
     if (location.pathname === '/') {
       dispatch(setShowSavedCourses(!query));
     }
-    if (query && query !== search.query) {
+    if (query !== search.query) {
       dispatch(setQuery({ index, query }));
       setPendingRequest(null);
     }

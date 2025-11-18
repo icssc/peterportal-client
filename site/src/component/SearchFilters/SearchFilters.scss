@@ -15,6 +15,33 @@
   }
 }
 
+.search-filters-menu {
+  max-width: 400px;
+
+  &.departments-menu {
+    width: 400px;
+    > ul {
+      padding-top: 0;
+    }
+  }
+
+  .search-filter-item {
+    gap: 4px;
+  }
+
+  .search-filter-item .item-text {
+    white-space: normal;
+  }
+
+  .dept-input {
+    position: sticky;
+    top: 0;
+    margin-bottom: 8px;
+    background-color: inherit;
+    z-index: 1;
+  }
+}
+
 // p.filter-placeholder {
 //   color: var(--text-secondary);
 //   margin: 0;
