@@ -37,6 +37,11 @@
     align-items: center;
     height: 24px;
   }
+
+  @media (max-width: 350px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 .reviewcard-content {
