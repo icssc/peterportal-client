@@ -22,6 +22,13 @@ const menuProps: Partial<MenuProps> = {
   },
 };
 
+function briefLabel(selected: string[], defaultLabel: string) {
+  if (selected.length == 0) return defaultLabel;
+  if (selected.length == 1) return selected[0];
+
+  return `${selected[0]} +${selected.length - 1}`;
+}
+
 function DepartmentSelect() {
   const departments = useAppSelector((state) => state.departments.departments);
   const selectedFilters = useAppSelector(selectCourseFilters);
@@ -61,10 +68,7 @@ function DepartmentSelect() {
       }}
       onChange={handleDepartmentSelection}
       renderValue={(selected) => {
-        if (selected.length === 0) return 'Departments';
-        if (selected.length === 1) return selected[0];
-
-        return `${selected[0]} +${selected.length - 1}`;
+        return briefLabel(selected, 'Departments');
       }}
     >
       <TextField
@@ -167,8 +171,7 @@ const SearchFilters: FC = () => {
           displayEmpty
           variant="outlined"
           renderValue={(selected) => {
-            return selected.length === 0 ? 'Level' : selected.join(', ');
-            // return <p className="filter-value">{selected.length === 0 ? 'Level' : selected.join(', ')}</p>;
+            return briefLabel(selected, 'Level');
           }}
           MenuProps={menuProps}
         >
@@ -189,8 +192,7 @@ const SearchFilters: FC = () => {
           onChange={handleGeCategorySelection}
           displayEmpty
           renderValue={(selected) => {
-            return selected.length === 0 ? 'GE' : selected.join(', ');
-            // return <p className="filter-value">{selected.length === 0 ? 'GE' : selected.join(', ')}</p>;
+            return briefLabel(selected, 'GE');
           }}
           MenuProps={menuProps}
         >
