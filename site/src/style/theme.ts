@@ -56,7 +56,6 @@ const lightPalette: PaletteOptions = {
       ...sharedTokens.misc.success,
       secondary: sharedTokens.chart.green,
     },
-    warning: sharedTokens.chart.orange,
   },
 };
 
@@ -98,7 +97,6 @@ const darkPalette: PaletteOptions = {
       secondary: '#295629',
     },
     error: '#ff3333',
-    warning: sharedTokens.chart.orange,
   },
 };
 
@@ -106,7 +104,6 @@ const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
   success: { main: base.misc!.success!.primary! },
   error: { main: base.misc!.error! },
-  warning: { main: base.misc!.warning! },
 });
 
 export let theme = createTheme({
