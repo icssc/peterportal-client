@@ -2,9 +2,20 @@ import CoursePage from '../CoursePage';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const id = decodeURIComponent((await params).id);
+
+  const input = encodeURIComponent(JSON.stringify({ courseID: id }));
+
+  const url = `${process.env.BACKEND_ROOT_URL}/trpc/courses.get?input=${input}`;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  const course = json.result.data;
+  const courseName = `${course.department} ${course.courseNumber}`;
+
   return {
-    title: `${id} | PeterPortal`,
-    description: `View recent offerings, prerequisites, grade distributions, and reviews for ${id} at UC Irvine.`,
+    title: `${courseName} | ${course.title}`,
+    description: course.description,
   };
 }
 

@@ -2,9 +2,20 @@ import ProfessorPage from '../ProfessorPage';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const id = decodeURIComponent((await params).id);
+
+  const input = encodeURIComponent(JSON.stringify({ ucinetid: id }));
+
+  const url = `${process.env.BACKEND_ROOT_URL}/trpc/professors.get?input=${input}`;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  const professor = json.result.data;
+  const profDescription = `${professor.title} in ${professor.department}`;
+
   return {
-    title: `${id} | PeterPortal`,
-    description: `View offered courses, grade distributions, and reviews for Professor ${id} at UC Irvine.`,
+    title: `${professor.name}`,
+    description: profDescription,
   };
 }
 
