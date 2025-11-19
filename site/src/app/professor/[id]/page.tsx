@@ -11,11 +11,26 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const json = await res.json();
 
   const professor = json.result.data;
-  const profDescription = `${professor.title} in ${professor.department}`;
+
+  const title = professor.name;
+  const description = `${professor.title} in ${professor.department}`;
 
   return {
-    title: `${professor.name}`,
-    description: profDescription,
+    title,
+    description,
+
+    openGraph: {
+      title,
+      description,
+      url: `https://peterportal.org/professor/${id}`,
+      type: 'website',
+    },
+
+    twitter: {
+      title,
+      description,
+      card: 'summary',
+    },
   };
 }
 
