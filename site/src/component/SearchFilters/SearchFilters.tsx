@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent, useState } from 'react';
+import { FC, KeyboardEvent, useEffect, useState } from 'react';
 import './SearchFilters.scss';
 
 import CheckIcon from '@mui/icons-material/Check';
@@ -33,6 +33,7 @@ function DepartmentSelect() {
   const departments = useAppSelector((state) => state.departments.departments);
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
+  const [inputEl, setInputEl] = useState<HTMLInputElement | null>(null);
   const [deptFilterText, setDeptFilterText] = useState('');
 
   const handleDepartmentSelection = (event: SelectChangeEvent<string[]>) => {
@@ -51,8 +52,12 @@ function DepartmentSelect() {
     event.stopPropagation();
   };
 
+  // Cannot use refs because refs can't be used as hook dependencies
+  useEffect(() => {
+    inputEl?.focus();
+  }, [inputEl]);
+
   const paperProps = {
-    style: { maxHeight: 'calc(100vh - 400px)' },
     className: 'search-filters-menu departments-menu',
   };
 
@@ -80,6 +85,7 @@ function DepartmentSelect() {
         defaultValue={deptFilterText}
         value={deptFilterText}
         onChange={(event) => setDeptFilterText(event.target.value)}
+        inputRef={setInputEl}
       />
       {Object.entries(departments).map(([code, name]) => {
         const labelText = `${code}: ${name}`;
