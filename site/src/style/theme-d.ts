@@ -51,3 +51,9 @@ declare module '@mui/material/styles' {
     chart?: Partial<ChartColorScale>;
   }
 }
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsSizeOverrides {
+    xsmall: true;
+  }
+}

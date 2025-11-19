@@ -7,11 +7,13 @@ import {
   initialPlanState,
   reviseRoadmap,
   setPlanIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
 import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
-import spawnToast from '../../../helpers/toastify';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -25,6 +27,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
 import { addPlanner, deletePlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
 import { deepCopy } from '../../../helpers/util';
+import { theme } from '../../../style/theme';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -94,8 +97,11 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
       <Button
         className="dropdown-button"
         variant="outlined"
+        color="inherit"
         onClick={() => setShowDropdown(!showDropdown)}
         endIcon={<ArrowDropDownIcon />}
+        /** @todo potentially add this override to the theme as a variant */
+        sx={{ borderColor: theme.palette.text.secondary }}
       >
         {name}
       </Button>
@@ -174,8 +180,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
     setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.length;
@@ -183,8 +199,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
 
     const plannerToUpdate = allPlans[editIdx];
     const revision = updatePlannerName(plannerToUpdate, newPlanName);
