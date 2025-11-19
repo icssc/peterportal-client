@@ -24,6 +24,9 @@ const SearchPagination: FC<SearchPaginationProps> = ({ index }) => {
   const numPages = Math.ceil(searchData.count / NUM_RESULTS_PER_PAGE);
   const activePage = searchData.pageNumber + 1;
 
+  // hide if there is no page or only one page
+  if (numPages <= 1) return null;
+
   return (
     <div className="search-pagination">
       <Pagination
