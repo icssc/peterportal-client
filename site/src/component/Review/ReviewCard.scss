@@ -82,19 +82,19 @@
   // color scheme for numerical ratings
   // reversed for difficulty so 1 => r5, etc.
   .r1 {
-    background-color: var(--red-secondary);
+    background-color: var(--review-red);
   }
   .r2 {
-    background-color: var(--orange-secondary);
+    background-color: var(--review-orange);
   }
   .r3 {
-    background-color: var(--yellow-secondary);
+    background-color: var(--review-yellow);
   }
   .r4 {
-    background-color: var(--green-secondary);
+    background-color: var(--review-green);
   }
   .r5 {
-    background-color: var(--blue-primary);
+    background-color: var(--review-blue);
   }
 }
 

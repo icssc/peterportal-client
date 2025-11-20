@@ -9,22 +9,17 @@ const sharedTokens = {
   },
   misc: {
     midGray: '#8d8d8d',
-  },
-  chart: {
-    red: {
-      secondary: '#e7966d',
-    },
-    orange: {
-      primary: 'orange',
-      secondary: '#ecad6d',
-    },
-    yellow: {
-      primary: 'yellow',
-      secondary: '#f5d77f',
-    },
-    green: {
+    success: {
       primary: 'green',
     },
+    error: '#ce0000',
+  },
+  chart: {
+    blue: '#5babe1',
+    red: '#e7966d',
+    orange: '#ecad6d',
+    yellow: '#f5d77f',
+    green: '#87c587',
     pass: '#4ab486',
     noPass: '#e36436',
   },
@@ -52,15 +47,14 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  chart: {
+  reviews: {
     ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
-      secondary: '#87c587',
-    },
-    red: {
-      primary: '#ce0000',
-      ...sharedTokens.chart.red,
+  },
+  misc: {
+    ...sharedTokens.misc,
+    success: {
+      ...sharedTokens.misc.success,
+      secondary: sharedTokens.chart.green,
     },
   },
 };
@@ -89,24 +83,27 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
-  chart: {
-    ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
+  reviews: {
+    blue: '#41779b',
+    green: '#295629',
+    red: '#b7523e',
+    yellow: '#c49e3e',
+    orange: '#c47e38',
+  },
+  misc: {
+    ...sharedTokens.misc,
+    success: {
+      ...sharedTokens.misc.success,
       secondary: '#295629',
     },
-    red: {
-      primary: '#ff3333',
-      ...sharedTokens.chart.red,
-    },
+    error: '#ff3333',
   },
 };
 
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
-  success: { main: base.chart!.green!.primary! },
-  error: { main: base.chart!.red!.primary! },
-  warning: { main: base.chart!.orange!.secondary! },
+  success: { main: base.misc!.success!.primary! },
+  error: { main: base.misc!.error! },
 });
 
 export let theme = createTheme({

@@ -106,31 +106,31 @@ export default class Pie extends Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: getCssVariable('--blue-secondary-light'),
+        color: getCssVariable('--chart-blue'),
       },
       {
         id: 'B',
         label: 'B',
         value: gradeBCount,
-        color: getCssVariable('--green-secondary-light'),
+        color: getCssVariable('--chart-green'),
       },
       {
         id: 'C',
         label: 'C',
         value: gradeCCount,
-        color: getCssVariable('--yellow-secondary-light'),
+        color: getCssVariable('--chart-yellow'),
       },
       {
         id: 'D',
         label: 'D',
         value: gradeDCount,
-        color: getCssVariable('--orange-secondary-light'),
+        color: getCssVariable('--chart-orange'),
       },
       {
         id: 'F',
         label: 'F',
         value: gradeFCount,
-        color: getCssVariable('--red-secondary-light'),
+        color: getCssVariable('--chart-red'),
       },
     ];
 
