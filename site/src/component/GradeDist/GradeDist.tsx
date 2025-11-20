@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useCallback, useContext } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import Chart from './Chart';
 import Pie from './Pie';
 import './GradeDist.scss';
@@ -6,8 +6,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import ThemeContext from '../../style/theme-context';
+import { MenuItem, Select } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -38,8 +37,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -168,58 +165,65 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
   const selectedProfCourseName =
     profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
+  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (
     <div className="gradedist-menu">
       {props.minify && (
         <div className="gradedist-filter">
-          <DropdownButton
-            className="ppc-dropdown-btn"
-            title="Chart Type"
-            variant={buttonVariant}
-            onSelect={(value) => setChartType(value as ChartTypes)}
+          <Select
+            value={chartType}
+            onChange={(e) => setChartType(e.target.value as ChartTypes)}
+            renderValue={() => 'Chart Type'}
           >
-            <Dropdown.Item eventKey="bar">Bar</Dropdown.Item>
-            <Dropdown.Item eventKey="pie">Pie</Dropdown.Item>
-          </DropdownButton>
+            <MenuItem key="bar" value="bar">
+              Bar
+            </MenuItem>
+            <MenuItem key="pie" value="pie">
+              Pie
+            </MenuItem>
+          </Select>
         </div>
       )}
 
       <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={selectedProfCourseName}
-          variant={buttonVariant}
-          onSelect={updateProfCourse}
+        <Select
+          value={profCourseSelectedValue}
+          onChange={(e) => updateProfCourse(e.target.value)}
+          renderValue={() => {
+            return selectedProfCourseName;
+          }}
+          displayEmpty
         >
           {profCourseOptions?.map((q) => {
             return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
+              <MenuItem key={q.value} value={q.value}>
                 {q.text}
-              </Dropdown.Item>
+              </MenuItem>
             );
           })}
-        </DropdownButton>
+        </Select>
       </div>
 
       <div className="gradedist-filter">
-        <DropdownButton
-          className="ppc-dropdown-btn"
-          title={selectedQuarterName}
-          variant={buttonVariant}
-          onSelect={(value) => setCurrentQuarter(value!)}
+        <Select
+          value={currentQuarter}
+          onChange={(e) => setCurrentQuarter(e.target.value)}
+          renderValue={() => {
+            return selectedQuarterName;
+          }}
+          displayEmpty
         >
           {quarterEntries?.map((q) => {
             return (
-              <Dropdown.Item key={q.value} eventKey={q.value}>
+              <MenuItem key={q.value} value={q.value}>
                 {q.text}
-              </Dropdown.Item>
+              </MenuItem>
             );
           })}
-        </DropdownButton>
+        </Select>
       </div>
     </div>
   );

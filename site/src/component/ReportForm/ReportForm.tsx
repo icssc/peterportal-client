@@ -1,11 +1,10 @@
 import React, { FC, useState } from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import './ReportForm.scss';
 import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
-import spawnToast from '../../helpers/toastify';
+import Toast, { ToastSeverity } from '../../helpers/toast';
+import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -17,15 +16,26 @@ interface ReportFormProps {
 const ReportForm: FC<ReportFormProps> = (props) => {
   const [reason, setReason] = useState<string>('');
   const [busy, setBusy] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState<ToastSeverity>('info');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const postReport = async (report: ReportSubmission) => {
     setBusy(true);
     try {
       await trpc.reports.add.mutate(report);
-      spawnToast('Your report has been submitted successfully');
+      setToastMsg('Your report has been submitted successfully');
+      setToastSeverity('success');
+      setShowToast(true);
       props.closeForm();
     } catch {
-      spawnToast('Unable to submit review', true);
+      setToastMsg('Unable to submit review');
+      setToastSeverity('error');
+      setShowToast(true);
     } finally {
       setBusy(false);
     }
@@ -33,7 +43,12 @@ const ReportForm: FC<ReportFormProps> = (props) => {
 
   const submitReport = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (reason.length === 0) return spawnToast('Report reason must not be empty', true);
+    if (reason.length === 0) {
+      setToastMsg('Report reason must not be empty');
+      setToastSeverity('error');
+      setShowToast(true);
+      return;
+    }
 
     const report = { reviewId: props.reviewId, reason };
     postReport(report);
@@ -47,29 +62,36 @@ const ReportForm: FC<ReportFormProps> = (props) => {
         <h2>Report Review</h2>
       </Modal.Header>
       <Modal.Body>
-        <Form noValidate onSubmit={submitReport}>
-          <Form.Label className="ppc-modal-form-label">Review Content</Form.Label>
+        <Box component="form" noValidate onSubmit={submitReport}>
+          <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
             <i>{props.reviewContent}</i>
           </p>
 
-          <Form.Group className="form-group">
-            <Form.Label>Why are you reporting this review?</Form.Label>
-            <Form.Control
-              as="textarea"
+          <FormLabel>Why are you reporting this review?</FormLabel>
+
+          <FormControl>
+            <TextField
               placeholder="Enter a reason..."
-              minLength={1}
-              maxLength={500}
+              multiline
+              slotProps={{
+                htmlInput: {
+                  minLength: 1,
+                  maxLength: 500,
+                },
+              }}
               onChange={(e) => setReason(e.target.value)}
               value={reason}
               rows={4}
             />
-          </Form.Group>
-          <Button variant="primary" type="submit" disabled={!reason.length || busy}>
+          </FormControl>
+
+          <Button type="submit" disabled={!reason.length} loading={busy}>
             Submit Report
           </Button>
-        </Form>
+        </Box>
       </Modal.Body>
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </Modal>
   );
 };

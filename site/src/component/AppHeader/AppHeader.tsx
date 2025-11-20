@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, FC, useContext } from 'react';
+import { FC } from 'react';
 
 import Logo from '../../asset/peterportal-banner-logo.svg';
 import Image from 'next/image';
@@ -8,31 +8,18 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import trpc from '../../trpc';
-import { Button } from 'react-bootstrap';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
-import ThemeContext from '../../style/theme-context';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import SmsIcon from '@mui/icons-material/Sms';
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
-  const [week, setWeek] = useState('');
-  const { darkMode } = useContext(ThemeContext);
-  const buttonVariant = darkMode ? 'dark' : 'light';
-
-  useEffect(() => {
-    // Get the current week data
-    trpc.schedule.currentWeek.query().then((res) => {
-      /** @todo make this less code-smelly */
-      setWeek(res.display.split(' • ')[0]);
-    });
-  }, []);
+  const currentWeek = useAppSelector((state) => state.schedule.currentWeek);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -51,22 +38,22 @@ const AppHeader: FC = () => {
       </p>
       <div className="feedback">
         <Button
-          as="a"
-          href="https://github.com/icssc-projects/peterportal-client/issues/new"
+          color="inherit"
+          href="https://github.com/icssc/peterportal-client/issues/new/choose"
           target="_blank"
           rel="noopener noreferrer"
-          variant={buttonVariant}
+          startIcon={<GitHubIcon />}
         >
-          <GitHubIcon /> Report an issue
+          Report an issue
         </Button>
         <Button
-          as="a"
+          color="inherit"
           href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
           target="_blank"
           rel="noopener noreferrer"
-          variant={buttonVariant}
+          startIcon={<SmsIcon />}
         >
-          <SmsIcon /> Feedback
+          Feedback
         </Button>
       </div>
     </div>
@@ -100,7 +87,7 @@ const AppHeader: FC = () => {
             </PPCOverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
-            {week}
+            {currentWeek}
           </p>
           <Profile />
         </div>

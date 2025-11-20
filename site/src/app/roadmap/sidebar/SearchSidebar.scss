@@ -1,9 +1,6 @@
 @use '../../../globals';
 
 .search-sidebar {
-  .saved-course-title {
-    margin: 12px 6px 0;
-  }
   &.mobile {
     @include globals.bottom-overlay(450);
   }

@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   defaultPlan,
@@ -7,11 +7,13 @@ import {
   initialPlanState,
   reviseRoadmap,
   setPlanIndex,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Button as Button2, Form, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
-import spawnToast from '../../../helpers/toastify';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
@@ -19,12 +21,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { Button, IconButton, Popover } from '@mui/material';
+import { Box, Button, IconButton, FormControl, FormLabel, Popover, TextField } from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
 import { addPlanner, deletePlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
 import { deepCopy } from '../../../helpers/util';
+import { theme } from '../../../style/theme';
 
 interface RoadmapSelectableItemProps {
   plan: RoadmapPlan;
@@ -94,8 +97,11 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
       <Button
         className="dropdown-button"
         variant="outlined"
+        color="inherit"
         onClick={() => setShowDropdown(!showDropdown)}
         endIcon={<ArrowDropDownIcon />}
+        /** @todo potentially add this override to the theme as a variant */
+        sx={{ borderColor: theme.palette.text.secondary }}
       >
         {name}
       </Button>
@@ -174,8 +180,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const handleSubmitNewPlan = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
     setShowAddPlan(false);
     addNewPlan(newPlanName);
     const newIndex = allPlans.length;
@@ -183,8 +199,18 @@ const RoadmapMultiplan: FC = () => {
   };
 
   const modifyPlanName = () => {
-    if (!newPlanName) return spawnToast('Name cannot be empty', true);
-    if (isDuplicateName()) return spawnToast('A plan with that name already exists', true);
+    if (!newPlanName) {
+      dispatch(setToastMsg('Name cannot be empty'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
+    if (isDuplicateName()) {
+      dispatch(setToastMsg('A plan with that name already exists'));
+      dispatch(setShowToast(true));
+      dispatch(setToastSeverity('error'));
+      return;
+    }
 
     const plannerToUpdate = allPlans[editIdx];
     const revision = updatePlannerName(plannerToUpdate, newPlanName);
@@ -217,32 +243,33 @@ const RoadmapMultiplan: FC = () => {
           <h2>New Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
-              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
-              <Form.Control
+          <Box
+            component="form"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault(); // prevent submitting form (reloads the page)
+              handleSubmitNewPlan();
+            }}
+          >
+            <FormControl>
+              <FormLabel>Roadmap Name</FormLabel>
+              <TextField
                 required
                 type="text"
                 name="roadmap_name"
                 value={newPlanName}
                 onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
+                slotProps={{
+                  htmlInput: {
+                    maxLength: 35,
+                  },
                 }}
-                maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
-            </Form.Group>
-          </Form>
-          <Button2
-            variant="primary"
-            onClick={() => {
-              handleSubmitNewPlan();
-            }}
-          >
-            Create Roadmap
-          </Button2>
+              />
+            </FormControl>
+
+            <Button type="submit">Create Roadmap</Button>
+          </Box>
         </Modal.Body>
       </Modal>
 
@@ -260,32 +287,33 @@ const RoadmapMultiplan: FC = () => {
           <h2>Edit Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
-              <Form.Label className="ppc-modal-form-label">Roadmap Name</Form.Label>
-              <Form.Control
+          <Box
+            component="form"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault(); // prevent submitting form (reloads the page)
+              modifyPlanName();
+            }}
+          >
+            <FormControl>
+              <FormLabel>Roadmap Name</FormLabel>
+              <TextField
                 required
                 type="text"
                 name="roadmap_name"
                 value={newPlanName}
                 onChange={(e) => setNewPlanName(e.target.value)}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  // prevent submitting form (reloads the page)
-                  if (e.key === 'Enter') e.preventDefault();
+                slotProps={{
+                  htmlInput: {
+                    maxLength: 35,
+                  },
                 }}
-                maxLength={35}
                 placeholder={defaultPlan.name}
-              ></Form.Control>
-            </Form.Group>
-          </Form>
-          <Button2
-            variant="primary"
-            onClick={() => {
-              modifyPlanName();
-            }}
-          >
-            Save Roadmap
-          </Button2>
+              />
+            </FormControl>
+
+            <Button type="submit">Save Roadmap</Button>
+          </Box>
         </Modal.Body>
       </Modal>
 
@@ -303,19 +331,18 @@ const RoadmapMultiplan: FC = () => {
           <h2>Delete Roadmap</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form noValidate className="ppc-modal-form">
-            <Form.Group className="form-group">
-              <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
-            </Form.Group>
-          </Form>
-          <Button2
-            variant="danger"
-            onClick={() => {
-              deleteCurrentPlan();
-            }}
-          >
-            I am sure
-          </Button2>
+          <Box component="form" noValidate>
+            <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
+
+            <Button
+              color="error"
+              onClick={() => {
+                deleteCurrentPlan();
+              }}
+            >
+              I am sure
+            </Button>
+          </Box>
         </Modal.Body>
       </Modal>
     </MultiplanDropdown>

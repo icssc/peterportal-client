@@ -1,13 +1,19 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Button as Button2, Form, Modal } from 'react-bootstrap';
-import { setPlanIndex, selectAllPlans, getNextPlannerTempId } from '../../../store/slices/roadmapSlice.ts';
+import { Modal } from 'react-bootstrap';
+import {
+  setPlanIndex,
+  selectAllPlans,
+  getNextPlannerTempId,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
+} from '../../../store/slices/roadmapSlice.ts';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks.ts';
 import trpc from '../../../trpc.ts';
 import { expandAllPlanners, makeUniquePlanName } from '../../../helpers/planner.ts';
 import { markTransfersAsUnread } from '../../../helpers/transferCredits.ts';
-import spawnToast from '../../../helpers/toastify.ts';
 import helpImage from '../../../asset/zot4plan-import-help.png';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn.ts';
 import { useTransferredCredits } from '../../../hooks/transferCredits.ts';
@@ -16,7 +22,7 @@ import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Button } from '@mui/material';
+import { Box, Button, FormControl, FormLabel, MenuItem, Select, TextField } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits.ts';
 import { useReviseAndSaveRoadmap } from '../../../hooks/planner.ts';
 
@@ -65,7 +71,9 @@ const ImportZot4PlanPopup: FC = () => {
       const expandedPlanners = await expandAllPlanners(savedRoadmap.planners);
       // Check for validity: length and invalid course names
       if (expandedPlanners.length < 1) {
-        spawnToast('The schedule "' + schedName + '" could not be imported', true);
+        dispatch(setToastMsg('The schedule "' + schedName + '" could not be imported'));
+        dispatch(setToastSeverity('error'));
+        dispatch(setShowToast(true));
         return;
       }
       // Unknown (undefined) course names will crash PeterPortal if loaded, so remove them
@@ -78,15 +86,19 @@ const ImportZot4PlanPopup: FC = () => {
         }
       }
       if (problemCount > 0) {
-        spawnToast('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)', true);
+        dispatch(setToastMsg('Partially imported "' + schedName + '" (removed ' + problemCount + ' unknown course(s)'));
+        dispatch(setToastSeverity('error'));
+        dispatch(setShowToast(true));
       }
       expandedPlanners[0].name = makeUniquePlanName(expandedPlanners[0].name, allPlanData);
       const revision = addPlanner(nextPlanTempId, expandedPlanners[0].name, expandedPlanners[0].content.yearPlans);
-      reviseAndSaveRoadmap(revision, true);
+      reviseAndSaveRoadmap(revision);
       dispatch(setPlanIndex(allPlanData.length));
     } catch (err) {
       // Notify the user
-      spawnToast('The schedule "' + schedName + '" could not be retrieved', true);
+      dispatch(setToastMsg('The schedule "' + schedName + '" could not be retrieved'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
     }
   };
 
@@ -108,8 +120,8 @@ const ImportZot4PlanPopup: FC = () => {
           <h2>Import Schedule from Zot4Plan</h2>
         </Modal.Header>
         <Modal.Body>
-          <Form className="ppc-modal-form">
-            <Form.Group className="form-group">
+          <Box component="form" noValidate>
+            <FormControl>
               <p>
                 To add your{' '}
                 <a target="_blank" href="https://zot4plan.com/" rel="noreferrer">
@@ -124,10 +136,11 @@ const ImportZot4PlanPopup: FC = () => {
                 height={helpImage.height}
                 alt="Screenshot of Zot4Plan's save feature where the schedule name is typically used"
               />
-            </Form.Group>
-            <Form.Group className="form-group" controlId="ScheduleName">
-              <Form.Label className="ppc-modal-form-label">Schedule Name</Form.Label>
-              <Form.Control
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Schedule Name</FormLabel>
+              <TextField
                 type="text"
                 placeholder="Exact Zot4Plan schedule name"
                 onChange={(e) => setScheduleName(e.target.value)}
@@ -144,23 +157,32 @@ const ImportZot4PlanPopup: FC = () => {
                   No Zot4Plan schedule name contains less than 8 characters
                 </span>
               )}
-            </Form.Group>
-            <Form.Group className="form-group" controlId="CurrentYear">
-              <Form.Label className="ppc-modal-form-label">I am currently a...</Form.Label>
-              <Form.Control as="select" onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
-                <option value="1">1st year</option>
-                <option value="2">2nd year</option>
-                <option value="3">3rd year</option>
-                <option value="4">4th year</option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-          <Button2 variant="primary" disabled={busy || scheduleName.length < 8} onClick={handleImport}>
-            {busy ? 'Importing...' : 'Import and Save'}
-          </Button2>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>I am currently a...</FormLabel>
+              <Select
+                onChange={(ev) => setStudentYear(ev.target.value)}
+                value={studentYear}
+                /** @todo Remove after migration to MUI Modal. This temporarily prevents z-indexing issues due to the lack of a MUI Portal. */
+                MenuProps={{
+                  disablePortal: true,
+                }}
+              >
+                <MenuItem value="1">1st year</MenuItem>
+                <MenuItem value="2">2nd year</MenuItem>
+                <MenuItem value="3">3rd year</MenuItem>
+                <MenuItem value="4">4th year</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+              Import and Save
+            </Button>
+          </Box>
         </Modal.Body>
       </Modal>
-      <Button variant="text" className="ppc-btn" onClick={() => setShowModal(true)}>
+      <Button variant="text" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>
       </Button>

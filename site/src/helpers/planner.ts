@@ -18,7 +18,6 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
-  CourseGQLData,
   InvalidCourseData,
   PlannerData,
   PlannerQuarterData,
@@ -27,7 +26,6 @@ import {
 } from '../types/types';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
-import spawnToast from './toastify';
 import { compareRoadmaps } from './roadmap';
 
 export function defaultYear() {

@@ -1,6 +1,7 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import { Button, Stack } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -16,6 +17,9 @@ import {
   setInitialPlannerData,
   setInvalidCourses,
   setRoadmapLoading,
+  setToastMsg,
+  setToastSeverity,
+  setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
@@ -95,7 +99,20 @@ const PlannerLoader: FC = () => {
   const saveRoadmapAndUpsertTransfers = useCallback(
     async (collapsedPlans: SavedPlannerData[]) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      await saveRoadmap(isLoggedIn, null, collapsedPlans, false);
+      const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
+      if (res && isLoggedIn) {
+        dispatch(setToastMsg('Roadmap saved to your account!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      } else if (res && !isLoggedIn) {
+        setToastMsg('Roadmap saved locally! Log in to save it to your account');
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      } else if (!res) {
+        setToastMsg('Unable to save roadmap to your account');
+        setToastSeverity('error');
+        setShowToast(true);
+      }
 
       // upsert transfers
       const { courses, ap, ge, other } = await loadLocalTransfers();
@@ -193,12 +210,13 @@ const PlannerLoader: FC = () => {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={overrideAccountRoadmap}>
-          This Device
-        </Button>
-        <Button variant="secondary" onClick={() => setShowSyncModal(false)}>
-          My Account
-        </Button>
+        <Stack direction="row" spacing={2}>
+          {/* @todo: When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
+          <Button onClick={overrideAccountRoadmap}>This Device</Button>
+          <Button color="inherit" onClick={() => setShowSyncModal(false)}>
+            My Account
+          </Button>
+        </Stack>
       </Modal.Footer>
     </Modal>
   );

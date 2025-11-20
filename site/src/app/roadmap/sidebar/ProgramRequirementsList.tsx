@@ -29,7 +29,7 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Collapse } from '@mui/material';
+import { Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 
 interface SourceOverlayProps {
@@ -86,7 +86,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   const insertCourseOnClick = async () => {
     setLoading(true);
     const fullData = await loadFullData();
-    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData);
+    const missingPrerequisites = getMissingPrerequisites(clearedCourses, fullData.prerequisiteTree);
     dispatch(setActiveCourse({ course: fullData as CourseGQLData }));
     dispatch(setActiveMissingPrerequisites(missingPrerequisites));
     dispatch(setShowAddCourse(true));
@@ -107,7 +107,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   return (
     <div className={className} {...tappableCourseProps} style={{ fontSize }}>
       <SourceOverlay completedBy={completedBy} />
-      <CourseNameAndInfo data={courseData} openPopoverLeft popupListener={handlePopoverStateChange} alwaysCollapse />
+      <CourseNameAndInfo data={courseData} popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && (
         <div className="spinner">
           <LoadingSpinner />
@@ -282,13 +282,7 @@ const MarkerRequirement: FC<MarkerRequirementProps> = ({ data, storeKey }) => {
     <div className={className}>
       <label>
         <b>{data.label}</b>
-        <input
-          type="checkbox"
-          name={'marker-' + storeKey}
-          className="form-check-input"
-          checked={complete}
-          onChange={(e) => setComplete(e.target.checked)}
-        />
+        <Checkbox name={'marker-' + storeKey} checked={complete} onChange={(e) => setComplete(e.target.checked)} />
       </label>
     </div>
   );
