@@ -4,13 +4,12 @@ import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms, transformCourseGQL } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import trpc from '../../trpc';
 import { CourseGQLData } from '../../types/types';
-import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { Button, CircularProgress, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
@@ -80,7 +79,7 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
-    return <LoadingSpinner />;
+    return <CircularProgress />;
   }
 
   return (

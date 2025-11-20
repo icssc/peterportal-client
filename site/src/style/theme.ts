@@ -260,5 +260,17 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '8px auto',
+        },
+        '&.page-loader': {
+          marginTop: 24,
+        },
+      },
+    },
   },
 });

@@ -21,7 +21,6 @@ import {
   setShowAddCourse,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
@@ -29,7 +28,7 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Checkbox, Collapse } from '@mui/material';
+import { Checkbox, CircularProgress, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 
 interface SourceOverlayProps {
@@ -110,7 +109,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
       <CourseNameAndInfo data={courseData} popupListener={handlePopoverStateChange} alwaysCollapse />
       {isMobile && loading && (
         <div className="spinner">
-          <LoadingSpinner />
+          <CircularProgress />
         </div>
       )}
     </div>

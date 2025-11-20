@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import trpc from '../../../trpc';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { setGERequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { normalizeTitleLabels } from '../../../helpers/substitutions';
+import { CircularProgress } from '@mui/material';
 
 async function getCoursesForGE() {
   const fetchedRequirements = await trpc.programs.getRequiredCoursesUgrad.query({ id: 'GE' });
@@ -31,7 +31,7 @@ const GERequiredCourseList: FC = () => {
     });
   }, [dispatch, requirements]);
 
-  if (resultsLoading) return <LoadingSpinner />;
+  if (resultsLoading) return <CircularProgress />;
 
   return <ProgramRequirementsList requirements={requirements} storeKeyPrefix="ge" />;
 };
