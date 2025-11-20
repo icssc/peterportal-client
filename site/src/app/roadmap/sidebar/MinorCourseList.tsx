@@ -2,12 +2,11 @@ import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
-import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { CircularProgress, Collapse } from '@mui/material';
 
 function getCoursesForMinor(programId: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
@@ -53,7 +52,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
       </button>
       <Collapse in={open} unmountOnExit>
         {resultsLoading ? (
-          <LoadingSpinner />
+          <CircularProgress />
         ) : (
           <ProgramRequirementsList
             requirements={minorReqs.requirements}

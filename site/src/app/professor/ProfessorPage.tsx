@@ -1,6 +1,5 @@
 'use client';
 import { FC, useState, useEffect } from 'react';
-import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 import Schedule from '../../component/Schedule/Schedule';
 import Review from '../../component/Review/Review';
 import GradeDist from '../../component/GradeDist/GradeDist';
@@ -12,6 +11,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import { CircularProgress } from '@mui/material';
 
 interface ProfessorPageProps {
   ucinetid: string;
@@ -42,7 +42,7 @@ const ProfessorPage: FC<ProfessorPageProps> = ({ ucinetid: id }) => {
   }
   // loading results
   else if (!professorGQLData) {
-    return <LoadingSpinner />;
+    return <CircularProgress />;
   } else {
     const sideInfo = (
       <SideInfo

@@ -1,7 +1,7 @@
 'use client';
 import './ReviewCard.scss';
 import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
-import Badge from 'react-bootstrap/Badge';
+import { Chip } from '@mui/material';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
@@ -225,15 +225,14 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   const verifiedBadge = (
     <OverlayTrigger overlay={badgeOverlay}>
-      <Badge bg="primary">Verified</Badge>
+      {/* @todo: even smaller variant? */}
+      <Chip color="primary" size="small" label="Verified" />
     </OverlayTrigger>
   );
 
   const authorBadge = (
     <OverlayTrigger overlay={authorOverlay}>
-      <Badge bg="success" style={{ padding: '1px' }}>
-        <PersonIcon />
-      </Badge>
+      <Chip color="success" size="small" label={<PersonIcon />} />
     </OverlayTrigger>
   );
 
@@ -304,9 +303,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       {tags.length > 0 && (
         <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Badge pill className="reviewcard-tag" key={tag}>
-              {tag}
-            </Badge>
+            <Chip className="reviewcard-tag" size="small" color="primary" key={tag} label={tag} />
           ))}
         </div>
       )}
