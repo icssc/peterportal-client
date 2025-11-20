@@ -99,7 +99,7 @@ const UncategorizedCreditInput: FC<{ courses: TransferWithUnread<TransferredUnca
         size="small"
         type="number"
         name="units"
-        placeholder="Units..."
+        placeholder="Units"
         value={units}
         onChange={(e) => updateUnits(e.target.value)}
         error={error}

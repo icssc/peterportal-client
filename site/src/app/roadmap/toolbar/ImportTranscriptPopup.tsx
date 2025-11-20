@@ -1,6 +1,5 @@
 import { FC, useState } from 'react';
 import './ImportTranscriptPopup.scss';
-import { Modal } from 'react-bootstrap';
 import { getNextPlannerTempId, reviseRoadmap, selectAllPlans, setPlanIndex } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { parse as parseHTML, HTMLElement } from 'node-html-parser';
@@ -21,7 +20,7 @@ import trpc from '../../../trpc';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { Box, Button, FormControl, FormLabel } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel } from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits';
 import { VisuallyHiddenInput } from '../../../helpers/styling';
 
@@ -280,16 +279,9 @@ const ImportTranscriptPopup: FC = () => {
 
   return (
     <>
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        centered
-        className="ppc-modal multiplan-modal transcript-form"
-      >
-        <Modal.Header closeButton>
-          <h2>Import from Transcript</h2>
-        </Modal.Header>
-        <Modal.Body>
+      <Dialog className="transcript-form" open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Import from Transcript</DialogTitle>
+        <DialogContent>
           <Box component="form" noValidate>
             Please upload an HTML copy of your unofficial transcript. To obtain this:
             <ol>
@@ -326,12 +318,17 @@ const ImportTranscriptPopup: FC = () => {
                 <div className="file-path">{fileLabel || 'No file selected.'}</div>
               </div>
             </FormControl>
-            <Button disabled={!file} loading={busy} onClick={importHandler}>
-              Import
-            </Button>
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button disabled={!file} loading={busy} onClick={importHandler}>
+            Import
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Button variant="text" onClick={() => setShowModal(true)}>
         <DescriptionIcon />
         <span>Student Transcript</span>

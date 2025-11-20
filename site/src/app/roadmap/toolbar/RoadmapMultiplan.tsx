@@ -12,7 +12,6 @@ import {
   setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import './RoadmapMultiplan.scss';
-import { Modal } from 'react-bootstrap';
 import { makeUniquePlanName } from '../../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
 import ImportZot4PlanPopup from './ImportZot4PlanPopup';
@@ -21,7 +20,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import { Box, Button, IconButton, FormControl, FormLabel, Popover, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  Popover,
+  TextField,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+} from '@mui/material';
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
@@ -67,9 +77,16 @@ interface MultiplanDropdownProps {
   setEditIndex: (index: number) => void;
   setDeleteIndex: (index: number) => void;
   handleCreate: () => void;
+  setNewPlanName: (name: string) => void;
   children?: ReactNode;
 }
-const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex, setDeleteIndex, handleCreate }) => {
+const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
+  children,
+  setEditIndex,
+  setDeleteIndex,
+  setNewPlanName,
+  handleCreate,
+}) => {
   const dispatch = useAppDispatch();
   const allPlans = useAppSelector((state) => state.roadmap.plans);
   const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
@@ -84,12 +101,6 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
     const revision = addPlanner(nextPlanTempId, newName, yearPlans);
     dispatch(reviseRoadmap(revision));
     dispatch(setPlanIndex(allPlans.length));
-  };
-
-  const handleClose = (_?: object, reason?: string) => {
-    const multiplanModalOpen = !!document.querySelector('.multiplan-modal');
-    if (reason === 'escapeKeyDown' && multiplanModalOpen) return;
-    setShowDropdown(false);
   };
 
   return (
@@ -111,7 +122,7 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
         anchorReference="anchorEl"
         anchorEl={containerRef.current}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        onClose={handleClose}
+        onClose={() => setShowDropdown(false)}
       >
         {allPlans.map((plan, index) => (
           <RoadmapSelectableItem
@@ -120,11 +131,17 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({ children, setEditIndex,
             index={index}
             clickHandler={() => {
               dispatch(setPlanIndex(index));
-              handleClose();
+              setShowDropdown(false);
             }}
-            editHandler={() => setEditIndex(index)}
+            editHandler={() => {
+              setEditIndex(index);
+              setNewPlanName(allPlans[index].name);
+            }}
             duplicateHandler={() => duplicatePlan(plan)}
-            deleteHandler={() => setDeleteIndex(index)}
+            deleteHandler={() => {
+              setDeleteIndex(index);
+              setNewPlanName(allPlans[index].name);
+            }}
           />
         ))}
         <div className="separator-label">
@@ -223,26 +240,27 @@ const RoadmapMultiplan: FC = () => {
     document.title = `${name} | PeterPortal`;
   }, [name]);
 
+  const openHandler = () => {
+    setShowAddPlan(true);
+
+    const planCount = allPlans?.length ?? 0;
+    let newIdx = planCount + 1;
+    while (allPlans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
+
+    setNewPlanName(`Roadmap ${newIdx}`);
+  };
+
   return (
-    <MultiplanDropdown handleCreate={() => setShowAddPlan(true)} setEditIndex={setEditIdx} setDeleteIndex={setDelIdx}>
+    <MultiplanDropdown
+      handleCreate={openHandler}
+      setEditIndex={setEditIdx}
+      setDeleteIndex={setDelIdx}
+      setNewPlanName={setNewPlanName}
+    >
       {/* Create Roadmap Modal */}
-      <Modal
-        show={showAddPlan}
-        onShow={() => {
-          setShowAddPlan(true);
-          const planCount = allPlans?.length ?? 0;
-          let newIdx = planCount + 1;
-          while (allPlans.find((p) => p.name === `Roadmap ${newIdx}`)) newIdx++;
-          setNewPlanName(`Roadmap ${newIdx}`);
-        }}
-        onHide={() => setShowAddPlan(false)}
-        centered
-        className="ppc-modal multiplan-modal"
-      >
-        <Modal.Header closeButton>
-          <h2>New Roadmap</h2>
-        </Modal.Header>
-        <Modal.Body>
+      <Dialog open={showAddPlan} onClose={() => setShowAddPlan(false)} fullWidth>
+        <DialogTitle>New Roadmap</DialogTitle>
+        <DialogContent>
           <Box
             component="form"
             noValidate
@@ -251,42 +269,35 @@ const RoadmapMultiplan: FC = () => {
               handleSubmitNewPlan();
             }}
           >
-            <FormControl>
-              <FormLabel>Roadmap Name</FormLabel>
-              <TextField
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                slotProps={{
-                  htmlInput: {
-                    maxLength: 35,
-                  },
-                }}
-                placeholder={defaultPlan.name}
-              />
-            </FormControl>
-
-            <Button type="submit">Create Roadmap</Button>
+            <TextField
+              variant="standard"
+              label="Roadmap Name"
+              type="text"
+              value={newPlanName}
+              onChange={(e) => setNewPlanName(e.target.value)}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 35,
+                },
+              }}
+              placeholder={defaultPlan.name}
+            />
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setShowAddPlan(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => handleSubmitNewPlan()}>
+            Create Roadmap
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Edit Roadmap Modal */}
-      <Modal
-        show={editIdx !== -1}
-        onShow={() => {
-          setNewPlanName(allPlans[editIdx].name);
-        }}
-        onHide={() => setEditIdx(-1)}
-        centered
-        className="ppc-modal multiplan-modal"
-      >
-        <Modal.Header closeButton>
-          <h2>Edit Roadmap</h2>
-        </Modal.Header>
-        <Modal.Body>
+      <Dialog open={editIdx !== -1} onClose={() => setEditIdx(-1)} fullWidth>
+        <DialogTitle>Edit Roadmap</DialogTitle>
+        <DialogContent>
           <Box
             component="form"
             noValidate
@@ -295,56 +306,48 @@ const RoadmapMultiplan: FC = () => {
               modifyPlanName();
             }}
           >
-            <FormControl>
-              <FormLabel>Roadmap Name</FormLabel>
-              <TextField
-                required
-                type="text"
-                name="roadmap_name"
-                value={newPlanName}
-                onChange={(e) => setNewPlanName(e.target.value)}
-                slotProps={{
-                  htmlInput: {
-                    maxLength: 35,
-                  },
-                }}
-                placeholder={defaultPlan.name}
-              />
-            </FormControl>
-
-            <Button type="submit">Save Roadmap</Button>
+            <TextField
+              variant="standard"
+              label="Roadmap Name"
+              type="text"
+              value={newPlanName}
+              onChange={(e) => setNewPlanName(e.target.value)}
+              slotProps={{
+                htmlInput: {
+                  maxLength: 35,
+                },
+              }}
+              placeholder={defaultPlan.name}
+            />
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setEditIdx(-1)}>
+            Cancel
+          </Button>
+          <Button type="submit" onClick={() => modifyPlanName()}>
+            Save Roadmap
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Delete Roadmap Modal */}
-      <Modal
-        show={delIdx !== -1}
-        onShow={() => {
-          setNewPlanName(allPlans[delIdx].name);
-        }}
-        onHide={() => setDelIdx(-1)}
-        centered
-        className="ppc-modal multiplan-modal"
-      >
-        <Modal.Header closeButton>
-          <h2>Delete Roadmap</h2>
-        </Modal.Header>
-        <Modal.Body>
+      <Dialog open={delIdx !== -1} onClose={() => setDelIdx(-1)} fullWidth>
+        <DialogTitle>Delete Roadmap</DialogTitle>
+        <DialogContent>
           <Box component="form" noValidate>
-            <p>Are you sure you want to delete the roadmap "{newPlanName}"?</p>
-
-            <Button
-              color="error"
-              onClick={() => {
-                deleteCurrentPlan();
-              }}
-            >
-              I am sure
-            </Button>
+            <DialogContentText>Are you sure you want to delete the roadmap "{newPlanName}"?</DialogContentText>
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setDelIdx(-1)}>
+            Cancel
+          </Button>
+          <Button color="error" onClick={() => deleteCurrentPlan()}>
+            I am sure
+          </Button>
+        </DialogActions>
+      </Dialog>
     </MultiplanDropdown>
   );
 };
