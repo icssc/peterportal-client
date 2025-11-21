@@ -30,7 +30,7 @@ const PGStore = connectPgSimple(session);
 if (!process.env.DATABASE_URL) {
   console.log('DATABASE_URL env var is not defined!');
 }
-// Setup Passport and Sessions
+// Setup Sessions
 if (!process.env.SESSION_SECRET) {
   console.log('SESSION_SECRET env var is not defined!');
 }

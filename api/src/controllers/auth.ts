@@ -27,8 +27,6 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
   // Match user by email first (for existing users)
   const existingUser = await db.select().from(user).where(eq(user.email, email)).limit(1);
 
-  console.log(userInfo);
-
   let userData;
   if (existingUser.length > 0) {
     // Existing user - update their googleId to the new OIDC sub
