@@ -41,6 +41,7 @@ jobs:
           GRECAPTCHA_SECRET: ${{ secrets.GRECAPTCHA_SECRET }}
           ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
           PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
+          PRODUCTION_CLIENT_DOMAIN: ${{ secrets.PRODUCTION_CLIENT_DOMAIN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
