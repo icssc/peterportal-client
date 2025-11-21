@@ -10,8 +10,8 @@ import searchReducer from './slices/searchSlice';
 import transferCreditsReducer from './slices/transferCreditsSlice';
 import userReducer from './slices/userSlice';
 import scheduleReducer from './slices/scheduleSlice';
-import { UserSliceState } from '@peterportal/types';
 import courseCatalogReducer from './slices/courseCatalogSlice';
+import { UserSliceState } from '@peterportal/types';
 
 const reducer = {
   coursePreview: coursePreviewReducer,

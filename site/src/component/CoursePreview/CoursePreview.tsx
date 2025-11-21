@@ -19,6 +19,7 @@ import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
 import IosShareIcon from '@mui/icons-material/IosShare';
+
 interface PreviewTitleProps {
   isLoading: boolean;
   courseId: string;

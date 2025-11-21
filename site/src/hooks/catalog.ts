@@ -4,14 +4,14 @@ import { transformCourseGQL } from '../helpers/util';
 import trpc from '../trpc';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
-import { setCourse, selectCourseCatalog } from '../store/slices/courseCatalogSlice';
+import { setCourse } from '../store/slices/courseCatalogSlice';
 
 export function useCourseData(courseId: string) {
-  const [fullCourseData, setFullCourseData] = useState(LOADING_COURSE_PLACEHOLDER);
+  const courseCache = useAppSelector((state) => state.courseCatalog.courses);
+  const [fullCourseData, setFullCourseData] = useState(courseCache[courseId] ?? LOADING_COURSE_PLACEHOLDER);
   const [loadTrigger, setLoadTrigger] = useState(false);
 
   const dispatch = useAppDispatch();
-  const courseCache = useAppSelector(selectCourseCatalog);
 
   useEffect(() => {
     // Use a stateful trigger to avoid sending two requests as a result of double first render
