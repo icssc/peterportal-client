@@ -19,6 +19,9 @@ function getDomainConfig() {
 }
 
 function createTrpcLambdaFunction() {
+  const domainName = getDomainConfig().name;
+  const productionDomain = `https://${domainName}`;
+
   const environment = {
     DATABASE_URL: process.env.DATABASE_URL!,
     SESSION_SECRET: process.env.SESSION_SECRET!,
@@ -26,7 +29,7 @@ function createTrpcLambdaFunction() {
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID!,
     OIDC_ISSUER_URL: process.env.OIDC_ISSUER_URL!,
     GRECAPTCHA_SECRET: process.env.GRECAPTCHA_SECRET!,
-    PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN!,
+    PRODUCTION_DOMAIN: productionDomain, // Dynamically set based on stage
     ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
     NODE_ENV: process.env.NODE_ENV ?? 'staging',
     ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
