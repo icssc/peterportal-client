@@ -1,1 +1,1 @@
-export const SESSION_LENGTH = 30 * 86400 * 1000;
+export const SESSION_LENGTH = 1000 * 60 * 60 * 24 * 7; // 1 week
