@@ -112,10 +112,7 @@ const reviewsRouter = router({
    */
   add: userProcedure.input(reviewSubmission).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId!;
-
-    // Get user information
-    const userData = await db.select({ name: user.name }).from(user).where(eq(user.id, userId)).limit(1);
-    const userName = userData[0]?.name || 'Anonymous';
+    const userName = ctx.session.userName!;
 
     // check if user is trusted
     const { verifiedCount } = (

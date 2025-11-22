@@ -11,6 +11,10 @@ declare module 'express-session' {
      */
     userId: number;
     /**
+     * User's display name
+     */
+    userName: string;
+    /**
      * Whether the user is an admin
      */
     isAdmin: boolean;

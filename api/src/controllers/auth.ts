@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic';
 import { db } from '../db';
 import { user } from '../db/schema';
-import { eq } from 'drizzle-orm';
 import { createOIDCClient } from '../config/oidc';
 
 const router = express.Router();
@@ -24,35 +23,26 @@ interface OIDCUserInfo {
 async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response) {
   const { sub, email, name, picture } = userInfo;
 
-  // Match user by email first (for existing users)
-  const existingUser = await db.select().from(user).where(eq(user.email, email)).limit(1);
-
-  let userData;
-  if (existingUser.length > 0) {
-    // Existing user - update their googleId to the new OIDC sub
-    userData = await db
-      .update(user)
-      .set({
-        googleId: sub,
-        name: name || existingUser[0].name,
-        picture: picture || existingUser[0].picture,
-      })
-      .where(eq(user.email, email))
-      .returning();
-  } else {
-    // New user - create with OIDC sub as googleId
-    userData = await db
-      .insert(user)
-      .values({
+  const userData = await db
+    .insert(user)
+    .values({
+      googleId: sub,
+      name: name ?? '',
+      email,
+      picture: picture ?? '',
+    })
+    .onConflictDoUpdate({
+      target: user.email,
+      set: {
         googleId: sub,
         name: name ?? '',
-        email,
         picture: picture ?? '',
-      })
-      .returning();
-  }
+      },
+    })
+    .returning();
 
   req.session.userId = userData[0].id;
+  req.session.userName = userData[0].name;
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
