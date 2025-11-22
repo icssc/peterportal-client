@@ -9,10 +9,11 @@ declare global {
       PUBLIC_API_URL: string;
       MONGO_URL: string;
       SESSION_SECRET: string;
-      GOOGLE_CLIENT: string;
-      GOOGLE_SECRET: string;
+      OIDC_CLIENT_ID: string;
+      OIDC_ISSUER_URL: string;
       GRECAPTCHA_SECRET: string;
       PRODUCTION_DOMAIN: string;
+      PRODUCTION_CLIENT_DOMAIN: string;
       ADMIN_EMAILS: string;
       ANTEATER_API_KEY?: string;
       EXTERNAL_USER_READ_SECRET?: string;
