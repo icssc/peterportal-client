@@ -9,9 +9,6 @@ const sharedTokens = {
   },
   misc: {
     midGray: '#8d8d8d',
-    success: {
-      primary: 'green',
-    },
   },
   chart: {
     blue: '#5babe1',
@@ -21,6 +18,9 @@ const sharedTokens = {
     green: '#87c587',
     pass: '#4ab486',
     noPass: '#e36436',
+  },
+  success: {
+    main: 'green',
   },
 };
 
@@ -48,13 +48,6 @@ const lightPalette: PaletteOptions = {
   },
   reviews: {
     ...sharedTokens.chart,
-  },
-  misc: {
-    ...sharedTokens.misc,
-    success: {
-      ...sharedTokens.misc.success,
-      secondary: sharedTokens.chart.green,
-    },
   },
   error: {
     main: '#ce0000',
@@ -92,28 +85,16 @@ const darkPalette: PaletteOptions = {
     yellow: '#c49e3e',
     orange: '#c47e38',
   },
-  misc: {
-    ...sharedTokens.misc,
-    success: {
-      ...sharedTokens.misc.success,
-      secondary: '#295629',
-    },
-  },
   error: {
     main: '#ff3333',
   },
 };
 
-const makeExtendedPalette = (base: PaletteOptions) => ({
-  ...base,
-  success: { main: base.misc!.success!.primary! },
-});
-
 export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
   colorSchemes: {
-    light: { palette: makeExtendedPalette(lightPalette) },
-    dark: { palette: makeExtendedPalette(darkPalette) },
+    light: { palette: lightPalette },
+    dark: { palette: darkPalette },
   },
   spacing: 4,
 });

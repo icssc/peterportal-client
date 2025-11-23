@@ -27,7 +27,6 @@ declare module '@mui/material/styles' {
     };
     misc: {
       midGray: string;
-      success: TwoToneColor;
     };
     reviews: ColorScale;
     chart: ChartColorScale;
@@ -43,7 +42,6 @@ declare module '@mui/material/styles' {
     };
     misc?: {
       midGray?: string;
-      success?: Partial<TwoToneColor>;
     };
     reviews?: Partial<ColorScale>;
     chart?: Partial<ChartColorScale>;
