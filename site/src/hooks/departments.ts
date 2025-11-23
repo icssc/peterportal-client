@@ -3,7 +3,7 @@ import { useAppDispatch } from '../store/hooks';
 import { setDepartments } from '../store/slices/departmentsSlice';
 import trpc from '../trpc';
 
-export function useDepartments() {
+export function useLoadDepartments() {
   const dispatch = useAppDispatch();
   const [loadTrigger, setLoadTrigger] = useState(false);
 

@@ -8,14 +8,14 @@ import AppThemeProvider from '../AppThemeProvider/AppThemeProvider';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { useSetSchedule } from '../../hooks/schedule';
-import { useDepartments } from '../../hooks/departments';
+import { useLoadDepartments } from '../../hooks/departments';
 import { UserData } from '@peterportal/types';
 import PlannerLoader from '../../app/roadmap/planner/PlannerLoader';
 
 const UserDataLoader: FC = () => {
   useLoadSavedCourses();
   useSetSchedule();
-  useDepartments();
+  useLoadDepartments();
   return null;
 };
 
