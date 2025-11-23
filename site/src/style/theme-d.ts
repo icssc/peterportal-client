@@ -55,3 +55,15 @@ declare module '@mui/material/Button' {
     xsmall: true;
   }
 }
+
+declare module '@mui/material' {
+  interface InputBasePropsSizeOverrides {
+    xsmall: true;
+  }
+}
+
+declare module '@mui/material/Autocomplete' {
+  interface AutocompletePropsSizeOverrides {
+    xsmall: true;
+  }
+}

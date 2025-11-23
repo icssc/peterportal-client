@@ -15,7 +15,8 @@ import { useClearedCourses } from '../../../hooks/planner';
 
 const AllCourseSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
-  const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
+  const { results } = useAppSelector((state) => state.search.courses);
+  const searchInProgress = useAppSelector((state) => state.search.searchInProgress);
   const { savedCourses } = useSavedCourses();
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
