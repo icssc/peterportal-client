@@ -72,6 +72,7 @@ function DepartmentSelect() {
         slotProps: { paper: paperProps },
       }}
       onChange={handleDepartmentSelection}
+      className={selectedFilters.departments.length > 0 ? 'has-selection' : ''}
       renderValue={(selected) => briefLabel(selected, 'Departments')}
     >
       <TextField
@@ -137,12 +138,11 @@ const SearchFilters: FC = () => {
       <FormControl className="filter-form-control">
         <Select
           size="xsmall"
-          id="level-select"
           multiple
           value={selectedFilters.levels}
           onChange={handleLevelSelection}
           displayEmpty
-          variant="outlined"
+          className={selectedFilters.levels.length > 0 ? 'has-selection' : ''}
           renderValue={(selected) => briefLabel(selected, 'Level')}
           MenuProps={menuProps}
         >
@@ -157,14 +157,12 @@ const SearchFilters: FC = () => {
       <FormControl className="filter-form-control">
         <Select
           size="xsmall"
-          id="ge-category-select"
           multiple
           value={selectedFilters.geCategories}
           onChange={handleGeCategorySelection}
           displayEmpty
-          renderValue={(selected) => {
-            return briefLabel(selected, 'GE');
-          }}
+          className={selectedFilters.geCategories.length > 0 ? 'has-selection' : ''}
+          renderValue={(selected) => briefLabel(selected, 'GE')}
           MenuProps={menuProps}
         >
           {Object.entries(GE_TITLE_MAP).map(([key, value]) => (
