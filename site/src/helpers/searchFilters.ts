@@ -19,11 +19,6 @@ export const levels: Record<string, string> = {
 };
 
 export function stringifySearchFilters(filters: FilterOptions): StringifiedFilterOptions {
-  const filterLevels = Object.entries(levels)
-    .filter(([, label]) => filters.levels.includes(label))
-    .map((e) => e[0])
-    .join(',');
-
   const removePrefix = (label: string) => label.replace(/^.*: /, '');
   const filterCategories = Object.entries(GE_TITLE_MAP)
     .filter(([, label]) => filters.geCategories.includes(removePrefix(label)))
@@ -32,7 +27,7 @@ export function stringifySearchFilters(filters: FilterOptions): StringifiedFilte
 
   return {
     // change empty string to undefined for API call purposes
-    stringifiedLevels: filterLevels || undefined,
+    stringifiedLevels: filters.levels.join(',') || undefined,
     stringifiedGeCategories: filterCategories || undefined,
     stringifiedDepartments: filters.departments.join(',') || undefined,
   };

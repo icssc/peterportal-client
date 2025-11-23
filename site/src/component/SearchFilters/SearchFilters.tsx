@@ -72,9 +72,7 @@ function DepartmentSelect() {
         slotProps: { paper: paperProps },
       }}
       onChange={handleDepartmentSelection}
-      renderValue={(selected) => {
-        return briefLabel(selected, 'Departments');
-      }}
+      renderValue={(selected) => briefLabel(selected, 'Departments')}
     >
       <TextField
         key="fixed"
@@ -116,11 +114,9 @@ const SearchFilters: FC = () => {
     } = event;
 
     const valueArray = typeof value === 'string' ? value.split(',') : value;
+    const validValues = valueArray.filter((val) => val in levels);
 
-    updateSelectedFilters({
-      ...selectedFilters,
-      levels: valueArray,
-    });
+    updateSelectedFilters({ ...selectedFilters, levels: validValues });
   };
 
   const handleGeCategorySelection = (event: SelectChangeEvent<string[]>) => {
@@ -136,35 +132,6 @@ const SearchFilters: FC = () => {
     });
   };
 
-  // #region MUI Filter Styles
-  // Set the height of the tag selector based on the number of tags
-  // const ITEM_HEIGHT = 48;
-  // const ITEM_PADDING_TOP = 8;
-
-  // Custom styles for the MUI Select and Autocomplete components
-  // const selectStyles = {
-  //   backgroundColor: 'var(--overlay1)',
-  //   borderColor: 'var(--overlay2)',
-  //   borderWidth: '1px',
-  //   borderRadius: '6px',
-  //   '& .MuiOutlinedInput-notchedOutline': {
-  //     borderRadius: '6px', // Targets the outer 'fieldset' element
-  //   },
-  // };
-
-  // const autocompleteStyles = {
-  //   // flexGrow: 1,
-  //   backgroundColor: 'var(--overlay1)',
-  //   borderColor: 'var(--overlay2)',
-  //   borderWidth: '1px',
-  //   borderRadius: '6px',
-  //   '& .MuiOutlinedInput-notchedOutline': {
-  //     borderRadius: '6px', // Targets the outer 'fieldset' element
-  //   },
-  //   width: 'fit-content',
-  // };
-  // #endregion
-
   return (
     <div className="filter-group">
       <FormControl className="filter-form-control">
@@ -176,15 +143,13 @@ const SearchFilters: FC = () => {
           onChange={handleLevelSelection}
           displayEmpty
           variant="outlined"
-          renderValue={(selected) => {
-            return briefLabel(selected, 'Level');
-          }}
+          renderValue={(selected) => briefLabel(selected, 'Level')}
           MenuProps={menuProps}
         >
-          {Object.keys(levels).map((key) => (
-            <MenuItem key={key} value={levels[key]} className="search-filter-item">
-              {selectedFilters.levels.includes(levels[key]) ? <CheckIcon /> : <span style={{ width: 24 }}></span>}
-              <ListItemText primary={levels[key]} />
+          {Object.entries(levels).map(([key, value]) => (
+            <MenuItem key={key} value={key} className="search-filter-item">
+              {selectedFilters.levels.includes(key) ? <CheckIcon /> : <span style={{ width: 24 }}></span>}
+              <ListItemText primary={value} />
             </MenuItem>
           ))}
         </Select>
@@ -211,27 +176,6 @@ const SearchFilters: FC = () => {
         </Select>
       </FormControl>
       <DepartmentSelect />
-      {/* <Autocomplete
-        multiple
-        size="xsmall"
-        limitTags={1}
-        id="multiple-limit-tags"
-        options={Object.keys(departments)}
-        value={selectedFilters.departments}
-        onChange={(_event, newValue) => {
-          updateSelectedFilters({
-            ...selectedFilters,
-            departments: newValue,
-          });
-        }}
-        getOptionLabel={(option) => option}
-        renderOption={(props, option) => <li {...props}>{departments[option]}</li>}
-        renderInput={(params) => (
-          <TextField {...params} placeholder={selectedFilters.departments.length === 0 ? 'Department' : ''} />
-        )}
-        clearIcon={null}
-        sx={autocompleteStyles}
-      /> */}
     </div>
   );
 };
