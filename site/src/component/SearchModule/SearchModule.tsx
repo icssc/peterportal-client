@@ -67,7 +67,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
         autoCorrect="off"
         slotProps={{ input: { endAdornment, className: 'input-wrapper' } }}
       />
-      {index === 'courses' && <SearchFilters />}
+      {index === 'courses' && search.query && <SearchFilters />}
     </div>
   );
 };
