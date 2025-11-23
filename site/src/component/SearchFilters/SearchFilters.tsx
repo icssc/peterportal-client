@@ -37,12 +37,15 @@ function DepartmentSelect() {
   const [deptFilterText, setDeptFilterText] = useState('');
 
   const handleDepartmentSelection = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event;
+    const value = event.target.value;
     const valueArray = typeof value === 'string' ? value.split(',') : value;
 
     const validValues = valueArray.filter((val) => val in departments);
+    const unchanged =
+      selectedFilters.departments.length === validValues.length &&
+      selectedFilters.departments.every((oldDept, i) => validValues[i] === oldDept);
+    if (unchanged) return;
+
     dispatch(setCourseFilters({ ...selectedFilters, departments: validValues }));
   };
 
@@ -110,9 +113,7 @@ const SearchFilters: FC = () => {
   };
 
   const handleLevelSelection = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event;
+    const value = event.target.value;
 
     const valueArray = typeof value === 'string' ? value.split(',') : value;
     const validValues = valueArray.filter((val) => val in levels);
