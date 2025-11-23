@@ -45,7 +45,10 @@
     position: sticky;
     top: 0;
     margin-bottom: 8px;
-    background-color: inherit;
     z-index: 1;
+    .MuiInputBase-input {
+      background-color: var(--mui-palette-background-paper);
+      background-image: var(--Paper-overlay);
+    }
   }
 }
