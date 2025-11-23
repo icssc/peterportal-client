@@ -24,6 +24,19 @@ const searchRouter = router({
           .int()
           .transform((x) => x.toString()),
         resultType: z.union([z.literal('course'), z.literal('instructor')]),
+        department: z.string().optional(),
+        courseLevel: z.string().optional(),
+        minUnits: z
+          .number()
+          .int()
+          .transform((x) => x.toString())
+          .optional(),
+        maxUnits: z
+          .number()
+          .int()
+          .transform((x) => x.toString())
+          .optional(),
+        ge: z.string().optional(),
       }),
     )
     .query(async ({ input }) => {
