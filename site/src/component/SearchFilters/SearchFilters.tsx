@@ -148,7 +148,7 @@ const SearchFilters: FC = () => {
         >
           {Object.entries(levels).map(([key, value]) => (
             <MenuItem key={key} value={key} className="search-filter-item">
-              {selectedFilters.levels.includes(key) ? <CheckIcon /> : <span style={{ width: 24 }}></span>}
+              {selectedFilters.levels.includes(key) ? <CheckIcon /> : <Icon />}
               <ListItemText primary={value} />
             </MenuItem>
           ))}

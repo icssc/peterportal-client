@@ -10,10 +10,6 @@
     margin-bottom: 0;
   }
 
-  .dept-select {
-    border-color: oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
-  }
-
   .has-selection {
     .MuiSelect-select {
       background-color: var(--blue-primary);
