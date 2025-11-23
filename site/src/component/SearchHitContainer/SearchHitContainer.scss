@@ -2,7 +2,7 @@
 
 .search-hit-container {
   overflow-y: auto;
-  padding: 90px 36px 36px;
+  padding: 128px 36px 36px;
 
   > *:not(:last-child) {
     margin-bottom: 20px;
@@ -10,4 +10,13 @@
   @media only screen and (max-width: globals.$mobile-cutoff) {
     padding-right: 36px;
   }
+}
+
+.search-module:not(:has(.filter-group)) ~ .search-hit-container {
+  padding-top: 96px;
+}
+
+.search-pagination {
+  display: flex;
+  justify-content: center;
 }
