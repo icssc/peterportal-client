@@ -12,7 +12,6 @@ const sharedTokens = {
     success: {
       primary: 'green',
     },
-    error: '#ce0000',
   },
   chart: {
     blue: '#5babe1',
@@ -57,6 +56,9 @@ const lightPalette: PaletteOptions = {
       secondary: sharedTokens.chart.green,
     },
   },
+  error: {
+    main: '#ce0000',
+  },
 };
 
 // each overlay is about 5% brighter than the previous
@@ -96,14 +98,15 @@ const darkPalette: PaletteOptions = {
       ...sharedTokens.misc.success,
       secondary: '#295629',
     },
-    error: '#ff3333',
+  },
+  error: {
+    main: '#ff3333',
   },
 };
 
 const makeExtendedPalette = (base: PaletteOptions) => ({
   ...base,
   success: { main: base.misc!.success!.primary! },
-  error: { main: base.misc!.error! },
 });
 
 export let theme = createTheme({
