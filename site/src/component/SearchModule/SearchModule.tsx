@@ -14,15 +14,16 @@ import { useSearchTrigger } from '../../hooks/search.ts';
 const SEARCH_TIMEOUT_MS = 300;
 
 interface SearchModuleProps {
-  index: SearchIndex;
+  index?: SearchIndex;
 }
 
-const SearchModule: FC<SearchModuleProps> = ({ index }) => {
+const SearchModule: FC<SearchModuleProps> = () => {
+  const index = useAppSelector((state) => state.search.viewIndex);
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
-  useSearchTrigger(index);
+  useSearchTrigger();
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -30,7 +31,7 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
       dispatch(setShowSavedCourses(!query));
     }
     if (query !== search.query) {
-      dispatch(setQuery({ index, query }));
+      dispatch(setQuery(query));
       setPendingRequest(null);
     }
   };

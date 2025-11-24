@@ -40,7 +40,7 @@ const SearchResults = ({
 
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
   const { query, results } = useAppSelector((state) => state.search[index]);
-  const searchInProgress = useAppSelector((state) => state.search.searchInProgress);
+  const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const containerDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

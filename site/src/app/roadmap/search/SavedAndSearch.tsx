@@ -3,7 +3,7 @@ import { FC } from 'react';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../../types/types';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
@@ -16,8 +16,9 @@ import { useClearedCourses } from '../../../hooks/planner';
 
 const SavedAndSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
-  const { results } = useAppSelector((state) => state.search.courses);
-  const searchInProgress = useAppSelector((state) => state.search.searchInProgress);
+  const viewIndex = useAppSelector((state) => state.search.viewIndex);
+  const results = useAppSelector((state) => state.search[viewIndex].results);
+  const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const { savedCourses } = useSavedCourses();
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
@@ -33,13 +34,19 @@ const SavedAndSearch: FC = () => {
 
   return (
     <>
-      <SearchModule index="courses" />
+      <SearchModule />
       <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
 
       {searchInProgress ? (
         <LoadingSpinner />
       ) : shownCourses.length === 0 ? (
         <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
+      ) : viewIndex === 'professors' ? (
+        <ul>
+          {shownCourses.map((prof) => {
+            return <li key={prof.id}>{(prof as unknown as ProfessorGQLData).name}</li>;
+          })}
+        </ul>
       ) : (
         <ReactSortable
           {...courseSearchSortable}
