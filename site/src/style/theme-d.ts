@@ -7,6 +7,16 @@ declare module '@mui/material/styles' {
     secondary: string;
   }
 
+  interface ColorScale {
+    red: string;
+    orange: string;
+    yellow: string;
+    green: string;
+    blue: string;
+  }
+
+  type ChartColorScale = ColorScale & { pass: string; noPass: string };
+
   interface Palette {
     tertiary: PaletteColor;
     accent: PaletteColor;
@@ -18,14 +28,8 @@ declare module '@mui/material/styles' {
     misc: {
       midGray: string;
     };
-    chart: {
-      red: TwoToneColor;
-      orange: TwoToneColor;
-      yellow: TwoToneColor;
-      green: TwoToneColor;
-      pass: string;
-      noPass: string;
-    };
+    reviews: ColorScale;
+    chart: ChartColorScale;
   }
 
   interface PaletteOptions {
@@ -39,14 +43,8 @@ declare module '@mui/material/styles' {
     misc?: {
       midGray?: string;
     };
-    chart?: {
-      red?: Partial<TwoToneColor>;
-      orange?: Partial<TwoToneColor>;
-      yellow?: Partial<TwoToneColor>;
-      green?: Partial<TwoToneColor>;
-      pass?: string;
-      noPass: string;
-    };
+    reviews?: Partial<ColorScale>;
+    chart?: Partial<ChartColorScale>;
   }
 }
 
