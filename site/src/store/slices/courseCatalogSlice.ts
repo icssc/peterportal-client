@@ -3,7 +3,9 @@ import { CourseGQLData } from '../../types/types';
 
 export const courseCatalogSlice = createSlice({
   name: 'courseCatalog',
-  initialState: { courses: {} } as { courses: Record<string, CourseGQLData> },
+  initialState: {
+    courses: {} as Record<string, CourseGQLData>,
+  },
   reducers: {
     setCourse(state, action: PayloadAction<{ courseId: string; data: CourseGQLData }>) {
       state.courses[action.payload.courseId] = action.payload.data;
