@@ -194,10 +194,11 @@ const APExamsSection: FC = () => {
 
   // Set selected rewards
   useEffect(() => {
+    if (!isLoggedIn) return;
     trpc.transferCredits.getSelectedAPRewards.query().then((rewards) => {
       dispatch(setSelectedApRewards(rewards));
     });
-  }, [dispatch]);
+  }, [dispatch, isLoggedIn]);
 
   // Save AP Exam to store
   useEffect(() => {
