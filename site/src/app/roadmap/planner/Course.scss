@@ -1,5 +1,5 @@
 .course {
-  box-shadow: 0px 0px 4px var(--blue-primary);
+  box-shadow: 0px 0px 4px;
   background: var(--overlay1);
   border-radius: 15px;
   height: auto;
@@ -22,6 +22,7 @@
       cursor: grab;
       user-select: none;
       -webkit-user-select: none;
+      color: var(--blue-primary);
 
       &:active {
         cursor: grabbing;
@@ -33,6 +34,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--blue-primary);
     }
   }
 
@@ -42,7 +44,6 @@
 
   .name {
     font-weight: bold;
-    text-decoration: underline;
     color: var(--blue-primary);
   }
 
@@ -62,21 +63,6 @@
     align-items: center;
     white-space: nowrap;
     flex-wrap: nowrap;
-  }
-
-  .courseLabels > * {
-    white-space: nowrap;
-  }
-
-  .courseLabels > *:not(:last-child)::after {
-    content: '•';
-    margin: 0 6px;
-    color: var(--text-secondary);
-    white-space: pre;
-  }
-
-  .units {
-    margin-left: auto;
   }
 
   .missing-prereq {
@@ -104,20 +90,26 @@
   }
 }
 
-button.course-delete-btn {
+.course-info-top {
   color: var(--blue-primary);
-  width: 24px;
-  height: 24px;
-  margin: -8px 0;
-  margin-right: -4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  .MuiSvgIcon-root {
-    font-size: 20px;
+  .units {
+    width: 50px;
   }
-}
+  button.course-delete-btn {
+    color: var(--blue-primary);
+    width: 24px;
+    height: 24px;
+    margin: -8px 0;
+    margin-right: -4px;
 
-.course-tooltip {
-  margin-left: auto;
+    .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+  }
 }
 
 .course.sortable-fallback {
@@ -148,7 +140,6 @@ button.course-delete-btn {
     margin: 2px;
     padding: 6px 12px;
     box-shadow: 0 0 2px 0 #60616680;
-    // align-items: center;
 
     .course-drag-handle {
       grid-area: A;
@@ -158,6 +149,12 @@ button.course-delete-btn {
       align-items: center;
       position: relative;
       left: -6px;
+    }
+
+    .name {
+      font-size: $header-font-size;
+      margin: 0;
+      text-decoration: underline;
     }
 
     .course-card-top {
@@ -173,6 +170,8 @@ button.course-delete-btn {
       grid-area: C;
       overflow: hidden;
       font-size: 14px;
+      display: block;
+      white-space: normal;
 
       .title {
         font-size: 14px;
@@ -184,18 +183,14 @@ button.course-delete-btn {
         float: none;
       }
 
-      .course-labels {
+      .course-tags {
         display: flex;
-        justify-content: left;
+        flex-wrap: wrap;
+        justify-content: flex-start;
         font-weight: 500;
+        font-size: 11px;
         gap: 6px;
       }
-
-      // .course-labels > *:not(:last-child)::after {
-      //   content: '•';
-      //   margin: 0 6px;
-      //   color: var(--text-secondary);
-      // }
     }
     .name {
       font-size: $header-font-size;

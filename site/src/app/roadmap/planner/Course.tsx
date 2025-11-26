@@ -5,7 +5,7 @@ import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/Re
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
-import { useIsMobile, pluralize, getGEs } from '../../../helpers/util';
+import { useIsMobile, pluralize, getGEs, getCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -80,11 +80,10 @@ const Course: FC<CourseProps> = (props) => {
   const GeData = getGEs(props.data);
 
   const titleWords = title.split(' ').length;
-  const desiredLength = 12 - titleWords;
+  const desiredLength = 14 - titleWords;
 
   const parsedDescription = description.split(' ').slice(0, desiredLength).join(' ');
-  // const parsedDescription = description.slice(0, 70); //find a better way to parse this data
-  const parsed_courseLevel = courseLevel.slice(0, 9);
+  const parsed_courseLevel = getCourseLevel(courseLevel);
 
   const dispatch = useAppDispatch();
 
@@ -97,9 +96,6 @@ const Course: FC<CourseProps> = (props) => {
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
-  //after finishing search results the course component needs to be fixed when in the planner
-  // fix spacing for course lables
-  // drag handle is the only one that should be dragged
   return (
     <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
       <div className="course-drag-handle">
@@ -111,33 +107,49 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          <CourseBookmarkButton course={props.data} />
+
+          {!onDelete && <CourseBookmarkButton course={props.data} />}
         </div>
+
         {onDelete && (
-          <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
-            <DeleteOutlineIcon className="course-delete-icon" />
-          </IconButton>
+          <div className="course-info-top">
+            <span className="units">
+              {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
+            </span>
+
+            <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
+              <DeleteOutlineIcon className="course-delete-icon" />
+            </IconButton>
+          </div>
         )}
       </div>
       <div className="course-info">
-        <div className="title">{title}: </div>
-        <div className="description"> {parsedDescription}...</div>
-        <div className="course-labels">
-          <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-            {' • '}
-          </span>
-
-          <div className="courseLevel">
-            {parsed_courseLevel}
-            {' • '}
-          </div>
-          <div className="ge">{GeData}</div>
-
-          <div className="course-tooltip">
-            <RecentOfferingsTooltip terms={terms} />
-          </div>
+        <div className="title">
+          {title}
+          {!onDelete ? ': ' : ''}
         </div>
+        {!onDelete && <div className="description"> {parsedDescription}...</div>}
+        {!onDelete && (
+          <div className="course-tags">
+            <span className="units">
+              {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
+              {' • '}
+            </span>
+
+            <div className="courseLevel">
+              {parsed_courseLevel}
+              {' • '}
+            </div>
+            <div className="ge">
+              {GeData}
+              {' • '}
+            </div>
+
+            <div className="course-tooltip">
+              <RecentOfferingsTooltip terms={terms} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

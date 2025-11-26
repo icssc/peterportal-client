@@ -41,7 +41,10 @@ export function getGEs(course: CourseGQLData): string {
 
   return `GE ${numerals.join(', ')}`;
 }
-
+//helper fucntion to return course level in the form of Upper Div, Lower Div or, Grad
+export function getCourseLevel(courseLevel: string): string {
+  return courseLevel === 'Graduate/Professional Only (200+)' ? 'Grad' : courseLevel.slice(0, 9);
+}
 // helper function to search 1 result from course/professor page
 export async function searchAPIResult<T extends SearchType>(
   type: T,
