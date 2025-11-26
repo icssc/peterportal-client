@@ -76,10 +76,12 @@ const Rewards: FC<{ examName: string; coursesGranted: CoursesGrantedTree }> = ({
   const selectedApRewards = useAppSelector((state) => state.transferCredits.selectedApRewards);
   const selectedReward = selectedApRewards.find((reward) => reward.examName === examName);
   const dispatch = useAppDispatch();
+  const isLoggedIn = useIsLoggedIn();
 
   const handleSelect = (selectedIndex: number) => {
     // path column to be removed in a future PR
     dispatch(updateSelectedApReward({ examName, path: '', selectedIndex }));
+    if (!isLoggedIn) return;
     trpc.transferCredits.setSelectedAPReward.mutate({ examName, path: '', selectedIndex });
   };
 
