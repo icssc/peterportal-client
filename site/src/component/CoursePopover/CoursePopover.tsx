@@ -10,9 +10,9 @@ import {
   PrerequisiteText,
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
-import { CircularProgress } from '@mui/material';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
@@ -25,7 +25,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   if (typeof course === 'string') {
     return (
       <div className="popover-body course-popover">
-        <CircularProgress />
+        <LoadingSpinner />
       </div>
     );
   }

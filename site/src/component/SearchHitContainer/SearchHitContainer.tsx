@@ -7,8 +7,8 @@ import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '
 import SearchPagination from '../SearchPagination/SearchPagination';
 import NoResults from '../NoResults/NoResults';
 import { getMissingPrerequisites } from '../../helpers/planner';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { useClearedCourses } from '../../hooks/planner';
-import { CircularProgress } from '@mui/material';
 
 // TODO: CourseHitItem and ProfessorHitem should not need index
 // investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
@@ -39,8 +39,7 @@ const SearchResults = ({
 };
 
 const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem, ProfessorHitItem }) => {
-  const { query, results } = useAppSelector((state) => state.search[index]);
-  const searchInProgress = useAppSelector((state) => state.search.searchInProgress);
+  const { query, results, searchInProgress } = useAppSelector((state) => state.search[index]);
   const containerDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,11 +52,11 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index, CourseHitItem,
 
   return (
     <div ref={containerDivRef} className="search-hit-container">
-      {searchInProgress && <CircularProgress />}
-      {!searchInProgress && (!query || results.length === 0) && (
+      {searchInProgress && <LoadingSpinner />}
+      {!searchInProgress && results.length === 0 && (
         <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
       )}
-      {!searchInProgress && query && results.length > 0 && (
+      {!searchInProgress && results.length > 0 && (
         <>
           <SearchResults
             index={index}

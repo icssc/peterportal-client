@@ -1,5 +1,6 @@
 'use client';
 import { FC, useState, useEffect } from 'react';
+import LoadingSpinner from '../../component/LoadingSpinner/LoadingSpinner';
 
 import GradeDist from '../../component/GradeDist/GradeDist';
 import PrereqTree from '../../component/PrereqTree/PrereqTree';
@@ -12,7 +13,6 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
-import { CircularProgress } from '@mui/material';
 
 interface CoursePageProps {
   courseId: string;
@@ -43,7 +43,7 @@ const CoursePage: FC<CoursePageProps> = ({ courseId: id }) => {
   }
   // loading results
   else if (!courseGQLData) {
-    return <CircularProgress />;
+    return <LoadingSpinner />;
   } else {
     const sideInfo = (
       <SideInfo

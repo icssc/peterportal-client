@@ -1,5 +1,5 @@
-import { CircularProgress } from '@mui/material';
+import LoadingSpinner from '../component/LoadingSpinner/LoadingSpinner';
 
 export default function Loading() {
-  return <CircularProgress className="page-loader" />;
+  return <LoadingSpinner className="page-loader" />;
 }

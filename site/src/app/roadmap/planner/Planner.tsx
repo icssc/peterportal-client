@@ -3,11 +3,11 @@ import { FC } from 'react';
 import './Planner.scss';
 import Header from '../toolbar/Header';
 import Year from './Year';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { useAppSelector } from '../../../store/hooks';
 import { selectYearPlans } from '../../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
-import { CircularProgress } from '@mui/material';
 
 const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
@@ -39,7 +39,7 @@ const Planner: FC = () => {
     <div className="planner">
       <Header courseCount={courseCount} unitCount={unitCount} missingPrerequisites={new Set()} />
       {roadmapLoading ? (
-        <CircularProgress />
+        <LoadingSpinner />
       ) : (
         <section className="years" data-max-quarter-count={maxQuarterCount}>
           {currentPlanData.map((year, yearIndex) => {

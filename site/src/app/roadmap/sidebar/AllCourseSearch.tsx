@@ -9,14 +9,13 @@ import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../planner/Course';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
-import { CircularProgress } from '@mui/material';
 
 const AllCourseSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
-  const { results } = useAppSelector((state) => state.search.courses);
-  const searchInProgress = useAppSelector((state) => state.search.searchInProgress);
+  const { results, searchInProgress } = useAppSelector((state) => state.search.courses);
   const { savedCourses } = useSavedCourses();
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
@@ -36,7 +35,7 @@ const AllCourseSearch: FC = () => {
       <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
 
       {searchInProgress ? (
-        <CircularProgress />
+        <LoadingSpinner />
       ) : shownCourses.length === 0 ? (
         <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       ) : (

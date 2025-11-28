@@ -1,6 +1,6 @@
 import { FC, Children } from 'react';
 import './ReviewItemGrid.scss';
-import { CircularProgress } from '@mui/material';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface ReviewItemGridProps {
   title: string;
@@ -16,7 +16,7 @@ const ReviewItemGrid: FC<ReviewItemGridProps> = ({ title, description, isLoading
       <h1 className="review-grid-title">{title}</h1>
       <p>{description}</p>
       {isLoading ? (
-        <CircularProgress />
+        <LoadingSpinner />
       ) : (
         <div className="review-grid">
           {Children.toArray(children).length === 0 ? <span>{noDataMsg}</span> : children}

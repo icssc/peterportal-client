@@ -11,11 +11,12 @@ import {
   setSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
+import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { CircularProgress, Collapse } from '@mui/material';
+import { Collapse } from '@mui/material';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -148,7 +149,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
         {hasSpecs && !majorWithSpec.selectedSpec ? (
           <p className="unselected-spec-notice">Please select a specialization to view requirements</p>
         ) : resultsLoading ? (
-          <CircularProgress />
+          <LoadingSpinner />
         ) : (
           <ProgramRequirementsList
             requirements={majorWithSpec.requirements}
