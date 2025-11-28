@@ -1,6 +1,7 @@
 @use '../../globals';
 
 .review-form-modal {
+  // "paper" refers to the component used internally to render the Dialog's content
   .MuiDialog-paper {
     width: 350px;
     display: flex;
