@@ -8,6 +8,7 @@ import AppThemeProvider from '../AppThemeProvider/AppThemeProvider';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { useSetSchedule } from '../../hooks/schedule';
+import { useLoadDepartments } from '../../hooks/departments';
 import { UserData } from '@peterportal/types';
 import { useLoadCompletedMarkers } from '../../hooks/courseRequirements';
 import { useLoadTransferredCredits } from '../../hooks/transferCredits';
@@ -18,6 +19,7 @@ const UserDataLoader: FC = () => {
   useLoadCompletedMarkers();
   useLoadTransferredCredits();
   useSetSchedule();
+  useLoadDepartments();
   return null;
 };
 

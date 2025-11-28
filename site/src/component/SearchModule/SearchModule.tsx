@@ -1,17 +1,15 @@
-import { useState, useEffect, FC, useCallback, useRef } from 'react';
+import { useState, FC } from 'react';
 import './SearchModule.scss';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { SearchIndex, SearchResultData } from '../../types/types';
-import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
+import { SearchIndex } from '../../types/types';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
-import trpc from '../../trpc.ts';
-import { setQuery, setResults } from '../../store/slices/searchSlice';
-import { transformGQLData } from '../../helpers/util';
+import { setQuery } from '../../store/slices/searchSlice';
 
+import { InputAdornment, IconButton, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import SearchFilters from '../SearchFilters/SearchFilters.tsx';
+import { useSearchTrigger } from '../../hooks/search.ts';
 
 const SEARCH_TIMEOUT_MS = 300;
 
@@ -24,63 +22,19 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const search = useAppSelector((state) => state.search[index]);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  const fuzzySearch = useCallback(
-    async (query: string) => {
-      abortControllerRef.current?.abort();
-      const abortController = new AbortController();
-      abortControllerRef.current = abortController;
-      try {
-        const { count, results } = await trpc.search.get.query(
-          {
-            query,
-            take: NUM_RESULTS_PER_PAGE,
-            skip: NUM_RESULTS_PER_PAGE * search.pageNumber,
-            resultType: index === 'courses' ? 'course' : 'instructor',
-          },
-          { signal: abortController.signal },
-        );
-        if (!abortController.signal.aborted) {
-          dispatch(
-            setResults({
-              index,
-              results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
-              count,
-            }),
-          );
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name !== 'AbortError') {
-          console.error('Search error:', error);
-        }
-      }
-    },
-    [dispatch, index, search.pageNumber],
-  );
-
-  // Cleanup abort controller on unmount
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current?.abort();
-    };
-  }, []);
-
-  // Refresh search results when names and page number changes (controlled by searchResults dependency array)
-  useEffect(() => {
-    fuzzySearch(search.query);
-  }, [search.query, fuzzySearch]);
+  useSearchTrigger(index);
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
     if (location.pathname === '/') {
       dispatch(setShowSavedCourses(!query));
     }
-    if (query && query !== search.query) {
+    if (query !== search.query) {
       dispatch(setQuery({ index, query }));
       setPendingRequest(null);
     }
   };
+
   const searchAfterTimeout = (query: string) => {
     setSearchQuery(query);
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -92,24 +46,28 @@ const SearchModule: FC<SearchModuleProps> = ({ index }) => {
   const professorPlaceholder = 'Search a professor';
   const placeholder = index === 'courses' ? coursePlaceholder : professorPlaceholder;
 
+  const endAdornment = (
+    <InputAdornment position="end">
+      <IconButton aria-label="Search" onClick={() => searchImmediately(searchQuery)}>
+        <SearchIcon />
+      </IconButton>
+    </InputAdornment>
+  );
+
   return (
     <div className="search-module">
-      <Form.Group>
-        <InputGroup>
-          <Form.Control
-            className="search-bar"
-            aria-label="search"
-            type="search"
-            placeholder={placeholder}
-            onChange={(e) => searchAfterTimeout(e.target.value)}
-            defaultValue={search.query}
-            autoCorrect="off"
-          />
-          <button className="input-group-text" onClick={() => searchImmediately(searchQuery)}>
-            <SearchIcon />
-          </button>
-        </InputGroup>
-      </Form.Group>
+      <TextField
+        variant="outlined"
+        className="search-bar"
+        aria-label="search"
+        type="text"
+        placeholder={placeholder}
+        onChange={(e) => searchAfterTimeout(e.target.value)}
+        defaultValue={search.query}
+        autoCorrect="off"
+        slotProps={{ input: { endAdornment, className: 'input-wrapper' } }}
+      />
+      {index === 'courses' && search.query && <SearchFilters />}
     </div>
   );
 };
