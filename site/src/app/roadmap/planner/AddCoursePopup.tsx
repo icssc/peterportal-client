@@ -14,7 +14,7 @@ import {
   PreviousOfferingsRow,
 } from '../../../component/CourseInfo/CourseInfo';
 
-import { DialogContent, DialogTitle, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { modifyQuarterCourse } from '../../../helpers/roadmapEdits';
 
@@ -32,7 +32,7 @@ const AddCoursePopup: FC = () => {
   const yearIndex = currentYearAndQuarter?.year ?? -1;
 
   const closePopup = () => dispatch(setShowAddCourse(false));
-  const contentClassName = 'ppc-modal add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
+  const contentClassName = 'add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
   const overlay = <UIOverlay onClick={closePopup} zIndex={499} />;
 
   const addToRoadmap = () => {
@@ -63,7 +63,7 @@ const AddCoursePopup: FC = () => {
   return (
     <>
       <div className={contentClassName}>
-        <DialogTitle>
+        <div className="title">
           <h2>
             {department} {courseNumber}
           </h2>
@@ -75,8 +75,8 @@ const AddCoursePopup: FC = () => {
           <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
-        <DialogContent>
+        </div>
+        <div className="content">
           <CourseDescription course={activeCourse} />
           {activeMissingPrerequisites ? (
             <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
@@ -84,7 +84,7 @@ const AddCoursePopup: FC = () => {
             <PrerequisiteText course={activeCourse} />
           )}
           <PreviousOfferingsRow course={activeCourse} />
-        </DialogContent>
+        </div>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
         </button>
