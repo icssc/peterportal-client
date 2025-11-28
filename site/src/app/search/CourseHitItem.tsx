@@ -7,7 +7,7 @@ import Badge from 'react-bootstrap/Badge';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
 import { CourseGQLData } from '../../types/types';
-import { getCourseTags, useIsMobile } from '../../helpers/util';
+import { getCourseTags } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
 
 import { IconButton } from '@mui/material';
@@ -21,7 +21,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const activeCourse = useAppSelector((state) => state.popup.course);
-  const isMobile = useIsMobile();
   const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
   const courseIsSaved = isCourseSaved(props);
   const pillData = getCourseTags(props); // data to be displayed in pills
@@ -31,8 +30,8 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     dispatch(setCourse(props));
 
     // if click on a course that is already in popup
-    // or if on mobile
-    if ((activeCourse && props.id == activeCourse.id) || isMobile) {
+    // if click on a course that is already in popup
+    if (activeCourse && props.id == activeCourse.id) {
       router.push(`/course/${props.id}`);
     }
   };

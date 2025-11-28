@@ -83,8 +83,8 @@ const AppHeader: FC = () => {
               <ArrowLeftIcon />
             </IconButton>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', height: '100%', width: '100%' }}>
-            <div style={{ flex: 1 }}>
+          <div className="fullscreen-search-row">
+            <div>
               <SearchModule index="courses" />
             </div>
           </div>
