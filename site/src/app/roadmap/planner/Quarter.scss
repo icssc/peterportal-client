@@ -5,6 +5,42 @@
   }
 }
 
+@mixin dragged-quarter-styles() {
+  &.sortable-ghost {
+    opacity: 0.35;
+    width: auto;
+    color: var(--blue-primary);
+
+    .course-info {
+      display: contents;
+    }
+
+    .course-synopsis {
+      margin-bottom: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      display: block;
+    }
+    .course-synopsis .title {
+      font-weight: inherit;
+      &::after {
+        display: none;
+      }
+    }
+
+    .course-drag-handle,
+    .MuiIconButton-root {
+      color: inherit;
+    }
+    .course-tags,
+    .course-synopsis .description {
+      display: none;
+    }
+  }
+}
+
 div.quarter {
   border-radius: 0;
   flex: 1 1 30%;
@@ -77,12 +113,12 @@ div.quarter {
       border: 1px solid var(--border-secondary);
       border-radius: 0;
       margin-block: -0.5px;
+
       .quarter-indicator-container {
         display: none;
       }
-      &.sortable-ghost {
-        opacity: 0.35;
-      }
+
+      @include dragged-quarter-styles();
     }
   }
 

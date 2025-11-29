@@ -78,9 +78,7 @@ const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, description, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
 
-  const titleWords = title.split(' ').length;
-  const desiredLength = 14 - titleWords;
-  const parsedDescription = description.split(' ').slice(0, desiredLength).join(' ');
+  const isInRoadmap = !!onDelete;
 
   const formattedCourseLevel = getCourseLevel(courseLevel);
   const geTags = getGETags(geList);
@@ -96,8 +94,14 @@ const Course: FC<CourseProps> = (props) => {
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
+  /**
+   * @todo merge conflict with variable units - when merging with var units, this
+   * text should be used in course tags, but not in the course-card-top in the Roadmap
+   */
+  const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+
   return (
-    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
       <div className="course-drag-handle">
         <DragIndicatorIcon />
       </div>
@@ -108,47 +112,29 @@ const Course: FC<CourseProps> = (props) => {
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
 
-          {!onDelete && <CourseBookmarkButton course={props.data} />}
+          {isInRoadmap && <span className="units">{unitsText}</span>}
         </div>
-
-        {onDelete && (
-          <div className="course-info-top">
-            <span className="units">
-              {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-            </span>
-
-            <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
-              <DeleteOutlineIcon className="course-delete-icon" />
-            </IconButton>
+        {isInRoadmap ? (
+          <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
+            <DeleteOutlineIcon className="course-delete-icon" />
+          </IconButton>
+        ) : (
+          <CourseBookmarkButton course={props.data} />
+        )}
+      </div>
+      {isInRoadmap && <div className="title">{title}</div>}
+      {!isInRoadmap && (
+        <div className="course-info">
+          <p className="course-synopsis">
+            <b className="title">{title}</b>
+            <span className="description">{description}</span>
+          </p>
+          <div className="course-tags">
+            {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
+            <RecentOfferingsTooltip terms={terms} />
           </div>
-        )}
-      </div>
-      <div className="course-info">
-        <div className="title">
-          {title}
-          {!onDelete && ': '}
         </div>
-        {!onDelete && (
-          <>
-            <div className="description"> {parsedDescription}...</div>
-            <div className="course-tags">
-              {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-              {' • '}
-              {formattedCourseLevel}
-              {' • '}
-              {geTags.length > 0 && (
-                <>
-                  {geTags}
-                  {' • '}
-                </>
-              )}
-              <div className="course-tooltip">
-                <RecentOfferingsTooltip terms={terms} />
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+      )}
     </div>
   );
 };
