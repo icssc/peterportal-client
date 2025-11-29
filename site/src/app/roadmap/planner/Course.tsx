@@ -126,31 +126,27 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-info">
         <div className="title">
           {title}
-          {!onDelete ? ': ' : ''}
+          {!onDelete && ': '}
         </div>
-        {!onDelete && <div className="description"> {parsedDescription}...</div>}
         {!onDelete && (
-          <div className="course-tags">
-            <span className="units">
+          <>
+            <div className="description"> {parsedDescription}...</div>
+            <div className="course-tags">
               {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
               {' • '}
-            </span>
-
-            <div className="courseLevel">
               {formattedCourseLevel}
               {' • '}
-            </div>
-            {geTags.length > 0 && (
-              <div className="ge-tags">
-                {geTags}
-                {' • '}
+              {geTags.length > 0 && (
+                <>
+                  {geTags}
+                  {' • '}
+                </>
+              )}
+              <div className="course-tooltip">
+                <RecentOfferingsTooltip terms={terms} />
               </div>
-            )}
-
-            <div className="course-tooltip">
-              <RecentOfferingsTooltip terms={terms} />
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

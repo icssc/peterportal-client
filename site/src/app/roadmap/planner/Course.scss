@@ -58,13 +58,6 @@
     grid-area: C;
   }
 
-  .courseLabels {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    flex-wrap: nowrap;
-  }
-
   .missing-prereq {
     color: var(--red-primary);
   }
@@ -173,21 +166,21 @@
       display: block;
       white-space: normal;
 
+      .title,
+      .description {
+        display: inline;
+      }
+
       .title {
         font-size: 14px;
         font-weight: bold;
-        display: inline;
-      }
-      .description {
-        display: inline;
-        float: none;
       }
 
       .course-tags {
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start;
-        font-weight: 500;
+        margin-top: 4px;
         font-size: 11px;
         gap: 6px;
       }
