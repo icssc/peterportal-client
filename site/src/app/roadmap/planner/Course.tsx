@@ -5,7 +5,7 @@ import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/Re
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
-import { useIsMobile, pluralize, getGEs, getCourseLevel } from '../../../helpers/util';
+import { useIsMobile, pluralize, getGETags, getCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -75,15 +75,15 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, description, minUnits, maxUnits, terms } = props.data;
+  const { title, courseLevel, description, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
-  const GeData = getGEs(props.data);
 
   const titleWords = title.split(' ').length;
   const desiredLength = 14 - titleWords;
-
   const parsedDescription = description.split(' ').slice(0, desiredLength).join(' ');
-  const parsed_courseLevel = getCourseLevel(courseLevel);
+
+  const formattedCourseLevel = getCourseLevel(courseLevel);
+  const geTags = getGETags(geList);
 
   const dispatch = useAppDispatch();
 
@@ -137,13 +137,15 @@ const Course: FC<CourseProps> = (props) => {
             </span>
 
             <div className="courseLevel">
-              {parsed_courseLevel}
+              {formattedCourseLevel}
               {' • '}
             </div>
-            <div className="ge">
-              {GeData}
-              {' • '}
-            </div>
+            {geTags.length > 0 && (
+              <div className="ge-tags">
+                {geTags}
+                {' • '}
+              </div>
+            )}
 
             <div className="course-tooltip">
               <RecentOfferingsTooltip terms={terms} />
