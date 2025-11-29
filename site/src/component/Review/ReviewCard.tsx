@@ -218,14 +218,14 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     setReportFormOpen(true);
   };
 
-  const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
+  const verifiedOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
   const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
   const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
   const verifiedIcon = (
-    <OverlayTrigger overlay={badgeOverlay}>
+    <OverlayTrigger overlay={verifiedOverlay}>
       <VerifiedUserIcon />
     </OverlayTrigger>
   );
