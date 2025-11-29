@@ -125,8 +125,9 @@ const Course: FC<CourseProps> = (props) => {
           <CourseBookmarkButton course={props.data} />
         )}
       </div>
-      {isInRoadmap && <div className="title">{title}</div>}
-      {!isInRoadmap && (
+      {isInRoadmap ? (
+        <div className="title">{title}</div>
+      ) : (
         <div className="course-info">
           <p className="course-synopsis">
             <b className="title">{title}</b>
