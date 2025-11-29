@@ -41,7 +41,7 @@ const SavedAndSearch: FC = () => {
         <LoadingSpinner />
       ) : shownCourses.length === 0 ? (
         <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
-      ) : viewIndex === 'professors' ? (
+      ) : !showSavedCourses && viewIndex === 'professors' ? (
         <ul>
           {shownCourses.map((prof) => {
             return <li key={prof.id}>{(prof as unknown as ProfessorGQLData).name}</li>;
