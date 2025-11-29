@@ -1,9 +1,20 @@
 import React, { FC, useState } from 'react';
-import { Modal } from 'react-bootstrap';
 import { PlannerYearData } from '../../../types/types';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { quarters, QuarterName } from '@peterportal/types';
-import { Button, Box, Checkbox, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
+import {
+  Button,
+  Box,
+  Dialog,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  TextField,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
 interface YearPopupQuarter {
   id: QuarterName;
@@ -90,66 +101,61 @@ const YearModal: FC<YearModalProps> = (props) => {
   };
 
   return (
-    <Modal show={show} onShow={resetForm} onHide={handleHide} centered className="ppc-modal">
-      <Modal.Header closeButton>
-        <h2>{title}</h2>
-      </Modal.Header>
-      <Modal.Body>
+    <Dialog open={show} onClose={handleHide} maxWidth="xs" fullWidth>
+      <DialogTitle>{title}</DialogTitle>
+      <DialogContent>
         <Box component="form" noValidate>
-          <FormControl>
-            <FormLabel>Name</FormLabel>
-            <TextField
-              required
-              type="text"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                // prevent submitting form (reloads the page)
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                }
-              }}
-              error={validated}
-              slotProps={{
-                htmlInput: {
-                  maxLength: 35,
-                },
-              }}
-              placeholder={placeholderName}
-            />
-          </FormControl>
+          <TextField
+            variant="standard"
+            label="Name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              // prevent submitting form (reloads the page)
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            error={validated}
+            slotProps={{
+              htmlInput: {
+                maxLength: 35,
+              },
+            }}
+            placeholder={placeholderName}
+          />
 
-          <FormControl>
-            <FormLabel>Start Year</FormLabel>
-            <TextField
-              required
-              type="number"
-              name="year"
-              value={year}
-              onChange={(e) => setYear(parseInt(e.target.value))}
-              error={validated}
-              slotProps={{
-                htmlInput: {
-                  min: 1000,
-                  max: 9999,
-                },
-              }}
-              placeholder={placeholderYear.toString()}
-            />
-          </FormControl>
+          <TextField
+            variant="standard"
+            label="Year"
+            type="number"
+            value={year}
+            onChange={(e) => setYear(parseInt(e.target.value))}
+            error={validated}
+            slotProps={{
+              htmlInput: {
+                min: 1000,
+                max: 9999,
+              },
+            }}
+            placeholder={placeholderYear.toString()}
+          />
           <FormControl>
             <FormLabel>Include Quarters</FormLabel>
             {quarterCheckboxes}
           </FormControl>
-
-          {/* @todo: Should be able to remove disableElevation and variant after conversion to MUI Modal */}
-          <Button variant="contained" onClick={saveYear} disableElevation>
-            {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
-          </Button>
         </Box>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={handleHide}>
+          Cancel
+        </Button>
+        <Button variant="contained" disableElevation onClick={saveYear}>
+          {type === 'add' ? 'Add to Roadmap' : 'Save Changes'}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
