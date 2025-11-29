@@ -27,23 +27,6 @@
     }
   }
 
-  &.roadmap-course {
-    color: var(--blue-primary);
-
-    .title {
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--blue-primary);
-    }
-
-    .course-drag-handle,
-    .course-delete-btn {
-      color: inherit;
-    }
-  }
-
   .course-and-info {
     grid-area: B;
   }
@@ -94,10 +77,6 @@
     width: calc(100% - 4px);
     margin-inline: 2px;
 
-    .name {
-      margin: 0;
-    }
-
     .course-card-top {
       grid-area: B;
 
@@ -141,6 +120,27 @@
 
     div.course-and-info {
       display: contents;
+    }
+  }
+
+  &.roadmap-course {
+    color: var(--blue-primary);
+    box-shadow: none;
+    border: 1px solid var(--border-secondary);
+    border-radius: 0;
+    margin-block: -0.5px;
+
+    .title {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--blue-primary);
+    }
+
+    .course-drag-handle,
+    .course-delete-btn {
+      color: inherit;
     }
   }
 }

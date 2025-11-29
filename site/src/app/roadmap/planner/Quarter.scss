@@ -109,15 +109,6 @@ div.quarter {
     }
 
     .course {
-      box-shadow: none;
-      border: 1px solid var(--border-secondary);
-      border-radius: 0;
-      margin-block: -0.5px;
-
-      .quarter-indicator-container {
-        display: none;
-      }
-
       @include dragged-quarter-styles();
     }
   }
