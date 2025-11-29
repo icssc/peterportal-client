@@ -110,7 +110,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
           </div>
           <div className="progress-bar">
             <LinearProgress
-              color="success"
+              color={enrollmentPercent === 100 ? 'error' : 'success'}
               variant="determinate"
               value={enrollmentPercent}
               data-status={section.status}
