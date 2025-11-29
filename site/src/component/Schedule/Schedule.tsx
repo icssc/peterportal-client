@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.scss';
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import { LinearProgress } from '@mui/material';
 
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
@@ -109,7 +109,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
             <span className="enrollment-percentage">{Math.round(enrollmentPercent)}%</span>
           </div>
           <div className="progress-bar">
-            <ProgressBar now={enrollmentPercent} data-status={section.status} />
+            <LinearProgress variant="determinate" value={enrollmentPercent} data-status={section.status} />
           </div>
         </td>
 

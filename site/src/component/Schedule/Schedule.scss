@@ -41,16 +41,7 @@
   }
 }
 
-.progress-bar {
-  position: relative;
-  border-radius: 50px;
-  height: 10px;
-  background-color: transparent;
-}
-
 [data-status] {
-  --status-color: #8888;
-
   &.status-badge {
     background-color: var(--status-color);
     padding: 5px 12px;
@@ -58,10 +49,6 @@
     font-size: 12px;
     font-weight: bold;
     text-align: center;
-  }
-
-  .progress-bar {
-    background-color: var(--status-color);
   }
 
   &[data-status='OPEN'] {
@@ -78,11 +65,14 @@
   }
 }
 
-.progress-bar > div {
-  position: relative;
-  background-color: #8884;
-  border-radius: 50px;
-  height: 10px;
+.progress-bar {
+  .MuiLinearProgress-root {
+    background-color: #8888; // @todo: define this somewhere or use a different color
+  }
+
+  .MuiLinearProgress-bar {
+    background-color: var(--status-color);
+  }
 }
 
 .col-tableHolder {

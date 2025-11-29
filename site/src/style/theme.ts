@@ -160,6 +160,13 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiCircularProgress: {
+      styleOverrides: {
+        root: {
+          color: 'inherit',
+        },
+      },
+    },
     MuiFormControl: {
       styleOverrides: {
         root: {
