@@ -19,6 +19,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { Button, IconButton, Card, Skeleton, Stack } from '@mui/material';
 import Link from 'next/link';
 
@@ -223,16 +224,15 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
   const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
-  const verifiedBadge = (
+  const verifiedIcon = (
     <OverlayTrigger overlay={badgeOverlay}>
-      {/* @todo: even smaller variant? */}
-      <Chip color="primary" size="small" label="Verified" />
+      <VerifiedUserIcon />
     </OverlayTrigger>
   );
 
-  const authorBadge = (
+  const authorIcon = (
     <OverlayTrigger overlay={authorOverlay}>
-      <Chip color="success" size="small" label={<PersonIcon />} />
+      <PersonIcon />
     </OverlayTrigger>
   );
 
@@ -281,8 +281,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
               <div className="reviewcard-author">
                 <b>Posted by:</b>
                 <p className="reviewcard-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="reviewcard-author-verified">{verifiedBadge}</div>}
-                {review.authored && <div className="reviewcard-author-author">{authorBadge}</div>}
+                {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
+                {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
               </div>
               <p>
                 <b>Quarter:</b> {review.quarter}
