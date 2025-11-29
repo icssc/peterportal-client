@@ -79,6 +79,7 @@ const Course: FC<CourseProps> = (props) => {
   const { requiredCourses, onDelete, openPopoverLeft } = props;
 
   const isInRoadmap = !!onDelete;
+  const isMobile = useIsMobile();
 
   const formattedCourseLevel = getCourseLevel(courseLevel);
   const geTags = getGETags(geList);
@@ -102,9 +103,11 @@ const Course: FC<CourseProps> = (props) => {
 
   return (
     <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
-      <div className="course-drag-handle">
-        <DragIndicatorIcon />
-      </div>
+      {(!isMobile || isInRoadmap) && (
+        <div className="course-drag-handle">
+          <DragIndicatorIcon />
+        </div>
+      )}
 
       <div className="course-card-top">
         <div className="course-and-info">
