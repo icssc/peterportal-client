@@ -29,7 +29,12 @@ const Node: FC<NodeProps> = (props) => {
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
       <OverlayTrigger overlay={popover}>
         {!props.label.startsWith('AP ') ? (
-          <Link href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')} role="button" className="node">
+          <Link
+            target="_blank"
+            href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
+            role="button"
+            className="node"
+          >
             {props.label}
           </Link>
         ) : (

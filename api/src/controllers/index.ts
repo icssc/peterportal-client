@@ -12,6 +12,7 @@ import transferCreditsRouter from './transferCredits';
 import usersRouter from './users';
 import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
+import departmentRouter from './department';
 import { externalAppRouter } from './external';
 
 export const appRouter = router({
@@ -29,6 +30,7 @@ export const appRouter = router({
   transferCredits: transferCreditsRouter,
   users: usersRouter,
   zot4PlanImport: zot4PlanImportRouter,
+  departments: departmentRouter,
 });
 
 // Export only the type of a router!
