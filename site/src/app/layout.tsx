@@ -23,6 +23,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  title: 'PeterPortal',
   description:
     'A web application for course discovery and planning at UCI, featuring an enhanced catalogue and a 4-year planner.',
 };
@@ -43,7 +44,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        <title>PeterPortal</title>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-script.js"></script>
         {/* This script must run and apply styles to the root HTML element before the
