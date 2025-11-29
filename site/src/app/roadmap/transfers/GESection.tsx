@@ -8,6 +8,7 @@ import { setTransferredGE } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { GE_TITLE_MAP } from '../../../helpers/courseRequirements';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface GEInputProps {
   value: number;
@@ -54,6 +55,7 @@ interface GEMenuTileProps {
 
 const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
   const dispatch = useAppDispatch();
+  const isLoggedIn = useIsLoggedIn();
 
   const currentGE = useAppSelector((state) =>
     state.transferCredits.transferredGEs.find((ge) => ge.geName === geName),
@@ -66,6 +68,7 @@ const GEMenuTile: FC<GEMenuTileProps> = ({ geName }) => {
       units: newUnitCount,
     };
     dispatch(setTransferredGE(updatedGE));
+    if (!isLoggedIn) return;
     trpc.transferCredits.setTransferredGE.mutate(updatedGE);
   };
 

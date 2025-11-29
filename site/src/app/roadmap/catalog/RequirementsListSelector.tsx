@@ -1,40 +1,29 @@
-import './RequirementsListSelector.scss';
-import { FC, useContext } from 'react';
-import { Button } from 'react-bootstrap';
-import ThemeContext from '../../../style/theme-context';
+import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import TabSelector from './../sidebar/TabSelector';
 import { useIsMobile } from '../../../helpers/util';
 
-interface ListSelectorProps {
-  text: RequirementsTabName;
-}
-const ListSelector: FC<ListSelectorProps> = ({ text }) => {
-  const { darkMode } = useContext(ThemeContext);
-  const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
-  const dispatch = useAppDispatch();
-
-  const selected = selectedTab === text;
-  const variant = selected ? 'primary' : darkMode ? 'dark' : 'light';
-  const selectTab = () => dispatch(setSelectedTab(text));
-
-  return (
-    <Button variant={variant} onClick={selectTab}>
-      <span>{text}</span>
-    </Button>
-  );
-};
-
 const RequirementsListSelector: FC = () => {
+  const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
+  const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
   const lastTab = isMobile ? 'Search' : 'Saved';
 
+  const tabs = [
+    { value: 'Major', label: 'Major' },
+    { value: 'Minor', label: 'Minor' },
+    { value: 'GE', label: 'GE' },
+    { value: lastTab, label: lastTab },
+  ];
+
+  const handleTabChange = (tab: string) => {
+    dispatch(setSelectedTab(tab as RequirementsTabName));
+  };
+
   return (
-    <div className="requirements-list-selector">
-      <ListSelector text="Major" />
-      <ListSelector text="Minor" />
-      <ListSelector text="GE" />
-      <ListSelector text={lastTab} /> {/** @todo resolve merge conflict with MUI sidebar */}
+    <div>
+      <TabSelector tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
     </div>
   );
 };
