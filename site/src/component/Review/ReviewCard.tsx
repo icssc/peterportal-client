@@ -310,7 +310,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       {tags.length > 0 && (
         <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Chip className="reviewcard-tag" size="small" color="primary" key={tag} label={tag} />
+            <Chip size="small" color="primary" key={tag} label={tag} />
           ))}
         </div>
       )}
