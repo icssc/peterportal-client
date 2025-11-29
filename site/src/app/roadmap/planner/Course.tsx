@@ -5,7 +5,7 @@ import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/Re
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
-import { useIsMobile, pluralize, getGETags, getCourseLevel } from '../../../helpers/util';
+import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -81,8 +81,8 @@ const Course: FC<CourseProps> = (props) => {
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
 
-  const formattedCourseLevel = getCourseLevel(courseLevel);
-  const geTags = getGETags(geList);
+  const formattedCourseLevel = shortenCourseLevel(courseLevel);
+  const geTags = formatGEsTag(geList);
 
   const dispatch = useAppDispatch();
 

@@ -9,7 +9,7 @@ import {
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
-import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
+import { CourseAAPIResponse, GETitle, ProfessorAAPIResponse } from '@peterportal/types';
 import { ReactNode } from 'react';
 
 export function getCourseTags(course: CourseGQLData) {
@@ -31,14 +31,14 @@ export function getCourseTags(course: CourseGQLData) {
 }
 
 // helper function to format GEs in the form of "GE: II, III"
-export function getGETags(geList: CourseGQLData['geList']): string {
+export function formatGEsTag(geList: GETitle[]): string {
   if (geList.length === 0) return '';
   const numerals = geList.map((ge) => ge.slice(3).split(':')[0].trim());
   return `GE ${numerals.join(', ')}`;
 }
 
 // helper function to truncate course level in the form of Upper Div, Lower Div, or Grad
-export function getCourseLevel(courseLevel: CourseGQLData['courseLevel']): string {
+export function shortenCourseLevel(courseLevel: CourseGQLData['courseLevel']): string {
   return courseLevel === 'Graduate/Professional Only (200+)' ? 'Grad' : courseLevel.slice(0, 9);
 }
 
