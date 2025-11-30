@@ -3,7 +3,7 @@ import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
-import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import PPCOverlay from '../../../component/PPCOverlayTrigger/PPCOverlay';
 
 import { useIsMobile, pluralize } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
@@ -45,11 +45,12 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
-    <PPCOverlayTrigger
+    <PPCOverlay
       popoverContent={popoverContent}
-      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
       disabled={isMobile}
+      anchor={isMobile ? 'bottom' : openPopoverLeft ? 'left' : 'right'}
+      transform={isMobile ? 'bottom' : openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
@@ -61,7 +62,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </PPCOverlayTrigger>
+    </PPCOverlay>
   );
 };
 

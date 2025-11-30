@@ -1,6 +1,5 @@
 import { FC, useState, MouseEvent } from 'react';
 import './RecentOfferingsTooltip.scss';
-// import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { Popover, Typography } from '@mui/material';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
@@ -25,15 +24,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   // if the course was not offered in the previous academic year, show a ❌
   if (prevOfferings.length === 0) prevOfferings.push('❌');
 
-  // const popover = (
-  //   <Popover id="recent-offerings-popover" className="ppc-popover recent-offerings-popover">
-  //     <div className="popover-body">
-  //       <h4 className="center">Recent Offerings</h4>
-  //       <RecentOfferingsTable terms={terms} size="thin" />
-  //     </div>
-  //   </Popover>
-  // );
-
   const handlePopoverOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -45,25 +35,13 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   const open = Boolean(anchorEl);
 
   return (
-    // <OverlayTrigger overlay={popover} placement="auto">
-    //   <div className="tooltip-trigger">
-    //     {prevOfferings.map((emoji) => (
-    //       <span key={emoji}>{emoji}</span>
-    //     ))}
-    //   </div>
-    // </OverlayTrigger>
     <div className="tooltip-trigger">
-      <Typography
-        aria-owns={open ? 'recent-offerings-popover' : undefined}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-      >
+      <Typography onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
         {prevOfferings}
       </Typography>
       <Popover
         id="recent-offerings-popover"
-        className="ppc-popover recent-offerings-popover"
-        sx={{ pointerEvents: 'none' }}
+        className="recent-offerings-popover"
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -75,7 +53,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
           horizontal: 'right',
         }}
         onClose={handlePopoverClose}
-        disableRestoreFocus
       >
         <div className="popover-body">
           <h4 className="center">Recent Offerings</h4>
