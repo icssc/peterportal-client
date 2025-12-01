@@ -1,14 +1,13 @@
 'use client';
 import './ReviewCard.scss';
 import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
-import Badge from 'react-bootstrap/Badge';
+import { Chip } from '@mui/material';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { Modal } from 'react-bootstrap';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
@@ -19,7 +18,18 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { Button, IconButton, Card, Skeleton, Stack } from '@mui/material';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import {
+  Button,
+  IconButton,
+  Card,
+  Skeleton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+} from '@mui/material';
 import Link from 'next/link';
 
 interface AuthorEditButtonsProps {
@@ -61,24 +71,22 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
       <IconButton onClick={() => setShowDeleteModal(true)}>
         <DeleteOutlineIcon />
       </IconButton>
-      <Modal className="ppc-modal" show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-        <Modal.Header closeButton>
-          <h2>Delete Review</h2>
-        </Modal.Header>
-        <Modal.Body>Deleting a review will remove it permanently. Are you sure you want to proceed?</Modal.Body>
-        <Modal.Footer>
-          <Stack direction="row" spacing={2}>
-            {' '}
-            {/* When the Modal is migrated to MUI, should remove the Stack used for spacing here */}
-            <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
-              Cancel
-            </Button>
-            <Button color="error" onClick={() => deleteReview(review.id!)}>
-              Delete
-            </Button>
-          </Stack>
-        </Modal.Footer>
-      </Modal>
+      <Dialog open={showDeleteModal} onClose={() => setShowDeleteModal(false)} fullWidth>
+        <DialogTitle>Delete Review</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Deleting a review will remove it permanently. Are you sure you want to proceed?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button color="error" onClick={() => deleteReview(review.id!)}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <ReviewForm
         course={course}
         professor={professor}
@@ -217,23 +225,21 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     setReportFormOpen(true);
   };
 
-  const badgeOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
+  const verifiedOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
   const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
 
   const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
   const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
-  const verifiedBadge = (
-    <OverlayTrigger overlay={badgeOverlay}>
-      <Badge bg="primary">Verified</Badge>
+  const verifiedIcon = (
+    <OverlayTrigger overlay={verifiedOverlay}>
+      <VerifiedUserIcon />
     </OverlayTrigger>
   );
 
-  const authorBadge = (
+  const authorIcon = (
     <OverlayTrigger overlay={authorOverlay}>
-      <Badge bg="success" style={{ padding: '1px' }}>
-        <PersonIcon />
-      </Badge>
+      <PersonIcon />
     </OverlayTrigger>
   );
 
@@ -282,8 +288,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
               <div className="reviewcard-author">
                 <b>Posted by:</b>
                 <p className="reviewcard-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="reviewcard-author-verified">{verifiedBadge}</div>}
-                {review.authored && <div className="reviewcard-author-author">{authorBadge}</div>}
+                {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
+                {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
               </div>
               <p>
                 <b>Quarter:</b> {review.quarter}
@@ -304,9 +310,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       {tags.length > 0 && (
         <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Badge pill className="reviewcard-tag" key={tag}>
-              {tag}
-            </Badge>
+            <Chip size="small" color="primary" key={tag} label={tag} />
           ))}
         </div>
       )}

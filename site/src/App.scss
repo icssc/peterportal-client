@@ -5,6 +5,7 @@ button {
 }
 
 body a {
+  color: var(--blue-accent);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
@@ -182,63 +183,6 @@ div.ppc-popover.bs-popover-bottom {
   }
 }
 
-.ppc-modal {
-  font-size: 18px;
-
-  .modal-header {
-    align-items: center;
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  .modal-content {
-    border: none;
-    background-color: var(--overlay2);
-    padding: 4px 8px 8px;
-    max-height: 100%;
-    overflow: auto;
-    margin-block: 32px;
-  }
-  .modal-dialog {
-    max-width: 400px;
-    margin: auto;
-    width: calc(100% - 32px);
-    max-height: 100%;
-  }
-  .modal-footer {
-    border-top: none;
-    justify-content: flex-start;
-  }
-  h2 {
-    margin-bottom: 0;
-    font-size: 25px;
-    font-weight: 600;
-  }
-  button.close {
-    margin: -4px -4px;
-    padding: 4px 8px;
-    font-size: 32px;
-    overflow: hidden;
-  }
-
-  a {
-    color: #1b76b4;
-  }
-  button.btn-primary {
-    border-color: var(--blue-primary);
-    background-color: var(--blue-primary);
-  }
-
-  [data-theme='dark'] & .btn-close {
-    opacity: 1;
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-[data-theme='dark'] .ppc-modal a {
-  color: var(--blue-accent);
-}
-
 .ppc-table {
   thead tr {
     background-color: var(--overlay2);
@@ -273,12 +217,6 @@ div.ppc-popover.bs-popover-bottom {
   }
 }
 
-.badge.rounded-pill {
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: var(--blue-primary) !important; // override bootstrap important
-}
-
 .table-wrapper {
   width: 100%;
   overflow: auto;
@@ -309,35 +247,6 @@ body hr {
 }
 
 [data-theme='dark'] {
-  .list-group-item,
-  .modal-content,
-  .dropdown-menu,
-  .dropdown-item,
-  .form-control,
-  .form-control:focus {
-    color: var(--text);
-    background-color: var(--overlay2);
-    &::placeholder {
-      color: #8888;
-    }
-  }
-
-  .form-control {
-    border-color: var(--overlay3);
-  }
-
-  .form-control:focus {
-    border-color: #86bbfb !important;
-  }
-
-  .custom-control-label::before {
-    background-color: var(--overlay3);
-  }
-
-  .dropdown-item:hover {
-    background-color: var(--overlay3);
-  }
-
   .btn-outline-primary {
     color: #0f83ff;
     border-color: #0f83ff;

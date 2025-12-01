@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './ReviewForm.scss';
-import Modal from 'react-bootstrap/Modal';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
@@ -34,6 +33,10 @@ import {
   Rating,
   Select,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -305,12 +308,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }
 
   const reviewForm = (
-    <Modal show={show} onHide={closeForm} centered className="ppc-modal review-form-modal">
-      <Modal.Header closeButton>
+    <Dialog open={show} onClose={closeForm} className="review-form-modal">
+      <DialogTitle>
         {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
-      </Modal.Header>
-      <Modal.Body>
-        {editing && <p className="editing-notice">{`You are editing your review for ${professorName}.`}</p>}
+        {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
+      </DialogTitle>
+      <DialogContent>
         <Box component="form" noValidate onSubmit={submitForm}>
           <div className="year-quarter-row">
             <FormControl error={showFormErrors && !yearTaken}>
@@ -458,8 +461,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
               placeholder="Select up to 3 tags"
               closeMenuOnSelect={false}
               theme={(t) => comboboxTheme(t, darkMode)}
-              className="ppc-combobox"
-              classNamePrefix="ppc-combobox"
+              className="tag-select"
+              classNamePrefix="tag-select"
             />
           </FormControl>
 
@@ -467,11 +470,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <FormLabel>Additional Details</FormLabel>
             <TextField
               multiline
-              fullWidth
+              variant="outlined"
               placeholder="The course was pretty good."
               onChange={(e) => setContent(e.target.value)}
               value={content}
-              minRows={3}
+              minRows={2}
               slotProps={{
                 htmlInput: {
                   maxLength: 500,
@@ -497,12 +500,18 @@ const ReviewForm: FC<ReviewFormProps> = ({
             />
           </FormControl>
 
-          <Button type="submit" loading={isSubmitting}>
-            Submit Review
-          </Button>
+          <div className="review-form-actions">
+            {/* Using this over FormActions since we don't want actions to be sticky over the form */}
+            <Button variant="text" color="inherit" onClick={closeForm}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={isSubmitting}>
+              Submit Review
+            </Button>
+          </div>
         </Box>
-      </Modal.Body>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 
   return reviewForm;
