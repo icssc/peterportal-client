@@ -31,8 +31,6 @@ const RoadmapPage: FC = () => {
 
   const fullscreenActive = isMobile && showFullscreenSearch;
 
-  if (fullscreenActive) return <MobileSearchMenu />;
-
   return (
     <div className="roadmap-page">
       {!isMobile && <DesktopRoadmapSidebar />}
@@ -43,11 +41,15 @@ const RoadmapPage: FC = () => {
       <MobileCourseCatalog />
       <MobileCreditsMenu />
 
-      {/* Main Planner View */}
-      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
-        <Planner />
-        {previewCourseId && <CoursePreview courseId={previewCourseId} />}
-      </div>
+      {/* Main Planner View or Fullscreen Mobile Search */}
+      {fullscreenActive ? (
+        <MobileSearchMenu />
+      ) : (
+        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+          <Planner />
+          {previewCourseId && <CoursePreview courseId={previewCourseId} />}
+        </div>
+      )}
     </div>
   );
 };
