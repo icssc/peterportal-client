@@ -3,7 +3,7 @@ import { FC } from 'react';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
-import { CourseGQLData, ProfessorGQLData } from '../../../types/types';
+import { CourseGQLData } from '../../../types/types';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
@@ -13,6 +13,7 @@ import Course from '../planner/Course';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
+import ProfessorResult from './ProfessorResult';
 
 const SavedAndSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
@@ -42,11 +43,11 @@ const SavedAndSearch: FC = () => {
       ) : shownCourses.length === 0 ? (
         <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       ) : !showSavedCourses && viewIndex === 'professors' ? (
-        <ul>
+        <div className="professor-results">
           {shownCourses.map((prof) => {
-            return <li key={prof.id}>{(prof as unknown as ProfessorGQLData).name}</li>;
+            return <ProfessorResult key={prof.id} data={prof} />;
           })}
-        </ul>
+        </div>
       ) : (
         <ReactSortable
           {...courseSearchSortable}
