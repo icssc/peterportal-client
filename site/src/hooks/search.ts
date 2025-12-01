@@ -97,6 +97,10 @@ export function useSearchTrigger() {
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('professors', profRes);
         const showCoursesFirst = courseRes.avgRank > profRes.avgRank;
+        /**
+         * @todo after fullscreen mobile search merges - on mobile, should only set
+         * dynamically for the full screen search and not the one when adding courses
+         */
         dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'professors'));
       })
       .catch(handleSearchError);
