@@ -11,7 +11,7 @@ const MobileSearchMenu: FC = () => {
   const selectedCourse = useAppSelector((state) => state.popup.course);
 
   const handleClose = () => {
-    dispatch(setCourse(null!));
+    dispatch(setCourse(null));
   };
 
   return (
