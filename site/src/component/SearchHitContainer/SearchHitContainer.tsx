@@ -10,8 +10,6 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import CourseHitItem from '../../app/search/CourseHitItem';
 import ProfessorHitItem from '../../app/search/ProfessorHitItem';
 
-// TODO: CourseHitItem and ProfessorHitem should not need index
-// investigate: see if you can refactor respective components to use course id/ucinetid for keys instead then remove index from props
 interface SearchHitContainerProps {
   index: SearchIndex;
 }
