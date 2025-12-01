@@ -1,9 +1,9 @@
 import './SavedAndSearch.scss';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
-import { CourseGQLData, ProfessorGQLData } from '../../../types/types';
+import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../../types/types';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
@@ -14,6 +14,7 @@ import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
+import { setSearchViewIndex } from '../../../store/slices/searchSlice';
 
 interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
@@ -65,6 +66,39 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
   );
 };
 
+const ResultsHeader: FC = () => {
+  const showSavedCourses = useAppSelector((state) => state.roadmap.showSavedCourses);
+  const viewIndex = useAppSelector((state) => state.search.viewIndex);
+  const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
+
+  const singularIndexType = viewIndex.replace(/s$/, '');
+  const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'professors' : 'courses';
+
+  if (showSavedCourses) {
+    return <h3 className="results-list-title">Saved Courses</h3>;
+  }
+
+  if (isMobile) {
+    return <h3 className="results-list-title">Search Results</h3>;
+  }
+
+  const switchViewIndex = (event: React.MouseEvent) => {
+    event.preventDefault();
+    dispatch(setSearchViewIndex(otherIndexType));
+  };
+
+  /** @todo only show the link if the other type actually has results */
+  return (
+    <p className="result-type-header">
+      Showing {singularIndexType} results.{' '}
+      <a className="results-switcher" href={`#${otherIndexType}`} onClick={switchViewIndex}>
+        Show {otherIndexType}
+      </a>
+    </p>
+  );
+};
+
 const SavedAndSearch: FC = () => {
   const { showSavedCourses } = useAppSelector((state) => state.roadmap);
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
@@ -78,7 +112,7 @@ const SavedAndSearch: FC = () => {
   return (
     <>
       <SearchModule />
-      <h3 className="saved-courses-title">{showSavedCourses ? 'Saved Courses' : 'Search Results'}</h3>
+      <ResultsHeader />
 
       {searchInProgress ? (
         <LoadingSpinner />
