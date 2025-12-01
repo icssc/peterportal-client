@@ -30,6 +30,7 @@ const AppHeader: FC = () => {
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isShowMobileSearchFilters = useAppSelector((state) => state.roadmap.showMobileSearchFilters);
   const isRoadmapPage = usePathname() == '/';
+  const courseSearchQuery = useAppSelector((state) => state.search['courses'].query);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -95,9 +96,11 @@ const AppHeader: FC = () => {
             <div>
               <SearchModule index="courses" />
             </div>
-            <IconButton onClick={toggleMobileSearchFilters}>
-              <TuneIcon />
-            </IconButton>
+            {courseSearchQuery && (
+              <IconButton onClick={toggleMobileSearchFilters}>
+                <TuneIcon />
+              </IconButton>
+            )}
           </div>
         </div>
       </header>
