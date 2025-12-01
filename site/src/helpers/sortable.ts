@@ -20,6 +20,7 @@ export const courseSearchSortable: SortableOptions & Partial<ReactSortableProps<
   setList: () => {},
   sort: false,
   revertOnSpill: true,
+  handle: '.course-drag-handle',
   group: { name: 'courses', pull: 'clone', put: false },
 };
 
