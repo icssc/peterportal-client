@@ -160,16 +160,10 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiFormLabel: {
+    MuiCircularProgress: {
       styleOverrides: {
         root: {
-          fontSize: 18,
-          fontWeight: 600,
-          marginBottom: theme.spacing(1),
-          color: 'var(--mui-palette-text-primary)',
-          '&.Mui-focused': {
-            color: 'inherit',
-          },
+          color: 'inherit',
         },
       },
     },
@@ -181,9 +175,6 @@ theme = createTheme(theme, {
           marginBottom: theme.spacing(4),
           '&:last-child': {
             marginBottom: 0,
-          },
-          '& .MuiInputBase-input': {
-            padding: '7px 12px',
           },
           '& .MuiFormControlLabel-root': {
             display: 'flex',
@@ -205,22 +196,21 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiInputBase: {
+    MuiFormLabel: {
       styleOverrides: {
         root: {
-          '& .MuiInputBase-input': {
-            padding: '8px 10px',
+          '&.Mui-focused': {
+            color: 'var(--mui-palette-text-secondary)',
           },
-        },
-        input: {
-          fontSize: 16,
-          backgroundColor: 'var(--mui-palette-background-paper)',
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          "[data-theme='dark'] &.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: 'var(--mui-palette-accent-main)',
+          },
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
           },
@@ -249,6 +239,13 @@ theme = createTheme(theme, {
           disablePortal: true,
           PaperProps: {
             style: { maxHeight: '25vh' },
+          },
+        },
+      },
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
           },
         },
       },

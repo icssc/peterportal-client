@@ -5,7 +5,7 @@ import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/Re
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import PPCOverlay from '../../../component/PPCOverlayTrigger/PPCOverlay';
 
-import { useIsMobile, pluralize } from '../../../helpers/util';
+import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -15,6 +15,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
+import { CourseBookmarkButton } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -75,8 +76,14 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, minUnits, maxUnits, terms } = props.data;
+  const { title, courseLevel, description, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
+
+  const isInRoadmap = !!onDelete;
+  const isMobile = useIsMobile();
+
+  const formattedCourseLevel = shortenCourseLevel(courseLevel);
+  const geTags = formatGEsTag(geList);
 
   const dispatch = useAppDispatch();
 
@@ -89,33 +96,50 @@ const Course: FC<CourseProps> = (props) => {
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
+  /**
+   * @todo merge conflict with variable units - when merging with var units, this
+   * text should be used in course tags, but not in the course-card-top in the Roadmap
+   */
+  const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+
   return (
-    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
-      {onDelete && (
+    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+      {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />
         </div>
       )}
+
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-          </span>
+
+          {isInRoadmap && <span className="units">{unitsText}</span>}
         </div>
-        {onDelete ? (
+        {isInRoadmap ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
             <DeleteOutlineIcon className="course-delete-icon" />
           </IconButton>
         ) : (
-          <div className="course-tooltip">
-            <RecentOfferingsTooltip terms={terms} />
-          </div>
+          <CourseBookmarkButton course={props.data} />
         )}
       </div>
-      <div className="title">{title}</div>
+      {isInRoadmap ? (
+        <div className="title">{title}</div>
+      ) : (
+        <div className="course-info">
+          <p className="course-synopsis">
+            <b className="title">{title}</b>
+            <span className="description">{description}</span>
+          </p>
+          <div className="course-tags">
+            {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
+            <RecentOfferingsTooltip terms={terms} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
