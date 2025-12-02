@@ -93,7 +93,7 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
   }
 }
 
-function transformProfessorGQL(data: ProfessorAAPIResponse) {
+export function transformProfessorGQL(data: ProfessorAAPIResponse) {
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
   professor.courses = Object.fromEntries(data.courses.map((course) => [course.id, course]));
