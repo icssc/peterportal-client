@@ -43,7 +43,9 @@ const RoadmapPage: FC = () => {
 
       {/* Main Planner View or Fullscreen Mobile Search */}
       {fullscreenActive ? (
-        <MobileSearchMenu />
+        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+          <MobileSearchMenu />
+        </div>
       ) : (
         <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
           <Planner />
