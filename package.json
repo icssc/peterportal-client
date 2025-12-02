@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "concurrently -n backend,frontend -c blue,green \"pnpm --filter=api dev\" \"pnpm --filter=site dev\"",
     "prepare": "husky",
-    "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html}",
-    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check && pnpm --filter=site lint && pnpm --filter=api lint",
+    "format": "prettier --write **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --no-error-on-unmatched-pattern",
+    "lint": "prettier **/*.{css,scss,cjs,js,ts,tsx,yml,json,html} --check --no-error-on-unmatched-pattern && pnpm --filter=site lint && pnpm --filter=api lint",
     "test": "pnpm --filter=site test",
     "db:generate": "pnpm --filter=api db:generate",
     "db:migrate": "pnpm --filter=api db:migrate",
@@ -30,5 +30,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
     "prettier": "^3.4.1"
-  }
+  },
+  "packageManager": "pnpm@9.15.9"
 }

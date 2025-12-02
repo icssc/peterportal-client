@@ -249,7 +249,13 @@ const transferCreditsRouter = router({
           units,
           userId: ctx.session.userId!,
         }));
-        const addOtherQuery = db.insert(transferredMisc).values(rows);
+        const addOtherQuery = db
+          .insert(transferredMisc)
+          .values(rows)
+          .onConflictDoUpdate({
+            target: [transferredMisc.userId, transferredMisc.courseName],
+            set: { units: sql.raw(`EXCLUDED.${transferredMisc.units.name}`) },
+          });
         dbQueries.push(addOtherQuery);
       }
 

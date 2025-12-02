@@ -96,13 +96,3 @@
     padding-block: 8px;
   }
 }
-
-// Override multiplan modal z-index to be greater than MUI Popover's z-index of 1300
-// This is so things like "Edit Plan" show up in front of the roadmap selector menu
-.modal-backdrop:has(+ .multiplan-modal) {
-  z-index: 1340;
-}
-
-.multiplan-modal {
-  z-index: 1350;
-}
