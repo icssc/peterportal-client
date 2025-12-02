@@ -109,14 +109,19 @@ const SavedAndSearch: FC = () => {
   const results = useAppSelector((state) => state.search[viewIndex].results);
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const { savedCourses } = useSavedCourses();
+  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
   // Deep copy because Sortable requires data to be extensible (non read-only)
   const searchResults = deepCopy(showSavedCourses ? savedCourses : results); // as CourseGQLData[];
 
   return (
     <>
-      <SearchModule />
-      <ResultsHeader />
+      {!showFullscreenSearch && (
+        <>
+          <SearchModule />
+          <ResultsHeader />
+        </>
+      )}
 
       {searchInProgress ? (
         <LoadingSpinner />

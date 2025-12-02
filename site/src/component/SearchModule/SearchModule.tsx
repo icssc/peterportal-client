@@ -21,6 +21,8 @@ const SearchModule: FC<SearchModuleProps> = () => {
   const index = useAppSelector((state) => state.search.viewIndex);
   const dispatch = useAppDispatch();
   const search = useAppSelector((state) => state.search[index]);
+  const isMobileFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+  const isMobileSearchFiltersShown = useAppSelector((state) => state.roadmap.showMobileSearchFilters);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
   useSearchTrigger();
@@ -68,7 +70,9 @@ const SearchModule: FC<SearchModuleProps> = () => {
         autoCorrect="off"
         slotProps={{ input: { endAdornment, className: 'input-wrapper' } }}
       />
-      {index === 'courses' && search.query && <SearchFilters />}
+      {index === 'courses' && search.query && (!isMobileFullscreenSearch || isMobileSearchFiltersShown) && (
+        <SearchFilters />
+      )}
     </div>
   );
 };

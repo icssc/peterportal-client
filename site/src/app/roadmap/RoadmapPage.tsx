@@ -12,6 +12,7 @@ import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
 import { setShowToast } from '../../store/slices/roadmapSlice';
 import Toast from '../../helpers/toast';
 import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
+import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -24,10 +25,13 @@ const RoadmapPage: FC = () => {
   const toastMsg = useAppSelector((state) => state.roadmap.toastMsg);
   const toastSeverity = useAppSelector((state) => state.roadmap.toastSeverity);
   const showToast = useAppSelector((state) => state.roadmap.showToast);
+  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
   const handleClose = () => {
     dispatch(setShowToast(false));
   };
+
+  const fullscreenActive = isMobile && showFullscreenSearch;
 
   return (
     <div className="roadmap-page">
@@ -39,11 +43,17 @@ const RoadmapPage: FC = () => {
       <MobileCourseCatalog />
       <MobileCreditsMenu />
 
-      {/* Main Planner View */}
+      {/* Main Planner View or Fullscreen Mobile Search */}
       <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
-        <Planner />
-        {previewCourseId && <CoursePreview courseId={previewCourseId} />}
-        {previewProfId && <ProfessorPreview netid={previewProfId} />}
+        {fullscreenActive ? (
+          <MobileSearchMenu />
+        ) : (
+          <>
+            <Planner />
+            {previewCourseId && <CoursePreview courseId={previewCourseId} />}
+            {previewProfId && <ProfessorPreview netid={previewProfId} />}
+          </>
+        )}
       </div>
     </div>
   );

@@ -4,14 +4,14 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 
 // Define a type for the slice state
 interface PopupState {
-  course: CourseGQLData;
-  professor: ProfessorGQLData;
+  course: CourseGQLData | null;
+  professor: ProfessorGQLData | null;
 }
 
 // Define the initial state using that type
 const initialState: PopupState = {
-  course: null!,
-  professor: null!,
+  course: null,
+  professor: null,
 };
 
 export const reviewSlice = createSlice({
@@ -20,10 +20,10 @@ export const reviewSlice = createSlice({
   initialState,
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
-    setCourse: (state, action: PayloadAction<CourseGQLData>) => {
+    setCourse: (state, action: PayloadAction<CourseGQLData | null>) => {
       state.course = action.payload;
     },
-    setProfessor: (state, action: PayloadAction<ProfessorGQLData>) => {
+    setProfessor: (state, action: PayloadAction<ProfessorGQLData | null>) => {
       state.professor = action.payload;
     },
   },
