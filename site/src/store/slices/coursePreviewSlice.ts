@@ -10,9 +10,12 @@ export const coursePreviewSlice = createSlice({
     setPreviewedCourse: (state, action: PayloadAction<string>) => {
       state.courseId = action.payload;
     },
+    setPreviewedProfessor: (state, action: PayloadAction<string>) => {
+      state.professorId = action.payload;
+    },
   },
 });
 
-export const { setPreviewedCourse } = coursePreviewSlice.actions;
+export const { setPreviewedCourse, setPreviewedProfessor } = coursePreviewSlice.actions;
 
 export default coursePreviewSlice.reducer;

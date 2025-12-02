@@ -6,16 +6,18 @@ import MobileCourseCatalog from './catalog/MobileCourseCatalog';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import AddCoursePopup from './planner/AddCoursePopup';
 import { useIsMobile } from '../../helpers/util';
-import CoursePreview from '../../component/CoursePreview/CoursePreview';
+import CoursePreview from '../../component/ResultPreview/CoursePreview';
 import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
 import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
 import { setShowToast } from '../../store/slices/roadmapSlice';
 import Toast from '../../helpers/toast';
+import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
 
   const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
+  const previewProfId = useAppSelector((state) => state.coursePreview.professorId);
 
   const dispatch = useAppDispatch();
 
@@ -41,6 +43,7 @@ const RoadmapPage: FC = () => {
       <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
         <Planner />
         {previewCourseId && <CoursePreview courseId={previewCourseId} />}
+        {previewProfId && <ProfessorPreview netid={previewProfId} />}
       </div>
     </div>
   );

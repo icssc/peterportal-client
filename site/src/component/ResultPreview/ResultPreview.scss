@@ -1,6 +1,6 @@
 @use '../../globals.scss';
 
-.course-preview {
+.result-preview {
   position: absolute;
   inset: 0;
   height: 100%;
@@ -51,5 +51,11 @@
     @media (max-width: globals.$mobile-cutoff) {
       padding: 16px;
     }
+  }
+
+  .professor-summary {
+    margin-inline: auto;
+    max-width: 1000px;
+    margin-bottom: 32px;
   }
 }
