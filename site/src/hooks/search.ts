@@ -12,7 +12,7 @@ import trpc from '../trpc';
 import { SearchIndex, SearchResultData } from '../types/types';
 import { transformGQLData } from '../helpers/util';
 
-type SearchResponseData = { count: number; results: SearchResultData; avgRank: number };
+type SearchResponseData = { count: number; results: SearchResultData; totalRank: number };
 async function performSearch(
   index: SearchIndex,
   query: string,
@@ -43,7 +43,7 @@ async function performSearch(
   return {
     count,
     results: results.map((x) => transformGQLData(index, x.result)) as SearchResultData,
-    avgRank: results.map((r) => r.rank).reduce((a, b) => a + b, 0) / results.length || 0,
+    totalRank: results.map((r) => r.rank).reduce((a, b) => a + b, 0),
   };
 }
 
@@ -96,7 +96,7 @@ export function useSearchTrigger() {
       .then(([courseRes, profRes]) => {
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('professors', profRes);
-        const showCoursesFirst = courseRes.avgRank > profRes.avgRank;
+        const showCoursesFirst = courseRes.totalRank > profRes.totalRank;
         /**
          * @todo after fullscreen mobile search merges - on mobile, should only set
          * dynamically for the full screen search and not the one when adding courses
