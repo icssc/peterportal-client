@@ -27,7 +27,7 @@ export const user = pgTable(
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
   },
-  (table) => [unique('unique_google_id').on(table.googleId)],
+  (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
 );
 
 export const report = pgTable(
