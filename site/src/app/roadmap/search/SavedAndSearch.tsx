@@ -75,6 +75,8 @@ const ResultsHeader: FC = () => {
   const singularIndexType = viewIndex.replace(/s$/, '');
   const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'professors' : 'courses';
 
+  const resultsOther = useAppSelector((state) => state.search[otherIndexType].results);
+
   if (showSavedCourses) {
     return <h3 className="results-list-title">Saved Courses</h3>;
   }
@@ -88,13 +90,15 @@ const ResultsHeader: FC = () => {
     dispatch(setSearchViewIndex(otherIndexType));
   };
 
-  /** @todo only show the link if the other type actually has results */
   return (
     <p className="result-type-header">
-      Showing {singularIndexType} results.{' '}
-      <a className="results-switcher" href={`#${otherIndexType}`} onClick={switchViewIndex}>
-        Show {otherIndexType}
-      </a>
+      Showing {singularIndexType} results.
+      {resultsOther.length > 0 && (
+        <a className="results-switcher" href={`#${otherIndexType}`} onClick={switchViewIndex}>
+          {' '}
+          Show {otherIndexType}
+        </a>
+      )}
     </p>
   );
 };
