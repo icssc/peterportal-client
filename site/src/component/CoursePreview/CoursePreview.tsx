@@ -76,7 +76,7 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   );
 };
 
-const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
+const CoursePreview: FC<{ courseId: string; onClose?: () => void }> = ({ courseId, onClose }) => {
   courseId = courseId.replace(/\s/g, '');
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
@@ -90,6 +90,7 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
     setOpen(false);
     setTimeout(() => {
       dispatch(setPreviewedCourse(''));
+      if (onClose) onClose();
     }, transitionTime);
   };
 
