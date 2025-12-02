@@ -18,7 +18,7 @@ const MobileSearchMenu: FC = () => {
     <div className="mobile-search-menu">
       <SearchHitContainer index="courses" />
       <Dialog fullScreen={true} open={selectedCourse != null} onClose={handleClose} className="mobile-search-dialog">
-        <CoursePreview courseId={selectedCourse ? selectedCourse.id : ''} onClose={handleClose} />
+        {selectedCourse && <CoursePreview courseId={selectedCourse.id} onClose={handleClose} />}
       </Dialog>
     </div>
   );
