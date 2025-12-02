@@ -2,9 +2,8 @@
 import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
-import Badge from 'react-bootstrap/Badge';
 import Link from 'next/link';
-import { Button, MenuItem, Select } from '@mui/material';
+import { Button, Chip, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -160,9 +159,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           <p>{props.description}</p>
           <div className="course-tags">
             {props.tags.map((tag, i) => (
-              <Badge pill bg="info" key={`side-info-badge-${i}`}>
-                {tag}
-              </Badge>
+              <Chip color="primary" size="small" key={`side-info-badge-${i}`} label={tag} />
             ))}
           </div>
         </div>

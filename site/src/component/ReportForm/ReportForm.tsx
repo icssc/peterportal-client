@@ -1,10 +1,9 @@
 import React, { FC, useState } from 'react';
 import './ReportForm.scss';
-import Modal from 'react-bootstrap/Modal';
 import trpc from '../../trpc';
 import { ReportSubmission } from '@peterportal/types';
 import Toast, { ToastSeverity } from '../../helpers/toast';
-import { Button, Box, FormControl, FormLabel, TextField } from '@mui/material';
+import { Button, Box, FormLabel, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
 interface ReportFormProps {
   showForm: boolean;
@@ -54,45 +53,48 @@ const ReportForm: FC<ReportFormProps> = (props) => {
     postReport(report);
   };
 
-  const resetForm = () => setReason('');
-
   return (
-    <Modal show={props.showForm} onShow={resetForm} onHide={props.closeForm} centered className="ppc-modal report-form">
-      <Modal.Header closeButton>
-        <h2>Report Review</h2>
-      </Modal.Header>
-      <Modal.Body>
-        <Box component="form" noValidate onSubmit={submitReport}>
+    <Dialog className="report-form" open={props.showForm} onClose={props.closeForm} fullWidth>
+      <DialogTitle>Report Review</DialogTitle>
+      <DialogContent>
+        <Box component="form" noValidate onSubmit={submitReport} id="report-form">
           <FormLabel>Review Content</FormLabel>
           <p className="reported-review-content">
-            <i>{props.reviewContent}</i>
+            <i>
+              {props.reviewContent?.length
+                ? props.reviewContent
+                : 'No additional content was provided for this review.'}
+            </i>
           </p>
 
           <FormLabel>Why are you reporting this review?</FormLabel>
 
-          <FormControl>
-            <TextField
-              placeholder="Enter a reason..."
-              multiline
-              slotProps={{
-                htmlInput: {
-                  minLength: 1,
-                  maxLength: 500,
-                },
-              }}
-              onChange={(e) => setReason(e.target.value)}
-              value={reason}
-              rows={4}
-            />
-          </FormControl>
-
-          <Button type="submit" disabled={!reason.length} loading={busy}>
-            Submit Report
-          </Button>
+          <TextField
+            variant="outlined"
+            placeholder="Enter a reason..."
+            multiline
+            slotProps={{
+              htmlInput: {
+                minLength: 1,
+                maxLength: 500,
+              },
+            }}
+            onChange={(e) => setReason(e.target.value)}
+            value={reason}
+            minRows={4}
+          />
         </Box>
-      </Modal.Body>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={props.closeForm}>
+          Cancel
+        </Button>
+        <Button type="submit" form="report-form" disabled={!reason.length} loading={busy}>
+          Submit Report
+        </Button>
+      </DialogActions>
       <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
-    </Modal>
+    </Dialog>
   );
 };
 

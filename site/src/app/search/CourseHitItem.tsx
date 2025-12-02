@@ -2,7 +2,6 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
-import Badge from 'react-bootstrap/Badge';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
@@ -10,7 +9,7 @@ import { CourseGQLData } from '../../types/types';
 import { getCourseTags } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
 
-import { IconButton } from '@mui/material';
+import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import { useRouter } from 'next/navigation';
@@ -70,9 +69,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
         <div className="hit-lower">
           <div className="hit-badges">
             {pillData.map((pill, i) => (
-              <Badge key={`course-hit-item-pill-${i}`} pill className="badge" bg="info">
-                {pill}
-              </Badge>
+              <Chip key={`course-hit-item-pill-${i}`} color="primary" size="small" label={pill} />
             ))}
           </div>
           <IconButton onClick={toggleSaveCourse} size="small">

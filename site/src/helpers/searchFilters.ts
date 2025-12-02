@@ -1,5 +1,3 @@
-import { GE_TITLE_MAP } from './courseRequirements';
-
 export interface FilterOptions {
   levels: string[];
   geCategories: string[];
@@ -19,16 +17,10 @@ export const levels: Record<string, string> = {
 };
 
 export function stringifySearchFilters(filters: FilterOptions): StringifiedFilterOptions {
-  const removePrefix = (label: string) => label.replace(/^.*: /, '');
-  const filterCategories = Object.entries(GE_TITLE_MAP)
-    .filter(([, label]) => filters.geCategories.includes(removePrefix(label)))
-    .map((e) => e[0])
-    .join(',');
-
   return {
     // change empty string to undefined for API call purposes
     stringifiedLevels: filters.levels.join(',') || undefined,
-    stringifiedGeCategories: filterCategories || undefined,
+    stringifiedGeCategories: filters.geCategories.join(',') || undefined,
     stringifiedDepartments: filters.departments.join(',') || undefined,
   };
 }

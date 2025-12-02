@@ -5,52 +5,20 @@ import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { checkModalOpen, sortTerms, transformCourseGQL } from '../../helpers/util';
+import { checkModalOpen, sortTerms } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
-import trpc from '../../trpc';
 import { CourseGQLData } from '../../types/types';
 import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
+import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
 import IosShareIcon from '@mui/icons-material/IosShare';
-
-/** @todo make this a shared hook to read and write to global cache after that's created  */
-function useCourseData(courseId: string) {
-  const [fullCourseData, setFullCourseData] = useState(LOADING_COURSE_PLACEHOLDER);
-  const [loadTrigger, setLoadTrigger] = useState(false);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    // Use a stateful trigger to avoid sending two requests as a result of double first render
-    setLoadTrigger(true);
-  }, [courseId]);
-
-  /** @todo read from global cache */
-  useEffect(() => {
-    if (!loadTrigger) return;
-    setLoadTrigger(false);
-    setFullCourseData(LOADING_COURSE_PLACEHOLDER);
-    trpc.courses.get
-      .query({ courseID: courseId })
-      .then((course) => {
-        setFullCourseData(transformCourseGQL(course));
-      })
-      .catch(() => {
-        dispatch(setToastMsg('Failed to load course data.'));
-        dispatch(setToastSeverity('error'));
-        dispatch(setShowToast(true));
-      });
-  }, [courseId, dispatch, loadTrigger]);
-
-  return fullCourseData;
-}
 
 interface PreviewTitleProps {
   isLoading: boolean;
