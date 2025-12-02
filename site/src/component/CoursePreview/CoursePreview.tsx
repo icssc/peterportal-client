@@ -43,8 +43,8 @@ function useCourseData(courseId: string) {
         setFullCourseData(transformCourseGQL(course));
       })
       .catch(() => {
-        dispatch(setToastMsg('Copied course URL to clipboard!'));
-        dispatch(setToastSeverity('success'));
+        dispatch(setToastMsg('Failed to load course data.'));
+        dispatch(setToastSeverity('error'));
         dispatch(setShowToast(true));
       });
   }, [courseId, dispatch, loadTrigger]);
