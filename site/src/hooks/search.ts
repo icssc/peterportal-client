@@ -90,11 +90,16 @@ export function useSearchTrigger() {
 
     const signal = regenerateAbortSignal();
 
-    Promise.all([
-      performSearch('courses', searchState.query, 0, courseFilters, signal),
-      performSearch('professors', searchState.query, 0, courseFilters, signal),
-    ])
+    const searches = [performSearch('courses', searchState.query, 0, courseFilters, signal)];
+    if (!showMobileCatalog) {
+      const instructorSearch = performSearch('professors', searchState.query, 0, courseFilters, signal);
+      searches.push(instructorSearch);
+    }
+
+    Promise.all(searches)
       .then(([courseRes, profRes]) => {
+        // if a prof search is not triggered, we still want to clear old query results
+        profRes ??= { count: 0, results: [], totalRank: 0 };
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('professors', profRes);
         const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
