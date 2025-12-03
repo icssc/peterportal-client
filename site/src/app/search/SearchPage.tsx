@@ -19,7 +19,7 @@ const SearchPage: FC<{ index: SearchIndex }> = ({ index }) => {
       <div className="search-wrapper">
         <div className="search-list">
           <SearchModule index={index} />
-          <SearchHitContainer index={index} />
+          <SearchHitContainer />
         </div>
         {index == 'courses' && <CoursePopup />}
         {index == 'professors' && <ProfessorPopup />}
