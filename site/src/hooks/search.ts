@@ -103,7 +103,11 @@ export function useSearchTrigger() {
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('professors', profRes);
         const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
-        dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'professors'));
+        const eitherHasResults = courseRes.count > 0 || profRes.count > 0;
+        if (showMobileCatalog || eitherHasResults) {
+          // don't change if there are no results
+          dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'professors'));
+        }
       })
       .catch(handleSearchError);
   }, [handleFirstPageResults, inProgressSearch, searchState.query, courseFilters, showMobileCatalog, dispatch]);
