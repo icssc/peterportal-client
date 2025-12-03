@@ -34,9 +34,10 @@ const PPCOverlay: FC<PPCOverlayProps> = ({
   anchor,
   transform,
 }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [open, setOpen] = useState(false);
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
 
   const showPopover = (event: React.MouseEvent<HTMLElement>) => {
     if (disabled) {
@@ -44,7 +45,6 @@ const PPCOverlay: FC<PPCOverlayProps> = ({
     }
 
     setAnchorEl(event.currentTarget);
-    setOpen(true);
     popupListener?.(true);
   };
 
@@ -53,21 +53,14 @@ const PPCOverlay: FC<PPCOverlayProps> = ({
     setTimer(null);
 
     setAnchorEl(null);
-    setOpen(false);
     popupListener?.(false);
   };
-
-  // const handleHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //   if (disabled) return;
-  //   showPopover(e);
-  // };
 
   const handleUnhover = (e: React.MouseEvent) => {
     const relatedTarget = e.relatedTarget as Node | null;
     const popoverContent = document.querySelector('.ppc-popover-content');
 
     if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
-      // ?
       hidePopover();
     }
   };
