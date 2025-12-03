@@ -57,6 +57,7 @@ export function useSearchTrigger() {
 
   const searchState = useAppSelector((state) => state.search[visibleSearchIdx]);
   const courseFilters = useAppSelector(selectCourseFilters);
+  const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
 
   const abortControllerRef = useRef<AbortController | null>(null);
   const dispatch = useAppDispatch();
@@ -96,15 +97,11 @@ export function useSearchTrigger() {
       .then(([courseRes, profRes]) => {
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('professors', profRes);
-        const showCoursesFirst = courseRes.totalRank > profRes.totalRank;
-        /**
-         * @todo after fullscreen mobile search merges - on mobile, should only set
-         * dynamically for the full screen search and not the one when adding courses
-         */
+        const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
         dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'professors'));
       })
       .catch(handleSearchError);
-  }, [handleFirstPageResults, inProgressSearch, searchState.query, courseFilters, dispatch]);
+  }, [handleFirstPageResults, inProgressSearch, searchState.query, courseFilters, showMobileCatalog, dispatch]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newFilters') return;

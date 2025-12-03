@@ -35,7 +35,6 @@ const SearchModule: FC<SearchModuleProps> = () => {
       setPendingRequest(null);
       // if empty query, remove all results
       if (!query) {
-        console.log('empty');
         dispatch(setFirstPageResults({ index: 'courses', count: 0, results: [] }));
         dispatch(setFirstPageResults({ index: 'professors', count: 0, results: [] }));
       }
