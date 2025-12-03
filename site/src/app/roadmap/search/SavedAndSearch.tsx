@@ -31,6 +31,9 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
     dispatch(setActiveCourse({ course }));
   };
 
+  // Deep copy because Sortable requires data to be extensible (non read-only). Must be done within component
+  searchResults = deepCopy(searchResults);
+
   return (
     <ReactSortable
       {...courseSearchSortable}
@@ -114,8 +117,7 @@ const SavedAndSearch: FC = () => {
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const { savedCourses } = useSavedCourses();
 
-  // Deep copy because Sortable requires data to be extensible (non read-only)
-  const searchResults = deepCopy(showSavedCourses ? savedCourses : results);
+  const searchResults = showSavedCourses ? savedCourses : results;
   const noResults = <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />;
 
   return (
