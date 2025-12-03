@@ -55,7 +55,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
         sx={{ pointerEvents: 'none' }}
         slotProps={{
           paper: {
-            className: 'recent-offerings-popover-inner',
             sx: { pointerEvents: 'auto' },
           },
         }}
