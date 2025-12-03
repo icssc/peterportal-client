@@ -1,6 +1,6 @@
 'use client';
 import React, { FC, ReactNode, useState } from 'react';
-import { Popover, Box } from '@mui/material';
+import { Popover } from '@mui/material';
 import './PPCOverlay.scss';
 
 interface PPCOverlayProps {
@@ -38,36 +38,54 @@ const PPCOverlay: FC<PPCOverlayProps> = ({
   const [open, setOpen] = useState(false);
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
-  const showPopover = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const showPopover = (event: React.MouseEvent<HTMLElement>) => {
+    if (disabled) {
+      return;
+    }
+
     setAnchorEl(event.currentTarget);
     setOpen(true);
+    popupListener?.(true);
   };
 
   const hidePopover = () => {
     if (timer) clearTimeout(timer);
     setTimer(null);
-    setOpen(false);
+
     setAnchorEl(null);
+    setOpen(false);
     popupListener?.(false);
   };
 
-  const handleHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (disabled) return;
-    showPopover(e);
-  };
+  // const handleHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //   if (disabled) return;
+  //   showPopover(e);
+  // };
 
   const handleUnhover = (e: React.MouseEvent) => {
-    try {
-      const inTooltip = document.querySelector('.ppc-popover-content')?.contains(e?.relatedTarget as HTMLElement);
-      if (!inTooltip) hidePopover();
-    } catch {
+    const relatedTarget = e.relatedTarget as Node | null;
+    const popoverContent = document.querySelector('.ppc-popover-content');
+
+    if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
+      // ?
       hidePopover();
     }
   };
 
+  const clonedChild = React.cloneElement(children, {
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      showPopover(e);
+      children.props.onMouseEnter?.(e);
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+      handleUnhover(e);
+      children.props.onMouseLeave?.(e);
+    },
+  });
+
   return (
-    <Box className="ppc-popover-trigger" onMouseEnter={handleHover} onMouseLeave={handleUnhover}>
-      {children}
+    <div className="ppc-popover-trigger">
+      {clonedChild}
       <Popover
         open={open}
         anchorEl={anchorEl}
@@ -77,21 +95,19 @@ const PPCOverlay: FC<PPCOverlayProps> = ({
         slotProps={{
           paper: {
             className: 'ppc-popover-content',
-            onMouseEnter: () => {
-              popupListener?.(true);
-            },
-            onMouseLeave: () => {
-              hidePopover();
-            },
+            onMouseLeave: hidePopover,
             sx: {
               pointerEvents: 'auto',
             },
           },
         }}
+        sx={{
+          pointerEvents: 'none',
+        }}
       >
         {popoverContent}
       </Popover>
-    </Box>
+    </div>
   );
 };
 
