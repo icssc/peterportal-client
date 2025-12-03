@@ -32,7 +32,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     // if click on a course that is already in popup
     // or if on mobile
     if ((activeCourse && props.id == activeCourse.id) || isMobile) {
-      router.push(`/course/${props.id}`);
+      router.push(`/course/${encodeURIComponent(props.id)}`);
     }
   };
 
