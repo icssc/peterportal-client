@@ -238,16 +238,3 @@ div.popover-body {
   background-color: var(--overlay1);
   color: var(--text);
 }
-div.bs-popover-top > div.arrow::after {
-  border-top-color: var(--overlay1);
-}
-div.bs-popover-bottom > div.arrow::after {
-  border-bottom-color: var(--overlay1);
-}
-div.bs-popover-left > div.arrow::after {
-  border-left-color: var(--overlay1);
-}
-div.bs-popover-right > div.arrow::after {
-  border-right-color: var(--overlay1);
-}
-// end bootstrap overwrites

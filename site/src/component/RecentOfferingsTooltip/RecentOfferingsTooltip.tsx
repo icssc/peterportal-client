@@ -9,6 +9,7 @@ interface RecentOfferingsTooltipProps {
 
 const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
 
   if (terms.length === 0) return null;
 
@@ -32,8 +33,6 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-
   return (
     <div className="tooltip-trigger">
       <Typography onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
@@ -53,6 +52,13 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
           horizontal: 'right',
         }}
         onClose={handlePopoverClose}
+        sx={{ pointerEvents: 'none' }}
+        slotProps={{
+          paper: {
+            className: 'recent-offerings-popover-inner',
+            sx: { pointerEvents: 'auto' },
+          },
+        }}
       >
         <div className="popover-body">
           <h4 className="center">Recent Offerings</h4>

@@ -33,7 +33,7 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
   anchor,
   transform,
 }) => {
-  const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  // const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -48,8 +48,8 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
   };
 
   const hidePopover = () => {
-    if (timer) clearTimeout(timer);
-    setTimer(null);
+    // if (timer) clearTimeout(timer);
+    // setTimer(null);
 
     setAnchorEl(null);
     popupListener?.(false);
