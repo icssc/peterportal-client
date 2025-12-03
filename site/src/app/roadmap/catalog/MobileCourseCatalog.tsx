@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { hideMobileCatalog } from '../../../store/slices/roadmapSlice';
 import { CourseCatalog } from './CourseCatalog';
 import MobilePopup from '../MobilePopup';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 import { useIsMobile } from '../../../helpers/util';
 
@@ -14,8 +14,7 @@ const MobileCourseCatalog = () => {
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
-  /** @todo move out of global state since this will no longer be conditionally rendered */
-  const closeSearch = () => dispatch(hideMobileCatalog());
+  const closeSearch = useCallback(() => dispatch(hideMobileCatalog()), [dispatch]);
 
   useEffect(() => {
     if (isMobile && selectedCourseList === 'Saved') {
@@ -24,6 +23,10 @@ const MobileCourseCatalog = () => {
       dispatch(setSelectedTab('Saved'));
     }
   }, [isMobile, selectedCourseList, dispatch]);
+
+  useEffect(() => {
+    if (!isMobile) closeSearch();
+  }, [isMobile, closeSearch]);
 
   return (
     <MobilePopup show={showSearch} onClose={closeSearch}>

@@ -107,14 +107,15 @@ export const ResultsHeader: FC = () => {
 };
 
 const SavedAndSearch: FC = () => {
-  const { showSavedCourses } = useAppSelector((state) => state.roadmap);
-  const viewIndex = useAppSelector((state) => state.search.viewIndex);
+  const showSavedCourses = useAppSelector((state) => state.roadmap.showSavedCourses);
+  const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
+  const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
   const results = useAppSelector((state) => state.search[viewIndex].results);
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const { savedCourses } = useSavedCourses();
 
   // Deep copy because Sortable requires data to be extensible (non read-only)
-  const searchResults = deepCopy(showSavedCourses ? savedCourses : results); // as CourseGQLData[];
+  const searchResults = deepCopy(showSavedCourses ? savedCourses : results);
 
   return (
     <>
