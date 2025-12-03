@@ -3,19 +3,18 @@ import './SearchHitContainer.scss';
 
 import { useAppSelector } from '../../store/hooks';
 
-import { SearchIndex, CourseGQLData, ProfessorGQLData, SearchResultData } from '../../types/types';
+import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import SearchPagination from '../SearchPagination/SearchPagination';
 import NoResults from '../NoResults/NoResults';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import CourseHitItem from '../../app/search/CourseHitItem';
 import ProfessorHitItem from '../../app/search/ProfessorHitItem';
 
-interface SearchHitContainerProps {
-  index: SearchIndex;
-}
+const SearchResults: FC = () => {
+  const viewIndex = useAppSelector((state) => state.search.viewIndex);
+  const results = useAppSelector((state) => state.search[viewIndex].results);
 
-const SearchResults = ({ index, results }: Required<SearchHitContainerProps> & { results: SearchResultData }) => {
-  if (index === 'courses') {
+  if (viewIndex === 'courses') {
     return (results as CourseGQLData[]).map((course) => {
       return <CourseHitItem key={course.id} {...course} />;
     });
@@ -26,8 +25,9 @@ const SearchResults = ({ index, results }: Required<SearchHitContainerProps> & {
   }
 };
 
-const SearchHitContainer: FC<SearchHitContainerProps> = ({ index }) => {
-  const { query, results } = useAppSelector((state) => state.search[index]);
+const SearchHitContainer: FC = () => {
+  const viewIndex = useAppSelector((state) => state.search.viewIndex);
+  const { query, results } = useAppSelector((state) => state.search[viewIndex]);
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const containerDivRef = useRef<HTMLDivElement>(null);
 
@@ -39,14 +39,15 @@ const SearchHitContainer: FC<SearchHitContainerProps> = ({ index }) => {
     <div ref={containerDivRef} className="search-hit-container">
       {searchInProgress && <LoadingSpinner />}
       {!searchInProgress && (!query || results.length === 0) && (
-        <NoResults showPrompt={query === ''} prompt={`Start typing in the search bar to search for ${index}...`} />
+        <NoResults
+          showPrompt={query === ''}
+          prompt={`Start typing in the search bar to search for courses or instructors...`}
+        />
       )}
       {!searchInProgress && query && results.length > 0 && (
         <>
-          <SearchResults index={index} results={results} />
-          <div className="search-pagination">
-            <SearchPagination index={index} />
-          </div>
+          <SearchResults />
+          <SearchPagination />
         </>
       )}
     </div>

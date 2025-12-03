@@ -2,17 +2,10 @@
 
 .search-hit-container {
   overflow-y: auto;
-
-  padding: 36px 36px 36px;
-  @media only screen and (min-width: globals.$mobile-cutoff) {
-    padding: 128px 36px 36px;
-  }
+  padding: 20px;
 
   > *:not(:last-child) {
     margin-bottom: 20px;
-  }
-  @media only screen and (max-width: globals.$mobile-cutoff) {
-    padding-right: 36px;
   }
 }
 

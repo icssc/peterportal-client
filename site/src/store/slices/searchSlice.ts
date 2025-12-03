@@ -51,8 +51,8 @@ export const searchSlice = createSlice({
       state.courseLevels = levels;
       state.inProgressSearchOperation = 'newFilters';
     },
-    setPageNumber: (state, action: PayloadAction<{ index: SearchIndex; pageNumber: SearchData['pageNumber'] }>) => {
-      state[action.payload.index].pageNumber = action.payload.pageNumber;
+    setPageNumber: (state, action: PayloadAction<number>) => {
+      state[state.viewIndex].pageNumber = action.payload;
       state.inProgressSearchOperation = 'newPage';
     },
     // Setting results
