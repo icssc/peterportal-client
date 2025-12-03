@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
-// import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
 import './Profile.scss';

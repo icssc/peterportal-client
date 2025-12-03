@@ -7,19 +7,17 @@ interface PPCOverlayTriggerProps {
   children: React.ReactElement;
   popupListener?: (open: boolean) => void;
   disabled?: boolean;
-  anchor: 'top' | 'bottom' | 'left' | 'right';
-  transform: 'top' | 'bottom' | 'left' | 'right';
+  anchor: 'bottom' | 'left' | 'right';
+  transform: 'bottom' | 'left' | 'right';
 }
 
 const anchorMap = {
-  top: { vertical: 'top', horizontal: 'center' } as const,
   bottom: { vertical: 'bottom', horizontal: 'center' } as const,
   left: { vertical: 'center', horizontal: 'left' } as const,
   right: { vertical: 'center', horizontal: 'right' } as const,
 };
 
 const transformMap = {
-  top: { vertical: 'bottom', horizontal: 'center' } as const,
   bottom: { vertical: 'top', horizontal: 'center' } as const,
   left: { vertical: 'center', horizontal: 'right' } as const,
   right: { vertical: 'center', horizontal: 'left' } as const,
@@ -33,8 +31,6 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
   anchor,
   transform,
 }) => {
-  // const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
@@ -48,9 +44,6 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
   };
 
   const hidePopover = () => {
-    // if (timer) clearTimeout(timer);
-    // setTimer(null);
-
     setAnchorEl(null);
     popupListener?.(false);
   };
