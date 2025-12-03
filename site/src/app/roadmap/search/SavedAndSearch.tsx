@@ -15,6 +15,7 @@ import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
 import { setSearchViewIndex } from '../../../store/slices/searchSlice';
+import SearchFilters from '../../../component/SearchFilters/SearchFilters';
 
 interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
@@ -66,10 +67,11 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
   );
 };
 
-const ResultsHeader: FC = () => {
+export const ResultsHeader: FC = () => {
+  const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const showSavedCourses = useAppSelector((state) => state.roadmap.showSavedCourses);
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
-  const isMobile = useIsMobile();
+  const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const dispatch = useAppDispatch();
 
   const singularIndexType = viewIndex.replace(/s$/, '');
@@ -77,11 +79,13 @@ const ResultsHeader: FC = () => {
 
   const resultsOther = useAppSelector((state) => state.search[otherIndexType].results);
 
+  if (inProgressSearch !== 'none') return null;
+
   if (showSavedCourses) {
     return <h3 className="results-list-title">Saved Courses</h3>;
   }
 
-  if (isMobile) {
+  if (showMobileCatalog) {
     return <h3 className="results-list-title">Search Results</h3>;
   }
 
@@ -109,19 +113,14 @@ const SavedAndSearch: FC = () => {
   const results = useAppSelector((state) => state.search[viewIndex].results);
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
   const { savedCourses } = useSavedCourses();
-  const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
   // Deep copy because Sortable requires data to be extensible (non read-only)
   const searchResults = deepCopy(showSavedCourses ? savedCourses : results); // as CourseGQLData[];
 
   return (
     <>
-      {!showFullscreenSearch && (
-        <>
-          <SearchModule />
-          <ResultsHeader />
-        </>
-      )}
+      <SearchModule />
+      <ResultsHeader />
 
       {searchInProgress ? (
         <LoadingSpinner />
@@ -130,7 +129,10 @@ const SavedAndSearch: FC = () => {
       ) : !showSavedCourses && viewIndex === 'professors' ? (
         <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
       ) : (
-        <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
+        <>
+          {!showSavedCourses && <SearchFilters />}
+          <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
+        </>
       )}
     </>
   );

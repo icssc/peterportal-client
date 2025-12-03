@@ -15,12 +15,11 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
-import TuneIcon from '@mui/icons-material/Tune';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
-import { setShowMobileFullscreenSearch, setShowMobileSearchFilters } from '../../store/slices/roadmapSlice';
+import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
@@ -28,9 +27,7 @@ const AppHeader: FC = () => {
   const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
   const isMobile = useIsMobile();
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
-  const isShowMobileSearchFilters = useAppSelector((state) => state.roadmap.showMobileSearchFilters);
   const isRoadmapPage = usePathname() == '/';
-  const courseSearchQuery = useAppSelector((state) => state.search['courses'].query);
 
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
@@ -41,12 +38,6 @@ const AppHeader: FC = () => {
   };
   const closeFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(false));
-    // also hide filters when closing fullscreen search
-    dispatch(setShowMobileSearchFilters(false));
-  };
-
-  const toggleMobileSearchFilters = () => {
-    dispatch(setShowMobileSearchFilters(!isShowMobileSearchFilters));
   };
 
   const popover = (
@@ -93,14 +84,7 @@ const AppHeader: FC = () => {
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
-            <div>
-              <SearchModule index="courses" />
-            </div>
-            {courseSearchQuery && (
-              <IconButton onClick={toggleMobileSearchFilters}>
-                <TuneIcon />
-              </IconButton>
-            )}
+            <SearchModule index="courses" />
           </div>
         </div>
       </header>

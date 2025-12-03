@@ -32,7 +32,7 @@
   position: sticky;
   z-index: 300;
   width: 100%;
-  height: min(72px, min-content);
+  height: 72px;
   background-color: var(--overlay1);
   padding: 8px 16px;
   display: flex;
@@ -102,15 +102,8 @@
 }
 
 .fullscreen-search-row {
-  display: flex;
-  align-items: flex-start;
-  height: 100%;
   width: 100%;
-  margin-block: 4px;
-
-  > div {
-    flex: 1;
-  }
+  margin-left: 8px;
 }
 
 .feedback {

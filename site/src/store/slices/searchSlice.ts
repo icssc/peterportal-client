@@ -40,8 +40,8 @@ export const searchSlice = createSlice({
   reducers: {
     // Things that will trigger a new search
     setQuery: (state, action: PayloadAction<string>) => {
-      if (!action.payload) return;
       state.courses.query = state.professors.query = action.payload;
+      if (!action.payload) return;
       state.inProgressSearchOperation = 'newQuery';
     },
     setCourseFilters: (state, action: PayloadAction<FilterOptions>) => {
