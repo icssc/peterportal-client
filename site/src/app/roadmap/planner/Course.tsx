@@ -3,7 +3,7 @@ import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
-import PPCOverlay from '../../../component/PPCOverlayTrigger/PPCOverlay';
+import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
@@ -46,7 +46,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
-    <PPCOverlay
+    <PPCOverlayTrigger
       popoverContent={popoverContent}
       popupListener={popupListener}
       disabled={isMobile}
@@ -63,7 +63,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </PPCOverlay>
+    </PPCOverlayTrigger>
   );
 };
 

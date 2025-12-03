@@ -8,8 +8,7 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-// import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
-import PPCOverlay from '../PPCOverlayTrigger/PPCOverlay';
+import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -25,40 +24,6 @@ const AppHeader: FC = () => {
   const toggleMenu = () => {
     dispatch(setSidebarStatus(!sidebarOpen));
   };
-
-  // const popover = (
-  //   <div className="popover-body">
-  //     <h4>Beta Disclaimer</h4>
-  //     <p>
-  //       Please note that this is a beta version of PeterPortal, which is still undergoing development. Some content on
-  //       this web application may not be accurate. Users are encouraged to double check details.
-  //     </p>
-  //     <p>
-  //       Should you encounter any bugs, glitches, lack of functionality or other problems on the application, please let
-  //       us know immediately so we can rectify these accordingly. Your help in this regard is greatly appreciated.
-  //     </p>
-  //     <div className="feedback">
-  //       <Button
-  //         color="inherit"
-  //         href="https://github.com/icssc/peterportal-client/issues/new/choose"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //         startIcon={<GitHubIcon />}
-  //       >
-  //         Report an issue
-  //       </Button>
-  //       <Button
-  //         color="inherit"
-  //         href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //         startIcon={<SmsIcon />}
-  //       >
-  //         Feedback
-  //       </Button>
-  //     </div>
-  //   </div>
-  // );
 
   const popover = (
     <div className="popover-body">
@@ -114,12 +79,12 @@ const AppHeader: FC = () => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
-            <PPCOverlay popoverContent={popover} anchor="bottom" transform="bottom">
+            <PPCOverlayTrigger popoverContent={popover} anchor="bottom" transform="bottom">
               <div id="beta-tag">
                 <div>beta</div>
                 <div className="shade">v1.2</div>
               </div>
-            </PPCOverlay>
+            </PPCOverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {currentWeek}

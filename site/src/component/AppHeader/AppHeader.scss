@@ -139,3 +139,12 @@
     height: 100%;
   }
 }
+.popover-paper {
+  background-color: transparent;
+}
+
+.popover-body {
+  max-width: 375px;
+  padding: 16px;
+  background-color: var(--overlay1);
+}

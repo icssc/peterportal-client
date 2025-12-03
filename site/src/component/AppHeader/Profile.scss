@@ -26,9 +26,9 @@
   }
 }
 
-.ppc-popover-paper.MuiPaper-root {
+.ppc-popover-paper {
   font-size: 1rem;
-  background-color: var(--mui-palette-overlay-overlay1) !important;
+  background-color: var(--overlay1) !important;
   border-radius: var(--border-radius);
   border: 1px solid var(--background);
   width: 310px;
