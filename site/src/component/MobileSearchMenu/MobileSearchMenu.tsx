@@ -1,4 +1,5 @@
 'use client';
+import './MobileSearchMenu.scss';
 import { FC } from 'react';
 import SearchHitContainer from '../SearchHitContainer/SearchHitContainer';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -10,10 +11,10 @@ import { ResultsHeader } from '../../app/roadmap/search/SavedAndSearch';
 
 const MobileSearchMenu: FC = () => {
   const dispatch = useAppDispatch();
+  const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const selectedCourse = useAppSelector((state) => state.popup.course);
-  const showFilters = useAppSelector((state) => state.search.viewIndex === 'courses' && state.search.courses.query);
-
-  // TODO 12-2 fix styles + don't auto switch to profs in course catalog view (or rather, don't trigger search at all there)
+  const hasCompletedQuery = useAppSelector((state) => inProgressSearch === 'none' && !!state.search.courses.query);
+  const showFilters = useAppSelector((state) => hasCompletedQuery && state.search.viewIndex === 'courses');
 
   const handleClose = () => {
     dispatch(setCourse(null));
@@ -21,8 +22,10 @@ const MobileSearchMenu: FC = () => {
 
   return (
     <div className="mobile-search-menu">
-      <ResultsHeader />
-      {showFilters && <SearchFilters />}
+      <div className="result-info-container">
+        {hasCompletedQuery && <ResultsHeader />}
+        {hasCompletedQuery && showFilters && <SearchFilters />}
+      </div>
       <SearchHitContainer />
       <MobilePopup show={!!selectedCourse} onClose={handleClose}>
         {selectedCourse && <CoursePreview courseId={selectedCourse.id} onClose={handleClose} />}

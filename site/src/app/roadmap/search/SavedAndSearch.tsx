@@ -96,10 +96,9 @@ export const ResultsHeader: FC = () => {
 
   return (
     <p className="result-type-header">
-      Showing {singularIndexType} results.
+      Showing {singularIndexType} results.{' '}
       {resultsOther.length > 0 && (
         <a className="results-switcher" href={`#${otherIndexType}`} onClick={switchViewIndex}>
-          {' '}
           Show {otherIndexType}
         </a>
       )}

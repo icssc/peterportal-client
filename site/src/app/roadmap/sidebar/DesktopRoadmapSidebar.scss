@@ -29,6 +29,10 @@
     height: 100%;
     overflow: auto;
     padding: 16px 20px;
+
+    .loading-spinner {
+      margin-top: 24px;
+    }
   }
 
   .MuiTabs-list {
