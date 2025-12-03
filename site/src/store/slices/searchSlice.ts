@@ -2,6 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SearchIndex, SearchResultData } from '../../types/types';
 import { FilterOptions } from '../../helpers/searchFilters';
 import { RootState } from '../store';
+import { shouldResetFilters } from '../../helpers/search';
 
 interface SearchData {
   query: string;
@@ -42,6 +43,13 @@ export const searchSlice = createSlice({
     setQuery: (state, action: PayloadAction<string>) => {
       state.courses.query = state.professors.query = action.payload;
       if (!action.payload) return;
+
+      if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {
+        state.courseDepartments = [];
+        state.courseGeCategories = [];
+        state.courseLevels = [];
+      }
+
       state.inProgressSearchOperation = 'newQuery';
     },
     setCourseFilters: (state, action: PayloadAction<FilterOptions>) => {

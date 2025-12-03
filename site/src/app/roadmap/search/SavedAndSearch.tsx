@@ -116,6 +116,7 @@ const SavedAndSearch: FC = () => {
 
   // Deep copy because Sortable requires data to be extensible (non read-only)
   const searchResults = deepCopy(showSavedCourses ? savedCourses : results);
+  const noResults = <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />;
 
   return (
     <>
@@ -124,13 +125,15 @@ const SavedAndSearch: FC = () => {
 
       {searchInProgress ? (
         <LoadingSpinner />
-      ) : searchResults.length === 0 ? (
-        <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />
       ) : !showSavedCourses && viewIndex === 'professors' ? (
-        <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
+        <>
+          {searchResults.length === 0 && noResults}
+          <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
+        </>
       ) : (
         <>
           {!showSavedCourses && <SearchFilters />}
+          {searchResults.length === 0 && noResults}
           <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
         </>
       )}
