@@ -107,22 +107,23 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
-  const profcache = useProfessorData(review.professorId);
+  const profCache = useProfessorData(review.professorId);
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
     let courseName: string | undefined = undefined;
 
     try {
-      if (!profcache) {
+      // if cache does not need to be loaded/is empty
+      if (!profCache) {
         return;
       }
-      const nameParts = profcache.name.split(' ');
+      const nameParts = profCache.name.split(' ');
       const profInitial = nameParts[0][0] + '.';
       const profLastName = nameParts[nameParts.length - 1];
       profName = `${profInitial} ${profLastName}`;
 
-      const matchedCourse = profcache.courses[review.courseId];
+      const matchedCourse = profCache.courses[review.courseId];
 
       // first, try to match a course name using the professor's API course array. otherwise, lookup the course separately.
       if (matchedCourse) {
@@ -143,7 +144,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
 
   useEffect(() => {
     // if loading then return
-    if (!profcache) {
+    if (!profCache) {
       return;
     }
 
@@ -177,7 +178,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profcache]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(

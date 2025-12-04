@@ -3,10 +3,10 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { ProfessorGQLData } from '../types/types';
 import { transformProfessorGQL } from '../helpers/util.tsx';
-import { setProfessor } from '../store/slices/professorReviewsSlice.ts';
+import { setProfessor } from '../store/slices/professorSlice.ts';
 
-// Get a professor's info
-// If it is not in cache then get from API and put in cache
+// Get a professor's info (name, net ID, etc.)
+// If not in cache then fetch from API and put in cache
 
 export function useProfessorData(netID: string) {
   const professorCache = useAppSelector((state) => state.professors.professors);

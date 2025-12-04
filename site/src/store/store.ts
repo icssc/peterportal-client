@@ -12,7 +12,7 @@ import userReducer from './slices/userSlice';
 import scheduleReducer from './slices/scheduleSlice';
 import departmentsReducer from './slices/departmentsSlice';
 import { UserSliceState } from '@peterportal/types';
-import professorSliceReducer from './slices/professorReviewsSlice';
+import professorSliceReducer from './slices/professorSlice';
 
 const reducer = {
   coursePreview: coursePreviewReducer,
