@@ -13,7 +13,7 @@ const MobileSearchMenu: FC = () => {
   const dispatch = useAppDispatch();
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const selectedCourse = useAppSelector((state) => state.popup.course);
-  const hasCompletedQuery = useAppSelector((state) => inProgressSearch === 'none' && !!state.search.courses.query);
+  const hasCompletedQuery = useAppSelector((state) => inProgressSearch !== 'newQuery' && !!state.search.courses.query);
   const showFilters = useAppSelector((state) => hasCompletedQuery && state.search.viewIndex === 'courses');
 
   const handleClose = () => {

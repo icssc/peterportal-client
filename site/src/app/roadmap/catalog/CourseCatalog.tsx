@@ -37,7 +37,7 @@ export const CourseCatalog = () => {
       {selectedCourseList === 'Minor' && <MinorSelector />}
       {selectedCourseList === 'GE' && <GERequiredCourseList />}
       {selectedCourseList === 'Saved' && <SavedCourseList />}
-      {selectedCourseList === 'Search' && <SavedAndSearch />}
+      {selectedCourseList === 'Search' && <SavedAndSearch showSavedCoursesOnEmpty />}
 
       <CloseRoadmapSearchButton />
     </div>

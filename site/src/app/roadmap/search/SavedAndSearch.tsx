@@ -70,9 +70,13 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
   );
 };
 
-export const ResultsHeader: FC = () => {
+interface ShowSavedProps {
+  showSavedCoursesOnEmpty?: boolean;
+}
+
+export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
-  const showSavedCourses = useAppSelector((state) => state.roadmap.showSavedCourses);
+  const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const dispatch = useAppDispatch();
@@ -82,7 +86,7 @@ export const ResultsHeader: FC = () => {
 
   const resultsOther = useAppSelector((state) => state.search[otherIndexType].results);
 
-  if (inProgressSearch !== 'none') return null;
+  if (inProgressSearch === 'newQuery') return null;
 
   if (showSavedCourses) {
     return <h3 className="results-list-title">Saved Courses</h3>;
@@ -109,23 +113,34 @@ export const ResultsHeader: FC = () => {
   );
 };
 
-const SavedAndSearch: FC = () => {
-  const showSavedCourses = useAppSelector((state) => state.roadmap.showSavedCourses);
+const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+  const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
   const results = useAppSelector((state) => state.search[viewIndex].results);
-  const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
+  const hasQuery = useAppSelector((state) => !!state.search[viewIndex].query);
+  const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
 
   const searchResults = showSavedCourses ? savedCourses : results;
-  const noResults = <NoResults showPrompt={showSavedCourses} prompt="No courses saved. Try searching for something!" />;
+
+  const showCustomPrompt = showSavedCourses || !hasQuery;
+  const customPrompt = showSavedCourses
+    ? 'No courses saved. Try searching for something!'
+    : 'Start typing in the search bar to search for courses or instructors...';
+
+  const noResults = <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />;
+
+  const showHeader = showSavedCoursesOnEmpty || hasQuery;
+  const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
 
   return (
     <>
       <SearchModule />
-      <ResultsHeader />
+      {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
+      {showCourseFilters && <SearchFilters />}
 
-      {searchInProgress ? (
+      {inProgressSearch !== 'none' ? (
         <LoadingSpinner />
       ) : !showSavedCourses && viewIndex === 'professors' ? (
         <>
@@ -134,7 +149,6 @@ const SavedAndSearch: FC = () => {
         </>
       ) : (
         <>
-          {!showSavedCourses && <SearchFilters />}
           {searchResults.length === 0 && noResults}
           <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
         </>
