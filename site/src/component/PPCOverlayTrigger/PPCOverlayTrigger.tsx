@@ -50,7 +50,7 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
 
   const handleUnhover = (e: React.MouseEvent) => {
     const relatedTarget = e.relatedTarget as Node | null;
-    const popoverContent = document.querySelector('.ppc-popover-content');
+    const popoverContent = document.querySelector('.popover-paper');
 
     if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
       hidePopover();
