@@ -36,7 +36,8 @@ async function performSearch(
     ...(index === 'courses' && apiCourseFilters),
   } as const;
 
-  const { count, results } = await trpc.search.get.query(payload, { signal });
+  const response = await trpc.search.get.query(payload, { signal });
+  const { count, results } = response ?? { count: 0, results: [] };
 
   signal.throwIfAborted();
 
