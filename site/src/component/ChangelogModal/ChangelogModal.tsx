@@ -1,12 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import changelogImage from '../../asset/course-preview.png';
+import changelogImage from '../../asset/rm-dedicated-search-pgs.png';
 import Image from 'next/image';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const DESCRIPTION =
-  'Course and professor search is now part of the roadmap page! You can access universal search on the desktop sidebar or mobile navbar.';
+const DESCRIPTION = 'Course and instructor search are now integrated into the main roadmap search menus!';
 const LAST_UPDATED = '12/04/2025';
 
 const ChangelogModal = () => {
