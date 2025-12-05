@@ -148,7 +148,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     } catch (error) {
       console.error('Error fetching professor or course name:', error);
     }
-  }, [review.professorId, review.courseId]);
+  }, [review.courseId, profCache]);
 
   useEffect(() => {
     // if loading then return
