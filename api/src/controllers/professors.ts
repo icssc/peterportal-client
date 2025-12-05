@@ -9,10 +9,6 @@ import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 
 const professorsRouter = router({
   /**
-   * Check the cache for existing professor data
-   */
-
-  /**
    * Anteater API proxy for getting professor data
    */
   get: publicProcedure.input(z.object({ ucinetid: z.string() })).query(async ({ input }) => {
