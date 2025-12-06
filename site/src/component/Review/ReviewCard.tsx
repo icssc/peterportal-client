@@ -162,7 +162,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
-        const courseLink = <Link href={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>;
+        const courseLink = (
+          <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
+        );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
@@ -175,7 +177,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const profName = foundCourseAndProfName?.profName ?? review.professorId;
         const courseAndProfLink = (
           <div>
-            <Link href={{ pathname: `/course/${review.courseId}` }}>{courseName}</Link>
+            <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
             {' • '}
             <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
           </div>
