@@ -14,6 +14,7 @@ import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
+import { useProfessorData } from '../../hooks/professorReviews';
 
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -114,19 +115,23 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
+  const profCache = useProfessorData(review.professorId);
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
     let courseName: string | undefined = undefined;
 
     try {
-      const profResponse = await trpc.professors.get.query({ ucinetid: review.professorId });
-      const nameParts = profResponse.name.split(' ');
+      // if cache does not need to be loaded/is empty
+      if (!profCache) {
+        return;
+      }
+      const nameParts = profCache.name.split(' ');
       const profInitial = nameParts[0][0] + '.';
       const profLastName = nameParts[nameParts.length - 1];
       profName = `${profInitial} ${profLastName}`;
 
-      const matchedCourse = profResponse.courses.find((c) => c.id === review.courseId);
+      const matchedCourse = profCache.courses[review.courseId];
 
       // first, try to match a course name using the professor's API course array. otherwise, lookup the course separately.
       if (matchedCourse) {
@@ -143,11 +148,17 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     } catch (error) {
       console.error('Error fetching professor or course name:', error);
     }
-  }, [review.professorId, review.courseId]);
+  }, [review.courseId, profCache]);
 
   useEffect(() => {
+    // if loading then return
+    if (!profCache) {
+      return;
+    }
+
     const getIdentifier = async () => {
       setLoadingIdentifier(true);
+
       if (professor) {
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
@@ -177,7 +188,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
