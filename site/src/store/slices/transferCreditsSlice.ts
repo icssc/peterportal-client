@@ -15,7 +15,7 @@ export type TransferWithUnread<T> = T & { unread?: true };
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
-    showTransfersMenu: false,
+    showMobileCreditsMenu: false,
     dataLoadState: 'waiting' as DataLoadingState,
     transferredCourses: [] as TransferWithUnread<TransferredCourse>[],
     apExamInfo: [] as APExam[],
@@ -25,8 +25,8 @@ export const transferCreditsSlice = createSlice({
     uncategorizedCourses: [] as TransferWithUnread<TransferredUncategorized>[],
   },
   reducers: {
-    setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
-      state.showTransfersMenu = action.payload;
+    setShowMobileCreditsMenu: (state, action: PayloadAction<boolean>) => {
+      state.showMobileCreditsMenu = action.payload;
     },
     setDataLoadState: (state, action: PayloadAction<DataLoadingState>) => {
       state.dataLoadState = action.payload;
@@ -122,7 +122,7 @@ export const transferCreditsSlice = createSlice({
 });
 
 export const {
-  setShowTransfersMenu,
+  setShowMobileCreditsMenu,
   setDataLoadState,
   addTransferredCourse,
   removeTransferredCourse,

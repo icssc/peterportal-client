@@ -4,7 +4,6 @@ import courseRequirementsReducer from './slices/courseRequirementsSlice';
 import savedCoursesReducer from './slices/savedCoursesSlice';
 import reviewReducer from './slices/reviewSlice';
 import uiReducer from './slices/uiSlice';
-import popupReducer from './slices/popupSlice';
 import roadmapReducer from './slices/roadmapSlice';
 import searchReducer from './slices/searchSlice';
 import transferCreditsReducer from './slices/transferCreditsSlice';
@@ -21,7 +20,6 @@ const reducer = {
   savedCourses: savedCoursesReducer,
   review: reviewReducer,
   ui: uiReducer,
-  popup: popupReducer,
   roadmap: roadmapReducer,
   search: searchReducer,
   transferCredits: transferCreditsReducer,

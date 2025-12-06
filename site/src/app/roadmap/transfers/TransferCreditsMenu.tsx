@@ -1,20 +1,17 @@
 'use client';
-import { FC, useEffect, useRef } from 'react';
+import { FC } from 'react';
 import './TransferCreditsMenu.scss';
-import { CSSTransition } from 'react-transition-group';
 import { useIsMobile } from '../../../helpers/util';
-import UIOverlay from '../../../component/UIOverlay/UIOverlay';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setShowTransfersMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
+import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import CoursesSection from './CoursesSection';
 import APExamsSection from './APExamsSection';
 import GESection from './GESection';
 import UncategorizedCreditsSection from './UncategorizedCreditsSection';
-import { useLoadTransferredCredits } from '../../../hooks/transferCredits';
 
 export const ToggleTransfersButton: FC = () => {
   const isMobile = useIsMobile();
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
+  const show = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const dispatch = useAppDispatch();
 
   const toggleMenu = () => {
@@ -22,7 +19,7 @@ export const ToggleTransfersButton: FC = () => {
       // After closing the menu, clear all the unread markers
       dispatch(clearUnreadTransfers());
     }
-    dispatch(setShowTransfersMenu(!show));
+    dispatch(setShowMobileCreditsMenu(!show));
   };
 
   return (
@@ -32,44 +29,16 @@ export const ToggleTransfersButton: FC = () => {
   );
 };
 
-const TransferCreditsMenu: FC = () => {
-  const isMobile = useIsMobile();
-  const show = useAppSelector((state) => state.transferCredits.showTransfersMenu);
-  useLoadTransferredCredits();
-
-  const dispatch = useAppDispatch();
-
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isMobile) return;
-    overlayRef.current?.classList.toggle('enter-done', show);
-  }, [isMobile, show]);
-
-  useEffect(() => {
-    if (!isMobile) dispatch(setShowTransfersMenu(false));
-  }, [dispatch, isMobile]);
-
-  const closeMenu = () => dispatch(setShowTransfersMenu(false));
-
+export const TransferCreditsMenu = () => {
   return (
-    <>
-      {isMobile && <UIOverlay onClick={closeMenu} zIndex={399} ref={overlayRef} />}
-      <CSSTransition in={show} timeout={500} unmountOnExit nodeRef={sidebarRef}>
-        <div className={`side-panel transfers-menu ${isMobile ? 'mobile' : ''}`} ref={sidebarRef}>
-          <div className="transfers-menu-inner">
-            <h3>Transfer Credits</h3>
+    <div className="transfers-menu">
+      <h3>Add Course Credits</h3>
 
-            <CoursesSection />
-            <APExamsSection />
-            <GESection />
-            <UncategorizedCreditsSection />
-          </div>
-          <ToggleTransfersButton />
-        </div>
-      </CSSTransition>
-    </>
+      <CoursesSection />
+      <APExamsSection />
+      <GESection />
+      <UncategorizedCreditsSection />
+    </div>
   );
 };
 

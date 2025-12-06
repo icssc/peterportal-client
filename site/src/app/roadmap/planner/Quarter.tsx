@@ -8,7 +8,7 @@ import {
   reviseRoadmap,
   selectCurrentPlan,
   setActiveCourse,
-  setShowSearch,
+  showMobileCatalog,
 } from '../../../store/slices/roadmapSlice';
 import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
 import './Quarter.scss';
@@ -132,7 +132,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         {isMobile && (
           <Button
             startIcon={<PlaylistAddIcon />}
-            onClick={() => dispatch(setShowSearch({ show: true, year: yearIndex, quarter: quarterIndex }))}
+            onClick={() => dispatch(showMobileCatalog({ year: yearIndex, quarter: quarterIndex }))}
             size="small"
             variant="contained"
             color="inherit"

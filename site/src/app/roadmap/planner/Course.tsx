@@ -30,7 +30,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const dispatch = useAppDispatch();
-  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const isMobile = useIsMobile();
 
   const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));

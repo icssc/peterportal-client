@@ -60,6 +60,7 @@ interface SideInfoProps {
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
   terms?: string[];
+  className?: string;
 }
 
 interface AverageReview {
@@ -152,7 +153,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
   return (
     <div className="side-content-wrapper">
-      <div className="side-info">
+      <div className={`side-info ${props.className ?? ''}`}>
         <div className="side-info-overview">
           <h2>{props.name}</h2>
           <h3>{props.title}</h3>

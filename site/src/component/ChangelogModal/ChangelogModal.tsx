@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import changelogImage from '../../asset/course-preview.png';
+import changelogImage from '../../asset/rm-dedicated-search-pgs.png';
 import Image from 'next/image';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const DESCRIPTION = 'You can now click on courses in the sidebar to preview them without leaving your roadmap!';
-const LAST_UPDATED = '11/03/2025';
+const DESCRIPTION = 'Course and instructor search are now integrated into the main roadmap search menus!';
+const LAST_UPDATED = '12/04/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);

@@ -130,3 +130,16 @@ export function useLoadTransferredCredits() {
     saveLocalTransfers<TransferredUncategorized>(OtherKey, transferredOther);
   }, [isLoggedIn, OtherKey, transferredOther, userDataLoaded]);
 }
+
+export function useHasUnreadTransfers() {
+  const transferredCourses = useAppSelector((state) => state.transferCredits.transferredCourses);
+  const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
+  const uncategorizedCourses = useAppSelector((state) => state.transferCredits.uncategorizedCourses);
+
+  const hasUnreadTransfers =
+    transferredCourses.some((course) => course.unread) ||
+    userAPExams.some((ap) => ap.unread) ||
+    uncategorizedCourses.some((course) => course.unread);
+
+  return hasUnreadTransfers;
+}

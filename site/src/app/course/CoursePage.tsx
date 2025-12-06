@@ -9,10 +9,10 @@ import Review from '../../component/Review/Review';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { setCourse } from '../../store/slices/popupSlice';
-import { getCourseTags, searchAPIResult, sortTerms } from '../../helpers/util';
+import { useAppDispatch } from '../../store/hooks';
+import { getCourseTags, sortTerms } from '../../helpers/util';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import { useCourseData } from '../../hooks/catalog';
 
 interface CoursePageProps {
   courseId: string;
@@ -20,22 +20,16 @@ interface CoursePageProps {
 
 const CoursePage: FC<CoursePageProps> = ({ courseId: id }) => {
   const dispatch = useAppDispatch();
-  const courseGQLData = useAppSelector((state) => state.popup.course);
+  const courseGQLData = useCourseData(id);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (id !== undefined) {
-      searchAPIResult('course', id).then((course) => {
-        if (course) {
-          dispatch(setCourse(course));
-          setError('');
-          document.title = `${course.department + ' ' + course.courseNumber} | PeterPortal`;
-        } else {
-          setError(`Course ${id} does not exist!`);
-        }
-      });
+    if (id === undefined) return;
+    if (courseGQLData) {
+      setError('');
+      document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | PeterPortal`;
     }
-  }, [dispatch, id]);
+  }, [courseGQLData, dispatch, id]);
 
   // if course does not exists
   if (error) {

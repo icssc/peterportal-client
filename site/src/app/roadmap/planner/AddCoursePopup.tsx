@@ -1,7 +1,12 @@
 'use client';
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { reviseRoadmap, selectCurrentPlan, setShowAddCourse, setShowSearch } from '../../../store/slices/roadmapSlice';
+import {
+  hideMobileCatalog,
+  reviseRoadmap,
+  selectCurrentPlan,
+  setShowAddCourse,
+} from '../../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
@@ -46,7 +51,7 @@ const AddCoursePopup: FC = () => {
     dispatch(reviseRoadmap(revision));
 
     // hide the search bar to view the roadmap
-    dispatch(setShowSearch({ show: false }));
+    dispatch(hideMobileCatalog());
     closePopup();
   };
 

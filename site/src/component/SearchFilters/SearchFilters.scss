@@ -4,7 +4,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding-top: 8px;
 
   .filter-form-control {
     margin-bottom: 0;
@@ -30,6 +29,10 @@
 
     > ul {
       padding-top: 0;
+    }
+
+    .MuiInputBase-input {
+      padding-top: 12px;
     }
   }
 

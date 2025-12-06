@@ -7,34 +7,26 @@ import GradeDist from '../../component/GradeDist/GradeDist';
 import SideInfo from '../../component/SideInfo/SideInfo';
 import Error from '../../component/Error/Error';
 
-import { setProfessor } from '../../store/slices/popupSlice';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { searchAPIResult, unionTerms, sortTerms } from '../../helpers/util';
+import { unionTerms, sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 import ResultPageContent, { ResultPageSection } from '../../component/ResultPageContent/ResultPageContent';
+import { useProfessorData } from '../../hooks/professorReviews';
 
 interface ProfessorPageProps {
   ucinetid: string;
 }
 
 const ProfessorPage: FC<ProfessorPageProps> = ({ ucinetid: id }) => {
-  const dispatch = useAppDispatch();
-  const professorGQLData = useAppSelector((state) => state.popup.professor);
+  const professorGQLData = useProfessorData(id);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (id !== undefined) {
-      searchAPIResult('professor', id).then((professor) => {
-        if (professor) {
-          dispatch(setProfessor(professor));
-          setError('');
-          document.title = `${professor.name} | PeterPortal`;
-        } else {
-          setError(`Professor ${id} does not exist!`);
-        }
-      });
+    if (id === undefined) return;
+    if (professorGQLData) {
+      setError('');
+      document.title = `${professorGQLData.name} | PeterPortal`;
     }
-  }, [dispatch, id]);
+  }, [id, professorGQLData]);
 
   // if professor does not exists
   if (error) {
