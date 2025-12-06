@@ -6,15 +6,14 @@ import Image from 'next/image';
 import './AppHeader.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
 import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
 import SearchModule from '../SearchModule/SearchModule';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
+import Home from '@mui/icons-material/Home';
 import TuneIcon from '@mui/icons-material/Tune';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
@@ -25,16 +24,11 @@ import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
-  const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
   const isMobile = useIsMobile();
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isShowMobileSearchFilters = useAppSelector((state) => state.roadmap.showMobileSearchFilters);
   const isRoadmapPage = usePathname() == '/';
   const courseSearchQuery = useAppSelector((state) => state.search['courses'].query);
-
-  const toggleMenu = () => {
-    dispatch(setSidebarStatus(!sidebarOpen));
-  };
 
   const showFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(true));
@@ -110,14 +104,15 @@ const AppHeader: FC = () => {
     <header className="navbar">
       <div className="navbar-nav">
         <div className="navbar-left">
-          {/* Hamburger Menu */}
-          <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
-            <MenuIcon className="navbar-menu-icon" />
-          </IconButton>
           {/* Search */}
           {isMobile && isRoadmapPage && (
             <IconButton onClick={showFullscreenSearch}>
               <SearchIcon />
+            </IconButton>
+          )}
+          {!isRoadmapPage && (
+            <IconButton href="/">
+              <Home />
             </IconButton>
           )}
         </div>
