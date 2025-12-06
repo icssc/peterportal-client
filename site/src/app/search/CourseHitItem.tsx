@@ -29,9 +29,8 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     dispatch(setCourse(props));
 
     // if click on a course that is already in popup
-    // if click on a course that is already in popup
     if (activeCourse && props.id == activeCourse.id) {
-      router.push(`/course/${props.id}`);
+      router.push(`/course/${encodeURIComponent(props.id)}`);
     }
   };
 
