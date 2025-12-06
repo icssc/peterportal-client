@@ -38,4 +38,4 @@ jobs:
         with:
           environment: staging-${{ github.event.pull_request.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          onlyDeactivateDeployments: true
+          onlyDeactivateDeployments: false
