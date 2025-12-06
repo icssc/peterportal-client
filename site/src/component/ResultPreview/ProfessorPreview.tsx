@@ -4,7 +4,7 @@ import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { checkModalOpen, sortTerms, transformProfessorGQL, unionTerms } from '../../helpers/util';
+import { checkModalOpen, sortTerms, unionTerms } from '../../helpers/util';
 import { ProfessorGQLData } from '../../types/types';
 import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
 import { useAppDispatch } from '../../store/hooks';
@@ -16,39 +16,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
-import trpc from '../../trpc';
-
-/** @todo remove once cached professors gets merged */
-function useProfessorData(ucinetid: string) {
-  const [fullProfData, setFullProfData] = useState<ProfessorGQLData | null>(null);
-  const [loadTrigger, setLoadTrigger] = useState(false);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    // Use a stateful trigger to avoid sending two requests as a result of double first render
-    setLoadTrigger(true);
-  }, [ucinetid]);
-
-  /** @todo read from global cache */
-  useEffect(() => {
-    if (!loadTrigger) return;
-    setLoadTrigger(false);
-    setFullProfData(null);
-    trpc.professors.get
-      .query({ ucinetid })
-      .then((prof) => {
-        setFullProfData(transformProfessorGQL(prof));
-      })
-      .catch(() => {
-        dispatch(setToastMsg('Unable to load professor'));
-        dispatch(setToastSeverity('error'));
-        dispatch(setShowToast(true));
-      });
-  }, [ucinetid, dispatch, loadTrigger]);
-
-  return fullProfData;
-}
+import { useProfessorData } from '../../hooks/professorReviews';
 
 interface PreviewTitleProps {
   isLoading: boolean;
