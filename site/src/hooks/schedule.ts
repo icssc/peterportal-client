@@ -19,8 +19,8 @@ export function useSetSchedule() {
     trpc.schedule.currentWeek
       .query()
       .then((res) => {
-        const week = res.display.split(' • ')[0];
-        dispatch(setCurrentWeek(week));
+        // const week = res.display.split(' • ')[0];
+        dispatch(setCurrentWeek(res.display));
       })
       .catch(() => {
         console.error('Error fetching the current week number from tRPC');
