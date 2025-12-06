@@ -111,7 +111,7 @@ const AppHeader: FC = () => {
             </IconButton>
           )}
           {!isRoadmapPage && (
-            <IconButton href="/">
+            <IconButton component={Link} href="/">
               <Home />
             </IconButton>
           )}
