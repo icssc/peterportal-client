@@ -30,7 +30,6 @@ function createTrpcLambdaFunction() {
     OIDC_ISSUER_URL: process.env.OIDC_ISSUER_URL!,
     GRECAPTCHA_SECRET: process.env.GRECAPTCHA_SECRET!,
     PRODUCTION_DOMAIN: productionDomain, // Dynamically set based on stage
-    PRODUCTION_CLIENT_DOMAIN: productionDomain, // Same as PRODUCTION_DOMAIN (frontend on same domain)
     ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
     NODE_ENV: process.env.NODE_ENV ?? 'staging',
     ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,

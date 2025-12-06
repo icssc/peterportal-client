@@ -13,7 +13,6 @@ declare global {
       OIDC_ISSUER_URL: string;
       GRECAPTCHA_SECRET: string;
       PRODUCTION_DOMAIN: string;
-      PRODUCTION_CLIENT_DOMAIN: string;
       ADMIN_EMAILS: string;
       ANTEATER_API_KEY?: string;
       EXTERNAL_USER_READ_SECRET?: string;
