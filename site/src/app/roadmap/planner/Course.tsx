@@ -50,8 +50,8 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       popoverContent={popoverContent}
       popupListener={popupListener}
       disabled={isMobile}
-      anchor={isMobile ? 'bottom' : openPopoverLeft ? 'left' : 'right'}
-      transform={isMobile ? 'bottom' : openPopoverLeft ? 'left' : 'right'}
+      anchor={openPopoverLeft ? 'left' : 'right'}
+      transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>

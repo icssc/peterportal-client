@@ -1,6 +1,7 @@
 'use client';
 import React, { FC, ReactNode, useState } from 'react';
 import { Popover } from '@mui/material';
+import './PPCOverlayTrigger.scss';
 
 interface PPCOverlayTriggerProps {
   popoverContent: ReactNode;
@@ -50,7 +51,7 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
 
   const handleUnhover = (e: React.MouseEvent) => {
     const relatedTarget = e.relatedTarget as Node | null;
-    const popoverContent = document.querySelector('.popover-paper');
+    const popoverContent = document.querySelector('hoverable-popover');
 
     if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
       hidePopover();
@@ -78,12 +79,12 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
         anchorOrigin={anchorMap[anchor]}
         transformOrigin={transformMap[transform]}
         slotProps={{
+          root: {
+            className: 'root',
+          },
           paper: {
-            className: 'popover-paper',
+            className: 'hoverable-popover',
             onMouseLeave: hidePopover,
-            sx: {
-              pointerEvents: 'auto',
-            },
           },
         }}
         sx={{

@@ -28,7 +28,7 @@
 
 .ppc-popover-paper {
   font-size: 1rem;
-  background-color: var(--overlay1) !important;
+  background-color: var(--overlay1);
   border-radius: var(--border-radius);
   border: 1px solid var(--background);
   width: 310px;
@@ -40,7 +40,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background-color: transparent !important;
+  background-color: transparent;
 }
 
 .profile-popover__header {
