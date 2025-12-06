@@ -18,6 +18,7 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
+  CourseGQLData,
   InvalidCourseData,
   PlannerData,
   PlannerQuarterData,
@@ -125,15 +126,38 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
   return new Promise((resolve) => {
     const planner: PlannerData = [];
+    const invalidCourseIds: string[] = [];
+
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
+
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
-        quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
+
+        //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
+        const validCourses: CourseGQLData[] = [];
+        savedQuarter.courses.forEach((courseId) => {
+          if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
+            if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
+          } else {
+            validCourses.push(courseLookup[courseId]);
+          }
+        });
+        quarter.courses = validCourses;
+
         year.quarters.push(quarter);
       });
+
       planner.push(year);
     });
+
+    if (invalidCourseIds.length > 0) {
+      const uniqueIds = [...new Set(invalidCourseIds)];
+      console.warn(
+        `Removed ${uniqueIds.length} invalid course${uniqueIds.length === 1 ? '' : 's'} from roadmap: ${uniqueIds.join(', ')}`,
+      );
+    }
+
     resolve(planner);
   });
 };
