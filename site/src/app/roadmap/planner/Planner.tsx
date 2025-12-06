@@ -8,6 +8,7 @@ import { useAppSelector } from '../../../store/hooks';
 import { selectYearPlans } from '../../../store/slices/roadmapSlice';
 import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
+import Footer from '../../../shared-components/Footer';
 
 const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
@@ -47,6 +48,8 @@ const Planner: FC = () => {
           })}
         </section>
       )}
+
+      <Footer className="app-footer" />
     </div>
   );
 };

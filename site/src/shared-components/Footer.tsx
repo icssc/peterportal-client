@@ -1,0 +1,57 @@
+import { Button, Container, Stack, SvgIcon, useTheme } from '@mui/material';
+import { FC } from 'react';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import ICSSCLogo from './IcsscLogo';
+
+const Footer: FC<{ className?: string }> = ({ className }) => {
+  const theme = useTheme();
+  theme.palette.text.secondary;
+
+  const stackStyleOverrides = {
+    color: theme.palette.text.secondary,
+    gap: 2,
+    justifyContent: 'center',
+  };
+
+  const icsscLogo = <SvgIcon inheritViewBox component={ICSSCLogo} />;
+
+  return (
+    <Container className={className}>
+      <Stack direction="row" sx={stackStyleOverrides}>
+        <Button
+          variant="text"
+          size="large"
+          color="inherit"
+          startIcon={icsscLogo}
+          href="https://studentcouncil.ics.uci.edu/projects"
+          target="_blank"
+        >
+          ICSSC Projects
+        </Button>
+        <Button
+          variant="text"
+          size="large"
+          color="inherit"
+          startIcon={<GitHubIcon />}
+          href="https://github.com/icssc/peterportal-client"
+          target="_blank"
+        >
+          GitHub
+        </Button>
+        <Button
+          variant="text"
+          size="large"
+          color="inherit"
+          startIcon={<AssignmentIcon />}
+          href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
+          target="_blank"
+        >
+          Feedback
+        </Button>
+      </Stack>
+    </Container>
+  );
+};
+
+export default Footer;
