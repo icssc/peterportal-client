@@ -1,14 +1,20 @@
 'use client';
+import './MobileSearchMenu.scss';
 import { FC } from 'react';
 import SearchHitContainer from '../SearchHitContainer/SearchHitContainer';
-import { Dialog } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCourse } from '../../store/slices/popupSlice';
-import CoursePreview from '../CoursePreview/CoursePreview';
+import CoursePreview from '../ResultPreview/CoursePreview';
+import MobilePopup from '../../app/roadmap/MobilePopup';
+import SearchFilters from '../SearchFilters/SearchFilters';
+import { ResultsHeader } from '../../app/roadmap/search/SavedAndSearch';
 
 const MobileSearchMenu: FC = () => {
   const dispatch = useAppDispatch();
+  const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const selectedCourse = useAppSelector((state) => state.popup.course);
+  const hasCompletedQuery = useAppSelector((state) => inProgressSearch !== 'newQuery' && !!state.search.courses.query);
+  const showFilters = useAppSelector((state) => hasCompletedQuery && state.search.viewIndex === 'courses');
 
   const handleClose = () => {
     dispatch(setCourse(null));
@@ -16,10 +22,14 @@ const MobileSearchMenu: FC = () => {
 
   return (
     <div className="mobile-search-menu">
-      <SearchHitContainer index="courses" />
-      <Dialog fullScreen={true} open={selectedCourse != null} onClose={handleClose} className="mobile-search-dialog">
+      <div className="result-info-container">
+        {hasCompletedQuery && <ResultsHeader />}
+        {hasCompletedQuery && showFilters && <SearchFilters />}
+      </div>
+      <SearchHitContainer />
+      <MobilePopup show={!!selectedCourse} onClose={handleClose}>
         {selectedCourse && <CoursePreview courseId={selectedCourse.id} onClose={handleClose} />}
-      </Dialog>
+      </MobilePopup>
     </div>
   );
 };

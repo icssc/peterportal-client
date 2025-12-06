@@ -1,4 +1,4 @@
-import './CoursePreview.scss';
+import './ResultPreview.scss';
 import { FC, ReactNode, useEffect, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
@@ -117,7 +117,7 @@ const CoursePreview: FC<{ courseId: string; onClose?: () => void }> = ({ courseI
 
   return (
     <Fade in={open} timeout={{ enter: 0, exit: transitionTime }}>
-      <div className="course-preview">
+      <div className="result-preview">
         <Paper className="preview-header" variant="outlined">
           <Tooltip title="Exit Preview (Esc)">
             <IconButton onClick={closePreview}>

@@ -1,4 +1,4 @@
-h3.saved-courses-title {
+h3.results-list-title {
   font-size: 20px;
   font-size: 1.25rem;
   font-weight: 500;
@@ -16,4 +16,14 @@ h3.saved-courses-title {
   overflow: auto;
   gap: 8px;
   margin-top: 8px;
+}
+
+.result-type-header {
+  color: var(--text-secondary);
+  margin-block: 8px 12px;
+
+  a {
+    color: var(--blue-primary);
+    font-style: italic;
+  }
 }
