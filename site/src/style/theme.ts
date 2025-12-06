@@ -11,22 +11,16 @@ const sharedTokens = {
     midGray: '#8d8d8d',
   },
   chart: {
-    red: {
-      secondary: '#e7966d',
-    },
-    orange: {
-      primary: 'orange',
-      secondary: '#ecad6d',
-    },
-    yellow: {
-      primary: 'yellow',
-      secondary: '#f5d77f',
-    },
-    green: {
-      primary: 'green',
-    },
+    blue: '#5babe1',
+    red: '#e7966d',
+    orange: '#ecad6d',
+    yellow: '#f5d77f',
+    green: '#87c587',
     pass: '#4ab486',
     noPass: '#e36436',
+  },
+  success: {
+    main: 'green',
   },
 };
 
@@ -52,16 +46,11 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  chart: {
+  reviews: {
     ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
-      secondary: '#87c587',
-    },
-    red: {
-      primary: '#ce0000',
-      ...sharedTokens.chart.red,
-    },
+  },
+  error: {
+    main: '#ce0000',
   },
 };
 
@@ -89,53 +78,57 @@ const darkPalette: PaletteOptions = {
     primary: '#fff',
     secondary: '#99999f',
   },
-  chart: {
-    ...sharedTokens.chart,
-    green: {
-      ...sharedTokens.chart.green,
-      secondary: '#295629',
-    },
-    red: {
-      primary: '#ff3333',
-      ...sharedTokens.chart.red,
-    },
+  reviews: {
+    blue: '#41779b',
+    green: '#295629',
+    red: '#b7523e',
+    yellow: '#c49e3e',
+    orange: '#c47e38',
+  },
+  error: {
+    main: '#ff3333',
   },
 };
-
-const makeExtendedPalette = (base: PaletteOptions) => ({
-  ...base,
-  success: { main: base.chart!.green!.primary! },
-  error: { main: base.chart!.red!.primary! },
-  warning: { main: base.chart!.orange!.secondary! },
-});
 
 export let theme = createTheme({
   cssVariables: { colorSchemeSelector: '[data-theme=%s]', nativeColor: true },
   colorSchemes: {
-    light: { palette: makeExtendedPalette(lightPalette) },
-    dark: { palette: makeExtendedPalette(darkPalette) },
+    light: { palette: lightPalette },
+    dark: { palette: darkPalette },
   },
   spacing: 4,
 });
 
+const xsmall = {
+  props: { size: 'xsmall' },
+  style: {
+    height: '24px',
+    fontSize: '11px',
+    '& .MuiButton-startIcon': {
+      marginRight: 4,
+    },
+    '& .MuiButton-startIcon .MuiSvgIcon-root': {
+      fontSize: '18px',
+    },
+    '& .MuiInputBase-input': {
+      padding: '4px 10px 4px 10px',
+      height: '24px',
+      boxSizing: 'border-box',
+      fontSize: 'inherit',
+    },
+    '& > div.MuiSelect-select.MuiInputBase-input': {
+      paddingRight: '28px',
+    },
+    '& .MuiSvgIcon-root': {
+      right: '2px',
+    },
+  },
+};
+
 theme = createTheme(theme, {
   components: {
     MuiButton: {
-      variants: [
-        {
-          props: { size: 'xsmall' },
-          style: {
-            height: '24px',
-            fontSize: '11px',
-            '& .MuiButton-startIcon': {
-              marginRight: 4,
-            },
-            '& .MuiButton-startIcon .MuiSvgIcon-root': {
-              fontSize: '18px',
-            },
-          },
-        },
-      ],
+      variants: [xsmall],
       defaultProps: {
         variant: 'contained',
         disableElevation: true,
@@ -167,16 +160,10 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiFormLabel: {
+    MuiCircularProgress: {
       styleOverrides: {
         root: {
-          fontSize: 18,
-          fontWeight: 600,
-          marginBottom: theme.spacing(1),
-          color: 'var(--mui-palette-text-primary)',
-          '&.Mui-focused': {
-            color: 'inherit',
-          },
+          color: 'inherit',
         },
       },
     },
@@ -188,9 +175,6 @@ theme = createTheme(theme, {
           marginBottom: theme.spacing(4),
           '&:last-child': {
             marginBottom: 0,
-          },
-          '& .MuiInputBase-input': {
-            padding: '7px 12px',
           },
           '& .MuiFormControlLabel-root': {
             display: 'flex',
@@ -212,22 +196,21 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiInputBase: {
+    MuiFormLabel: {
       styleOverrides: {
         root: {
-          '& .MuiInputBase-input': {
-            padding: '8px 10px',
+          '&.Mui-focused': {
+            color: 'var(--mui-palette-text-secondary)',
           },
-        },
-        input: {
-          fontSize: 16,
-          backgroundColor: 'var(--mui-palette-background-paper)',
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          "[data-theme='dark'] &.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: 'var(--mui-palette-accent-main)',
+          },
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
           },
@@ -259,6 +242,17 @@ theme = createTheme(theme, {
           },
         },
       },
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-input': {
+            padding: '8px 10px',
+          },
+        },
+      },
+      variants: [xsmall],
+    },
+    MuiAutocomplete: {
+      variants: [xsmall],
     },
   },
 });

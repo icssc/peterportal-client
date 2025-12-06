@@ -1,6 +1,5 @@
 'use client';
 import { FC } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { reviseRoadmap, selectCurrentPlan, setShowAddCourse, setShowSearch } from '../../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
@@ -33,7 +32,7 @@ const AddCoursePopup: FC = () => {
   const yearIndex = currentYearAndQuarter?.year ?? -1;
 
   const closePopup = () => dispatch(setShowAddCourse(false));
-  const contentClassName = 'ppc-modal add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
+  const contentClassName = 'add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
   const overlay = <UIOverlay onClick={closePopup} zIndex={499} />;
 
   const addToRoadmap = () => {
@@ -64,7 +63,7 @@ const AddCoursePopup: FC = () => {
   return (
     <>
       <div className={contentClassName}>
-        <Modal.Header>
+        <div className="title">
           <h2>
             {department} {courseNumber}
           </h2>
@@ -76,8 +75,8 @@ const AddCoursePopup: FC = () => {
           <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
           </IconButton>
-        </Modal.Header>
-        <Modal.Body>
+        </div>
+        <div className="content">
           <CourseDescription course={activeCourse} />
           {activeMissingPrerequisites ? (
             <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
@@ -85,11 +84,12 @@ const AddCoursePopup: FC = () => {
             <PrerequisiteText course={activeCourse} />
           )}
           <PreviousOfferingsRow course={activeCourse} />
-        </Modal.Body>
+        </div>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
         </button>
       </div>
+
       {overlay}
     </>
   );

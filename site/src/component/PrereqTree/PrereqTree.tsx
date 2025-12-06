@@ -31,7 +31,7 @@ const Node: FC<NodeProps> = (props) => {
         {!props.label.startsWith('AP ') ? (
           <Link
             target="_blank"
-            href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
+            href={'/course/' + encodeURIComponent(props.label.split('(')[0].replace(/\s+/g, ''))}
             role="button"
             className="node"
           >

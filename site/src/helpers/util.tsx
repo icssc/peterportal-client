@@ -9,7 +9,7 @@ import {
 } from '../types/types';
 import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
-import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
+import { CourseAAPIResponse, GETitle, ProfessorAAPIResponse } from '@peterportal/types';
 import { ReactNode } from 'react';
 
 export function getCourseTags(course: CourseGQLData) {
@@ -28,6 +28,18 @@ export function getCourseTags(course: CourseGQLData) {
     tags.push(`${ge.substring(0, ge.indexOf(':'))}`);
   });
   return tags;
+}
+
+// helper function to format GEs in the form of "GE: II, III"
+export function formatGEsTag(geList: GETitle[]): string {
+  if (geList.length === 0) return '';
+  const numerals = geList.map((ge) => ge.slice(3).split(':')[0].trim());
+  return `GE ${numerals.join(', ')}`;
+}
+
+// helper function to truncate course level in the form of Upper Div, Lower Div, or Grad
+export function shortenCourseLevel(courseLevel: CourseGQLData['courseLevel']): string {
+  return courseLevel === 'Graduate/Professional Only (200+)' ? 'Grad' : courseLevel.slice(0, 9);
 }
 
 // helper function to search 1 result from course/professor page
@@ -93,7 +105,7 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
   }
 }
 
-function transformProfessorGQL(data: ProfessorAAPIResponse) {
+export function transformProfessorGQL(data: ProfessorAAPIResponse) {
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
   professor.courses = Object.fromEntries(data.courses.map((course) => [course.id, course]));
@@ -161,6 +173,5 @@ export function addDelimiter(items: ReactNode[], between: ReactNode, last?: Reac
 }
 
 export function checkModalOpen() {
-  /** @todo update when getting rid of bootstrap modals */
-  return !!document.querySelector('body > :is(.MuiModal-root, .ppc-modal)');
+  return !!document.querySelector('body > :is(.MuiModal-root)');
 }
