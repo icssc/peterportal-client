@@ -1,4 +1,4 @@
-import { Button, Container, Stack, SvgIcon, useTheme } from '@mui/material';
+import { Button, Container, Stack, SvgIcon, useMediaQuery, useTheme } from '@mui/material';
 import { FC } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -14,7 +14,9 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
     justifyContent: 'center',
   };
 
+  const showFullText = useMediaQuery('(min-width: 440px)');
   const icsscLogo = <SvgIcon inheritViewBox component={ICSSCLogo} />;
+  const icsscText = showFullText ? 'ICSSC Projects' : 'ICSSC';
 
   return (
     <Container className={className}>
@@ -27,7 +29,7 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
           href="https://studentcouncil.ics.uci.edu/projects"
           target="_blank"
         >
-          ICSSC Projects
+          {icsscText}
         </Button>
         <Button
           variant="text"
