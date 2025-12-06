@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -6,9 +6,8 @@ import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms, unionTerms } from '../../helpers/util';
 import { ProfessorGQLData } from '../../types/types';
-import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { useAppDispatch } from '../../store/hooks';
-import { setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
@@ -72,22 +71,11 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   );
 };
 
-const ProfessorPreview: FC<{ netid: string }> = ({ netid }) => {
+const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, onClose }) => {
   netid = netid.replace(/\s/g, '');
   const professorData = useProfessorData(netid);
   const isLoading = false;
   const dispatch = useAppDispatch();
-
-  const [open, setOpen] = useState(true);
-  const theme = useTheme();
-  const transitionTime = theme.transitions.duration.shortest;
-
-  const closePreview = () => {
-    setOpen(false);
-    setTimeout(() => {
-      dispatch(setPreviewedProfessor(''));
-    }, transitionTime);
-  };
 
   const copyProfLink = () => {
     const url = new URL('/professor/' + netid, location.origin).toString();
@@ -103,7 +91,7 @@ const ProfessorPreview: FC<{ netid: string }> = ({ netid }) => {
       if (event.key !== 'Escape' || modified) return;
       if (checkModalOpen()) return;
       event.preventDefault();
-      closePreview();
+      onClose();
     };
 
     document.body.addEventListener('keydown', listener);
@@ -111,31 +99,29 @@ const ProfessorPreview: FC<{ netid: string }> = ({ netid }) => {
   });
 
   return (
-    <Fade in={open} timeout={{ enter: 0, exit: transitionTime }}>
-      <div className="result-preview">
-        <Paper className="preview-header" variant="outlined">
-          <Tooltip title="Exit Preview (Esc)">
-            <IconButton onClick={closePreview}>
-              <CloseIcon />
-            </IconButton>
-          </Tooltip>
-          <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
-          <Button
-            variant="contained"
-            color="inherit"
-            startIcon={<IosShareIcon />}
-            size="small"
-            disableElevation
-            onClick={copyProfLink}
-          >
-            Share
-          </Button>
-        </Paper>
-        <Twemoji options={{ className: 'twemoji' }}>
-          <ProfessorPreviewContent data={professorData} />
-        </Twemoji>
-      </div>
-    </Fade>
+    <div className="result-preview">
+      <Paper className="preview-header" variant="outlined">
+        <Tooltip title="Exit Preview (Esc)">
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
+        <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<IosShareIcon />}
+          size="small"
+          disableElevation
+          onClick={copyProfLink}
+        >
+          Share
+        </Button>
+      </Paper>
+      <Twemoji options={{ className: 'twemoji' }}>
+        <ProfessorPreviewContent data={professorData} />
+      </Twemoji>
+    </div>
   );
 };
 

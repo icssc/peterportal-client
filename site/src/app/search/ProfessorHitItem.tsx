@@ -1,30 +1,18 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setProfessor } from '../../store/slices/popupSlice';
+import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
-import { useIsMobile } from '../../helpers/util';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const isMobile = useIsMobile();
-  const activeProfessor = useAppSelector((state) => state.popup.professor);
 
   const onClickName = () => {
-    // set the professor popup
-    dispatch(setProfessor(props));
-
-    // if click on a professor that is already in popup
-    // or if on mobile
-    if ((activeProfessor && props.ucinetid == activeProfessor.ucinetid) || isMobile) {
-      router.push(`/professor/${props.ucinetid}`);
-    }
+    dispatch(setPreviewedProfessor(props.ucinetid));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

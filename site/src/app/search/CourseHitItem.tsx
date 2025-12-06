@@ -3,8 +3,7 @@ import { FC } from 'react';
 import './HitItem.scss';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setCourse } from '../../store/slices/popupSlice';
+import { useAppDispatch } from '../../store/hooks';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
@@ -12,26 +11,18 @@ import { useSavedCourses } from '../../hooks/savedCourses';
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { useRouter } from 'next/navigation';
+import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const activeCourse = useAppSelector((state) => state.popup.course);
   const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
   const courseIsSaved = isCourseSaved(props);
   const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
-    // set the popup course
-    dispatch(setCourse(props));
-
-    // if click on a course that is already in popup
-    if (activeCourse && props.id == activeCourse.id) {
-      router.push(`/course/${encodeURIComponent(props.id)}`);
-    }
+    dispatch(setPreviewedCourse(props.id));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
