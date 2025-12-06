@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
 import Link from 'next/link';
-import { setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
+import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
@@ -45,13 +45,16 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           <p>
             <b>Recently taught: </b>
             {Object.keys(props.courses).map((item: string, index: number) => {
+              const handleLinkClick = (event: React.MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+                dispatch(setPreviewedCourse(item));
+              };
+
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <Link
-                    href={'/course/' + encodeURIComponent(item.replace(/\s+/g, ''))}
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                  <Link href={'/course/' + encodeURIComponent(item.replace(/\s+/g, ''))} onClick={handleLinkClick}>
                     {item}
                   </Link>
                 </span>
