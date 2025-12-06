@@ -109,6 +109,11 @@ const AppHeader: FC = () => {
               <SearchIcon />
             </IconButton>
           )}
+          {!isRoadmapPage && (
+            <IconButton href="/">
+              <ArrowLeftIcon />
+            </IconButton>
+          )}
         </div>
 
         {/* Logo */}
