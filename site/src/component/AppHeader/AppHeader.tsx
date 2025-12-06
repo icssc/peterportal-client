@@ -13,6 +13,7 @@ import SearchModule from '../SearchModule/SearchModule';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
+import Home from '@mui/icons-material/Home';
 import TuneIcon from '@mui/icons-material/Tune';
 import SmsIcon from '@mui/icons-material/Sms';
 import { Button, IconButton } from '@mui/material';
@@ -111,7 +112,7 @@ const AppHeader: FC = () => {
           )}
           {!isRoadmapPage && (
             <IconButton href="/">
-              <ArrowLeftIcon />
+              <Home />
             </IconButton>
           )}
         </div>
