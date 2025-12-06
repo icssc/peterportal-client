@@ -49,9 +49,10 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   return (
     <PPCOverlayTrigger
       popoverContent={popoverContent}
-      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
       disabled={isMobile}
+      anchor={openPopoverLeft ? 'left' : 'right'}
+      transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>

@@ -1,71 +1,99 @@
 'use client';
-import { FC, ReactNode, useState } from 'react';
-import { OverlayTrigger, OverlayTriggerProps, Popover } from 'react-bootstrap';
+import React, { FC, ReactNode, useState } from 'react';
+import { Popover } from '@mui/material';
+import './PPCOverlayTrigger.scss';
 
-/** temporary file/patch for overlay trigger to make it so user can mouse into it without it closing */
-
-interface PPCOverlayTriggerProps extends Omit<OverlayTriggerProps, 'overlay'> {
+interface PPCOverlayTriggerProps {
   popoverContent: ReactNode;
   children: React.ReactElement;
   popupListener?: (open: boolean) => void;
   disabled?: boolean;
+  anchor: 'bottom' | 'left' | 'right';
+  transform: 'bottom' | 'left' | 'right';
 }
 
-const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = (props) => {
-  const { popupListener, popoverContent, children, disabled, ...passedProps } = props;
-  const [showInfoPopover, setShowInfoPopover] = useState(false);
-  const [showPopoverTimeout, setShowPopoverTimeout] = useState(0);
+const anchorMap = {
+  bottom: { vertical: 'bottom', horizontal: 'center' } as const,
+  left: { vertical: 'center', horizontal: 'left' } as const,
+  right: { vertical: 'center', horizontal: 'right' } as const,
+};
 
-  const POPOVER_DELAY = 80;
+const transformMap = {
+  bottom: { vertical: 'top', horizontal: 'center' } as const,
+  left: { vertical: 'center', horizontal: 'right' } as const,
+  right: { vertical: 'center', horizontal: 'left' } as const,
+};
 
-  const showPopover = () => {
-    setShowInfoPopover(true);
+const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
+  popoverContent,
+  children,
+  popupListener,
+  disabled = false,
+  anchor,
+  transform,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
+
+  const showPopover = (event: React.MouseEvent<HTMLElement>) => {
+    if (disabled) {
+      return;
+    }
+
+    setAnchorEl(event.currentTarget);
     popupListener?.(true);
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(0);
   };
 
   const hidePopover = () => {
-    setShowInfoPopover(false);
+    setAnchorEl(null);
     popupListener?.(false);
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(0);
   };
 
-  const handleMouseMove = () => {
-    if (!showPopoverTimeout) return;
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
-  };
+  const handleUnhover = (e: React.MouseEvent) => {
+    const relatedTarget = e.relatedTarget as Node | null;
+    const popoverContent = document.querySelector('hoverable-popover');
 
-  const handleHover = () => {
-    if (document.querySelector('.course.sortable-fallback')) return;
-    if (disabled) return;
-    clearTimeout(showPopoverTimeout);
-    setShowPopoverTimeout(window.setTimeout(showPopover, POPOVER_DELAY));
-  };
-
-  const handleUnhover = (event: React.MouseEvent) => {
-    try {
-      const inTooltip = document.querySelector('.ppc-popover')?.contains(event?.relatedTarget as HTMLElement);
-      if (!inTooltip) hidePopover();
-    } catch {
+    if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
       hidePopover();
     }
   };
 
-  const popover = (
-    <Popover className="ppc-popover" id="ppc-popover" onMouseLeave={hidePopover}>
-      {popoverContent}
-    </Popover>
-  );
+  const clonedChild = React.cloneElement(children, {
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+      showPopover(e);
+      children.props.onMouseEnter?.(e);
+    },
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
+      handleUnhover(e);
+      children.props.onMouseLeave?.(e);
+    },
+  });
 
   return (
-    <OverlayTrigger {...passedProps} show={showInfoPopover} overlay={popover}>
-      <div onMouseEnter={handleHover} onMouseLeave={handleUnhover} onMouseMove={handleMouseMove}>
-        {children}
-      </div>
-    </OverlayTrigger>
+    <div className="ppc-popover">
+      {clonedChild}
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={hidePopover}
+        anchorOrigin={anchorMap[anchor]}
+        transformOrigin={transformMap[transform]}
+        slotProps={{
+          root: {
+            className: 'root',
+          },
+          paper: {
+            className: 'hoverable-popover',
+            onMouseLeave: hidePopover,
+          },
+        }}
+        sx={{
+          pointerEvents: 'none',
+        }}
+      >
+        {popoverContent}
+      </Popover>
+    </div>
   );
 };
 

@@ -79,7 +79,7 @@ const AppHeader: FC = () => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
-            <PPCOverlayTrigger popoverContent={popover} placement="bottom">
+            <PPCOverlayTrigger popoverContent={popover} anchor="bottom" transform="bottom">
               <div id="beta-tag">
                 <div>beta</div>
                 <div className="shade">v1.2</div>
