@@ -33,7 +33,8 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const showSearch = useAppSelector((state) => state.roadmap.showSearch);
   const isMobile = useIsMobile();
 
-  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
+  const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));
+  const courseRoute = '/course/' + encodedCourseTitle;
   let courseID = department + ' ' + courseNumber;
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
