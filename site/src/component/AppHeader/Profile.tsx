@@ -149,6 +149,7 @@ const Profile = () => {
         <Image src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
       </button>
       <Popover
+        className="profile-popover"
         open={open}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
@@ -159,11 +160,6 @@ const Profile = () => {
         transformOrigin={{
           vertical: 'top',
           horizontal: 'right',
-        }}
-        slotProps={{
-          paper: {
-            className: 'profile-popover',
-          },
         }}
       >
         {profilePopoverContent}

@@ -143,9 +143,9 @@ body[data-theme='light'] {
 
 // Although :has is not super widely supported, this style is not critical to page functionality.
 // It should be fine to make it work for just browsers that do support it.
-body:has(> #profile-popover) {
-  .MuiButtonBase-root {
-    transition: background-color 0s;
+body:has(> .profile-popover) {
+  button.MuiButtonBase-root:not(:hover) {
+    transition: background-color 0s !important;
   }
 }
 body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
