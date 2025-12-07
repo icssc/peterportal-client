@@ -70,7 +70,7 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
   });
 
   return (
-    <div className="ppc-popover">
+    <div className="overlay-trigger">
       {clonedChild}
       <Popover
         open={open}

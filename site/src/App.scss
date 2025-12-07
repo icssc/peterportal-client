@@ -100,28 +100,6 @@ code {
   }
 }
 
-div.ppc-popover {
-  border-radius: 8px;
-  padding: 0px;
-  box-shadow: none;
-  max-width: 375px;
-  top: -12px !important;
-
-  $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
-  filter: $filter;
-  -webkit-filter: $filter;
-  border: none;
-
-  div.popover-body {
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
-}
-
 .ppc-table {
   thead tr {
     background-color: var(--overlay2);
@@ -229,12 +207,4 @@ body hr {
     background-color: var(--overlay1);
     border-color: var(--overlay2);
   }
-}
-
-div.popover {
-  background-color: var(--overlay1);
-}
-div.popover-body {
-  background-color: var(--overlay1);
-  color: var(--text);
 }
