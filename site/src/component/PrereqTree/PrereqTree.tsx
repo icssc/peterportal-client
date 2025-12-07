@@ -1,11 +1,12 @@
 'use client';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import './PrereqTree.scss';
 import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
-import { Box, Popover } from '@mui/material';
+import { Box } from '@mui/material';
 import Link from 'next/link';
+import OverlayTrigger from '../OverlayTrigger/OverlayTrigger';
 
 interface NodeProps {
   node: string;
@@ -20,50 +21,28 @@ const phraseMapping = {
   NOT: 'none of',
 };
 const Node: FC<NodeProps> = (props) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = Boolean(anchorEl);
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
-      <Popover
-        id="tree-node-popover"
-        className="tree-node-popover"
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        onClose={handlePopoverClose}
+      <OverlayTrigger
+        popoverContent={<div className="popover-body">{props.content || props.label}</div>}
+        anchor="bottom"
+        transform="bottom"
       >
-        <div className="popover-body">{props.content ? props.content : props.label}</div>
-      </Popover>
-      <Box onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
-        {!props.label.startsWith('AP ') ? (
-          <Link
-            target="_blank"
-            href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
-            role="button"
-            className="node"
-          >
-            {props.label}
-          </Link>
-        ) : (
-          <button className="node">{`${props.label}`}</button>
-        )}
-      </Box>
+        <Box>
+          {!props.label.startsWith('AP ') ? (
+            <Link
+              target="_blank"
+              href={'/course/' + props.label.split('(')[0].replace(/\s+/g, '')}
+              role="button"
+              className="node"
+            >
+              {props.label}
+            </Link>
+          ) : (
+            <button className="node">{`${props.label}`}</button>
+          )}
+        </Box>
+      </OverlayTrigger>
     </div>
   );
 };

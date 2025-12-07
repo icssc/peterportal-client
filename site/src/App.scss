@@ -114,6 +114,12 @@ code {
   }
 }
 
+.popover-body {
+  max-width: 375px;
+  padding: 16px;
+  background-color: var(--overlay1); // @todo: use this or paper?
+}
+
 .ui-overlay {
   position: fixed;
   inset: 0;
