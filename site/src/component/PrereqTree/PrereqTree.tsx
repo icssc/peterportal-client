@@ -1,15 +1,17 @@
 'use client';
-import { FC } from 'react';
 import './PrereqTree.scss';
+import { FC } from 'react';
 import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
-import { Box } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import Link from 'next/link';
-import OverlayTrigger from '../OverlayTrigger/OverlayTrigger';
+import { createTooltipOffset } from '../../helpers/slotProps';
+
+type PrerequisiteTreeNodeType = 'course' | 'prerequisite' | 'dependent';
 
 interface NodeProps {
-  node: string;
+  nodeType: PrerequisiteTreeNodeType;
   label: string;
   content: string;
   index?: number;
@@ -21,11 +23,12 @@ const phraseMapping = {
   NOT: 'none of',
 };
 const Node: FC<NodeProps> = (props) => {
-  const prereqPopoverContent = <div className="popover-body">{props.content || props.label}</div>;
+  const tooltipText = props.content || props.label;
+  const wrapperClassName = `${props.nodeType}-node`;
 
   return (
-    <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
-      <OverlayTrigger popoverContent={prereqPopoverContent} anchor="bottom" transform="bottom">
+    <div className={wrapperClassName} key={props.index}>
+      <Tooltip title={tooltipText} placement="top" disableInteractive slotProps={createTooltipOffset(0, -8)}>
         <Box>
           {!props.label.startsWith('AP ') ? (
             <Link
@@ -37,10 +40,10 @@ const Node: FC<NodeProps> = (props) => {
               {props.label}
             </Link>
           ) : (
-            <button className="node">{`${props.label}`}</button>
+            <div className="node">{`${props.label}`}</div>
           )}
         </Box>
-      </OverlayTrigger>
+      </Tooltip>
     </div>
   );
 };
@@ -72,7 +75,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
               prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : (prereq.examName ?? '')
             ]?.title ?? ''
           }
-          node="prerequisite-node"
+          nodeType="prerequisite"
         />
       </li>
     );
@@ -146,7 +149,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
                       <Node
                         label={`${dependent.department} ${dependent.courseNumber}`}
                         content={dependent.title}
-                        node="dependent-node"
+                        nodeType="dependent"
                       />
                     </li>
                   ))}
@@ -161,14 +164,8 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             </>
           )}
 
-          {/* {!hasDependents && <div className='dependent-branch'>
-            <p className='missing-tree'>
-              No Dependents!
-            </p>
-          </div>} */}
-
           {/* Display the class id */}
-          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} node="course-node" />
+          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} nodeType="course" />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
@@ -176,12 +173,6 @@ const PrereqTree: FC<PrereqProps> = (props) => {
               <PrereqTreeNode prerequisiteNames={props.prerequisites} prerequisiteJSON={props.prerequisiteTree} />
             </div>
           )}
-
-          {/* {!hasPrereqs && <div className='dependent-branch'>
-            <p className='missing-tree'>
-              No Prerequisites!
-            </p>
-          </div>} */}
         </div>
         {props.prerequisiteText !== '' && (
           <div

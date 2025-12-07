@@ -1,9 +1,7 @@
 'use client';
 import './ReviewCard.scss';
 import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Chip } from '@mui/material';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import { Chip, Tooltip } from '@mui/material';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
@@ -31,6 +29,7 @@ import {
   DialogContentText,
 } from '@mui/material';
 import Link from 'next/link';
+import { createTooltipOffset } from '../../helpers/slotProps';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -225,22 +224,24 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     setReportFormOpen(true);
   };
 
-  const verifiedOverlay = <Tooltip id="verified-tooltip">This review was verified by an administrator.</Tooltip>;
-  const authorOverlay = <Tooltip id="authored-tooltip">You are the author of this review.</Tooltip>;
-
   const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
   const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
+  const tooltipProps = {
+    placement: 'top' as const,
+    slotProps: createTooltipOffset(0, -10),
+  };
+
   const verifiedIcon = (
-    <OverlayTrigger overlay={verifiedOverlay}>
+    <Tooltip title="This review was verified by an administrator." {...tooltipProps}>
       <VerifiedUserIcon />
-    </OverlayTrigger>
+    </Tooltip>
   );
 
   const authorIcon = (
-    <OverlayTrigger overlay={authorOverlay}>
+    <Tooltip title="You are the author of this review." {...tooltipProps}>
       <PersonIcon />
-    </OverlayTrigger>
+    </Tooltip>
   );
 
   const tags: string[] = review.tags?.slice() ?? [];
