@@ -3,12 +3,6 @@
 $base-quarter-width: 250px;
 
 [data-theme='dark'] {
-  .year-settings-btn:hover,
-  .year-settings-btn:focus,
-  .popover-body .year-settings-btn:active {
-    background-color: var(--overlay2);
-  }
-
   .edit-year-form {
     .form-control,
     .form-control:focus {

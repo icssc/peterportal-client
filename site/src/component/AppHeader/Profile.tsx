@@ -103,7 +103,7 @@ const Profile = () => {
   };
 
   const profilePopoverContent = (
-    <div className="profile-popover-body">
+    <div>
       <div className="profile-popover-header">
         <Image src={picture} alt={name} width="50" height="50" />
         <div>
