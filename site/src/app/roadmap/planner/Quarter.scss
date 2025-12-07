@@ -10,6 +10,7 @@
     opacity: 0.35;
     width: auto;
     color: var(--blue-primary);
+    pointer-events: none;
 
     .course-info {
       display: contents;
