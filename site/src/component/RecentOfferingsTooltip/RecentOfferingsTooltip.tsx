@@ -1,7 +1,7 @@
-import { FC } from 'react';
 import './RecentOfferingsTooltip.scss';
+import { FC } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
-import OverlayTrigger from '../OverlayTrigger/OverlayTrigger';
+import { Tooltip } from '@mui/material';
 
 interface RecentOfferingsTooltipProps {
   terms: string[];
@@ -23,22 +23,17 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   if (prevOfferings.length === 0) prevOfferings.push('❌');
 
   return (
-    <OverlayTrigger
-      popoverContent={
-        <div className="popover-body">
-          <h4 className="center">Recent Offerings</h4>
-          <RecentOfferingsTable terms={terms} size="thin" />
-        </div>
-      }
-      anchor="right"
-      transform="right"
+    <Tooltip
+      title={<RecentOfferingsTable terms={terms} size="thin" />}
+      placement="right"
+      slotProps={{ popper: { className: 'offerings-tooltip' } }}
     >
       <div className="tooltip-trigger">
         {prevOfferings.map((emoji) => (
           <span key={emoji}>{emoji}</span>
         ))}
       </div>
-    </OverlayTrigger>
+    </Tooltip>
   );
 };
 

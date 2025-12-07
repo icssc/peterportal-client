@@ -1,4 +1,10 @@
-.center {
-  display: flex;
-  justify-content: center;
+.offerings-tooltip .MuiTooltip-tooltip {
+  padding: 4px;
+  overflow: hidden;
+  border-radius: 8px;
+
+  .recent-offerings-table {
+    border-radius: 4px;
+    overflow: hidden;
+  }
 }
