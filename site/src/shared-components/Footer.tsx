@@ -6,7 +6,6 @@ import ICSSCLogo from './IcsscLogo';
 
 const Footer: FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
-  theme.palette.text.secondary;
 
   const stackStyleOverrides = {
     color: theme.palette.text.secondary,

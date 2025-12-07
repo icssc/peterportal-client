@@ -36,7 +36,6 @@ export const searchSlice = createSlice({
       results: [],
       count: 0,
     } as SearchData,
-    // searchInProgress: false,
   },
   reducers: {
     // Things that will trigger a new search

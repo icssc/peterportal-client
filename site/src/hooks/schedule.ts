@@ -19,7 +19,6 @@ export function useSetSchedule() {
     trpc.schedule.currentWeek
       .query()
       .then((res) => {
-        // const week = res.display.split(' • ')[0];
         dispatch(setCurrentWeek(res.display));
       })
       .catch(() => {
