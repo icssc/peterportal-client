@@ -51,7 +51,7 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
 
   const handleUnhover = (e: React.MouseEvent) => {
     const relatedTarget = e.relatedTarget as Node | null;
-    const popoverContent = document.querySelector('hoverable-popover');
+    const popoverContent = document.querySelector('.hoverable-popover');
 
     if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
       hidePopover();
@@ -73,22 +73,17 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
     <div className="overlay-trigger">
       {clonedChild}
       <Popover
+        className="popover-root"
         open={open}
         anchorEl={anchorEl}
         onClose={hidePopover}
         anchorOrigin={anchorMap[anchor]}
         transformOrigin={transformMap[transform]}
         slotProps={{
-          root: {
-            className: 'root',
-          },
           paper: {
             className: 'hoverable-popover',
             onMouseLeave: hidePopover,
           },
-        }}
-        sx={{
-          pointerEvents: 'none',
         }}
       >
         {popoverContent}

@@ -1,7 +1,7 @@
-.hoverable-popover {
+.popover-root {
   pointer-events: none;
 
-  .MuiPaper-root {
-    pointer-events: none;
+  .hoverable-popover {
+    pointer-events: auto;
   }
 }
