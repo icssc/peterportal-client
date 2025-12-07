@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import './RecentOfferingsTooltip.scss';
-import { Typography } from '@mui/material';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import OverlayTrigger from '../OverlayTrigger/OverlayTrigger';
 
@@ -31,10 +30,14 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
           <RecentOfferingsTable terms={terms} size="thin" />
         </div>
       }
-      anchor="left"
+      anchor="right"
       transform="right"
     >
-      <Typography>{prevOfferings}</Typography>
+      <div className="tooltip-trigger">
+        {prevOfferings.map((emoji) => (
+          <span key={emoji}>{emoji}</span>
+        ))}
+      </div>
     </OverlayTrigger>
   );
 };
