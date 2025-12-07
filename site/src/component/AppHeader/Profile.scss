@@ -20,15 +20,7 @@
   height: 100%;
 }
 
-[data-theme='dark'] {
-  #profile-popover {
-    box-shadow: 2px 4px 24px rgba(0, 0, 0, 0.24);
-  }
-}
-
-.ppc-popover-paper {
-  font-size: 1rem;
-  background-color: var(--overlay1);
+.profile-popover {
   border-radius: var(--border-radius);
   border: 1px solid var(--background);
   width: 310px;
@@ -36,16 +28,8 @@
   padding: 16px 20px;
 }
 
-.ppc-popover-inner {
+.profile-popover-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background-color: transparent;
-}
-
-.profile-popover__header {
-  display: flex;
-  height: 50px;
   margin-bottom: 0.75em;
 
   h1 {
@@ -81,7 +65,7 @@
   }
 }
 
-.profile-popover__theme-section {
+.profile-popover-theme-selector {
   .MuiDivider-root {
     margin: 4px 0 0;
   }
@@ -91,7 +75,7 @@
   }
 }
 
-.profile-popover__links {
+.profile-popover-links {
   .MuiListItem-root {
     padding: 0;
   }
@@ -110,7 +94,7 @@
   }
 }
 
-.profile-popover__link.active {
+.profile-popover-link.active {
   color: var(--blue-primary);
 
   .MuiListItemIcon-root {

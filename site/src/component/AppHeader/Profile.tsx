@@ -102,24 +102,24 @@ const Profile = () => {
     setTheme(tab as Theme);
   };
 
-  const popover = (
-    <div className="ppc-popover-inner">
-      <div className="profile-popover__header">
+  const profilePopoverContent = (
+    <div className="profile-popover-body">
+      <div className="profile-popover-header">
         <Image src={picture} alt={name} width="50" height="50" />
         <div>
           <h1 title={name}>{name}</h1>
           <h2 title={email}>{email}</h2>
         </div>
       </div>
-      <div className="profile-popover__theme-section">
+      <div className="profile-popover-theme-selector">
         <h4>Theme</h4>
         <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
         <Divider />
       </div>
-      <List className="profile-popover__links">
+      <List className="profile-popover-links">
         <ListItem>
           <ListItemButton
-            className={'profile-popover__link' + (pathname === '/reviews' ? ' active' : '')}
+            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
             href="/reviews"
             onClick={() => setAnchorEl(null)}
             component={Link}
@@ -132,7 +132,7 @@ const Profile = () => {
         </ListItem>
         {isAdmin && <AdminProfileLinks pathname={pathname} onClose={() => setAnchorEl(null)} />}
         <ListItem>
-          <ListItemButton href={'/api/users/auth/logout'} className="profile-popover__link" component="a">
+          <ListItemButton href={'/api/users/auth/logout'} className="profile-popover-link" component="a">
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -162,11 +162,11 @@ const Profile = () => {
         }}
         slotProps={{
           paper: {
-            className: 'ppc-popover-paper',
+            className: 'profile-popover',
           },
         }}
       >
-        {popover}
+        {profilePopoverContent}
       </Popover>
     </div>
   );
