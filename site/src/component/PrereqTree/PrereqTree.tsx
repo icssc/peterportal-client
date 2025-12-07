@@ -21,13 +21,11 @@ const phraseMapping = {
   NOT: 'none of',
 };
 const Node: FC<NodeProps> = (props) => {
+  const prereqPopoverContent = <div className="popover-body">{props.content || props.label}</div>;
+
   return (
     <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
-      <OverlayTrigger
-        popoverContent={<div className="popover-body">{props.content || props.label}</div>}
-        anchor="bottom"
-        transform="bottom"
-      >
+      <OverlayTrigger popoverContent={prereqPopoverContent} anchor="bottom" transform="bottom">
         <Box>
           {!props.label.startsWith('AP ') ? (
             <Link
