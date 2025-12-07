@@ -8,7 +8,7 @@ import './AppHeader.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
-import PPCOverlayTrigger from '../PPCOverlayTrigger/PPCOverlayTrigger';
+import OverlayTrigger from '../OverlayTrigger/OverlayTrigger';
 
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -79,12 +79,12 @@ const AppHeader: FC = () => {
         {/* Week */}
         <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
           <div className="beta" style={{ margin: 'auto 12px' }}>
-            <PPCOverlayTrigger popoverContent={popover} anchor="bottom" transform="bottom">
+            <OverlayTrigger popoverContent={popover} anchor="bottom" transform="bottom">
               <div id="beta-tag">
                 <div>beta</div>
                 <div className="shade">v1.2</div>
               </div>
-            </PPCOverlayTrigger>
+            </OverlayTrigger>
           </div>
           <p className="school-term" style={{ height: '1rem', lineHeight: '1rem' }}>
             {currentWeek}

@@ -1,9 +1,9 @@
 'use client';
 import React, { FC, ReactNode, useState } from 'react';
 import { Popover } from '@mui/material';
-import './PPCOverlayTrigger.scss';
+import './OverlayTrigger.scss';
 
-interface PPCOverlayTriggerProps {
+interface OverlayTriggerProps {
   popoverContent: ReactNode;
   children: React.ReactElement;
   popupListener?: (open: boolean) => void;
@@ -24,7 +24,7 @@ const transformMap = {
   right: { vertical: 'center', horizontal: 'left' } as const,
 };
 
-const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
+const OverlayTrigger: FC<OverlayTriggerProps> = ({
   popoverContent,
   children,
   popupListener,
@@ -97,4 +97,4 @@ const PPCOverlayTrigger: FC<PPCOverlayTriggerProps> = ({
   );
 };
 
-export default PPCOverlayTrigger;
+export default OverlayTrigger;
