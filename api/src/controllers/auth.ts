@@ -32,7 +32,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       picture: picture ?? '',
     })
     .onConflictDoUpdate({
-      target: user.email,
+      target: [user.email, user.googleId],
       set: {
         googleId: sub,
         name: name ?? '',
