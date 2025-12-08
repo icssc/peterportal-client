@@ -10,7 +10,10 @@ import searchReducer from './slices/searchSlice';
 import transferCreditsReducer from './slices/transferCreditsSlice';
 import userReducer from './slices/userSlice';
 import scheduleReducer from './slices/scheduleSlice';
+import courseCatalogReducer from './slices/courseCatalogSlice';
+import departmentsReducer from './slices/departmentsSlice';
 import { UserSliceState } from '@peterportal/types';
+import professorSliceReducer from './slices/professorSlice';
 
 const reducer = {
   coursePreview: coursePreviewReducer,
@@ -24,6 +27,9 @@ const reducer = {
   transferCredits: transferCreditsReducer,
   user: userReducer,
   schedule: scheduleReducer,
+  courseCatalog: courseCatalogReducer,
+  departments: departmentsReducer,
+  professors: professorSliceReducer,
 };
 
 export function generateStore(user: UserSliceState) {

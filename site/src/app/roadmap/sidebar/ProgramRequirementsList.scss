@@ -62,7 +62,7 @@
   }
 
   &.completed {
-    border-color: var(--green-secondary);
+    border-color: oklab(from var(--green-primary) 50% -0.5 0.5 / 0.5);
 
     > .group-header {
       color: var(--green-primary);

@@ -1,7 +1,6 @@
 'use client';
 import { FC, useState } from 'react';
 import './ImportZot4PlanPopup.scss';
-import { Modal } from 'react-bootstrap';
 import {
   setPlanIndex,
   selectAllPlans,
@@ -22,7 +21,19 @@ import Image from 'next/image';
 
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Box, Button, FormControl, FormLabel, MenuItem, Select, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material';
 import { addPlanner } from '../../../helpers/roadmapEdits.ts';
 import { useReviseAndSaveRoadmap } from '../../../hooks/planner.ts';
 
@@ -115,11 +126,9 @@ const ImportZot4PlanPopup: FC = () => {
 
   return (
     <>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered className="ppc-modal multiplan-modal">
-        <Modal.Header closeButton>
-          <h2>Import Schedule from Zot4Plan</h2>
-        </Modal.Header>
-        <Modal.Body>
+      <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>Import Schedule from Zot4Plan</DialogTitle>
+        <DialogContent>
           <Box component="form" noValidate>
             <FormControl>
               <p>
@@ -141,6 +150,7 @@ const ImportZot4PlanPopup: FC = () => {
             <FormControl>
               <FormLabel>Schedule Name</FormLabel>
               <TextField
+                variant="outlined"
                 type="text"
                 placeholder="Exact Zot4Plan schedule name"
                 onChange={(e) => setScheduleName(e.target.value)}
@@ -151,37 +161,35 @@ const ImportZot4PlanPopup: FC = () => {
                   }
                 }}
               />
-              {scheduleName.length > 0 && scheduleName.length < 8 && (
-                <span className="import-schedule-warning">
-                  <WarningAmberIcon className="import-schedule-icon" />
-                  No Zot4Plan schedule name contains less than 8 characters
-                </span>
-              )}
             </FormControl>
+
+            {scheduleName.length > 0 && scheduleName.length < 8 && (
+              <span className="import-schedule-warning">
+                <WarningAmberIcon className="import-schedule-icon" />
+                No Zot4Plan schedule name contains less than 8 characters
+              </span>
+            )}
 
             <FormControl>
               <FormLabel>I am currently a...</FormLabel>
-              <Select
-                onChange={(ev) => setStudentYear(ev.target.value)}
-                value={studentYear}
-                /** @todo Remove after migration to MUI Modal. This temporarily prevents z-indexing issues due to the lack of a MUI Portal. */
-                MenuProps={{
-                  disablePortal: true,
-                }}
-              >
+              <Select onChange={(ev) => setStudentYear(ev.target.value)} value={studentYear}>
                 <MenuItem value="1">1st year</MenuItem>
                 <MenuItem value="2">2nd year</MenuItem>
                 <MenuItem value="3">3rd year</MenuItem>
                 <MenuItem value="4">4th year</MenuItem>
               </Select>
             </FormControl>
-
-            <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
-              Import and Save
-            </Button>
           </Box>
-        </Modal.Body>
-      </Modal>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="inherit" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button disabled={scheduleName.length < 8} loading={busy} onClick={handleImport}>
+            Import and Save
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Button variant="text" onClick={() => setShowModal(true)}>
         <CloudDownloadIcon />
         <span>Zot4Plan Schedule</span>

@@ -76,7 +76,7 @@ const SearchPopupContent: FC<SearchPopupProps> = (props) => {
       <div className="search-popup-header">
         <h2 className="search-popup-id">
           {props.name}
-          <Link href={`/${props.searchType}/${props.id}`}>
+          <Link href={`/${props.searchType}/${encodeURIComponent(props.id)}`}>
             <Button variant="outlined">More Information</Button>
           </Link>
         </h2>

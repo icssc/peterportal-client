@@ -1,18 +1,10 @@
 .report-form {
-  .modal-dialog {
+  .MuiPaper-root {
     max-width: 512px;
   }
 
-  .MuiInputBase-root {
-    padding: 0;
-  }
-
-  p {
-    margin-bottom: 0;
-  }
-
   .reported-review-content {
-    background-color: var(--overlay3);
+    background-color: var(--overlay2);
     border-radius: var(--border-radius);
     padding: 12px 16px;
     margin-bottom: 16px;

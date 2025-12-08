@@ -5,6 +5,7 @@ button {
 }
 
 body a {
+  color: var(--blue-accent);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
@@ -99,146 +100,6 @@ code {
   }
 }
 
-div.ppc-popover {
-  border-radius: 8px;
-  padding: 0px;
-  box-shadow: none;
-  max-width: 375px;
-  top: -12px !important;
-
-  $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
-  filter: $filter;
-  -webkit-filter: $filter;
-  border: none;
-
-  div.popover-body {
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  div.popover-arrow {
-    z-index: -1;
-    &::before {
-      display: none;
-    }
-  }
-  div.popover-arrow::after {
-    position: absolute;
-    border: 8px solid transparent;
-    border-width: 12px 16px;
-    top: 8px;
-    left: unset;
-  }
-  &[data-popper-placement='bottom'] {
-    top: -24px !important;
-    div.popover-arrow::after {
-      left: 0;
-      bottom: 0;
-      top: 10px;
-      border-bottom-color: var(--overlay1);
-      transform: translate(-25%, -100%);
-      border-width: 16px 12px;
-    }
-  }
-  &[data-popper-placement='left-start'] {
-    margin-inline: 8px !important;
-    div.popover-arrow::after {
-      left: -2px;
-      border-left-color: var(--overlay1);
-    }
-  }
-  &[data-popper-placement='right-start'] {
-    margin-inline: 8px !important;
-    div.popover-arrow::after {
-      right: -2px;
-      border-right-color: var(--overlay1);
-    }
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
-}
-
-div.bs-popover-left {
-  margin-right: 20px;
-
-  div.arrow::after,
-  div.arrow::before {
-    left: -1px;
-  }
-}
-
-div.ppc-popover.bs-popover-right {
-  margin-left: 20px;
-  margin-top: 4px !important;
-}
-
-div.ppc-popover.bs-popover-bottom {
-  margin-top: 48px;
-  div.arrow::after,
-  div.arrow::before {
-    left: 2px;
-  }
-}
-
-.ppc-modal {
-  font-size: 18px;
-
-  .modal-header {
-    align-items: center;
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-  .modal-content {
-    border: none;
-    background-color: var(--overlay2);
-    padding: 4px 8px 8px;
-    max-height: 100%;
-    overflow: auto;
-    margin-block: 32px;
-  }
-  .modal-dialog {
-    max-width: 400px;
-    margin: auto;
-    width: calc(100% - 32px);
-    max-height: 100%;
-  }
-  .modal-footer {
-    border-top: none;
-    justify-content: flex-start;
-  }
-  h2 {
-    margin-bottom: 0;
-    font-size: 25px;
-    font-weight: 600;
-  }
-  button.close {
-    margin: -4px -4px;
-    padding: 4px 8px;
-    font-size: 32px;
-    overflow: hidden;
-  }
-
-  a {
-    color: #1b76b4;
-  }
-  button.btn-primary {
-    border-color: var(--blue-primary);
-    background-color: var(--blue-primary);
-  }
-
-  [data-theme='dark'] & .btn-close {
-    opacity: 1;
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-[data-theme='dark'] .ppc-modal a {
-  color: var(--blue-accent);
-}
-
 .ppc-table {
   thead tr {
     background-color: var(--overlay2);
@@ -273,12 +134,6 @@ div.ppc-popover.bs-popover-bottom {
   }
 }
 
-.badge.rounded-pill {
-  padding: 6px 10px;
-  font-size: 12px;
-  background-color: var(--blue-primary) !important; // override bootstrap important
-}
-
 .table-wrapper {
   width: 100%;
   overflow: auto;
@@ -309,35 +164,6 @@ body hr {
 }
 
 [data-theme='dark'] {
-  .list-group-item,
-  .modal-content,
-  .dropdown-menu,
-  .dropdown-item,
-  .form-control,
-  .form-control:focus {
-    color: var(--text);
-    background-color: var(--overlay2);
-    &::placeholder {
-      color: #8888;
-    }
-  }
-
-  .form-control {
-    border-color: var(--overlay3);
-  }
-
-  .form-control:focus {
-    border-color: #86bbfb !important;
-  }
-
-  .custom-control-label::before {
-    background-color: var(--overlay3);
-  }
-
-  .dropdown-item:hover {
-    background-color: var(--overlay3);
-  }
-
   .btn-outline-primary {
     color: #0f83ff;
     border-color: #0f83ff;
@@ -382,24 +208,3 @@ body hr {
     border-color: var(--overlay2);
   }
 }
-
-div.popover {
-  background-color: var(--overlay1);
-}
-div.popover-body {
-  background-color: var(--overlay1);
-  color: var(--text);
-}
-div.bs-popover-top > div.arrow::after {
-  border-top-color: var(--overlay1);
-}
-div.bs-popover-bottom > div.arrow::after {
-  border-bottom-color: var(--overlay1);
-}
-div.bs-popover-left > div.arrow::after {
-  border-left-color: var(--overlay1);
-}
-div.bs-popover-right > div.arrow::after {
-  border-right-color: var(--overlay1);
-}
-// end bootstrap overwrites
