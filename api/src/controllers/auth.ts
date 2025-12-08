@@ -36,6 +36,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       set: {
         googleId: sub,
         name: name ?? '',
+        email,
         picture: picture ?? '',
       },
     })
