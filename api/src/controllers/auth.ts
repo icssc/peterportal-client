@@ -23,6 +23,14 @@ interface OIDCUserInfo {
 async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response) {
   const { sub, email, name, picture } = userInfo;
 
+  /**
+   * TODO: Some legacy user accounts do not have an email associated, but do have a google id.
+   *
+   * We would like to handle this case gracefully, by handling conflicts on google id OR email.
+   * At the time of writing (2025-12-07), Drizzle does not have such a mechanism.
+   * Possible methods include updating a user based on google id, then manually inserting if no such user exists,
+   * or using a raw SQL query
+   */
   const userData = await db
     .insert(user)
     .values({
@@ -32,7 +40,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       picture: picture ?? '',
     })
     .onConflictDoUpdate({
-      target: [],
+      target: [user.email],
       set: {
         googleId: sub,
         name: name ?? '',
