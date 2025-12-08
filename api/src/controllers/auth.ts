@@ -52,6 +52,10 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
 
   req.session.userId = userData[0].id;
   req.session.userName = userData[0].name;
+  const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
+  if (allowedUsers.includes(userData[0].email)) {
+    req.session.isAdmin = true;
+  }
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
