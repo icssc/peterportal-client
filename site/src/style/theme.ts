@@ -54,8 +54,6 @@ const lightPalette: PaletteOptions = {
   },
 };
 
-// each overlay is about 5% brighter than the previous
-// roughly following: https://m2.material.io/design/color/dark-theme.html
 const darkPalette: PaletteOptions = {
   mode: 'dark',
   ...sharedTokens,
@@ -68,7 +66,7 @@ const darkPalette: PaletteOptions = {
   overlay: {
     overlay1: '#1e1e1e',
     overlay2: '#292929',
-    overlay3: '#363636',
+    overlay3: '#333',
   },
   background: {
     default: '#121212',

@@ -3,7 +3,7 @@ import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
-import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
@@ -47,11 +47,12 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
-    <PPCOverlayTrigger
+    <OverlayTrigger
       popoverContent={popoverContent}
-      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
       disabled={isMobile}
+      anchor={openPopoverLeft ? 'left' : 'right'}
+      transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
@@ -63,7 +64,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </PPCOverlayTrigger>
+    </OverlayTrigger>
   );
 };
 
