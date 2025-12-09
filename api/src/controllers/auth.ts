@@ -1,31 +1,61 @@
 import express, { Request, Response } from 'express';
-import passport from 'passport';
-import { PassportUser } from '@peterportal/types';
+import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic';
 import { db } from '../db';
 import { user } from '../db/schema';
+import { createOIDCClient } from '../config/oidc';
 
 const router = express.Router();
 
+interface OIDCUserInfo {
+  sub: string;
+  email: string;
+  name?: string;
+  picture?: string;
+}
+
 /**
  * Called after successful authentication
+ * Matches user by email and updates/creates user record
+ * @param userInfo OIDC user information
  * @param req Express Request Object
  * @param res Express Response Object
  */
-async function successLogin(req: Request, res: Response) {
-  const {
-    email,
-    name,
-    id: googleId,
-    picture,
-  } = req.user as { email: string; id: string; name: string; picture: string };
-  // upsert user data in db
+async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response) {
+  const { sub, email, name, picture } = userInfo;
+
+  /**
+   * TODO: Some legacy user accounts do not have an email associated, but do have a google id.
+   *
+   * We would like to handle this case gracefully, by handling conflicts on google id OR email.
+   * At the time of writing (2025-12-07), Drizzle does not have such a mechanism.
+   * Possible methods include updating a user based on google id, then manually inserting if no such user exists,
+   * or using a raw SQL query
+   */
   const userData = await db
     .insert(user)
-    .values({ googleId, name, email, picture })
-    .onConflictDoUpdate({ target: user.googleId, set: { name, email, picture } })
+    .values({
+      googleId: sub,
+      name: name ?? '',
+      email,
+      picture: picture ?? '',
+    })
+    .onConflictDoUpdate({
+      target: [user.email],
+      set: {
+        googleId: sub,
+        name: name ?? '',
+        email,
+        picture: picture ?? '',
+      },
+    })
     .returning();
 
   req.session.userId = userData[0].id;
+  req.session.userName = userData[0].name;
+  const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
+  if (allowedUsers.includes(userData[0].email)) {
+    req.session.isAdmin = true;
+  }
   // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
@@ -33,52 +63,88 @@ async function successLogin(req: Request, res: Response) {
 }
 
 /**
- * Initiate authentication with Google
+ * Initiate authentication with OIDC
  */
-router.get('/google', function (req, res) {
-  req.session.returnTo = req.headers.referer;
-  passport.authenticate('google', {
-    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'],
-    state: req.headers.host,
-  })(req, res);
+router.get('/google', async function (req, res) {
+  try {
+    const oidcClient = createOIDCClient();
+    const state = generateState();
+    const codeVerifier = generateCodeVerifier();
+
+    req.session.oauthState = state;
+    req.session.codeVerifier = codeVerifier;
+    req.session.returnTo = req.headers.referer;
+
+    const authUrl = oidcClient.createAuthorizationURLWithPKCE(
+      `${process.env.OIDC_ISSUER_URL}/authorize`,
+      state,
+      CodeChallengeMethod.S256,
+      codeVerifier,
+      ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/calendar.readonly'],
+    );
+
+    res.redirect(authUrl.toString());
+  } catch (error) {
+    console.error('Error initiating authentication:', error);
+    res.redirect('/?error=auth_failed');
+  }
 });
 
 /**
- * Callback for Google authentication
+ * Callback for OIDC authentication
  */
-router.get('/google/callback', function (req, res) {
-  const returnTo = req.session.returnTo;
-  const host: string = req.query.state as string;
-  // all staging auths will redirect their callback to prod since all callback URLs must be registered
-  // with google cloud for security reasons and it isn't feasible to register the callback URLs for all
-  // staging instances
-  // if Google redirects the user to a non-staging instance (on prod or local), but original host is
-  // a staging instance, redirect back to host.
-  if (host.startsWith('staging-') && !req.headers.host?.startsWith('staging')) {
-    // req.url doesn't include /api/users/auth part, only /google/callback? and whatever params after that
-    res.redirect(`https://${host}/api/users/auth${req.url}`);
-    return;
+router.get('/google/callback', async function (req, res) {
+  const returnTo = req.session.returnTo ?? '/';
+
+  try {
+    const code = req.query.code as string;
+    const state = req.query.state as string;
+    const storedState = req.session.oauthState;
+    const codeVerifier = req.session.codeVerifier;
+
+    if (!code || !state || !storedState || state !== storedState || !codeVerifier) {
+      console.error('Invalid OAuth state or code');
+      res.redirect('/?error=invalid_state');
+      return;
+    }
+
+    delete req.session.oauthState;
+    delete req.session.codeVerifier;
+
+    const oidcClient = createOIDCClient();
+    const tokens = await oidcClient.validateAuthorizationCode(
+      `${process.env.OIDC_ISSUER_URL}/token`,
+      code,
+      codeVerifier,
+    );
+
+    const userInfoEndpoint = `${process.env.OIDC_ISSUER_URL}/userinfo`;
+    const userInfoResponse = await fetch(userInfoEndpoint, {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken()}`,
+      },
+    });
+
+    if (!userInfoResponse.ok) {
+      console.error('Failed to fetch user info:', userInfoResponse.statusText);
+      res.redirect('/?error=userinfo_failed');
+      return;
+    }
+
+    const userInfo: OIDCUserInfo = await userInfoResponse.json();
+
+    if (!userInfo.email) {
+      console.error('Email not provided by OIDC provider');
+      res.redirect('/?error=no_email');
+      return;
+    }
+
+    req.session.returnTo = returnTo;
+    await successLogin(userInfo, req, res);
+  } catch (error) {
+    console.error('Error in OIDC callback:', error);
+    res.redirect('/?error=callback_failed');
   }
-  passport.authenticate(
-    'google',
-    { failureRedirect: '/', session: true },
-    // provides user information to determine whether or not to authenticate
-    function (err: Error, user: PassportUser | false | null) {
-      if (err) return console.error(err);
-      if (!user) return console.error('Invalid login data');
-      // manually login
-      req.login(user, function (err) {
-        if (err) return console.error(err);
-        // check if user is an admin
-        const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
-        if (allowedUsers.includes(user.email)) {
-          req.session.isAdmin = true;
-        }
-        req.session.returnTo = returnTo;
-        successLogin(req, res);
-      });
-    },
-  )(req, res);
 });
 
 /**
@@ -89,7 +155,12 @@ router.get('/logout', function (req, res) {
     if (err) console.error(err);
     // clear the user cookie
     res.clearCookie('user');
-    res.redirect('back');
+
+    // Redirect to OIDC logout endpoint
+    const logoutUrl = new URL(`${process.env.OIDC_ISSUER_URL}/logout`);
+    logoutUrl.searchParams.set('post_logout_redirect_uri', process.env.PRODUCTION_DOMAIN);
+
+    res.redirect(logoutUrl.toString());
   });
 });
 
