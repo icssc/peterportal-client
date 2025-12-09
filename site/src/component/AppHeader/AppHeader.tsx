@@ -6,30 +6,63 @@ import Image from 'next/image';
 import './AppHeader.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setSidebarStatus } from '../../store/slices/uiSlice';
 import Profile from './Profile';
+import SearchModule from '../SearchModule/SearchModule';
 
-import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
+import HomeIcon from '@mui/icons-material/Home';
 import { IconButton } from '@mui/material';
 
 import Link from 'next/link';
+import { useIsMobile } from '../../helpers/util';
+import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { usePathname } from 'next/navigation';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
-  const sidebarOpen = useAppSelector((state) => state.ui.sidebarOpen);
+  const isMobile = useIsMobile();
+  const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+  const isRoadmapPage = usePathname() == '/';
 
-  const toggleMenu = () => {
-    dispatch(setSidebarStatus(!sidebarOpen));
+  const showFullscreenSearch = () => {
+    dispatch(setShowMobileFullscreenSearch(true));
   };
+  const closeFullscreenSearch = () => {
+    dispatch(setShowMobileFullscreenSearch(false));
+  };
+
+  if (isMobile && isShowFullscreenSearch && isRoadmapPage)
+    return (
+      <header className="navbar">
+        <div className="navbar-nav">
+          <div className="navbar-left">
+            <IconButton onClick={closeFullscreenSearch}>
+              <ArrowLeftIcon />
+            </IconButton>
+          </div>
+          <div className="fullscreen-search-row">
+            <SearchModule index="courses" />
+          </div>
+        </div>
+      </header>
+    );
 
   return (
     <header className="navbar">
       <div className="navbar-nav">
         <div className="navbar-left">
-          {/* Hamburger Menu */}
-          <IconButton className="navbar-menu-btn" onClick={toggleMenu}>
-            <MenuIcon className="navbar-menu-icon" />
-          </IconButton>
+          {/* Search */}
+          {isMobile && isRoadmapPage && (
+            <IconButton onClick={showFullscreenSearch}>
+              <SearchIcon />
+            </IconButton>
+          )}
+          {!isRoadmapPage && (
+            <IconButton component={Link} href="/">
+              <HomeIcon />
+            </IconButton>
+          )}
         </div>
 
         {/* Logo */}

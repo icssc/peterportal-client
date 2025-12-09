@@ -1,3 +1,5 @@
+@use '../../../globals.scss';
+
 [data-theme='dark'] {
   .quarter .quarter-header .quarter-title,
   .quarter {
@@ -127,7 +129,7 @@ body[data-theme='light'] {
   }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: globals.$mobile-cutoff) {
   div.quarter .quarter-course-list:empty {
     padding: 16px;
     border: none;
