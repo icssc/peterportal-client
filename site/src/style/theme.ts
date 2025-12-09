@@ -131,6 +131,11 @@ theme = createTheme(theme, {
         variant: 'contained',
         disableElevation: true,
       },
+      styleOverrides: {
+        root: {
+          lineHeight: 1.75,
+        },
+      },
     },
     MuiCheckbox: {
       styleOverrides: {
@@ -248,6 +253,21 @@ theme = createTheme(theme, {
         },
       },
       variants: [xsmall],
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          verticalAlign: 'middle',
+          display: 'inline-block',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          lineHeight: 'inherit',
+        },
+      },
     },
     MuiAutocomplete: {
       variants: [xsmall],

@@ -17,13 +17,29 @@ body {
   height: 100%;
 }
 
-html > body {
+body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--text);
   background: var(--background);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+b,
+strong {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
 }
 
 code {
@@ -118,11 +134,6 @@ code {
   justify-content: center;
 }
 
-// revert styles that bootstrap decided to override for SOME reason
-body hr {
-  opacity: 1;
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
@@ -131,53 +142,8 @@ body hr {
   border-radius: 4px;
 }
 
-// general bootstrap overwrites. bg/border color may need further customization per component
-.table {
-  color: var(--text);
-}
-
-[data-theme='dark'] {
-  .btn-outline-primary {
-    color: #0f83ff;
-    border-color: #0f83ff;
-
-    &:hover,
-    &:focus {
-      color: white;
-    }
-
-    &:hover {
-      border-color: #007bff;
-    }
-
-    &:focus {
-      border-color: #2767d4;
-    }
-  }
-
-  .close {
-    color: var(--text);
-    text-shadow: none;
-  }
-
-  .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-
-    &:hover,
-    &:focus {
-      background-color: var(--overlay2);
-      color: #1284ff;
-    }
-  }
-
-  .page-item.active .page-link:hover {
-    background-color: #1284ff;
-    color: #fff;
-  }
-
-  .page-item.disabled .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
