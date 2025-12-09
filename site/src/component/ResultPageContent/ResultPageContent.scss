@@ -5,7 +5,7 @@
   $side-info-width: 560px;
   $max-main-content-width: 1000px;
   $base-percent: math.div($side-info-width, ($side-info-width + $max-main-content-width)) * 100%;
-  $base-content-width: $side-info-width + $max-main-content-width + globals.$sidebar-width-closed;
+  $base-content-width: $side-info-width + $max-main-content-width;
   $gap: 32px;
 
   display: flex;

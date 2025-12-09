@@ -1,5 +1,5 @@
-import './CoursePreview.scss';
-import { FC, ReactNode, useEffect, useState } from 'react';
+import './ResultPreview.scss';
+import { FC, ReactNode, useEffect } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -9,10 +9,9 @@ import { checkModalOpen, sortTerms } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
-import { Button, Fade, IconButton, Paper, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
-import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
@@ -76,22 +75,11 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   );
 };
 
-const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
+const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId, onClose }) => {
   courseId = courseId.replace(/\s/g, '');
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
-
-  const [open, setOpen] = useState(true);
-  const theme = useTheme();
-  const transitionTime = theme.transitions.duration.shortest;
-
-  const closePreview = () => {
-    setOpen(false);
-    setTimeout(() => {
-      dispatch(setPreviewedCourse(''));
-    }, transitionTime);
-  };
 
   const copyCourseLink = () => {
     const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
@@ -107,7 +95,7 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
       if (event.key !== 'Escape' || modified) return;
       if (checkModalOpen()) return;
       event.preventDefault();
-      closePreview();
+      onClose();
     };
 
     document.body.addEventListener('keydown', listener);
@@ -115,32 +103,30 @@ const CoursePreview: FC<{ courseId: string }> = ({ courseId }) => {
   });
 
   return (
-    <Fade in={open} timeout={{ enter: 0, exit: transitionTime }}>
-      <div className="course-preview">
-        <Paper className="preview-header" variant="outlined">
-          <Tooltip title="Exit Preview (Esc)">
-            <IconButton onClick={closePreview}>
-              <CloseIcon />
-            </IconButton>
-          </Tooltip>
-          <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
-          <Button
-            variant="contained"
-            color="inherit"
-            startIcon={<IosShareIcon />}
-            size="small"
-            disableElevation
-            onClick={copyCourseLink}
-          >
-            Share
-          </Button>
-          <CourseBookmarkButton course={courseData} disabled={isLoading} />
-        </Paper>
-        <Twemoji options={{ className: 'twemoji' }}>
-          <CoursePreviewContent data={courseData} />
-        </Twemoji>
-      </div>
-    </Fade>
+    <div className="result-preview">
+      <Paper className="preview-header" variant="outlined">
+        <Tooltip title="Exit Preview (Esc)">
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Tooltip>
+        <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<IosShareIcon />}
+          size="small"
+          disableElevation
+          onClick={copyCourseLink}
+        >
+          Share
+        </Button>
+        <CourseBookmarkButton course={courseData} disabled={isLoading} />
+      </Paper>
+      <Twemoji options={{ className: 'twemoji' }}>
+        <CoursePreviewContent data={courseData} />
+      </Twemoji>
+    </div>
   );
 };
 

@@ -1,17 +1,20 @@
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
-import TabSelector from './TabSelector';
+import TabSelector from './../sidebar/TabSelector';
+import { useIsMobile } from '../../../helpers/util';
 
 const RequirementsListSelector: FC = () => {
   const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
   const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
+  const lastTab = isMobile ? 'Search' : 'Saved';
 
   const tabs = [
     { value: 'Major', label: 'Major' },
     { value: 'Minor', label: 'Minor' },
     { value: 'GE', label: 'GE' },
-    { value: 'Search', label: 'Search' },
+    { value: lastTab, label: lastTab },
   ];
 
   const handleTabChange = (tab: string) => {

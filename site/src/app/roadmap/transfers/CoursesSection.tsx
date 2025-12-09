@@ -87,7 +87,7 @@ const CoursesSection: FC = () => {
   };
 
   return (
-    <MenuSection title="Courses You've Transferred">
+    <MenuSection title="Courses Taken">
       <SectionDescription>
         Enter courses you&rsquo;ve claimed credit for through a{' '}
         <a href="https://testingcenter.uci.edu/" target="_blank" rel="noreferrer">
