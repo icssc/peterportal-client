@@ -95,7 +95,7 @@ svg {
   border-collapse: collapse;
 
   th {
-    text-align: center;
+    text-align: inherit;
 
     &:first-child {
       text-align: start;
