@@ -249,14 +249,6 @@ theme = createTheme(theme, {
       },
       variants: [xsmall],
     },
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          verticalAlign: 'middle',
-          display: 'inline-block',
-        },
-      },
-    },
     MuiTypography: {
       styleOverrides: {
         root: {

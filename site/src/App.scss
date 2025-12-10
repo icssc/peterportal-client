@@ -37,11 +37,8 @@
   padding: 32px 36px;
 }
 
-body a {
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
+html {
+  font-family: 'Roboto', sans-serif;
 }
 
 html,
@@ -51,14 +48,26 @@ body {
 
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 p {
   margin-top: 0;
+}
+
+b,
+strong {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
 }
 
 h1,
@@ -70,18 +79,9 @@ h4 {
   line-height: 1.2;
 }
 
-h4 {
-  font-size: 24px; // @todo: not do this
-}
-
-b,
-strong {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+img,
+svg {
+  vertical-align: middle;
 }
 
 .ppc-table {
@@ -133,12 +133,6 @@ code {
 .table-wrapper {
   width: 100%;
   overflow: auto;
-}
-
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
 }
 
 // monkey patch for recaptcha border bug
