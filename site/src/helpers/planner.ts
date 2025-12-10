@@ -134,16 +134,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
-        //Check if the course is valid, if not add to invalid courses, if so add to the quarter.
-        const validCourses: CourseGQLData[] = [];
-        savedQuarter.courses.forEach((courseId) => {
-          if (!courseId || courseId === 'Loading...' || !courseLookup[courseId]) {
-            if (courseId && courseId !== 'Loading...') invalidCourseIds.push(courseId);
-          } else {
-            validCourses.push(courseLookup[courseId]);
-          }
-        });
-        quarter.courses = validCourses;
+        savedQuarter.courses = savedQuarter.courses.filter((courseId) => !!courseLookup[courseId]);
 
         year.quarters.push(quarter);
       });
