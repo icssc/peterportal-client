@@ -1,76 +1,5 @@
 @use 'globals';
 
-button {
-  color: inherit;
-}
-
-body a {
-  color: var(--blue-accent);
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--text);
-  background: var(--background);
-}
-
-p {
-  margin-top: 0;
-}
-
-table,
-tr,
-th,
-td {
-  border: 0 solid;
-  border-color: inherit;
-  border-collapse: collapse;
-}
-
-th:first-child {
-  text-align: start;
-}
-
-th {
-  text-align: center;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  line-height: 1.2;
-}
-
-h4 {
-  font-size: 24px; // @todo: not do this
-}
-
-b,
-strong {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 700;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 #root {
   position: relative;
   height: 100%;
@@ -98,23 +27,76 @@ code {
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .content-wrapper {
   padding: 32px 36px;
 }
 
-.side-panel {
-  background-color: var(--overlay1);
-  height: 100%;
-  overflow: auto;
-  width: globals.$roadmap-sidebar-width;
+body a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
 
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding: 16px 20px;
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+h4 {
+  font-size: 24px; // @todo: not do this
+}
+
+b,
+strong {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 .ppc-table {
+  border: 0 solid;
+  border-color: inherit;
+  border-collapse: collapse;
+
+  th {
+    text-align: center;
+
+    &:first-child {
+      text-align: start;
+    }
+  }
+
   thead tr {
     background-color: var(--overlay2);
   }
@@ -165,10 +147,4 @@ code {
   width: 302px;
   height: 76px;
   border-radius: 4px;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
 }
