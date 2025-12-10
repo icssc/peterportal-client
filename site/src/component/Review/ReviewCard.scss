@@ -55,7 +55,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: auto;
-  color: var(--mui-palette-text-primary-secondary);
+  color: var(--mui-palette-text-secondary);
 }
 
 // Rating boxes (quality and difficulty)
@@ -113,7 +113,7 @@
 
   .author-bottom {
     font-size: 13px;
-    color: var(--mui-palette-text-primary-secondary);
+    color: var(--mui-palette-text-secondary);
   }
 
   .review-content {

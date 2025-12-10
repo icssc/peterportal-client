@@ -177,9 +177,9 @@
 
   &.completed {
     background-color: var(--mui-palette-overlay-overlay2);
-    outline: 1.5px solid var(--mui-palette-text-primary-secondary);
+    outline: 1.5px solid var(--mui-palette-text-secondary);
     outline-offset: -1.5px;
-    color: var(--mui-palette-text-primary-secondary);
+    color: var(--mui-palette-text-secondary);
     text-decoration: line-through;
     text-decoration-thickness: 2px;
     opacity: 0.75;
@@ -194,7 +194,7 @@
   width: 20px;
   height: 20px;
   border-radius: 20px;
-  background-color: var(--mui-palette-text-primary-secondary);
+  background-color: var(--mui-palette-text-secondary);
   color: var(--mui-palette-overlay-overlay2);
   display: flex;
   justify-content: center;
