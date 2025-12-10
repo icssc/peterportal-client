@@ -2,7 +2,7 @@
 @use 'sass:color';
 
 @mixin highlight-group() {
-  background: var(--overlay2);
+  background: var(--mui-palette-overlay-overlay2);
   margin: 4px -2px 8px;
   padding: 4px 6px 4px 12px;
   border-radius: 4px;
@@ -28,7 +28,7 @@
 }
 
 .group-requirement {
-  border: 2px solid var(--blue-secondary);
+  border: 2px solid var(--mui-palette-secondary-main);
   border-radius: 8px;
   padding: 12px;
   position: relative;
@@ -37,7 +37,7 @@
     display: flex;
     gap: 8px;
     align-items: center;
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
     text-align: left;
     padding: 0;
     background: none;
@@ -62,19 +62,19 @@
   }
 
   &.completed {
-    border-color: oklab(from var(--green-primary) 50% -0.5 0.5 / 0.5);
+    border-color: oklab(from var(--mui-palette-success-main) 50% -0.5 0.5 / 0.5);
 
     > .group-header {
-      color: var(--green-primary);
+      color: var(--mui-palette-success-main);
       text-decoration: line-through;
       text-decoration-thickness: 2px;
     }
 
     :is(.group-requirement, .marker-requirement, .course-requirement):not(.completed) {
-      border-color: var(--mid-gray);
-      color: var(--mid-gray);
+      border-color: var(--mui-palette-misc-midGray);
+      color: var(--mui-palette-misc-midGray);
       .group-header {
-        color: var(--mid-gray);
+        color: var(--mui-palette-misc-midGray);
       }
     }
 
@@ -84,7 +84,7 @@
   }
 
   .course-requirement.completed {
-    color: var(--green-primary);
+    color: var(--mui-palette-success-main);
   }
 
   > .group-requirement:not(:last-child),
@@ -140,7 +140,7 @@
   }
 
   &.completed {
-    color: var(--green-primary);
+    color: var(--mui-palette-success-main);
   }
 
   ~ .group-requirement {
@@ -163,7 +163,7 @@
   justify-content: center;
   align-items: center;
   padding: 5px 2px;
-  background-color: var(--blue-primary);
+  background-color: var(--mui-palette-primary-main);
   color: white;
   font-weight: bold;
   font-size: 13px;
@@ -176,10 +176,10 @@
   }
 
   &.completed {
-    background-color: var(--overlay2);
-    outline: 1.5px solid var(--text-secondary);
+    background-color: var(--mui-palette-overlay-overlay2);
+    outline: 1.5px solid var(--mui-palette-text-primary-secondary);
     outline-offset: -1.5px;
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-primary-secondary);
     text-decoration: line-through;
     text-decoration-thickness: 2px;
     opacity: 0.75;
@@ -194,8 +194,8 @@
   width: 20px;
   height: 20px;
   border-radius: 20px;
-  background-color: var(--text-secondary);
-  color: var(--overlay2);
+  background-color: var(--mui-palette-text-primary-secondary);
+  color: var(--mui-palette-overlay-overlay2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -229,6 +229,6 @@
 
   &.loading {
     color: #fff6;
-    background-color: var(--blue-secondary);
+    background-color: var(--mui-palette-secondary-main);
   }
 }

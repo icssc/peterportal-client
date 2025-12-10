@@ -3,7 +3,7 @@
 
   &.MuiCard-root {
     border-radius: var(--border-radius);
-    background-color: var(--overlay1);
+    background-color: var(--mui-palette-overlay-overlay1);
   }
 
   .report-group-header {
@@ -47,7 +47,7 @@
   }
 
   .report-group-user-display {
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-primary-secondary);
     margin-bottom: 10px;
     font-size: 14px;
   }

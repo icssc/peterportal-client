@@ -3,7 +3,7 @@
 .side-info {
   width: 100%;
   height: fit-content;
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
   border-radius: var(--border-radius);
   position: sticky;
   top: 32px;
@@ -33,7 +33,7 @@
 
   .MuiInputBase-root .MuiInputBase-input {
     // @todo: create a variant to apply the background color
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 }
 
@@ -111,7 +111,7 @@
 }
 
 .ratings-widget {
-  background-color: var(--overlay2);
+  background-color: var(--mui-palette-overlay-overlay2);
   padding: 10px 16px;
   display: flex;
   gap: 24px;

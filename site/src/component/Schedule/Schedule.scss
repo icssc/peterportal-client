@@ -52,15 +52,15 @@
   }
 
   &[data-status='OPEN'] {
-    --status-color: var(--green-primary);
+    --status-color: var(--mui-palette-success-main);
     color: white;
   }
   &[data-status='Waitl'] {
-    --status-color: var(--blue-primary);
+    --status-color: var(--mui-palette-primary-main);
     color: white;
   }
   &[data-status='FULL'] {
-    --status-color: var(--red-primary);
+    --status-color: var(--mui-palette-error-main);
     color: white;
   }
 }

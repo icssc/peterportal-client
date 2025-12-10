@@ -1,12 +1,12 @@
 .hit-item {
   border-radius: var(--border-radius);
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
   padding: 20px 24px;
   margin-bottom: 2vh;
   cursor: pointer;
 
   a {
-    color: var(--text);
+    color: var(--mui-palette-text-primary);
   }
 
   .hit-name {
@@ -61,7 +61,7 @@
     max-width: 50px;
     height: 50px;
     border-radius: 50px;
-    background: var(--blue-primary);
+    background: var(--mui-palette-primary-main);
     display: flex;
     justify-content: center;
     align-items: center;

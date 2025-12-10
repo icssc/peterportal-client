@@ -5,7 +5,7 @@ button {
 }
 
 body a {
-  color: var(--blue-accent);
+  color: var(--mui-palette-accent-main);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
@@ -22,8 +22,8 @@ html > body {
   font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--text);
-  background: var(--background);
+  color: var(--mui-palette-text-primary);
+  background: var(--mui-palette-background-default);
 }
 
 code {
@@ -48,7 +48,7 @@ code {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--background);
+  background-color: var(--mui-palette-background-default);
   box-sizing: border-box;
 
   .main-wrapper {
@@ -62,7 +62,7 @@ code {
 }
 
 .side-panel {
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
   height: 100%;
   overflow: auto;
   width: globals.$roadmap-sidebar-width;
@@ -75,15 +75,15 @@ code {
 
 .ppc-table {
   thead tr {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(even) {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(odd) {
-    background-color: var(--overlay3);
+    background-color: var(--mui-palette-overlay-overlay3);
   }
 }
 
@@ -133,7 +133,7 @@ body hr {
 
 // general bootstrap overwrites. bg/border color may need further customization per component
 .table {
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
 }
 
 [data-theme='dark'] {
@@ -156,17 +156,17 @@ body hr {
   }
 
   .close {
-    color: var(--text);
+    color: var(--mui-palette-text-primary);
     text-shadow: none;
   }
 
   .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay1);
+    border-color: var(--mui-palette-overlay-overlay2);
 
     &:hover,
     &:focus {
-      background-color: var(--overlay2);
+      background-color: var(--mui-palette-overlay-overlay2);
       color: #1284ff;
     }
   }
@@ -177,7 +177,7 @@ body hr {
   }
 
   .page-item.disabled .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay1);
+    border-color: var(--mui-palette-overlay-overlay2);
   }
 }

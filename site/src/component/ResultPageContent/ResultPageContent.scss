@@ -58,7 +58,7 @@
 
     .MuiInputBase-root .MuiInputBase-input {
       // @todo: try to get rid of this, likely through a variant
-      background-color: var(--overlay2);
+      background-color: var(--mui-palette-overlay-overlay2);
       width: 150px;
     }
 
@@ -103,7 +103,7 @@
 }
 
 .result-page-section {
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
   border-radius: var(--border-radius);
   max-width: 1000px;
   margin-bottom: 32px;
