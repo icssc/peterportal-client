@@ -19,7 +19,6 @@
 }
 
 [data-theme='dark'] .tab-selector {
-  background-color: #212529;
   border: 1px solid #8886;
 
   .MuiButtonGroup-grouped:not(:last-of-type) {
@@ -34,7 +33,6 @@
 }
 
 [data-theme='light'] .tab-selector {
-  background-color: #f8f9fa;
   border: 1px solid #d3d4d5;
 
   .MuiButtonGroup-grouped:not(:last-of-type) {

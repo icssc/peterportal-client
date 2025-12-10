@@ -170,26 +170,3 @@
     opacity: 1;
   }
 }
-
-.search-sidebar {
-  div.search-body {
-    display: grid;
-    grid-auto-flow: row;
-    grid-auto-rows: fit-content;
-    justify-items: stretch;
-    gap: 8px;
-    height: fit-content;
-
-    &:not(.disabled) .course-drag-handle {
-      cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
-      &:active {
-        cursor: grabbing;
-      }
-    }
-    &.disabled .course {
-      cursor: pointer;
-    }
-  }
-}

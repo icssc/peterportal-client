@@ -2,6 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SearchIndex, SearchResultData } from '../../types/types';
 import { FilterOptions } from '../../helpers/searchFilters';
 import { RootState } from '../store';
+import { shouldResetFilters } from '../../helpers/search';
 
 interface SearchData {
   query: string;
@@ -11,9 +12,13 @@ interface SearchData {
   count: number;
 }
 
+type SearchOperationType = 'none' | 'newQuery' | 'newFilters' | 'newPage';
+
 export const searchSlice = createSlice({
   name: 'search',
   initialState: {
+    inProgressSearchOperation: 'none' as SearchOperationType,
+    viewIndex: 'courses' as SearchIndex,
     courses: {
       query: '',
       lastQuery: '',
@@ -31,36 +36,52 @@ export const searchSlice = createSlice({
       results: [],
       count: 0,
     } as SearchData,
-    searchInProgress: false,
   },
   reducers: {
-    // Use the PayloadAction type to declare the contents of `action.payload`
-    setQuery: (state, action: PayloadAction<{ index: SearchIndex; query: SearchData['query'] }>) => {
-      state[action.payload.index].query = action.payload.query;
-    },
-    setPageNumber: (state, action: PayloadAction<{ index: SearchIndex; pageNumber: SearchData['pageNumber'] }>) => {
-      state[action.payload.index].pageNumber = action.payload.pageNumber;
-    },
-    setResults: (
-      state,
-      action: PayloadAction<{ index: SearchIndex; results: SearchData['results']; count: SearchData['count'] }>,
-    ) => {
-      state.searchInProgress = false;
-      state[action.payload.index].results = action.payload.results;
-      state[action.payload.index].count = action.payload.count;
-      if (state[action.payload.index].lastQuery !== state[action.payload.index].query) {
-        state[action.payload.index].pageNumber = 0;
-        state[action.payload.index].lastQuery = state[action.payload.index].query;
+    // Things that will trigger a new search
+    setQuery: (state, action: PayloadAction<string>) => {
+      state.courses.query = state.professors.query = action.payload;
+      if (!action.payload) return;
+
+      if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {
+        state.courseDepartments = [];
+        state.courseGeCategories = [];
+        state.courseLevels = [];
       }
+
+      state.inProgressSearchOperation = 'newQuery';
     },
     setCourseFilters: (state, action: PayloadAction<FilterOptions>) => {
       const { departments, geCategories, levels } = action.payload;
       state.courseDepartments = departments;
       state.courseGeCategories = geCategories;
       state.courseLevels = levels;
+      state.inProgressSearchOperation = 'newFilters';
     },
-    setSearchStarted: (state) => {
-      state.searchInProgress = true;
+    setPageNumber: (state, action: PayloadAction<number>) => {
+      state[state.viewIndex].pageNumber = action.payload;
+      state.inProgressSearchOperation = 'newPage';
+    },
+    // Setting results
+    setFirstPageResults: (
+      state,
+      action: PayloadAction<{ index: SearchIndex; results: SearchResultData; count: number }>,
+    ) => {
+      state.inProgressSearchOperation = 'none';
+      const index = action.payload.index;
+      state[index].results = action.payload.results;
+      state[index].count = action.payload.count;
+      state[index].pageNumber = 0;
+      state[index].lastQuery = state[index].query;
+    },
+    setNewPageResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchResultData }>) => {
+      state.inProgressSearchOperation = 'none';
+      const index = action.payload.index;
+      state[index].results = action.payload.results;
+    },
+    // Viewing
+    setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {
+      state.viewIndex = action.payload;
     },
   },
 });
@@ -72,6 +93,9 @@ export const selectCourseFilters = createSelector(
   (departments, geCategories, levels) => ({ departments, geCategories, levels }),
 );
 
-export const { setQuery, setPageNumber, setResults, setCourseFilters, setSearchStarted } = searchSlice.actions;
+export type SearchCourseFilters = ReturnType<typeof selectCourseFilters>;
+
+export const { setQuery, setPageNumber, setCourseFilters, setFirstPageResults, setNewPageResults, setSearchViewIndex } =
+  searchSlice.actions;
 
 export default searchSlice.reducer;
