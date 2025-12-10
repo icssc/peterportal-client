@@ -27,6 +27,27 @@ body {
   background: var(--background);
 }
 
+p {
+  margin-top: 0;
+}
+
+table,
+tr,
+th,
+td {
+  border: 0 solid;
+  border-color: inherit;
+  border-collapse: collapse;
+}
+
+th:first-child {
+  text-align: start;
+}
+
+th {
+  text-align: center;
+}
+
 h1,
 h2,
 h3,
@@ -34,6 +55,10 @@ h4 {
   margin-top: 0;
   margin-bottom: 8px;
   line-height: 1.2;
+}
+
+h4 {
+  font-size: 24px; // @todo: not do this
 }
 
 b,

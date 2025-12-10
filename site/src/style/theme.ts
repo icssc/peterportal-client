@@ -131,11 +131,6 @@ theme = createTheme(theme, {
         variant: 'contained',
         disableElevation: true,
       },
-      styleOverrides: {
-        root: {
-          lineHeight: 1.75,
-        },
-      },
     },
     MuiCheckbox: {
       styleOverrides: {
