@@ -1,6 +1,7 @@
 import ProfessorPage from '../ProfessorPage';
 import { createServerSideTrpcCaller } from '../../../trpc';
 import { headers } from 'next/headers';
+import { notFound } from 'next/navigation';
 
 interface ProfessorPageParams {
   params: Promise<{ id: string }>;
@@ -12,6 +13,8 @@ export async function generateMetadata({ params }: ProfessorPageParams) {
   const reqHeaders = await headers().then((h) => Object.fromEntries(h.entries()));
   const serverTrpc = createServerSideTrpcCaller(reqHeaders);
   const professor = await serverTrpc.professors.get.query({ ucinetid: id });
+
+  if (!professor) return notFound();
 
   const title = professor.name;
   const description = `${professor.title} in ${professor.department}`;

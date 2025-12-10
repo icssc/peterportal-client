@@ -24,7 +24,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
 
   if (typeof course === 'string') {
     return (
-      <div className="popover-body course-popover">
+      <div className="course-popover">
         <LoadingSpinner />
       </div>
     );
@@ -34,7 +34,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
-    <div className="popover-body course-popover">
+    <div className="course-popover">
       <div className="popover-name">
         {department + ' ' + courseNumber + ' '}
         <span className="popover-units">

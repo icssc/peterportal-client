@@ -1,14 +1,17 @@
 'use client';
-import { FC } from 'react';
 import './PrereqTree.scss';
+import { FC } from 'react';
 import type { Prerequisite, PrerequisiteTree, PrerequisiteNode } from '@peterportal/types';
 
 import { CourseGQLData, CourseLookup } from '../../types/types';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { Box, Tooltip } from '@mui/material';
 import Link from 'next/link';
+import { createTooltipOffset } from '../../helpers/slotProps';
+
+type PrerequisiteTreeNodeType = 'course' | 'prerequisite' | 'dependent';
 
 interface NodeProps {
-  node: string;
+  nodeType: PrerequisiteTreeNodeType;
   label: string;
   content: string;
   index?: number;
@@ -20,27 +23,27 @@ const phraseMapping = {
   NOT: 'none of',
 };
 const Node: FC<NodeProps> = (props) => {
-  const popover = (
-    <Popover id="tree-node-popover" className="tree-node-popover" placement="bottom">
-      <div className="popover-body">{props.content ? props.content : props.label}</div>
-    </Popover>
-  );
+  const tooltipText = props.content || props.label;
+  const wrapperClassName = `${props.nodeType}-node`;
+
   return (
-    <div style={{ padding: '1px 0' }} className={`node-container ${props.node}`} key={props.index}>
-      <OverlayTrigger overlay={popover}>
-        {!props.label.startsWith('AP ') ? (
-          <Link
-            target="_blank"
-            href={'/course/' + encodeURIComponent(props.label.split('(')[0].replace(/\s+/g, ''))}
-            role="button"
-            className="node"
-          >
-            {props.label}
-          </Link>
-        ) : (
-          <button className="node">{`${props.label}`}</button>
-        )}
-      </OverlayTrigger>
+    <div className={wrapperClassName} key={props.index}>
+      <Tooltip title={tooltipText} placement="top" disableInteractive slotProps={createTooltipOffset(0, -8)}>
+        <Box>
+          {!props.label.startsWith('AP ') ? (
+            <Link
+              target="_blank"
+              href={'/course/' + encodeURIComponent(props.label.split('(')[0].replace(/\s+/g, ''))}
+              role="button"
+              className="node"
+            >
+              {props.label}
+            </Link>
+          ) : (
+            <div className="node">{`${props.label}`}</div>
+          )}
+        </Box>
+      </Tooltip>
     </div>
   );
 };
@@ -72,7 +75,7 @@ const PrereqTreeNode: FC<TreeProps> = (props) => {
               prereq.prereqType === 'course' ? prereq.courseId.replace(/ /g, '') : (prereq.examName ?? '')
             ]?.title ?? ''
           }
-          node="prerequisite-node"
+          nodeType="prerequisite"
         />
       </li>
     );
@@ -146,7 +149,7 @@ const PrereqTree: FC<PrereqProps> = (props) => {
                       <Node
                         label={`${dependent.department} ${dependent.courseNumber}`}
                         content={dependent.title}
-                        node="dependent-node"
+                        nodeType="dependent"
                       />
                     </li>
                   ))}
@@ -161,14 +164,8 @@ const PrereqTree: FC<PrereqProps> = (props) => {
             </>
           )}
 
-          {/* {!hasDependents && <div className='dependent-branch'>
-            <p className='missing-tree'>
-              No Dependents!
-            </p>
-          </div>} */}
-
           {/* Display the class id */}
-          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} node="course-node" />
+          <Node label={`${props.department} ${props.courseNumber}`} content={props.title} nodeType="course" />
 
           {/* Spawns the root of the prerequisite tree */}
           {hasPrereqs && (
@@ -176,12 +173,6 @@ const PrereqTree: FC<PrereqProps> = (props) => {
               <PrereqTreeNode prerequisiteNames={props.prerequisites} prerequisiteJSON={props.prerequisiteTree} />
             </div>
           )}
-
-          {/* {!hasPrereqs && <div className='dependent-branch'>
-            <p className='missing-tree'>
-              No Prerequisites!
-            </p>
-          </div>} */}
         </div>
         {props.prerequisiteText !== '' && (
           <div

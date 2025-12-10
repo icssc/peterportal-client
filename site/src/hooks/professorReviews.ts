@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
-import { ProfessorGQLData } from '../types/types';
 import { transformProfessorGQL } from '../helpers/util.tsx';
 import { setProfessor } from '../store/slices/professorSlice.ts';
+import { ProfessorGQLData } from '../types/types.ts';
 
 // Get a professor's info (name, net ID, etc.)
 // If not in cache then fetch from API and put in cache
 
 export function useProfessorData(netID: string) {
   const professorCache = useAppSelector((state) => state.professors.professors);
-  const [loadTrigger, setLoadTrigger] = useState(false);
   const [fullProfessorData, setFullProfessorData] = useState<ProfessorGQLData | null>(professorCache[netID] ?? null);
+  const [loadTrigger, setLoadTrigger] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -30,6 +30,8 @@ export function useProfessorData(netID: string) {
       setFullProfessorData(cachedProfessor);
       return;
     }
+
+    setFullProfessorData(null);
     trpc.professors.get.query({ ucinetid: netID }).then((professor) => {
       const transformedProfessor = transformProfessorGQL(professor);
       setFullProfessorData(transformedProfessor);
