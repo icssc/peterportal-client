@@ -18,7 +18,6 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
-  CourseGQLData,
   InvalidCourseData,
   PlannerData,
   PlannerQuarterData,
@@ -126,7 +125,6 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
   return new Promise((resolve) => {
     const planner: PlannerData = [];
-    const invalidCourseIds: string[] = [];
 
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
@@ -141,14 +139,6 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
       planner.push(year);
     });
-
-    if (invalidCourseIds.length > 0) {
-      const uniqueIds = [...new Set(invalidCourseIds)];
-      console.warn(
-        `Removed ${uniqueIds.length} invalid course${uniqueIds.length === 1 ? '' : 's'} from roadmap: ${uniqueIds.join(', ')}`,
-      );
-    }
-
     resolve(planner);
   });
 };
