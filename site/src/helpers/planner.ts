@@ -132,7 +132,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
-        savedQuarter.courses = savedQuarter.courses.filter((courseId) => !!courseLookup[courseId]);
+        quarter.courses = savedQuarter.courses.map((courseId) => courseLookup[courseId]).filter((course) => !!course);
 
         year.quarters.push(quarter);
       });
