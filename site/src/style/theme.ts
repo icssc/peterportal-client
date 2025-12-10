@@ -249,13 +249,6 @@ theme = createTheme(theme, {
       },
       variants: [xsmall],
     },
-    MuiTypography: {
-      styleOverrides: {
-        root: {
-          lineHeight: 'inherit',
-        },
-      },
-    },
     MuiAutocomplete: {
       variants: [xsmall],
     },
