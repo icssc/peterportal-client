@@ -32,7 +32,17 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Create deployment
+        id: create-deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: staging-${{ github.event.pull_request.number }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          description: Staging deployment for PR #${{ github.event.pull_request.number }}
+
       - name: Build and deploy
+        id: deploy
         run: pnpm sst deploy --stage staging-${{ github.event.pull_request.number }}
         env:
           DATABASE_URL: ${{ secrets.DEV_DATABASE_URL }}
@@ -49,3 +59,20 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ANTEATER_API_KEY: ${{ secrets.ANTEATER_API_KEY }}
           EXTERNAL_USER_READ_SECRET: ${{ secrets.EXTERNAL_USER_READ_SECRET }}
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.create-deployment.outputs.deployment_id }}
+          state: success
+          environment-url: https://staging-${{ github.event.pull_request.number }}.peterportal.org
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.create-deployment.outputs.deployment_id }}
+          state: failure
