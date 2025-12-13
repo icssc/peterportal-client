@@ -1,12 +1,10 @@
 :root {
-  --border-radius: 8px;
   --border-primary: rgba(96, 97, 102, 0.5);
   --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-
   --border-secondary: rgba(255, 255, 255, 0.12);
 }
 

@@ -22,7 +22,7 @@
 
 .profile-popover {
   .MuiPaper-root {
-    border-radius: var(--border-radius);
+    border-radius: var(--mui-shape-borderRadius);
     border: 1px solid var(--mui-palette-background-default);
     width: 310px;
     max-width: 100vw;
@@ -89,7 +89,7 @@
 
     .MuiListItemButton-root {
       padding-inline: 10px;
-      border-radius: var(--border-radius);
+      border-radius: var(--mui-shape-borderRadius);
     }
 
     .MuiListItemIcon-root {
