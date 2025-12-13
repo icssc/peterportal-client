@@ -80,7 +80,7 @@ router.get('/google', async function (req, res) {
       state,
       CodeChallengeMethod.S256,
       codeVerifier,
-      ['openid', 'profile', 'email', 'https://www.googleapis.com/auth/calendar.readonly'],
+      ['openid', 'profile', 'email'],
     );
 
     res.redirect(authUrl.toString());
