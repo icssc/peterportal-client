@@ -14,11 +14,12 @@ const SideNav = () => {
       sx={{
         height: '100%',
         width: 64,
-        zIndex: '4000',
+        zIndex: 300,
         position: 'fixed',
         top: 0,
         left: 0,
-        boxShadow: '0px 0px 4px 1px rgba(0, 0, 0, 0.1)',
+        borderRight: '1px solid #60616680',
+        borderRadius: 0,
       }}
     >
       <Stack direction="column" alignItems="center" sx={{ gap: '16px', paddingTop: '8px' }}>
