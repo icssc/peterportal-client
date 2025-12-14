@@ -1,35 +1,5 @@
 @use 'globals';
 
-button {
-  color: inherit;
-}
-
-body a {
-  color: var(--blue-accent);
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-html,
-body {
-  height: 100%;
-}
-
-html > body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--text);
-  background: var(--background);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 #root {
   position: relative;
   height: 100%;
@@ -58,23 +28,82 @@ code {
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .content-wrapper {
   padding: 32px 36px;
 }
 
-.side-panel {
-  background-color: var(--overlay1);
-  height: 100%;
-  overflow: auto;
-  width: globals.$roadmap-sidebar-width;
+html {
+  font-family: 'Roboto', sans-serif;
+}
 
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding: 16px 20px;
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body a {
+  color: var(--blue-accent);
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+p {
+  margin-top: 0;
+}
+
+b,
+strong {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+button {
+  color: inherit;
+  cursor: pointer; // @todo: refactor some clickable elements to non-buttons to get rid of this
+}
+
+img,
+svg {
+  vertical-align: middle;
 }
 
 .ppc-table {
+  border: 0 solid;
+  border-color: inherit;
+  border-collapse: collapse;
+
+  th {
+    text-align: inherit;
+
+    &:first-child {
+      text-align: start;
+    }
+  }
+
   thead tr {
     background-color: var(--overlay2);
   }
@@ -113,72 +142,10 @@ code {
   overflow: auto;
 }
 
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
-}
-
-// revert styles that bootstrap decided to override for SOME reason
-body hr {
-  opacity: 1;
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
   width: 302px;
   height: 76px;
   border-radius: 4px;
-}
-
-// general bootstrap overwrites. bg/border color may need further customization per component
-.table {
-  color: var(--text);
-}
-
-[data-theme='dark'] {
-  .btn-outline-primary {
-    color: #0f83ff;
-    border-color: #0f83ff;
-
-    &:hover,
-    &:focus {
-      color: white;
-    }
-
-    &:hover {
-      border-color: #007bff;
-    }
-
-    &:focus {
-      border-color: #2767d4;
-    }
-  }
-
-  .close {
-    color: var(--text);
-    text-shadow: none;
-  }
-
-  .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-
-    &:hover,
-    &:focus {
-      background-color: var(--overlay2);
-      color: #1284ff;
-    }
-  }
-
-  .page-item.active .page-link:hover {
-    background-color: #1284ff;
-    color: #fff;
-  }
-
-  .page-item.disabled .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-  }
 }
