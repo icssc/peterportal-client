@@ -22,8 +22,8 @@
 
 .profile-popover {
   .MuiPaper-root {
-    border-radius: var(--border-radius);
-    border: 1px solid var(--background);
+    border-radius: var(--mui-shape-borderRadiusLg);
+    border: 1px solid var(--mui-palette-background-default);
     width: 310px;
     max-width: 100vw;
     padding: 16px 20px;
@@ -44,7 +44,7 @@
 
     h2 {
       font-size: 14px;
-      color: var(--text-secondary);
+      color: var(--mui-palette-text-secondary);
       overflow: hidden;
       text-overflow: ellipsis;
       padding-bottom: 4px;
@@ -76,7 +76,7 @@
     }
 
     .tab-selector {
-      background-color: var(--overlay2);
+      background-color: var(--mui-palette-overlay-overlay2);
     }
   }
 
@@ -89,7 +89,7 @@
 
     .MuiListItemButton-root {
       padding-inline: 10px;
-      border-radius: var(--border-radius);
+      border-radius: var(--mui-shape-borderRadiusLg);
     }
 
     .MuiListItemIcon-root {
@@ -98,14 +98,14 @@
   }
 
   .profile-popover-link.active {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
 
     .MuiListItemIcon-root {
-      color: var(--blue-primary);
+      color: var(--mui-palette-primary-main);
     }
   }
 }
 
 .login-button {
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
 }

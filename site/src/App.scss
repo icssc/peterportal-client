@@ -18,7 +18,7 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--background);
+  background-color: var(--mui-palette-background-default);
   box-sizing: border-box;
 
   .main-wrapper {
@@ -54,7 +54,7 @@ body {
 }
 
 body a {
-  color: var(--blue-accent);
+  color: var(--mui-palette-accent-main);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
@@ -104,15 +104,15 @@ svg {
   }
 
   thead tr {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(even) {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(odd) {
-    background-color: var(--overlay3);
+    background-color: var(--mui-palette-overlay-overlay3);
   }
 }
 

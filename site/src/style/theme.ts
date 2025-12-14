@@ -94,6 +94,10 @@ export let theme = createTheme({
     light: { palette: lightPalette },
     dark: { palette: darkPalette },
   },
+  shape: {
+    borderRadius: 4,
+    borderRadiusLg: 8,
+  },
   spacing: 4,
 });
 

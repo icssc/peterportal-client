@@ -2,8 +2,8 @@
   padding: 16px 20px;
 
   &.MuiCard-root {
-    border-radius: var(--border-radius);
-    background-color: var(--overlay1);
+    border-radius: var(--mui-shape-borderRadiusLg);
+    background-color: var(--mui-palette-overlay-overlay1);
   }
 
   .report-group-header {
@@ -47,13 +47,13 @@
   }
 
   .report-group-user-display {
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
     margin-bottom: 10px;
     font-size: 14px;
   }
 
   .report-group-subreports-container {
-    border-radius: var(--border-radius);
+    border-radius: var(--mui-shape-borderRadiusLg);
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -67,7 +67,7 @@
 
     &.MuiCard-root {
       background-color: var(--overlay4);
-      border-radius: var(--border-radius);
+      border-radius: var(--mui-shape-borderRadiusLg);
     }
   }
 }

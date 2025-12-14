@@ -1,6 +1,6 @@
 .course {
   box-shadow: 0 0 2px 0 #60616680;
-  background: var(--overlay1);
+  background: var(--mui-palette-overlay-overlay1);
   border-radius: 4px;
   height: auto;
   font-size: 16px;
@@ -33,7 +33,7 @@
 
   .name {
     font-weight: bold;
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
   }
 
   .warning-container {
@@ -59,7 +59,7 @@
   }
 
   .missing-prereq {
-    color: var(--red-primary);
+    color: var(--mui-palette-error-main);
   }
 
   button.MuiIconButton-root {
@@ -124,7 +124,7 @@
   }
 
   &.roadmap-course {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
     box-shadow: none;
     border: 1px solid var(--border-secondary);
     margin-block: -0.5px;
@@ -134,7 +134,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--blue-primary);
+      color: var(--mui-palette-primary-main);
     }
 
     .course-drag-handle,

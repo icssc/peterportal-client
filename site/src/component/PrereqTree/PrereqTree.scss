@@ -9,8 +9,8 @@
   font-size: 13px;
 
   .node {
-    color: var(--text);
-    background-color: var(--overlay2);
+    color: var(--mui-palette-text-primary);
+    background-color: var(--mui-palette-overlay-overlay2);
     border: none;
     font-weight: 600;
     text-align: center;
@@ -33,7 +33,7 @@
   &::before {
     content: '';
     position: absolute;
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     top: 50%;
     left: -1.5rem;
     width: 0.5rem;
@@ -58,7 +58,7 @@
   &::before {
     content: '';
     position: absolute;
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     top: 50%;
     left: -0.8rem;
     width: 0.7rem;
@@ -68,7 +68,7 @@
   &::after {
     content: '';
     position: absolute;
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     top: 50%;
     right: -1rem;
     width: 1rem;
@@ -103,7 +103,7 @@
       height: 50%;
       right: -1rem;
       content: '';
-      background: var(--mid-gray);
+      background: var(--mui-palette-misc-midGray);
       position: absolute;
       bottom: 0;
       top: auto;
@@ -116,7 +116,7 @@
       height: 50%;
       right: -1rem;
       content: '';
-      background: var(--mid-gray);
+      background: var(--mui-palette-misc-midGray);
       position: absolute;
       top: 0;
     }
@@ -127,7 +127,7 @@
     height: 100%;
     right: -1rem;
     content: '';
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     position: absolute;
     top: 0;
   }
@@ -135,7 +135,7 @@
   &::before {
     content: '';
     position: absolute;
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     top: 50%;
     right: -1rem;
     width: 1rem;
@@ -160,7 +160,7 @@
       height: 50%;
       left: -1rem;
       content: '';
-      background: var(--mid-gray);
+      background: var(--mui-palette-misc-midGray);
       position: absolute;
       bottom: 0;
       top: auto;
@@ -173,7 +173,7 @@
       height: 50%;
       left: -1rem;
       content: '';
-      background: var(--mid-gray);
+      background: var(--mui-palette-misc-midGray);
       position: absolute;
       top: 0;
     }
@@ -184,7 +184,7 @@
     height: 100%;
     left: -1rem;
     content: '';
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     position: absolute;
     top: 0;
   }
@@ -192,7 +192,7 @@
   &::before {
     content: '';
     position: absolute;
-    background: var(--mid-gray);
+    background: var(--mui-palette-misc-midGray);
     top: 50%;
     left: -1rem;
     width: 1rem;
@@ -203,7 +203,7 @@
 .prereq-text-box {
   padding: 1em;
   margin-top: 2em;
-  background-color: var(--overlay2);
+  background-color: var(--mui-palette-overlay-overlay2);
   p {
     margin: 0;
   }

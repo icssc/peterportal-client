@@ -11,7 +11,7 @@ interface ToastProps {
 }
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
-  const backgroundColor = severity === 'error' ? 'var(--red-primary)' : 'var(--blue-primary)';
+  const backgroundColor = severity === 'error' ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-primary-main)';
   return (
     <Snackbar
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

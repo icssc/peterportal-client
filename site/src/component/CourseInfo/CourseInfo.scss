@@ -1,6 +1,6 @@
 .course-info-warning {
   .warning-primary {
-    color: var(--red-primary);
+    color: var(--mui-palette-error-main);
 
     .warning-primary-icon {
       font-size: 20px;
@@ -14,7 +14,7 @@
     font-weight: 400;
     font-size: 14px;
     font-style: italic;
-    color: var(--mid-gray);
+    color: var(--mui-palette-misc-midGray);
     margin-bottom: 10px;
   }
 }

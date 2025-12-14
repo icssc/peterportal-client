@@ -1,7 +1,7 @@
 @use '../../../globals.scss';
 
 .roadmap-sidebar {
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
   height: 100%;
   overflow: auto;
   width: globals.$roadmap-sidebar-width;

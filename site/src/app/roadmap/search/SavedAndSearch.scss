@@ -19,11 +19,11 @@ h3.results-list-title {
 }
 
 .result-type-header {
-  color: var(--text-secondary);
+  color: var(--mui-palette-text-secondary);
   margin-block: 8px 12px;
 
   a {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
     font-style: italic;
   }
 }

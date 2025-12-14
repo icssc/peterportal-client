@@ -43,7 +43,7 @@ ReviewCards on courses/professors pages need a background of overlay2,
 while ReviewCards in verification need the usual (overlay1) background
  */
 .reviewcards > div.MuiCard-root {
-  background-color: var(--overlay2);
+  background-color: var(--mui-palette-overlay-overlay2);
   box-shadow: none;
 }
 
