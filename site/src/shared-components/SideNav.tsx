@@ -1,6 +1,6 @@
 'use client';
 
-import { IconButton, Paper, Stack, Typography, useTheme } from '@mui/material';
+import { Paper, Stack, Typography, useTheme } from '@mui/material';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import RouteIcon from '@mui/icons-material/Route';
 import Link from 'next/link';
@@ -18,27 +18,25 @@ const SideNav = () => {
         position: 'fixed',
         top: 0,
         left: 0,
-        borderRight: '2px solid var(--mui-palette-overlay-overlay2)', // @todo: use theme
+        boxShadow: '0px 0px 4px 1px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <Stack direction="column" alignItems="center" gap={1}>
-        <IconButton href="">
-          <Stack direction="column" alignItems="center" sx={{ color: theme.palette.text.primary }}>
-            <EventNoteIcon fontSize="medium" sx={{ color: 'var(--mui-palette-text-primary) ' }} />
-            <Link href="" style={{ textDecoration: 'none', color: 'var(--mui-palette-text-primary)' }}>
-              <Typography fontSize={11}>Scheduler</Typography>
-            </Link>
+      <Stack direction="column" alignItems="center" sx={{ gap: '16px', paddingTop: '8px' }}>
+        <Link href="" style={{ textDecoration: 'none', color: 'var(--mui-palette-text-primary)' }}>
+          {' '}
+          {/* @todo: investigate why theme isn't working for this */}
+          <Stack direction="column" alignItems="center">
+            <EventNoteIcon fontSize="medium" />
+            <Typography fontSize={11}>Scheduler</Typography>
           </Stack>
-        </IconButton>
+        </Link>
 
-        <IconButton href="">
-          <Stack direction="column" alignItems="center" sx={{ color: theme.palette.primary.main }}>
+        <Link href="" style={{ textDecoration: 'none', color: theme.palette.primary.main }}>
+          <Stack direction="column" alignItems="center">
             <RouteIcon fontSize="medium" color="inherit" />
-            <Link href="" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Typography fontSize={11}>Planner</Typography>
-            </Link>
+            <Typography fontSize={11}>Planner</Typography>
           </Stack>
-        </IconButton>
+        </Link>
       </Stack>
     </Paper>
   );
