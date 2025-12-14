@@ -2,7 +2,7 @@
   padding: 16px 20px;
 
   &.MuiCard-root {
-    border-radius: var(--mui-shape-borderRadius);
+    border-radius: var(--mui-shape-borderRadiusLg);
     background-color: var(--mui-palette-overlay-overlay1);
   }
 
@@ -53,7 +53,7 @@
   }
 
   .report-group-subreports-container {
-    border-radius: var(--mui-shape-borderRadius);
+    border-radius: var(--mui-shape-borderRadiusLg);
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -67,7 +67,7 @@
 
     &.MuiCard-root {
       background-color: var(--overlay4);
-      border-radius: var(--mui-shape-borderRadius);
+      border-radius: var(--mui-shape-borderRadiusLg);
     }
   }
 }
