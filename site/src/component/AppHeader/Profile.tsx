@@ -20,6 +20,7 @@ import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme } from '@peterportal/types';
+import { useIsMobile } from '../../helpers/util';
 
 interface AdminProfileLinksProps {
   pathname: string | null;
@@ -75,6 +76,7 @@ const Profile = () => {
 
   const user = useAppSelector((state) => state.user.user);
   const isAdmin = useAppSelector((state) => state.user.isAdmin);
+  const isMobile = useIsMobile();
 
   if (!user) {
     return (
@@ -118,14 +120,16 @@ const Profile = () => {
         <Divider />
       </div>
       <List className="profile-popover-links">
-        <ListItem>
-          <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
-            <ListItemIcon>
-              <EventNoteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Go to Scheduler" />
-          </ListItemButton>
-        </ListItem>
+        {isMobile && (
+          <ListItem>
+            <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
+              <ListItemIcon>
+                <EventNoteIcon />
+              </ListItemIcon>
+              <ListItemText primary="Go to Scheduler" />
+            </ListItemButton>
+          </ListItem>
+        )}
         <ListItem>
           <ListItemButton
             className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
