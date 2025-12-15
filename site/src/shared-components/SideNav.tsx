@@ -40,7 +40,7 @@ const SideNav = () => {
 
         <Link href="/" style={{ textDecoration: 'none', color: 'var(--mui-palette-primary-main)' }}>
           <Stack direction="column" alignItems="center">
-            <RouteIcon fontSize="medium" color="inherit" />
+            <RouteIcon fontSize="medium" />
             <Typography fontSize={11}>Planner</Typography>
           </Stack>
         </Link>
