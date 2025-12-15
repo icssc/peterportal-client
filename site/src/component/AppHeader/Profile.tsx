@@ -5,13 +5,14 @@ import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Pop
 import './Profile.scss';
 
 import Link from 'next/link';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
-import GradingIcon from '@mui/icons-material/Grading';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import FlagIcon from '@mui/icons-material/Flag';
 import Divider from '@mui/material/Divider';
 import { usePathname } from 'next/navigation';
@@ -36,7 +37,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
           component={Link}
         >
           <ListItemIcon>
-            <GradingIcon />
+            <PlaylistAddCheckIcon />
           </ListItemIcon>
           <ListItemText primary="Verify Reviews" />
         </ListItemButton>
@@ -118,6 +119,14 @@ const Profile = () => {
       </div>
       <List className="profile-popover-links">
         <ListItem>
+          <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <EventNoteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Go to Scheduler" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
           <ListItemButton
             className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
             href="/reviews"
@@ -125,7 +134,7 @@ const Profile = () => {
             component={Link}
           >
             <ListItemIcon>
-              <StickyNote2OutlinedIcon />
+              <RateReviewIcon />
             </ListItemIcon>
             <ListItemText primary="Your Reviews" />
           </ListItemButton>

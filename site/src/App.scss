@@ -8,7 +8,6 @@
 .app-body {
   display: flex;
   height: calc(100% - 72px);
-  margin-left: 64px;
   overflow: hidden;
 }
 
@@ -17,6 +16,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  margin-left: 64px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--background);
@@ -25,6 +25,12 @@
   .main-wrapper {
     position: relative;
     @include globals.outer-padding();
+  }
+}
+
+@media (max-width: globals.$mobile-cutoff) {
+  .app-content {
+    margin-left: 0;
   }
 }
 

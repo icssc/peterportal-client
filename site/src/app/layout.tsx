@@ -52,8 +52,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AppProvider user={user}>
           <div id="root">
             <AppHeader />
-            <SideNav />
             <div className="app-body">
+              <SideNav />
               <div className="app-content">{children}</div>
               <ChangelogModal />
             </div>
