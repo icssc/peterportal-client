@@ -22,6 +22,14 @@
   border: none;
 }
 
+svg.profile-menu {
+  path {
+    height: 1em;
+    width: 1em;
+    padding-left: 4px;
+  }
+}
+
 .profile-popover {
   .MuiPaper-root {
     border-radius: var(--border-radius);

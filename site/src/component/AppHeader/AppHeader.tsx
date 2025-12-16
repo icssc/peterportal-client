@@ -9,7 +9,6 @@ import SearchModule from '../SearchModule/SearchModule';
 
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
-import HomeIcon from '@mui/icons-material/Home';
 import { IconButton } from '@mui/material';
 
 import Link from 'next/link';
@@ -36,7 +35,7 @@ const AppHeader: FC = () => {
         <div className="navbar-nav">
           <div className="navbar-left">
             <IconButton onClick={closeFullscreenSearch}>
-              <ArrowLeftIcon />
+              <ArrowLeftIcon sx={{ color: '#FFFFFF' }} />
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
@@ -54,19 +53,13 @@ const AppHeader: FC = () => {
           <Link href="/">
             <Logo />
           </Link>
-          {/* Search */}
-          {isMobile && isRoadmapPage && (
-            <IconButton onClick={showFullscreenSearch}>
-              <SearchIcon />
-            </IconButton>
-          )}
-          {!isRoadmapPage && (
-            <IconButton component={Link} href="/">
-              <HomeIcon />
-            </IconButton>
-          )}
         </div>
-
+        {/* Search */}
+        {isMobile && isRoadmapPage && (
+          <IconButton onClick={showFullscreenSearch}>
+            <SearchIcon sx={{ color: '#FFFFFF' }} />
+          </IconButton>
+        )}
         <Profile />
       </div>
     </header>
