@@ -16,6 +16,8 @@ import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
 
+import SaveButton from './SaveButton';
+
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
@@ -55,10 +57,15 @@ const AppHeader: FC = () => {
           </Link>
         </div>
         {/* Search */}
-        {isMobile && isRoadmapPage && (
-          <IconButton onClick={showFullscreenSearch}>
-            <SearchIcon sx={{ color: '#FFFFFF' }} />
-          </IconButton>
+        {isRoadmapPage && (
+          <>
+            <SaveButton />
+            {isMobile && (
+              <IconButton onClick={showFullscreenSearch}>
+                <SearchIcon sx={{ color: '#FFFFFF' }} />
+              </IconButton>
+            )}
+          </>
         )}
         <Profile />
       </div>
