@@ -1,5 +1,5 @@
 import Image, { type StaticImageData } from 'next/image';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { useIsMobile } from '../../helpers/util';
 
 import DefaultLogo from '../../asset/logo.svg';
 import MobileDefaultLogo from '../../asset/mobile-logo.svg';
@@ -79,16 +79,13 @@ function isCurrentSeason(logo: Logo) {
 }
 
 export function Logo() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useIsMobile();
 
   const currentLogo = logos.find(isCurrentSeason) ?? defaultLogo;
 
   return (
     <Image
       src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
-      height={64}
-      width={340}
       alt="logo"
       title={currentLogo?.attribution}
       style={{
