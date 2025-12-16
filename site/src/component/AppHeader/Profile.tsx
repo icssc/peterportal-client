@@ -148,7 +148,7 @@ const Profile = () => {
     <div className="navbar-profile">
       <button className="profile-button" onClick={handleClick}>
         <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
-        <ExpandMoreIcon />
+        <ExpandMoreIcon className="profile-chevron" sx={{ color: '#FFFFFF' }} />
       </button>
       <Popover
         className="profile-popover"
