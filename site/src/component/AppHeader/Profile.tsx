@@ -19,6 +19,7 @@ import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme } from '@peterportal/types';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface AdminProfileLinksProps {
   pathname: string | null;
@@ -146,7 +147,8 @@ const Profile = () => {
   return (
     <div className="navbar-profile">
       <button className="profile-button" onClick={handleClick}>
-        <Image src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
+        <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
+        <ExpandMoreIcon />
       </button>
       <Popover
         className="profile-popover"

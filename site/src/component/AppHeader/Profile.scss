@@ -1,10 +1,6 @@
-.navbar-profile {
-  height: 70%;
-}
-
 .navbar-profile-pic {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 100%;
   white-space: normal;
   color: inherit !important; // overwrite next.js default color for alt text
@@ -15,9 +11,22 @@
 }
 
 .profile-button {
-  background: none;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 72px;
+  gap: 4px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 24px;
+  background-color: rgba(255, 255, 255, 0.2);
   border: none;
-  height: 100%;
+}
+
+.profile-chevron {
+  width: 24px;
+  height: 24px;
+
+  opacity: 0.9;
 }
 
 .profile-popover {
