@@ -1,10 +1,8 @@
 'use client';
 import { FC } from 'react';
 
-import Logo from '../../asset/peterportal-banner-logo.svg';
-import Image from 'next/image';
 import './AppHeader.scss';
-
+import { Logo } from './Logo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
@@ -52,6 +50,10 @@ const AppHeader: FC = () => {
     <header className="navbar">
       <div className="navbar-nav">
         <div className="navbar-left">
+          {/* Logo */}
+          <Link href="/">
+            <Logo />
+          </Link>
           {/* Search */}
           {isMobile && isRoadmapPage && (
             <IconButton onClick={showFullscreenSearch}>
@@ -63,13 +65,6 @@ const AppHeader: FC = () => {
               <HomeIcon />
             </IconButton>
           )}
-        </div>
-
-        {/* Logo */}
-        <div className="navbar-logo">
-          <Link href="/">
-            <Image alt="PeterPortal" id="peterportal-logo" src={Logo} />
-          </Link>
         </div>
 
         <Profile />
