@@ -2,7 +2,7 @@
 
 .add-course-modal {
   @include globals.bottom-overlay(500);
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
 
   &:is(.enter, .enter-done) + .ui-overlay {
     opacity: 1;
@@ -54,6 +54,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
   }
 }
