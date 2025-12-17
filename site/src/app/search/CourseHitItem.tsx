@@ -45,26 +45,31 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
       <div className="course-hit-id">
         <div>
           <p className="hit-name">
-            {props.department} {props.courseNumber} • {props.title}
+            {props.department} {props.courseNumber}
           </p>
+          <IconButton onClick={toggleSaveCourse} size="small">
+            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </IconButton>
+        </div>
+      </div>
+
+      <div>
+        <p className="description">
+          <b>{props.title}: </b>
+          {props.description}
+        </p>
+        <div className="hit-previous-terms">
+          <b>Past Offerings: </b>
           <div className="hit-tooltip">
             <RecentOfferingsTooltip terms={props.terms} />
           </div>
         </div>
-        <p className="hit-subtitle">{props.school}</p>
-      </div>
-
-      <div>
-        <p className="description">{props.description}</p>
         <div className="hit-lower">
           <div className="hit-badges">
             {pillData.map((pill, i) => (
               <Chip key={`course-hit-item-pill-${i}`} color="primary" size="small" label={pill} />
             ))}
           </div>
-          <IconButton onClick={toggleSaveCourse} size="small">
-            {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-          </IconButton>
         </div>
       </div>
     </div>
