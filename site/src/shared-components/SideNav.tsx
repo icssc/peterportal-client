@@ -16,7 +16,7 @@ const SideNav = () => {
     position: 'fixed',
     top: 0,
     left: 0,
-    borderRight: '1px solid #60616680',
+    borderRight: '1px solid var(--mui-palette-divider)',
     borderRadius: 0,
   };
 
