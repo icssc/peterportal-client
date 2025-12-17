@@ -26,10 +26,8 @@
     position: relative;
     @include globals.outer-padding();
   }
-}
 
-@media (max-width: globals.$mobile-cutoff) {
-  .app-content {
+  @media (max-width: globals.$mobile-cutoff) {
     margin-left: 0;
   }
 }
