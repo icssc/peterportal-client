@@ -59,7 +59,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           {props.description}
         </p>
         <div className="hit-previous-terms">
-          <b>Past Offerings: </b>
+          <b>Past Offerings:</b>
           <div className="hit-tooltip">
             <RecentOfferingsTooltip terms={props.terms} />
           </div>
