@@ -12,6 +12,7 @@ import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
 import { Roboto } from 'next/font/google';
+import SideNav from '../shared-components/SideNav';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div id="root">
             <AppHeader />
             <div className="app-body">
+              <SideNav />
               <div className="app-content">{children}</div>
               <ChangelogModal />
             </div>
