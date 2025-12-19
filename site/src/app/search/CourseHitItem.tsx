@@ -64,12 +64,10 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
             <RecentOfferingsTooltip terms={props.terms} />
           </div>
         </div>
-        <div className="hit-lower">
-          <div className="hit-badges">
-            {pillData.map((pill, i) => (
-              <Chip key={`course-hit-item-pill-${i}`} color="primary" size="small" label={pill} />
-            ))}
-          </div>
+        <div className="hit-badges">
+          {pillData.map((pill, i) => (
+            <Chip key={`course-hit-item-pill-${i}`} color="primary" size="small" label={pill} />
+          ))}
         </div>
       </div>
     </div>

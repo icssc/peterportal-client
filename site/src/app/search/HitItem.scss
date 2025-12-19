@@ -11,6 +11,12 @@
 
   p.description {
     margin: 0px 0px 8px 0px;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hit-name {
@@ -28,6 +34,10 @@
 
   .hit-badges {
     display: flex;
+    // height: 24px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
   }
 }
@@ -73,12 +83,4 @@
     font-weight: bold;
     color: white;
   }
-}
-
-.hit-lower {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 24px;
 }
