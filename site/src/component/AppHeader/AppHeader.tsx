@@ -33,7 +33,7 @@ const AppHeader: FC = () => {
 
   if (isMobile && isShowFullscreenSearch && isRoadmapPage)
     return (
-      <header className="navbar">
+      <header className="navbar mobile">
         <div className="navbar-nav">
           <div className="navbar-left">
             <IconButton onClick={closeFullscreenSearch}>
@@ -48,7 +48,7 @@ const AppHeader: FC = () => {
     );
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${isMobile ? 'mobile' : 'desktop'}`}>
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Logo */}

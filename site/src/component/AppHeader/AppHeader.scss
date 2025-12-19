@@ -14,16 +14,25 @@
 .navbar {
   position: sticky;
   z-index: 300;
-  width: 100%;
   height: 52px;
-  background-color: var(--mui-palette-primary-main);
-  padding-right: 17px;
+  padding-right: 14px;
   padding-left: 8px;
+  background-color: var(--mui-palette-primary-main);
   display: flex;
   top: 0;
   font-size: 14px;
 
   box-shadow: none;
+
+  &.desktop {
+    left: 64px;
+    width: calc(100% - 64px);
+  }
+
+  &.mobile {
+    left: 0;
+    width: 100%;
+  }
 
   .navbar-nav {
     margin: auto;
