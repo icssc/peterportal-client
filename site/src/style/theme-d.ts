@@ -46,6 +46,14 @@ declare module '@mui/material/styles' {
     reviews?: Partial<ColorScale>;
     chart?: Partial<ChartColorScale>;
   }
+
+  interface Shape {
+    borderRadiusLg: number;
+  }
+
+  interface ShapeOptions {
+    borderRadiusLg?: number;
+  }
 }
 
 declare module '@mui/material/Button' {

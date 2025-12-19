@@ -39,7 +39,7 @@
   }
 
   .prerequisite-line {
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
     margin-top: 4px;
 
     .icon {
@@ -48,10 +48,10 @@
       transform-origin: 100% 0;
     }
     .icon-complete {
-      color: var(--green-primary);
+      color: var(--mui-palette-success-main);
     }
     .icon-incomplete {
-      color: var(--red-primary);
+      color: var(--mui-palette-error-main);
     }
   }
 
