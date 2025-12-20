@@ -10,6 +10,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   /** @todo make recent courses only the ones taught within the last 5 years */
   const courses = Object.values(professor.courses);
+  const hasCourses = courses.length > 0;
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -28,22 +29,29 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
       </p>
       <p className="recent-courses">
         <b>Recently Taught:</b>{' '}
-        {addDelimiter(
-          courses.slice(0, 10).map((c) => {
-            const handleLinkClick = (event: React.MouseEvent) => {
-              event.preventDefault();
-              dispatch(setPreviewedCourse(c.id));
-            };
-
-            return (
-              <a key={c.id} href={`/course/${c.id}`} className="course-link" onClick={handleLinkClick}>
-                {c.department} {c.courseNumber}
-              </a>
-            );
-          }),
-          ', ',
-        )}{' '}
-        {courses.length > 10 && ` + ${courses.length - 10} more...`}
+        {hasCourses ? (
+          <>
+            {addDelimiter(
+              courses.slice(0, 10).map((c) => (
+                <a
+                  key={c.id}
+                  href={`/course/${c.id}`}
+                  className="course-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(setPreviewedCourse(c.id));
+                  }}
+                >
+                  {c.department} {c.courseNumber}
+                </a>
+              )),
+              ', ',
+            )}
+            {courses.length > 10 && ` + ${courses.length - 10} more...`}
+          </>
+        ) : (
+          <span className="no-courses">No recent courses</span>
+        )}
       </p>
     </div>
   );
