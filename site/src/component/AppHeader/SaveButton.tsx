@@ -16,11 +16,10 @@ const SaveButton: FC = () => {
   return (
     <Button
       variant="text"
-      size="medium"
+      size="small"
       startIcon={<SaveIcon />}
       loading={saveInProgress}
       onClick={handleSave}
-      sx={{ fontSize: '12.25px', height: '32px' }}
       color="inherit"
     >
       Save
