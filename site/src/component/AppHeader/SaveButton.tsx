@@ -20,7 +20,7 @@ const SaveButton: FC = () => {
       startIcon={<SaveIcon />}
       loading={saveInProgress}
       onClick={handleSave}
-      sx={{ color: '#FFFFFF', fontSize: '12px' }}
+      sx={{ fontSize: '12.25px', height: '32px' }}
       color="inherit"
     >
       Save

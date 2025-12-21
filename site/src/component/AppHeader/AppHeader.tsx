@@ -36,8 +36,8 @@ const AppHeader: FC = () => {
       <header className="navbar mobile">
         <div className="navbar-nav">
           <div className="navbar-left">
-            <IconButton onClick={closeFullscreenSearch}>
-              <ArrowLeftIcon sx={{ color: '#FFFFFF' }} />
+            <IconButton onClick={closeFullscreenSearch} color="inherit">
+              <ArrowLeftIcon />
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
@@ -61,8 +61,8 @@ const AppHeader: FC = () => {
           <>
             <SaveButton />
             {isMobile && (
-              <IconButton onClick={showFullscreenSearch}>
-                <SearchIcon sx={{ color: '#FFFFFF' }} />
+              <IconButton onClick={showFullscreenSearch} color="inherit">
+                <SearchIcon />
               </IconButton>
             )}
           </>
