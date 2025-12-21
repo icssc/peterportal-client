@@ -2,7 +2,7 @@
 import { FC } from 'react';
 
 import './AppHeader.scss';
-import { Logo } from './Logo';
+import { Logo } from '../../shared-components/Logo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';

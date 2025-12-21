@@ -1,17 +1,17 @@
 import Image, { type StaticImageData } from 'next/image';
-import { useIsMobile } from '../../helpers/util';
+import { useIsMobile } from '../helpers/util';
 
-import DefaultLogo from '../../asset/logo.svg';
-import MobileDefaultLogo from '../../asset/mobile-logo.svg';
+import DefaultLogo from '../asset/logo.svg';
+import MobileDefaultLogo from '../asset/mobile-logo.svg';
 
-import ChristmasLogo from '../../asset/christmas-logo.png';
-import MobileChristmasLogo from '../../asset/christmas-mobile-logo.png';
+import ChristmasLogo from '../asset/christmas-logo.png';
+import MobileChristmasLogo from '../asset/christmas-mobile-logo.png';
 
-import ThanksgivingLogo from '../../asset/thanksgiving-logo.png';
-import MobileThanksgivingLogo from '../../asset/thanksgiving-mobile-logo.png';
+import ThanksgivingLogo from '../asset/thanksgiving-logo.png';
+import MobileThanksgivingLogo from '../asset/thanksgiving-mobile-logo.png';
 
-import HalloweenLogo from '../../asset/halloween-logo.png';
-import MobileHalloweenLogo from '../../asset/halloween-mobile-logo.png';
+import HalloweenLogo from '../asset/halloween-logo.png';
+import MobileHalloweenLogo from '../asset/halloween-mobile-logo.png';
 
 type Logo = {
   name: string;
