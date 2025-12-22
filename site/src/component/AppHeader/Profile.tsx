@@ -163,23 +163,17 @@ const Profile = () => {
 
   return (
     <div className="navbar-profile">
-      <button className="profile-button" onClick={handleClick}>
+      <Button className="profile-button" onClick={handleClick} variant="text" color="inherit">
         <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
         <MenuIcon className="profile-menu" />
-      </button>
+      </Button>
       <Popover
         className="profile-popover"
         open={open}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         {profilePopoverContent}
       </Popover>

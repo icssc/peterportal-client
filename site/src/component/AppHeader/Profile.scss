@@ -10,7 +10,8 @@
   }
 }
 
-.profile-button {
+// selector requires specificity higher than just a class
+body .profile-button {
   display: flex;
   align-items: center;
   height: 40px;
