@@ -81,11 +81,15 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <a href={`/api/users/auth/google`} className="login-button">
-        <Button variant="text" size="small" startIcon={<AccountCircleIcon />} color="inherit">
-          Sign In
-        </Button>
-      </a>
+      <Button
+        variant="text"
+        size="small"
+        startIcon={<AccountCircleIcon />}
+        color="inherit"
+        href="/api/users/auth/google"
+      >
+        Sign In
+      </Button>
     );
   }
 
