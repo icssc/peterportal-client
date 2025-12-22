@@ -2,7 +2,7 @@ import { createTheme, PaletteOptions } from '@mui/material';
 
 const sharedTokens = {
   primary: {
-    main: '#2484c6',
+    main: '#305db7',
   },
   accent: {
     main: '#74d1f6',

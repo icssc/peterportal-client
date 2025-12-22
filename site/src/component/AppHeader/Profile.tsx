@@ -6,7 +6,7 @@ import './Profile.scss';
 
 import Link from 'next/link';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -20,6 +20,7 @@ import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme } from '@peterportal/types';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useIsMobile } from '../../helpers/util';
 
 interface AdminProfileLinksProps {
@@ -81,8 +82,8 @@ const Profile = () => {
   if (!user) {
     return (
       <a href={`/api/users/auth/google`} className="login-button">
-        <Button startIcon={<ExitToAppIcon />} color="inherit">
-          Log In
+        <Button variant="text" size="small" startIcon={<AccountCircleIcon />} color="inherit">
+          Sign In
         </Button>
       </a>
     );
@@ -159,7 +160,8 @@ const Profile = () => {
   return (
     <div className="navbar-profile">
       <button className="profile-button" onClick={handleClick}>
-        <Image src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
+        <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
+        <MenuIcon className="profile-menu" />
       </button>
       <Popover
         className="profile-popover"
