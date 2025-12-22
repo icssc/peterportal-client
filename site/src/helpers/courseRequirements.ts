@@ -67,7 +67,7 @@ export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
 
   themeCopy.colors.primary = getCssVariable('--mui-palette-primary-main'); // box border
   themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
-  themeCopy.colors.primary25 = getCssVariable('--mui-palette-tertiary-main'); // hover
+  themeCopy.colors.primary25 = getCssVariable('--mui-palette-secondary-main'); // hover
 
   if (darkMode) {
     const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];

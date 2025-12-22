@@ -1,12 +1,9 @@
 import { createTheme, PaletteOptions } from '@mui/material';
 
+export const DODGER_BLUE = '#1e90ff';
+export const BLUE = '#305db7';
+
 const sharedTokens = {
-  primary: {
-    main: '#305db7',
-  },
-  accent: {
-    main: '#74d1f6',
-  },
   misc: {
     midGray: '#8d8d8d',
   },
@@ -27,11 +24,11 @@ const sharedTokens = {
 const lightPalette: PaletteOptions = {
   mode: 'light',
   ...sharedTokens,
+  primary: {
+    main: '#5191d6',
+  },
   secondary: {
     main: '#5babe1',
-  },
-  tertiary: {
-    main: '#a0ceee',
   },
   overlay: {
     overlay1: '#fff',
@@ -57,11 +54,11 @@ const lightPalette: PaletteOptions = {
 const darkPalette: PaletteOptions = {
   mode: 'dark',
   ...sharedTokens,
+  primary: {
+    main: DODGER_BLUE,
+  },
   secondary: {
     main: '#185680',
-  },
-  tertiary: {
-    main: '#0b293c',
   },
   overlay: {
     overlay1: '#1e1e1e',
@@ -134,6 +131,24 @@ theme = createTheme(theme, {
       defaultProps: {
         variant: 'contained',
         disableElevation: true,
+      },
+      styleOverrides: {
+        root: ({ ownerState }) => ({
+          ...(ownerState.variant === 'contained' &&
+            ownerState.color === 'primary' && {
+              backgroundColor: BLUE,
+              ':hover': {
+                backgroundColor: '#003A75',
+              },
+            }),
+          ...(ownerState.variant === 'contained' &&
+            ownerState.color === 'secondary' && {
+              backgroundColor: '#E0E0E0',
+              ':hover': {
+                backgroundColor: '#D5D5D5',
+              },
+            }),
+        }),
       },
     },
     MuiCheckbox: {
@@ -211,7 +226,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           "[data-theme='dark'] &.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: 'var(--mui-palette-accent-main)',
+            borderColor: 'var(--mui-palette-primary-main)',
           },
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
