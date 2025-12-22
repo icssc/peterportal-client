@@ -1,9 +1,10 @@
 .hit-item {
   border-radius: var(--mui-shape-borderRadiusLg);
   background-color: var(--mui-palette-overlay-overlay1);
-  padding: 20px 24px;
+  padding: 12px 16px;
   margin-bottom: 2vh;
   cursor: pointer;
+  font-size: 14px;
 
   a {
     color: var(--mui-palette-text-primary);
@@ -12,16 +13,16 @@
   p.description {
     margin: 0px 0px 8px 0px;
     display: -webkit-box;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
+    line-clamp: 4;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .hit-name {
-    font-size: 22px;
-    margin-block: 0 4px;
+    margin: 0;
+    font-size: 20px;
     font-weight: bold;
     line-height: 1.25;
   }
@@ -29,7 +30,7 @@
   .hit-previous-terms {
     display: flex;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .hit-badges {
