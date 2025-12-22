@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
+import { Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
@@ -19,15 +19,52 @@ import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
-import { Theme } from '@peterportal/types';
+import { Theme, User } from '@peterportal/types';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useIsMobile } from '../../helpers/util';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+
+interface UserProp {
+  user?: Omit<User, 'id'> | null;
+}
+
+interface ProfileMenuButtonsProps extends UserProp {
+  handleOpen: (event: React.MouseEvent<HTMLElement>) => void;
+}
+const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) => {
+  if (!user) {
+    return (
+      <>
+        <Button
+          variant="text"
+          size="small"
+          startIcon={<AccountCircleIcon />}
+          color="inherit"
+          href="/api/users/auth/google"
+        >
+          Sign In
+        </Button>
+        <IconButton onClick={handleOpen} color="inherit">
+          <MenuIcon />
+        </IconButton>
+      </>
+    );
+  }
+
+  const { name, picture } = user;
+
+  return (
+    <Button className="profile-button" onClick={handleOpen} variant="text" color="inherit">
+      <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
+      <MenuIcon />
+    </Button>
+  );
+};
 
 interface AdminProfileLinksProps {
   pathname: string | null;
   onClose: () => void;
 }
-
 const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
   return (
     <>
@@ -61,39 +98,94 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
   );
 };
 
+interface ProfileMenuLinksProps {
+  handleLinkClick: () => void;
+}
+const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
+  const pathname = usePathname();
+  const isAdmin = useAppSelector((state) => state.user.isAdmin);
+  const isMobile = useIsMobile();
+  const isLoggedIn = useIsLoggedIn();
+
+  return (
+    <List className="profile-popover-links">
+      {isMobile && (
+        <ListItem>
+          <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <EventNoteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Go to Scheduler" />
+          </ListItemButton>
+        </ListItem>
+      )}
+      {isLoggedIn ? (
+        <>
+          <ListItem>
+            <ListItemButton
+              className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
+              href="/reviews"
+              onClick={handleLinkClick}
+              component={Link}
+            >
+              <ListItemIcon>
+                <RateReviewIcon />
+              </ListItemIcon>
+              <ListItemText primary="Your Reviews" />
+            </ListItemButton>
+          </ListItem>
+          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
+          <ListItem>
+            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover-link" component="a">
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Log Out" />
+            </ListItemButton>
+          </ListItem>
+        </>
+      ) : (
+        <ListItem>
+          <ListItemButton href={'/api/users/auth/google'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign In" />
+          </ListItemButton>
+        </ListItem>
+      )}
+    </List>
+  );
+};
+
+const UserInformation: FC<UserProp> = ({ user }) => {
+  if (!user) return null;
+
+  const { name, email, picture } = user;
+
+  return (
+    <div className="profile-popover-header">
+      <Image src={picture} alt={name} width="50" height="50" />
+      <div>
+        <h1 title={name}>{name}</h1>
+        <h2 title={email}>{email}</h2>
+      </div>
+    </div>
+  );
+};
+
 const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const pathname = usePathname();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = Boolean(anchorEl);
+  const open = !!anchorEl;
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (open) {
-      setAnchorEl(null);
-    } else {
-      setAnchorEl(event.currentTarget);
-    }
+  const handleClose = () => setAnchorEl(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const user = useAppSelector((state) => state.user.user);
-  const isAdmin = useAppSelector((state) => state.user.isAdmin);
-  const isMobile = useIsMobile();
-
-  if (!user) {
-    return (
-      <Button
-        variant="text"
-        size="small"
-        startIcon={<AccountCircleIcon />}
-        color="inherit"
-        href="/api/users/auth/google"
-      >
-        Sign In
-      </Button>
-    );
-  }
-
-  const { name, email, picture } = user;
 
   const themeTabs: TabOption[] = [
     { value: 'light', label: 'Light', icon: <LightModeIcon /> },
@@ -110,72 +202,26 @@ const Profile = () => {
     setTheme(tab as Theme);
   };
 
-  const profilePopoverContent = (
-    <div>
-      <div className="profile-popover-header">
-        <Image src={picture} alt={name} width="50" height="50" />
-        <div>
-          <h1 title={name}>{name}</h1>
-          <h2 title={email}>{email}</h2>
-        </div>
-      </div>
-      <div className="profile-popover-theme-selector">
-        <h4>Theme</h4>
-        <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-        <Divider />
-      </div>
-      <List className="profile-popover-links">
-        {isMobile && (
-          <ListItem>
-            <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
-              <ListItemIcon>
-                <EventNoteIcon />
-              </ListItemIcon>
-              <ListItemText primary="Go to Scheduler" />
-            </ListItemButton>
-          </ListItem>
-        )}
-        <ListItem>
-          <ListItemButton
-            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
-            href="/reviews"
-            onClick={() => setAnchorEl(null)}
-            component={Link}
-          >
-            <ListItemIcon>
-              <RateReviewIcon />
-            </ListItemIcon>
-            <ListItemText primary="Your Reviews" />
-          </ListItemButton>
-        </ListItem>
-        {isAdmin && <AdminProfileLinks pathname={pathname} onClose={() => setAnchorEl(null)} />}
-        <ListItem>
-          <ListItemButton href={'/api/users/auth/logout'} className="profile-popover-link" component="a">
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="Log Out" />
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </div>
-  );
-
   return (
     <div className="navbar-profile">
-      <Button className="profile-button" onClick={handleClick} variant="text" color="inherit">
-        <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
-        <MenuIcon className="profile-menu" />
-      </Button>
+      <ProfileMenuButtons user={user} handleOpen={handleOpen} />
       <Popover
         className="profile-popover"
         open={open}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        {profilePopoverContent}
+        <div>
+          <UserInformation user={user} />
+          <div className="profile-popover-theme-selector">
+            <h4>Theme</h4>
+            <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
+            <Divider />
+          </div>
+          <ProfileMenuLinks handleLinkClick={handleClose} />
+        </div>
       </Popover>
     </div>
   );
