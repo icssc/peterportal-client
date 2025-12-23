@@ -15,8 +15,7 @@
   position: sticky;
   z-index: 300;
   height: 52px;
-  padding-right: 14px;
-  padding-left: 8px;
+  padding-inline: 8px;
   color: white;
   background-color: var(--mui-palette-primary-main);
   display: flex;
@@ -43,6 +42,7 @@
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
+    gap: 4px;
 
     .navbar-left {
       display: flex;
