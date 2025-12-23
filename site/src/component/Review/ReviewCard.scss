@@ -2,15 +2,15 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background-color: var(--overlay2);
+  background-color: var(--mui-palette-overlay-overlay2);
   padding: 16px 20px;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 14px;
 
   &.MuiCard-root {
-    border-radius: var(--border-radius);
-    background-color: var(--overlay1);
+    border-radius: var(--mui-shape-borderRadiusLg);
+    background-color: var(--mui-palette-overlay-overlay1);
   }
 }
 
@@ -25,7 +25,7 @@
     font-size: 20px;
     margin: 0;
     a {
-      color: var(--text);
+      color: var(--mui-palette-text-primary);
     }
     word-break: break-word;
   }
@@ -55,7 +55,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: auto;
-  color: var(--text-secondary);
+  color: var(--mui-palette-text-secondary);
 }
 
 // Rating boxes (quality and difficulty)
@@ -67,7 +67,7 @@
   gap: 10px;
 
   .rating {
-    border-radius: var(--border-radius);
+    border-radius: var(--mui-shape-borderRadiusLg);
     width: 72px;
     height: 72px;
     display: flex;
@@ -88,19 +88,19 @@
   // color scheme for numerical ratings
   // reversed for difficulty so 1 => r5, etc.
   .r1 {
-    background-color: var(--review-red);
+    background-color: var(--mui-palette-reviews-red);
   }
   .r2 {
-    background-color: var(--review-orange);
+    background-color: var(--mui-palette-reviews-orange);
   }
   .r3 {
-    background-color: var(--review-yellow);
+    background-color: var(--mui-palette-reviews-yellow);
   }
   .r4 {
-    background-color: var(--review-green);
+    background-color: var(--mui-palette-reviews-green);
   }
   .r5 {
-    background-color: var(--review-blue);
+    background-color: var(--mui-palette-reviews-blue);
   }
 }
 
@@ -113,7 +113,7 @@
 
   .author-bottom {
     font-size: 13px;
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
   }
 
   .review-content {
@@ -140,7 +140,7 @@
   }
 
   span.edit-time {
-    color: var(--mid-gray);
+    color: var(--mui-palette-misc-midGray);
     white-space: nowrap;
   }
 
@@ -211,10 +211,10 @@
     font-size: 20px;
   }
   .colored-upvote {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
   }
   .colored-downvote {
-    color: var(--red-primary);
+    color: var(--mui-palette-error-main);
   }
 }
 
@@ -225,7 +225,7 @@
   padding: 0;
 }
 .add-report-button:hover {
-  color: var(--text);
+  color: var(--mui-palette-text-primary);
 }
 
 // screen width is less than or equal to 599px

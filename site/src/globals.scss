@@ -1,44 +1,10 @@
 :root {
-  --background: var(--mui-palette-background-default);
-  --overlay1: var(--mui-palette-overlay-overlay1);
-  --overlay2: var(--mui-palette-overlay-overlay2);
-  --overlay3: var(--mui-palette-overlay-overlay3);
-  --text: var(--mui-palette-text-primary);
-  --text-secondary: var(--mui-palette-text-secondary);
-
-  --blue-primary: var(--mui-palette-primary-main);
-  --blue-secondary: var(--mui-palette-secondary-main);
-  --blue-tertiary: var(--mui-palette-tertiary-main);
-  --blue-accent: var(--mui-palette-accent-main);
-
-  --green-primary: var(--mui-palette-success-main);
-  --red-primary: var(--mui-palette-error-main);
-
-  --mid-gray: var(--mui-palette-misc-midGray);
-
-  --review-blue: var(--mui-palette-reviews-blue);
-  --review-green: var(--mui-palette-reviews-green);
-  --review-red: var(--mui-palette-reviews-red);
-  --review-yellow: var(--mui-palette-reviews-yellow);
-  --review-orange: var(--mui-palette-reviews-orange);
-
-  --chart-blue: var(--mui-palette-chart-blue);
-  --chart-green: var(--mui-palette-chart-green);
-  --chart-yellow: var(--mui-palette-chart-yellow);
-  --chart-red: var(--mui-palette-chart-red);
-  --chart-orange: var(--mui-palette-chart-orange);
-
-  --gradedist-p: var(--mui-palette-chart-pass);
-  --gradedist-np: var(--mui-palette-chart-noPass);
-
-  --border-radius: 8px;
   --border-primary: rgba(96, 97, 102, 0.5);
   --border-secondary: rgba(0, 0, 0, 0.12);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-
   --border-secondary: rgba(255, 255, 255, 0.12);
 }
 
@@ -95,7 +61,7 @@ $mui-transition-time: 268ms;
   bottom: 0;
   left: 0;
   height: 40px;
-  background-color: var(--blue-primary);
+  background-color: var(--mui-palette-primary-main);
   width: 100%;
   border: none;
   appearance: none;
