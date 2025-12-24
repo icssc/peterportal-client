@@ -6,6 +6,8 @@ import { setPageNumber } from '../../store/slices/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { NUM_RESULTS_PER_PAGE } from '../../helpers/constants';
 
+// charlie @todo remove this in favor of infinite scroll
+
 /* SearchPagination is the page buttons at the bottom of the search results */
 const SearchPagination: FC = () => {
   const dispatch = useAppDispatch();
