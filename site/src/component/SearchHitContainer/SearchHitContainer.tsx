@@ -4,16 +4,12 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { setPageNumber } from '../../store/slices/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useSearchTrigger } from '../../hooks/search';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 
-// import SearchPagination from '../SearchPagination/SearchPagination';
 import NoResults from '../NoResults/NoResults';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import CourseHitItem from '../../app/search/CourseHitItem';
 import ProfessorHitItem from '../../app/search/ProfessorHitItem';
-
-// charlie @todo make sure this works w/ infinite scroll
 
 const SearchResults: FC = () => {
   const dispatch = useAppDispatch();
@@ -21,9 +17,8 @@ const SearchResults: FC = () => {
   const results = useAppSelector((state) => state.search[viewIndex].results);
   const pageNumber = useAppSelector((state) => state.search[viewIndex].pageNumber);
 
-  const useFetchMore = () => {
+  const updatePageNumber = () => {
     dispatch(setPageNumber(pageNumber + 1));
-    useSearchTrigger();
   };
 
   return (
@@ -31,7 +26,7 @@ const SearchResults: FC = () => {
       <p>Number of results: {results.length}</p>
       <InfiniteScroll
         dataLength={results.length}
-        next={useFetchMore}
+        next={updatePageNumber}
         hasMore={true} // charlie @todo update this to not always be true
         loader={<LoadingSpinner />}
         scrollableTarget="scrollContainer"
@@ -65,12 +60,7 @@ const SearchHitContainer: FC = () => {
           prompt={`Start typing in the search bar to search for courses or instructors...`}
         />
       )}
-      {query && results.length > 0 && (
-        <>
-          <SearchResults />
-          {/* <SearchPagination /> */}
-        </>
-      )}
+      {query && results.length > 0 && <SearchResults />}
     </div>
   );
 };

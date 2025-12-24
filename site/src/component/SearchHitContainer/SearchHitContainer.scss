@@ -16,10 +16,3 @@
 .search-module:not(:has(.filter-group)) ~ .search-hit-container {
   padding-top: 96px;
 }
-
-.search-pagination {
-  display: flex;
-  justify-content: center;
-}
-
-// charlie @todo update/remove this, according to inf scroll
