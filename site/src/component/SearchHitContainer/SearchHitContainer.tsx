@@ -14,30 +14,26 @@ import ProfessorHitItem from '../../app/search/ProfessorHitItem';
 const SearchResults: FC = () => {
   const dispatch = useAppDispatch();
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
-  const results = useAppSelector((state) => state.search[viewIndex].results);
-  const pageNumber = useAppSelector((state) => state.search[viewIndex].pageNumber);
+  const { results, pageNumber } = useAppSelector((state) => state.search[viewIndex]);
 
   const updatePageNumber = () => {
     dispatch(setPageNumber(pageNumber + 1));
   };
 
   return (
-    <>
-      <p>Number of results: {results.length}</p>
-      <InfiniteScroll
-        dataLength={results.length}
-        next={updatePageNumber}
-        hasMore={true} // charlie @todo update this to not always be true
-        loader={<LoadingSpinner />}
-        scrollableTarget="scrollContainer"
-      >
-        {viewIndex === 'courses'
-          ? (results as CourseGQLData[]).map((course) => <CourseHitItem key={course.id} {...course} />)
-          : (results as ProfessorGQLData[]).map((professor) => (
-              <ProfessorHitItem key={professor.ucinetid} {...professor} />
-            ))}
-      </InfiniteScroll>
-    </>
+    <InfiniteScroll
+      dataLength={results.length}
+      next={updatePageNumber}
+      hasMore={true} // charlie @todo update this to not always be true
+      loader={<LoadingSpinner />}
+      scrollableTarget="mobileScrollContainer"
+    >
+      {viewIndex === 'courses'
+        ? (results as CourseGQLData[]).map((course) => <CourseHitItem key={course.id} {...course} />)
+        : (results as ProfessorGQLData[]).map((professor) => (
+            <ProfessorHitItem key={professor.ucinetid} {...professor} />
+          ))}
+    </InfiniteScroll>
   );
 };
 

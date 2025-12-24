@@ -42,7 +42,6 @@ const AppHeader: FC = () => {
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
-            {/* charlie @todo check if this is affected by sidebar infinite scroll (since SearchModule uses useSearchTrigger) */}
             <SearchModule />
           </div>
         </div>
