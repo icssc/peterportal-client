@@ -43,7 +43,7 @@ const AppHeader: FC = () => {
           </div>
           <div className="fullscreen-search-row">
             {/* charlie @todo check if this is affected by sidebar infinite scroll (since SearchModule uses useSearchTrigger) */}
-            <SearchModule index="courses" />
+            <SearchModule />
           </div>
         </div>
       </header>
