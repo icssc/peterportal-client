@@ -2,6 +2,7 @@
 import { FC } from 'react';
 import './HitItem.scss';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
+import { CourseDescription } from '../../component/CourseInfo/CourseInfo';
 
 import { useAppDispatch } from '../../store/hooks';
 import { CourseGQLData } from '../../types/types';
@@ -54,10 +55,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
       </div>
 
       <div>
-        <p className="description">
-          <b>{props.title}: </b>
-          {props.description}
-        </p>
+        <CourseDescription course={props} clampDescription={4} />
         <div className="hit-previous-terms">
           <b>Past Offerings:</b>
           <div className="hit-tooltip">

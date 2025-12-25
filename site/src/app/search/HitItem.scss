@@ -10,14 +10,8 @@
     color: var(--mui-palette-text-primary);
   }
 
-  p.description {
-    margin: 0px 0px 8px 0px;
-    display: -webkit-box;
-    line-clamp: 4;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .course-description {
+    margin: 0px 0px 4px 0px;
   }
 
   .hit-name {
