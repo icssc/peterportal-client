@@ -33,6 +33,3 @@ tsconfig.tsbuildinfo
 
 # Jest
 site/coverage
-
-# TypeScript
-site/next-env.d.ts
