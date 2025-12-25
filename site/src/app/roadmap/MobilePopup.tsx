@@ -9,9 +9,10 @@ interface MobilePopupProps extends PropsWithChildren {
   show: boolean;
   onClose: () => void;
   className?: string;
+  id?: string;
 }
 
-const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, children }) => {
+const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, children }) => {
   const isMobile = useIsMobile();
   const overlayRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -28,7 +29,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, children 
     <>
       {isMobile && <UIOverlay onClick={onClose} zIndex={399} ref={overlayRef} />}
       <CSSTransition in={show} timeout={500} unmountOnExit nodeRef={popupRef}>
-        <div className={`mobile-popup mobile ${className ?? ''}`} ref={popupRef}>
+        <div className={`mobile-popup mobile ${className ?? ''}`} id={id ?? ''} ref={popupRef}>
           {children}
         </div>
       </CSSTransition>
