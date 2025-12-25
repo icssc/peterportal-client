@@ -163,6 +163,10 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
   const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
 
+  console.log('\n\ninProgressSearch: ', inProgressSearch);
+  console.log('showSavedCourses: ', showSavedCourses);
+  console.log('searchResults.length: ', searchResults.length, '\n\n');
+
   return (
     <>
       <SearchModule />
@@ -170,7 +174,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       {showCourseFilters && <SearchFilters />}
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
-      ) : !showSavedCourses && searchResults.length === 0 ? (
+      ) : !showSavedCourses && searchResults.length === 0 ? ( // charlie @todo: fix this logic
         <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
