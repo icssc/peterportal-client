@@ -18,10 +18,18 @@ const MenuSection: FC<MenuSectionProps> = ({ title, children }) => {
 
   return (
     <div className="transfer-credits-section">
-      <button className="header-tab" onClick={toggleExpand}>
+      <div
+        className="header-tab"
+        role="button"
+        tabIndex={0}
+        onClick={toggleExpand}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
+        }}
+      >
         <h4>{title}</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </button>
+      </div>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">{children}</div>
       </Collapse>
