@@ -18,3 +18,10 @@
     margin-bottom: 10px;
   }
 }
+
+.course-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
