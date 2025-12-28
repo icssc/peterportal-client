@@ -4,9 +4,6 @@ const sharedTokens = {
   primary: {
     main: '#305db7',
   },
-  accent: {
-    main: '#90B3F9',
-  },
   misc: {
     midGray: '#8d8d8d',
   },
@@ -28,12 +25,10 @@ const lightPalette: PaletteOptions = {
   mode: 'light',
   ...sharedTokens,
   secondary: {
-    main: '#5babe1',
-  },
-  accent: {
     main: '#305DB7',
   },
   tertiary: {
+    // @todo: remove tertiary color
     main: '#a0ceee',
   },
   overlay: {
@@ -61,9 +56,6 @@ const darkPalette: PaletteOptions = {
   mode: 'dark',
   ...sharedTokens,
   secondary: {
-    main: '#6390EB',
-  },
-  accent: {
     main: '#90B3F9',
   },
   tertiary: {
@@ -217,7 +209,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           "[data-theme='dark'] &.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: 'var(--mui-palette-accent-main)',
+            borderColor: 'var(--mui-palette-secondary-main)',
           },
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
@@ -263,7 +255,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            color: 'var(--mui-palette-accent-main)',
+            color: 'var(--mui-palette-secondary-main)',
           },
         },
       },
@@ -271,7 +263,7 @@ theme = createTheme(theme, {
     MuiTabs: {
       styleOverrides: {
         indicator: {
-          backgroundColor: 'var(--mui-palette-accent-main)',
+          backgroundColor: 'var(--mui-palette-secondary-main)',
         },
       },
     },

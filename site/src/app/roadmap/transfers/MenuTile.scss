@@ -1,12 +1,12 @@
 @use '../../../globals.scss';
 
 .menu-tile {
-  border: 2px solid var(--mui-palette-primary-main);
+  border: 2px solid var(--mui-palette-secondary-main);
   border-radius: 8px;
   padding: 10px 12px;
   position: relative;
   font-size: 12px;
-  color: var(--mui-palette-accent-main);
+  color: var(--mui-palette-secondary-main);
 
   .tile-info {
     display: flex;

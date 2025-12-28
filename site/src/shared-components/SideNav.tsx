@@ -37,7 +37,7 @@ const SideNav = () => {
           </Stack>
         </Link>
 
-        <Link href="/" style={{ textDecoration: 'none', color: 'var(--mui-palette-accent-main)' }}>
+        <Link href="/" style={{ textDecoration: 'none', color: 'var(--mui-palette-secondary-main)' }}>
           <Stack direction="column" alignItems="center">
             <RouteIcon fontSize="medium" />
             <Typography fontSize={11}>Planner</Typography>

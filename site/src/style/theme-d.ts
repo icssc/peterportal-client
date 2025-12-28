@@ -19,7 +19,6 @@ declare module '@mui/material/styles' {
 
   interface Palette {
     tertiary: PaletteColor;
-    accent: PaletteColor;
     overlay: {
       overlay1: string;
       overlay2: string;
@@ -34,7 +33,6 @@ declare module '@mui/material/styles' {
 
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
-    accent?: PaletteColorOptions;
     overlay?: {
       overlay1?: string;
       overlay2?: string;
