@@ -5,7 +5,7 @@ const sharedTokens = {
     main: '#305db7',
   },
   accent: {
-    main: '#74d1f6',
+    main: '#90B3F9',
   },
   misc: {
     midGray: '#8d8d8d',
@@ -29,6 +29,9 @@ const lightPalette: PaletteOptions = {
   ...sharedTokens,
   secondary: {
     main: '#5babe1',
+  },
+  accent: {
+    main: '#305DB7',
   },
   tertiary: {
     main: '#a0ceee',
@@ -58,7 +61,10 @@ const darkPalette: PaletteOptions = {
   mode: 'dark',
   ...sharedTokens,
   secondary: {
-    main: '#185680',
+    main: '#6390EB',
+  },
+  accent: {
+    main: '#90B3F9',
   },
   tertiary: {
     main: '#0b293c',
@@ -252,6 +258,22 @@ theme = createTheme(theme, {
         },
       },
       variants: [xsmall],
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            color: 'var(--mui-palette-accent-main)',
+          },
+        },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          backgroundColor: 'var(--mui-palette-accent-main)',
+        },
+      },
     },
     MuiAutocomplete: {
       variants: [xsmall],
