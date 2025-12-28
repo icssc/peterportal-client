@@ -15,7 +15,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
-import { CourseBookmarkButton } from '../../../component/CourseInfo/CourseInfo';
+import { CourseBookmarkButton, CourseDescription } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -77,7 +77,7 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, description, minUnits, maxUnits, terms, geList } = props.data;
+  const { title, courseLevel, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
 
   const isInRoadmap = !!onDelete;
@@ -131,10 +131,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="title">{title}</div>
       ) : (
         <div className="course-info">
-          <p className="course-synopsis">
-            <b className="title">{title}</b>
-            <span className="description">{description}</span>
-          </p>
+          <CourseDescription course={props.data} clampDescription={3} />
           <div className="course-tags">
             {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
             <RecentOfferingsTooltip terms={terms} />
