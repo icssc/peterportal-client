@@ -25,3 +25,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.course-description b::after {
+  content: ': ';
+}
