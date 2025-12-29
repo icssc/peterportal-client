@@ -25,11 +25,7 @@ const lightPalette: PaletteOptions = {
   mode: 'light',
   ...sharedTokens,
   secondary: {
-    main: '#305DB7',
-  },
-  tertiary: {
-    // @todo: remove tertiary color
-    main: '#a0ceee',
+    main: sharedTokens.primary.main,
   },
   overlay: {
     overlay1: '#fff',
@@ -57,9 +53,6 @@ const darkPalette: PaletteOptions = {
   ...sharedTokens,
   secondary: {
     main: '#90B3F9',
-  },
-  tertiary: {
-    main: '#0b293c',
   },
   overlay: {
     overlay1: '#1e1e1e',

@@ -65,9 +65,9 @@ const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
 
-  themeCopy.colors.primary = getCssVariable('--mui-palette-primary-main'); // box border
+  themeCopy.colors.primary = getCssVariable('--mui-palette-secondary-main'); // box border
   themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
-  themeCopy.colors.primary25 = getCssVariable('--mui-palette-tertiary-main'); // hover
+  themeCopy.colors.primary25 = `color-mix(in oklab, var(--mui-palette-primary-main) 50%, transparent)`;
 
   if (darkMode) {
     const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
