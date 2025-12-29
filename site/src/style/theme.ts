@@ -219,7 +219,7 @@ theme = createTheme(theme, {
           color: 'var(--mui-palette-text-primary)',
         },
         iconFilled: {
-          color: 'var(--mui-palette-primary-main)',
+          color: 'var(--mui-palette-secondary-main)',
         },
         iconHover: {
           opacity: 0.6,

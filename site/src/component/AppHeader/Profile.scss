@@ -102,10 +102,10 @@ body .profile-button {
   }
 
   .profile-popover-link.active {
-    color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-secondary-main);
 
     .MuiListItemIcon-root {
-      color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-secondary-main);
     }
   }
 }
