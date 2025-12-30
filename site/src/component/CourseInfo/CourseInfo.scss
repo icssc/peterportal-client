@@ -19,13 +19,13 @@
   }
 }
 
-.course-description {
+.course-synopsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.course-description b::after {
+.course-synopsis .title::after {
   content: ': ';
 }
