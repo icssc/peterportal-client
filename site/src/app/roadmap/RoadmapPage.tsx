@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useRef } from 'react';
 import './RoadmapPage.scss';
 import Planner from './planner/Planner';
 import MobileCourseCatalog from './catalog/MobileCourseCatalog';
@@ -29,6 +29,8 @@ const RoadmapPage: FC = () => {
   const toastSeverity = useAppSelector((state) => state.roadmap.toastSeverity);
   const showToast = useAppSelector((state) => state.roadmap.showToast);
   const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
+
+  const mobileScrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [showPreview, setShowPreview] = useState(false);
   const theme = useTheme();
@@ -70,8 +72,8 @@ const RoadmapPage: FC = () => {
       <MobileCreditsMenu />
 
       {/* Main Planner View or Fullscreen Mobile Search */}
-      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} id="mobileScrollContainer">
-        {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
+      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} ref={mobileScrollContainerRef}>
+        {fullscreenActive ? <MobileSearchMenu mobileScrollContainerRef={mobileScrollContainerRef} /> : <Planner />}
         {isMobile ? (
           <MobilePopup show={showPreview} onClose={handleClosePreview}>
             {resultPreview}

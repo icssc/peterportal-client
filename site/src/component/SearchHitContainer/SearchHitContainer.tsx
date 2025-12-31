@@ -11,7 +11,11 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import CourseHitItem from '../../app/search/CourseHitItem';
 import ProfessorHitItem from '../../app/search/ProfessorHitItem';
 
-const SearchResults: FC = () => {
+interface SearchHitContainerProps {
+  mobileScrollContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+const SearchResults: FC<SearchHitContainerProps> = ({ mobileScrollContainerRef }) => {
   const dispatch = useAppDispatch();
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
   const { results, pageNumber } = useAppSelector((state) => state.search[viewIndex]);
@@ -26,7 +30,7 @@ const SearchResults: FC = () => {
       next={updatePageNumber}
       hasMore={true} // charlie @todo update this to not always be true
       loader={<LoadingSpinner />}
-      scrollableTarget="mobileScrollContainer"
+      scrollableTarget={mobileScrollContainerRef.current}
     >
       {viewIndex === 'courses'
         ? (results as CourseGQLData[]).map((course) => <CourseHitItem key={course.id} {...course} />)
@@ -37,7 +41,7 @@ const SearchResults: FC = () => {
   );
 };
 
-const SearchHitContainer: FC = () => {
+const SearchHitContainer: FC<SearchHitContainerProps> = ({ mobileScrollContainerRef }) => {
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
   const { query, results } = useAppSelector((state) => state.search[viewIndex]);
   const searchInProgress = useAppSelector((state) => state.search.inProgressSearchOperation !== 'none');
@@ -56,7 +60,7 @@ const SearchHitContainer: FC = () => {
           prompt={`Start typing in the search bar to search for courses or instructors...`}
         />
       )}
-      {query && results.length > 0 && <SearchResults />}
+      {query && results.length > 0 && <SearchResults mobileScrollContainerRef={mobileScrollContainerRef} />}
     </div>
   );
 };

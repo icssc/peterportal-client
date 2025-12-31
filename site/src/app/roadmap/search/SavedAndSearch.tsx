@@ -21,9 +21,10 @@ import SearchFilters from '../../../component/SearchFilters/SearchFilters';
 interface SearchResultsProps {
   viewIndex: SearchIndex;
   searchResults: CourseGQLData[] | ProfessorGQLData[];
+  sidebarScrollContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => {
+const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults, sidebarScrollContainerRef }) => {
   const dispatch = useAppDispatch();
   const { pageNumber } = useAppSelector((state) => state.search[viewIndex]);
 
@@ -37,7 +38,8 @@ const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => 
       next={updatePageNumber}
       hasMore={true} // charlie @todo update this to not always be true
       loader={<LoadingSpinner />}
-      scrollableTarget="sidebarScrollContainer"
+      scrollableTarget={sidebarScrollContainerRef.current}
+      // scrollableTarget="sidebarScrollContainerId"
     >
       {viewIndex === 'professors' ? (
         <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
@@ -101,11 +103,11 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
   );
 };
 
-interface ShowSavedProps {
+interface ResultsHeaderProps {
   showSavedCoursesOnEmpty?: boolean;
 }
 
-export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+export const ResultsHeader: FC<ResultsHeaderProps> = ({ showSavedCoursesOnEmpty }) => {
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
@@ -144,7 +146,12 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   );
 };
 
-const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+interface SavedAndSearchProps {
+  sidebarScrollContainerRef: React.RefObject<HTMLDivElement>;
+  showSavedCoursesOnEmpty?: boolean;
+}
+
+const SavedAndSearch: FC<SavedAndSearchProps> = ({ sidebarScrollContainerRef, showSavedCoursesOnEmpty }) => {
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
@@ -177,7 +184,11 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       ) : !showSavedCourses && searchResults.length === 0 ? ( // charlie @todo: fix this logic
         <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
       ) : (
-        <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
+        <SearchResults
+          viewIndex={viewIndex}
+          searchResults={searchResults}
+          sidebarScrollContainerRef={sidebarScrollContainerRef}
+        />
       )}
     </>
   );
