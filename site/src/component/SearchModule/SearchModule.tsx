@@ -2,6 +2,7 @@ import { useState, FC } from 'react';
 import './SearchModule.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { SearchIndex } from '../../types/types';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
 import { setFirstPageResults, setQuery } from '../../store/slices/searchSlice';
 
@@ -11,7 +12,11 @@ import { useSearchTrigger } from '../../hooks/search.ts';
 
 const SEARCH_TIMEOUT_MS = 300;
 
-const SearchModule: FC = () => {
+interface SearchModuleProps {
+  index?: SearchIndex;
+}
+
+const SearchModule: FC<SearchModuleProps> = () => {
   const dispatch = useAppDispatch();
   const index = useAppSelector((state) => state.search.viewIndex);
   const search = useAppSelector((state) => state.search[index]);
