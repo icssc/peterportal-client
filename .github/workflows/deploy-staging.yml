@@ -19,7 +19,7 @@ jobs:
     if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository
     environment:
       name: staging-${{ github.event.pull_request.number }}
-      url: https://staging-${{ github.event.pull_request.number }}.antalmanac.com
+      url: https://planner-${{ github.event.pull_request.number }}.antalmanac.com
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.create-deployment.outputs.deployment_id }}
           state: success
-          environment-url: https://staging-${{ github.event.pull_request.number }}.antalmanac.com
+          environment-url: https://planner-${{ github.event.pull_request.number }}.antalmanac.com
 
       - name: Update deployment status (failure)
         if: failure()
