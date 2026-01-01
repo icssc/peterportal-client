@@ -13,6 +13,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 interface CourseProp {
   course: CourseGQLData;
   disabled?: boolean;
+  clampDescription?: number;
 }
 
 export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false }) => {
@@ -25,9 +26,9 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false 
   );
 };
 
-export const CourseDescription: FC<CourseProp> = ({ course }) => {
+export const CourseDescription: FC<CourseProp> = ({ course, clampDescription = 0 }) => {
   return (
-    <p>
+    <p className="course-description" style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
       <b>{course.title}:</b> {course.description}
     </p>
   );

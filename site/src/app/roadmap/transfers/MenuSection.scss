@@ -16,7 +16,11 @@
     color: var(--mui-palette-text-secondary);
   }
 
-  button.header-tab {
+  .section-description a {
+    color: var(--mui-palette-secondary-main);
+  }
+
+  .header-tab {
     background: none;
     border: none;
     font: inherit;
@@ -26,6 +30,7 @@
     gap: 6px;
     overflow: visible;
     padding: 0 0.5px;
+    cursor: pointer;
   }
 
   .section-content {

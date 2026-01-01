@@ -18,7 +18,7 @@
       display: contents;
     }
 
-    .course-synopsis {
+    .course-description {
       margin-bottom: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -26,8 +26,10 @@
       text-overflow: ellipsis;
       display: block;
     }
-    .course-synopsis .title {
+
+    .course-description b {
       font-weight: inherit;
+
       &::after {
         display: none;
       }
@@ -37,6 +39,7 @@
     .MuiIconButton-root {
       color: inherit;
     }
+
     .course-tags,
     .course-synopsis .description {
       display: none;
@@ -105,6 +108,7 @@ div.quarter {
       justify-content: center;
       align-items: center;
       text-align: center;
+
       &::before {
         content: 'Drag courses here to add them to your roadmap';
         max-width: 200px;
@@ -135,9 +139,11 @@ body[data-theme='light'] {
     border: none;
     margin-block: -16px;
     pointer-events: none;
+
     &::before {
       content: '';
     }
+
     &.dropzone-active {
       pointer-events: auto;
     }
@@ -151,6 +157,7 @@ body:has(> .profile-popover) {
     transition: background-color 0s !important;
   }
 }
+
 body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
   // when a course is dragged, show grabbing cursor no matter what
   cursor: grabbing !important;
