@@ -24,8 +24,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-}
 
-.course-synopsis .title::after {
-  content: ': ';
+  .title::after {
+    content: ': ';
+  }
 }
