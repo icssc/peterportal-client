@@ -1,6 +1,6 @@
 .course {
   box-shadow: 0 0 2px 0 #60616680;
-  background: var(--overlay1);
+  background: var(--mui-palette-overlay-overlay1);
   border-radius: 4px;
   height: auto;
   font-size: 16px;
@@ -33,7 +33,7 @@
 
   .name {
     font-weight: bold;
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
   }
 
   .warning-container {
@@ -59,7 +59,7 @@
   }
 
   .missing-prereq {
-    color: var(--red-primary);
+    color: var(--mui-palette-error-main);
   }
 
   button.MuiIconButton-root {
@@ -90,15 +90,8 @@
       font-size: 14px;
     }
 
-    .course-synopsis {
-      display: -webkit-box;
-      $line-limit: 3;
-      line-clamp: $line-limit;
-      -webkit-line-clamp: $line-limit;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 5px;
+    .course-description {
+      margin: 4px 0;
     }
 
     .title::after {
@@ -124,7 +117,7 @@
   }
 
   &.roadmap-course {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
     box-shadow: none;
     border: 1px solid var(--border-secondary);
     margin-block: -0.5px;
@@ -134,7 +127,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--blue-primary);
+      color: var(--mui-palette-primary-main);
     }
 
     .course-drag-handle,
@@ -150,9 +143,11 @@
   margin-right: 2px;
   align-items: center;
   width: 100%;
+
   > .name {
     display: block;
   }
+
   .warning-container svg {
     font-size: 20px;
   }
@@ -162,10 +157,12 @@
   height: fit-content !important;
   animation: course-fade-in 0.2s forwards;
 }
+
 @keyframes course-fade-in {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

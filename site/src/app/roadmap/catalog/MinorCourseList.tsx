@@ -47,10 +47,18 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   return (
     <div className="major-section">
-      <button className="header-tab" onClick={toggleExpand}>
+      <div
+        className="header-tab"
+        role="button"
+        tabIndex={0}
+        onClick={toggleExpand}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
+        }}
+      >
         <h4 className="major-name">{minorReqs.minor.name}</h4>
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
-      </button>
+      </div>
       <Collapse in={open} unmountOnExit>
         {resultsLoading ? (
           <LoadingSpinner />

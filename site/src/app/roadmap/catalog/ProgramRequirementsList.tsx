@@ -159,10 +159,18 @@ interface GroupHeaderProps {
 const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
-    <button className={className} onClick={() => setOpen(!open)}>
+    <div
+      className={className}
+      role="button"
+      tabIndex={0}
+      onClick={() => setOpen(!open)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') setOpen(!open);
+      }}
+    >
       <b>{title}</b>
       <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
-    </button>
+    </div>
   );
 };
 

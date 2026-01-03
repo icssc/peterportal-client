@@ -3,8 +3,8 @@
 .side-info {
   width: 100%;
   height: fit-content;
-  background-color: var(--overlay1);
-  border-radius: var(--border-radius);
+  background-color: var(--mui-palette-overlay-overlay1);
+  border-radius: var(--mui-shape-borderRadiusLg);
   position: sticky;
   top: 32px;
   overflow-y: auto;
@@ -33,7 +33,7 @@
 
   .MuiInputBase-root .MuiInputBase-input {
     // @todo: create a variant to apply the background color
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 }
 
@@ -52,10 +52,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-
-  .badge-pill {
-    margin: 0;
-  }
 }
 
 .side-info-ratings .side-info-buttons {
@@ -111,7 +107,7 @@
 }
 
 .ratings-widget {
-  background-color: var(--overlay2);
+  background-color: var(--mui-palette-overlay-overlay2);
   padding: 10px 16px;
   display: flex;
   gap: 24px;

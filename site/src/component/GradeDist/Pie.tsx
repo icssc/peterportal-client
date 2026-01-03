@@ -87,13 +87,13 @@ export default class Pie extends Component<PieProps> {
         id: 'P',
         label: 'P',
         value: gradePCount,
-        color: getCssVariable('--gradedist-p'),
+        color: getCssVariable('--mui-palette-chart-pass'),
       },
       {
         id: 'NP',
         label: 'NP',
         value: gradeNPCount,
-        color: getCssVariable('--gradedist-np'),
+        color: getCssVariable('--mui-palette-chart-noPass'),
       },
     ];
 
@@ -106,31 +106,31 @@ export default class Pie extends Component<PieProps> {
         id: 'A',
         label: 'A',
         value: gradeACount,
-        color: getCssVariable('--chart-blue'),
+        color: getCssVariable('--mui-palette-chart-blue'),
       },
       {
         id: 'B',
         label: 'B',
         value: gradeBCount,
-        color: getCssVariable('--chart-green'),
+        color: getCssVariable('--mui-palette-chart-green'),
       },
       {
         id: 'C',
         label: 'C',
         value: gradeCCount,
-        color: getCssVariable('--chart-yellow'),
+        color: getCssVariable('--mui-palette-chart-yellow'),
       },
       {
         id: 'D',
         label: 'D',
         value: gradeDCount,
-        color: getCssVariable('--chart-orange'),
+        color: getCssVariable('--mui-palette-chart-orange'),
       },
       {
         id: 'F',
         label: 'F',
         value: gradeFCount,
-        color: getCssVariable('--chart-red'),
+        color: getCssVariable('--mui-palette-chart-red'),
       },
     ];
 
