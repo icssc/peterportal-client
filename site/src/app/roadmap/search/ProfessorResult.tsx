@@ -23,9 +23,11 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
         {professor.name}
       </a>
       <p className="professor-synopsis">
-        <span className="professor-title">{professor.title}</span>
-        {' • '}
-        <span className="professor-department">{professor.department}</span>
+        {professor.title && <span className="professor-title">{professor.title}</span>}
+
+        {professor.title && professor.department && ' • '}
+
+        {professor.department && <span className="professor-department">{professor.department}</span>}
       </p>
       <p className="recent-courses">
         <b>Recently Taught:</b>{' '}
