@@ -237,7 +237,7 @@ const RoadmapMultiplan: FC = () => {
   };
 
   useEffect(() => {
-    document.title = `${name} | PeterPortal`;
+    document.title = `${name} | AntAlmanac Planner`;
   }, [name]);
 
   const openHandler = () => {

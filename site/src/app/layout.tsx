@@ -22,7 +22,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'PeterPortal',
+  title: 'AntAlmanac Planner',
   description:
     'A web application for course discovery and planning at UCI, featuring an enhanced catalogue and a 4-year planner.',
 };
