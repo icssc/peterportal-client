@@ -5,10 +5,39 @@ import { useAppDispatch } from '../../../store/hooks';
 import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
 import { addDelimiter } from '../../../helpers/util';
 
+type RecentlyTaughtListProps = {
+  courses: Array<ProfessorGQLData['courses'][string]>;
+};
+
+const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
+  const dispatch = useAppDispatch();
+
+  return (
+    <>
+      {addDelimiter(
+        courses.slice(0, 10).map((c) => (
+          <a
+            key={c.id}
+            href={`/course/${c.id}`}
+            className="course-link"
+            onClick={(e) => {
+              e.preventDefault();
+              dispatch(setPreviewedCourse(c.id));
+            }}
+          >
+            {c.department} {c.courseNumber}
+          </a>
+        )),
+        ', ',
+      )}
+      {courses.length > 10 && ` + ${courses.length - 10} more...`}
+    </>
+  );
+};
+
 const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) => {
   const dispatch = useAppDispatch();
 
-  /** @todo make recent courses only the ones taught within the last 5 years */
   const courses = Object.values(professor.courses);
   const hasCourses = courses.length > 0;
 
@@ -31,29 +60,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
       </p>
       <p className="recent-courses">
         <b>Recently Taught:</b>{' '}
-        {hasCourses ? (
-          <>
-            {addDelimiter(
-              courses.slice(0, 10).map((c) => (
-                <a
-                  key={c.id}
-                  href={`/course/${c.id}`}
-                  className="course-link"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(setPreviewedCourse(c.id));
-                  }}
-                >
-                  {c.department} {c.courseNumber}
-                </a>
-              )),
-              ', ',
-            )}
-            {courses.length > 10 && ` + ${courses.length - 10} more...`}
-          </>
-        ) : (
-          <span className="no-courses">No recent courses</span>
-        )}
+        {hasCourses ? <RecentlyTaughtList courses={courses} /> : <span className="no-courses">No recent courses</span>}
       </p>
     </div>
   );
