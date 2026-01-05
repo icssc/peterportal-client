@@ -5,18 +5,28 @@ const nextConfig = {
   },
   basePath: '/planner',
   async rewrites() {
-    return [{
-      source: '/api/:path*',
-      destination: 'http://localhost:8080/api/:path*',
-    }];
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8080/api/:path*',
+      }
+    ];
   },
 
   async redirects() {
-    return [{
-      source: '/roadmap',
-      destination: '/',
-      permanent: true,
-    }];
+    return [
+      {
+        source: '/roadmap',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/',
+        destination: '/planner',
+        basePath: false,
+        permanent: true,
+      }
+    ];
   }
 };
  
