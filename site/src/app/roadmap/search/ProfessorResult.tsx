@@ -4,10 +4,11 @@ import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
 import { addDelimiter } from '../../../helpers/util';
+import { CoursePreviewWithTerms } from '@peterportal/types';
 
-type RecentlyTaughtListProps = {
-  courses: Array<ProfessorGQLData['courses'][string]>;
-};
+interface RecentlyTaughtListProps {
+  courses: CoursePreviewWithTerms[];
+}
 
 const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
   const dispatch = useAppDispatch();
