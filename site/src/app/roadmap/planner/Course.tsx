@@ -16,6 +16,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
 import { CourseBookmarkButton, CourseDescription } from '../../../component/CourseInfo/CourseInfo';
+import Link from 'next/link';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -55,9 +56,9 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
       transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
-        <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
+        <Link className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
-        </a>
+        </Link>
         {requiredCourses && (
           <span className="warning-container">
             <WarningAmberIcon />

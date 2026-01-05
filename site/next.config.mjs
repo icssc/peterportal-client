@@ -3,6 +3,7 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  basePath: '/planner',
   async rewrites() {
     return [{
       source: '/api/:path*',
@@ -12,10 +13,10 @@ const nextConfig = {
 
   async redirects() {
     return [{
-        source: '/roadmap',
-        destination: '/',
-        permanent: true,
-      }];
+      source: '/roadmap',
+      destination: '/',
+      permanent: true,
+    }];
   }
 };
  
