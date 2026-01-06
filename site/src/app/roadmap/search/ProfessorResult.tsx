@@ -5,12 +5,43 @@ import { useAppDispatch } from '../../../store/hooks';
 import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
 import { addDelimiter } from '../../../helpers/util';
 import Link from 'next/link';
+import { CoursePreviewWithTerms } from '@peterportal/types';
+
+interface RecentlyTaughtListProps {
+  courses: CoursePreviewWithTerms[];
+}
+
+const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
+  const dispatch = useAppDispatch();
+
+  return (
+    <>
+      {addDelimiter(
+        courses.slice(0, 10).map((c) => (
+          <Link
+            key={c.id}
+            href={`/course/${c.id}`}
+            className="course-link"
+            onClick={(e) => {
+              e.preventDefault();
+              dispatch(setPreviewedCourse(c.id));
+            }}
+          >
+            {c.department} {c.courseNumber}
+          </Link>
+        )),
+        ', ',
+      )}
+      {courses.length > 10 && ` + ${courses.length - 10} more...`}
+    </>
+  );
+};
 
 const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) => {
   const dispatch = useAppDispatch();
 
-  /** @todo make recent courses only the ones taught within the last 5 years */
   const courses = Object.values(professor.courses);
+  const hasCourses = courses.length > 0;
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -23,28 +54,15 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
         {professor.name}
       </Link>
       <p className="professor-synopsis">
-        <span className="professor-title">{professor.title}</span>
-        {' • '}
-        <span className="professor-department">{professor.department}</span>
+        {professor.title && <span className="professor-title">{professor.title}</span>}
+
+        {professor.title && professor.department && ' • '}
+
+        {professor.department && <span className="professor-department">{professor.department}</span>}
       </p>
       <p className="recent-courses">
         <b>Recently Taught:</b>{' '}
-        {addDelimiter(
-          courses.slice(0, 10).map((c) => {
-            const handleLinkClick = (event: React.MouseEvent) => {
-              event.preventDefault();
-              dispatch(setPreviewedCourse(c.id));
-            };
-
-            return (
-              <a key={c.id} href={`/course/${c.id}`} className="course-link" onClick={handleLinkClick}>
-                {c.department} {c.courseNumber}
-              </a>
-            );
-          }),
-          ', ',
-        )}{' '}
-        {courses.length > 10 && ` + ${courses.length - 10} more...`}
+        {hasCourses ? <RecentlyTaughtList courses={courses} /> : <span className="no-courses">No recent courses</span>}
       </p>
     </div>
   );
