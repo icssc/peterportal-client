@@ -93,10 +93,8 @@ function DepartmentSelect() {
         const labelText = `${code}: ${name}`;
         const hidden = !labelText.toLowerCase().includes(deptFilterText.toLowerCase());
 
-        if (hidden) return null;
-
         return (
-          <MenuItem key={code} value={code} className="search-filter-item">
+          <MenuItem key={code} value={code} className={`search-filter-item ${hidden ? 'hidden' : ''}`}>
             {selectedFilters.departments.includes(code) ? <CheckIcon /> : <Icon />}
             <ListItemText className="item-text" primary={labelText} />
           </MenuItem>
