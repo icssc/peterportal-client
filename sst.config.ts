@@ -121,7 +121,7 @@ function createApiCFCacheBehavior(
   cloudfrontInjectionFunction: aws.cloudfront.Function,
 ) {
   const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
-    pathPattern: '/api/*',
+    pathPattern: '/planner/api/*',
     allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
     cachedMethods: ['GET', 'HEAD'],
     targetOriginId: apiOrigin.originId,
