@@ -210,11 +210,6 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiPopover: {
-      defaultProps: {
-        disableRestoreFocus: true,
-      },
-    },
     MuiRating: {
       styleOverrides: {
         sizeLarge: {
