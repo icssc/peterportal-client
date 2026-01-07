@@ -10,8 +10,9 @@ function getDomainConfig() {
   } else if ($app.stage === 'dev') {
     domainName = 'dev.peterportal.org';
   } else if ($app.stage.match(/^staging-(\d+)$/)) {
-    // check if stage is like staging-###
-    domainName = `${$app.stage}.peterportal.org`;
+    // if stage is like staging-###, use planner-###
+    const subdomainPrefix = $app.stage.replace('staging-', 'planner-');
+    domainName = `${subdomainPrefix}.antalmanac.com`;
   } else {
     throw new Error('Invalid stage');
   }
