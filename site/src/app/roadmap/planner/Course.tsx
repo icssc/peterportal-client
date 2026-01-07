@@ -15,7 +15,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
-import { CourseBookmarkButton, CourseDescription } from '../../../component/CourseInfo/CourseInfo';
+import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
 
 interface CourseNameAndInfoProps {
@@ -132,7 +132,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="title">{title}</div>
       ) : (
         <div className="course-info">
-          <CourseDescription course={props.data} clampDescription={3} />
+          <CourseSynopsis course={props.data} clampDescription={3} />
           <div className="course-tags">
             {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
             <RecentOfferingsTooltip terms={terms} />

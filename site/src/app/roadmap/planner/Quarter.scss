@@ -18,7 +18,7 @@
       display: contents;
     }
 
-    .course-description {
+    .course-synopsis {
       margin-bottom: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -27,7 +27,7 @@
       display: block;
     }
 
-    .course-description b {
+    .course-synopsis .title {
       font-weight: inherit;
 
       &::after {
