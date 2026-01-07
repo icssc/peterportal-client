@@ -91,10 +91,10 @@ function DepartmentSelect() {
       />
       {Object.entries(departments).map(([code, name]) => {
         const labelText = `${code}: ${name}`;
-        const hidden = !labelText.toLowerCase().includes(deptFilterText.toLowerCase());
+        const matchesFilter = labelText.toLowerCase().includes(deptFilterText.toLowerCase());
 
         return (
-          <MenuItem key={code} value={code} className={`search-filter-item ${hidden ? 'hidden' : ''}`}>
+          <MenuItem key={code} value={code} className={`search-filter-item ${!matchesFilter ? 'hidden' : ''}`}>
             {selectedFilters.departments.includes(code) ? <CheckIcon /> : <Icon />}
             <ListItemText className="item-text" primary={labelText} />
           </MenuItem>
