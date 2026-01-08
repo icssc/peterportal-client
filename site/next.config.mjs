@@ -16,14 +16,14 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/roadmap',
-        destination: '/',
-        permanent: true,
-      },
-      {
         source: '/',
         destination: '/planner',
         basePath: false,
+        permanent: true,
+      },
+      {
+        source: '/roadmap',
+        destination: '/',
         permanent: true,
       }
     ];
