@@ -4,6 +4,7 @@ import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
+import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/coursePreviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { Button, MenuItem, Select } from '@mui/material';
@@ -12,6 +13,7 @@ import { ReviewData } from '@peterportal/types';
 
 import AddIcon from '@mui/icons-material/Add';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -32,6 +34,7 @@ const Review: FC<ReviewProps> = (props) => {
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
+  const isLoggedIn = useIsLoggedIn();
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
@@ -101,6 +104,12 @@ const Review: FC<ReviewProps> = (props) => {
   }
 
   const openReviewForm = () => {
+    if (!isLoggedIn) {
+      dispatch(setToastMsg('You must be logged in to add a review!'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
+      return;
+    }
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
   };
