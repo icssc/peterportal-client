@@ -4,6 +4,7 @@ import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
 import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
 import { addDelimiter } from '../../../helpers/util';
+import Link from 'next/link';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 
 interface RecentlyTaughtListProps {
@@ -17,7 +18,7 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
     <>
       {addDelimiter(
         courses.slice(0, 10).map((c) => (
-          <a
+          <Link
             key={c.id}
             href={`/course/${c.id}`}
             className="course-link"
@@ -27,7 +28,7 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
             }}
           >
             {c.department} {c.courseNumber}
-          </a>
+          </Link>
         )),
         ', ',
       )}
@@ -49,9 +50,9 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   return (
     <div className="professor-result">
-      <a href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
+      <Link href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
         {professor.name}
-      </a>
+      </Link>
       <p className="professor-synopsis">
         {professor.title && <span className="professor-title">{professor.title}</span>}
 

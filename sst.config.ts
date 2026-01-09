@@ -121,7 +121,7 @@ function createApiCFCacheBehavior(
   cloudfrontInjectionFunction: aws.cloudfront.Function,
 ) {
   const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
-    pathPattern: '/api/*',
+    pathPattern: '/planner/api/*',
     allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
     cachedMethods: ['GET', 'HEAD'],
     targetOriginId: apiOrigin.originId,
@@ -149,7 +149,7 @@ function createNextJsApplication(
     environment: {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
-      BACKEND_ROOT_URL: `https://${getDomainConfig().name}/api`,
+      BACKEND_ROOT_URL: `https://${getDomainConfig().name}/planner/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
     domain: getDomainConfig(),
