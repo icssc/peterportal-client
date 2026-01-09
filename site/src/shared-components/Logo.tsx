@@ -2,7 +2,7 @@ import Image, { type StaticImageData } from 'next/image';
 import { useIsMobile } from '../helpers/util';
 
 import DefaultLogo from '../asset/logo.svg';
-import MobileDefaultLogo from '../asset/mobile-logo.svg';
+import MobileDefaultLogo from '../asset/mobile-logo-cropped.svg';
 
 import ChristmasLogo from '../asset/christmas-logo.png';
 import MobileChristmasLogo from '../asset/christmas-mobile-logo.png';
@@ -85,12 +85,12 @@ export function Logo() {
 
   return (
     <Image
-      src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
+      src={isMobile ? currentLogo.mobileLogo : currentLogo.mobileLogo}
       alt="logo"
       title={currentLogo?.attribution}
       style={{
         width: 'auto',
-        height: '32px',
+        height: '24px',
       }}
     />
   );
