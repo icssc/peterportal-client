@@ -26,7 +26,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const dispatch = useAppDispatch();
 
-  const open = useAppSelector((state) => state.courseRequirements.expandedMinors[minorReqs.minor.id] ?? false);
+  const open = useAppSelector((state) => state.courseRequirements.expandedMinors[minorReqs.minor.id] ?? true);
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setMinorExpanded({ minorId: minorReqs.minor.id, expanded: isOpen }));

@@ -49,7 +49,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const dispatch = useAppDispatch();
 
-  const open = useAppSelector((state) => state.courseRequirements.expandedMajors[major.id] ?? false);
+  const open = useAppSelector((state) => state.courseRequirements.expandedMajors[major.id] ?? true);
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setMajorExpanded({ majorId: major.id, expanded: isOpen }));

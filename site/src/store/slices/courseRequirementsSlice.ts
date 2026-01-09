@@ -116,14 +116,14 @@ const courseRequirementsSlice = createSlice({
       if (action.payload.expanded) {
         state.expandedMajors[action.payload.majorId] = true;
       } else {
-        delete state.expandedMajors[action.payload.majorId];
+        state.expandedMajors[action.payload.majorId] = false;
       }
     },
     setMinorExpanded: (state, action: PayloadAction<{ minorId: string; expanded: boolean }>) => {
       if (action.payload.expanded) {
         state.expandedMinors[action.payload.minorId] = true;
       } else {
-        delete state.expandedMinors[action.payload.minorId];
+        state.expandedMinors[action.payload.minorId] = false;
       }
     },
   },
