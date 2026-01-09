@@ -119,7 +119,7 @@ const AppHeader: FC = () => {
                   }
                   sx={{ width: '200px' }}
                 >
-                  <Link href="https://antalmanac.com" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Link href="https://staging-1411.antalmanac.com" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <MenuItem selected={platform === 'Scheduler'} onClick={() => setAnchorEl(null)}>
                       <ListItemIcon>
                         <CalendarMonth />
