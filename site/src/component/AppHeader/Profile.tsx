@@ -37,7 +37,7 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
       <>
         <Button
           variant="text"
-          size="small"
+          size="medium"
           startIcon={<AccountCircleIcon />}
           color="inherit"
           href="/api/users/auth/google"
