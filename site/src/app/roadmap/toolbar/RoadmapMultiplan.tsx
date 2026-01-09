@@ -1,5 +1,5 @@
 'use client';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   defaultPlan,
@@ -173,8 +173,6 @@ const RoadmapMultiplan: FC = () => {
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const isDuplicateName = () => allPlans.find((p) => p.name === newPlanName);
 
-  const name = allPlans[currentPlanIndex].name;
-
   const addNewPlan = (name: string) => {
     const yearPlans = deepCopy(initialPlanState.yearPlans);
     const revision = addPlanner(nextPlanTempId, name, yearPlans);
@@ -235,10 +233,6 @@ const RoadmapMultiplan: FC = () => {
 
     setEditIdx(-1);
   };
-
-  useEffect(() => {
-    document.title = `${name} | PeterPortal`;
-  }, [name]);
 
   const openHandler = () => {
     setShowAddPlan(true);
