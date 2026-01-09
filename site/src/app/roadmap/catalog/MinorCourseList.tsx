@@ -1,10 +1,14 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { setMinorRequirements, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
+import {
+  setMinorRequirements,
+  MinorRequirements,
+  setMinorExpanded,
+} from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
@@ -19,9 +23,14 @@ interface MinorCourseListProps {
 
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const [resultsLoading, setResultsLoading] = useState(false);
-  const [open, setOpen] = useState(true);
 
   const dispatch = useAppDispatch();
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedMinors[minorReqs.minor.id] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setMinorExpanded({ minorId: minorReqs.minor.id, expanded: isOpen }));
+  };
 
   const fetchRequirements = useCallback(
     async (minorId: string) => {

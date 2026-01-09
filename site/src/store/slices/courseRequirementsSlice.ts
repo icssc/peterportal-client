@@ -30,6 +30,8 @@ const courseRequirementsSlice = createSlice({
     geRequirements: [] as ProgramRequirement[],
     completedMarkers: {} as Record<string, boolean>,
     expandedGroups: {} as ExpandedGroupsList,
+    expandedMajors: {} as Record<string, boolean>,
+    expandedMinors: {} as Record<string, boolean>,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -110,6 +112,20 @@ const courseRequirementsSlice = createSlice({
         delete state.expandedGroups[action.payload.storeKey];
       }
     },
+    setMajorExpanded: (state, action: PayloadAction<{ majorId: string; expanded: boolean }>) => {
+      if (action.payload.expanded) {
+        state.expandedMajors[action.payload.majorId] = true;
+      } else {
+        delete state.expandedMajors[action.payload.majorId];
+      }
+    },
+    setMinorExpanded: (state, action: PayloadAction<{ minorId: string; expanded: boolean }>) => {
+      if (action.payload.expanded) {
+        state.expandedMinors[action.payload.minorId] = true;
+      } else {
+        delete state.expandedMinors[action.payload.minorId];
+      }
+    },
   },
 });
 
@@ -129,6 +145,8 @@ export const {
   setMarkerComplete,
   initializeCompletedMarkers,
   setGroupExpanded,
+  setMajorExpanded,
+  setMinorExpanded,
 } = courseRequirementsSlice.actions;
 
 export default courseRequirementsSlice.reducer;

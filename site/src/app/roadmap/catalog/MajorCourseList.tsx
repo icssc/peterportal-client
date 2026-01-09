@@ -9,11 +9,12 @@ import {
   setMajorSpecs,
   setRequirements,
   setSpecialization,
+  setMajorExpanded,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
@@ -41,13 +42,18 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
-  const [open, setOpen] = useState(true);
 
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
 
   const dispatch = useAppDispatch();
+
+  const open = useAppSelector((state) => state.courseRequirements.expandedMajors[major.id] ?? false);
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setMajorExpanded({ majorId: major.id, expanded: isOpen }));
+  };
 
   const loadSpecs = useCallback(async () => {
     setSpecsLoading(true);
