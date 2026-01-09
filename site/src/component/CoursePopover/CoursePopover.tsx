@@ -5,7 +5,7 @@ import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
-  CourseDescription,
+  CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
@@ -44,7 +44,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
         <CourseBookmarkButton course={course} />
       </div>
       <br />
-      <CourseDescription course={course} />
+      <CourseSynopsis course={course} />
       <PrerequisiteText course={course} />
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
