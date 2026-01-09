@@ -91,18 +91,7 @@
     }
 
     .course-synopsis {
-      display: -webkit-box;
-      $line-limit: 3;
-      line-clamp: $line-limit;
-      -webkit-line-clamp: $line-limit;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 5px;
-    }
-
-    .title::after {
-      content: ': ';
+      margin: 4px 0;
     }
 
     .course-tags {
@@ -150,9 +139,11 @@
   margin-right: 2px;
   align-items: center;
   width: 100%;
+
   > .name {
     display: block;
   }
+
   .warning-container svg {
     font-size: 20px;
   }
@@ -162,10 +153,12 @@
   height: fit-content !important;
   animation: course-fade-in 0.2s forwards;
 }
+
 @keyframes course-fade-in {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

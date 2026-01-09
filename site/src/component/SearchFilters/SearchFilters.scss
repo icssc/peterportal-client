@@ -38,6 +38,10 @@
 
   .search-filter-item {
     gap: 4px;
+
+    &.hidden {
+      display: none;
+    }
   }
 
   .search-filter-item .item-text {
