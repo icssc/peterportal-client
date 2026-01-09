@@ -16,7 +16,7 @@ interface TabSelectorProps {
 
 const TabSelector: FC<TabSelectorProps> = ({ tabs, selectedTab, onTabChange }) => {
   return (
-    <ButtonGroup className="tab-selector" variant="text">
+    <ButtonGroup className="tab-selector" variant="text" color="secondary">
       {tabs.map((tab) => {
         const isSelected = selectedTab === tab.value;
         return (
