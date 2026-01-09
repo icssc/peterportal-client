@@ -39,7 +39,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
-  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
+  const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
 
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
@@ -158,6 +158,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
+        <p>{termOptions[0].text !== currentQuarter ? 'PLACEHOLDER No offerings this quarter.' : null}</p>
         <div className="table-wrapper">
           <table className="ppc-table schedule-table">
             <thead>
