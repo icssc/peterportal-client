@@ -7,7 +7,8 @@ import { hourMinuteTo12HourString } from '../../helpers/util';
 import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
-import { MenuItem, Select } from '@mui/material';
+import { MenuItem, Select, Tooltip, Stack } from '@mui/material';
+import HistoryIcon from '@mui/icons-material/History';
 
 interface ScheduleProps {
   courseID?: string;
@@ -142,23 +143,44 @@ const Schedule: FC<ScheduleProps> = (props) => {
     return (
       <div>
         {props.termsOffered ? (
-          <Select
-            value={selectedQuarter ?? currentQuarter}
-            onChange={(e) => setSelectedQuarter(e.target.value)}
-            renderValue={() => {
-              return selectedQuarter;
-            }}
-          >
-            {termOptions.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>
-                {opt.text}
-              </MenuItem>
-            ))}
-          </Select>
+          <Stack direction="row" spacing={3} alignItems="center">
+            <Select
+              value={selectedQuarter ?? currentQuarter}
+              onChange={(e) => setSelectedQuarter(e.target.value)}
+              renderValue={() => {
+                return selectedQuarter;
+              }}
+            >
+              {termOptions.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.text}
+                </MenuItem>
+              ))}
+            </Select>
+            {selectedQuarter !== currentQuarter && (
+              <Tooltip
+                title="Showing Past Quarter History"
+                placement="right-start"
+                slotProps={{
+                  popper: {
+                    modifiers: [
+                      {
+                        name: 'offset',
+                        options: {
+                          offset: [0, -4],
+                        },
+                      },
+                    ],
+                  },
+                }}
+              >
+                <HistoryIcon />
+              </Tooltip>
+            )}
+          </Stack>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
-        <p>{termOptions[0].text !== currentQuarter ? 'PLACEHOLDER No offerings this quarter.' : null}</p>
         <div className="table-wrapper">
           <table className="ppc-table schedule-table">
             <thead>
