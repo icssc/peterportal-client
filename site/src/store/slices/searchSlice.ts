@@ -77,7 +77,10 @@ export const searchSlice = createSlice({
     setNewPageResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchResultData }>) => {
       state.inProgressSearchOperation = 'none';
       const index = action.payload.index;
-      state[index].results = action.payload.results;
+      state[index].results = [
+        ...state[index].results,
+        ...action.payload.results,
+      ] as (typeof state)[typeof index]['results'];
     },
     // Viewing
     setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {

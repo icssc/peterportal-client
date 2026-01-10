@@ -1,5 +1,6 @@
 import './SavedAndSearch.scss';
 import React, { FC } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
@@ -14,8 +15,40 @@ import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
-import { setSearchViewIndex } from '../../../store/slices/searchSlice';
+import { setPageNumber, setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
+
+interface SearchResultsProps {
+  viewIndex: SearchIndex;
+  searchResults: CourseGQLData[] | ProfessorGQLData[];
+  sidebarScrollContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults, sidebarScrollContainerRef }) => {
+  const dispatch = useAppDispatch();
+  const { pageNumber } = useAppSelector((state) => state.search[viewIndex]);
+
+  const updatePageNumber = () => {
+    dispatch(setPageNumber(pageNumber + 1));
+  };
+
+  return (
+    <InfiniteScroll
+      dataLength={searchResults.length}
+      next={updatePageNumber}
+      hasMore={true} // charlie @todo update this to not always be true
+      loader={<LoadingSpinner />}
+      scrollableTarget={sidebarScrollContainerRef.current}
+      // scrollableTarget="sidebarScrollContainerId"
+    >
+      {viewIndex === 'professors' ? (
+        <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
+      ) : (
+        <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
+      )}
+    </InfiniteScroll>
+  );
+};
 
 interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
@@ -70,11 +103,11 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
   );
 };
 
-interface ShowSavedProps {
+interface ResultsHeaderProps {
   showSavedCoursesOnEmpty?: boolean;
 }
 
-export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+export const ResultsHeader: FC<ResultsHeaderProps> = ({ showSavedCoursesOnEmpty }) => {
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
@@ -113,7 +146,12 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   );
 };
 
-const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+interface SavedAndSearchProps {
+  sidebarScrollContainerRef: React.RefObject<HTMLDivElement>;
+  showSavedCoursesOnEmpty?: boolean;
+}
+
+const SavedAndSearch: FC<SavedAndSearchProps> = ({ sidebarScrollContainerRef, showSavedCoursesOnEmpty }) => {
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
@@ -129,29 +167,28 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
     ? 'No courses saved. Try searching for something!'
     : 'Start typing in the search bar to search for courses or instructors...';
 
-  const noResults = <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />;
-
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
   const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
+
+  console.log('\n\ninProgressSearch: ', inProgressSearch);
+  console.log('showSavedCourses: ', showSavedCourses);
+  console.log('searchResults.length: ', searchResults.length, '\n\n');
 
   return (
     <>
       <SearchModule />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
       {showCourseFilters && <SearchFilters />}
-
-      {inProgressSearch !== 'none' ? (
+      {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
-      ) : !showSavedCourses && viewIndex === 'professors' ? (
-        <>
-          {searchResults.length === 0 && noResults}
-          <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
-        </>
+      ) : !showSavedCourses && searchResults.length === 0 ? ( // charlie @todo: fix this logic
+        <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
       ) : (
-        <>
-          {searchResults.length === 0 && noResults}
-          <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
-        </>
+        <SearchResults
+          viewIndex={viewIndex}
+          searchResults={searchResults}
+          sidebarScrollContainerRef={sidebarScrollContainerRef}
+        />
       )}
     </>
   );

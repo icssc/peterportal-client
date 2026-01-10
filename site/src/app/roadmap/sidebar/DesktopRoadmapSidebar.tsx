@@ -2,7 +2,7 @@
 import './DesktopRoadmapSidebar.scss';
 import { Badge, Tab, Tabs } from '@mui/material';
 import { CourseCatalog } from '../catalog/CourseCatalog';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -18,6 +18,7 @@ const DesktopRoadmapSidebar = () => {
   const [hasSeenCredits, setHasSeenCredits] = useState(false);
   const hasUnreadTransfers = useHasUnreadTransfers();
   const dispatch = useAppDispatch();
+  const sidebarScrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (selectedIndex === 0) {
@@ -49,10 +50,10 @@ const DesktopRoadmapSidebar = () => {
         <Tab icon={<SearchIcon />} iconPosition="start" label="Search" />
       </Tabs>
 
-      <div className="sidebar-content">
+      <div className="sidebar-content" ref={sidebarScrollContainerRef}>
         {selectedIndex === 0 && <TransferCreditsMenu />}
-        {selectedIndex === 1 && <CourseCatalog />}
-        {selectedIndex === 2 && <SavedAndSearch />}
+        {selectedIndex === 1 && <CourseCatalog sidebarScrollContainerRef={sidebarScrollContainerRef} />}
+        {selectedIndex === 2 && <SavedAndSearch sidebarScrollContainerRef={sidebarScrollContainerRef} />}
       </div>
     </div>
   );

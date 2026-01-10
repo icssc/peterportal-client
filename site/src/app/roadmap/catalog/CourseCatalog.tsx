@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import './CourseCatalog.scss';
 import { useIsMobile } from '../../../helpers/util';
 import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
@@ -26,7 +27,11 @@ const CloseRoadmapSearchButton = () => {
   );
 };
 
-export const CourseCatalog = () => {
+interface CourseCatalogProps {
+  sidebarScrollContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+export const CourseCatalog: FC<CourseCatalogProps> = ({ sidebarScrollContainerRef }) => {
   const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
 
   return (
@@ -37,7 +42,9 @@ export const CourseCatalog = () => {
       {selectedCourseList === 'Minor' && <MinorSelector />}
       {selectedCourseList === 'GE' && <GERequiredCourseList />}
       {selectedCourseList === 'Saved' && <SavedCourseList />}
-      {selectedCourseList === 'Search' && <SavedAndSearch showSavedCoursesOnEmpty />}
+      {selectedCourseList === 'Search' && (
+        <SavedAndSearch showSavedCoursesOnEmpty sidebarScrollContainerRef={sidebarScrollContainerRef} />
+      )}
 
       <CloseRoadmapSearchButton />
     </div>
