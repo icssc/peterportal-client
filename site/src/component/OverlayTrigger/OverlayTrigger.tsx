@@ -77,6 +77,7 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
         open={open}
         anchorEl={anchorEl}
         onClose={hidePopover}
+        disableRestoreFocus
         anchorOrigin={anchorMap[anchor]}
         transformOrigin={transformMap[transform]}
         slotProps={{
