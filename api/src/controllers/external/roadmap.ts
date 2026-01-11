@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { publicProcedure, router } from '../../helpers/trpc';
 import { user } from '../../db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import { z } from 'zod';
 import { queryGetPlanners } from '../../helpers/roadmap';
 
@@ -12,7 +12,11 @@ const externalRoadmapsRouter = router({
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
 
-    const planners = await queryGetPlanners(eq(user.googleId, input.googleUserId));
+    const idLegacy = input.googleUserId.replace('google_', '');
+    const idPrefixed = `google_${idLegacy}`;
+
+    const where = or(eq(user.googleId, idPrefixed), eq(user.googleId, idLegacy))!;
+    const planners = await queryGetPlanners(where);
 
     return planners;
   }),
