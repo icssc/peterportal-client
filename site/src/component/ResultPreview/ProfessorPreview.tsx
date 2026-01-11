@@ -106,14 +106,14 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
   return (
     <div className="result-preview">
       <Paper className="preview-header" variant="outlined">
-        <Tooltip title="Go Back">
-          <IconButton onClick={onBack}>
-            <BackIcon />
-          </IconButton>
-        </Tooltip>
         <Tooltip title="Exit Preview (Esc)">
           <IconButton onClick={onClose}>
             <CloseIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Go Back">
+          <IconButton onClick={onBack}>
+            <BackIcon />
           </IconButton>
         </Tooltip>
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />

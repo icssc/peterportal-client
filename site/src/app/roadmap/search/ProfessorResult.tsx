@@ -23,7 +23,7 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
             className="course-link"
             onClick={(e) => {
               e.preventDefault();
-              dispatch(setPreviewedCourse(c.id));
+              dispatch(addPreview({ type: 'course', id: c.id }));
             }}
           >
             {c.department} {c.courseNumber}
