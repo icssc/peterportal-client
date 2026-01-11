@@ -14,7 +14,7 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../../store/slices/coursePreviewSlice';
 import { CourseBookmarkButton, CourseDescription } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
@@ -41,7 +41,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     if (isMobile && showSearch) return;
-    dispatch(setPreviewedCourse(courseID));
+    dispatch(addPreview({ type: 'course', id: courseID }));
   };
 
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;

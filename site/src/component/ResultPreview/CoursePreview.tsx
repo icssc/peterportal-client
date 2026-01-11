@@ -17,6 +17,7 @@ import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
+import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
 
 interface PreviewTitleProps {
@@ -75,7 +76,11 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   );
 };
 
-const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId, onClose }) => {
+const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => void }> = ({
+  courseId,
+  onClose,
+  onBack,
+}) => {
   courseId = courseId.replace(/\s/g, '');
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
@@ -105,6 +110,11 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId
   return (
     <div className="result-preview">
       <Paper className="preview-header" variant="outlined">
+        <Tooltip title="Go Back">
+          <IconButton onClick={onBack}>
+            <BackIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Exit Preview (Esc)">
           <IconButton onClick={onClose}>
             <CloseIcon />

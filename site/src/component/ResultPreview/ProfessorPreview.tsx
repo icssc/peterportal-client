@@ -12,6 +12,7 @@ import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
+import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
@@ -71,7 +72,11 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   );
 };
 
-const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, onClose }) => {
+const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void }> = ({
+  netid,
+  onClose,
+  onBack,
+}) => {
   netid = netid.replace(/\s/g, '');
   const professorData = useProfessorData(netid);
   const isLoading = false;
@@ -101,6 +106,11 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, o
   return (
     <div className="result-preview">
       <Paper className="preview-header" variant="outlined">
+        <Tooltip title="Go Back">
+          <IconButton onClick={onBack}>
+            <BackIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Exit Preview (Esc)">
           <IconButton onClick={onClose}>
             <CloseIcon />

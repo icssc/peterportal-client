@@ -31,6 +31,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
+import { addPreview } from '../../store/slices/coursePreviewSlice';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -162,13 +163,25 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = (
-          <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
+          <Link
+            href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
+            onClick={(e) => handleLinkClick(e, review.courseId)}
+          >
+            {courseName}
+          </Link>
         );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
-        const profLink = <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        const profLink = (
+          <Link
+            href={{ pathname: `/professor/${review.professorId}` }}
+            onClick={(e) => handleLinkClick(e, review.professorId)}
+          >
+            {profName}
+          </Link>
+        );
         setIdentifier(profLink);
       } else {
         const foundCourseAndProfName = await fetchCourseAndProfName();
@@ -260,6 +273,16 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const tags: string[] = review.tags?.slice() ?? [];
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
+
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault();
+
+    if (course) {
+      dispatch(addPreview({ type: 'professor', id }));
+    } else {
+      dispatch(addPreview({ type: 'course', id }));
+    }
+  };
 
   return (
     <Card variant="outlined" className="reviewcard">

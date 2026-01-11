@@ -1,23 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+interface Preview {
+  type: 'course' | 'professor';
+  id: string;
+}
+
 export const coursePreviewSlice = createSlice({
   name: 'coursePreview',
   initialState: {
-    courseId: '',
-    professorId: '',
+    previewStack: [] as Preview[],
   },
   reducers: {
-    setPreviewedCourse: (state, action: PayloadAction<string>) => {
-      state.courseId = action.payload;
-      state.professorId = '';
+    // setPreviewedCourse: (state, action: PayloadAction<string>) => {
+    //   state.courseId = action.payload;
+    //   state.professorId = '';
+    // },
+    // setPreviewedProfessor: (state, action: PayloadAction<string>) => {
+    //   state.professorId = action.payload;
+    //   state.courseId = '';
+    // },
+    addPreview: (state, action: PayloadAction<Preview>) => {
+      state.previewStack.push(action.payload);
     },
-    setPreviewedProfessor: (state, action: PayloadAction<string>) => {
-      state.professorId = action.payload;
-      state.courseId = '';
+    removePreview: (state) => {
+      state.previewStack.pop();
+    },
+    clearPreviews: (state) => {
+      state.previewStack = [];
     },
   },
 });
 
-export const { setPreviewedCourse, setPreviewedProfessor } = coursePreviewSlice.actions;
+export const { addPreview, removePreview, clearPreviews } = coursePreviewSlice.actions;
 
 export default coursePreviewSlice.reducer;

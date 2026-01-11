@@ -2,7 +2,7 @@ import './ProfessorResult.scss';
 import React, { FC } from 'react';
 import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../../store/slices/coursePreviewSlice';
 import { addDelimiter } from '../../../helpers/util';
 
 const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) => {
@@ -13,7 +13,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
-    dispatch(setPreviewedProfessor(professor.ucinetid));
+    dispatch(addPreview({ type: 'professor', id: professor.ucinetid }));
   };
 
   return (
@@ -32,7 +32,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
           courses.slice(0, 10).map((c) => {
             const handleLinkClick = (event: React.MouseEvent) => {
               event.preventDefault();
-              dispatch(setPreviewedCourse(c.id));
+              dispatch(addPreview({ type: 'course', id: c.id }));
             };
 
             return (

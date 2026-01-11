@@ -15,13 +15,13 @@ import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
-import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
+import { clearPreviews, removePreview } from '../../store/slices/coursePreviewSlice';
+import { useCurrentPreview } from '../../hooks/preview';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
 
-  const previewCourseId = useAppSelector((state) => state.coursePreview.courseId);
-  const previewProfId = useAppSelector((state) => state.coursePreview.professorId);
+  const previews = useAppSelector((state) => state.coursePreview.previewStack);
 
   const dispatch = useAppDispatch();
 
@@ -43,19 +43,27 @@ const RoadmapPage: FC = () => {
   const handleClosePreview = () => {
     setShowPreview(false);
     setTimeout(() => {
-      dispatch(setPreviewedCourse(''));
-      dispatch(setPreviewedProfessor(''));
+      dispatch(clearPreviews());
     }, transitionTime);
   };
 
-  useEffect(() => {
-    if (previewCourseId || previewProfId) setShowPreview(true);
-  }, [previewCourseId, previewProfId]);
+  const handleBackPreview = () => {
+    dispatch(removePreview());
+  };
 
+  useEffect(() => {
+    if (previews.length) setShowPreview(true);
+  }, [previews]);
+
+  const currentPreview = useCurrentPreview();
   const resultPreview = (
     <div>
-      {previewCourseId && <CoursePreview courseId={previewCourseId} onClose={handleClosePreview} />}
-      {previewProfId && <ProfessorPreview netid={previewProfId} onClose={handleClosePreview} />}
+      {currentPreview &&
+        (currentPreview.type === 'course' ? (
+          <CoursePreview courseId={currentPreview.id} onClose={handleClosePreview} onBack={handleBackPreview} />
+        ) : (
+          <ProfessorPreview netid={currentPreview.id} onClose={handleClosePreview} onBack={handleBackPreview} />
+        ))}
     </div>
   );
 

@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
 import Link from 'next/link';
-import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../store/slices/coursePreviewSlice';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
@@ -12,7 +12,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
   const dispatch = useAppDispatch();
 
   const onClickName = () => {
-    dispatch(setPreviewedProfessor(props.ucinetid));
+    dispatch(addPreview({ type: 'professor', id: props.ucinetid }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -48,7 +48,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
               const handleLinkClick = (event: React.MouseEvent) => {
                 event.preventDefault();
                 event.stopPropagation();
-                dispatch(setPreviewedCourse(item));
+                dispatch(addPreview({ type: 'course', id: item }));
               };
 
               return (
