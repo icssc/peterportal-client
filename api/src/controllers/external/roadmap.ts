@@ -12,7 +12,7 @@ const externalRoadmapsRouter = router({
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
 
-    const idLegacy = input.googleUserId.replace('google_', '');
+    const idLegacy = input.googleUserId;
     const idPrefixed = `google_${idLegacy}`;
 
     const where = or(eq(user.googleId, idPrefixed), eq(user.googleId, idLegacy))!;
