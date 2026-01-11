@@ -22,7 +22,7 @@ import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme, UserMetadata } from '@peterportal/types';
 import { useIsMobile } from '../../helpers/util';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import ProfileMenuButtons from '../../shared-components/ProfileMenuButton';
+import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
 
 interface AdminProfileLinksProps {
   pathname: string | null;
