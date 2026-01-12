@@ -16,7 +16,7 @@ const SaveButton: FC = () => {
   return (
     <Button
       variant="text"
-      size="small"
+      size="medium"
       startIcon={<SaveIcon />}
       loading={saveInProgress}
       onClick={handleSave}
