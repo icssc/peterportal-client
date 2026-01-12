@@ -168,9 +168,9 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       <SearchModule />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
       {showCourseFilters && <SearchFilters />}
-      {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
+      {inProgressSearch !== 'none' ? (
         <LoadingSpinner />
-      ) : !showSavedCourses && searchResults.length === 0 ? ( // charlie @todo: fix this logic
+      ) : searchResults.length === 0 ? (
         <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
