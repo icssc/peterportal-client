@@ -2,17 +2,16 @@
 import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
-import Badge from 'react-bootstrap/Badge';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { Button, Chip, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { toggleFormStatus } from '../../store/slices/reviewSlice';
+import { toggleFormStatus, setShowToast } from '../../store/slices/reviewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+
+import Toast from '../../helpers/toast';
 
 interface FeaturedInfoData {
   searchType: SearchType;
@@ -61,6 +60,7 @@ interface SideInfoProps {
   course?: CourseGQLData;
   professor?: ProfessorGQLData;
   terms?: string[];
+  className?: string;
 }
 
 interface AverageReview {
@@ -78,6 +78,14 @@ const SideInfo: FC<SideInfoProps> = (props) => {
   const [highestReview, setHighestReview] = useState('');
   const [lowestReview, setLowestReview] = useState('');
   const [selectedReview, setSelectedReview] = useState('');
+
+  const toastMsg = useAppSelector((state) => state.review.toastMsg);
+  const toastSeverity = useAppSelector((state) => state.review.toastSeverity);
+  const showToast = useAppSelector((state) => state.review.showToast);
+
+  const handleClose = () => {
+    dispatch(setShowToast(false));
+  };
 
   useEffect(() => {
     const newAverageReviews: { [key: string]: AverageReview } = {};
@@ -145,48 +153,47 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
   return (
     <div className="side-content-wrapper">
-      <div className="side-info">
+      <div className={`side-info ${props.className ?? ''}`}>
         <div className="side-info-overview">
           <h2>{props.name}</h2>
           <h3>{props.title}</h3>
           <p>{props.description}</p>
           <div className="course-tags">
             {props.tags.map((tag, i) => (
-              <Badge pill bg="info" key={`side-info-badge-${i}`}>
-                {tag}
-              </Badge>
+              <Chip color="primary" size="small" key={`side-info-badge-${i}`} label={tag} />
             ))}
           </div>
         </div>
 
-        {props.terms && <RecentOfferingsTable terms={props.terms} size="wide" />}
+        {props.terms && props.terms.length > 0 && (
+          <>
+            <h2>Recent Offerings</h2>
+            <RecentOfferingsTable terms={props.terms} size="wide" />
+          </>
+        )}
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
           <div className="side-info-buttons">
-            {/* Dropdown to select specific course/professor */}
-            <DropdownButton
-              title={selectedReview}
-              variant="secondary"
-              onSelect={(e) => {
-                setSelectedReview(e as string);
+            <Select
+              value={selectedReview}
+              onChange={(e) => {
+                setSelectedReview(e.target.value as string);
               }}
             >
               {sortedReviews.map((key, index) => (
-                <Dropdown.Item eventKey={key} key={`side-info-dropdown-${index}`}>
+                <MenuItem key={`side-info-dropdown-${index}`} value={key}>
                   {props.searchType == 'course' &&
                     (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
                   {props.searchType == 'professor' &&
                     (props.professor?.courses[key]
                       ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
                       : key)}
-                </Dropdown.Item>
+                </MenuItem>
               ))}
-            </DropdownButton>
+            </Select>
 
-            {/* Add a review */}
             <Button
-              variant="primary"
               onClick={() => {
                 dispatch(toggleFormStatus());
               }}
@@ -196,7 +203,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
           {hasReviews && (
             <>
-              {/* Show stats of selected course/professor */}
               {selectedReview && (
                 <>
                   <div className="side-info-selected-based">Based on {count} reviews</div>
@@ -277,6 +283,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
           </div>
         )}
       </div>
+      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
     </div>
   );
 };

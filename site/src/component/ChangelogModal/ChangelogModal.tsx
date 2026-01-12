@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import Modal from 'react-bootstrap/Modal';
-import changelogImage from '../../asset/transfer-credits.webp';
+import changelogImage from '../../asset/rm-dedicated-search-pgs.png';
 import Image from 'next/image';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-const DESCRIPTION = 'Transferred courses are now easier to add, and AP Exams now clear prerequisites!';
-const LAST_UPDATED = '5/16/2025';
+const DESCRIPTION = 'Course and instructor search are now integrated into the main roadmap search menus!';
+const LAST_UPDATED = '12/04/2025';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -28,22 +28,26 @@ const ChangelogModal = () => {
   };
 
   return (
-    <Modal className="ppc-modal changelog-modal" show={showModal} centered onHide={closeModal}>
-      <Modal.Header closeButton>
-        <h2>
-          What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
-        </h2>
-      </Modal.Header>
-
-      <p className="modal-body">{DESCRIPTION}</p>
-      <Image
-        className="modal-img"
-        src={changelogImage.src}
-        width={changelogImage.width}
-        height={changelogImage.height}
-        alt="Screenshot or gif of new changes"
-      />
-    </Modal>
+    <Dialog open={showModal} onClose={closeModal} className="changelog-modal">
+      <DialogTitle>
+        What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>{DESCRIPTION}</DialogContentText>
+        <Image
+          className="modal-img"
+          src={changelogImage.src}
+          width={changelogImage.width}
+          height={changelogImage.height}
+          alt="Screenshot or gif of new changes"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={closeModal}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

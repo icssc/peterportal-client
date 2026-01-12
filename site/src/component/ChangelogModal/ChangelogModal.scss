@@ -1,19 +1,9 @@
 @use '../../globals';
 
 .changelog-modal {
-  .modal-dialog {
+  // "paper" refers to the component used internally to render the Dialog's content
+  .MuiDialog-paper {
     max-width: 500px;
-  }
-
-  h2 {
-    margin-bottom: 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-  }
-
-  .modal-body {
-    font-size: 1.2rem;
-    margin: 0;
   }
 
   .modal-img {

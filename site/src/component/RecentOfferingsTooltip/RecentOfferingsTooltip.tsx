@@ -1,7 +1,7 @@
-import { FC } from 'react';
 import './RecentOfferingsTooltip.scss';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { FC } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+import { Tooltip } from '@mui/material';
 
 interface RecentOfferingsTooltipProps {
   terms: string[];
@@ -22,22 +22,18 @@ const RecentOfferingsTooltip: FC<RecentOfferingsTooltipProps> = ({ terms }) => {
   // if the course was not offered in the previous academic year, show a ❌
   if (prevOfferings.length === 0) prevOfferings.push('❌');
 
-  const popover = (
-    <Popover id="recent-offerings-popover" className="ppc-popover recent-offerings-popover">
-      <div className="popover-body">
-        <RecentOfferingsTable terms={terms} size="thin" />
-      </div>
-    </Popover>
-  );
-
   return (
-    <OverlayTrigger overlay={popover} placement="auto">
+    <Tooltip
+      title={<RecentOfferingsTable terms={terms} size="thin" />}
+      placement="right"
+      slotProps={{ popper: { className: 'offerings-tooltip' } }}
+    >
       <div className="tooltip-trigger">
         {prevOfferings.map((emoji) => (
           <span key={emoji}>{emoji}</span>
         ))}
       </div>
-    </OverlayTrigger>
+    </Tooltip>
   );
 };
 

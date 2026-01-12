@@ -1,30 +1,18 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setProfessor } from '../../store/slices/popupSlice';
+import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
-import { useIsMobile } from '../../helpers/util';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const isMobile = useIsMobile();
-  const activeProfessor = useAppSelector((state) => state.popup.professor);
 
   const onClickName = () => {
-    // set the professor popup
-    dispatch(setProfessor(props));
-
-    // if click on a professor that is already in popup
-    // or if on mobile
-    if ((activeProfessor && props.ucinetid == activeProfessor.ucinetid) || isMobile) {
-      router.push(`/professor/${props.ucinetid}`);
-    }
+    dispatch(setPreviewedProfessor(props.ucinetid));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -57,10 +45,16 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           <p>
             <b>Recently taught: </b>
             {Object.keys(props.courses).map((item: string, index: number) => {
+              const handleLinkClick = (event: React.MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+                dispatch(setPreviewedCourse(item));
+              };
+
               return (
                 <span key={`professor-hit-item-course-${index}`}>
                   {index ? ', ' : ''}
-                  <Link href={'/course/' + item.replace(/\s+/g, '')} onClick={(e) => e.stopPropagation()}>
+                  <Link href={'/course/' + encodeURIComponent(item.replace(/\s+/g, ''))} onClick={handleLinkClick}>
                     {item}
                   </Link>
                 </span>

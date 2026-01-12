@@ -1,23 +1,27 @@
 import type { Metadata } from 'next';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
-import 'toastify-js/src/toastify.css';
-import '../style/theme.scss';
 import '../globals.scss';
 import '../App.scss';
-import '../index.css';
 
 import AppHeader from '../component/AppHeader/AppHeader';
 import ChangelogModal from '../component/ChangelogModal/ChangelogModal';
-import SideBar from '../component/SideBar/SideBar';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
 import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  variable: '--font-roboto',
+  style: ['normal', 'italic'],
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
+  title: 'PeterPortal',
   description:
     'A web application for course discovery and planning at UCI, featuring an enhanced catalogue and a 4-year planner.',
 };
@@ -28,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = await serverTrpc.users.get.query().catch(() => null);
 
   return (
-    <html lang="en" data-theme={user?.theme} suppressHydrationWarning>
+    <html lang="en" data-theme={user?.theme} className={roboto.variable} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="dark light" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -38,7 +42,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        <title>PeterPortal</title>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/theme-script.js"></script>
         {/* This script must run and apply styles to the root HTML element before the
@@ -49,7 +52,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div id="root">
             <AppHeader />
             <div className="app-body">
-              <SideBar />
               <div className="app-content">{children}</div>
               <ChangelogModal />
             </div>

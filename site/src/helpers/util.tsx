@@ -7,9 +7,10 @@ import {
   SearchType,
   CourseWithTermsLookup,
 } from '../types/types';
-import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
-import { CourseAAPIResponse, ProfessorAAPIResponse } from '@peterportal/types';
+import { CourseAAPIResponse, GETitle, ProfessorAAPIResponse } from '@peterportal/types';
+import { ReactNode } from 'react';
+import { useMediaQuery } from '@mui/material';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -27,6 +28,18 @@ export function getCourseTags(course: CourseGQLData) {
     tags.push(`${ge.substring(0, ge.indexOf(':'))}`);
   });
   return tags;
+}
+
+// helper function to format GEs in the form of "GE: II, III"
+export function formatGEsTag(geList: GETitle[]): string {
+  if (geList.length === 0) return '';
+  const numerals = geList.map((ge) => ge.slice(3).split(':')[0].trim());
+  return `GE ${numerals.join(', ')}`;
+}
+
+// helper function to truncate course level in the form of Upper Div, Lower Div, or Grad
+export function shortenCourseLevel(courseLevel: CourseGQLData['courseLevel']): string {
+  return courseLevel === 'Graduate/Professional Only (200+)' ? 'Grad' : courseLevel.slice(0, 9);
 }
 
 // helper function to search 1 result from course/professor page
@@ -72,7 +85,7 @@ export async function searchAPIResults<T extends SearchIndex>(
 export const hourMinuteTo12HourString = ({ hour, minute }: { hour: number; minute: number }) =>
   `${hour === 12 ? 12 : hour % 12}:${minute.toString().padStart(2, '0')} ${Math.floor(hour / 12) === 0 ? 'AM' : 'PM'}`;
 
-function transformCourseGQL(data: CourseAAPIResponse) {
+export function transformCourseGQL(data: CourseAAPIResponse) {
   // create copy to override fields with lookups
   const course = { ...data } as unknown as CourseGQLData;
   course.instructors = Object.fromEntries(data.instructors.map((instructor) => [instructor.ucinetid, instructor]));
@@ -92,7 +105,7 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
   }
 }
 
-function transformProfessorGQL(data: ProfessorAAPIResponse) {
+export function transformProfessorGQL(data: ProfessorAAPIResponse) {
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
   professor.courses = Object.fromEntries(data.courses.map((course) => [course.id, course]));
@@ -100,12 +113,12 @@ function transformProfessorGQL(data: ProfessorAAPIResponse) {
 }
 
 export function useIsDesktop() {
-  const isDesktop = useMediaQuery({ minWidth: 800 });
+  const isDesktop = useMediaQuery('(min-wdith: 840.1px)');
   return isDesktop;
 }
 
 export function useIsMobile() {
-  const isMobile = useMediaQuery({ maxWidth: 799.9 });
+  const isMobile = useMediaQuery('(max-width: 840px)');
   return isMobile;
 }
 
@@ -148,4 +161,17 @@ export function pluralize(count: number, pluralText: string = 's', singularText:
 
 export function getCourseIdWithSpaces(course: Pick<CourseGQLData, 'department'> & Pick<CourseGQLData, 'courseNumber'>) {
   return `${course.department} ${course.courseNumber}`;
+}
+
+export function addDelimiter(items: ReactNode[], between: ReactNode, last?: ReactNode) {
+  const lastIdx = items.length - 1;
+  last ??= between;
+  return items.flatMap((item, idx) => {
+    if (idx === lastIdx) return [item];
+    return [item, idx === lastIdx - 1 ? last : between];
+  });
+}
+
+export function checkModalOpen() {
+  return !!document.querySelector('body > :is(.MuiModal-root)');
 }

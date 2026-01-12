@@ -1,11 +1,11 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
-import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
-import { useIsMobile, pluralize } from '../../../helpers/util';
+import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -14,6 +14,8 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
+import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -27,28 +29,30 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
-  const [allowTouchClick, setAllowTouchClick] = useState(false);
-  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const dispatch = useAppDispatch();
+  const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const isMobile = useIsMobile();
 
-  const courseRoute = '/course/' + department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, '');
+  const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));
+  const courseRoute = '/course/' + encodedCourseTitle;
   let courseID = department + ' ' + courseNumber;
   if (alwaysCollapse) courseID = courseID.replace(/\s/g, '');
 
   const handleLinkClick = (event: React.MouseEvent) => {
-    const isTouchEvent = !(event.target as HTMLAnchorElement).matches(':focus');
-    if (isTouchEvent && !allowTouchClick) event.preventDefault();
+    event.preventDefault();
+    if (isMobile && showSearch) return;
+    dispatch(setPreviewedCourse(courseID));
   };
 
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
-    <PPCOverlayTrigger
+    <OverlayTrigger
       popoverContent={popoverContent}
-      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
-      setAllowSecondaryTap={setAllowTouchClick}
-      disabled={isMobile && showSearch}
+      disabled={isMobile}
+      anchor={openPopoverLeft ? 'left' : 'right'}
+      transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
@@ -60,7 +64,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </PPCOverlayTrigger>
+    </OverlayTrigger>
   );
 };
 
@@ -73,13 +77,19 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, minUnits, maxUnits, terms } = props.data;
+  const { title, courseLevel, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
+
+  const isInRoadmap = !!onDelete;
+  const isMobile = useIsMobile();
+
+  const formattedCourseLevel = shortenCourseLevel(courseLevel);
+  const geTags = formatGEsTag(geList);
 
   const dispatch = useAppDispatch();
 
   const insertCourseOnClick = () => {
-    dispatch(setActiveCourse(props.data));
+    dispatch(setActiveCourse({ course: props.data }));
     dispatch(setActiveMissingPrerequisites(requiredCourses));
     dispatch(setShowAddCourse(true));
   };
@@ -87,33 +97,47 @@ const Course: FC<CourseProps> = (props) => {
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = props.addMode === 'tap' ? tapProps : {};
 
+  /**
+   * @todo merge conflict with variable units - when merging with var units, this
+   * text should be used in course tags, but not in the course-card-top in the Roadmap
+   */
+  const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+
   return (
-    <div className={`course ${onDelete ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
-      {onDelete && (
+    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+      {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />
         </div>
       )}
+
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          <span className="units">
-            {minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit{pluralize(maxUnits)}
-          </span>
+
+          {isInRoadmap && <span className="units">{unitsText}</span>}
         </div>
-        {onDelete ? (
+        {isInRoadmap ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
             <DeleteOutlineIcon className="course-delete-icon" />
           </IconButton>
         ) : (
-          <div className="course-tooltip">
-            <RecentOfferingsTooltip terms={terms} />
-          </div>
+          <CourseBookmarkButton course={props.data} />
         )}
       </div>
-      <div className="title">{title}</div>
+      {isInRoadmap ? (
+        <div className="title">{title}</div>
+      ) : (
+        <div className="course-info">
+          <CourseSynopsis course={props.data} clampDescription={3} />
+          <div className="course-tags">
+            {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
+            <RecentOfferingsTooltip terms={terms} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
