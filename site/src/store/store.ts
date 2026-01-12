@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import coursePreviewReducer from './slices/previewSlice.ts';
+import previewReducer from './slices/previewSlice.ts';
 import courseRequirementsReducer from './slices/courseRequirementsSlice';
 import savedCoursesReducer from './slices/savedCoursesSlice';
 import reviewReducer from './slices/reviewSlice';
@@ -15,7 +15,7 @@ import { UserSliceState } from '@peterportal/types';
 import professorSliceReducer from './slices/professorSlice';
 
 const reducer = {
-  coursePreview: coursePreviewReducer,
+  preview: previewReducer,
   courseRequirements: courseRequirementsReducer,
   savedCourses: savedCoursesReducer,
   review: reviewReducer,

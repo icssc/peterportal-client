@@ -21,7 +21,7 @@ import { useCurrentPreview } from '../../hooks/preview';
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
 
-  const previews = useAppSelector((state) => state.coursePreview.previewStack);
+  const previews = useAppSelector((state) => state.preview.previewStack);
 
   const dispatch = useAppDispatch();
 

@@ -11,7 +11,7 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
@@ -85,6 +85,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
+  const previews = useAppSelector((state) => state.preview.previewStack);
 
   const copyCourseLink = () => {
     const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
@@ -115,11 +116,13 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
             <CloseIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Go Back">
-          <IconButton onClick={onBack}>
-            <BackIcon />
-          </IconButton>
-        </Tooltip>
+        {previews.length > 1 && (
+          <Tooltip title="Go Back">
+            <IconButton onClick={onBack}>
+              <BackIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
         <Button
           variant="contained"

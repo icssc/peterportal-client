@@ -32,6 +32,7 @@ import {
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { addPreview } from '../../store/slices/previewSlice.ts';
+import { useCurrentPreview } from '../../hooks/preview.ts';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -274,9 +275,10 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
-  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const preview = useCurrentPreview();
+  const handleLinkClick = (event: React.MouseEvent, id: string) => {
+    if (!preview) return;
     event.preventDefault();
-
     if (course) {
       dispatch(addPreview({ type: 'professor', id }));
     } else {
