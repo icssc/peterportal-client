@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { NUM_RESULTS_PER_PAGE } from '../helpers/constants';
 import { FilterOptions, stringifySearchFilters } from '../helpers/searchFilters';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
@@ -11,6 +10,8 @@ import {
 import trpc from '../trpc';
 import { SearchIndex, SearchResultData } from '../types/types';
 import { transformGQLData } from '../helpers/util';
+
+const NUM_RESULTS_PER_PAGE = 10;
 
 type SearchResponseData = { count: number; results: SearchResultData; totalRank: number };
 async function performSearch(
