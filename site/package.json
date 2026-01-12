@@ -33,6 +33,7 @@
     "start": "next start",
     "dev": "next dev",
     "build": "next build",
+    "typegen": "next typegen",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives && tsc --noEmit",
     "test": "jest"
   },
