@@ -163,10 +163,6 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
   const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
 
-  console.log('\n\ninProgressSearch: ', inProgressSearch);
-  console.log('showSavedCourses: ', showSavedCourses);
-  console.log('searchResults.length: ', searchResults.length, '\n\n');
-
   return (
     <>
       <SearchModule />
