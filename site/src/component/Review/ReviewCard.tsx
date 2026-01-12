@@ -31,7 +31,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
-import { addPreview } from '../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../store/slices/previewSlice.ts';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;

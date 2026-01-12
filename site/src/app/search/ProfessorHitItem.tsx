@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
 import Link from 'next/link';
-import { addPreview } from '../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../store/slices/previewSlice.ts';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 

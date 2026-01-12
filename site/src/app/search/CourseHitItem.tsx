@@ -12,7 +12,7 @@ import { useSavedCourses } from '../../hooks/savedCourses';
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { addPreview } from '../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../store/slices/previewSlice.ts';
 
 interface CourseHitItemProps extends CourseGQLData {}
 

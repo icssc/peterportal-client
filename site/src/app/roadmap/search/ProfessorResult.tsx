@@ -2,7 +2,7 @@ import './ProfessorResult.scss';
 import React, { FC } from 'react';
 import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { addPreview } from '../../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../../store/slices/previewSlice.ts';
 import { addDelimiter } from '../../../helpers/util';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 

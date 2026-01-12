@@ -15,7 +15,7 @@ import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
-import { clearPreviews, removePreview } from '../../store/slices/coursePreviewSlice';
+import { clearPreviews, removePreview } from '../../store/slices/previewSlice.ts';
 import { useCurrentPreview } from '../../hooks/preview';
 
 const RoadmapPage: FC = () => {

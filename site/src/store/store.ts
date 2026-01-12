@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import coursePreviewReducer from './slices/coursePreviewSlice';
+import coursePreviewReducer from './slices/previewSlice.ts';
 import courseRequirementsReducer from './slices/courseRequirementsSlice';
 import savedCoursesReducer from './slices/savedCoursesSlice';
 import reviewReducer from './slices/reviewSlice';

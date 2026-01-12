@@ -5,8 +5,8 @@ interface Preview {
   id: string;
 }
 
-export const coursePreviewSlice = createSlice({
-  name: 'coursePreview',
+export const previewSlice = createSlice({
+  name: 'preview',
   initialState: {
     previewStack: [] as Preview[],
   },
@@ -23,6 +23,6 @@ export const coursePreviewSlice = createSlice({
   },
 });
 
-export const { addPreview, removePreview, clearPreviews } = coursePreviewSlice.actions;
+export const { addPreview, removePreview, clearPreviews } = previewSlice.actions;
 
-export default coursePreviewSlice.reducer;
+export default previewSlice.reducer;

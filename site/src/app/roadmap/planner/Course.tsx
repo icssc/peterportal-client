@@ -14,7 +14,7 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { addPreview } from '../../../store/slices/coursePreviewSlice';
+import { addPreview } from '../../../store/slices/previewSlice.ts';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
