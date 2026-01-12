@@ -25,7 +25,7 @@ interface SearchResultsProps {
 
 const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => {
   const dispatch = useAppDispatch();
-  const { pageNumber } = useAppSelector((state) => state.search[viewIndex]);
+  const { pageNumber, count } = useAppSelector((state) => state.search[viewIndex]);
 
   const updatePageNumber = () => {
     dispatch(setPageNumber(pageNumber + 1));
@@ -35,7 +35,7 @@ const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => 
     <InfiniteScroll
       dataLength={searchResults.length}
       next={updatePageNumber}
-      hasMore={true} // charlie @todo update this to not always be true
+      hasMore={searchResults.length < count}
       loader={<LoadingSpinner />}
       scrollableTarget="sidebarScrollContainer"
     >

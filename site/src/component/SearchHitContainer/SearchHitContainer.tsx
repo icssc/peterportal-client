@@ -14,7 +14,7 @@ import ProfessorHitItem from '../../app/search/ProfessorHitItem';
 const SearchResults: FC = () => {
   const dispatch = useAppDispatch();
   const viewIndex = useAppSelector((state) => state.search.viewIndex);
-  const { results, pageNumber } = useAppSelector((state) => state.search[viewIndex]);
+  const { results, pageNumber, count } = useAppSelector((state) => state.search[viewIndex]);
 
   const updatePageNumber = () => {
     dispatch(setPageNumber(pageNumber + 1));
@@ -24,7 +24,7 @@ const SearchResults: FC = () => {
     <InfiniteScroll
       dataLength={results.length}
       next={updatePageNumber}
-      hasMore={true} // charlie @todo update this to not always be true
+      hasMore={results.length < count}
       loader={<LoadingSpinner />}
       scrollableTarget="mobileScrollContainer"
     >
