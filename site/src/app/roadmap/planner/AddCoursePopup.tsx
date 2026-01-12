@@ -13,7 +13,7 @@ import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
 import { pluralize } from '../../../helpers/util';
 import {
   CourseBookmarkButton,
-  CourseDescription,
+  CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
@@ -82,7 +82,7 @@ const AddCoursePopup: FC = () => {
           </IconButton>
         </div>
         <div className="content">
-          <CourseDescription course={activeCourse} />
+          <CourseSynopsis course={activeCourse} />
           {activeMissingPrerequisites ? (
             <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
           ) : (
