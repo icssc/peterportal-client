@@ -1,6 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./.sst/platform/config.d.ts" />
 
+function isStaging(stage: string) {
+  return stage.match(/^staging-(\d+)$/);
+}
+
 function getDomainConfig() {
   let domainName: string;
   let domainRedirects: string[] | undefined;
@@ -9,7 +13,7 @@ function getDomainConfig() {
     domainRedirects = ['www.peterportal.org'];
   } else if ($app.stage === 'dev') {
     domainName = 'dev.peterportal.org';
-  } else if ($app.stage.match(/^staging-(\d+)$/)) {
+  } else if (isStaging($app.stage)) {
     // if stage is like staging-###, use planner-###
     const subdomainPrefix = $app.stage.replace('staging-', 'planner-');
     domainName = `${subdomainPrefix}.antalmanac.com`;
@@ -121,7 +125,7 @@ function createApiCFCacheBehavior(
   cloudfrontInjectionFunction: aws.cloudfront.Function,
 ) {
   const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
-    pathPattern: '/planner/api/*',
+    pathPattern: '/api/*',
     allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
     cachedMethods: ['GET', 'HEAD'],
     targetOriginId: apiOrigin.originId,
@@ -138,10 +142,34 @@ function createApiCFCacheBehavior(
   return behavior;
 }
 
+/**
+ * Obtains the correct router based on the stage.
+ * Staging instances use new routers, while dev and prod use their respective shared routers.
+ */
+function createOrGetRouter() {
+  if ($app.stage === 'prod') {
+    /** @todo (@cadenlee2) create permanent cloudfront distributions for shared dev and prod routing */
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
+    return sharedRouter;
+  } else if ($app.stage === 'dev') {
+    /** @todo (@cadenlee2) create permanent cloudfront distributions for shared dev and prod routing */
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
+    return sharedRouter;
+  } else if (isStaging($app.stage)) {
+    return new sst.aws.Router('AntAlmanacRouter', {
+      domain: getDomainConfig(),
+    });
+  } else {
+    throw new Error('Invalid stage');
+  }
+}
+
 function createNextJsApplication(
   apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
   apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
 ) {
+  const router = createOrGetRouter();
+
   // The Nextjs Site Name must not have spaces; unlike static sites, this name
   // gets prepended in CreatePolicy, so it must meet these requirements:
   // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
@@ -152,7 +180,10 @@ function createNextJsApplication(
       BACKEND_ROOT_URL: `https://${getDomainConfig().name}/planner/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
-    domain: getDomainConfig(),
+    router: {
+      instance: router,
+      path: '/planner',
+    },
     path: './site',
     transform: {
       cdn: (args) => {
