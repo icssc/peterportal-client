@@ -33,7 +33,7 @@ function setBodyThemeAttribute() {
   // The previous flickering would always stop once the page is fully loaded; thus, we can
   // now unlock changes to the root element
   window.addEventListener('load', () => {
-    observer.disconnect();
+    setTimeout(observer.disconnect, 400);
   });
 }
 setBodyThemeAttribute();
