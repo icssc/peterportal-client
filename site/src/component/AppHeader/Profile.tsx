@@ -1,7 +1,7 @@
 import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { Button, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
@@ -19,47 +19,10 @@ import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
-import { Theme, User } from '@peterportal/types';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Theme, UserMetadata } from '@peterportal/types';
 import { useIsMobile } from '../../helpers/util';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-
-interface UserProp {
-  user?: Omit<User, 'id'> | null;
-}
-
-interface ProfileMenuButtonsProps extends UserProp {
-  handleOpen: (event: React.MouseEvent<HTMLElement>) => void;
-}
-const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) => {
-  if (!user) {
-    return (
-      <>
-        <Button
-          variant="text"
-          size="small"
-          startIcon={<AccountCircleIcon />}
-          color="inherit"
-          href="/api/users/auth/google"
-        >
-          Sign In
-        </Button>
-        <IconButton onClick={handleOpen} color="inherit">
-          <MenuIcon />
-        </IconButton>
-      </>
-    );
-  }
-
-  const { name, picture } = user;
-
-  return (
-    <Button className="profile-button" onClick={handleOpen} variant="text" color="inherit">
-      <Image src={picture} alt={name} className="navbar-profile-pic" width={32} height={32} />
-      <MenuIcon />
-    </Button>
-  );
-};
+import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
 
 interface AdminProfileLinksProps {
   pathname: string | null;
@@ -158,7 +121,7 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
   );
 };
 
-const UserInformation: FC<UserProp> = ({ user }) => {
+const UserInformation: FC<{ user: UserMetadata | null }> = ({ user }) => {
   if (!user) return null;
 
   const { name, email, picture } = user;
@@ -203,7 +166,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="navbar-profile">
+    <div>
       <ProfileMenuButtons user={user} handleOpen={handleOpen} />
       <Popover
         className="profile-popover"
