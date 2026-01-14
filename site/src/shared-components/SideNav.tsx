@@ -1,8 +1,8 @@
 'use client';
 
-import { Paper, Stack, Typography } from '@mui/material';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import RouteIcon from '@mui/icons-material/Route';
+import { Paper, Stack, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useIsMobile } from '../helpers/util';
 
@@ -28,8 +28,11 @@ const SideNav = () => {
     <Paper elevation={0} sx={paperStyleOverrides}>
       <Stack direction="column" alignItems="center" sx={{ gap: '16px', paddingTop: '8px' }}>
         <Link
-          href="https://antalmanac.com"
-          style={{ textDecoration: 'none', color: 'var(--mui-palette-text-primary)' }}
+          href="https://staging-shared.antalmanac.com"
+          style={{
+            textDecoration: 'none',
+            color: 'var(--mui-palette-text-primary)',
+          }}
         >
           <Stack direction="column" alignItems="center">
             <EventNoteIcon fontSize="medium" />
@@ -37,7 +40,13 @@ const SideNav = () => {
           </Stack>
         </Link>
 
-        <Link href="/" style={{ textDecoration: 'none', color: 'var(--mui-palette-secondary-main)' }}>
+        <Link
+          href="/"
+          style={{
+            textDecoration: 'none',
+            color: 'var(--mui-palette-secondary-main)',
+          }}
+        >
           <Stack direction="column" alignItems="center">
             <RouteIcon fontSize="medium" />
             <Typography fontSize={11}>Planner</Typography>
