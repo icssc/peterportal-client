@@ -7,8 +7,8 @@ import { hourMinuteTo12HourString } from '../../helpers/util';
 import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
-import { MenuItem, Select, Tooltip, Stack } from '@mui/material';
-import HistoryIcon from '@mui/icons-material/History';
+import { MenuItem, Select, Stack } from '@mui/material';
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 
 interface ScheduleProps {
   courseID?: string;
@@ -41,7 +41,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
-
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
 
@@ -140,8 +139,18 @@ const Schedule: FC<ScheduleProps> = (props) => {
         return { text: term, value: term };
       }) ?? [];
 
+    const isOffered = termOptions[0].text === currentQuarter;
+
     return (
       <div>
+        {!isOffered && (
+          <div className="offering-alert">
+            <InfoOutlineIcon fontSize="small" />
+            <p style={{ margin: 0 }}>
+              <i>Not offered in {currentQuarter}.</i>
+            </p>
+          </div>
+        )}
         {props.termsOffered ? (
           <Stack direction="row" spacing={3} alignItems="center">
             <Select
@@ -157,26 +166,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 </MenuItem>
               ))}
             </Select>
-            {selectedQuarter !== currentQuarter && (
-              <Tooltip
-                title="Showing Past Quarter History"
-                placement="right-start"
-                slotProps={{
-                  popper: {
-                    modifiers: [
-                      {
-                        name: 'offset',
-                        options: {
-                          offset: [0, -4],
-                        },
-                      },
-                    ],
-                  },
-                }}
-              >
-                <HistoryIcon />
-              </Tooltip>
-            )}
           </Stack>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
