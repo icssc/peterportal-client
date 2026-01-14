@@ -158,7 +158,7 @@ function createNextJsApplication(
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
     // domain: getDomainConfig(),
-    // path: './site',
+    path: './site',
     transform: {
       cdn: (args) => {
         args.origins = $output(args.origins).apply((origins) => [apiOrigin, ...origins]);
