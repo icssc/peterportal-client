@@ -263,5 +263,10 @@ theme = createTheme(theme, {
     MuiAutocomplete: {
       variants: [xsmall],
     },
+    MuiListSubheader: {
+      styleOverrides: {
+        root: { background: 'none' },
+      },
+    },
   },
 });

@@ -29,6 +29,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
 type Logo = {
   name: string;
@@ -98,8 +99,17 @@ function isCurrentSeason(logo: Logo) {
 export function LogoAndSwitcher() {
   const isMobile = useIsMobile();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const router = useRouter();
 
   const currentLogo = logos.find(isCurrentSeason) ?? defaultLogo;
+  const isRoadmapPage = usePathname() === '/';
+
+  // manually navigate to the roadmap page because MenuItem and next <Link/>
+  // don't play well with each other (hard reload occurs)
+  const navToRoadmap = () => {
+    setAnchorEl(null);
+    router.push('/');
+  };
 
   if (!isMobile)
     return (
@@ -152,7 +162,7 @@ export function LogoAndSwitcher() {
             </ListItemIcon>
             <Typography>Scheduler</Typography>
           </MenuItem>
-          <MenuItem selected onClick={() => setAnchorEl(null)} href="/" component={Link}>
+          <MenuItem selected={isRoadmapPage} onClickCapture={navToRoadmap}>
             <ListItemIcon>
               <MapOutlinedIcon />
             </ListItemIcon>
