@@ -7,7 +7,7 @@ import { hourMinuteTo12HourString } from '../../helpers/util';
 import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
-import { MenuItem, Select, Stack } from '@mui/material';
+import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 
 interface ScheduleProps {
@@ -146,27 +146,25 @@ const Schedule: FC<ScheduleProps> = (props) => {
         {!isOffered && (
           <div className="offering-alert">
             <InfoOutlineIcon fontSize="small" />
-            <p style={{ margin: 0 }}>
+            <p>
               <i>Not offered in {currentQuarter}.</i>
             </p>
           </div>
         )}
         {props.termsOffered ? (
-          <Stack direction="row" spacing={3} alignItems="center">
-            <Select
-              value={selectedQuarter ?? currentQuarter}
-              onChange={(e) => setSelectedQuarter(e.target.value)}
-              renderValue={() => {
-                return selectedQuarter;
-              }}
-            >
-              {termOptions.map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.text}
-                </MenuItem>
-              ))}
-            </Select>
-          </Stack>
+          <Select
+            value={selectedQuarter ?? currentQuarter}
+            onChange={(e) => setSelectedQuarter(e.target.value)}
+            renderValue={() => {
+              return selectedQuarter;
+            }}
+          >
+            {termOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.text}
+              </MenuItem>
+            ))}
+          </Select>
         ) : (
           <div className="schedule-quarter">Showing results for {selectedQuarter}</div>
         )}
