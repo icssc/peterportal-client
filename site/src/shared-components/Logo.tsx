@@ -13,6 +13,23 @@ import MobileThanksgivingLogo from '../asset/thanksgiving-mobile-logo.png';
 import HalloweenLogo from '../asset/halloween-logo.png';
 import MobileHalloweenLogo from '../asset/halloween-mobile-logo.png';
 
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import {
+  Box,
+  Button,
+  Link,
+  ListItemIcon,
+  ListSubheader,
+  MenuItem,
+  MenuList,
+  Popover,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
+
 type Logo = {
   name: string;
   desktopLogo: StaticImageData;
@@ -78,20 +95,71 @@ function isCurrentSeason(logo: Logo) {
   return now >= start && now <= end;
 }
 
-export function Logo() {
+export function LogoAndSwitcher() {
   const isMobile = useIsMobile();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const currentLogo = logos.find(isCurrentSeason) ?? defaultLogo;
 
+  if (!isMobile)
+    return (
+      <Link href="/">
+        <Image
+          src={currentLogo.desktopLogo}
+          alt="logo"
+          title={currentLogo?.attribution}
+          style={{
+            width: 'auto',
+            height: '32px',
+          }}
+        />
+      </Link>
+    );
+
   return (
-    <Image
-      src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
-      alt="logo"
-      title={currentLogo?.attribution}
-      style={{
-        width: 'auto',
-        height: '32px',
-      }}
-    />
+    <Box>
+      <Button onClick={(event) => setAnchorEl(event.currentTarget)} size="small" sx={{ paddingRight: 1.5 }}>
+        <Stack gap={1} direction="row" alignItems="center">
+          <Image src={currentLogo.mobileLogo} alt="logo" title={currentLogo.attribution} height={32} />
+          <UnfoldMoreIcon />
+        </Stack>
+      </Button>
+
+      <Popover
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <MenuList
+          subheader={
+            <ListSubheader component="div" sx={{ lineHeight: '30px' }}>
+              Switch Apps
+            </ListSubheader>
+          }
+          sx={{ width: '200px' }}
+        >
+          <MenuItem onClick={() => setAnchorEl(null)} href="https://antalmanac.com" component="a">
+            <ListItemIcon>
+              <EventNoteIcon />
+            </ListItemIcon>
+            <Typography>Scheduler</Typography>
+          </MenuItem>
+          <MenuItem selected onClick={() => setAnchorEl(null)} href="/" component={Link}>
+            <ListItemIcon>
+              <MapOutlinedIcon />
+            </ListItemIcon>
+            <Typography>Planner</Typography>
+          </MenuItem>
+        </MenuList>
+      </Popover>
+    </Box>
   );
 }
