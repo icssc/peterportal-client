@@ -2,7 +2,6 @@ import { useState, FC } from 'react';
 import './SearchModule.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { SearchIndex } from '../../types/types';
 import { setShowSavedCourses } from '../../store/slices/roadmapSlice';
 import { setFirstPageResults, setQuery } from '../../store/slices/searchSlice';
 
@@ -13,10 +12,10 @@ import { useSearchTrigger } from '../../hooks/search.ts';
 const SEARCH_TIMEOUT_MS = 300;
 
 interface SearchModuleProps {
-  index?: SearchIndex;
+  autoFocused?: boolean;
 }
 
-const SearchModule: FC<SearchModuleProps> = () => {
+const SearchModule: FC<SearchModuleProps> = ({ autoFocused }) => {
   const dispatch = useAppDispatch();
   const index = useAppSelector((state) => state.search.viewIndex);
   const search = useAppSelector((state) => state.search[index]);
@@ -69,6 +68,8 @@ const SearchModule: FC<SearchModuleProps> = () => {
         onChange={(e) => searchAfterTimeout(e.target.value)}
         defaultValue={search.query}
         autoCorrect="off"
+        /* eslint-disable-next-line */
+        autoFocus={autoFocused} // this is only set to happen right when the user clicks the search button
         slotProps={{ input: { endAdornment, className: 'input-wrapper' } }}
       />
     </div>
