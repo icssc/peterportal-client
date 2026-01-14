@@ -2,7 +2,7 @@
 
 import { IconButton, Paper, Stack, SvgIcon, Tooltip, Typography } from '@mui/material';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import RouteIcon from '@mui/icons-material/Route';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import Link from 'next/link';
 import { useIsMobile } from '../helpers/util';
@@ -58,7 +58,7 @@ const SideNav = () => {
 
         <Link href="/" style={{ textDecoration: 'none', color: 'var(--mui-palette-secondary-main)' }}>
           <Stack direction="column" alignItems="center">
-            <RouteIcon fontSize="medium" />
+            <MapOutlinedIcon fontSize="medium" />
             <Typography fontSize={11}>Planner</Typography>
           </Stack>
         </Link>
