@@ -9,7 +9,7 @@ import {
   setMajorSpecs,
   setRequirements,
   setSpecialization,
-  setMajorExpanded,
+  setGroupExpanded,
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
@@ -49,10 +49,10 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const dispatch = useAppDispatch();
 
-  const open = useAppSelector((state) => state.courseRequirements.expandedMajors[major.id] ?? true);
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[major.id] ?? false);
 
   const setOpen = (isOpen: boolean) => {
-    dispatch(setMajorExpanded({ majorId: major.id, expanded: isOpen }));
+    dispatch(setGroupExpanded({ storeKey: major.id, expanded: isOpen }));
   };
 
   const loadSpecs = useCallback(async () => {

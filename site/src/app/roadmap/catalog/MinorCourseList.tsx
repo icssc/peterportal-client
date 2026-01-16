@@ -4,7 +4,7 @@ import ProgramRequirementsList from './ProgramRequirementsList';
 import {
   setMinorRequirements,
   MinorRequirements,
-  setMinorExpanded,
+  setGroupExpanded,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
@@ -26,10 +26,10 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   const dispatch = useAppDispatch();
 
-  const open = useAppSelector((state) => state.courseRequirements.expandedMinors[minorReqs.minor.id] ?? true);
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[minorReqs.minor.id] ?? false);
 
   const setOpen = (isOpen: boolean) => {
-    dispatch(setMinorExpanded({ minorId: minorReqs.minor.id, expanded: isOpen }));
+    dispatch(setGroupExpanded({ storeKey: minorReqs.minor.id, expanded: isOpen }));
   };
 
   const fetchRequirements = useCallback(
