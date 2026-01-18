@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+
+import { Button, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
@@ -60,8 +60,17 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
 
 const Profile = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const [show, setShow] = useState(false);
   const pathname = usePathname();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (open) {
+      setAnchorEl(null);
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
+  };
 
   const user = useAppSelector((state) => state.user.user);
   const isAdmin = useAppSelector((state) => state.user.isAdmin);
@@ -93,75 +102,68 @@ const Profile = () => {
     setTheme(tab as Theme);
   };
 
-  const ProfilePopover = (
-    <Popover id="profile-popover" className="ppc-popover">
-      <div className="popover-body">
-        <div className="profile-popover__header">
-          <Image src={picture} alt={name} width="50" height="50" />
-          <div>
-            <h1 title={name}>{name}</h1>
-            <h2 title={email}>{email}</h2>
-          </div>
+  const profilePopoverContent = (
+    <div>
+      <div className="profile-popover-header">
+        <Image src={picture} alt={name} width="50" height="50" />
+        <div>
+          <h1 title={name}>{name}</h1>
+          <h2 title={email}>{email}</h2>
         </div>
-        <div className="profile-popover__theme-section">
-          <h4>Theme</h4>
-          <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-          <Divider />
-        </div>
-        <List className="profile-popover__links">
-          <ListItem>
-            <ListItemButton
-              className={'profile-popover__link' + (pathname === '/reviews' ? ' active' : '')}
-              href="/reviews"
-              onClick={() => setShow(false)}
-              component={Link}
-            >
-              <ListItemIcon>
-                <StickyNote2OutlinedIcon />
-              </ListItemIcon>
-              <ListItemText primary="Your Reviews" />
-            </ListItemButton>
-          </ListItem>
-          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={() => setShow(false)} />}
-          <ListItem>
-            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover__link" component="a">
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </List>
       </div>
-    </Popover>
+      <div className="profile-popover-theme-selector">
+        <h4>Theme</h4>
+        <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
+        <Divider />
+      </div>
+      <List className="profile-popover-links">
+        <ListItem>
+          <ListItemButton
+            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
+            href="/reviews"
+            onClick={() => setAnchorEl(null)}
+            component={Link}
+          >
+            <ListItemIcon>
+              <StickyNote2OutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Your Reviews" />
+          </ListItemButton>
+        </ListItem>
+        {isAdmin && <AdminProfileLinks pathname={pathname} onClose={() => setAnchorEl(null)} />}
+        <ListItem>
+          <ListItemButton href={'/api/users/auth/logout'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </div>
   );
 
   return (
     <div className="navbar-profile">
-      <OverlayTrigger
-        rootClose
-        trigger="click"
-        placement="bottom"
-        overlay={ProfilePopover}
-        show={show}
-        onToggle={setShow}
-        popperConfig={{
-          modifiers: [
-            {
-              name: 'offset',
-              options: {
-                offset: [-135, 8],
-              },
-            },
-          ],
+      <button className="profile-button" onClick={handleClick}>
+        <Image src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
+      </button>
+      <Popover
+        className="profile-popover"
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
         }}
       >
-        {({ ref, ...triggerHandler }) => (
-          <button {...triggerHandler} className="profile-button">
-            <Image ref={ref} src={picture} alt={name} className="navbar-profile-pic" width={36} height={36} />
-          </button>
-        )}
-      </OverlayTrigger>
+        {profilePopoverContent}
+      </Popover>
     </div>
   );
 };

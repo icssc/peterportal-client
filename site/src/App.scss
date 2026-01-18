@@ -1,35 +1,5 @@
 @use 'globals';
 
-button {
-  color: inherit;
-}
-
-body a {
-  color: var(--blue-accent);
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-html,
-body {
-  height: 100%;
-}
-
-html > body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: var(--text);
-  background: var(--background);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 #root {
   position: relative;
   height: 100%;
@@ -48,7 +18,7 @@ code {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: var(--background);
+  background-color: var(--mui-palette-background-default);
   box-sizing: border-box;
 
   .main-wrapper {
@@ -57,143 +27,92 @@ code {
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .content-wrapper {
   padding: 32px 36px;
 }
 
-.side-panel {
-  background-color: var(--overlay1);
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+html,
+body {
   height: 100%;
-  overflow: auto;
-  width: globals.$roadmap-sidebar-width;
+}
 
-  background-color: var(--overlay1);
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  padding: 16px 20px;
+body {
+  margin: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  // prevents child element z index escaping (i.e. any child of this element
-  // may not appear above any element outside of the .program-requirements element)
-  z-index: 0;
-
-  .search-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: auto;
-    gap: 8px;
-    margin-top: 8px;
-  }
-
-  &.mobile {
-    border-radius: 8px 8px 0 0;
-  }
-
-  button.fixed {
-    @include globals.bottom-button();
-    z-index: 1;
-  }
-
-  .ppc-combobox__clear-indicator {
-    display: none;
+body a {
+  color: var(--mui-palette-accent-main);
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
   }
 }
 
-div.ppc-popover {
-  border-radius: 8px;
-  padding: 0px;
-  box-shadow: none;
-  max-width: 375px;
-  top: -12px !important;
-
-  $filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.35));
-  filter: $filter;
-  -webkit-filter: $filter;
-  border: none;
-
-  div.popover-body {
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  div.popover-arrow {
-    z-index: -1;
-    &::before {
-      display: none;
-    }
-  }
-  div.popover-arrow::after {
-    position: absolute;
-    border: 8px solid transparent;
-    border-width: 12px 16px;
-    top: 8px;
-    left: unset;
-  }
-  &[data-popper-placement='bottom'] {
-    top: -24px !important;
-    div.popover-arrow::after {
-      left: 0;
-      bottom: 0;
-      top: 10px;
-      border-bottom-color: var(--overlay1);
-      transform: translate(-25%, -100%);
-      border-width: 16px 12px;
-    }
-  }
-  &[data-popper-placement='left-start'] {
-    margin-inline: 8px !important;
-    div.popover-arrow::after {
-      left: -2px;
-      border-left-color: var(--overlay1);
-    }
-  }
-  &[data-popper-placement='right-start'] {
-    margin-inline: 8px !important;
-    div.popover-arrow::after {
-      right: -2px;
-      border-right-color: var(--overlay1);
-    }
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
+p {
+  margin-top: 0;
 }
 
-div.bs-popover-left {
-  margin-right: 20px;
-
-  div.arrow::after,
-  div.arrow::before {
-    left: -1px;
-  }
+b,
+strong {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
 }
 
-div.ppc-popover.bs-popover-right {
-  margin-left: 20px;
-  margin-top: 4px !important;
+h1,
+h2,
+h3,
+h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  line-height: 1.2;
 }
 
-div.ppc-popover.bs-popover-bottom {
-  margin-top: 48px;
-  div.arrow::after,
-  div.arrow::before {
-    left: 2px;
-  }
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+img,
+svg {
+  vertical-align: middle;
 }
 
 .ppc-table {
+  border: 0 solid;
+  border-color: inherit;
+  border-collapse: collapse;
+
+  th {
+    text-align: inherit;
+
+    &:first-child {
+      text-align: start;
+    }
+  }
+
   thead tr {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(even) {
-    background-color: var(--overlay2);
+    background-color: var(--mui-palette-overlay-overlay2);
   }
 
   tbody tr:nth-child(odd) {
-    background-color: var(--overlay3);
+    background-color: var(--mui-palette-overlay-overlay3);
   }
 }
 
@@ -222,17 +141,6 @@ div.ppc-popover.bs-popover-bottom {
   overflow: auto;
 }
 
-.loader-container {
-  display: flex;
-  margin: 20px;
-  justify-content: center;
-}
-
-// revert styles that bootstrap decided to override for SOME reason
-body hr {
-  opacity: 1;
-}
-
 // monkey patch for recaptcha border bug
 .g-recaptcha {
   overflow: hidden;
@@ -240,75 +148,3 @@ body hr {
   height: 76px;
   border-radius: 4px;
 }
-
-// general bootstrap overwrites. bg/border color may need further customization per component
-.table {
-  color: var(--text);
-}
-
-[data-theme='dark'] {
-  .btn-outline-primary {
-    color: #0f83ff;
-    border-color: #0f83ff;
-
-    &:hover,
-    &:focus {
-      color: white;
-    }
-
-    &:hover {
-      border-color: #007bff;
-    }
-
-    &:focus {
-      border-color: #2767d4;
-    }
-  }
-
-  .close {
-    color: var(--text);
-    text-shadow: none;
-  }
-
-  .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-
-    &:hover,
-    &:focus {
-      background-color: var(--overlay2);
-      color: #1284ff;
-    }
-  }
-
-  .page-item.active .page-link:hover {
-    background-color: #1284ff;
-    color: #fff;
-  }
-
-  .page-item.disabled .page-link {
-    background-color: var(--overlay1);
-    border-color: var(--overlay2);
-  }
-}
-
-div.popover {
-  background-color: var(--overlay1);
-}
-div.popover-body {
-  background-color: var(--overlay1);
-  color: var(--text);
-}
-div.bs-popover-top > div.arrow::after {
-  border-top-color: var(--overlay1);
-}
-div.bs-popover-bottom > div.arrow::after {
-  border-bottom-color: var(--overlay1);
-}
-div.bs-popover-left > div.arrow::after {
-  border-left-color: var(--overlay1);
-}
-div.bs-popover-right > div.arrow::after {
-  border-right-color: var(--overlay1);
-}
-// end bootstrap overwrites

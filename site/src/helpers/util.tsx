@@ -7,10 +7,10 @@ import {
   SearchType,
   CourseWithTermsLookup,
 } from '../types/types';
-import { useMediaQuery } from 'react-responsive';
 import trpc from '../trpc';
 import { CourseAAPIResponse, GETitle, ProfessorAAPIResponse } from '@peterportal/types';
 import { ReactNode } from 'react';
+import { useMediaQuery } from '@mui/material';
 
 export function getCourseTags(course: CourseGQLData) {
   // data to be displayed in pills
@@ -105,7 +105,7 @@ export function transformGQLData(index: SearchIndex, data: CourseAAPIResponse | 
   }
 }
 
-function transformProfessorGQL(data: ProfessorAAPIResponse) {
+export function transformProfessorGQL(data: ProfessorAAPIResponse) {
   // create copy to override fields with lookups
   const professor = { ...data } as unknown as ProfessorGQLData;
   professor.courses = Object.fromEntries(data.courses.map((course) => [course.id, course]));
@@ -113,12 +113,12 @@ function transformProfessorGQL(data: ProfessorAAPIResponse) {
 }
 
 export function useIsDesktop() {
-  const isDesktop = useMediaQuery({ minWidth: 800 });
+  const isDesktop = useMediaQuery('(min-wdith: 840.1px)');
   return isDesktop;
 }
 
 export function useIsMobile() {
-  const isMobile = useMediaQuery({ maxWidth: 799.9 });
+  const isMobile = useMediaQuery('(max-width: 840px)');
   return isMobile;
 }
 

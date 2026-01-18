@@ -79,7 +79,7 @@
     font-size: 12px;
     margin-block: 4px;
     margin-inline: 16px;
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
     display: flex;
     white-space: nowrap;
     align-items: center;
@@ -87,7 +87,7 @@
   }
   .separator-label hr {
     margin: 0;
-    border: 0.5px solid var(--text-secondary);
+    border: 0.5px solid var(--mui-palette-text-secondary);
     width: 100%;
     opacity: 0.8;
   }

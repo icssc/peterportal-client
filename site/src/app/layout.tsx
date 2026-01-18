@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import '../globals.scss';
 import '../App.scss';
 
 import AppHeader from '../component/AppHeader/AppHeader';
 import ChangelogModal from '../component/ChangelogModal/ChangelogModal';
-import SideBar from '../component/SideBar/SideBar';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
@@ -54,7 +52,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div id="root">
             <AppHeader />
             <div className="app-body">
-              <SideBar />
               <div className="app-content">{children}</div>
               <ChangelogModal />
             </div>

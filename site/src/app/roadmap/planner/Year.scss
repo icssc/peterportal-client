@@ -3,16 +3,10 @@
 $base-quarter-width: 250px;
 
 [data-theme='dark'] {
-  .year-settings-btn:hover,
-  .year-settings-btn:focus,
-  .popover-body .year-settings-btn:active {
-    background-color: var(--overlay2);
-  }
-
   .edit-year-form {
     .form-control,
     .form-control:focus {
-      background-color: var(--overlay1);
+      background-color: var(--mui-palette-overlay-overlay1);
     }
   }
 }
@@ -20,11 +14,11 @@ $base-quarter-width: 250px;
 div.year {
   border-radius: 8px;
   container: roadmap-year / inline-size;
-  background-color: var(--overlay1);
+  background-color: var(--mui-palette-overlay-overlay1);
 
   @mixin year-subtext() {
     font-size: 16px;
-    color: var(--mid-gray);
+    color: var(--mui-palette-misc-midGray);
     @container roadmap-year (max-width: 512px) {
       margin-top: 4px;
       font-size: 14px;
@@ -63,7 +57,7 @@ div.year {
     }
 
     .year-title {
-      color: var(--text);
+      color: var(--mui-palette-text-primary);
       text-align: left;
       font-size: 18px;
     }

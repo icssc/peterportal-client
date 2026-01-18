@@ -1,3 +1,5 @@
+@use '../../../globals.scss';
+
 [data-theme='dark'] {
   .quarter .quarter-header .quarter-title,
   .quarter {
@@ -9,7 +11,8 @@
   &.sortable-ghost {
     opacity: 0.35;
     width: auto;
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
+    pointer-events: none;
 
     .course-info {
       display: contents;
@@ -23,8 +26,10 @@
       text-overflow: ellipsis;
       display: block;
     }
+
     .course-synopsis .title {
       font-weight: inherit;
+
       &::after {
         display: none;
       }
@@ -34,6 +39,7 @@
     .MuiIconButton-root {
       color: inherit;
     }
+
     .course-tags,
     .course-synopsis .description {
       display: none;
@@ -102,6 +108,7 @@ div.quarter {
       justify-content: center;
       align-items: center;
       text-align: center;
+
       &::before {
         content: 'Drag courses here to add them to your roadmap';
         max-width: 200px;
@@ -126,15 +133,17 @@ body[data-theme='light'] {
   }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: globals.$mobile-cutoff) {
   div.quarter .quarter-course-list:empty {
     padding: 16px;
     border: none;
     margin-block: -16px;
     pointer-events: none;
+
     &::before {
       content: '';
     }
+
     &.dropzone-active {
       pointer-events: auto;
     }
@@ -143,11 +152,12 @@ body[data-theme='light'] {
 
 // Although :has is not super widely supported, this style is not critical to page functionality.
 // It should be fine to make it work for just browsers that do support it.
-body:has(> #profile-popover) {
-  .MuiButtonBase-root {
-    transition: background-color 0s;
+body:has(> .profile-popover) {
+  button.MuiButtonBase-root:not(:hover) {
+    transition: background-color 0s !important;
   }
 }
+
 body:has(> .sortable-fallback:is(.course, .program-course-tile)) * {
   // when a course is dragged, show grabbing cursor no matter what
   cursor: grabbing !important;

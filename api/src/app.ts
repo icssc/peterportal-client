@@ -6,7 +6,6 @@
 import express, { ErrorRequestHandler } from 'express';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
-import passport from 'passport';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
 import dotenv from 'dotenv-flow';
@@ -22,7 +21,6 @@ import authRouter from './controllers/auth';
 import { SESSION_LENGTH } from './config/constants';
 import { createContext } from './helpers/trpc';
 import { appRouter } from './controllers';
-import passportInit from './config/passport';
 
 // instantiate app
 const app = express();
@@ -32,7 +30,7 @@ const PGStore = connectPgSimple(session);
 if (!process.env.DATABASE_URL) {
   console.log('DATABASE_URL env var is not defined!');
 }
-// Setup Passport and Sessions
+// Setup Sessions
 if (!process.env.SESSION_SECRET) {
   console.log('SESSION_SECRET env var is not defined!');
 }
@@ -49,12 +47,8 @@ app.use(
   }),
 );
 
-if (process.env.GOOGLE_CLIENT && process.env.GOOGLE_SECRET) {
-  app.use(passport.initialize());
-  app.use(passport.session());
-  passportInit();
-} else {
-  console.log('GOOGLE_CLIENT and/or GOOGLE_SECRET env var(s) not defined! Google login will not be available.');
+if (!process.env.OIDC_CLIENT_ID || !process.env.OIDC_ISSUER_URL) {
+  console.log('OIDC_CLIENT_ID and/or OIDC_ISSUER_URL env var(s) not defined! OIDC login will not be available.');
 }
 
 if (!process.env.ANTEATER_API_KEY) {
@@ -102,7 +96,8 @@ app.use('/api', expressRouter);
 /**
  * Error Handler
  */
-const errorHandler: ErrorRequestHandler = (err, req, res) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal Serverless Error', err });
 };
