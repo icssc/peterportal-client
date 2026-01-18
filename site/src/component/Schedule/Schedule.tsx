@@ -8,6 +8,7 @@ import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 
 interface ScheduleProps {
   courseID?: string;
@@ -39,8 +40,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
-  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
-
+  const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
 
@@ -139,8 +139,18 @@ const Schedule: FC<ScheduleProps> = (props) => {
         return { text: term, value: term };
       }) ?? [];
 
+    const isOffered = termOptions[0].text === currentQuarter;
+
     return (
       <div>
+        {!isOffered && (
+          <div className="offering-alert">
+            <InfoOutlineIcon fontSize="small" />
+            <p>
+              <i>Not offered in {currentQuarter}.</i>
+            </p>
+          </div>
+        )}
         {props.termsOffered ? (
           <Select
             value={selectedQuarter ?? currentQuarter}
