@@ -18,6 +18,7 @@ export async function queryGetPlanners(where: SQL) {
     .select({
       id: planner.id,
       name: planner.name,
+      chc: planner.chc,
       content: sql.raw(`jsonb_agg(jsonb_build_object(
         'name', ${planYearTableName}."${plannerYear.name.name}",
         'startYear', ${planYearTableName}."${plannerYear.startYear.name}",

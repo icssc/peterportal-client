@@ -86,6 +86,7 @@ export const planner = pgTable(
     name: text('name').notNull(),
     years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
     shareId: text('share_id'),
+    chc: text('chc'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
 );
