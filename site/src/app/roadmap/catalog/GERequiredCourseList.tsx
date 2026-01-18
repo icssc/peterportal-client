@@ -77,7 +77,7 @@ const CHCRequirements: FC = () => {
         <MenuItem key="CHC4" value="CHC4">
           4-Year CHC Student
         </MenuItem>
-        <MenuItem key="CHC2" value="CHC2">
+        <MenuItem key="CHC2" value="CHC2" disabled>
           2-Year CHC Student (Not yet supported)
         </MenuItem>
       </Select>
