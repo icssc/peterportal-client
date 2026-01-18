@@ -28,6 +28,13 @@ jobs:
         env:
           HUSKY: 0
 
+      # TODO (@cadenlee2): Remove this stage once SST fixes compat with Pulumi
+      # https://github.com/anomalyco/sst/issues/6314
+      - name: Setup Pulumi
+        uses: pulumi/actions@v5
+        with:
+          pulumi-version: 3.138.0 # Any version < 3.214.0 works
+
       - name: Build and deploy
         run: pnpm sst deploy --stage prod
         env:
