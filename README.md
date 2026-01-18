@@ -124,3 +124,4 @@ We consolidate our data directly from official UCI sources such as: UCI Catalogu
 ## Terms & Conditions
 
 📜 There are no hard policies at the moment for utilizing this tool. However, please refrain from abusing the Website by methods such as: sending excessive amount of requests in a small period of time or purposely looking to exploit the system.
+
