@@ -5,7 +5,7 @@ import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
   CourseBookmarkButton,
-  CourseDescription,
+  CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
@@ -24,7 +24,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
 
   if (typeof course === 'string') {
     return (
-      <div className="popover-body course-popover">
+      <div className="course-popover">
         <LoadingSpinner />
       </div>
     );
@@ -34,7 +34,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
-    <div className="popover-body course-popover">
+    <div className="course-popover">
       <div className="popover-name">
         {department + ' ' + courseNumber + ' '}
         <span className="popover-units">
@@ -44,7 +44,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
         <CourseBookmarkButton course={course} />
       </div>
       <br />
-      <CourseDescription course={course} />
+      <CourseSynopsis course={course} />
       <PrerequisiteText course={course} />
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />

@@ -7,19 +7,20 @@
   h4 {
     margin-bottom: 0;
     text-align: left;
+    font-size: 20px;
   }
 
   .section-description {
     font-size: 14px;
     margin-bottom: 0;
-    color: var(--text-secondary);
+    color: var(--mui-palette-text-secondary);
   }
 
   .section-description a {
-    color: var(--blue-primary);
+    color: var(--mui-palette-primary-main);
   }
 
-  button.header-tab {
+  .header-tab {
     background: none;
     border: none;
     font: inherit;
@@ -29,6 +30,7 @@
     gap: 6px;
     overflow: visible;
     padding: 0 0.5px;
+    cursor: pointer;
   }
 
   .section-content {

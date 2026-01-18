@@ -4,7 +4,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding-top: 8px;
 
   .filter-form-control {
     margin-bottom: 0;
@@ -12,7 +11,7 @@
 
   .has-selection {
     .MuiSelect-select {
-      background-color: var(--blue-primary);
+      background-color: var(--mui-palette-primary-main);
       color: white;
     }
     .MuiSvgIcon-root {
@@ -31,10 +30,18 @@
     > ul {
       padding-top: 0;
     }
+
+    .MuiInputBase-input {
+      padding-top: 12px;
+    }
   }
 
   .search-filter-item {
     gap: 4px;
+
+    &.hidden {
+      display: none;
+    }
   }
 
   .search-filter-item .item-text {

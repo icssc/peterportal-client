@@ -125,13 +125,18 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
   return new Promise((resolve) => {
     const planner: PlannerData = [];
+
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
+
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
-        quarter.courses = savedQuarter.courses.map((course) => courseLookup[course]);
+
+        quarter.courses = savedQuarter.courses.map((courseId) => courseLookup[courseId]).filter((course) => !!course);
+
         year.quarters.push(quarter);
       });
+
       planner.push(year);
     });
     resolve(planner);

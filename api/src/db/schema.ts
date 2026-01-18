@@ -1,4 +1,3 @@
-import { SavedPlannerYearData } from '@peterportal/types';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -27,7 +26,7 @@ export const user = pgTable(
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
   },
-  (table) => [unique('unique_google_id').on(table.googleId)],
+  (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
 );
 
 export const report = pgTable(
@@ -84,7 +83,6 @@ export const planner = pgTable(
       .references(() => user.id)
       .notNull(),
     name: text('name').notNull(),
-    years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
     shareId: text('share_id'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],

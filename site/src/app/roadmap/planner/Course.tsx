@@ -3,7 +3,7 @@ import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import CoursePopover from '../../../component/CoursePopover/CoursePopover';
-import PPCOverlayTrigger from '../../../component/PPCOverlayTrigger/PPCOverlayTrigger';
+import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData } from '../../../types/types';
@@ -15,7 +15,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { setPreviewedCourse } from '../../../store/slices/coursePreviewSlice';
-import { CourseBookmarkButton } from '../../../component/CourseInfo/CourseInfo';
+import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -30,7 +30,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const dispatch = useAppDispatch();
-  const showSearch = useAppSelector((state) => state.roadmap.showSearch);
+  const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const isMobile = useIsMobile();
 
   const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));
@@ -47,11 +47,12 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
 
   return (
-    <PPCOverlayTrigger
+    <OverlayTrigger
       popoverContent={popoverContent}
-      placement={isMobile ? 'bottom' : openPopoverLeft ? 'left-start' : 'right-start'}
       popupListener={popupListener}
       disabled={isMobile}
+      anchor={openPopoverLeft ? 'left' : 'right'}
+      transform={openPopoverLeft ? 'left' : 'right'}
     >
       <span>
         <a className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
@@ -63,7 +64,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
           </span>
         )}
       </span>
-    </PPCOverlayTrigger>
+    </OverlayTrigger>
   );
 };
 
@@ -76,7 +77,7 @@ interface CourseProps {
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, description, minUnits, maxUnits, terms, geList } = props.data;
+  const { title, courseLevel, minUnits, maxUnits, terms, geList } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
 
   const isInRoadmap = !!onDelete;
@@ -130,10 +131,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="title">{title}</div>
       ) : (
         <div className="course-info">
-          <p className="course-synopsis">
-            <b className="title">{title}</b>
-            <span className="description">{description}</span>
-          </p>
+          <CourseSynopsis course={props.data} clampDescription={3} />
           <div className="course-tags">
             {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
             <RecentOfferingsTooltip terms={terms} />
