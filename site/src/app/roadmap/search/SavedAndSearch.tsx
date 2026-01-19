@@ -1,5 +1,6 @@
 import './SavedAndSearch.scss';
 import React, { FC } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
@@ -14,8 +15,38 @@ import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCourses } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
-import { setSearchViewIndex } from '../../../store/slices/searchSlice';
+import { setPageNumber, setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
+
+interface SearchResultsProps {
+  viewIndex: SearchIndex;
+  searchResults: CourseGQLData[] | ProfessorGQLData[];
+}
+
+const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => {
+  const dispatch = useAppDispatch();
+  const { pageNumber, count } = useAppSelector((state) => state.search[viewIndex]);
+
+  const updatePageNumber = () => {
+    dispatch(setPageNumber(pageNumber + 1));
+  };
+
+  return (
+    <InfiniteScroll
+      dataLength={searchResults.length}
+      next={updatePageNumber}
+      hasMore={searchResults.length < count}
+      loader={<LoadingSpinner />}
+      scrollableTarget="sidebarScrollContainer"
+    >
+      {viewIndex === 'professors' ? (
+        <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
+      ) : (
+        <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
+      )}
+    </InfiniteScroll>
+  );
+};
 
 interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
@@ -129,8 +160,6 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
     ? 'No courses saved. Try searching for something!'
     : 'Start typing in the search bar to search for courses or instructors...';
 
-  const noResults = <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />;
-
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
   const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
 
@@ -139,19 +168,12 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       <SearchModule />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
       {showCourseFilters && <SearchFilters />}
-
-      {inProgressSearch !== 'none' ? (
+      {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
-      ) : !showSavedCourses && viewIndex === 'professors' ? (
-        <>
-          {searchResults.length === 0 && noResults}
-          <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
-        </>
+      ) : searchResults.length === 0 ? (
+        <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
       ) : (
-        <>
-          {searchResults.length === 0 && noResults}
-          <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
-        </>
+        <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
     </>
   );
