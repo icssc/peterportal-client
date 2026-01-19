@@ -4,10 +4,9 @@ import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
-import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/coursePreviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Button, MenuItem, Select } from '@mui/material';
+import { Button, MenuItem, Select, Tooltip } from '@mui/material';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 
@@ -104,12 +103,6 @@ const Review: FC<ReviewProps> = (props) => {
   }
 
   const openReviewForm = () => {
-    if (!isLoggedIn) {
-      dispatch(setToastMsg('You must be logged in to add a review!'));
-      dispatch(setToastSeverity('error'));
-      dispatch(setShowToast(true));
-      return;
-    }
     dispatch(setFormStatus(true));
     document.body.style.overflow = 'hidden';
   };
@@ -208,9 +201,13 @@ const Review: FC<ReviewProps> = (props) => {
               ))}
             </div>
           )}
-          <Button className="add-review-button" onClick={openReviewForm}>
-            <AddIcon /> Add Review
-          </Button>
+          <Tooltip title="You must be logged in to leave a review" placement="top">
+            <span className="add-review-button">
+              <Button onClick={openReviewForm} disabled={!isLoggedIn}>
+                <AddIcon /> Add Review
+              </Button>
+            </span>
+          </Tooltip>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />
       </>

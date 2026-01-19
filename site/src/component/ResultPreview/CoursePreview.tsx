@@ -11,10 +11,9 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
-import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/coursePreviewSlice';
-import Toast from '../../helpers/toast';
+import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -47,15 +46,6 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
-  const dispatch = useAppDispatch();
-  const toastMsg = useAppSelector((state) => state.coursePreview.toastMsg);
-  const toastSeverity = useAppSelector((state) => state.coursePreview.toastSeverity);
-  const showToast = useAppSelector((state) => state.coursePreview.showToast);
-
-  const handleCloseToast = () => {
-    dispatch(setShowToast(false));
-  };
-
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
@@ -81,8 +71,6 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
       <ResultPageSection title="💬 Reviews">
         <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
       </ResultPageSection>
-
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
     </div>
   );
 };
