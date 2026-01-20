@@ -141,18 +141,23 @@ function createApiCFCacheBehavior(
 function createNextJsApplication(
   apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
   apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
+  router: sst.aws.Router,
 ) {
   // The Nextjs Site Name must not have spaces; unlike static sites, this name
   // gets prepended in CreatePolicy, so it must meet these requirements:
   // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
   return new sst.aws.Nextjs('PeterPortal-Site', {
+    router: {
+      instance: router,
+      path: '/planner',
+    },
     environment: {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
       BACKEND_ROOT_URL: `https://${getDomainConfig().name}/planner/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
-    domain: getDomainConfig(),
+    // domain: getDomainConfig(),
     path: './site',
     transform: {
       cdn: (args) => {
@@ -183,7 +188,8 @@ export default $config({
     const apiOrigin = createApiOrigin(lambdaFunction);
     const cloudfrontInjectionFunction = createCloudFrontInjectionFunction();
     const apiCacheBehavior = createApiCFCacheBehavior(apiOrigin, cloudfrontInjectionFunction);
+    const router = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
 
-    createNextJsApplication(apiCacheBehavior, apiOrigin);
+    createNextJsApplication(apiCacheBehavior, apiOrigin, router);
   },
 });
