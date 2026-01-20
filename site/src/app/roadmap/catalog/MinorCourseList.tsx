@@ -24,7 +24,7 @@ interface MinorCourseListProps {
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
   const [resultsLoading, setResultsLoading] = useState(false);
-  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? true);
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKeyPrefix, expanded: isOpen }));
   };
