@@ -326,7 +326,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         <div className="reviewcard-voting">
           <p className="reviewcard-voting-question">Helpful?</p>
           <div className="reviewcard-voting-buttons">
-            <Tooltip title="You must be logged in to vote">
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
               <span>
                 <button
                   className={upvoteClassname}
@@ -339,7 +339,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
               </span>
             </Tooltip>
             <p className="reviewcard-voting-count">{review.score}</p>
-            <Tooltip title="You must be logged in to vote">
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
               <span>
                 <button
                   className={downvoteClassname}

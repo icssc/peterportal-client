@@ -201,7 +201,11 @@ const Review: FC<ReviewProps> = (props) => {
               ))}
             </div>
           )}
-          <Tooltip title="You must be logged in to leave a review" placement="top">
+          <Tooltip
+            title="You must be logged in to leave a review"
+            placement="top"
+            open={isLoggedIn ? false : undefined}
+          >
             <span className="add-review-button">
               <Button onClick={openReviewForm} disabled={!isLoggedIn}>
                 <AddIcon /> Add Review
