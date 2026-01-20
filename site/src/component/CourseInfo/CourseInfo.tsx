@@ -3,7 +3,7 @@ import { CourseGQLData } from '../../types/types';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
-import RecentOfferingsTooltip from '../RecentOfferingsTooltip/RecentOfferingsTooltip';
+import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
 import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -12,22 +12,25 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface CourseProp {
   course: CourseGQLData;
+  disabled?: boolean;
+  clampDescription?: number;
 }
 
-export const CourseBookmarkButton: FC<CourseProp> = ({ course }) => {
+export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
   const courseIsSaved = isCourseSaved(course);
   return (
-    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)}>
+    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
       {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
     </IconButton>
   );
 };
 
-export const CourseDescription: FC<CourseProp> = ({ course }) => {
+export const CourseSynopsis: FC<CourseProp> = ({ course, clampDescription = 0 }) => {
   return (
-    <p>
-      <b>{course.title}:</b> {course.description}
+    <p className="course-synopsis" style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
+      <b className="title">{course.title}</b>
+      <span className="description">{course.description}</span>
     </p>
   );
 };
@@ -74,8 +77,8 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
     <>
       {course.terms && course.terms.length > 0 && (
         <div className="quarter-offerings-section">
-          <b>Previous Offerings:</b>
-          <RecentOfferingsTooltip terms={course.terms} />
+          <b>Recent Offerings:</b>
+          <RecentOfferingsTable terms={course.terms} size="thin" />
         </div>
       )}
     </>

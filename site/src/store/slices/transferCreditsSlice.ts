@@ -5,6 +5,7 @@ import {
   TransferredCourse,
   TransferredAPExam,
   TransferredUncategorized,
+  SelectedApReward,
 } from '@peterportal/types';
 
 type DataLoadingState = 'waiting' | 'loading' | 'done';
@@ -14,17 +15,18 @@ export type TransferWithUnread<T> = T & { unread?: true };
 export const transferCreditsSlice = createSlice({
   name: 'transferCredits',
   initialState: {
-    showTransfersMenu: false,
+    showMobileCreditsMenu: false,
     dataLoadState: 'waiting' as DataLoadingState,
     transferredCourses: [] as TransferWithUnread<TransferredCourse>[],
     apExamInfo: [] as APExam[],
     userAPExams: [] as TransferWithUnread<TransferredAPExam>[],
+    selectedApRewards: [] as SelectedApReward[],
     transferredGEs: [] as TransferredGE[],
     uncategorizedCourses: [] as TransferWithUnread<TransferredUncategorized>[],
   },
   reducers: {
-    setShowTransfersMenu: (state, action: PayloadAction<boolean>) => {
-      state.showTransfersMenu = action.payload;
+    setShowMobileCreditsMenu: (state, action: PayloadAction<boolean>) => {
+      state.showMobileCreditsMenu = action.payload;
     },
     setDataLoadState: (state, action: PayloadAction<DataLoadingState>) => {
       state.dataLoadState = action.payload;
@@ -55,12 +57,29 @@ export const transferCreditsSlice = createSlice({
     },
     removeUserAPExam: (state, action: PayloadAction<string>) => {
       state.userAPExams = state.userAPExams.filter((exam) => exam.examName !== action.payload);
+      state.selectedApRewards = state.selectedApRewards.filter((reward) => reward.examName !== action.payload);
     },
     updateUserExam: (state, action: PayloadAction<TransferredAPExam>) => {
       const e = state.userAPExams.find((exam) => exam.examName === action.payload.examName);
       if (e) {
         e.score = action.payload.score;
         e.units = action.payload.units;
+      }
+    },
+    setSelectedApRewards: (state, action: PayloadAction<SelectedApReward[]>) => {
+      state.selectedApRewards = action.payload;
+    },
+    addSelectedApReward: (state, action: PayloadAction<SelectedApReward>) => {
+      state.selectedApRewards.push(action.payload);
+    },
+    updateSelectedApReward: (state, action: PayloadAction<SelectedApReward>) => {
+      const e = state.selectedApRewards.find(
+        (exam) => exam.examName === action.payload.examName && exam.path === action.payload.path,
+      );
+      if (e) {
+        e.selectedIndex = action.payload.selectedIndex;
+      } else {
+        state.selectedApRewards.push(action.payload);
       }
     },
     setAllTransferredGEs: (state, action: PayloadAction<TransferredGE[]>) => {
@@ -73,6 +92,15 @@ export const transferCreditsSlice = createSlice({
     },
     setUncategorizedCourses: (state, action: PayloadAction<TransferredUncategorized[]>) => {
       state.uncategorizedCourses = action.payload;
+    },
+    addUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
+      state.uncategorizedCourses.push(action.payload);
+    },
+    updateUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
+      const course = state.uncategorizedCourses.find((course) => course.name === action.payload.name);
+      if (course) {
+        course.units = action.payload.units;
+      }
     },
     removeUncategorizedCourse: (state, action: PayloadAction<TransferredUncategorized>) => {
       state.uncategorizedCourses = state.uncategorizedCourses.filter(
@@ -94,7 +122,7 @@ export const transferCreditsSlice = createSlice({
 });
 
 export const {
-  setShowTransfersMenu,
+  setShowMobileCreditsMenu,
   setDataLoadState,
   addTransferredCourse,
   removeTransferredCourse,
@@ -105,9 +133,14 @@ export const {
   addUserAPExam,
   removeUserAPExam,
   updateUserExam,
+  setSelectedApRewards,
+  addSelectedApReward,
+  updateSelectedApReward,
   setAllTransferredGEs,
   setTransferredGE,
   setUncategorizedCourses,
+  addUncategorizedCourse,
+  updateUncategorizedCourse,
   removeUncategorizedCourse,
   clearUnreadTransfers,
 } = transferCreditsSlice.actions;

@@ -65,9 +65,9 @@ const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.
 export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
   const themeCopy = { ...theme, colors: { ...theme.colors } };
 
-  themeCopy.colors.primary = getCssVariable('--blue-primary'); // box border
-  themeCopy.colors.primary50 = getCssVariable('--blue-secondary'); // active
-  themeCopy.colors.primary25 = getCssVariable('--blue-tertiary'); // hover
+  themeCopy.colors.primary = getCssVariable('--mui-palette-primary-main'); // box border
+  themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
+  themeCopy.colors.primary25 = getCssVariable('--mui-palette-tertiary-main'); // hover
 
   if (darkMode) {
     const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
@@ -129,12 +129,31 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
   return computedRequirements;
 }
 
-export function flattenSingletonGroups(requirements: ProgramRequirement[]): ProgramRequirement[] {
+/**
+ * Flattens requirements to prevent deep nesting.
+ * Preserves the titles of the top-level categories by default.
+ *
+ * @param requirements Nested requirements to flatten.
+ * @param preserveOuterLabels If labels of highest-level categories should not be changed. Defaults to true.
+ * @returns Flattened requirements.
+ */
+export function flattenSingletonGroups(
+  requirements: ProgramRequirement[],
+  preserveOuterLabels = true,
+): ProgramRequirement[] {
   const res = requirements.flatMap((r) => {
-    if (r.requirementType !== 'Group') return r;
-    if (r.requirementCount !== r.requirements.length) return r;
-    return flattenSingletonGroups(r.requirements);
+    if (r.requirementType !== 'Group' || r.requirementCount !== r.requirements.length || r.requirementCount > 1) {
+      return r;
+    }
+    return flattenSingletonGroups(r.requirements, false);
   });
+  if (preserveOuterLabels) {
+    // Map to new objects since we Can't modify label directly because it's read-only
+    return res.map((r, i) => ({
+      ...r,
+      label: requirements[i].label,
+    }));
+  }
   return res;
 }
 

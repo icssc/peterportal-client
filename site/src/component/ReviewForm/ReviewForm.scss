@@ -1,7 +1,8 @@
 @use '../../globals';
 
 .review-form-modal {
-  .modal-dialog {
+  // "paper" refers to the component used internally to render the Dialog's content
+  .MuiDialog-paper {
     width: 350px;
     display: flex;
     flex-direction: column;
@@ -9,18 +10,10 @@
     overflow-y: auto;
   }
 
-  .modal-header {
-    font-weight: bold;
-  }
-
-  .editing-notice {
-    margin-top: -16px;
+  .MuiDialogContentText-root {
+    margin-top: 4px;
     font-size: 12px;
     font-style: italic;
-  }
-
-  .form-check-input {
-    border: 1px solid rgba(136, 136, 136, 0.4);
   }
 
   .year-quarter-row,
@@ -28,29 +21,51 @@
     display: flex;
     gap: 16px;
 
-    > .form-group {
+    > .MuiFormControl-root {
       flex: 1;
     }
   }
 
-  .ppc-combobox {
-    .ppc-combobox__menu {
+  .rating-error .MuiRating-iconEmpty {
+    color: var(--mui-palette-error-main);
+  }
+
+  .tag-select {
+    .tag-select__menu {
       margin-top: 0;
       border-radius: 0 0 8px 8px;
       overflow: hidden;
     }
-    .ppc-combobox__menu-list {
+
+    .tag-select__menu-list {
       padding: 0;
     }
-  }
 
-  .additional-details {
-    textarea {
-      height: 90px;
+    .tag-select__control {
+      background-color: inherit;
+    }
+
+    .tag-select__control--is-focused {
+      border-color: var(--mui-palette-accent-main);
+    }
+
+    .tag-select__value-container {
+      background-color: inherit;
+    }
+
+    .tag-select__multi-value {
+      background-color: var(--mui-palette-overlay-overlay2);
     }
   }
 
   .anonymous-checkbox {
     margin-top: 16px;
+  }
+
+  .review-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
   }
 }

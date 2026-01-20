@@ -1,9 +1,25 @@
-$mobile-cutoff: 800px;
-$sidebar-width-open: 300px;
-$sidebar-width-closed: 72px;
+:root {
+  --border-primary: rgba(96, 97, 102, 0.5);
+  --border-secondary: rgba(0, 0, 0, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --border-secondary: rgba(255, 255, 255, 0.12);
+}
+
+$mobile-cutoff: 840px;
+$roadmap-toolbar-height: 60px;
 
 $roadmap-sidebar-width: 368px;
 $mui-transition-time: 268ms;
+
+@mixin outer-padding {
+  padding: 36px;
+  @media (max-width: $mobile-cutoff) {
+    padding: 20px 24px;
+  }
+}
 
 @mixin card-padding {
   padding: 24px 28px;
@@ -30,7 +46,7 @@ $mui-transition-time: 268ms;
   width: 100%;
   bottom: 0;
   z-index: $zIndex;
-  max-height: calc(100% - 120px);
+  max-height: calc(100% - 40px);
   padding-bottom: 56px;
   transform: translateY(100%);
   transition: transform 0.3s;
@@ -45,7 +61,7 @@ $mui-transition-time: 268ms;
   bottom: 0;
   left: 0;
   height: 40px;
-  background-color: var(--blue-primary);
+  background-color: var(--mui-palette-primary-main);
   width: 100%;
   border: none;
   appearance: none;

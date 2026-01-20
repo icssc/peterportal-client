@@ -2,7 +2,22 @@
   ol {
     margin-top: 8px;
   }
-  input[type='file'] {
-    margin-bottom: 16px;
+
+  .transcript-upload {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    > .MuiButtonBase-root {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .file-path {
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }

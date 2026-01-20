@@ -9,6 +9,14 @@ const nextConfig = {
       destination: 'http://localhost:8080/api/:path*',
     }];
   },
-}
+
+  async redirects() {
+    return [{
+        source: '/roadmap',
+        destination: '/',
+        permanent: true,
+      }];
+  }
+};
  
 export default nextConfig

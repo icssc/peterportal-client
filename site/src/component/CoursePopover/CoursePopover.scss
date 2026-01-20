@@ -1,6 +1,7 @@
 .course-popover {
   line-height: normal;
   width: 375px;
+  padding: 16px;
 
   .popover-name {
     font-weight: bold;
@@ -45,16 +46,11 @@
 
   .quarter-offerings-section {
     display: flex;
+    flex-direction: column;
     gap: 4px;
   }
 
   .course-info-warning + .quarter-offerings-section {
     margin-top: 10px;
-  }
-
-  .quarter-indicator-container {
-    margin-left: 0;
-    float: none;
-    align-items: center;
   }
 }

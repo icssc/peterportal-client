@@ -14,6 +14,7 @@ import {
 } from '../../../store/slices/transferCreditsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { getCourseIdWithSpaces } from '../../../helpers/util';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface CourseSelectOption {
   value: TransferredCourse;
@@ -23,15 +24,18 @@ interface CourseSelectOption {
 const CourseCreditMenuTile: FC<{ course: TransferWithUnread<TransferredCourse> }> = ({ course }) => {
   const { courseName, units, unread } = course;
   const dispatch = useAppDispatch();
+  const isLoggedIn = useIsLoggedIn();
 
   const deleteFn = () => {
-    trpc.transferCredits.removeTransferredCourse.mutate(courseName);
     dispatch(removeTransferredCourse(courseName));
+    if (!isLoggedIn) return;
+    trpc.transferCredits.removeTransferredCourse.mutate(courseName);
   };
   const setUnits = (value: number) => {
     const updatedCourse: TransferredCourse = { courseName, units: value };
-    trpc.transferCredits.updateTransferredCourse.mutate(updatedCourse);
     dispatch(updateTransferredCourse(updatedCourse));
+    if (!isLoggedIn) return;
+    trpc.transferCredits.updateTransferredCourse.mutate(updatedCourse);
   };
 
   return (
@@ -47,6 +51,7 @@ const CoursesSection: FC = () => {
   const [abortFn, setAbortFn] = useState<() => void>();
   const dispatch = useAppDispatch();
   const isDark = useContext(ThemeContext).darkMode;
+  const isLoggedIn = useIsLoggedIn();
 
   const cancelIncompleteSearch = () => {
     abortFn?.();
@@ -77,11 +82,12 @@ const CoursesSection: FC = () => {
 
   const addCourse = (course: TransferredCourse) => {
     dispatch(addTransferredCourse(course));
+    if (!isLoggedIn) return;
     trpc.transferCredits.addTransferredCourse.mutate(course);
   };
 
   return (
-    <MenuSection title="Courses You've Transferred">
+    <MenuSection title="Courses Taken">
       <SectionDescription>
         Enter courses you&rsquo;ve claimed credit for through a{' '}
         <a href="https://testingcenter.uci.edu/" target="_blank" rel="noreferrer">

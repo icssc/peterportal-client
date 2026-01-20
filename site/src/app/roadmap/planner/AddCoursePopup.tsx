@@ -1,15 +1,19 @@
 'use client';
 import { FC } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { moveCourse, setShowAddCourse, setShowSearch } from '../../../store/slices/roadmapSlice';
+import {
+  hideMobileCatalog,
+  reviseRoadmap,
+  selectCurrentPlan,
+  setShowAddCourse,
+} from '../../../store/slices/roadmapSlice';
 import './AddCoursePopup.scss';
 import UIOverlay from '../../../component/UIOverlay/UIOverlay';
 import { useNamedAcademicTerm } from '../../../hooks/namedAcademicTerm';
 import { pluralize } from '../../../helpers/util';
 import {
   CourseBookmarkButton,
-  CourseDescription,
+  CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
@@ -17,6 +21,7 @@ import {
 
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { modifyQuarterCourse } from '../../../helpers/roadmapEdits';
 
 const AddCoursePopup: FC = () => {
   const currentYearAndQuarter = useAppSelector((state) => state.roadmap.currentYearAndQuarter);
@@ -24,27 +29,29 @@ const AddCoursePopup: FC = () => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const activeMissingPrerequisites = useAppSelector((state) => state.roadmap.activeMissingPrerequisites);
   const term = useNamedAcademicTerm();
+  const currentPlan = useAppSelector(selectCurrentPlan);
 
   const dispatch = useAppDispatch();
 
-  const quarter = currentYearAndQuarter?.quarter ?? -1;
-  const year = currentYearAndQuarter?.year ?? -1;
+  const quarterIndex = currentYearAndQuarter?.quarter ?? -1;
+  const yearIndex = currentYearAndQuarter?.year ?? -1;
 
   const closePopup = () => dispatch(setShowAddCourse(false));
-  const contentClassName = 'ppc-modal add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
+  const contentClassName = 'add-course-modal ' + (showAddCourse ? 'enter' : 'exit');
   const overlay = <UIOverlay onClick={closePopup} zIndex={499} />;
 
   const addToRoadmap = () => {
-    dispatch(
-      moveCourse({
-        from: { yearIndex: -1, quarterIndex: -1, courseIndex: -1 },
-        to: { yearIndex: year, quarterIndex: quarter, courseIndex: 0 },
-      }),
-    );
+    const year = currentPlan.content.yearPlans[yearIndex];
+    const quarter = year.quarters[quarterIndex];
+    const revision = modifyQuarterCourse(currentPlan.id, activeCourse!, null, {
+      startYear: year.startYear,
+      quarter,
+      courseIndex: quarter.courses.length,
+    });
+    dispatch(reviseRoadmap(revision));
 
     // hide the search bar to view the roadmap
-    dispatch(setShowSearch({ show: false }));
-
+    dispatch(hideMobileCatalog());
     closePopup();
   };
 
@@ -61,7 +68,7 @@ const AddCoursePopup: FC = () => {
   return (
     <>
       <div className={contentClassName}>
-        <Modal.Header>
+        <div className="title">
           <h2>
             {department} {courseNumber}
           </h2>
@@ -73,20 +80,21 @@ const AddCoursePopup: FC = () => {
           <IconButton onClick={closePopup} className="close-button">
             <CloseIcon />
           </IconButton>
-        </Modal.Header>
-        <Modal.Body>
-          <CourseDescription course={activeCourse} />
+        </div>
+        <div className="content">
+          <CourseSynopsis course={activeCourse} />
           {activeMissingPrerequisites ? (
             <IncompletePrerequisiteText requiredCourses={activeMissingPrerequisites} />
           ) : (
             <PrerequisiteText course={activeCourse} />
           )}
           <PreviousOfferingsRow course={activeCourse} />
-        </Modal.Body>
+        </div>
         <button className="fixed" onClick={addToRoadmap}>
           Add to {term.quarter} {term.year}
         </button>
       </div>
+
       {overlay}
     </>
   );
