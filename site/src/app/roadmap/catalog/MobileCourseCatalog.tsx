@@ -29,7 +29,7 @@ const MobileCourseCatalog = () => {
   }, [isMobile, closeSearch]);
 
   return (
-    <MobilePopup show={showSearch} onClose={closeSearch}>
+    <MobilePopup show={showSearch} onClose={closeSearch} id="sidebarScrollContainer">
       <CourseCatalog />
     </MobilePopup>
   );
