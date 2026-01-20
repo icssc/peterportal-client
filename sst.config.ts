@@ -155,9 +155,11 @@ function createOrGetRouter() {
     const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
     return sharedRouter;
   } else if (isStaging($app.stage)) {
-    return new sst.aws.Router('AntAlmanacRouter', {
+    const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
       domain: getDomainConfig(),
     });
+    stagingRouter.route('/', '/planner');
+    return stagingRouter;
   } else {
     throw new Error('Invalid stage');
   }
