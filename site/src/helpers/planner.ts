@@ -103,6 +103,7 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
     id: p.id,
     name: p.name,
     content: collapsePlanner(p.content.yearPlans),
+    chc: p.chc,
   }));
 };
 
@@ -148,7 +149,7 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
     plans.map(async (p) => {
       const yearPlans = await expandPlanner(p.content);
       const planContent = { yearPlans, invalidCourses: [] };
-      return { id: p.id, name: p.name, content: planContent };
+      return { id: p.id, name: p.name, content: planContent, chc: p.chc };
     }),
   );
 };

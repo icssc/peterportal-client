@@ -4,7 +4,7 @@ import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Chip, Tooltip } from '@mui/material';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
-import { selectReviews, setReviews, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
@@ -232,12 +232,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   };
 
   const vote = async (newVote: number) => {
-    if (!isLoggedIn) {
-      dispatch(setToastMsg('You must be logged in to vote.'));
-      dispatch(setToastSeverity('error'));
-      dispatch(setShowToast(true));
-      return;
-    }
     updateScore(newVote);
     try {
       await trpc.reviews.vote.mutate({ id: review.id, vote: newVote });
@@ -357,13 +351,31 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         <div className="reviewcard-voting">
           <p className="reviewcard-voting-question">Helpful?</p>
           <div className="reviewcard-voting-buttons">
-            <button className={upvoteClassname} onClick={upvote}>
-              &#9650;
-            </button>
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+              <span>
+                <button
+                  className={upvoteClassname}
+                  onClick={upvote}
+                  disabled={!isLoggedIn}
+                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                >
+                  &#9650;
+                </button>
+              </span>
+            </Tooltip>
             <p className="reviewcard-voting-count">{review.score}</p>
-            <button className={downvoteClassname} onClick={downvote}>
-              &#9660;
-            </button>
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+              <span>
+                <button
+                  className={downvoteClassname}
+                  onClick={downvote}
+                  disabled={!isLoggedIn}
+                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                >
+                  &#9660;
+                </button>
+              </span>
+            </Tooltip>
           </div>
         </div>
         <button className="add-report-button" onClick={openReportForm}>
