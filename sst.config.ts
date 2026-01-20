@@ -11,8 +11,8 @@ function getDomainConfig() {
   if ($app.stage === 'prod') {
     domainName = 'peterportal.org';
     domainRedirects = ['www.peterportal.org'];
-  } else if ($app.stage === 'dev') {
-    domainName = 'dev.peterportal.org';
+  } else if ($app.stage === 'staging-shared') {
+    domainName = 'staging-shared.antalmanac.com';
   } else if (isStaging($app.stage)) {
     // if stage is like staging-###, use planner-###
     const subdomainPrefix = $app.stage.replace('staging-', 'planner-');
@@ -148,12 +148,11 @@ function createApiCFCacheBehavior(
  */
 function createOrGetRouter() {
   if ($app.stage === 'prod') {
-    /** @todo (@cadenlee2) create permanent cloudfront distributions for shared dev and prod routing */
+    /** @todo (@cadenlee2) create and get permanent cloudfront distributions for shared prod routing */
     const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
     return sharedRouter;
-  } else if ($app.stage === 'dev') {
-    /** @todo (@cadenlee2) create permanent cloudfront distributions for shared dev and prod routing */
-    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
+  } else if ($app.stage === 'staging-shared') {
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
     return sharedRouter;
   } else if (isStaging($app.stage)) {
     return new sst.aws.Router('AntAlmanacRouter', {
@@ -167,23 +166,22 @@ function createOrGetRouter() {
 function createNextJsApplication(
   apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
   apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
+  router: sst.aws.Router,
 ) {
-  const router = createOrGetRouter();
-
   // The Nextjs Site Name must not have spaces; unlike static sites, this name
   // gets prepended in CreatePolicy, so it must meet these requirements:
   // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
   return new sst.aws.Nextjs('PeterPortal-Site', {
+    router: {
+      instance: router,
+      path: '/planner',
+    },
     environment: {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
       BACKEND_ROOT_URL: `https://${getDomainConfig().name}/planner/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
-    router: {
-      instance: router,
-      path: '/planner',
-    },
     path: './site',
     transform: {
       cdn: (args) => {
@@ -214,7 +212,8 @@ export default $config({
     const apiOrigin = createApiOrigin(lambdaFunction);
     const cloudfrontInjectionFunction = createCloudFrontInjectionFunction();
     const apiCacheBehavior = createApiCFCacheBehavior(apiOrigin, cloudfrontInjectionFunction);
+    const router = createOrGetRouter();
 
-    createNextJsApplication(apiCacheBehavior, apiOrigin);
+    createNextJsApplication(apiCacheBehavior, apiOrigin, router);
   },
 });
