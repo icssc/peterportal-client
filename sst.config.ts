@@ -65,43 +65,6 @@ function createTrpcLambdaFunction() {
   });
 }
 
-/**
- * forwards host since lambda function url overwrites host (x-forwarded-host is recovered in api/app.ts)
- * encodes querystryings since cloudfront can't support "/" in querystring otherwise
- * @returns cloudfront function
- */
-const createCloudFrontInjectionFunction = () =>
-  new aws.cloudfront.Function(`${$app.name}-${$app.stage}-CloudFrontFunction`, {
-    runtime: 'cloudfront-js-2.0',
-    // this code is copy/pasted from an SST sveltekit component, forwards host and encodes query string
-    code: `
-      function handler(event) {
-        var request = event.request;
-        request.headers["x-forwarded-host"] = request.headers.host;
-        for (var key in request.querystring) {
-          if (key.includes("/")) {
-            request.querystring[encodeURIComponent(key)] = request.querystring[key];
-            delete request.querystring[key];
-          }
-        }
-        return request;
-      }
-    `,
-  });
-
-function createApiOrigin(lambdaFunction: sst.aws.Function): aws.types.input.cloudfront.DistributionOrigin {
-  return {
-    domainName: lambdaFunction.url.apply((url) => new URL(url).hostname),
-    originId: 'api',
-    customOriginConfig: {
-      httpPort: 80,
-      httpsPort: 443,
-      originProtocolPolicy: 'https-only',
-      originSslProtocols: ['TLSv1.2'],
-    },
-  };
-}
-
 enum AWSPolicyId {
   // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
   CachingDisabled = '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
@@ -109,37 +72,6 @@ enum AWSPolicyId {
   AllViewerExceptHostHeader = 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
   // The existing cache policy for PeterPortal's Next.js builds
   OrgNextjsCachePolicy = '0fddd706-8cdb-4835-bf8c-3202baed7dac',
-}
-
-/**
- * Creates a CloudFront cache behavior to prevent caching of API requests, forward the host header
- * (used for clients logging in from staging domains since OAUTH urls cannot be added programmatically),
- * and redirect the traffic to be handled by the tRPC handler
- * @param apiOrigin The Origin serving the tRPC API routes
- * @param cloudfrontInjectionFunction The Cloudfront function used to inject headers into API requests,
- * used to add referer headers to logins
- * @returns The behavior to apply to all `/api/*` routes
- */
-function createApiCFCacheBehavior(
-  apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
-  cloudfrontInjectionFunction: aws.cloudfront.Function,
-) {
-  const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
-    pathPattern: '/planner/api/*',
-    allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
-    cachedMethods: ['GET', 'HEAD'],
-    targetOriginId: apiOrigin.originId,
-    viewerProtocolPolicy: 'https-only',
-    cachePolicyId: AWSPolicyId.CachingDisabled,
-    originRequestPolicyId: AWSPolicyId.AllViewerExceptHostHeader,
-    functionAssociations: [
-      {
-        eventType: 'viewer-request',
-        functionArn: cloudfrontInjectionFunction.arn,
-      },
-    ],
-  };
-  return behavior;
 }
 
 /**
@@ -165,11 +97,7 @@ function createOrGetRouter() {
   }
 }
 
-function createNextJsApplication(
-  apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
-  apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
-  router: sst.aws.Router,
-) {
+function createNextJsApplication(router: sst.aws.Router) {
   // The Nextjs Site Name must not have spaces; unlike static sites, this name
   // gets prepended in CreatePolicy, so it must meet these requirements:
   // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
@@ -185,16 +113,6 @@ function createNextJsApplication(
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
     path: './site',
-    transform: {
-      cdn: (args) => {
-        args.origins = $output(args.origins).apply((origins) => [apiOrigin, ...origins]);
-
-        args.orderedCacheBehaviors = $output(args.orderedCacheBehaviors).apply((behaviors) => [
-          apiCacheBehavior,
-          ...(behaviors ?? []),
-        ]);
-      },
-    },
   });
 }
 
@@ -211,11 +129,10 @@ export default $config({
   async run() {
     const lambdaFunction = createTrpcLambdaFunction();
 
-    const apiOrigin = createApiOrigin(lambdaFunction);
-    const cloudfrontInjectionFunction = createCloudFrontInjectionFunction();
-    const apiCacheBehavior = createApiCFCacheBehavior(apiOrigin, cloudfrontInjectionFunction);
     const router = createOrGetRouter();
 
-    createNextJsApplication(apiCacheBehavior, apiOrigin, router);
+    router.route('/planner/api', lambdaFunction.url);
+
+    createNextJsApplication(router);
   },
 });
