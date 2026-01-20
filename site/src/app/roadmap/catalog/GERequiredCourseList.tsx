@@ -86,7 +86,7 @@ const CHCRequirements: FC = () => {
         <ProgramRequirementsList requirements={requirements} storeKeyPrefix={storeKeyPrefix} />
       )}
     </div>
-  ); // CHC2 not yet supported by API
+  );
 };
 const GERequiredCourseList: FC = () => {
   const requirements = useAppSelector((state) => state.courseRequirements.geRequirements);
