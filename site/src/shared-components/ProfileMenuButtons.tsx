@@ -20,7 +20,7 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
           size="medium"
           startIcon={<AccountCircleIcon />}
           color="inherit"
-          href="/api/users/auth/google"
+          href="/planner/api/users/auth/google"
         >
           Sign In
         </Button>
