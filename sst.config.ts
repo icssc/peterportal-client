@@ -5,6 +5,29 @@ function isStaging(stage: string) {
   return stage.match(/^staging-(\d+)$/);
 }
 
+/**
+ * Obtains the correct router based on the stage.
+ * Staging instances use new routers, while dev and prod use their respective shared routers.
+ */
+function createOrGetRouter() {
+  if ($app.stage === 'prod') {
+    /** @todo (@cadenlee2) create and get permanent cloudfront distributions for shared prod routing */
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
+    return sharedRouter;
+  } else if ($app.stage === 'staging-shared') {
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
+    return sharedRouter;
+  } else if (isStaging($app.stage)) {
+    const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
+      domain: getDomainConfig(),
+    });
+    stagingRouter.route('/', `https://${getDomainConfig().name}/planner`);
+    return stagingRouter;
+  } else {
+    throw new Error('Invalid stage');
+  }
+}
+
 function getDomainConfig() {
   let domainName: string;
   let domainRedirects: string[] | undefined;
@@ -72,29 +95,6 @@ enum AWSPolicyId {
   AllViewerExceptHostHeader = 'b689b0a8-53d0-40ab-baf2-68738e2966ac',
   // The existing cache policy for PeterPortal's Next.js builds
   OrgNextjsCachePolicy = '0fddd706-8cdb-4835-bf8c-3202baed7dac',
-}
-
-/**
- * Obtains the correct router based on the stage.
- * Staging instances use new routers, while dev and prod use their respective shared routers.
- */
-function createOrGetRouter() {
-  if ($app.stage === 'prod') {
-    /** @todo (@cadenlee2) create and get permanent cloudfront distributions for shared prod routing */
-    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
-    return sharedRouter;
-  } else if ($app.stage === 'staging-shared') {
-    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
-    return sharedRouter;
-  } else if (isStaging($app.stage)) {
-    const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
-      domain: getDomainConfig(),
-    });
-    stagingRouter.route('/', `https://${getDomainConfig().name}/planner`);
-    return stagingRouter;
-  } else {
-    throw new Error('Invalid stage');
-  }
 }
 
 function createNextJsApplication(router: sst.aws.Router) {
