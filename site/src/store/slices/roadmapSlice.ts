@@ -172,6 +172,12 @@ export const roadmapSlice = createSlice({
     setShowToast: (state, action: PayloadAction<boolean>) => {
       state.showToast = action.payload;
     },
+    setCHCSelection: (state, action: PayloadAction<{ plannerId: number; chc: '' | 'CHC4' | 'CHC2' }>) => {
+      const plan = state.plans.find((p) => p.id === action.payload.plannerId);
+      if (plan) {
+        plan.chc = action.payload.chc;
+      }
+    },
   },
 });
 
@@ -196,6 +202,7 @@ export const {
   setToastMsg,
   setToastSeverity,
   setShowToast,
+  setCHCSelection,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
