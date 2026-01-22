@@ -1,11 +1,17 @@
-import { Button, Container, Stack, SvgIcon, useMediaQuery, useTheme } from '@mui/material';
+import { Button, Container, Stack, useTheme } from '@mui/material';
 import { FC } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import ICSSCLogo from './IcsscLogo';
+import UpdateIcon from '@mui/icons-material/Update';
+import { setChangelogOpen } from '../store/slices/uiSlice';
+import { useAppDispatch } from '../store/hooks';
 
 const Footer: FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+
+  const openChangelog = () => {
+    dispatch(setChangelogOpen(true));
+  };
 
   const stackStyleOverrides = {
     color: theme.palette.text.secondary,
@@ -13,23 +19,9 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
     justifyContent: 'center',
   };
 
-  const showFullText = useMediaQuery('(min-width: 440px)');
-  const icsscLogo = <SvgIcon inheritViewBox component={ICSSCLogo} />;
-  const icsscText = showFullText ? 'ICSSC Projects' : 'ICSSC';
-
   return (
     <Container className={className}>
       <Stack direction="row" sx={stackStyleOverrides}>
-        <Button
-          variant="text"
-          size="large"
-          color="inherit"
-          startIcon={icsscLogo}
-          href="https://studentcouncil.ics.uci.edu/projects"
-          target="_blank"
-        >
-          {icsscText}
-        </Button>
         <Button
           variant="text"
           size="large"
@@ -40,15 +32,8 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
         >
           GitHub
         </Button>
-        <Button
-          variant="text"
-          size="large"
-          color="inherit"
-          startIcon={<AssignmentIcon />}
-          href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
-          target="_blank"
-        >
-          Feedback
+        <Button variant="text" size="large" color="inherit" startIcon={<UpdateIcon />} onClick={openChangelog}>
+          What&rsquo;s New
         </Button>
       </Stack>
     </Container>

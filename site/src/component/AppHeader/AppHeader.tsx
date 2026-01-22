@@ -2,7 +2,7 @@
 import { FC } from 'react';
 
 import './AppHeader.scss';
-import { Logo } from '../../shared-components/Logo';
+import { LogoAndSwitcher } from '../../shared-components/Logo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
@@ -11,7 +11,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
-import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
@@ -41,7 +40,7 @@ const AppHeader: FC = () => {
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
-            <SearchModule index="courses" />
+            <SearchModule autoFocused />
           </div>
         </div>
       </header>
@@ -52,21 +51,15 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           {/* Logo */}
-          <Link href="/">
-            <Logo />
-          </Link>
+          <LogoAndSwitcher />
         </div>
         {/* Search */}
-        {isRoadmapPage && (
-          <>
-            <SaveButton />
-            {isMobile && (
-              <IconButton onClick={showFullscreenSearch} color="inherit">
-                <SearchIcon />
-              </IconButton>
-            )}
-          </>
+        {isRoadmapPage && isMobile && (
+          <IconButton onClick={showFullscreenSearch} color="inherit">
+            <SearchIcon />
+          </IconButton>
         )}
+        {isRoadmapPage && <SaveButton />}
         <Profile />
       </div>
     </header>
