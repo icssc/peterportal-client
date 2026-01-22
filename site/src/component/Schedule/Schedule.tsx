@@ -8,6 +8,7 @@ import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
+import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import Toast, { ToastSeverity } from '../../helpers/toast';
 
 interface ScheduleProps {
@@ -40,7 +41,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
-  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
+  const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
 
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -49,7 +50,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const handleClose = () => {
     setShowToast(false);
   };
-
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
 
@@ -168,8 +168,18 @@ const Schedule: FC<ScheduleProps> = (props) => {
         return { text: term, value: term };
       }) ?? [];
 
+    const isOffered = termOptions[0].text === currentQuarter;
+
     return (
       <div>
+        {!isOffered && (
+          <div className="offering-alert">
+            <InfoOutlineIcon fontSize="small" />
+            <p>
+              <i>Not offered in {currentQuarter}.</i>
+            </p>
+          </div>
+        )}
         <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
 
         {props.termsOffered ? (

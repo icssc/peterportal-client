@@ -18,6 +18,7 @@ export async function queryGetPlanners(where: SQL) {
     .select({
       id: planner.id,
       name: planner.name,
+      chc: planner.chc,
       content: sql.raw(`jsonb_agg(jsonb_build_object(
         'name', ${planYearTableName}."${plannerYear.name.name}",
         'startYear', ${planYearTableName}."${plannerYear.startYear.name}",
@@ -143,10 +144,7 @@ export async function createPlanners(
   // corresponding planners. While observations detail that RETURNING should return
   // results in the same order, there is no explicit guarantee of this in any docs.
   const insertionIds = planners.map(async (plan) => {
-    const result = await tx
-      .insert(planner)
-      .values({ userId, name: plan.data.name, years: [] })
-      .returning({ id: planner.id });
+    const result = await tx.insert(planner).values({ userId, name: plan.data.name }).returning({ id: planner.id });
     return { [plan.data.id]: result[0].id };
   });
 

@@ -70,7 +70,7 @@ const RoadmapPage: FC = () => {
       <MobileCreditsMenu />
 
       {/* Main Planner View or Fullscreen Mobile Search */}
-      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`}>
+      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} id="mobileScrollContainer">
         {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
         {isMobile ? (
           <MobilePopup show={showPreview} onClose={handleClosePreview}>

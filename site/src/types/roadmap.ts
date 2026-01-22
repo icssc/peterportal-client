@@ -12,6 +12,7 @@ export interface RoadmapPlan {
   id: number;
   name: string;
   content: RoadmapPlanState;
+  chc?: '' | 'CHC4' | 'CHC2';
 }
 
 // Individual Changes
