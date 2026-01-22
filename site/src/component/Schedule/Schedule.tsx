@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.scss';
-import { LinearProgress } from '@mui/material';
+import { Chip, LinearProgress, Tooltip } from '@mui/material';
 
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
@@ -8,6 +8,7 @@ import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
+import Toast, { ToastSeverity } from '../../helpers/toast';
 
 interface ScheduleProps {
   courseID?: string;
@@ -40,6 +41,14 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState<ToastSeverity>('success');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
 
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
@@ -86,15 +95,35 @@ const Schedule: FC<ScheduleProps> = (props) => {
     const enrollmentPercent =
       parseInt(section.maxCapacity) == 0 ? 0 : (currentlyEnrolled * 100) / parseInt(section.maxCapacity);
 
+    const clicktoCopy = (event: React.MouseEvent<HTMLElement>, sectionCode: string) => {
+      event.stopPropagation();
+      navigator.clipboard.writeText(sectionCode);
+      setToastMsg('Section code copied to clipboard');
+      setToastSeverity('success');
+      setShowToast(true);
+    };
+
     //This function returns the data for a dynamic table after accessing the API
     return (
       <tr key={index}>
         {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
-        <td className="data-col">{section.sectionCode}</td>
         <td className="data-col">
-          {section.sectionType} {section.sectionNum}
+          <Tooltip title="Click to copy section code">
+            <Chip
+              label={section.sectionCode}
+              onClick={(e) => {
+                clicktoCopy(e, section.sectionCode);
+              }}
+            />
+          </Tooltip>
         </td>
-        <td className="data-col">{section.units}</td>
+        <td className="data-col">
+          {section.sectionType}
+          <br />
+          Sec: {section.sectionNum}
+          <br />
+          Units: {section.units}
+        </td>
         <td className="data-col">{section.instructors.join('\n')}</td>
         <td className="data-col">{getMeetingsString(section)}</td>
         <td className="data-col">
@@ -141,6 +170,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     return (
       <div>
+        <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
+
         {props.termsOffered ? (
           <Select
             value={selectedQuarter ?? currentQuarter}
@@ -164,8 +195,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
               <tr>
                 {props.professorIDs?.length && <th>Course</th>}
                 <th>Code</th>
-                <th>Section</th>
-                <th>Units</th>
+                <th>Type</th>
                 <th>Instructor</th>
                 <th>Time</th>
                 <th>Place</th>
