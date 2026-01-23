@@ -22,6 +22,7 @@ export const savedPlannerData = z.object({
   id: z.number(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
+  chc: z.enum(['', 'CHC4', 'CHC2']).optional(),
 });
 export type SavedPlannerData = z.infer<typeof savedPlannerData>;
 

@@ -6,6 +6,7 @@ import ThemeContext from '../../../style/theme-context';
 import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
+  setGroupExpanded,
   setMajorSpecs,
   setRequirements,
   setSpecialization,
@@ -39,9 +40,14 @@ interface MajorCourseListProps {
 }
 
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
+  const storeKeyPrefix = `major-${majorWithSpec.major.id}`;
   const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey: storeKeyPrefix, expanded: isOpen }));
+  };
 
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
@@ -165,10 +171,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
         ) : resultsLoading ? (
           <LoadingSpinner />
         ) : (
-          <ProgramRequirementsList
-            requirements={majorWithSpec.requirements}
-            storeKeyPrefix={`major-${majorWithSpec.major.id}`}
-          />
+          <ProgramRequirementsList requirements={majorWithSpec.requirements} storeKeyPrefix={storeKeyPrefix} />
         )}
       </Collapse>
     </div>

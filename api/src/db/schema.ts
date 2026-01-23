@@ -1,4 +1,3 @@
-import { SavedPlannerYearData } from '@peterportal/types';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -84,8 +83,8 @@ export const planner = pgTable(
       .references(() => user.id)
       .notNull(),
     name: text('name').notNull(),
-    years: jsonb('years').$type<SavedPlannerYearData>().array().notNull(),
     shareId: text('share_id'),
+    chc: text('chc'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
 );
