@@ -2,7 +2,7 @@
 import { FC } from 'react';
 
 import './AppHeader.scss';
-import { Logo } from '../../shared-components/Logo';
+import { LogoAndSwitcher } from '../../shared-components/Logo';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
@@ -11,7 +11,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
@@ -23,6 +23,10 @@ const AppHeader: FC = () => {
   const isMobile = useIsMobile();
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isRoadmapPage = usePathname() == '/';
+  // const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  // const platform = window.location.pathname.split('/')[1] === 'planner' ? 'Planner' : 'Scheduler';
+  // const platform = 'Planner';
 
   const showFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(true));
@@ -47,15 +51,16 @@ const AppHeader: FC = () => {
       </header>
     );
 
+  // TEMP COLOR
+  // const BLUE = '#305db7';
+
   return (
     <header className={`navbar ${isMobile ? 'mobile' : 'desktop'}`}>
       <div className="navbar-nav">
         <div className="navbar-left">
-          {/* Logo */}
-          <Link href="/">
-            <Logo />
-          </Link>
+          <LogoAndSwitcher />
         </div>
+
         {/* Search */}
         {isRoadmapPage && (
           <>
