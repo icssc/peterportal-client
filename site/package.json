@@ -20,6 +20,7 @@
     "react-cookie": "^7.2.2",
     "react-dom": "^18.3.1",
     "react-google-recaptcha": "^3.1.0",
+    "react-infinite-scroll-component": "^6.1.1",
     "react-multi-carousel": "^2.8.5",
     "react-redux": "^9.1.2",
     "react-responsive": "^10.0.0",
