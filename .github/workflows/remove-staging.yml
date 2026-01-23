@@ -5,7 +5,8 @@ on:
     types:
       - closed
   repository_dispatch:
-    types: [remove-command]
+    types:
+      - remove-command
 
 # use pr number for group instead of github.ref because ref will be main branch when the PR closes which is not a unique group for the PR
 # group should match with deploy-staging workflow so those don't run concurrently (if someone closes/reopens a PR)

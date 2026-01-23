@@ -2,7 +2,8 @@ name: Unlock - Staging
 
 on:
   repository_dispatch:
-    types: [unlock-command]
+    types:
+      - unlock-command
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
