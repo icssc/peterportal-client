@@ -2,7 +2,7 @@
 import { FC } from 'react';
 
 import './AppHeader.scss';
-import { LogoAndSwitcher } from '../../shared-components/Logo';
+import { LogoAndSwitcher } from '../../shared-components/LogoAndSwitcher';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
@@ -50,9 +50,6 @@ const AppHeader: FC = () => {
         </div>
       </header>
     );
-
-  // TEMP COLOR
-  // const BLUE = '#305db7';
 
   return (
     <header className={`navbar ${isMobile ? 'mobile' : 'desktop'}`}>
