@@ -46,6 +46,7 @@ const courseRequirementsSlice = createSlice({
           specializations: [],
           requirements: [],
         });
+        state.expandedGroups[`major-${action.payload.id}`] = true;
       }
     },
     removeMajor: (state, action: PayloadAction<string>) => {
@@ -87,6 +88,7 @@ const courseRequirementsSlice = createSlice({
           minor: action.payload,
           requirements: [],
         });
+        state.expandedGroups[`minor-${action.payload.id}`] = true;
       }
     },
     removeMinor: (state, action: PayloadAction<string>) => {
