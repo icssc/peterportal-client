@@ -26,15 +26,17 @@ const InfiniteScrollContainer: FC<InfiniteScrollContainerProps> = ({
   };
 
   return (
-    <InfiniteScroll
-      dataLength={searchResults.length}
-      next={updatePageNumber}
-      hasMore={searchResults.length < count}
-      loader={<LoadingSpinner />}
-      scrollableTarget={scrollableTarget}
-    >
-      {children}
-    </InfiniteScroll>
+    <div id={scrollableTarget}>
+      <InfiniteScroll
+        dataLength={searchResults.length}
+        next={updatePageNumber}
+        hasMore={searchResults.length < count}
+        loader={<LoadingSpinner />}
+        scrollableTarget={scrollableTarget}
+      >
+        {children}
+      </InfiniteScroll>
+    </div>
   );
 };
 

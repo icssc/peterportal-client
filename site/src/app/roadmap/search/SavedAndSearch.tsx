@@ -17,6 +17,7 @@ import ProfessorResult from './ProfessorResult';
 import { setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
 import InfiniteScrollContainer from '../../../component/InfiniteScrollContainer/InfiniteScrollContainer';
+import ScrollToTopButton from '../../../component/ScrollToTopButton/ScrollToTopButton';
 
 interface SearchResultsProps {
   viewIndex: SearchIndex;
@@ -166,6 +167,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
+      <ScrollToTopButton scrollableTarget="sidebarScrollContainer" />
     </>
   );
 };
