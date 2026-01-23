@@ -17,7 +17,7 @@ jobs:
   clean-up-pr:
     runs-on: ubuntu-latest
     # don't run on PRs from forks
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: ${{ github.event.pull_request.head.repo.full_name || github.event.client_payload.pull_request.head.repo.full_name }} == github.repository
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
