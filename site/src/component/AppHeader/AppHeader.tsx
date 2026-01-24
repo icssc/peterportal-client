@@ -23,10 +23,6 @@ const AppHeader: FC = () => {
   const isMobile = useIsMobile();
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isRoadmapPage = usePathname() == '/';
-  // const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  // const platform = window.location.pathname.split('/')[1] === 'planner' ? 'Planner' : 'Scheduler';
-  // const platform = 'Planner';
 
   const showFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(true));
