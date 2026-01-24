@@ -21,7 +21,6 @@ function createOrGetRouter() {
     const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
       domain: getDomainConfig(),
     });
-    stagingRouter.route('/', `https://${getDomainConfig().name}/planner`);
     return stagingRouter;
   } else {
     throw new Error('Invalid stage');
@@ -134,5 +133,10 @@ export default $config({
     router.route('/planner/api', lambdaFunction.url);
 
     createNextJsApplication(router);
+
+    // Add root redirect for staging environments after Next.js app is attached
+    if (isStaging($app.stage)) {
+      router.route('/', `https://${getDomainConfig().name}/planner`);
+    }
   },
 });
