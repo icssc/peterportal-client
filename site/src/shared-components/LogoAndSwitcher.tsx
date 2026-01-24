@@ -2,7 +2,7 @@ import { useIsMobile } from '../helpers/util';
 import { useState } from 'react';
 
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+// import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import {
   Box,
   Button,
@@ -16,7 +16,7 @@ import {
   Typography,
   ButtonGroup,
 } from '@mui/material';
-import { EventNote, Route } from '@mui/icons-material';
+import { EventNote, Route, UnfoldMore } from '@mui/icons-material';
 
 import { Logo } from './Logo';
 
@@ -30,14 +30,22 @@ export function LogoAndSwitcher() {
   return isMobile ? (
     // Mobile
     // @TODO Match with staging 1411's mobile dropdown
-    // @TODO fix mobile logo sizing
     <Box>
-      <Button onClick={(event) => setAnchorEl(event.currentTarget)} size="small" sx={{ paddingRight: 1.5 }}>
-        <Stack gap={1} direction="row" alignItems="center">
-          {/* <Image src={currentLogo.mobileLogo} alt="logo" title={currentLogo.attribution} height={36} width={78} /> */}
-          <Logo />
-          <UnfoldMoreIcon />
-        </Stack>
+      <Button
+        onClick={(event) => setAnchorEl(event.currentTarget)}
+        endIcon={<UnfoldMore />}
+        sx={{
+          paddingRight: 1,
+          p: 1,
+          minWidth: 'auto',
+          color: 'white',
+          '& .MuiTouchRipple-child': {
+            borderRadius: 0.5,
+            bgcolor: 'white',
+          },
+        }}
+      >
+        <Logo />
       </Button>
 
       <Popover

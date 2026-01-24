@@ -85,7 +85,8 @@ export function Logo() {
 
   return (
     <Image
-      src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
+      // src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
+      src={currentLogo.desktopLogo}
       alt="logo"
       title={currentLogo?.attribution}
       height={32}
