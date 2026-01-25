@@ -31,8 +31,8 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
-import { addPreview } from '../../store/slices/previewSlice.ts';
-import { useCurrentPreview } from '../../hooks/preview.ts';
+import { addPreview } from '../../store/slices/previewSlice';
+import { useCurrentPreview } from '../../hooks/preview';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -151,10 +151,10 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
-  const preview = useCurrentPreview();
+  const currentPreview = useCurrentPreview();
   const handleLinkClick = useCallback(
     (event: React.MouseEvent, id: string) => {
-      if (!preview) return;
+      if (!currentPreview) return;
       event.preventDefault();
       if (course) {
         dispatch(addPreview({ type: 'professor', id }));
@@ -162,7 +162,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         dispatch(addPreview({ type: 'course', id }));
       }
     },
-    [preview, course, dispatch],
+    [currentPreview, course, dispatch],
   );
 
   useEffect(() => {

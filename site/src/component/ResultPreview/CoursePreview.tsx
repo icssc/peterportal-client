@@ -86,6 +86,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
   const previews = useAppSelector((state) => state.preview.previewStack);
+  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyCourseLink = () => {
     const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
@@ -117,7 +118,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
           </IconButton>
         </Tooltip>
         {previews.length > 1 && (
-          <Tooltip title="Go Back">
+          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
             <IconButton onClick={onBack}>
               <BackIcon />
             </IconButton>

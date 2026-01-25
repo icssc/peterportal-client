@@ -82,6 +82,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
   const isLoading = false;
   const dispatch = useAppDispatch();
   const previews = useAppSelector((state) => state.preview.previewStack);
+  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyProfLink = () => {
     const url = new URL('/professor/' + netid, location.origin).toString();
@@ -113,7 +114,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
           </IconButton>
         </Tooltip>
         {previews.length > 1 && (
-          <Tooltip title="Go Back">
+          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
             <IconButton onClick={onBack}>
               <BackIcon />
             </IconButton>
