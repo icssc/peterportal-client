@@ -151,6 +151,20 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
+  const preview = useCurrentPreview();
+  const handleLinkClick = useCallback(
+    (event: React.MouseEvent, id: string) => {
+      if (!preview) return;
+      event.preventDefault();
+      if (course) {
+        dispatch(addPreview({ type: 'professor', id }));
+      } else {
+        dispatch(addPreview({ type: 'course', id }));
+      }
+    },
+    [preview, course, dispatch],
+  );
+
   useEffect(() => {
     // if loading then return
     if (!profCache) {
@@ -201,7 +215,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache, handleLinkClick]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -268,17 +282,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const tags: string[] = review.tags?.slice() ?? [];
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
-
-  const preview = useCurrentPreview();
-  const handleLinkClick = (event: React.MouseEvent, id: string) => {
-    if (!preview) return;
-    event.preventDefault();
-    if (course) {
-      dispatch(addPreview({ type: 'professor', id }));
-    } else {
-      dispatch(addPreview({ type: 'course', id }));
-    }
-  };
 
   return (
     <Card variant="outlined" className="reviewcard">
