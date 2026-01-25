@@ -63,7 +63,8 @@ export function LogoAndSwitcher() {
                   sx={{
                     lineHeight: '30px',
                     fontSize: '10.5px',
-                    color: '#00000099',
+                    color: 'var(--mui-palette-text-secondary)',
+                    bgcolor: 'inherit',
                   }}
                 >
                   Switch Apps
@@ -73,7 +74,7 @@ export function LogoAndSwitcher() {
             >
               <MenuItem
                 component={Link}
-                href="/"
+                href="https://staging-shared.antalmanac.com/"
                 onClick={() => setAnchorEl(null)}
                 sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
               >
@@ -128,6 +129,8 @@ export function LogoAndSwitcher() {
                 letterSpacing: 0,
               }}
               variant="outlined"
+              component={Link}
+              href="https://staging-shared.antalmanac.com/"
             >
               Scheduler
             </Button>
