@@ -15,7 +15,7 @@ import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
-import { clearPreviews, removePreview } from '../../store/slices/previewSlice.ts';
+import { clearPreviews, removePreview } from '../../store/slices/previewSlice';
 import { useCurrentPreview } from '../../hooks/preview';
 
 const RoadmapPage: FC = () => {
@@ -52,7 +52,7 @@ const RoadmapPage: FC = () => {
   };
 
   useEffect(() => {
-    if (previews.length) setShowPreview(true);
+    if (previews.length > 0) setShowPreview(true);
   }, [previews]);
 
   const currentPreview = useCurrentPreview();

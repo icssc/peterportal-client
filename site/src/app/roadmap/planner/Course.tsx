@@ -9,13 +9,13 @@ import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { useCurrentPreview } from '../../../hooks/preview.ts';
+import { useCurrentPreview } from '../../../hooks/preview';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { addPreview, clearPreviews } from '../../../store/slices/previewSlice.ts';
+import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 
 interface CourseNameAndInfoProps {
@@ -33,7 +33,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const isMobile = useIsMobile();
-  const preview = useCurrentPreview();
+  const currentPreview = useCurrentPreview();
 
   const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));
   const courseRoute = '/course/' + encodedCourseTitle;
@@ -43,7 +43,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     if (isMobile && showSearch) return;
-    if (preview) {
+    if (currentPreview) {
       dispatch(clearPreviews());
     }
     dispatch(addPreview({ type: 'course', id: courseID }));
