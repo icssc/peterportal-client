@@ -25,9 +25,6 @@ export function LogoAndSwitcher() {
   const isMobile = useIsMobile();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  // const platform = window.location.pathname.split('/')[1] === 'planner' ? 'Planner' : 'Scheduler';
-  // const platform = 'Planner';
-
   return (
     <Box>
       {isMobile ? (
@@ -73,9 +70,9 @@ export function LogoAndSwitcher() {
               sx={{ width: '200px' }}
             >
               <MenuItem
+                onClick={() => setAnchorEl(null)}
                 component={Link}
                 href="https://staging-shared.antalmanac.com/"
-                onClick={() => setAnchorEl(null)}
                 sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
               >
                 <ListItemIcon>
@@ -94,8 +91,8 @@ export function LogoAndSwitcher() {
               <MenuItem
                 selected
                 onClick={() => setAnchorEl(null)}
-                href="/"
                 component={Link}
+                href="/" // This should link to /planner in the future
                 sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
               >
                 <ListItemIcon>
@@ -146,6 +143,8 @@ export function LogoAndSwitcher() {
                 letterSpacing: 0,
               }}
               variant="contained"
+              component={Link}
+              href="/" // This should link to /planner in the future
             >
               Planner
             </Button>

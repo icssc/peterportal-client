@@ -11,7 +11,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
-// import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
