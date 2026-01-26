@@ -4,6 +4,9 @@ on:
   pull_request:
     types:
       - closed
+  repository_dispatch:
+    types:
+      - remove-command
 
 # use pr number for group instead of github.ref because ref will be main branch when the PR closes which is not a unique group for the PR
 # group should match with deploy-staging workflow so those don't run concurrently (if someone closes/reopens a PR)
@@ -18,6 +21,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Set commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+          sha: ${{ github.event.pull_request.head.sha || github.event.client_payload.pull_request.head.sha }}
+          context: Delete Staging
+          description: Removing staging environment for PR #${{ github.event.pull_request.number || github.event.client_payload.pull_request.number }}
 
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
@@ -46,3 +58,21 @@ jobs:
           environment: staging-${{ github.event.pull_request.number }}
           token: ${{ secrets.GITHUB_TOKEN }}
           onlyDeactivateDeployments: true
+
+      - name: Set final commit status
+        if: always()
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          sha: ${{ github.event.pull_request.head.sha || github.event.client_payload.pull_request.head.sha }}
+          context: Delete Staging
+          description: ${{ job.status == 'success' && 'Staging environment removed' || 'Failed to remove staging environment' }}
+
+      - name: Add reaction to comment
+        if: github.event_name == 'repository_dispatch'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reactions: rocket
