@@ -78,7 +78,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, o
   const dispatch = useAppDispatch();
 
   const copyProfLink = () => {
-    const url = new URL('/professor/' + netid, location.origin).toString();
+    const url = new URL('/planner/professor/' + netid, location.origin).toString();
     navigator.clipboard.writeText(url);
     dispatch(setToastMsg('Copied instructor URL to clipboard!'));
     dispatch(setToastSeverity('success'));

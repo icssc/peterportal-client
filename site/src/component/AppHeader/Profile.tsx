@@ -99,7 +99,7 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
           </ListItem>
           {isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
           <ListItem>
-            <ListItemButton href={'/api/users/auth/logout'} className="profile-popover-link" component="a">
+            <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
@@ -109,7 +109,7 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
         </>
       ) : (
         <ListItem>
-          <ListItemButton href={'/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>

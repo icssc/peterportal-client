@@ -82,7 +82,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId
   const dispatch = useAppDispatch();
 
   const copyCourseLink = () => {
-    const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
+    const url = new URL('/planner/course/' + encodeURIComponent(courseId), location.origin).toString();
     navigator.clipboard.writeText(url);
     dispatch(setToastMsg('Copied course URL to clipboard!'));
     dispatch(setToastSeverity('success'));
