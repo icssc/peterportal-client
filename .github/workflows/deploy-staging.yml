@@ -59,7 +59,6 @@ jobs:
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
           OIDC_CLIENT_ID: ${{ secrets.OIDC_CLIENT_ID }}
           OIDC_ISSUER_URL: ${{ secrets.OIDC_ISSUER_URL }}
-          GRECAPTCHA_SECRET: ${{ secrets.GRECAPTCHA_SECRET }}
           ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
           PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
