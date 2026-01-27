@@ -18,7 +18,7 @@ import { and, eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
 const programTypeNames = ['major', 'minor', 'specialization'] as const;
-const ugradRequirementTypeNames = ['UC', 'GE'] as const;
+const ugradRequirementTypeNames = ['UC', 'GE', 'CHC4'] as const;
 
 const getAPIProgramData = async <T extends ProgramType>(programType: string): Promise<T[]> => {
   const response = await fetch(`${process.env.PUBLIC_API_URL}programs/${programType}`, {
@@ -124,6 +124,15 @@ const programsRouter = router({
     const rowsToInsert = minorIds.map((minorId) => ({ plannerId, minorId }));
     if (rowsToInsert.length) await db.insert(plannerMinor).values(rowsToInsert);
   }),
+  saveCHCSelection: publicProcedure
+    .input(z.object({ plannerId: z.number(), chc: z.enum(['', 'CHC4', 'CHC2']) }))
+    .mutation(async ({ input }) => {
+      const { plannerId, chc } = input;
+      await db
+        .update(planner)
+        .set({ chc: chc || null })
+        .where(eq(planner.id, plannerId));
+    }),
 });
 
 export default programsRouter;

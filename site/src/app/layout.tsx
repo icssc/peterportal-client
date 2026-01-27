@@ -44,7 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="/theme-script.js"></script>
+        <script src="/planner/theme-script.js"></script>
         {/* This script must run and apply styles to the root HTML element before the
         <body> tag opens to avoid an unstyled body tag causing a white flash in dark mode */}
       </head>

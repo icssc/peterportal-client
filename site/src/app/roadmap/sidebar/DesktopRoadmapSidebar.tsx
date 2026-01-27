@@ -49,7 +49,7 @@ const DesktopRoadmapSidebar = () => {
         <Tab icon={<SearchIcon />} iconPosition="start" label="Search" />
       </Tabs>
 
-      <div className="sidebar-content">
+      <div className="sidebar-content" id="sidebarScrollContainer">
         {selectedIndex === 0 && <TransferCreditsMenu />}
         {selectedIndex === 1 && <CourseCatalog />}
         {selectedIndex === 2 && <SavedAndSearch />}
