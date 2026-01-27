@@ -92,7 +92,7 @@ export function LogoAndSwitcher() {
                 selected
                 onClick={() => setAnchorEl(null)}
                 component={Link}
-                href="/"
+                href="/planner"
                 sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
               >
                 <ListItemIcon>
@@ -113,7 +113,7 @@ export function LogoAndSwitcher() {
         </>
       ) : (
         <Stack direction="row" alignItems="center" gap={2}>
-          <Link href={'/'}>
+          <Link href={'/planner'}>
             <Logo />
           </Link>
           <ButtonGroup variant="outlined" color="inherit">
@@ -146,7 +146,7 @@ export function LogoAndSwitcher() {
               }}
               variant="contained"
               component={Link}
-              href="/"
+              href="/planner"
             >
               Planner
             </Button>
