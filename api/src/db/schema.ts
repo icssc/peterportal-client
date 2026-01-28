@@ -184,7 +184,7 @@ export const userMinor = pgTable(
       .notNull(),
     minorId: text('minor_id'),
   },
-  (table) => [{ userMajorUnique: uniqueIndex().on(table.userId, table.minorId) }],
+  (table) => [{ userMinorUnique: uniqueIndex().on(table.userId, table.minorId) }],
 );
 
 export const transferredMisc = pgTable(
