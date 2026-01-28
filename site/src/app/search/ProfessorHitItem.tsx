@@ -21,18 +21,9 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
   };
 
-  const initialsText = props.name
-    .split(' ')
-    .map((x: string) => x[0])
-    .join('');
-  const initialsSize = 22 - (initialsText.length - 2) * 4;
-
   return (
     <div className="hit-item professor-hit" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div className="name-container">
-        <div className="name-icon" style={{ fontSize: initialsSize }}>
-          {initialsText}
-        </div>
         <div>
           <p className="hit-name">{props.name}</p>
           <p className="hit-subtitle">
