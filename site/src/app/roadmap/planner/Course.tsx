@@ -9,7 +9,6 @@ import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../
 import { CourseGQLData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { useCurrentPreview } from '../../../hooks/preview';
 
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -33,7 +32,6 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const dispatch = useAppDispatch();
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const isMobile = useIsMobile();
-  const currentPreview = useCurrentPreview();
 
   const encodedCourseTitle = encodeURIComponent(department.replace(/\s+/g, '') + courseNumber.replace(/\s+/g, ''));
   const courseRoute = '/course/' + encodedCourseTitle;
@@ -43,9 +41,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     if (isMobile && showSearch) return;
-    if (currentPreview) {
-      dispatch(clearPreviews());
-    }
+    dispatch(clearPreviews());
     dispatch(addPreview({ type: 'course', id: courseID }));
   };
 
