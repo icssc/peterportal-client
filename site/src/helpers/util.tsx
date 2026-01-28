@@ -113,7 +113,7 @@ export function transformProfessorGQL(data: ProfessorAAPIResponse) {
 }
 
 export function useIsMobile() {
-  const isMobile = useMediaQuery('(max-width: 840px)');
+  const isMobile = useMediaQuery('(max-width: 800px)');
   return isMobile;
 }
 
