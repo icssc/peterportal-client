@@ -1,7 +1,7 @@
 import Image, { type StaticImageData } from 'next/image';
 import { useIsMobile } from '../helpers/util';
 
-import DefaultLogo from '../asset/logo.svg';
+import NewDefaultLogo from '../asset/mobile-logo-cropped.svg'; // @TODO rename when done
 import MobileDefaultLogo from '../asset/mobile-logo.svg';
 
 import ChristmasLogo from '../asset/christmas-logo.png';
@@ -26,7 +26,7 @@ type Logo = {
 
 const defaultLogo: Logo = {
   name: 'Default',
-  desktopLogo: DefaultLogo,
+  desktopLogo: NewDefaultLogo,
   mobileLogo: MobileDefaultLogo,
   startDay: 0,
   startMonthIndex: 0,
@@ -80,18 +80,15 @@ function isCurrentSeason(logo: Logo) {
 
 export function Logo() {
   const isMobile = useIsMobile();
-
   const currentLogo = logos.find(isCurrentSeason) ?? defaultLogo;
 
   return (
     <Image
-      src={isMobile ? currentLogo.mobileLogo : currentLogo.desktopLogo}
+      src={currentLogo.desktopLogo}
       alt="logo"
       title={currentLogo?.attribution}
-      style={{
-        width: 'auto',
-        height: '32px',
-      }}
+      height={32}
+      width={isMobile ? 48 : 78}
     />
   );
 }
