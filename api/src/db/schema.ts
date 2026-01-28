@@ -172,7 +172,7 @@ export const userMajor = pgTable(
     majorId: text('major_id').notNull(),
     specializationId: text('specialization_id'),
   },
-  (table) => [{ userMajorUnique: uniqueIndex().on(table.userId, table.majorId) }],
+  (table) => [uniqueIndex('user_major_unique').on(table.userId, table.majorId)],
 );
 
 export const userMinor = pgTable(
@@ -184,7 +184,7 @@ export const userMinor = pgTable(
       .notNull(),
     minorId: text('minor_id'),
   },
-  (table) => [{ userMinorUnique: uniqueIndex().on(table.userId, table.minorId) }],
+  (table) => [uniqueIndex('user_minor_unique').on(table.userId, table.minorId)],
 );
 
 export const transferredMisc = pgTable(
