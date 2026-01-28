@@ -11,12 +11,13 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
+import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
 
 interface PreviewTitleProps {
@@ -75,11 +76,17 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
   );
 };
 
-const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId, onClose }) => {
+const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => void }> = ({
+  courseId,
+  onClose,
+  onBack,
+}) => {
   courseId = courseId.replace(/\s/g, '');
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
+  const previews = useAppSelector((state) => state.preview.previewStack);
+  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyCourseLink = () => {
     const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
@@ -110,6 +117,13 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void }> = ({ courseId
             <CloseIcon />
           </IconButton>
         </Tooltip>
+        {previews.length > 1 && (
+          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
+            <IconButton onClick={onBack}>
+              <BackIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
         <Button
           variant="contained"
