@@ -31,6 +31,8 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
+import { addPreview } from '../../store/slices/previewSlice';
+import { useCurrentPreview } from '../../hooks/preview';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -149,6 +151,20 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
+  const currentPreview = useCurrentPreview();
+  const handleLinkClick = useCallback(
+    (event: React.MouseEvent, id: string) => {
+      if (!currentPreview) return;
+      event.preventDefault();
+      if (course) {
+        dispatch(addPreview({ type: 'professor', id }));
+      } else {
+        dispatch(addPreview({ type: 'course', id }));
+      }
+    },
+    [currentPreview, course, dispatch],
+  );
+
   useEffect(() => {
     // if loading then return
     if (!profCache) {
@@ -162,13 +178,25 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = (
-          <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
+          <Link
+            href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
+            onClick={(e) => handleLinkClick(e, review.courseId)}
+          >
+            {courseName}
+          </Link>
         );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
-        const profLink = <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        const profLink = (
+          <Link
+            href={{ pathname: `/professor/${review.professorId}` }}
+            onClick={(e) => handleLinkClick(e, review.professorId)}
+          >
+            {profName}
+          </Link>
+        );
         setIdentifier(profLink);
       } else {
         const foundCourseAndProfName = await fetchCourseAndProfName();
@@ -187,7 +215,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache, handleLinkClick]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
