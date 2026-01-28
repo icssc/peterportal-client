@@ -1,5 +1,4 @@
 import '@mui/material/styles';
-import { PaletteColor, PaletteColorOptions } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
   interface TwoToneColor {
@@ -18,8 +17,6 @@ declare module '@mui/material/styles' {
   type ChartColorScale = ColorScale & { pass: string; noPass: string };
 
   interface Palette {
-    tertiary: PaletteColor;
-    accent: PaletteColor;
     overlay: {
       overlay1: string;
       overlay2: string;
@@ -33,8 +30,6 @@ declare module '@mui/material/styles' {
   }
 
   interface PaletteOptions {
-    tertiary?: PaletteColorOptions;
-    accent?: PaletteColorOptions;
     overlay?: {
       overlay1?: string;
       overlay2?: string;

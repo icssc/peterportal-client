@@ -1,29 +1,8 @@
-.navbar-profile {
-  height: 70%;
-}
-
-.navbar-profile-pic {
-  width: 36px;
-  height: 36px;
-  border-radius: 100%;
-  white-space: normal;
-  color: inherit !important; // overwrite next.js default color for alt text
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.profile-button {
-  background: none;
-  border: none;
-  height: 100%;
-}
-
 .profile-popover {
   .MuiPaper-root {
     border-radius: var(--mui-shape-borderRadiusLg);
-    border: 1px solid var(--mui-palette-background-default);
+    margin-top: 3px;
+    margin-left: 4px;
     width: 310px;
     max-width: 100vw;
     padding: 16px 20px;
@@ -98,14 +77,10 @@
   }
 
   .profile-popover-link.active {
-    color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-secondary-main);
 
     .MuiListItemIcon-root {
-      color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-secondary-main);
     }
   }
-}
-
-.login-button {
-  color: var(--mui-palette-text-primary);
 }

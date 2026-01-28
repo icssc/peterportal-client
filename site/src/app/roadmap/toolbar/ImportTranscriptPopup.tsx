@@ -301,6 +301,7 @@ const ImportTranscriptPopup: FC = () => {
                   component="label"
                   role={undefined}
                   variant="outlined"
+                  color="secondary"
                   tabIndex={-1}
                   startIcon={<CloudUploadIcon />}
                   size="small"

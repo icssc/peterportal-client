@@ -33,7 +33,7 @@
 
   .name {
     font-weight: bold;
-    color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-secondary-main);
   }
 
   .warning-container {
@@ -113,7 +113,7 @@
   }
 
   &.roadmap-course {
-    color: var(--mui-palette-primary-main);
+    color: var(--mui-palette-secondary-main);
     box-shadow: none;
     border: 1px solid var(--border-secondary);
     margin-block: -0.5px;
@@ -123,7 +123,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-secondary-main);
     }
 
     .course-drag-handle,

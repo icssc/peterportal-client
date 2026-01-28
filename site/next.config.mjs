@@ -3,19 +3,30 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  basePath: '/planner',
   async rewrites() {
-    return [{
-      source: '/api/:path*',
-      destination: 'http://localhost:8080/api/:path*',
-    }];
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:8080/planner/api/:path*',
+      }
+    ];
   },
 
   async redirects() {
-    return [{
+    return [
+      {
+        source: '/',
+        destination: '/planner',
+        basePath: false,
+        permanent: true,
+      },
+      {
         source: '/roadmap',
         destination: '/',
         permanent: true,
-      }];
+      }
+    ];
   }
 };
  

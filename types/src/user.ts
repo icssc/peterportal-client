@@ -13,7 +13,9 @@ export interface User {
   picture: string;
 }
 
-export interface UserData extends Omit<User, 'id'> {
+export type UserMetadata = Omit<User, 'id'>;
+
+export interface UserData extends UserMetadata {
   id: number;
   theme: Theme;
   isAdmin: boolean;
@@ -21,7 +23,7 @@ export interface UserData extends Omit<User, 'id'> {
 }
 
 export interface UserSliceState {
-  user: Omit<User, 'id'> | null;
+  user: UserMetadata | null;
   theme: Theme | null;
   isAdmin: boolean;
 }

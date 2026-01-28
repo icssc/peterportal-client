@@ -27,7 +27,7 @@ const SearchModule: FC<SearchModuleProps> = () => {
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
-    if (location.pathname === '/') {
+    if (location.pathname === '/planner') {
       dispatch(setShowSavedCourses(!query));
     }
     if (query !== search.query) {

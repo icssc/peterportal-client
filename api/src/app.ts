@@ -91,7 +91,7 @@ expressRouter.use(
   }),
 );
 
-app.use('/api', expressRouter);
+app.use('/planner/api', expressRouter);
 
 /**
  * Error Handler

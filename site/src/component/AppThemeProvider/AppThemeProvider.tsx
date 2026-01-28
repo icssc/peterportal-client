@@ -79,7 +79,7 @@ const AppThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     // if logged in, load user theme from db
     if (!isLoggedIn) {
-      setThemePreference((localStorage.getItem('theme') ?? null) as Theme | null);
+      setThemePreference((localStorage.getItem('theme') ?? 'system') as Theme);
       return;
     }
   }, [isLoggedIn, setThemePreference]);
