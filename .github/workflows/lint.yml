@@ -27,5 +27,9 @@ jobs:
         env:
           HUSKY: 0
 
+      - name: Generate Next Types
+        run: npx next typegen
+        working-directory: ./site
+
       - name: Lint
         run: pnpm lint
