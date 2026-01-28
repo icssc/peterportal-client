@@ -33,6 +33,7 @@ const InfiniteScrollContainer: FC<InfiniteScrollContainerProps> = ({
         hasMore={searchResults.length < count}
         loader={<LoadingSpinner />}
         scrollableTarget={scrollableTarget}
+        style={{ overflow: '' }}
       >
         {children}
       </InfiniteScroll>
