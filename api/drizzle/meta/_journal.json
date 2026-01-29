@@ -148,6 +148,20 @@
       "when": 1768774187654,
       "tag": "0020_slimy_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1769637624973,
+      "tag": "0021_tricky_maddog",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1769639014966,
+      "tag": "0022_cooing_madelyne_pryor",
+      "breakpoints": true
     }
   ]
 }
