@@ -42,14 +42,13 @@ export const reviewSubmission = z.object({
   attendance: z.boolean(),
   tags: z.array(tagsEnum),
   updatedAt: z.string().optional(),
-  captchaToken: z.string().optional(),
 });
 export type ReviewSubmission = z.infer<typeof reviewSubmission>;
 
 export const editReviewSubmission = reviewSubmission.extend({ id: z.number() });
 export type EditReviewSubmission = z.infer<typeof editReviewSubmission>;
 
-export const reviewData = reviewSubmission.omit({ captchaToken: true, anonymous: true }).extend({
+export const reviewData = reviewSubmission.omit({ anonymous: true }).extend({
   id: z.number(),
   userId: z.number(),
   userDisplay: z.string(),

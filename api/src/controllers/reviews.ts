@@ -2,7 +2,6 @@
  @module ReviewRoute
 */
 
-import { verifyCaptcha } from '../helpers/recaptcha';
 import { adminProcedure, publicProcedure, router, userProcedure } from '../helpers/trpc';
 import { z } from 'zod';
 import {
@@ -127,13 +126,6 @@ const reviewsRouter = router({
       verified: verifiedCount >= 3, // auto-verify if use has 3+ verified reviews
       updatedAt: input.updatedAt ? new Date(input.updatedAt) : undefined,
     };
-
-    // Verify the captcha
-    const verifyResponse = await verifyCaptcha({
-      ...reviewToAdd,
-      updatedAt: reviewToAdd.updatedAt?.toISOString(),
-    });
-    if (!verifyResponse?.success) throw new TRPCError({ code: 'BAD_REQUEST', message: 'ReCAPTCHA token is invalid' });
 
     const addedReview = (await db.insert(review).values(reviewToAdd).returning())[0];
     return datesToStrings({

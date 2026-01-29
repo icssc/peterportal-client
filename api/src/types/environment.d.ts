@@ -11,7 +11,6 @@ declare global {
       SESSION_SECRET: string;
       OIDC_CLIENT_ID: string;
       OIDC_ISSUER_URL: string;
-      GRECAPTCHA_SECRET: string;
       PRODUCTION_DOMAIN: string;
       ADMIN_EMAILS: string;
       ANTEATER_API_KEY?: string;
