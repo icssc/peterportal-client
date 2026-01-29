@@ -16,6 +16,7 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
     return (
       <>
         <Button
+          className="header-button"
           variant="text"
           size="medium"
           startIcon={<AccountCircleIcon />}
