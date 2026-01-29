@@ -12,7 +12,7 @@ import { useSavedCourses } from '../../hooks/savedCourses';
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { setPreviewedCourse } from '../../store/slices/coursePreviewSlice';
+import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
@@ -23,7 +23,8 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
-    dispatch(setPreviewedCourse(props.id));
+    dispatch(clearPreviews());
+    dispatch(addPreview({ type: 'course', id: props.id }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

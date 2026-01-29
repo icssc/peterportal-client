@@ -327,9 +327,14 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
 interface RequireCourseListProps {
   requirements: ProgramRequirement[];
   storeKeyPrefix: string;
+  skipCollapseSingletons?: boolean;
 }
-const ProgramRequirementsList: FC<RequireCourseListProps> = ({ requirements, storeKeyPrefix }) => {
-  const formattedRequirements = formatRequirements(requirements);
+const ProgramRequirementsList: FC<RequireCourseListProps> = ({
+  requirements,
+  storeKeyPrefix,
+  skipCollapseSingletons,
+}) => {
+  const formattedRequirements = formatRequirements(requirements, skipCollapseSingletons);
   const transferredCourses = useTransferredCredits().courses;
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
