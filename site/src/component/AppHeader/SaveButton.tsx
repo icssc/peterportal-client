@@ -15,6 +15,7 @@ const SaveButton: FC = () => {
 
   return (
     <Button
+      className="save-button"
       variant="text"
       size="medium"
       startIcon={<SaveIcon />}

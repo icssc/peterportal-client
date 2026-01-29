@@ -29,9 +29,17 @@
     width: 100%;
   }
 
+  .save-button {
+    font-size: 12.25px;
+  }
+
   &.mobile {
     left: 0;
     width: 100%;
+
+    .save-button {
+      font-size: 10.5px;
+    }
   }
 
   .navbar-nav {
