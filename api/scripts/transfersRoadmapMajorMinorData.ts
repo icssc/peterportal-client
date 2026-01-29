@@ -1,6 +1,7 @@
 import dotenv from 'dotenv-flow';
-import { planner, plannerMajor /*plannerMinor, userMajor, userMinor*/ } from '../src/db/schema';
+import { planner, plannerMajor, plannerMinor /* userMajor, userMinor */ } from '../src/db/schema';
 import { db } from '../src/db';
+import { and, eq, isNotNull } from 'drizzle-orm';
 
 // load env (because this is a separate script)
 dotenv.config();
@@ -36,6 +37,33 @@ async function transferUserMajor() {
     };
   });
   console.log(userMajorsToAdd);
+
+  //   type FirstPlannerRow = {
+  //     userId: number;
+  //     plannerId: number;
+  // };
+
+  // firstPlanner should be an array of FirstPlannerRow types
+  for (const { userId, plannerId } of firstPlanner) {
+    const majors = await db
+      .select({
+        majorId: plannerMajor.majorId,
+        specializationId: plannerMajor.specializationId,
+      })
+      .from(plannerMajor)
+      .where(eq(plannerMajor.plannerId, plannerId));
+
+    const minors = await db
+      .select({
+        minorId: plannerMinor.minorId,
+      })
+      .from(plannerMinor)
+      .where(and(eq(plannerMinor.plannerId, plannerId), isNotNull(plannerMinor.minorId)));
+
+    console.log(`User ${userId} (planner ${plannerId})`);
+    console.log('  majors:', majors);
+    console.log('  minors:', minors);
+  }
 }
 
 transferUserMajor();
