@@ -69,7 +69,6 @@ async function getReviews(
         verified !== undefined ? eq(review.verified, verified) : undefined,
       ),
     )
-    .orderBy(desc(sql`COALESCE(SUM(${vote.vote}), 0)`), desc(review.createdAt))
     .leftJoin(vote, eq(vote.reviewId, review.id))
     .leftJoin(user, eq(user.id, review.userId))
     .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))

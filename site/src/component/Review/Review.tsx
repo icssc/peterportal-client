@@ -29,7 +29,7 @@ enum SortingOption {
 const Review: FC<ReviewProps> = (props) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.TOP_REVIEWS);
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
