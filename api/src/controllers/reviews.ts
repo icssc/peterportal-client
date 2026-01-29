@@ -72,7 +72,8 @@ async function getReviews(
     .leftJoin(vote, eq(vote.reviewId, review.id))
     .leftJoin(user, eq(user.id, review.userId))
     .leftJoin(userVoteSubquery, eq(userVoteSubquery.reviewId, review.id))
-    .groupBy(review.id, user.name, userVoteSubquery.userVote);
+    .groupBy(review.id, user.name, userVoteSubquery.userVote)
+    .orderBy(desc(sql`COALESCE(SUM(${vote.vote}), 0)`), desc(review.createdAt));
 
   if (results) {
     return results.map(({ review, score, userDisplay, userVote }) =>
