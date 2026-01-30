@@ -117,9 +117,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
             />
           </Tooltip>
         </td>
+        <td className="data-col">{section.sectionType}</td>
         <td className="data-col">
-          {section.sectionType}
-          <br />
           Sec: {section.sectionNum}
           <br />
           Units: {section.units}
@@ -206,6 +205,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 {props.professorIDs?.length && <th>Course</th>}
                 <th>Code</th>
                 <th>Type</th>
+                <th>Section</th>
                 <th>Instructor</th>
                 <th>Time</th>
                 <th>Place</th>
