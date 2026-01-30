@@ -3,7 +3,7 @@ import './HitItem.scss';
 import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
-import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
+import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
 import { addDelimiter } from '../../helpers/util';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 
@@ -27,7 +27,7 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              dispatch(setPreviewedCourse(c.id));
+              dispatch(addPreview({ type: 'course', id: c.id }));
             }}
           >
             {c.department} {c.courseNumber}
@@ -47,7 +47,8 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
   const hasCourses = courses.length > 0;
 
   const onClickName = () => {
-    dispatch(setPreviewedProfessor(props.ucinetid));
+    dispatch(clearPreviews());
+    dispatch(addPreview({ type: 'professor', id: props.ucinetid }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
