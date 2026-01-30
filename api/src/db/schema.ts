@@ -84,6 +84,7 @@ export const planner = pgTable(
       .notNull(),
     name: text('name').notNull(),
     shareId: text('share_id'),
+    chc: text('chc'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
 );

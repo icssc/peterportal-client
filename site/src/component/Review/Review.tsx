@@ -6,12 +6,13 @@ import './Review.scss';
 import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { Button, MenuItem, Select } from '@mui/material';
+import { Button, MenuItem, Select, Tooltip } from '@mui/material';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 
 import AddIcon from '@mui/icons-material/Add';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -32,6 +33,7 @@ const Review: FC<ReviewProps> = (props) => {
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
+  const isLoggedIn = useIsLoggedIn();
 
   const getReviews = useCallback(async () => {
     interface paramsProps {
@@ -199,9 +201,17 @@ const Review: FC<ReviewProps> = (props) => {
               ))}
             </div>
           )}
-          <Button className="add-review-button" onClick={openReviewForm}>
-            <AddIcon /> Add Review
-          </Button>
+          <Tooltip
+            title="You must be logged in to leave a review"
+            placement="top"
+            open={isLoggedIn ? false : undefined}
+          >
+            <span className="add-review-button">
+              <Button onClick={openReviewForm} disabled={!isLoggedIn}>
+                <AddIcon /> Add Review
+              </Button>
+            </span>
+          </Tooltip>
         </div>
         <ReviewForm closeForm={closeForm} show={showForm} {...props} />
       </>
