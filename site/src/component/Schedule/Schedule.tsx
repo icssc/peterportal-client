@@ -10,6 +10,8 @@ import trpc from '../../trpc';
 import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import Toast, { ToastSeverity } from '../../helpers/toast';
+import Link from 'next/link';
+import { restrictionsMapping } from '../../helpers/schedule';
 
 interface ScheduleProps {
   courseID?: string;
@@ -142,7 +144,17 @@ const Schedule: FC<ScheduleProps> = (props) => {
         </td>
 
         <td className="data-col">{section.numOnWaitlist}</td>
-        <td className="data-col">{section.restrictions}</td>
+        <td className="data-col">
+          <Tooltip title={restrictionsMapping[section.restrictions]}>
+            <Link
+              href="https://www.reg.uci.edu/enrollment/restrict_codes.html"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {section.restrictions}
+            </Link>
+          </Tooltip>
+        </td>
         <td className="data-col">
           <div className="status-badge" data-status={section.status}>
             {section.status}
