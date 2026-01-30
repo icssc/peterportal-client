@@ -36,7 +36,7 @@ jobs:
           pulumi-version: 3.138.0 # Any version < 3.214.0 works
 
       - name: Build and deploy
-        run: pnpm sst deploy --stage prod
+        run: pnpm sst remove --stage prod && pnpm sst deploy --stage prod
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
           NODE_ENV: production
