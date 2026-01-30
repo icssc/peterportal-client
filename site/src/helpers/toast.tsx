@@ -14,7 +14,7 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
   const backgroundColor = severity === 'error' ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-primary-main)';
   return (
     <Snackbar
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       open={showToast}
       autoHideDuration={3000}
       onClose={onClose}
