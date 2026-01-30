@@ -27,14 +27,18 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
         <div>
           <p className="hit-name">{props.name}</p>
           <p className="hit-subtitle">
-            {props.department}&nbsp;• {props.title}
+            {props.title && <span className="prof-title">{props.title}</span>}
+
+            {props.title && props.department && ' • '}
+
+            {props.department && <span className="prof-department">{props.department}</span>}
           </p>
         </div>
       </div>
       {Object.keys(props.courses).length > 0 && (
         <div>
           <p>
-            <b>Recently taught: </b>
+            <b>Recently Taught: </b>
             {Object.keys(props.courses).map((item: string, index: number) => {
               const handleLinkClick = (event: React.MouseEvent) => {
                 event.preventDefault();
