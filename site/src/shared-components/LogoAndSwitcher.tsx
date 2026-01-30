@@ -73,14 +73,15 @@ export function LogoAndSwitcher() {
                 onClick={() => setAnchorEl(null)}
                 component={Link}
                 href="https://staging-shared.antalmanac.com/"
-                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '30px' }}
+                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '34.5px' }}
               >
                 <ListItemIcon>
                   <EventNote sx={{ fontSize: '18px' }} />
                 </ListItemIcon>
                 <Typography
                   sx={{
-                    fontSize: '12px',
+                    fontSize: '15px',
+                    fontWeight: 500,
                     letterSpacing: '0px',
                   }}
                 >
@@ -92,14 +93,15 @@ export function LogoAndSwitcher() {
                 onClick={() => setAnchorEl(null)}
                 component={Link}
                 href="/planner"
-                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '30px' }}
+                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '34.5px' }}
               >
                 <ListItemIcon>
                   <Route sx={{ fontSize: '18px' }} />
                 </ListItemIcon>
                 <Typography
                   sx={{
-                    fontSize: '12px',
+                    fontSize: '15px',
+                    fontWeight: 500,
                     letterSpacing: '0px',
                   }}
                 >
