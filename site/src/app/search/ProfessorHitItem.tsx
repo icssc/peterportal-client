@@ -3,13 +3,48 @@ import './HitItem.scss';
 import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
-import Link from 'next/link';
 import { setPreviewedCourse, setPreviewedProfessor } from '../../store/slices/coursePreviewSlice';
+import { addDelimiter } from '../../helpers/util';
+import { CoursePreviewWithTerms } from '@peterportal/types';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
+interface RecentlyTaughtListProps {
+  courses: CoursePreviewWithTerms[];
+}
+
+const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
+  const dispatch = useAppDispatch();
+
+  return (
+    <>
+      {addDelimiter(
+        courses.slice(0, 10).map((c) => (
+          <a
+            key={c.id}
+            href={`/course/${c.id}`}
+            className="course-link"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dispatch(setPreviewedCourse(c.id));
+            }}
+          >
+            {c.department} {c.courseNumber}
+          </a>
+        )),
+        ', ',
+      )}
+      {courses.length > 10 && ` + ${courses.length - 10} more...`}
+    </>
+  );
+};
+
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
+
+  const courses = Object.values(props.courses);
+  const hasCourses = courses.length > 0;
 
   const onClickName = () => {
     dispatch(setPreviewedProfessor(props.ucinetid));
@@ -35,29 +70,16 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           </p>
         </div>
       </div>
-      {Object.keys(props.courses).length > 0 && (
-        <div>
-          <p>
-            <b>Recently Taught: </b>
-            {Object.keys(props.courses).map((item: string, index: number) => {
-              const handleLinkClick = (event: React.MouseEvent) => {
-                event.preventDefault();
-                event.stopPropagation();
-                dispatch(setPreviewedCourse(item));
-              };
-
-              return (
-                <span key={`professor-hit-item-course-${index}`}>
-                  {index ? ', ' : ''}
-                  <Link href={'/course/' + encodeURIComponent(item.replace(/\s+/g, ''))} onClick={handleLinkClick}>
-                    {item}
-                  </Link>
-                </span>
-              );
-            })}
-          </p>
-        </div>
-      )}
+      <div className="recent-courses">
+        <p className="recent-hit-courses">
+          <b>Recently Taught:</b>{' '}
+          {hasCourses ? (
+            <RecentlyTaughtList courses={courses} />
+          ) : (
+            <span className="no-courses">No recent courses</span>
+          )}
+        </p>
+      </div>
     </div>
   );
 };
