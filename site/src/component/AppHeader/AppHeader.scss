@@ -25,13 +25,22 @@
   box-shadow: none;
 
   &.desktop {
-    left: 64px;
-    width: calc(100% - 64px);
+    left: 0;
+    width: 100%;
+  }
+
+  .header-button {
+    font-size: 12.25px;
+    letter-spacing: 0;
   }
 
   &.mobile {
     left: 0;
     width: 100%;
+
+    .header-button {
+      font-size: 10.5px;
+    }
   }
 
   .navbar-nav {
@@ -42,7 +51,7 @@
     justify-content: space-between;
     align-items: center;
     flex-direction: row;
-    gap: 4px;
+    gap: 0px;
 
     .navbar-left {
       display: flex;
