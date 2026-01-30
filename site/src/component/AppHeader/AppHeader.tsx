@@ -56,12 +56,12 @@ const AppHeader: FC = () => {
         {/* Search */}
         {isRoadmapPage && (
           <>
-            <SaveButton />
             {isMobile && (
               <IconButton onClick={showFullscreenSearch} color="inherit">
-                <SearchIcon />
+                <SearchIcon sx={{ fontSize: 20 }} />
               </IconButton>
             )}
+            <SaveButton />
           </>
         )}
         <Profile />

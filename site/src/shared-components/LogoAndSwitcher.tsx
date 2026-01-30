@@ -25,6 +25,14 @@ export function LogoAndSwitcher() {
   const isMobile = useIsMobile();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
+  const desktopButtonSx = {
+    fontSize: 14,
+    fontWeight: 500,
+    py: 0.4,
+    letterSpacing: 0,
+    paddingBlock: '3.2px',
+  };
+
   return (
     <Box>
       {isMobile ? (
@@ -73,7 +81,7 @@ export function LogoAndSwitcher() {
                 onClick={() => setAnchorEl(null)}
                 component={Link}
                 href="https://staging-shared.antalmanac.com/"
-                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
+                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '34.5px' }}
               >
                 <ListItemIcon>
                   <EventNote sx={{ fontSize: '18px' }} />
@@ -93,7 +101,7 @@ export function LogoAndSwitcher() {
                 onClick={() => setAnchorEl(null)}
                 component={Link}
                 href="/planner"
-                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '36px' }}
+                sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '34.5px' }}
               >
                 <ListItemIcon>
                   <Route sx={{ fontSize: '18px' }} />
@@ -122,10 +130,7 @@ export function LogoAndSwitcher() {
               sx={{
                 color: 'white',
                 bgcolor: BLUE,
-                fontSize: 14,
-                fontWeight: 500,
-                py: 0.4,
-                letterSpacing: 0,
+                ...desktopButtonSx,
               }}
               variant="outlined"
               component={Link}
@@ -139,10 +144,7 @@ export function LogoAndSwitcher() {
                 color: BLUE,
                 '&:hover': { bgcolor: 'grey.100' },
                 bgcolor: 'white',
-                fontSize: 14,
-                fontWeight: 500,
-                py: 0.4,
-                letterSpacing: 0,
+                ...desktopButtonSx,
               }}
               variant="contained"
               component={Link}
