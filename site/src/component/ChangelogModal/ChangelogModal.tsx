@@ -1,12 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './ChangelogModal.scss';
-import changelogImage from '../../asset/rm-dedicated-search-pgs.png';
+import changelogImage from '../../asset/merge-switcher.jpg';
 import Image from 'next/image';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link } from '@mui/material';
 
-const DESCRIPTION = 'Course and instructor search are now integrated into the main roadmap search menus!';
-const LAST_UPDATED = '12/04/2025';
+const CUSTOM_TITLE = 'PeterPortal is now AntAlmanac Planner!'; // If ommitted, defaults to "What's New – {Month} {Year}"
+const DESCRIPTION = (
+  <p>
+    AntAlmanac and PeterPortal are now unified into the ultimate course planning app. Learn more in our{' '}
+    <Link href="https://docs.icssc.club/docs/about/antalmanac/merge" target="_blank">
+      blog post
+    </Link>
+    !
+  </p>
+);
+const LAST_UPDATED = '01/30/2026';
 
 const ChangelogModal = () => {
   const [showModal, setShowModal] = useState(false);
@@ -30,7 +39,8 @@ const ChangelogModal = () => {
   return (
     <Dialog open={showModal} onClose={closeModal} className="changelog-modal">
       <DialogTitle>
-        What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
+        {CUSTOM_TITLE ||
+          `What's New – ${new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}`}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>{DESCRIPTION}</DialogContentText>
