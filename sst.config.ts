@@ -30,8 +30,8 @@ function getDomainConfig() {
   let domainName: string;
   let domainRedirects: string[] | undefined;
   if ($app.stage === 'prod') {
-    domainName = 'peterportal.org';
-    domainRedirects = ['www.peterportal.org'];
+    domainName = 'antalmanac.com';
+    domainRedirects = ['www.antalmanac.com'];
   } else if ($app.stage === 'staging-shared') {
     domainName = 'staging-shared.antalmanac.com';
   } else if (isStaging($app.stage)) {
