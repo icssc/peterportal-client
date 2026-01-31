@@ -24,6 +24,31 @@ export function useClearedCourses() {
   return clearedCourses;
 }
 
+export function useClearedCoursesUntil(courseId: string): Set<string> {
+  const { courses, ap, apInfo } = useTransferredCredits();
+  const transfers = useMemo(() => getNamesOfTransfers(courses, ap, apInfo), [ap, apInfo, courses]);
+  const roadmap = useAppSelector((state) => state.roadmap);
+  const currentPlan = roadmap?.plans[roadmap.currentPlanIndex]?.content?.yearPlans;
+
+  const clearedCourses = useMemo(() => {
+    const taken = new Set<string>(transfers);
+
+    for (const year of currentPlan) {
+      for (const quarter of year.quarters) {
+        const ids = quarter.courses.map((c) => `${c.department} ${c.courseNumber}`);
+
+        if (ids.includes(courseId)) {
+          return taken;
+        }
+
+        ids.forEach((id) => taken.add(id));
+      }
+    }
+    return taken;
+  }, [currentPlan, transfers, courseId]);
+  return clearedCourses;
+}
+
 export function useSaveRoadmap() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
