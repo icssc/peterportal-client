@@ -11,8 +11,7 @@ function isStaging(stage: string) {
  */
 function createOrGetRouter() {
   if ($app.stage === 'prod') {
-    /** @todo (@cadenlee2) create and get permanent cloudfront distributions for shared prod routing */
-    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'TODO');
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E3RQWX02OHXETG');
     return sharedRouter;
   } else if ($app.stage === 'staging-shared') {
     const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
