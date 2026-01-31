@@ -6,6 +6,7 @@ import { ToastSeverity } from '../../helpers/toast';
 // Define a type for the slice state
 interface ReviewState {
   reviews: ReviewData[];
+  reviewOrder: number[];
   formOpen: boolean;
   toastMsg: string;
   toastSeverity: ToastSeverity;
@@ -15,6 +16,7 @@ interface ReviewState {
 // Define the initial state using that type
 const initialState: ReviewState = {
   reviews: [],
+  reviewOrder: [],
   formOpen: false,
   toastMsg: '',
   toastSeverity: 'info' as ToastSeverity,
@@ -32,6 +34,9 @@ export const reviewSlice = createSlice({
     },
     setReviews: (state, action: PayloadAction<ReviewData[]>) => {
       state.reviews = action.payload;
+    },
+    setReviewOrder: (state, action: PayloadAction<number[]>) => {
+      state.reviewOrder = action.payload;
     },
     editReview: (state, action: PayloadAction<EditReviewSubmission>) => {
       const i = state.reviews.findIndex((review) => review.id === action.payload.id);
@@ -58,6 +63,7 @@ export const reviewSlice = createSlice({
 export const {
   addReview,
   setReviews,
+  setReviewOrder,
   editReview,
   setFormStatus,
   toggleFormStatus,
@@ -68,5 +74,6 @@ export const {
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectReviews = (state: RootState) => state.review.reviews;
+export const selectReviewOrder = (state: RootState) => state.review.reviewOrder;
 
 export default reviewSlice.reducer;

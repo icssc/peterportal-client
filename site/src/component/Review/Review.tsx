@@ -3,7 +3,13 @@ import ReviewCard from './ReviewCard';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import './Review.scss';
 
-import { selectReviews, setReviews, setFormStatus } from '../../store/slices/reviewSlice';
+import {
+  selectReviews,
+  setReviews,
+  setFormStatus,
+  selectReviewOrder,
+  setReviewOrder,
+} from '../../store/slices/reviewSlice';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { Button, MenuItem, Select, Tooltip } from '@mui/material';
@@ -29,7 +35,8 @@ enum SortingOption {
 const Review: FC<ReviewProps> = (props) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
-  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.MOST_RECENT);
+  const reviewOrder = useAppSelector(selectReviewOrder);
+  const [sortingOption, setSortingOption] = useState<SortingOption>(SortingOption.TOP_REVIEWS);
   const [filterOption, setFilterOption] = useState('');
   const [showOnlyVerifiedReviews, setShowOnlyVerifiedReviews] = useState(false);
   const showForm = useAppSelector((state) => state.review.formOpen);
@@ -45,6 +52,7 @@ const Review: FC<ReviewProps> = (props) => {
     if (props.professor) params.professorId = props.professor.ucinetid;
     const reviews = await trpc.reviews.get.query(params);
     dispatch(setReviews(reviews));
+    dispatch(setReviewOrder(reviews.map((r) => r.id)));
   }, [dispatch, props.course, props.professor]);
 
   useEffect(() => {
@@ -92,7 +100,9 @@ const Review: FC<ReviewProps> = (props) => {
       break;
     case SortingOption.TOP_REVIEWS: // the right side of || will fall back to most recent when score is equal
       sortedReviews.sort(
-        (a, b) => b.score - a.score || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        (a, b) =>
+          reviewOrder.indexOf(a.id) - reviewOrder.indexOf(b.id) ||
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
       break;
     case SortingOption.CONTROVERSIAL:
