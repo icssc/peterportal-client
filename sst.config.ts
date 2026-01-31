@@ -5,6 +5,10 @@ function isStaging(stage: string) {
   return stage.match(/^staging-(\d+)$/);
 }
 
+function isPeterPortalLegacy(stage: string) {
+  return stage === 'peterportal-legacy';
+}
+
 /**
  * Obtains the correct router based on the stage.
  * Staging instances use new routers, while dev and prod use their respective shared routers.
@@ -21,6 +25,9 @@ function createOrGetRouter() {
       domain: getDomainConfig(),
     });
     return stagingRouter;
+  } else if (isPeterPortalLegacy($app.stage)) {
+    // For peterportal-legacy, we don't need to return a router since we handle it differently
+    throw new Error('peterportal-legacy stage should not call createOrGetRouter');
   } else {
     throw new Error('Invalid stage');
   }
@@ -38,6 +45,9 @@ function getDomainConfig() {
     // if stage is like staging-###, use planner-###
     const subdomainPrefix = $app.stage.replace('staging-', 'planner-');
     domainName = `${subdomainPrefix}.antalmanac.com`;
+  } else if (isPeterPortalLegacy($app.stage)) {
+    domainName = 'peterportal.org';
+    domainRedirects = ['www.peterportal.org'];
   } else {
     throw new Error('Invalid stage');
   }
@@ -124,23 +134,29 @@ export default $config({
   },
 
   async run() {
+    // Handle peterportal-legacy stage: redirect all traffic from peterportal.org/* to antalmanac.com/planner/*
+    if (isPeterPortalLegacy($app.stage)) {
+      // Lambda function to dynamically redirect requests to antalmanac.com/planner/*
+      const redirectFunction = new sst.aws.Function('PPRedirect', {
+        runtime: 'nodejs22.x',
+        memory: '128 MB',
+        handler: 'infra/redirect-handler.handler',
+        url: true,
+      });
+
+      new sst.aws.Router('PPLegacyRouter', {
+        domain: getDomainConfig(),
+        routes: {
+          '/*': redirectFunction.url,
+        },
+      });
+
+      return;
+    }
+
     const lambdaFunction = createTrpcLambdaFunction();
 
     const router = createOrGetRouter();
-
-    if ($app.stage === 'prod') {
-      new sst.aws.Router('PeterPortalRedirectRouter', {
-        domain: 'peterportal.org',
-        routes: {
-          '/*': {
-            redirect: {
-              url: 'https://antalmanac.com/planner',
-              status: 301,
-            },
-          },
-        },
-      });
-    }
 
     router.route('/planner/api', lambdaFunction.url);
 
