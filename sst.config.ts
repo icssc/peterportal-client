@@ -134,7 +134,7 @@ export default $config({
         routes: {
           '/*': {
             redirect: {
-              url: 'https://antalmanac.com/planner/:path*',
+              url: 'https://antalmanac.com/planner',
               status: 301,
             },
           },
