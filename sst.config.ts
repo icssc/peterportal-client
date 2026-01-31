@@ -128,6 +128,20 @@ export default $config({
 
     const router = createOrGetRouter();
 
+    if ($app.stage === 'prod') {
+      new sst.aws.Router('PeterPortalRedirectRouter', {
+        domain: 'peterportal.org',
+        routes: {
+          '/*': {
+            redirect: {
+              url: 'https://antalmanac.com/planner/:path*',
+              status: 301,
+            },
+          },
+        },
+      });
+    }
+
     router.route('/planner/api', lambdaFunction.url);
 
     createNextJsApplication(router);
