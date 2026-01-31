@@ -5,6 +5,7 @@ import changelogImage from '../../asset/merge-switcher.jpg';
 import Image from 'next/image';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link } from '@mui/material';
 
+const CUSTOM_TITLE = 'PeterPortal is now AntAlmanac Planner!'; // If ommitted, defaults to "What's New – {Month} {Year}"
 const DESCRIPTION = (
   <p>
     AntAlmanac and PeterPortal are now unified into the ultimate course planning app. Learn more in our{' '}
@@ -38,7 +39,8 @@ const ChangelogModal = () => {
   return (
     <Dialog open={showModal} onClose={closeModal} className="changelog-modal">
       <DialogTitle>
-        What's New &ndash; {new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}
+        {CUSTOM_TITLE ||
+          `What's New – ${new Date(LAST_UPDATED).toLocaleString('default', { month: 'long', year: 'numeric' })}`}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>{DESCRIPTION}</DialogContentText>
