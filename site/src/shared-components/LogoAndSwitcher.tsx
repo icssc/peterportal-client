@@ -80,7 +80,7 @@ export function LogoAndSwitcher() {
               <MenuItem
                 onClick={() => setAnchorEl(null)}
                 component={Link}
-                href="https://staging-shared.antalmanac.com/"
+                href="https://antalmanac.com/"
                 sx={{ minHeight: 'fit-content', textDecoration: 'none', color: 'inherit', height: '34.5px' }}
               >
                 <ListItemIcon>
@@ -134,7 +134,7 @@ export function LogoAndSwitcher() {
               }}
               variant="outlined"
               component={Link}
-              href="https://staging-shared.antalmanac.com/"
+              href="https://antalmanac.com/"
             >
               Scheduler
             </Button>
