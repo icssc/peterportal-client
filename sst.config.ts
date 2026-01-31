@@ -30,8 +30,8 @@ function getDomainConfig() {
   let domainName: string;
   let domainRedirects: string[] | undefined;
   if ($app.stage === 'prod') {
-    domainName = 'peterportal.org';
-    domainRedirects = ['www.peterportal.org'];
+    domainName = 'antalmanac.com';
+    domainRedirects = ['www.antalmanac.com'];
   } else if ($app.stage === 'staging-shared') {
     domainName = 'staging-shared.antalmanac.com';
   } else if (isStaging($app.stage)) {
@@ -127,6 +127,20 @@ export default $config({
     const lambdaFunction = createTrpcLambdaFunction();
 
     const router = createOrGetRouter();
+
+    if ($app.stage === 'prod') {
+      new sst.aws.Router('PeterPortalRedirectRouter', {
+        domain: 'peterportal.org',
+        routes: {
+          '/*': {
+            redirect: {
+              url: 'https://antalmanac.com/planner/:path*',
+              status: 301,
+            },
+          },
+        },
+      });
+    }
 
     router.route('/planner/api', lambdaFunction.url);
 
