@@ -145,11 +145,3 @@ svg {
   width: 100%;
   overflow: auto;
 }
-
-// monkey patch for recaptcha border bug
-.g-recaptcha {
-  overflow: hidden;
-  width: 302px;
-  height: 76px;
-  border-radius: 4px;
-}
