@@ -18,3 +18,15 @@ export const restrictionsMapping: Record<string, string> = {
   B: 'B: Authorization code required',
   L: 'L: Major only',
 };
+
+export function parseRestrictions(restrictions: string) {
+  return restrictions
+    .split(/\s+/)
+    .filter((code) => code !== 'and' && code !== 'or')
+    .map((code, index) => (
+      <div key={index}>
+        {restrictionsMapping[code as keyof typeof restrictionsMapping]}
+        <br />
+      </div>
+    ));
+}

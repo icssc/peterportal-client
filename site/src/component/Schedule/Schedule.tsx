@@ -11,7 +11,7 @@ import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import Toast, { ToastSeverity } from '../../helpers/toast';
 import Link from 'next/link';
-import { restrictionsMapping } from '../../helpers/schedule';
+import { parseRestrictions } from '../../helpers/schedule';
 
 interface ScheduleProps {
   courseID?: string;
@@ -145,7 +145,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
         <td className="data-col">{section.numOnWaitlist}</td>
         <td className="data-col">
-          <Tooltip title={restrictionsMapping[section.restrictions]}>
+          <Tooltip title={parseRestrictions(section.restrictions)}>
             <Link
               href="https://www.reg.uci.edu/enrollment/restrict_codes.html"
               rel="noopener noreferrer"
