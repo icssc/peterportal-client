@@ -100,7 +100,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
     const clicktoCopy = (event: React.MouseEvent<HTMLElement>, sectionCode: string) => {
       event.stopPropagation();
       navigator.clipboard.writeText(sectionCode);
-      setToastMsg('Section code copied to clipboard');
+      setToastMsg('WebsocSection code copied to clipboard');
       setToastSeverity('success');
       setShowToast(true);
     };
