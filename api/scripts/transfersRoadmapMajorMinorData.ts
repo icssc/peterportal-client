@@ -34,7 +34,6 @@ async function transferUserMajorMinors() {
         return null;
       } else {
         return {
-          id: plannerMajor.id,
           userId: userId,
           majorId: plannerMajor.majorId,
           specializationId: plannerMajor.specializationId,
@@ -53,7 +52,6 @@ async function transferUserMajorMinors() {
         return null;
       } else {
         return {
-          id: plannerMinor.id,
           userId: userId,
           minorId: plannerMinor.minorId,
         };
@@ -62,6 +60,31 @@ async function transferUserMajorMinors() {
     .filter((plannerMinor) => plannerMinor != null);
 
   console.log(userMinorsToAdd);
+
+  // NEW VERSION
+  // try {
+  //   await db.transaction(async (tx) => {
+  //     if (userMajorsToAdd.length > 0) {
+  //       await tx.insert(userMajor).values(userMajorsToAdd);
+  //     }
+  //     console.log(`Inserted ${userMajorsToAdd.length} majors`);
+  //   });
+  // } catch (error) {
+  //   console.error('Failed to insert majors:', error);
+  //   throw error;
+  // }
+
+  // try {
+  //   await db.transaction(async (tx) => {
+  //     if (userMinorsToAdd.length > 0) {
+  //       await tx.insert(userMinor).values(userMinorsToAdd);
+  //     }
+  //     console.log(`Inserted ${userMinorsToAdd.length} minors`);
+  //   });
+  // } catch (error) {
+  //   console.error('Failed to insert majors:', error);
+  //   throw error;
+  // }
 
   // execute queries to add rows into userMajor and userMinor
   // COMMENTED OUT SO IT WON'T TRIGGER
