@@ -1,9 +1,7 @@
 import './MajorCourseList.scss';
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -17,7 +15,7 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { Collapse, FormControl, MenuItem, Select } from '@mui/material';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -40,7 +38,6 @@ interface MajorCourseListProps {
 
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const storeKeyPrefix = `major-${majorWithSpec.major.id}`;
-  const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
@@ -117,17 +114,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
-      const updatedSpec = data?.value || null;
+      const updatedSpec = data?.value ?? null;
       if (updatedSpec?.id === selectedSpecId) return;
 
       setResultsLoading(true);
-      onSpecializationChange(major.id, data?.value ?? null);
+      onSpecializationChange(major.id, updatedSpec);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setSpecialization({ majorId: major.id, specialization: updatedSpec }));
-      await fetchRequirements(major.id, updatedSpec?.id || null);
+      await fetchRequirements(major.id, updatedSpec?.id ?? null);
     },
     [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
   );
+
+  const selectedSpecIdOrSelected = majorWithSpec.selectedSpec?.id ?? selectedSpecId ?? '';
 
   const toggleExpand = () => setOpen(!open);
 
@@ -147,17 +146,43 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       </div>
       <Collapse in={open} unmountOnExit>
         {hasSpecs && (
-          <Select
-            options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
-            isDisabled={specsLoading}
-            isLoading={specsLoading}
-            onChange={handleSpecializationChange}
-            className="ppc-combobox"
-            classNamePrefix="ppc-combobox"
-            placeholder="Select a specialization..."
-            theme={(t) => comboboxTheme(t, isDark)}
-          />
+          <FormControl size="small" fullWidth className="specialization-select">
+            <Select
+              value={selectedSpecIdOrSelected}
+              onChange={(e) => {
+                const id = e.target.value as string;
+                if (!id) {
+                  handleSpecializationChange(null);
+                  return;
+                }
+                const spec = specializations.find((s) => s.id === id);
+                if (spec) handleSpecializationChange({ value: spec, label: spec.name });
+              }}
+              displayEmpty
+              disabled={specsLoading}
+              variant="outlined"
+              MenuProps={{
+                slotProps: {
+                  paper: {
+                    sx: {
+                      marginTop: 0,
+                      borderRadius: '0 0 8px 8px',
+                      overflow: 'hidden',
+                    },
+                  },
+                },
+              }}
+            >
+              <MenuItem value="" disabled>
+                Select a specialization...
+              </MenuItem>
+              {specOptions.map((opt) => (
+                <MenuItem key={opt.value.id} value={opt.value.id}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
         {hasSpecs && !majorWithSpec.selectedSpec ? (
           <p className="unselected-spec-notice">Please select a specialization to view requirements</p>
