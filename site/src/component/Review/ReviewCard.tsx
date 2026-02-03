@@ -157,7 +157,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (!currentPreview) return;
       event.preventDefault();
       if (course) {
-        dispatch(addPreview({ type: 'professor', id }));
+        dispatch(addPreview({ type: 'instructor', id }));
       } else {
         dispatch(addPreview({ type: 'course', id }));
       }

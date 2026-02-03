@@ -49,7 +49,7 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
     <div className="preview-body">
       <SideInfo
         className="professor-summary"
-        searchType="professor"
+        searchType="instructor"
         name={data.name}
         title={data.title}
         description={data.department}

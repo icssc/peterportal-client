@@ -46,7 +46,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     dispatch(clearPreviews());
-    dispatch(addPreview({ type: 'professor', id: professor.ucinetid }));
+    dispatch(addPreview({ type: 'instructor', id: professor.ucinetid }));
   };
 
   return (

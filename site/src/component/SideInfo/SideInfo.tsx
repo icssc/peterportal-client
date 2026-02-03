@@ -33,7 +33,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
 
   const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
     e.preventDefault();
-    dispatch(addPreview({ type: searchType == 'course' ? 'professor' : 'course', id: reviewKey }));
+    dispatch(addPreview({ type: searchType == 'course' ? 'instructor' : 'course', id: reviewKey }));
   };
 
   return (
@@ -42,7 +42,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
         <p className="field-name">{featureType} Rated</p>
         <p className="field-value">
           <Link
-            href={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}
+            href={{ pathname: `/${searchType == 'course' ? 'instructor' : 'course'}/${reviewKey}` }}
             onClick={(e) => handleLinkClick(e, reviewKey, searchType)}
           >
             {displayName}
@@ -111,7 +111,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
       // determine the key to group reviews by
       if (props.searchType == 'course') {
         key = review.professorId;
-      } else if (props.searchType == 'professor') {
+      } else if (props.searchType == 'instructor') {
         key = review.courseId;
       }
 
@@ -184,6 +184,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
+          {/* <h3>{props.searchType}</h3> */}
           <div className="side-info-buttons">
             <Select
               value={selectedReview}
@@ -195,7 +196,7 @@ const SideInfo: FC<SideInfoProps> = (props) => {
                 <MenuItem key={`side-info-dropdown-${index}`} value={key}>
                   {props.searchType == 'course' &&
                     (props.course?.instructors[key] ? props.course?.instructors[key].name : key)}
-                  {props.searchType == 'professor' &&
+                  {props.searchType == 'instructor' &&
                     (props.professor?.courses[key]
                       ? props.professor?.courses[key].department + ' ' + props.professor?.courses[key].courseNumber
                       : key)}
