@@ -4,7 +4,7 @@ import { FC, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Chip, Tooltip } from '@mui/material';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
-import { selectReviews, setReviews, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
+import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
@@ -31,6 +31,8 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
+import { addPreview } from '../../store/slices/previewSlice';
+import { useCurrentPreview } from '../../hooks/preview';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -149,6 +151,20 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
+  const currentPreview = useCurrentPreview();
+  const handleLinkClick = useCallback(
+    (event: React.MouseEvent, id: string) => {
+      if (!currentPreview) return;
+      event.preventDefault();
+      if (course) {
+        dispatch(addPreview({ type: 'professor', id }));
+      } else {
+        dispatch(addPreview({ type: 'course', id }));
+      }
+    },
+    [currentPreview, course, dispatch],
+  );
+
   useEffect(() => {
     // if loading then return
     if (!profCache) {
@@ -162,13 +178,25 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = (
-          <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
+          <Link
+            href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
+            onClick={(e) => handleLinkClick(e, review.courseId)}
+          >
+            {courseName}
+          </Link>
         );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
-        const profLink = <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName}</Link>;
+        const profLink = (
+          <Link
+            href={{ pathname: `/professor/${review.professorId}` }}
+            onClick={(e) => handleLinkClick(e, review.professorId)}
+          >
+            {profName}
+          </Link>
+        );
         setIdentifier(profLink);
       } else {
         const foundCourseAndProfName = await fetchCourseAndProfName();
@@ -187,7 +215,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache]);
+  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache, handleLinkClick]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -218,12 +246,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   };
 
   const vote = async (newVote: number) => {
-    if (!isLoggedIn) {
-      dispatch(setToastMsg('You must be logged in to vote.'));
-      dispatch(setToastSeverity('error'));
-      dispatch(setShowToast(true));
-      return;
-    }
     updateScore(newVote);
     try {
       await trpc.reviews.vote.mutate({ id: review.id, vote: newVote });
@@ -332,13 +354,31 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         <div className="reviewcard-voting">
           <p className="reviewcard-voting-question">Helpful?</p>
           <div className="reviewcard-voting-buttons">
-            <button className={upvoteClassname} onClick={upvote}>
-              &#9650;
-            </button>
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+              <span>
+                <button
+                  className={upvoteClassname}
+                  onClick={upvote}
+                  disabled={!isLoggedIn}
+                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                >
+                  &#9650;
+                </button>
+              </span>
+            </Tooltip>
             <p className="reviewcard-voting-count">{review.score}</p>
-            <button className={downvoteClassname} onClick={downvote}>
-              &#9660;
-            </button>
+            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+              <span>
+                <button
+                  className={downvoteClassname}
+                  onClick={downvote}
+                  disabled={!isLoggedIn}
+                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                >
+                  &#9660;
+                </button>
+              </span>
+            </Tooltip>
           </div>
         </div>
         <button className="add-report-button" onClick={openReportForm}>

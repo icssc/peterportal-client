@@ -1,23 +1,21 @@
 'use client';
 import { FC } from 'react';
 
-import Logo from '../../asset/peterportal-banner-logo.svg';
-import Image from 'next/image';
 import './AppHeader.scss';
-
+import { LogoAndSwitcher } from '../../shared-components/LogoAndSwitcher';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
 
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
-import HomeIcon from '@mui/icons-material/Home';
 import { IconButton } from '@mui/material';
 
-import Link from 'next/link';
 import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
+
+import SaveButton from './SaveButton';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -34,10 +32,10 @@ const AppHeader: FC = () => {
 
   if (isMobile && isShowFullscreenSearch && isRoadmapPage)
     return (
-      <header className="navbar">
+      <header className="navbar mobile">
         <div className="navbar-nav">
           <div className="navbar-left">
-            <IconButton onClick={closeFullscreenSearch}>
+            <IconButton onClick={closeFullscreenSearch} color="inherit">
               <ArrowLeftIcon />
             </IconButton>
           </div>
@@ -49,29 +47,23 @@ const AppHeader: FC = () => {
     );
 
   return (
-    <header className="navbar">
+    <header className={`navbar ${isMobile ? 'mobile' : 'desktop'}`}>
       <div className="navbar-nav">
         <div className="navbar-left">
-          {/* Search */}
-          {isMobile && isRoadmapPage && (
-            <IconButton onClick={showFullscreenSearch}>
-              <SearchIcon />
-            </IconButton>
-          )}
-          {!isRoadmapPage && (
-            <IconButton component={Link} href="/">
-              <HomeIcon />
-            </IconButton>
-          )}
+          <LogoAndSwitcher />
         </div>
 
-        {/* Logo */}
-        <div className="navbar-logo">
-          <Link href="/">
-            <Image alt="PeterPortal" id="peterportal-logo" src={Logo} />
-          </Link>
-        </div>
-
+        {/* Search */}
+        {isRoadmapPage && (
+          <>
+            {isMobile && (
+              <IconButton onClick={showFullscreenSearch} color="inherit">
+                <SearchIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            )}
+            <SaveButton />
+          </>
+        )}
         <Profile />
       </div>
     </header>

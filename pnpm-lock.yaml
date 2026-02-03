@@ -187,6 +187,9 @@ importers:
       react-google-recaptcha:
         specifier: ^3.1.0
         version: 3.1.0(react@18.3.1)
+      react-infinite-scroll-component:
+        specifier: ^6.1.1
+        version: 6.1.1(react@18.3.1)
       react-multi-carousel:
         specifier: ^2.8.5
         version: 2.8.5
@@ -5655,6 +5658,11 @@ packages:
     peerDependencies:
       react: '>=16.4.1'
 
+  react-infinite-scroll-component@6.1.1:
+    resolution: {integrity: sha512-R8YoOyiNDynSWmfVme5LHslsKrP+/xcRUWR2ies8UgUab9dtyw5ECnMCVPPmnmjjF4MWQmfVdRwRWcWaDgeyMA==}
+    peerDependencies:
+      react: '>=16.0.0'
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -6184,6 +6192,10 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+
+  throttle-debounce@2.3.0:
+    resolution: {integrity: sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==}
+    engines: {node: '>=8'}
 
   tiny-invariant@1.2.0:
     resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
@@ -12991,6 +13003,11 @@ snapshots:
       react: 18.3.1
       react-async-script: 1.2.0(react@18.3.1)
 
+  react-infinite-scroll-component@6.1.1(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      throttle-debounce: 2.3.0
+
   react-is@16.13.1: {}
 
   react-is@17.0.2: {}
@@ -13609,6 +13626,8 @@ snapshots:
       minimatch: 3.1.2
 
   text-table@0.2.0: {}
+
+  throttle-debounce@2.3.0: {}
 
   tiny-invariant@1.2.0: {}
 
