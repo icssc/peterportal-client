@@ -1,10 +1,9 @@
-import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useState, useRef } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 import trpc from '../../../trpc';
-import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import ThemeContext from '../../../style/theme-context';
 import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
@@ -20,7 +19,6 @@ interface MinorOption {
 }
 
 const MinorSelector: FC = () => {
-  const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const minors = useAppSelector((state) => state.courseRequirements.minorList);
   const selectedMinors = useAppSelector((state) => state.courseRequirements.selectedMinors);
@@ -62,7 +60,7 @@ const MinorSelector: FC = () => {
   );
 
   const handleMinorChange = useCallback(
-    (selections: readonly MinorOption[] | null) => {
+    (_event: unknown, selections: MinorOption[] | null) => {
       const newMinors = selections?.map((s) => s.value) || [];
       const currentMinorIds = selectedMinors.map((m) => m.minor.id);
 
@@ -110,17 +108,33 @@ const MinorSelector: FC = () => {
 
   return (
     <>
-      <Select
-        isMulti
+      <Autocomplete
+        multiple
         options={minorSelectOptions}
-        value={selectedMinors.map((m) => minorSelectOptions.find((o) => o.value.id === m.minor.id)!)}
-        isDisabled={minorsLoading}
-        isLoading={minorsLoading}
+        value={selectedMinors.map((m) => minorSelectOptions.find((o) => o.value.id === m.minor.id)!).filter(Boolean)}
         onChange={handleMinorChange}
-        className="ppc-combobox"
-        classNamePrefix="ppc-combobox"
-        placeholder="Select minors..."
-        theme={(t) => comboboxTheme(t, isDark)}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        loading={minorsLoading}
+        disabled={minorsLoading}
+        className="minor-select"
+        slotProps={{
+          listbox: {
+            sx: {
+              padding: 0,
+            },
+          },
+          paper: {
+            sx: {
+              marginTop: 0,
+              borderRadius: '0 0 8px 8px',
+              overflow: 'hidden',
+            },
+          },
+        }}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" size="small" placeholder="Select minors..." />
+        )}
       />
       {selectedMinors.map((data) => (
         <MinorCourseList key={data.minor.id} minorReqs={data} />
