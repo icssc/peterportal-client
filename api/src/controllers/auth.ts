@@ -158,7 +158,7 @@ router.get('/logout', function (req, res) {
 
     // Redirect to OIDC logout endpoint
     const logoutUrl = new URL(`${process.env.OIDC_ISSUER_URL}/logout`);
-    logoutUrl.searchParams.set('post_logout_redirect_uri', process.env.PRODUCTION_DOMAIN);
+    logoutUrl.searchParams.set('post_logout_redirect_uri', `${process.env.PRODUCTION_DOMAIN}/planner`);
 
     res.redirect(logoutUrl.toString());
   });
