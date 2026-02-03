@@ -148,6 +148,13 @@
       "when": 1768774187654,
       "tag": "0020_slimy_wasp",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1770143807080,
+      "tag": "0021_colossal_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }
