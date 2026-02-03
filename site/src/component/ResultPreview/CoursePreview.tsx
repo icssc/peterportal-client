@@ -89,7 +89,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
   const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyCourseLink = () => {
-    const url = new URL('/course/' + encodeURIComponent(courseId), location.origin).toString();
+    const url = new URL('/planner/course/' + encodeURIComponent(courseId), location.origin).toString();
     navigator.clipboard.writeText(url);
     dispatch(setToastMsg('Copied course URL to clipboard!'));
     dispatch(setToastSeverity('success'));

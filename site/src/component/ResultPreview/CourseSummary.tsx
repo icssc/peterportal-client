@@ -177,7 +177,7 @@ const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
           <PrereqTree {...course} />
         </DialogContent>
         <DialogActions>
-          <Button variant="text" onClick={() => setOpen(false)}>
+          <Button variant="text" color="inherit" onClick={() => setOpen(false)}>
             Close
           </Button>
         </DialogActions>

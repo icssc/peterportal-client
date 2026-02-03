@@ -8,7 +8,7 @@ const ReviewsPage: FC = () => {
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
-    document.title = 'Your Reviews | PeterPortal';
+    document.title = 'Your Reviews | AntAlmanac Planner';
   }, []);
 
   if (!isLoggedIn) {
