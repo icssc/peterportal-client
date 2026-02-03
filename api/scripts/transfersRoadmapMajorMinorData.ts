@@ -61,7 +61,8 @@ async function transferUserMajorMinors() {
 
   console.log(userMinorsToAdd);
 
-  // NEW VERSION
+  // execute queries to add rows into userMajor and userMinor
+  // COMMENTED OUT SO IT WON'T TRIGGER
   // try {
   //   await db.transaction(async (tx) => {
   //     if (userMajorsToAdd.length > 0) {
@@ -84,45 +85,6 @@ async function transferUserMajorMinors() {
   // } catch (error) {
   //   console.error('Failed to insert majors:', error);
   //   throw error;
-  // }
-
-  // execute queries to add rows into userMajor and userMinor
-  // COMMENTED OUT SO IT WON'T TRIGGER
-  // await db.transaction(async (tx) => {
-  //   const addUserMajorQueries = userMajorsToAdd.map(async (major) => {
-  //     await tx.insert(userMajor).values(major);
-  //     console.log(`Inserted ${major.majorId} with specialization ${major.specializationId} for ${major.userId}`);
-  //   });
-  //   await Promise.all(addUserMajorQueries);
-  // });
-  // await db.transaction(async (tx) => {
-  //   const addUserMinorQueries = userMinorsToAdd.map(async (minor) => {
-  //     await tx.insert(userMinor).values(minor);
-  //     console.log(`Inserted ${minor.minorId} for ${minor.userId}`);
-  //   });
-  //   await Promise.all(addUserMinorQueries);
-  // });
-
-  // firstPlanner should be an array of FirstPlannerRow types
-  // for (const { userId, plannerId } of firstPlanner) {
-  //   const majors = await db
-  //     .select({
-  //       majorId: plannerMajor.majorId,
-  //       specializationId: plannerMajor.specializationId,
-  //     })
-  //     .from(plannerMajor)
-  //     .where(eq(plannerMajor.plannerId, plannerId));
-
-  //   const minors = await db
-  //     .select({
-  //       minorId: plannerMinor.minorId,
-  //     })
-  //     .from(plannerMinor)
-  //     .where(and(eq(plannerMinor.plannerId, plannerId), isNotNull(plannerMinor.minorId)));
-
-  //   console.log(`User ${userId} (planner ${plannerId})`);
-  //   console.log('  majors:', majors);
-  //   console.log('  minors:', minors);
   // }
 }
 
