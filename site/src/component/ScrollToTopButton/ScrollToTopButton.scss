@@ -1,4 +1,6 @@
 .scroll-to-top-button {
-  position: absolute;
+  position: absolute !important;
+  bottom: 1rem;
+  right: 1.5rem;
   z-index: 50;
 }
