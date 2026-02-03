@@ -23,7 +23,10 @@ jobs:
       PR_SHA: ${{ github.event.pull_request.head.sha || github.event.client_payload.pull_request.head.sha }}
       FULL_NAME: ${{ github.event.pull_request.head.repo.full_name || github.event.client_payload.pull_request.head.repo.full_name }}
     # don't run if labeled "no deploy" && don't run on PRs from forks
-    if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref != 'branding-changes'
+    if: |
+      !contains(github.event.pull_request.labels.*.name || github.event.client_payload.pull_request.labels.*.name, 'no deploy') &&
+      (github.event.pull_request.head.repo.full_name || github.event.client_payload.pull_request.head.repo.full_name) == github.repository &&
+      github.event.pull_request.head.ref != 'branding-changes'
     environment:
       name: staging-${{ github.event.pull_request.number || github.event.client_payload.pull_request.number }}
       url: https://planner-${{ github.event.pull_request.number || github.event.client_payload.pull_request.number }}.antalmanac.com/planner
