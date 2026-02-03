@@ -30,23 +30,23 @@ export function useClearedCoursesUntil(courseId: string): Set<string> {
   const roadmap = useAppSelector((state) => state.roadmap);
   const currentPlan = roadmap?.plans[roadmap.currentPlanIndex]?.content?.yearPlans;
 
-  const clearedCourses = useMemo(() => {
-    const taken = new Set<string>(transfers);
+  const clearedCoursesUntil = useMemo(() => {
+    const takenSoFar = new Set(transfers);
 
     for (const year of currentPlan) {
       for (const quarter of year.quarters) {
         const ids = quarter.courses.map((c) => `${c.department} ${c.courseNumber}`);
 
         if (ids.includes(courseId)) {
-          return taken;
+          return takenSoFar;
         }
 
-        ids.forEach((id) => taken.add(id));
+        ids.forEach((id) => takenSoFar.add(id));
       }
     }
-    return taken;
+    return takenSoFar;
   }, [currentPlan, transfers, courseId]);
-  return clearedCourses;
+  return clearedCoursesUntil;
 }
 
 export function useSaveRoadmap() {
