@@ -1,7 +1,7 @@
-import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useState, useRef } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 import trpc from '../../../trpc';
-import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   addMajor,
   removeMajor,
@@ -9,7 +9,6 @@ import {
   MajorWithSpecialization,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import ThemeContext from '../../../style/theme-context';
 import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MajorCourseList from './MajorCourseList';
@@ -25,7 +24,6 @@ interface MajorOption {
 }
 
 const MajorSelector: FC = () => {
-  const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
@@ -70,7 +68,7 @@ const MajorSelector: FC = () => {
   );
 
   const handleMajorChange = useCallback(
-    (selections: readonly MajorOption[] | null) => {
+    (_event: unknown, selections: MajorOption[] | null) => {
       const newMajors = selections?.map((s) => s.value) || [];
       const currentMajorIds = selectedMajors.map((m) => m.major.id);
 
@@ -138,17 +136,33 @@ const MajorSelector: FC = () => {
 
   return (
     <>
-      <Select
-        isMulti
+      <Autocomplete
+        multiple
         options={majorSelectOptions}
-        value={selectedMajors.map((m) => majorSelectOptions.find((o) => o.value.id === m.major.id)!)}
-        isDisabled={majorsLoading}
-        isLoading={majorsLoading}
+        value={selectedMajors.map((m) => majorSelectOptions.find((o) => o.value.id === m.major.id)!).filter(Boolean)}
         onChange={handleMajorChange}
-        className="ppc-combobox"
-        classNamePrefix="ppc-combobox"
-        placeholder="Select majors..."
-        theme={(t) => comboboxTheme(t, isDark)}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        loading={majorsLoading}
+        disabled={majorsLoading}
+        className="major-select"
+        slotProps={{
+          listbox: {
+            sx: {
+              padding: 0,
+            },
+          },
+          paper: {
+            sx: {
+              marginTop: 0,
+              borderRadius: '0 0 8px 8px',
+              overflow: 'hidden',
+            },
+          },
+        }}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" size="small" placeholder="Select majors..." />
+        )}
       />
       {selectedMajors.map((data) => (
         <MajorCourseList
