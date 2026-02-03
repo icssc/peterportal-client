@@ -52,29 +52,23 @@
 .professor-hit {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  line-height: 1.25;
+
+  p {
+    margin: 0;
+  }
 
   .name-container {
     display: flex;
     align-items: center;
-    gap: 12px;
   }
 
   .hit-name {
-    margin-block: -2px 2px;
+    font-size: 18px;
+    margin-bottom: 8px;
   }
 
-  .name-icon {
-    min-width: 50px;
-    max-width: 50px;
-    height: 50px;
-    border-radius: 50px;
-    background: var(--mui-palette-primary-main);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
+  .hit-subtitle {
+    margin-bottom: 8px;
   }
 }

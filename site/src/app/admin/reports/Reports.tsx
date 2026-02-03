@@ -25,7 +25,7 @@ const Reports: FC = () => {
 
   useEffect(() => {
     getData();
-    document.title = 'View Reports | PeterPortal';
+    document.title = 'View Reports | AntAlmanac Planner';
   }, [getData]);
 
   const acceptReports = async (reviewId: number) => {

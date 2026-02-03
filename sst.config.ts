@@ -1,17 +1,53 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./.sst/platform/config.d.ts" />
 
+function isStaging(stage: string) {
+  return stage.match(/^staging-(\d+)$/);
+}
+
+function isPeterPortalLegacy(stage: string) {
+  return stage === 'peterportal-legacy';
+}
+
+/**
+ * Obtains the correct router based on the stage.
+ * Staging instances use new routers, while dev and prod use their respective shared routers.
+ */
+function createOrGetRouter() {
+  if ($app.stage === 'prod') {
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E3RQWX02OHXETG');
+    return sharedRouter;
+  } else if ($app.stage === 'staging-shared') {
+    const sharedRouter = sst.aws.Router.get('AntAlmanacRouter', 'E22N9YXZNTVOMR');
+    return sharedRouter;
+  } else if (isStaging($app.stage)) {
+    const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
+      domain: getDomainConfig(),
+    });
+    return stagingRouter;
+  } else if (isPeterPortalLegacy($app.stage)) {
+    // For peterportal-legacy, we don't need to return a router since we handle it differently
+    throw new Error('peterportal-legacy stage should not call createOrGetRouter');
+  } else {
+    throw new Error('Invalid stage');
+  }
+}
+
 function getDomainConfig() {
   let domainName: string;
   let domainRedirects: string[] | undefined;
   if ($app.stage === 'prod') {
+    domainName = 'antalmanac.com';
+    domainRedirects = ['www.antalmanac.com'];
+  } else if ($app.stage === 'staging-shared') {
+    domainName = 'staging-shared.antalmanac.com';
+  } else if (isStaging($app.stage)) {
+    // if stage is like staging-###, use planner-###
+    const subdomainPrefix = $app.stage.replace('staging-', 'planner-');
+    domainName = `${subdomainPrefix}.antalmanac.com`;
+  } else if (isPeterPortalLegacy($app.stage)) {
     domainName = 'peterportal.org';
     domainRedirects = ['www.peterportal.org'];
-  } else if ($app.stage === 'dev') {
-    domainName = 'dev.peterportal.org';
-  } else if ($app.stage.match(/^staging-(\d+)$/)) {
-    // check if stage is like staging-###
-    domainName = `${$app.stage}.peterportal.org`;
   } else {
     throw new Error('Invalid stage');
   }
@@ -28,7 +64,6 @@ function createTrpcLambdaFunction() {
     PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
     OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID!,
     OIDC_ISSUER_URL: process.env.OIDC_ISSUER_URL!,
-    GRECAPTCHA_SECRET: process.env.GRECAPTCHA_SECRET!,
     PRODUCTION_DOMAIN: productionDomain, // Dynamically set based on stage
     ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
     NODE_ENV: process.env.NODE_ENV ?? 'staging',
@@ -60,43 +95,6 @@ function createTrpcLambdaFunction() {
   });
 }
 
-/**
- * forwards host since lambda function url overwrites host (x-forwarded-host is recovered in api/app.ts)
- * encodes querystryings since cloudfront can't support "/" in querystring otherwise
- * @returns cloudfront function
- */
-const createCloudFrontInjectionFunction = () =>
-  new aws.cloudfront.Function(`${$app.name}-${$app.stage}-CloudFrontFunction`, {
-    runtime: 'cloudfront-js-2.0',
-    // this code is copy/pasted from an SST sveltekit component, forwards host and encodes query string
-    code: `
-      function handler(event) {
-        var request = event.request;
-        request.headers["x-forwarded-host"] = request.headers.host;
-        for (var key in request.querystring) {
-          if (key.includes("/")) {
-            request.querystring[encodeURIComponent(key)] = request.querystring[key];
-            delete request.querystring[key];
-          }
-        }
-        return request;
-      }
-    `,
-  });
-
-function createApiOrigin(lambdaFunction: sst.aws.Function): aws.types.input.cloudfront.DistributionOrigin {
-  return {
-    domainName: lambdaFunction.url.apply((url) => new URL(url).hostname),
-    originId: 'api',
-    customOriginConfig: {
-      httpPort: 80,
-      httpsPort: 443,
-      originProtocolPolicy: 'https-only',
-      originSslProtocols: ['TLSv1.2'],
-    },
-  };
-}
-
 enum AWSPolicyId {
   // See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html
   CachingDisabled = '4135ea2d-6df8-44a3-9df3-4b5a84be39ad',
@@ -106,63 +104,22 @@ enum AWSPolicyId {
   OrgNextjsCachePolicy = '0fddd706-8cdb-4835-bf8c-3202baed7dac',
 }
 
-/**
- * Creates a CloudFront cache behavior to prevent caching of API requests, forward the host header
- * (used for clients logging in from staging domains since OAUTH urls cannot be added programmatically),
- * and redirect the traffic to be handled by the tRPC handler
- * @param apiOrigin The Origin serving the tRPC API routes
- * @param cloudfrontInjectionFunction The Cloudfront function used to inject headers into API requests,
- * used to add referer headers to logins
- * @returns The behavior to apply to all `/api/*` routes
- */
-function createApiCFCacheBehavior(
-  apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
-  cloudfrontInjectionFunction: aws.cloudfront.Function,
-) {
-  const behavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior = {
-    pathPattern: '/api/*',
-    allowedMethods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
-    cachedMethods: ['GET', 'HEAD'],
-    targetOriginId: apiOrigin.originId,
-    viewerProtocolPolicy: 'https-only',
-    cachePolicyId: AWSPolicyId.CachingDisabled,
-    originRequestPolicyId: AWSPolicyId.AllViewerExceptHostHeader,
-    functionAssociations: [
-      {
-        eventType: 'viewer-request',
-        functionArn: cloudfrontInjectionFunction.arn,
-      },
-    ],
-  };
-  return behavior;
-}
-
-function createNextJsApplication(
-  apiCacheBehavior: aws.types.input.cloudfront.DistributionOrderedCacheBehavior,
-  apiOrigin: aws.types.input.cloudfront.DistributionOrigin,
-) {
+function createNextJsApplication(router: sst.aws.Router) {
   // The Nextjs Site Name must not have spaces; unlike static sites, this name
   // gets prepended in CreatePolicy, so it must meet these requirements:
   // https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreatePolicy.html
   return new sst.aws.Nextjs('PeterPortal-Site', {
+    router: {
+      instance: router,
+      path: '/planner',
+    },
     environment: {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
-      BACKEND_ROOT_URL: `https://${getDomainConfig().name}/api`,
+      BACKEND_ROOT_URL: `https://${getDomainConfig().name}/planner/api`,
     },
     cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
-    domain: getDomainConfig(),
     path: './site',
-    transform: {
-      cdn: (args) => {
-        args.origins = $output(args.origins).apply((origins) => [apiOrigin, ...origins]);
-
-        args.orderedCacheBehaviors = $output(args.orderedCacheBehaviors).apply((behaviors) => [
-          apiCacheBehavior,
-          ...(behaviors ?? []),
-        ]);
-      },
-    },
   });
 }
 
@@ -177,12 +134,42 @@ export default $config({
   },
 
   async run() {
+    // Handle peterportal-legacy stage: redirect all traffic from peterportal.org/* to antalmanac.com/planner/*
+    if (isPeterPortalLegacy($app.stage)) {
+      // Lambda function to dynamically redirect requests to antalmanac.com/planner/*
+      const redirectFunction = new sst.aws.Function('PPRedirect', {
+        runtime: 'nodejs22.x',
+        memory: '128 MB',
+        handler: 'infra/redirect-handler.handler',
+        url: true,
+      });
+
+      new sst.aws.Router('PPLegacyRouter', {
+        domain: getDomainConfig(),
+        routes: {
+          '/*': redirectFunction.url,
+        },
+        transform: {
+          cachePolicy(_, opts) {
+            opts.id = '92d18877-845e-47e7-97e6-895382b1bf7c';
+          },
+        },
+      });
+
+      return;
+    }
+
     const lambdaFunction = createTrpcLambdaFunction();
 
-    const apiOrigin = createApiOrigin(lambdaFunction);
-    const cloudfrontInjectionFunction = createCloudFrontInjectionFunction();
-    const apiCacheBehavior = createApiCFCacheBehavior(apiOrigin, cloudfrontInjectionFunction);
+    const router = createOrGetRouter();
 
-    createNextJsApplication(apiCacheBehavior, apiOrigin);
+    router.route('/planner/api', lambdaFunction.url);
+
+    createNextJsApplication(router);
+
+    // Add root redirect for staging environments after Next.js app is attached
+    if (isStaging($app.stage)) {
+      router.route('/', `https://${getDomainConfig().name}/planner`);
+    }
   },
 });

@@ -1,15 +1,13 @@
 'use client';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { pluralize, useIsMobile } from '../../../helpers/util';
 import './Header.scss';
 import RoadmapMultiplan from './RoadmapMultiplan';
 import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
-import SaveIcon from '@mui/icons-material/Save';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
-import { useSaveRoadmap } from '../../../hooks/planner';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 
 interface HeaderProps {
@@ -21,15 +19,7 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const showTransfers = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const isMobile = useIsMobile();
-  const { handler: saveRoadmap } = useSaveRoadmap();
   const dispatch = useAppDispatch();
-
-  const [saveInProgress, setSaveInProgress] = useState(false);
-
-  const handleSave = () => {
-    setSaveInProgress(true);
-    saveRoadmap().finally(() => setSaveInProgress(false));
-  };
 
   const toggleTransfers = () => {
     if (showTransfers) {
@@ -71,18 +61,6 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
               </Button>
             </Badge>
           )}
-          <Button
-            variant="contained"
-            color="inherit"
-            size={buttonSize}
-            disableElevation
-            className="header-btn"
-            startIcon={<SaveIcon />}
-            loading={saveInProgress}
-            onClick={handleSave}
-          >
-            Save
-          </Button>
         </ButtonGroup>
       </div>
     </Paper>
