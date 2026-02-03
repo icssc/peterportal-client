@@ -27,7 +27,7 @@ const CoursePage: FC<CoursePageProps> = ({ courseId: id }) => {
     if (id === undefined) return;
     if (courseGQLData) {
       setError('');
-      document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | PeterPortal`;
+      document.title = `${courseGQLData.department + ' ' + courseGQLData.courseNumber} | AntAlmanac Planner`;
     }
   }, [courseGQLData, dispatch, id]);
 
