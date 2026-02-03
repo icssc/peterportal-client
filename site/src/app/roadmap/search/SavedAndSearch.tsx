@@ -144,6 +144,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const hasQuery = useAppSelector((state) => !!state.search[viewIndex].query);
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
+  const isMobile = useIsMobile();
 
   const searchResults = showSavedCourses ? savedCourses : results;
 
@@ -167,7 +168,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
-      <ScrollToTopButton scrollableTarget="sidebarScrollContainer" />
+      {!isMobile && <ScrollToTopButton scrollableTarget="sidebarScrollContainer" />}
     </>
   );
 };

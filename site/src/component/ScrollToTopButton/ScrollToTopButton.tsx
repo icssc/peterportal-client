@@ -6,9 +6,10 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 interface ScrollToTopButtonProps {
   scrollableTarget: string;
+  size?: 'medium' | 'large';
 }
 
-const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget }) => {
+const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget, size = 'medium' }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget }) => 
   if (!visible) return null;
 
   return (
-    <IconButton onClick={jumpToTop} className="scroll-to-top-button">
+    <IconButton onClick={jumpToTop} className="scroll-to-top-button" size={size}>
       <KeyboardArrowUpIcon />
     </IconButton>
   );
