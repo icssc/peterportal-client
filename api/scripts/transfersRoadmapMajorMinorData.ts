@@ -66,7 +66,7 @@ async function transferUserMajorMinors() {
   // try {
   //   await db.transaction(async (tx) => {
   //     if (userMajorsToAdd.length > 0) {
-  //       await tx.insert(userMajor).values(userMajorsToAdd);
+  //       await tx.insert(userMajor).values(userMajorsToAdd).onConflictDoNothing();
   //     }
   //     console.log(`Inserted ${userMajorsToAdd.length} majors`);
   //   });
@@ -78,7 +78,7 @@ async function transferUserMajorMinors() {
   // try {
   //   await db.transaction(async (tx) => {
   //     if (userMinorsToAdd.length > 0) {
-  //       await tx.insert(userMinor).values(userMinorsToAdd);
+  //       await tx.insert(userMinor).values(userMinorsToAdd).onConflictDoNothing();
   //     }
   //     console.log(`Inserted ${userMinorsToAdd.length} minors`);
   //   });
