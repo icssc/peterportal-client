@@ -162,6 +162,13 @@
       "when": 1769639014966,
       "tag": "0022_cooing_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1770167251312,
+      "tag": "0023_slim_gabe_jones",
+      "breakpoints": true
     }
   ]
 }
