@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useState, useRef } from 'react';
+import { FC, useCallback, useContext, useEffect, useState /*useRef*/ } from 'react';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
@@ -9,9 +9,8 @@ import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
 
-function updateSelectedMinors(plannerId: number, minorIds: string[]) {
-  if (!plannerId) return;
-  trpc.programs.saveSelectedMinor.mutate({ plannerId, minorIds });
+function updateSelectedMinors(minorIds: string[]) {
+  trpc.programs.saveSelectedMinor.mutate({ minorIds });
 }
 
 interface MinorOption {
@@ -25,15 +24,9 @@ const MinorSelector: FC = () => {
   const minors = useAppSelector((state) => state.courseRequirements.minorList);
   const selectedMinors = useAppSelector((state) => state.courseRequirements.selectedMinors);
 
-  const plans = useAppSelector((state) => state.roadmap.plans);
-  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const activePlanID = plans[planIndex].id;
-
   const [minorsLoading, setMinorsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  const planEffectRef = useRef<number | null>(null);
 
   // Initial Load Helpers
   const saveInitialMinorList = useCallback(
@@ -54,11 +47,11 @@ const MinorSelector: FC = () => {
 
   const saveMinors = useCallback(
     (minorsToSave: MinorRequirements[]) => {
-      if (!activePlanID || !isLoggedIn) return;
+      if (!isLoggedIn) return;
       const minorIds: string[] = minorsToSave.map((m) => m.minor.id);
-      updateSelectedMinors(activePlanID, minorIds);
+      updateSelectedMinors(minorIds);
     },
-    [activePlanID, isLoggedIn],
+    [isLoggedIn],
   );
 
   const handleMinorChange = useCallback(
@@ -83,15 +76,13 @@ const MinorSelector: FC = () => {
   );
 
   useEffect(() => {
-    if (!minors.length || !activePlanID || !isLoggedIn) return;
-    if (planEffectRef.current === activePlanID) return;
+    if (!minors.length || !isLoggedIn) return;
     if (selectedMinors.length) return;
 
     setMinorsLoading(true);
     trpc.programs.getSavedMinors
-      .query(activePlanID)
+      .query()
       .then((minorIds) => {
-        planEffectRef.current = activePlanID;
         for (const minor of minorIds) {
           const foundMinor = minors.find((m) => m.id === minor.id);
           if (!foundMinor) continue;
@@ -101,7 +92,7 @@ const MinorSelector: FC = () => {
       .finally(() => {
         setMinorsLoading(false);
       });
-  }, [dispatch, activePlanID, minors, isLoggedIn, selectedMinors.length]);
+  }, [dispatch, minors, isLoggedIn, selectedMinors.length]);
 
   const minorSelectOptions: MinorOption[] = minors.map((m) => ({
     value: m,
