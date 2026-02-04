@@ -32,7 +32,7 @@ const MobileCourseCatalog = () => {
   return (
     <MobilePopup show={showSearch} onClose={closeSearch} id="sidebarScrollContainer">
       <CourseCatalog />
-      <ScrollToTopButton scrollableTarget="sidebarScrollContainer" size="large" />
+      <ScrollToTopButton scrollableTarget="sidebarScrollContainer" raiseButton={true} />
     </MobilePopup>
   );
 };

@@ -2,7 +2,6 @@
 
 button.scroll-to-top-button {
   position: absolute;
-  bottom: 1rem;
   right: 1.5rem;
   z-index: 50;
 }
@@ -10,6 +9,5 @@ button.scroll-to-top-button {
 @media (max-width: globals.$mobile-cutoff) {
   button.scroll-to-top-button {
     position: fixed;
-    bottom: 4rem;
   }
 }
