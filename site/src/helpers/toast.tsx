@@ -2,6 +2,8 @@ import { FC, Fragment } from 'react';
 import { Close } from '@mui/icons-material';
 import { Snackbar, SnackbarContent, IconButton } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
 import Slide from '@mui/material/Slide';
 
 export type ToastSeverity = 'error' | 'success' | 'info';
@@ -12,6 +14,33 @@ interface ToastProps {
   showToast: boolean;
   onClose: () => void;
 }
+
+const iconMap: Record<ToastSeverity, () => JSX.Element> = {
+  success: () => (
+    <CheckCircleIcon
+      sx={{
+        mx: '8px',
+        fontSize: 20,
+      }}
+    />
+  ),
+  error: () => (
+    <ErrorIcon
+      sx={{
+        mx: '8px',
+        fontSize: 20,
+      }}
+    />
+  ),
+  info: () => (
+    <InfoIcon
+      sx={{
+        mx: '8px',
+        fontSize: 20,
+      }}
+    />
+  ),
+};
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
   const backgroundColor = severity === 'error' ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-primary-main)';
@@ -32,12 +61,7 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
       <SnackbarContent
         message={
           <>
-            <CheckCircleIcon
-              sx={{
-                mx: '8px',
-                fontSize: 20,
-              }}
-            />
+            {iconMap[severity]()}
             {text}
           </>
         }
