@@ -28,7 +28,6 @@ const iconMap: Record<ToastSeverity, () => JSX.Element> = {
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
   let backgroundColor;
-
   switch (severity) {
     case 'error':
       backgroundColor = 'var(--mui-palette-error-main)';
@@ -64,10 +63,12 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
           backgroundColor,
           color: 'white',
           fontSize: '0.675rem',
+          boxShadow:
+            '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
         }}
         action={
           <Fragment>
-            <IconButton aria-label="close" color="inherit" onClick={onClose}>
+            <IconButton color="inherit" onClick={onClose}>
               <Close sx={{ fontSize: 20 }} />
             </IconButton>
           </Fragment>
