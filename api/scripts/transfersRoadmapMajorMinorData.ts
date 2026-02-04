@@ -48,7 +48,7 @@ async function transferUserMajorMinors() {
   const userMinorsToAdd = allPlannerMinors
     .map((plannerMinor) => {
       const userId = firstPlanners.find((planner) => planner.id === plannerMinor.plannerId)?.userId;
-      if (userId === undefined) {
+      if (userId === undefined || plannerMinor.minorId == null) {
         return null;
       } else {
         return {

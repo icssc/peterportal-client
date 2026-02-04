@@ -13,7 +13,6 @@ import {
   text,
   timestamp,
   unique,
-  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable(
@@ -165,26 +164,24 @@ export const plannerMinor = pgTable(
 export const userMajor = pgTable(
   'user_major',
   {
-    id: serial('id').primaryKey().notNull(),
     userId: integer('user_id')
       .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
     majorId: text('major_id').notNull(),
     specializationId: text('specialization_id'),
   },
-  (table) => [uniqueIndex('user_major_unique').on(table.userId, table.majorId)],
+  (table) => [primaryKey({ columns: [table.userId, table.majorId] })],
 );
 
 export const userMinor = pgTable(
   'user_minor',
   {
-    id: serial('id').primaryKey().notNull(),
     userId: integer('user_id')
       .references(() => user.id, { onDelete: 'cascade' })
       .notNull(),
-    minorId: text('minor_id'),
+    minorId: text('minor_id').notNull(),
   },
-  (table) => [uniqueIndex('user_minor_unique').on(table.userId, table.minorId)],
+  (table) => [primaryKey({ columns: [table.userId, table.minorId] })],
 );
 
 export const transferredMisc = pgTable(
