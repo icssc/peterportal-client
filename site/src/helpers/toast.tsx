@@ -2,6 +2,7 @@ import { FC, Fragment } from 'react';
 import { Close } from '@mui/icons-material';
 import { Snackbar, SnackbarContent, IconButton } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Slide from '@mui/material/Slide';
 
 export type ToastSeverity = 'error' | 'success' | 'info';
 
@@ -14,12 +15,19 @@ interface ToastProps {
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
   const backgroundColor = severity === 'error' ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-primary-main)';
+
   return (
     <Snackbar
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       open={showToast}
       autoHideDuration={3000}
       onClose={onClose}
+      slots={{ transition: Slide }}
+      slotProps={{
+        transition: {
+          direction: 'right',
+        },
+      }}
     >
       <SnackbarContent
         message={
