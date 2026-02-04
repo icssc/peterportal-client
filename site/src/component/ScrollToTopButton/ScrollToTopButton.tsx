@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from 'react';
 import './ScrollToTopButton.scss';
-// import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -31,12 +30,21 @@ const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget, size 
   if (!visible) return null;
 
   return (
-    <IconButton onClick={jumpToTop} className="scroll-to-top-button" size={size}>
+    <IconButton
+      onClick={jumpToTop}
+      className="scroll-to-top-button"
+      size={size}
+      sx={{
+        backgroundColor: 'primary.main',
+        color: 'primary.contrastText',
+        '&:hover': {
+          backgroundColor: 'primary.dark',
+        },
+      }}
+    >
       <KeyboardArrowUpIcon />
     </IconButton>
   );
-
-  // return <Button onClick={jumpToTop} className="scroll-to-top-button" startIcon={<KeyboardArrowUpIcon />} />;
 };
 
 export default ScrollToTopButton;
