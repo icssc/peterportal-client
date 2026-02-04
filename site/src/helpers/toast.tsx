@@ -1,6 +1,6 @@
 import { FC, Fragment } from 'react';
-import { Close } from '@mui/icons-material';
 import { Snackbar, SnackbarContent, IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
@@ -15,31 +15,15 @@ interface ToastProps {
   onClose: () => void;
 }
 
+const iconSx = {
+  mx: '8px',
+  fontSize: 20,
+};
+
 const iconMap: Record<ToastSeverity, () => JSX.Element> = {
-  success: () => (
-    <CheckCircleIcon
-      sx={{
-        mx: '8px',
-        fontSize: 20,
-      }}
-    />
-  ),
-  error: () => (
-    <ErrorIcon
-      sx={{
-        mx: '8px',
-        fontSize: 20,
-      }}
-    />
-  ),
-  info: () => (
-    <InfoIcon
-      sx={{
-        mx: '8px',
-        fontSize: 20,
-      }}
-    />
-  ),
+  success: () => <CheckCircleIcon sx={iconSx} />,
+  error: () => <ErrorIcon sx={iconSx} />,
+  info: () => <InfoIcon sx={iconSx} />,
 };
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
@@ -80,10 +64,6 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
           backgroundColor,
           color: 'white',
           fontSize: '0.675rem',
-          lineHeight: 1.43,
-          letterSpacing: '0.01071em',
-          alignItems: 'center',
-          borderRadius: '4px',
         }}
         action={
           <Fragment>
