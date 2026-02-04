@@ -20,12 +20,16 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
       open={showToast}
       autoHideDuration={3000}
       onClose={onClose}
-      message={text}
     >
       <SnackbarContent
         message={
           <>
-            <CheckCircleIcon />
+            <CheckCircleIcon
+              sx={{
+                mx: '8px',
+                fontSize: 20,
+              }}
+            />
             {text}
           </>
         }
@@ -36,13 +40,12 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
           lineHeight: 1.43,
           letterSpacing: '0.01071em',
           alignItems: 'center',
-          padding: '6px 16px',
           borderRadius: '4px',
         }}
         action={
           <Fragment>
-            <IconButton aria-label="close" color="inherit" sx={{ fontSize: 20 }} onClick={onClose}>
-              <Close />
+            <IconButton aria-label="close" color="inherit" onClick={onClose}>
+              <Close sx={{ fontSize: 20 }} />
             </IconButton>
           </Fragment>
         }
