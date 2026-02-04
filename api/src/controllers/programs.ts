@@ -13,7 +13,7 @@ import {
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
-import { planner, plannerMinor, userMajor, userMinor } from '../db/schema';
+import { planner, userMajor, userMinor } from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
@@ -94,11 +94,8 @@ const programsRouter = router({
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const res = await db
-      .select({ minorId: plannerMinor.minorId })
-      .from(plannerMinor)
-      .innerJoin(planner, eq(planner.id, plannerMinor.plannerId))
-      .where(eq(planner.userId, userId));
+    const res = await db.select({ minorId: userMinor.minorId }).from(userMinor).where(eq(userMinor.userId, userId));
+
     return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
   }),
   /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
