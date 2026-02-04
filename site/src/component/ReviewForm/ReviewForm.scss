@@ -30,31 +30,19 @@
     color: var(--mui-palette-error-main);
   }
 
-  .tag-select {
-    .tag-select__menu {
-      margin-top: 0;
-      border-radius: 0 0 8px 8px;
-      overflow: hidden;
-    }
+  .MuiAutocomplete-root {
+    .MuiChip-root {
+      background-color: var(--mui-palette-action-hover);
+      color: var(--mui-palette-text-primary);
+      height: 24px;
+      font-size: 14px;
+      border-radius: 2px;
 
-    .tag-select__menu-list {
-      padding: 0;
-    }
-
-    .tag-select__control {
-      background-color: inherit;
-    }
-
-    .tag-select__control--is-focused {
-      border-color: var(--mui-palette-accent-main);
-    }
-
-    .tag-select__value-container {
-      background-color: inherit;
-    }
-
-    .tag-select__multi-value {
-      background-color: var(--mui-palette-overlay-overlay2);
+      .MuiChip-deleteIcon {
+        color: var(--mui-palette-text-primary);
+        font-size: 16px;
+        margin: 0 4px 0 -4px;
+      }
     }
   }
 

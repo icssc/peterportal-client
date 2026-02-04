@@ -1,10 +1,8 @@
-import { FC, useContext, useState } from 'react';
+import { FC, useState, useEffect, useRef } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
 import trpc from '../../../trpc';
-import { comboboxTheme } from '../../../helpers/courseRequirements';
-import ThemeContext from '../../../style/theme-context';
-import AsyncSelect from 'react-select/async';
 import { TransferredCourse, CourseAAPIResponse } from '@peterportal/types';
 import {
   addTransferredCourse,
@@ -47,38 +45,59 @@ const CourseCreditMenuTile: FC<{ course: TransferWithUnread<TransferredCourse> }
 
 const CoursesSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
-  const [timeout, setTimeout] = useState<number | null>(null);
-  const [abortFn, setAbortFn] = useState<() => void>();
+  const [options, setOptions] = useState<CourseSelectOption[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [loading, setLoading] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const dispatch = useAppDispatch();
-  const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
 
-  const cancelIncompleteSearch = () => {
-    abortFn?.();
-    if (timeout) clearTimeout(timeout);
-  };
+  useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
 
-  const loadCourses = async (query: string) => {
-    const response = await trpc.search.get.query({ query, skip: 0, take: 10, resultType: 'course' });
-    const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
-    const options: CourseSelectOption[] = courses.map((c) => ({
-      value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
-      label: `${getCourseIdWithSpaces(c)}: ${c.title}`,
-    }));
-    return options;
-  };
+    if (!inputValue.trim()) {
+      setOptions([]);
+      setLoading(false);
+      return;
+    }
 
-  const loadAfterTimeout = async (query: string) => {
-    if (timeout) clearTimeout(timeout);
-    return new Promise<CourseSelectOption[]>((resolve) => {
-      const initSearch = async () => {
-        const abortPromise = new Promise<null>((resolve) => setAbortFn(() => resolve));
-        const response = await Promise.race([abortPromise, loadCourses(query)]);
-        if (response) resolve(response);
-      };
-      setTimeout(window.setTimeout(initSearch, 300));
-    });
-  };
+    setLoading(true);
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    timeoutRef.current = window.setTimeout(async () => {
+      try {
+        const response = await trpc.search.get.query({ query: inputValue, skip: 0, take: 10, resultType: 'course' });
+        const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
+        const newOptions: CourseSelectOption[] = courses.map((c) => ({
+          value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
+          label: `${getCourseIdWithSpaces(c)}: ${c.title}`,
+        }));
+
+        if (!abortController.signal.aborted) {
+          setOptions(newOptions);
+          setLoading(false);
+        }
+      } catch (error) {
+        if (!abortController.signal.aborted) {
+          setOptions([]);
+          setLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [inputValue]);
 
   const addCourse = (course: TransferredCourse) => {
     dispatch(addTransferredCourse(course));
@@ -104,18 +123,37 @@ const CoursesSection: FC = () => {
         <CourseCreditMenuTile key={course.courseName} course={course} />
       ))}
 
-      <AsyncSelect
-        className="ppc-combobox"
-        classNamePrefix="ppc-combobox"
-        placeholder="Search for a course to add..."
-        theme={(t) => comboboxTheme(t, isDark)}
-        cacheOptions
-        onInputChange={cancelIncompleteSearch}
-        loadOptions={loadAfterTimeout}
-        onChange={(option) => addCourse(option!.value)}
-        noOptionsMessage={({ inputValue }) => (inputValue ? 'No courses found' : null)}
+      <Autocomplete
+        options={options}
         value={null}
-        components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+        inputValue={inputValue}
+        open={inputValue.length > 0 && (options.length > 0 || loading)}
+        onInputChange={(_event, newInputValue) => {
+          setInputValue(newInputValue);
+        }}
+        onChange={(_event, option) => {
+          if (option) {
+            addCourse(option.value);
+            setInputValue('');
+            setOptions([]);
+          }
+        }}
+        getOptionLabel={(option) => option.label}
+        loading={loading}
+        noOptionsText={inputValue ? 'No courses found' : ''}
+        className="course-search-select"
+        slotProps={{
+          paper: {
+            sx: {
+              marginTop: 0,
+              borderRadius: '0 0 8px 8px',
+              overflow: 'hidden',
+            },
+          },
+        }}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" size="small" placeholder="Search for a course to add..." />
+        )}
       />
     </MenuSection>
   );

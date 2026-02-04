@@ -7,11 +7,9 @@ import {
   ProgramRequirement,
 } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
-import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
-import { getCssVariable } from './styling';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -61,27 +59,6 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
 
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
-
-export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
-  const themeCopy = { ...theme, colors: { ...theme.colors } };
-
-  themeCopy.colors.primary = getCssVariable('--mui-palette-primary-main'); // box border
-  themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
-  themeCopy.colors.primary25 = getCssVariable('--mui-palette-tertiary-main'); // hover
-
-  if (darkMode) {
-    const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-    Object.entries(theme.colors).forEach(([key]) => {
-      if (key.startsWith('neutral')) {
-        const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
-        const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
-        themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
-      }
-    });
-  }
-
-  return themeCopy;
-};
 
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
