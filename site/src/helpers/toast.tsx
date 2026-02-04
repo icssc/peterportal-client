@@ -43,7 +43,18 @@ const iconMap: Record<ToastSeverity, () => JSX.Element> = {
 };
 
 const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
-  const backgroundColor = severity === 'error' ? 'var(--mui-palette-error-main)' : 'var(--mui-palette-primary-main)';
+  let backgroundColor;
+
+  switch (severity) {
+    case 'error':
+      backgroundColor = 'var(--mui-palette-error-main)';
+      break;
+    case 'success':
+      backgroundColor = 'var(--mui-palette-success-main)';
+      break;
+    default:
+      backgroundColor = 'var(--mui-palette-primary-main)';
+  }
 
   return (
     <Snackbar
