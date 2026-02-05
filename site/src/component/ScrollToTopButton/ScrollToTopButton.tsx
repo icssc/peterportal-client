@@ -16,7 +16,8 @@ const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget, raise
     if (!el) return;
 
     const onScroll = () => {
-      setVisible(el.scrollTop > 300);
+      const minScrollDistBeforeVisible = 300;
+      setVisible(el.scrollTop > minScrollDistBeforeVisible);
     };
 
     el.addEventListener('scroll', onScroll);
