@@ -32,16 +32,8 @@ const ScrollToTopButton: FC<ScrollToTopButtonProps> = ({ scrollableTarget, raise
   return (
     <IconButton
       onClick={jumpToTop}
-      className="scroll-to-top-button"
+      className={`scroll-to-top-button ${raiseButton ? 'scroll-to-top-button-raised' : ''}`}
       size="large"
-      sx={{
-        backgroundColor: 'primary.main',
-        color: 'primary.contrastText',
-        '&:hover': {
-          backgroundColor: 'primary.dark',
-        },
-        bottom: raiseButton ? '4rem' : '1.5rem',
-      }}
     >
       <KeyboardArrowUpIcon />
     </IconButton>
