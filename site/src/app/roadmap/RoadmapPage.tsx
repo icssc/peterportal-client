@@ -15,8 +15,9 @@ import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
-import { clearPreviews, removePreview } from '../../store/slices/previewSlice';
+import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
 import { useCurrentPreview } from '../../hooks/preview';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -33,6 +34,9 @@ const RoadmapPage: FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const theme = useTheme();
   const transitionTime = theme.transitions.duration.shortest;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const handleCloseToast = () => {
     dispatch(setShowToast(false));
@@ -44,11 +48,12 @@ const RoadmapPage: FC = () => {
     setShowPreview(false);
     setTimeout(() => {
       dispatch(clearPreviews());
+      router.push(pathname);
     }, transitionTime);
   };
 
   const handleBackPreview = () => {
-    dispatch(removePreview());
+    router.back();
   };
 
   useEffect(() => {
@@ -56,6 +61,37 @@ const RoadmapPage: FC = () => {
   }, [previews]);
 
   const currentPreview = useCurrentPreview();
+
+  useEffect(() => {
+    const course = searchParams.get('course');
+    const instructor = searchParams.get('instructor');
+
+    if (course) {
+      const alreadyCourse = currentPreview && currentPreview.type === 'course' && currentPreview.id === course;
+      if (alreadyCourse) return;
+
+      const existingInstructor = previews.find((p) => p.type === 'professor');
+      if (existingInstructor) {
+        dispatch(addPreview({ type: 'course', id: course }));
+      } else {
+        dispatch(clearPreviews());
+        dispatch(addPreview({ type: 'course', id: course }));
+      }
+      return;
+    }
+
+    if (instructor) {
+      if (!(currentPreview && currentPreview.type === 'professor' && currentPreview.id === instructor)) {
+        dispatch(clearPreviews());
+        dispatch(addPreview({ type: 'professor', id: instructor }));
+      }
+      return;
+    }
+
+    if (previews.length > 0) {
+      dispatch(clearPreviews());
+    }
+  }, [dispatch, searchParams, currentPreview, previews]);
   const resultPreview = (
     <div>
       {currentPreview &&
