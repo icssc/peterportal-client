@@ -216,8 +216,18 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
+          {showLabel && (
+            <p className="requirement-label">
+              <b>Complete {label} of the following:</b>
+            </p>
+          )}
           {geTransfer && (
-            <MenuTile title="Transfer Credits">
+            <MenuTile
+              title="Transfer Credits"
+              onClick={() => {
+                console.log('hehe');
+              }}
+            >
               <div className="transferred-ges">
                 <p>
                   Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>
@@ -227,11 +237,6 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
                 </p>
               </div>
             </MenuTile>
-          )}
-          {showLabel && (
-            <p className="requirement-label">
-              <b>Complete {label} of the following:</b>
-            </p>
           )}
           <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
         </Collapse>
@@ -291,6 +296,9 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
+          <p className="requirement-label">
+            Complete <b>{data.requirementCount}</b> of the following series:
+          </p>
           {geTransfer && (
             <MenuTile title="Transfer Credits">
               <div className="transferred-ges">
@@ -303,9 +311,6 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
               </div>
             </MenuTile>
           )}
-          <p className="requirement-label">
-            Complete <b>{data.requirementCount}</b> of the following series:
-          </p>
           {data.requirements.map((r, i) => (
             <ProgramRequirementDisplay
               key={i}
