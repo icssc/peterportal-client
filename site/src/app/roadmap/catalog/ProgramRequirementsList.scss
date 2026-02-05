@@ -34,6 +34,30 @@
   position: relative;
   width: 100%;
 
+  .menu-tile {
+    margin-top: 12px;
+    margin-bottom: 12px;
+
+    .name {
+      font-size: 14px;
+    }
+
+    .transferred-ges {
+      display: flex;
+      gap: 42px;
+      height: 20px;
+
+      p {
+        color: var(--mui-palette-text-primary);
+        font-size: 12px;
+      }
+
+      .transferred-num {
+        font-weight: bold;
+      }
+    }
+  }
+
   .group-header {
     display: flex;
     gap: 8px;

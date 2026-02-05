@@ -33,6 +33,7 @@ import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import MenuTile from '../transfers/MenuTile';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -215,6 +216,18 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
+          {geTransfer && (
+            <MenuTile title="Transfer Credits">
+              <div className="transferred-ges">
+                <p>
+                  Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>
+                </p>
+                <p>
+                  Units Taken: <span className="transferred-num">{geTransfer.units}</span>
+                </p>
+              </div>
+            </MenuTile>
+          )}
           {showLabel && (
             <p className="requirement-label">
               <b>Complete {label} of the following:</b>
@@ -278,6 +291,18 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
+          {geTransfer && (
+            <MenuTile title="Transfer Credits">
+              <div className="transferred-ges">
+                <p>
+                  Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>
+                </p>
+                <p>
+                  Units Taken: <span className="transferred-num">{geTransfer.units}</span>
+                </p>
+              </div>
+            </MenuTile>
+          )}
           <p className="requirement-label">
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
