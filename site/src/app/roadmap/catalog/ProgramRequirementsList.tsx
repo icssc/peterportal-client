@@ -207,6 +207,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     <Badge
       badgeContent={<SwapHorizIcon />}
       invisible={!geTransfer}
+      variant="circular"
       color="success"
       anchorOrigin={{
         vertical: 'top',
@@ -287,6 +288,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
     <Badge
       badgeContent={<SwapHorizIcon />}
       invisible={!geTransfer}
+      variant="circular"
       color="success"
       anchorOrigin={{
         vertical: 'top',
