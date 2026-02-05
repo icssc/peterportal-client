@@ -97,6 +97,14 @@
       text-decoration-thickness: 2px;
     }
 
+    .menu-tile {
+      border-color: var(--mui-palette-success-main);
+
+      .name {
+        color: var(--mui-palette-success-main);
+      }
+    }
+
     :is(.group-requirement, .marker-requirement, .course-requirement):not(.completed) {
       border-color: var(--mui-palette-misc-midGray);
       color: var(--mui-palette-misc-midGray);
