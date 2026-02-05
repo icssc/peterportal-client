@@ -7,7 +7,7 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
   CompletedCourseSet,
-  useGETransferCount,
+  useMatchingGETransfer,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
 import { CourseGQLData } from '../../../types/types';
@@ -200,13 +200,12 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
-  const geTransferCount = useGETransferCount(data);
-  const hideTransferredGEs = geTransferCount === 0;
+  const geTransfer = useMatchingGETransfer(data);
 
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
-      invisible={hideTransferredGEs}
+      invisible={!geTransfer}
       color="success"
       anchorOrigin={{
         vertical: 'top',
@@ -258,8 +257,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
 
-  const geTransferCount = useGETransferCount(data);
-  const hideTransferredGEs = geTransferCount === 0;
+  const geTransfer = useMatchingGETransfer(data);
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
@@ -270,7 +268,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
-      invisible={hideTransferredGEs}
+      invisible={!geTransfer}
       color="success"
       anchorOrigin={{
         vertical: 'top',
