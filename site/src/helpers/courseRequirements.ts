@@ -242,6 +242,13 @@ function getMatchingGECategory(label: string) {
   return categoryEntries.find((ent: [string, GETitle]) => filterFunction(ent[1]))?.[0] ?? null;
 }
 
+export function useGETransferCount(requirement: ProgramRequirement): number {
+  const transferredGEs = useTransferredCredits().ge;
+
+  const applicableGE = getMatchingGECategory(requirement.label.trim());
+  return transferredGEs.find((ge) => ge.geName === applicableGE)?.numberOfCourses ?? 0;
+}
+
 function checkCourseListCompletion(
   completed: CompletedCourseSet,
   requirement: ProgramRequirement<'Course'>,

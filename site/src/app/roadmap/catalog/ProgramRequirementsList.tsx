@@ -7,6 +7,7 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
   CompletedCourseSet,
+  useGETransferCount,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
 import { CourseGQLData } from '../../../types/types';
@@ -29,8 +30,9 @@ import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Checkbox, Collapse } from '@mui/material';
+import { Badge, Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -198,18 +200,31 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
+  const geTransferCount = useGETransferCount(data);
+  const hideTransferredGEs = geTransferCount === 0;
+
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        {showLabel && (
-          <p className="requirement-label">
-            <b>Complete {label} of the following:</b>
-          </p>
-        )}
-        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
-      </Collapse>
-    </div>
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={hideTransferredGEs}
+      color="success"
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          {showLabel && (
+            <p className="requirement-label">
+              <b>Complete {label} of the following:</b>
+            </p>
+          )}
+          <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+        </Collapse>
+      </div>
+    </Badge>
   );
 };
 
@@ -243,6 +258,9 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
 
+  const geTransferCount = useGETransferCount(data);
+  const hideTransferredGEs = geTransferCount === 0;
+
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
@@ -250,23 +268,33 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const className = `group-requirement${complete ? ' completed' : ''}`;
 
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        <p className="requirement-label">
-          Complete <b>{data.requirementCount}</b> of the following series:
-        </p>
-        {data.requirements.map((r, i) => (
-          <ProgramRequirementDisplay
-            key={i}
-            storeKey={`${storeKey}-${i}`}
-            requirement={r}
-            nested
-            takenCourseIDs={takenCourseIDs}
-          />
-        ))}
-      </Collapse>
-    </div>
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={hideTransferredGEs}
+      color="success"
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          <p className="requirement-label">
+            Complete <b>{data.requirementCount}</b> of the following series:
+          </p>
+          {data.requirements.map((r, i) => (
+            <ProgramRequirementDisplay
+              key={i}
+              storeKey={`${storeKey}-${i}`}
+              requirement={r}
+              nested
+              takenCourseIDs={takenCourseIDs}
+            />
+          ))}
+        </Collapse>
+      </div>
+    </Badge>
   );
 };
 
