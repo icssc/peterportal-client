@@ -1,5 +1,5 @@
 import dotenv from 'dotenv-flow';
-import { planner, plannerMajor, plannerMinor /*userMajor, userMinor*/ } from '../src/db/schema';
+import { planner, plannerMajor, plannerMinor, userMajor, userMinor } from '../src/db/schema';
 import { db } from '../src/db';
 
 // load env (because this is a separate script)
@@ -63,29 +63,29 @@ async function transferUserMajorMinors() {
 
   // execute queries to add rows into userMajor and userMinor
   // COMMENTED OUT SO IT WON'T TRIGGER
-  // try {
-  //   await db.transaction(async (tx) => {
-  //     if (userMajorsToAdd.length > 0) {
-  //       await tx.insert(userMajor).values(userMajorsToAdd).onConflictDoNothing();
-  //     }
-  //     console.log(`Inserted ${userMajorsToAdd.length} majors`);
-  //   });
-  // } catch (error) {
-  //   console.error('Failed to insert majors:', error);
-  //   throw error;
-  // }
+  try {
+    await db.transaction(async (tx) => {
+      if (userMajorsToAdd.length > 0) {
+        await tx.insert(userMajor).values(userMajorsToAdd).onConflictDoNothing();
+      }
+      console.log(`Inserted ${userMajorsToAdd.length} majors`);
+    });
+  } catch (error) {
+    console.error('Failed to insert majors:', error);
+    throw error;
+  }
 
-  // try {
-  //   await db.transaction(async (tx) => {
-  //     if (userMinorsToAdd.length > 0) {
-  //       await tx.insert(userMinor).values(userMinorsToAdd).onConflictDoNothing();
-  //     }
-  //     console.log(`Inserted ${userMinorsToAdd.length} minors`);
-  //   });
-  // } catch (error) {
-  //   console.error('Failed to insert majors:', error);
-  //   throw error;
-  // }
+  try {
+    await db.transaction(async (tx) => {
+      if (userMinorsToAdd.length > 0) {
+        await tx.insert(userMinor).values(userMinorsToAdd).onConflictDoNothing();
+      }
+      console.log(`Inserted ${userMinorsToAdd.length} minors`);
+    });
+  } catch (error) {
+    console.error('Failed to insert majors:', error);
+    throw error;
+  }
 }
 
 transferUserMajorMinors();
