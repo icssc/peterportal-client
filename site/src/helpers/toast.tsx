@@ -1,6 +1,6 @@
 import { FC, Fragment } from 'react';
 import { Snackbar, SnackbarContent, IconButton } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
@@ -41,14 +41,14 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
 
   return (
     <Snackbar
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       open={showToast}
       autoHideDuration={3000}
       onClose={onClose}
       slots={{ transition: Slide }}
       slotProps={{
         transition: {
-          direction: 'right',
+          direction: 'left',
         },
       }}
     >
@@ -62,14 +62,13 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
         sx={{
           backgroundColor,
           color: 'white',
-          fontSize: '0.675rem',
           boxShadow:
             '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
         }}
         action={
           <Fragment>
             <IconButton color="inherit" onClick={onClose}>
-              <Close sx={{ fontSize: 20 }} />
+              <CloseIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Fragment>
         }
