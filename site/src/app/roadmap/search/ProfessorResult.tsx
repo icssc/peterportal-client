@@ -51,7 +51,7 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   return (
     <div className="professor-result">
-      <Link href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
+      <Link href={`/instructor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
         {professor.name}
       </Link>
       <p className="professor-synopsis">
