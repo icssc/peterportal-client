@@ -5,7 +5,7 @@ import { useTransferredCredits } from './transferCredits';
 import { getNamesOfTransfers } from '../helpers/transferCredits';
 import { useIsLoggedIn } from './isLoggedIn';
 import { RoadmapRevision } from '../types/roadmap';
-import { reviseRoadmap, setSavedRevisionIndex } from '../store/slices/roadmapSlice';
+import { reviseRoadmap, setSavedRevisionIndex, updateTempPlannerIds } from '../store/slices/roadmapSlice';
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
@@ -64,20 +64,26 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
-    if (res && isLoggedIn) {
+    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+
+    if (result.success && isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved to your account!'));
       dispatch(setToastSeverity('success'));
       dispatch(setShowToast(true));
-    } else if (res && !isLoggedIn) {
+    } else if (result.success && !isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved locally! Log in to save it to your account'));
       dispatch(setToastSeverity('success'));
       dispatch(setShowToast(true));
-    } else if (!res) {
+    } else if (!result.success) {
       dispatch(setToastMsg('Unable to save roadmap to your account'));
       dispatch(setToastSeverity('error'));
       dispatch(setShowToast(true));
     }
+
+    if (result.success && result.plannerIdLookup) {
+      dispatch(updateTempPlannerIds(result.plannerIdLookup));
+    }
+
     dispatch(setSavedRevisionIndex(currIdx));
   };
 
