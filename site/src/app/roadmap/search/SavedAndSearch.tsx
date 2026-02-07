@@ -13,7 +13,7 @@ import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../planner/Course';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
-import { useClearedCourses } from '../../../hooks/planner';
+import { useClearedCoursesUntil } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
 import { setPageNumber, setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
@@ -52,9 +52,16 @@ interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
 }
 
+const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> = ({ course, addMode }) => {
+  const courseId = `${course.department} ${course.courseNumber}`;
+  const clearedCourses = useClearedCoursesUntil(courseId);
+  const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
+
+  return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} />;
+};
+
 const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults }) => {
   const isMobile = useIsMobile();
-  const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
 
   const setDraggedItem = (event: SortableEvent) => {
@@ -63,12 +70,12 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
   };
 
   // Deep copy because Sortable requires data to be extensible (non read-only). Must be done within component
-  searchResults = deepCopy(searchResults);
+  const copiedResults = deepCopy(searchResults);
 
   return (
     <ReactSortable
       {...courseSearchSortable}
-      list={searchResults}
+      list={copiedResults}
       onStart={setDraggedItem}
       disabled={isMobile}
       /**
@@ -77,12 +84,9 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
        */
       className={'roadmap-search-results' + (isMobile ? ' disabled' : '')}
     >
-      {searchResults.map((course, i) => {
-        const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
-        return (
-          <Course data={course} key={i} addMode={isMobile ? 'tap' : 'drag'} requiredCourses={missingPrerequisites} />
-        );
-      })}
+      {copiedResults.map((course, i) => (
+        <CourseResultItem key={i} course={course} addMode={isMobile ? 'tap' : 'drag'} />
+      ))}
     </ReactSortable>
   );
 };
