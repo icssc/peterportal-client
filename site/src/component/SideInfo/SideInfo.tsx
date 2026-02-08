@@ -184,7 +184,6 @@ const SideInfo: FC<SideInfoProps> = (props) => {
 
         <div className="side-info-ratings">
           <h2>Average Rating</h2>
-          {/* <h3>{props.searchType}</h3> */}
           <div className="side-info-buttons">
             <Select
               value={selectedReview}
