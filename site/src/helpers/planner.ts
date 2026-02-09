@@ -264,6 +264,17 @@ function saveLocalRoadmap(planners: SavedPlannerData[]) {
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
+function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLookup: Record<number, number>) {
+  if (Object.keys(plannerIdLookup).length == 0) return;
+  const updatedPlanners = planners.map((planner) => {
+    if (plannerIdLookup[planner.id]) {
+      return { ...planner, id: plannerIdLookup[planner.id] };
+    }
+    return planner;
+  });
+  saveLocalRoadmap(updatedPlanners);
+}
+
 export const saveRoadmap = async (
   isLoggedIn: boolean,
   lastSavedPlanners: SavedPlannerData[] | null,
@@ -271,20 +282,26 @@ export const saveRoadmap = async (
 ) => {
   saveLocalRoadmap(planners);
 
-  if (!isLoggedIn) return true;
+  if (!isLoggedIn) return { success: true };
 
   let res = false;
+  let plannerIdLookup: Record<number, number> = {};
+
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
+
   await trpc.roadmaps.save
     .mutate(changes)
-    .then(() => {
+    .then((lookup) => {
+      plannerIdLookup = lookup;
       res = true;
+      updateTempIdsInLocalRoadmap(planners, plannerIdLookup);
     })
     .catch(() => {
       res = false;
     });
-  return res;
+
+  return { success: res, plannerIdLookup: plannerIdLookup };
 };
 
 function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {

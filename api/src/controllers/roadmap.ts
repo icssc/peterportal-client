@@ -57,7 +57,7 @@ async function performRoadmapDeletesAndUpdates(tx: TransactionType, input: Roadm
 }
 
 async function applyRoadmapChanges(input: RoadmapDiffs, userId: number) {
-  await db.transaction(async (tx) => {
+  return await db.transaction(async (tx) => {
     performRoadmapDeletesAndUpdates(tx, input, userId);
 
     const plannerIdLookup = await createPlanners(tx, input.newPlanners, userId);
@@ -70,6 +70,8 @@ async function applyRoadmapChanges(input: RoadmapDiffs, userId: number) {
 
     await createYears(tx, input.newYears);
     await createQuarters(tx, input.newQuarters);
+
+    return plannerIdLookup;
   });
 }
 
@@ -100,9 +102,11 @@ const roadmapsRouter = router({
     // When `overwrite` is true, we're never updating/deleting planner data by their planner id;
     // all new info gets written to the current user's account
     if (!input.overwrite) await validatePlannerIds(input, userId);
-    await applyRoadmapChanges(input, userId);
+    const plannerIdLookup = await applyRoadmapChanges(input, userId);
 
     await db.update(user).set({ lastRoadmapEditAt: new Date() }).where(eq(user.id, userId));
+
+    return plannerIdLookup;
   }),
 });
 
