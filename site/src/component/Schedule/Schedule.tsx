@@ -169,7 +169,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
   } else {
     const sectionElements: JSX.Element[] = [];
     Object.keys(scheduleData).forEach((courseID) => {
-      scheduleData[courseID].forEach((section, i) => {
+      const sortedSections = [...scheduleData[courseID]].sort((a, b) => a.sectionCode.localeCompare(b.sectionCode));
+
+      sortedSections.forEach((section, i) => {
         sectionElements.push(renderData(courseID, section, i));
       });
     });
