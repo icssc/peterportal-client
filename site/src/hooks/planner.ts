@@ -28,6 +28,7 @@ export function useSaveRoadmap() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
   const planners = useAppSelector((state) => state.roadmap.plans);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
@@ -39,7 +40,7 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, currentPlanIndex);
     if (res && isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved to your account!'));
       dispatch(setToastSeverity('success'));
