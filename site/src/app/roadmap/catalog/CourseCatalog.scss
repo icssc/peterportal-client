@@ -1,18 +1,60 @@
 @use '../../../globals';
 
 .course-catalog {
-  .ppc-combobox {
+  .major-select,
+  .minor-select {
     margin-bottom: 12px;
-  }
 
-  .ppc-combobox__menu {
-    margin-top: 0;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
-  }
+    .MuiOutlinedInput-root {
+      border-radius: 4px;
+      background-color: var(--mui-palette-background-paper);
+      position: relative;
 
-  .ppc-combobox__clear-indicator {
-    display: none;
+      &::before {
+        content: '';
+        position: absolute;
+        right: 32px;
+        top: 8px;
+        bottom: 8px;
+        width: 1px;
+        background-color: var(--mui-palette-divider);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-tertiary-main);
+      }
+
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-primary-main);
+        border-width: 1px;
+      }
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: var(--mui-palette-text-secondary);
+    }
+
+    .MuiChip-root {
+      background-color: var(--mui-palette-action-hover);
+      color: var(--mui-palette-text-primary);
+      height: 24px;
+      font-size: 14px;
+      border-radius: 2px;
+
+      .MuiChip-deleteIcon {
+        color: var(--mui-palette-text-primary);
+        font-size: 16px;
+        margin: 0 4px 0 -4px;
+      }
+    }
+
+    .MuiAutocomplete-endAdornment {
+      .MuiSvgIcon-root {
+        color: var(--mui-palette-text-primary);
+      }
+    }
   }
 
   .filter-group {

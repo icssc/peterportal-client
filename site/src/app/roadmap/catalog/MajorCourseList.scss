@@ -3,6 +3,48 @@
     margin-bottom: 16px;
   }
 
+  .specialization-select {
+    margin-bottom: 12px;
+
+    .MuiOutlinedInput-root {
+      border-radius: 4px;
+      background-color: var(--mui-palette-background-paper);
+
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-tertiary-main);
+      }
+
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-color: var(--mui-palette-primary-main);
+        border-width: 1px;
+      }
+    }
+
+    .MuiSelect-icon {
+      color: var(--mui-palette-text-primary);
+      right: 8px;
+    }
+
+    .MuiOutlinedInput-root {
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        right: 32px;
+        top: 8px;
+        bottom: 8px;
+        width: 1px;
+        background-color: var(--mui-palette-divider);
+        pointer-events: none;
+      }
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: var(--mui-palette-text-secondary);
+    }
+  }
+
   .header-tab {
     background: none;
     border: none;

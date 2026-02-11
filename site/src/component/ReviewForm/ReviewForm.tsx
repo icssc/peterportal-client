@@ -1,9 +1,8 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import './ReviewForm.scss';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import ThemeContext from '../../style/theme-context';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -15,8 +14,6 @@ import {
   tags,
 } from '@peterportal/types';
 import trpc from '../../trpc';
-import Select2 from 'react-select';
-import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
@@ -36,6 +33,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  Autocomplete,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -56,7 +54,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
 }) => {
   const dispatch = useAppDispatch();
-  const { darkMode } = useContext(ThemeContext);
   const reviews = useAppSelector((state) => state.review.reviews);
   const isLoggedIn = useIsLoggedIn();
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
@@ -431,26 +428,28 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
           <FormControl>
             <FormLabel>Tags</FormLabel>
-            <Select2
-              isMulti
-              options={tags.map((tag) => ({ label: tag, value: tag }))}
-              value={selectedTags.map((tag) => ({ label: tag, value: tag }))}
-              onChange={(selected) => {
-                const newTags = selected.map((opt) => opt.value);
-                setSelectedTags(newTags);
-                if (newTags.length > 3) {
+            <Autocomplete
+              multiple
+              options={tags}
+              value={selectedTags}
+              onChange={(_event, newValue) => {
+                const limitedTags = newValue.slice(0, 3);
+                setSelectedTags(limitedTags);
+                if (limitedTags.length >= 3) {
                   setTagsOpen(false);
                 }
               }}
-              onMenuOpen={() => setTagsOpen(true)}
-              onMenuClose={() => setTagsOpen(false)}
-              menuIsOpen={selectedTags.length < 3 && tagsOpen}
-              isOptionDisabled={() => selectedTags.length >= 3}
-              placeholder="Select up to 3 tags"
-              closeMenuOnSelect={false}
-              theme={(t) => comboboxTheme(t, darkMode)}
-              className="tag-select"
-              classNamePrefix="tag-select"
+              open={selectedTags.length < 3 && tagsOpen}
+              onOpen={() => setTagsOpen(true)}
+              onClose={() => setTagsOpen(false)}
+              getOptionLabel={(option) => option}
+              getOptionDisabled={() => selectedTags.length >= 3}
+              disableCloseOnSelect
+              disableClearable
+              limitTags={3}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" size="small" placeholder="Select up to 3 tags" />
+              )}
             />
           </FormControl>
 
