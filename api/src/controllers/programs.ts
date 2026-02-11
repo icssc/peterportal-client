@@ -78,17 +78,17 @@ const programsRouter = router({
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const res = await db
+    const pairs = await db
       .select({ majorId: userMajor.majorId, specializationId: userMajor.specializationId })
       .from(userMajor)
       .where(eq(userMajor.userId, userId));
 
-    // undefined instead of null for return type consistency
-    (res as Partial<(typeof res)[0]>[]).forEach((r) => {
-      if (!r.specializationId) delete r.specializationId;
-    });
+    const res = pairs.map((p) => ({
+      ...p,
+      specializationId: p.specializationId ?? undefined,
+    }));
 
-    return res as MajorSpecializationPair[];
+    return res;
   }),
   getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<MinorProgram[]> => {
     const userId = ctx.session.userId;
@@ -104,14 +104,19 @@ const programsRouter = router({
     if (!userId) throw new Error('Unauthorized');
 
     const { pairs } = input;
-    await db.delete(userMajor).where(eq(userMajor.userId, userId));
 
     const rowsToInsert = pairs.map((p) => ({
       userId,
       majorId: p.majorId,
       specializationId: p.specializationId,
     }));
-    if (rowsToInsert.length) await db.insert(userMajor).values(rowsToInsert);
+
+    await db.transaction(async (tx) => {
+      await tx.delete(userMajor).where(eq(userMajor.userId, userId));
+      if (rowsToInsert.length) {
+        await tx.insert(userMajor).values(rowsToInsert);
+      }
+    });
   }),
   /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
   saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input, ctx }) => {
@@ -119,10 +124,15 @@ const programsRouter = router({
     if (!userId) throw new Error('Unauthorized');
 
     const { minorIds } = input;
-    await db.delete(userMinor).where(eq(userMinor.userId, userId));
 
     const rowsToInsert = minorIds.map((minorId) => ({ userId, minorId }));
-    if (rowsToInsert.length) await db.insert(userMinor).values(rowsToInsert);
+
+    await db.transaction(async (tx) => {
+      await tx.delete(userMinor).where(eq(userMinor.userId, userId));
+      if (rowsToInsert.length) {
+        await tx.insert(userMinor).values(rowsToInsert);
+      }
+    });
   }),
   saveCHCSelection: publicProcedure
     .input(z.object({ plannerId: z.number(), chc: z.enum(['', 'CHC4', 'CHC2']) }))

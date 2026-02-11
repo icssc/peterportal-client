@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useState /*useRef*/ } from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 import trpc from '../../../trpc';
 import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
