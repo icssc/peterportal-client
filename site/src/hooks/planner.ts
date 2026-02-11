@@ -5,7 +5,7 @@ import { useTransferredCredits } from './transferCredits';
 import { getNamesOfTransfers } from '../helpers/transferCredits';
 import { useIsLoggedIn } from './isLoggedIn';
 import { RoadmapRevision } from '../types/roadmap';
-import { reviseRoadmap, setSavedRevisionIndex } from '../store/slices/roadmapSlice';
+import { reviseRoadmap, setSavedRevisionIndex, updateTempPlannerIds } from '../store/slices/roadmapSlice';
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
@@ -24,6 +24,31 @@ export function useClearedCourses() {
   return clearedCourses;
 }
 
+export function useClearedCoursesUntil(courseId: string): Set<string> {
+  const { courses, ap, apInfo } = useTransferredCredits();
+  const transfers = useMemo(() => getNamesOfTransfers(courses, ap, apInfo), [ap, apInfo, courses]);
+  const roadmap = useAppSelector((state) => state.roadmap);
+  const currentPlan = roadmap?.plans[roadmap.currentPlanIndex]?.content?.yearPlans;
+
+  const clearedCoursesUntil = useMemo(() => {
+    const takenSoFar = new Set(transfers);
+
+    for (const year of currentPlan) {
+      for (const quarter of year.quarters) {
+        const ids = quarter.courses.map((c) => `${c.department} ${c.courseNumber}`);
+
+        if (ids.includes(courseId)) {
+          return takenSoFar;
+        }
+
+        ids.forEach((id) => takenSoFar.add(id));
+      }
+    }
+    return takenSoFar;
+  }, [currentPlan, transfers, courseId]);
+  return clearedCoursesUntil;
+}
+
 export function useSaveRoadmap() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
@@ -39,20 +64,26 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const res = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
-    if (res && isLoggedIn) {
+    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+
+    if (result.success && isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved to your account!'));
       dispatch(setToastSeverity('success'));
       dispatch(setShowToast(true));
-    } else if (res && !isLoggedIn) {
+    } else if (result.success && !isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved locally! Log in to save it to your account'));
       dispatch(setToastSeverity('success'));
       dispatch(setShowToast(true));
-    } else if (!res) {
+    } else if (!result.success) {
       dispatch(setToastMsg('Unable to save roadmap to your account'));
       dispatch(setToastSeverity('error'));
       dispatch(setShowToast(true));
     }
+
+    if (result.success && result.plannerIdLookup) {
+      dispatch(updateTempPlannerIds(result.plannerIdLookup));
+    }
+
     dispatch(setSavedRevisionIndex(currIdx));
   };
 
