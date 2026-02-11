@@ -445,6 +445,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               getOptionLabel={(option) => option}
               getOptionDisabled={() => selectedTags.length >= 3}
               disableCloseOnSelect
+              disableClearable
               limitTags={3}
               renderInput={(params) => (
                 <TextField {...params} variant="outlined" size="small" placeholder="Select up to 3 tags" />

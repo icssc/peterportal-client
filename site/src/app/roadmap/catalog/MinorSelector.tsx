@@ -117,6 +117,7 @@ const MinorSelector: FC = () => {
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
         loading={minorsLoading}
         disabled={minorsLoading}
+        disableClearable
         className="minor-select"
         slotProps={{
           listbox: {

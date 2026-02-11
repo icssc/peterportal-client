@@ -145,6 +145,7 @@ const MajorSelector: FC = () => {
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
         loading={majorsLoading}
         disabled={majorsLoading}
+        disableClearable
         className="major-select"
         slotProps={{
           listbox: {
