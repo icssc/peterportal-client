@@ -112,13 +112,8 @@ export function transformProfessorGQL(data: ProfessorAAPIResponse) {
   return professor;
 }
 
-export function useIsDesktop() {
-  const isDesktop = useMediaQuery('(min-wdith: 840.1px)');
-  return isDesktop;
-}
-
 export function useIsMobile() {
-  const isMobile = useMediaQuery('(max-width: 840px)');
+  const isMobile = useMediaQuery('(max-width: 800px)');
   return isMobile;
 }
 

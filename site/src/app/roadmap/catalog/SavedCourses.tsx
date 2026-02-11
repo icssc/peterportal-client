@@ -57,7 +57,7 @@ const SavedCourseList = () => {
 
   return (
     <div className="saved-courses">
-      <ProgramRequirementsList requirements={requirements} storeKeyPrefix="saved" />
+      <ProgramRequirementsList requirements={requirements} storeKeyPrefix="saved" skipCollapseSingletons />
     </div>
   );
 };

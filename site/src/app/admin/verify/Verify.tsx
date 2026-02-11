@@ -19,7 +19,7 @@ const Verify: FC = () => {
 
   useEffect(() => {
     getUnverifiedReviews();
-    document.title = 'Verify Reviews | PeterPortal';
+    document.title = 'Verify Reviews | AntAlmanac Planner';
   }, [getUnverifiedReviews]);
 
   const verifyReview = async (reviewId: number) => {

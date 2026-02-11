@@ -7,11 +7,12 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms, unionTerms } from '../../helpers/util';
 import { ProfessorGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
+import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
@@ -71,14 +72,20 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   );
 };
 
-const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, onClose }) => {
+const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void }> = ({
+  netid,
+  onClose,
+  onBack,
+}) => {
   netid = netid.replace(/\s/g, '');
   const professorData = useProfessorData(netid);
   const isLoading = false;
   const dispatch = useAppDispatch();
+  const previews = useAppSelector((state) => state.preview.previewStack);
+  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyProfLink = () => {
-    const url = new URL('/professor/' + netid, location.origin).toString();
+    const url = new URL('/planner/professor/' + netid, location.origin).toString();
     navigator.clipboard.writeText(url);
     dispatch(setToastMsg('Copied instructor URL to clipboard!'));
     dispatch(setToastSeverity('success'));
@@ -106,6 +113,13 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void }> = ({ netid, o
             <CloseIcon />
           </IconButton>
         </Tooltip>
+        {previews.length > 1 && (
+          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
+            <IconButton onClick={onBack}>
+              <BackIcon />
+            </IconButton>
+          </Tooltip>
+        )}
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
         <Button
           variant="contained"

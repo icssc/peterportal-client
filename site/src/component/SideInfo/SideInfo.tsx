@@ -8,6 +8,7 @@ import { Button, Chip, MenuItem, Select } from '@mui/material';
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { toggleFormStatus, setShowToast } from '../../store/slices/reviewSlice';
+import { addPreview } from '../../store/slices/previewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
@@ -22,6 +23,7 @@ interface FeaturedInfoData {
 }
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
+  const dispatch = useAppDispatch();
   if (averageReviews[reviewKey] === undefined) {
     return null;
   }
@@ -29,12 +31,20 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
   // rating and difficulty were constructed as totals (??)
   const { rating, difficulty, count } = averageReviews[reviewKey];
 
+  const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
+    e.preventDefault();
+    dispatch(addPreview({ type: searchType == 'course' ? 'professor' : 'course', id: reviewKey }));
+  };
+
   return (
     <div className="ratings-widget">
       <div className="column">
         <p className="field-name">{featureType} Rated</p>
         <p className="field-value">
-          <Link href={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}>
+          <Link
+            href={{ pathname: `/${searchType == 'course' ? 'professor' : 'course'}/${reviewKey}` }}
+            onClick={(e) => handleLinkClick(e, reviewKey, searchType)}
+          >
             {displayName}
           </Link>
         </p>

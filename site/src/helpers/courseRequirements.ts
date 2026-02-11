@@ -170,9 +170,12 @@ function coerceEmptyRequirements(requirements: ProgramRequirement[]): ProgramReq
   });
 }
 
-export function formatRequirements(requirements: ProgramRequirement[]): ProgramRequirement[] {
+export function formatRequirements(
+  requirements: ProgramRequirement[],
+  skipCollapseSingletons?: boolean,
+): ProgramRequirement[] {
   const pipeline = [
-    collapseSingletonRequirements,
+    ...(skipCollapseSingletons ? [] : [collapseSingletonRequirements]),
     flattenSingletonGroups,
     coerceEmptyRequirements,
     sortGroupRequirementsByType,
