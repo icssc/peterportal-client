@@ -9,6 +9,9 @@ import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/s
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
+import UndoIcon from '@mui/icons-material/UndoRounded';
+import RedoIcon from '@mui/icons-material/RedoRounded';
+import { redoRoadmapRevision, undoRoadmapRevision } from '../../../store/slices/roadmapSlice';
 
 interface HeaderProps {
   courseCount: number;
@@ -20,6 +23,13 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const showTransfers = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
+
+  const handleUndo = () => {
+    dispatch(undoRoadmapRevision());
+  };
+  const handleRedo = () => {
+    dispatch(redoRoadmapRevision());
+  };
 
   const toggleTransfers = () => {
     if (showTransfers) {
@@ -45,6 +55,12 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       </div>
       <div className="planner-actions">
         <ButtonGroup>
+          <Button variant="text" size="small" className="header-btn icon-only-btn" onClick={handleUndo}>
+            <UndoIcon />
+          </Button>
+          <Button variant="text" size="small" className="header-btn icon-only-btn" onClick={handleRedo}>
+            <RedoIcon />
+          </Button>
           <AddYearPopup buttonSize={buttonSize} />
           {isMobile && (
             <Badge color="error" variant="dot" invisible={!hasUnreadTransfers}>
