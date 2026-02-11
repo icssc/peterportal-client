@@ -157,7 +157,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (!currentPreview) return;
       event.preventDefault();
       if (course) {
-        dispatch(addPreview({ type: 'professor', id }));
+        dispatch(addPreview({ type: 'instructor', id }));
       } else {
         dispatch(addPreview({ type: 'course', id }));
       }
@@ -191,7 +191,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
         const profLink = (
           <Link
-            href={{ pathname: `/professor/${review.professorId}` }}
+            href={{ pathname: `/instructor/${review.professorId}` }}
             onClick={(e) => handleLinkClick(e, review.professorId)}
           >
             {profName}
@@ -206,7 +206,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
           <div>
             <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
             {' • '}
-            <Link href={{ pathname: `/professor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
+            <Link href={{ pathname: `/instructor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
           </div>
         );
         setIdentifier(courseAndProfLink);

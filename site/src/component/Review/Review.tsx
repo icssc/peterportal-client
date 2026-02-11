@@ -131,7 +131,7 @@ const Review: FC<ReviewProps> = (props) => {
       { text: 'Controversial', value: SortingOption.CONTROVERSIAL },
     ];
 
-    const professorOptions = [{ text: 'All Professors', value: '' }].concat(
+    const professorOptions = [{ text: 'All Instructors', value: '' }].concat(
       Object.keys(props.course?.instructors ?? {})
         .map((profID) => {
           const name = `${props.course?.instructors[profID].name} (${reviewFreq.get(profID) || 0})`;
