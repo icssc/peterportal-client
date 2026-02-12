@@ -35,6 +35,7 @@ import { Badge, Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import MenuTile from '../transfers/MenuTile';
+import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -204,6 +205,8 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
 
+  const isMobile = useIsMobile();
+
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
@@ -227,7 +230,11 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                dispatch(setSelectedSidebarTab(0));
+                if (isMobile) {
+                  dispatch(setShowMobileCreditsMenu(true));
+                } else {
+                  dispatch(setSelectedSidebarTab(0));
+                }
               }}
             >
               <div className="transferred-ges">
@@ -284,6 +291,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
+  const isMobile = useIsMobile();
 
   return (
     <Badge
@@ -306,7 +314,11 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                dispatch(setSelectedSidebarTab(0));
+                if (isMobile) {
+                  dispatch(setShowMobileCreditsMenu(true));
+                } else {
+                  dispatch(setSelectedSidebarTab(0));
+                }
               }}
             >
               <div className="transferred-ges">

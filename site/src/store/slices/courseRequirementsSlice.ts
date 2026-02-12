@@ -117,7 +117,6 @@ const courseRequirementsSlice = createSlice({
 
 export const {
   setSelectedTab,
-  // setSelectedRoadmapTab,
   setMajorList,
   addMajor,
   removeMajor,
