@@ -184,7 +184,8 @@ interface CourseRequirementProps {
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
-  const complete = useCompletionCheck(takenCourseIDs, data).done;
+  const geTransfer = useMatchingGETransfer(data);
+  const complete = useCompletionCheck(takenCourseIDs, data).done; // probably include geTransfer in useCompletionCheck
 
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -200,15 +201,14 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
-
-  const geTransfer = useMatchingGETransfer(data);
+  const badgeColor = complete ? 'success' : 'inProgress';
 
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
       invisible={!geTransfer}
       variant="circular"
-      color="success"
+      color={badgeColor}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right',
@@ -272,11 +272,10 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const geTransfer = useMatchingGETransfer(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
-
-  const geTransfer = useMatchingGETransfer(data);
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));

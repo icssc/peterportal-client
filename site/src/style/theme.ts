@@ -134,6 +134,15 @@ theme = createTheme(theme, {
                 },
               },
             },
+            {
+              props: { color: 'inProgress' },
+              style: {
+                '& .MuiBadge-badge': {
+                  backgroundColor: '#B8B8B8',
+                  color: 'white',
+                },
+              },
+            },
           ],
         },
       },
