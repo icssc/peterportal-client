@@ -282,13 +282,14 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
+  const badgeColor = complete ? 'success' : 'inProgress';
 
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
       invisible={!geTransfer}
       variant="circular"
-      color="success"
+      color={badgeColor}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right',
