@@ -227,7 +227,7 @@ export interface CompletionStatus {
   done: boolean;
 }
 
-export function getMatchingGECategory(label: string) {
+function getMatchingGECategory(label: string) {
   const labelMatch = label.match(GE_LABEL_REGEX);
   if (!labelMatch) return null;
 
