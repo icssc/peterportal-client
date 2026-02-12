@@ -27,7 +27,7 @@ const CloseRoadmapSearchButton = () => {
 };
 
 export const CourseCatalog = () => {
-  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
+  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedCatalogTab);
 
   return (
     <div className="course-catalog">

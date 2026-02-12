@@ -24,7 +24,11 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
-import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
+import {
+  setGroupExpanded,
+  setMarkerComplete,
+  setSelectedCatalogTab,
+} from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
@@ -226,7 +230,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                console.log('hehe');
+                dispatch(setSelectedCatalogTab('GE'));
               }}
             >
               <div className="transferred-ges">

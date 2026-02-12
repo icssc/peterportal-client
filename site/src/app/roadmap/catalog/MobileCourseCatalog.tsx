@@ -5,12 +5,12 @@ import { hideMobileCatalog } from '../../../store/slices/roadmapSlice';
 import { CourseCatalog } from './CourseCatalog';
 import MobilePopup from '../MobilePopup';
 import { useCallback, useEffect } from 'react';
-import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import { setSelectedCatalogTab } from '../../../store/slices/courseRequirementsSlice';
 import { useIsMobile } from '../../../helpers/util';
 
 const MobileCourseCatalog = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
-  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedTab);
+  const selectedCourseList = useAppSelector((state) => state.courseRequirements.selectedCatalogTab);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
 
@@ -18,9 +18,9 @@ const MobileCourseCatalog = () => {
 
   useEffect(() => {
     if (isMobile && selectedCourseList === 'Saved') {
-      dispatch(setSelectedTab('Search'));
+      dispatch(setSelectedCatalogTab('Search'));
     } else if (!isMobile && selectedCourseList === 'Search') {
-      dispatch(setSelectedTab('Saved'));
+      dispatch(setSelectedCatalogTab('Saved'));
     }
   }, [isMobile, selectedCourseList, dispatch]);
 
