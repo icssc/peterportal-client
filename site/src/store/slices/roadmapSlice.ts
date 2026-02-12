@@ -182,6 +182,15 @@ export const roadmapSlice = createSlice({
         plan.chc = action.payload.chc;
       }
     },
+
+    // Update the planner IDs of newly created planners that still have temporary (negative) IDs
+
+    updateTempPlannerIds: (state, action: PayloadAction<Record<number, number>>) => {
+      if (Object.keys(action.payload).length === 0) return;
+      state.plans.forEach((plan) => {
+        plan.id = action.payload[plan.id] ?? plan.id;
+      });
+    },
   },
 });
 
@@ -207,6 +216,7 @@ export const {
   setToastSeverity,
   setShowToast,
   setCHCSelection,
+  updateTempPlannerIds,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

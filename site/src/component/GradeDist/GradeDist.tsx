@@ -166,7 +166,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const selectedProfCourseName =
-    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Professor';
+    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Instructor';
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (

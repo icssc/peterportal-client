@@ -1,6 +1,6 @@
 {
-  "id": "6799116b-2e54-4095-8bbc-00aa253630b1",
-  "prevId": "68b1d4da-eb80-47a8-a4ff-01b3b5ebfadc",
+  "id": "8622bd55-ed28-4bf4-990a-26fed48b5270",
+  "prevId": "6799116b-2e54-4095-8bbc-00aa253630b1",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1062,13 +1062,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "current_plan_index": {
-          "name": "current_plan_index",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
         }
       },
       "indexes": {},
@@ -1119,7 +1112,29 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "user_major_unique": {
+          "name": "user_major_unique",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "major_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "user_major_user_id_user_id_fk": {
           "name": "user_major_user_id_user_id_fk",
@@ -1160,7 +1175,29 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "user_minor_unique": {
+          "name": "user_minor_unique",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "minor_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "user_minor_user_id_user_id_fk": {
           "name": "user_minor_user_id_user_id_fk",

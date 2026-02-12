@@ -162,6 +162,29 @@ export const plannerMinor = pgTable(
   (table) => [index('planner_minor_planner_id_idx').on(table.plannerId)],
 );
 
+export const userMajor = pgTable(
+  'user_major',
+  {
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    majorId: text('major_id').notNull(),
+    specializationId: text('specialization_id'),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.majorId] })],
+);
+
+export const userMinor = pgTable(
+  'user_minor',
+  {
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    minorId: text('minor_id').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.minorId] })],
+);
+
 export const transferredMisc = pgTable(
   'transferred_misc',
   {
