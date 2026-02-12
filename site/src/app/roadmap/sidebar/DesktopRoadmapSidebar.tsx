@@ -12,10 +12,10 @@ import SavedAndSearch from '../search/SavedAndSearch';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
-import { setSelectedRoadmapTab } from '../../../store/slices/courseRequirementsSlice';
+import { setSelectedSidebarTab } from '../../../store/slices/roadmapSlice';
 
 const DesktopRoadmapSidebar = () => {
-  const selectedIndex = useAppSelector((state) => state.courseRequirements.selectedRoadmapTab);
+  const selectedIndex = useAppSelector((state) => state.roadmap.selectedSidebarTab);
   const [hasSeenCredits, setHasSeenCredits] = useState(false);
   const hasUnreadTransfers = useHasUnreadTransfers();
   const dispatch = useAppDispatch();
@@ -34,7 +34,7 @@ const DesktopRoadmapSidebar = () => {
       <Tabs
         className="sidebar-tabs"
         value={selectedIndex}
-        onChange={(_, newValue) => dispatch(setSelectedRoadmapTab(newValue))}
+        onChange={(_, newValue) => dispatch(setSelectedSidebarTab(newValue))}
         variant="fullWidth"
       >
         <Tab

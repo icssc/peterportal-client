@@ -20,8 +20,7 @@ export interface MinorRequirements {
 const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
   initialState: {
-    selectedCatalogTab: 'Major' as RequirementsTabName,
-    selectedRoadmapTab: 1,
+    selectedTab: 'Major' as RequirementsTabName,
     majorList: [] as MajorProgram[],
     selectedMajors: [] as MajorWithSpecialization[],
     specialization: null as MajorSpecialization | null,
@@ -33,11 +32,8 @@ const courseRequirementsSlice = createSlice({
     expandedGroups: {} as ExpandedGroupsList,
   },
   reducers: {
-    setSelectedCatalogTab: (state, action: PayloadAction<RequirementsTabName>) => {
-      state.selectedCatalogTab = action.payload;
-    },
-    setSelectedRoadmapTab: (state, action: PayloadAction<number>) => {
-      state.selectedRoadmapTab = action.payload;
+    setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
+      state.selectedTab = action.payload;
     },
     setMajorList: (state, action: PayloadAction<MajorProgram[]>) => {
       state.majorList = action.payload;
@@ -120,8 +116,8 @@ const courseRequirementsSlice = createSlice({
 });
 
 export const {
-  setSelectedCatalogTab,
-  setSelectedRoadmapTab,
+  setSelectedTab,
+  // setSelectedRoadmapTab,
   setMajorList,
   addMajor,
   removeMajor,

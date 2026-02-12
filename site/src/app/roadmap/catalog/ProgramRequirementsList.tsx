@@ -19,16 +19,13 @@ import {
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
+  setSelectedSidebarTab,
   setShowAddCourse,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
-import {
-  setGroupExpanded,
-  setMarkerComplete,
-  setSelectedRoadmapTab,
-} from '../../../store/slices/courseRequirementsSlice';
+import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
@@ -230,7 +227,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                dispatch(setSelectedRoadmapTab(0));
+                dispatch(setSelectedSidebarTab(0));
               }}
             >
               <div className="transferred-ges">
@@ -309,7 +306,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                dispatch(setSelectedRoadmapTab(0));
+                dispatch(setSelectedSidebarTab(0));
               }}
             >
               <div className="transferred-ges">

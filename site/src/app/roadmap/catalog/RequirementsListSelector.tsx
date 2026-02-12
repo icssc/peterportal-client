@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { RequirementsTabName, setSelectedCatalogTab } from '../../../store/slices/courseRequirementsSlice';
+import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 import TabSelector from './../sidebar/TabSelector';
 import { useIsMobile } from '../../../helpers/util';
 
 const RequirementsListSelector: FC = () => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  const selectedTab = useAppSelector((state) => state.courseRequirements.selectedCatalogTab);
+  const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
   const lastTab = isMobile ? 'Search' : 'Saved';
 
   const tabs = [
@@ -18,7 +18,7 @@ const RequirementsListSelector: FC = () => {
   ];
 
   const handleTabChange = (tab: string) => {
-    dispatch(setSelectedCatalogTab(tab as RequirementsTabName));
+    dispatch(setSelectedTab(tab as RequirementsTabName));
   };
 
   return (
