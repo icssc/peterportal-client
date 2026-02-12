@@ -24,7 +24,7 @@ import {
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import { ProgramRequirement } from '@peterportal/types';
+import { ProgramRequirement, TransferredGE } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
@@ -179,6 +179,37 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
+interface TransferCreditsTileProps {
+  transferredGE: TransferredGE;
+}
+
+const TransferCreditsTile = ({ transferredGE }: TransferCreditsTileProps) => {
+  const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
+
+  return (
+    <MenuTile
+      title="Transfer Credits"
+      onClick={() => {
+        if (isMobile) {
+          dispatch(setShowMobileCreditsMenu(true));
+        } else {
+          dispatch(setSelectedSidebarTab(0));
+        }
+      }}
+    >
+      <div className="transferred-ges">
+        <p>
+          Number of Courses: <span className="transferred-num">{transferredGE.numberOfCourses}</span>
+        </p>
+        <p>
+          Units Taken: <span className="transferred-num">{transferredGE.units}</span>
+        </p>
+      </div>
+    </MenuTile>
+  );
+};
+
 interface CourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
@@ -187,8 +218,7 @@ interface CourseRequirementProps {
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
   const geTransfer = useMatchingGETransfer(data);
-  const complete = useCompletionCheck(takenCourseIDs, data).done; // probably include geTransfer in useCompletionCheck
-
+  const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
@@ -204,8 +234,6 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
-
-  const isMobile = useIsMobile();
 
   return (
     <Badge
@@ -226,27 +254,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
               <b>Complete {label} of the following:</b>
             </p>
           )}
-          {geTransfer && (
-            <MenuTile
-              title="Transfer Credits"
-              onClick={() => {
-                if (isMobile) {
-                  dispatch(setShowMobileCreditsMenu(true));
-                } else {
-                  dispatch(setSelectedSidebarTab(0));
-                }
-              }}
-            >
-              <div className="transferred-ges">
-                <p>
-                  Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>
-                </p>
-                <p>
-                  Units Taken: <span className="transferred-num">{geTransfer.units}</span>
-                </p>
-              </div>
-            </MenuTile>
-          )}
+          {geTransfer && <TransferCreditsTile transferredGE={geTransfer} />}
           <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
         </Collapse>
       </div>
@@ -291,7 +299,6 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
-  const isMobile = useIsMobile();
 
   return (
     <Badge
@@ -310,27 +317,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
           <p className="requirement-label">
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
-          {geTransfer && (
-            <MenuTile
-              title="Transfer Credits"
-              onClick={() => {
-                if (isMobile) {
-                  dispatch(setShowMobileCreditsMenu(true));
-                } else {
-                  dispatch(setSelectedSidebarTab(0));
-                }
-              }}
-            >
-              <div className="transferred-ges">
-                <p>
-                  Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>
-                </p>
-                <p>
-                  Units Taken: <span className="transferred-num">{geTransfer.units}</span>
-                </p>
-              </div>
-            </MenuTile>
-          )}
+          {geTransfer && <TransferCreditsTile transferredGE={geTransfer} />}
           {data.requirements.map((r, i) => (
             <ProgramRequirementDisplay
               key={i}
