@@ -27,7 +27,7 @@ import { ProgramRequirement } from '@peterportal/types';
 import {
   setGroupExpanded,
   setMarkerComplete,
-  setSelectedCatalogTab,
+  setSelectedRoadmapTab,
 } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
@@ -230,7 +230,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
             <MenuTile
               title="Transfer Credits"
               onClick={() => {
-                dispatch(setSelectedCatalogTab('GE'));
+                dispatch(setSelectedRoadmapTab(0));
               }}
             >
               <div className="transferred-ges">
@@ -306,7 +306,12 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
           {geTransfer && (
-            <MenuTile title="Transfer Credits">
+            <MenuTile
+              title="Transfer Credits"
+              onClick={() => {
+                dispatch(setSelectedRoadmapTab(0));
+              }}
+            >
               <div className="transferred-ges">
                 <p>
                   Number of Courses: <span className="transferred-num">{geTransfer.numberOfCourses}</span>

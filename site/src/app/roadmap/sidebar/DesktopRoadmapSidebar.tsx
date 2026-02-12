@@ -10,11 +10,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { TransferCreditsMenu } from '../transfers/TransferCreditsMenu';
 import SavedAndSearch from '../search/SavedAndSearch';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
+import { setSelectedRoadmapTab } from '../../../store/slices/courseRequirementsSlice';
 
 const DesktopRoadmapSidebar = () => {
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  const selectedIndex = useAppSelector((state) => state.courseRequirements.selectedRoadmapTab);
   const [hasSeenCredits, setHasSeenCredits] = useState(false);
   const hasUnreadTransfers = useHasUnreadTransfers();
   const dispatch = useAppDispatch();
@@ -33,7 +34,7 @@ const DesktopRoadmapSidebar = () => {
       <Tabs
         className="sidebar-tabs"
         value={selectedIndex}
-        onChange={(_, newValue) => setSelectedIndex(newValue)}
+        onChange={(_, newValue) => dispatch(setSelectedRoadmapTab(newValue))}
         variant="fullWidth"
       >
         <Tab

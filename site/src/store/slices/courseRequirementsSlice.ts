@@ -21,6 +21,7 @@ const courseRequirementsSlice = createSlice({
   name: 'courseRequirements',
   initialState: {
     selectedCatalogTab: 'Major' as RequirementsTabName,
+    selectedRoadmapTab: 1,
     majorList: [] as MajorProgram[],
     selectedMajors: [] as MajorWithSpecialization[],
     specialization: null as MajorSpecialization | null,
@@ -34,6 +35,9 @@ const courseRequirementsSlice = createSlice({
   reducers: {
     setSelectedCatalogTab: (state, action: PayloadAction<RequirementsTabName>) => {
       state.selectedCatalogTab = action.payload;
+    },
+    setSelectedRoadmapTab: (state, action: PayloadAction<number>) => {
+      state.selectedRoadmapTab = action.payload;
     },
     setMajorList: (state, action: PayloadAction<MajorProgram[]>) => {
       state.majorList = action.payload;
@@ -117,6 +121,7 @@ const courseRequirementsSlice = createSlice({
 
 export const {
   setSelectedCatalogTab,
+  setSelectedRoadmapTab,
   setMajorList,
   addMajor,
   removeMajor,
