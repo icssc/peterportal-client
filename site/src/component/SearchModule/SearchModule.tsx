@@ -27,7 +27,7 @@ const SearchModule: FC<SearchModuleProps> = () => {
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
-    if (location.pathname === '/') {
+    if (location.pathname === '/planner') {
       dispatch(setShowSavedCourses(!query));
     }
     if (query !== search.query) {
@@ -36,7 +36,7 @@ const SearchModule: FC<SearchModuleProps> = () => {
       // if empty query, remove all results
       if (!query) {
         dispatch(setFirstPageResults({ index: 'courses', count: 0, results: [] }));
-        dispatch(setFirstPageResults({ index: 'professors', count: 0, results: [] }));
+        dispatch(setFirstPageResults({ index: 'instructors', count: 0, results: [] }));
       }
     }
   };

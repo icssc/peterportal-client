@@ -25,6 +25,10 @@
     &:first-child {
       padding-left: 10px;
     }
+
+    a {
+      text-decoration: underline;
+    }
   }
 
   :is(th, .data-col):last-child {

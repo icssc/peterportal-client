@@ -4,7 +4,7 @@ import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import { CourseGQLData } from '../../types/types';
 import { CoursePreview, PrerequisiteNode } from '@peterportal/types';
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip } from '@mui/material';
-import { useClearedCourses } from '../../hooks/planner';
+import { useClearedCoursesUntil } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -63,9 +63,10 @@ const PrereqItemText: FC<{ item: PrerequisiteNode; wrapInParens?: boolean }> = (
   return result;
 };
 
-const CoursePrequisiteLine: FC<{ item: PrerequisiteNode }> = ({ item }) => {
-  const clearedCourses = useClearedCourses();
-
+const CoursePrequisiteLine: FC<{ item: PrerequisiteNode; clearedCourses: Set<string> }> = ({
+  item,
+  clearedCourses,
+}) => {
   let complete = !getMissingPrerequisites(clearedCourses, { AND: [item] });
   if ('NOT' in item) {
     // if we are NOT missing any disallowed prerequisites, that means they are in the planner
@@ -99,7 +100,10 @@ const CoursePrequisiteLine: FC<{ item: PrerequisiteNode }> = ({ item }) => {
 /**
  * A list view of course prerequisites that also performs checks against the current planner
  */
-const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree'] }> = ({ tree }) => {
+const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree']; clearedCourses: Set<string> }> = ({
+  tree,
+  clearedCourses,
+}) => {
   let listLabel = 'All of the following:';
   if (tree.OR) listLabel = 'Any of the following:';
   else if (tree.NOT) listLabel = 'None of the following:';
@@ -114,7 +118,7 @@ const CoursePrerequisiteListView: FC<{ tree: CourseGQLData['prerequisiteTree'] }
       </p>
       <ul className="summary-prerequisites">
         {items.map((requirement, idx) => (
-          <CoursePrequisiteLine key={idx} item={requirement} />
+          <CoursePrequisiteLine key={idx} item={requirement} clearedCourses={clearedCourses} />
         ))}
       </ul>
     </>
@@ -177,7 +181,7 @@ const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
           <PrereqTree {...course} />
         </DialogContent>
         <DialogActions>
-          <Button variant="text" onClick={() => setOpen(false)}>
+          <Button variant="text" color="inherit" onClick={() => setOpen(false)}>
             Close
           </Button>
         </DialogActions>
@@ -187,6 +191,8 @@ const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
 };
 
 const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
+  const courseId = `${course.department} ${course.courseNumber}`;
+  const clearedCourses = useClearedCoursesUntil(courseId);
   return (
     <div className="course-summary">
       <p>{course.description}</p>
@@ -198,7 +204,7 @@ const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
           <CourseRestriction restriction={course.restriction} />
         </div>
         <div className="summary-column">
-          <CoursePrerequisiteListView tree={course.prerequisiteTree} />
+          <CoursePrerequisiteListView tree={course.prerequisiteTree} clearedCourses={clearedCourses} />
           <br />
           <CourseDependentText
             courseName={`${course.department} ${course.courseNumber}`}

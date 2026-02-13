@@ -3,16 +3,52 @@ import './HitItem.scss';
 import { useAppDispatch } from '../../store/hooks';
 
 import { ProfessorGQLData } from '../../types/types';
-import Link from 'next/link';
 import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
+import { addDelimiter } from '../../helpers/util';
+import { CoursePreviewWithTerms } from '@peterportal/types';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
+interface RecentlyTaughtListProps {
+  courses: CoursePreviewWithTerms[];
+}
+
+const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
+  const dispatch = useAppDispatch();
+
+  return (
+    <>
+      {addDelimiter(
+        courses.slice(0, 10).map((c) => (
+          <a
+            key={c.id}
+            href={`/course/${c.id}`}
+            className="course-link"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dispatch(addPreview({ type: 'course', id: c.id }));
+            }}
+          >
+            {c.department} {c.courseNumber}
+          </a>
+        )),
+        ', ',
+      )}
+      {courses.length > 10 && ` + ${courses.length - 10} more...`}
+    </>
+  );
+};
+
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
   const dispatch = useAppDispatch();
+
+  const courses = Object.values(props.courses);
+  const hasCourses = courses.length > 0;
+
   const onClickName = () => {
     dispatch(clearPreviews());
-    dispatch(addPreview({ type: 'professor', id: props.ucinetid }));
+    dispatch(addPreview({ type: 'instructor', id: props.ucinetid }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -21,49 +57,30 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     }
   };
 
-  const initialsText = props.name
-    .split(' ')
-    .map((x: string) => x[0])
-    .join('');
-  const initialsSize = 22 - (initialsText.length - 2) * 4;
-
   return (
     <div className="hit-item professor-hit" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
       <div className="name-container">
-        <div className="name-icon" style={{ fontSize: initialsSize }}>
-          {initialsText}
-        </div>
         <div>
           <p className="hit-name">{props.name}</p>
           <p className="hit-subtitle">
-            {props.department}&nbsp;• {props.title}
+            {props.title && <span className="prof-title">{props.title}</span>}
+
+            {props.title && props.department && ' • '}
+
+            {props.department && <span className="prof-department">{props.department}</span>}
           </p>
         </div>
       </div>
-      {Object.keys(props.courses).length > 0 && (
-        <div>
-          <p>
-            <b>Recently taught: </b>
-            {Object.keys(props.courses).map((item: string, index: number) => {
-              const handleLinkClick = (event: React.MouseEvent) => {
-                event.preventDefault();
-                event.stopPropagation();
-                dispatch(clearPreviews());
-                dispatch(addPreview({ type: 'course', id: item }));
-              };
-
-              return (
-                <span key={`professor-hit-item-course-${index}`}>
-                  {index ? ', ' : ''}
-                  <Link href={'/course/' + encodeURIComponent(item.replace(/\s+/g, ''))} onClick={handleLinkClick}>
-                    {item}
-                  </Link>
-                </span>
-              );
-            })}
-          </p>
-        </div>
-      )}
+      <div className="recent-courses">
+        <p className="recent-hit-courses">
+          <b>Recently Taught:</b>{' '}
+          {hasCourses ? (
+            <RecentlyTaughtList courses={courses} />
+          ) : (
+            <span className="no-courses">No recent courses</span>
+          )}
+        </p>
+      </div>
     </div>
   );
 };
