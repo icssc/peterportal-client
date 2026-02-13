@@ -31,7 +31,7 @@ const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => 
       searchResults={searchResults}
       scrollableTarget="sidebarScrollContainer"
     >
-      {viewIndex === 'professors' ? (
+      {viewIndex === 'instructors' ? (
         <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
       ) : (
         <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
@@ -109,7 +109,7 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   const dispatch = useAppDispatch();
 
   const singularIndexType = viewIndex.replace(/s$/, '');
-  const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'professors' : 'courses';
+  const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'instructors' : 'courses';
 
   const resultsOther = useAppSelector((state) => state.search[otherIndexType].results);
 
