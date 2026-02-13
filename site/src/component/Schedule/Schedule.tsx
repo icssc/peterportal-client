@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.scss';
-import { LinearProgress } from '@mui/material';
+import { Chip, LinearProgress, Tooltip } from '@mui/material';
 
 import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
@@ -9,6 +9,9 @@ import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
+import Toast, { ToastSeverity } from '../../helpers/toast';
+import Link from 'next/link';
+import { parseRestrictions } from '../../helpers/schedule';
 
 interface ScheduleProps {
   courseID?: string;
@@ -41,6 +44,14 @@ const Schedule: FC<ScheduleProps> = (props) => {
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastSeverity, setToastSeverity] = useState<ToastSeverity>('success');
+
+  const handleClose = () => {
+    setShowToast(false);
+  };
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
 
@@ -86,15 +97,34 @@ const Schedule: FC<ScheduleProps> = (props) => {
     const enrollmentPercent =
       parseInt(section.maxCapacity) == 0 ? 0 : (currentlyEnrolled * 100) / parseInt(section.maxCapacity);
 
+    const clicktoCopy = (event: React.MouseEvent<HTMLElement>, sectionCode: string) => {
+      event.stopPropagation();
+      navigator.clipboard.writeText(sectionCode);
+      setToastMsg('WebsocSection code copied to clipboard');
+      setToastSeverity('success');
+      setShowToast(true);
+    };
+
     //This function returns the data for a dynamic table after accessing the API
     return (
       <tr key={index}>
         {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
-        <td className="data-col">{section.sectionCode}</td>
         <td className="data-col">
-          {section.sectionType} {section.sectionNum}
+          <Tooltip title="Click to copy section code">
+            <Chip
+              label={section.sectionCode}
+              onClick={(e) => {
+                clicktoCopy(e, section.sectionCode);
+              }}
+            />
+          </Tooltip>
         </td>
-        <td className="data-col">{section.units}</td>
+        <td className="data-col">{section.sectionType}</td>
+        <td className="data-col">
+          Sec: {section.sectionNum}
+          <br />
+          Units: {section.units}
+        </td>
         <td className="data-col">{section.instructors.join('\n')}</td>
         <td className="data-col">{getMeetingsString(section)}</td>
         <td className="data-col">
@@ -114,7 +144,17 @@ const Schedule: FC<ScheduleProps> = (props) => {
         </td>
 
         <td className="data-col">{section.numOnWaitlist}</td>
-        <td className="data-col">{section.restrictions}</td>
+        <td className="data-col">
+          <Tooltip title={parseRestrictions(section.restrictions)}>
+            <Link
+              href="https://www.reg.uci.edu/enrollment/restrict_codes.html"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {section.restrictions}
+            </Link>
+          </Tooltip>
+        </td>
         <td className="data-col">
           <div className="status-badge" data-status={section.status}>
             {section.status}
@@ -129,7 +169,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
   } else {
     const sectionElements: JSX.Element[] = [];
     Object.keys(scheduleData).forEach((courseID) => {
-      scheduleData[courseID].forEach((section, i) => {
+      const sortedSections = [...scheduleData[courseID]].sort((a, b) => a.sectionCode.localeCompare(b.sectionCode));
+
+      sortedSections.forEach((section, i) => {
         sectionElements.push(renderData(courseID, section, i));
       });
     });
@@ -151,6 +193,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
             </p>
           </div>
         )}
+        <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
+
         {props.termsOffered ? (
           <Select
             value={selectedQuarter ?? currentQuarter}
@@ -174,8 +218,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
               <tr>
                 {props.professorIDs?.length && <th>Course</th>}
                 <th>Code</th>
+                <th>Type</th>
                 <th>Section</th>
-                <th>Units</th>
                 <th>Instructor</th>
                 <th>Time</th>
                 <th>Place</th>
