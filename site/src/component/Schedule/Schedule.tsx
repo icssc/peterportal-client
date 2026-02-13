@@ -39,6 +39,10 @@ function getMeetingsString(section: Section) {
   return meetingStrings.map((str) => str.replace(/\n/g, '')).join('\n');
 }
 
+function normalize(value: number, min = 0, max = 100) {
+  return Math.min(Math.max(value, min), max);
+}
+
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
@@ -139,7 +143,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
             <span className="enrollment-percentage">{Math.round(enrollmentPercent)}%</span>
           </div>
           <div className="progress-bar">
-            <LinearProgress variant="determinate" value={enrollmentPercent} data-status={section.status} />
+            <LinearProgress variant="determinate" value={normalize(enrollmentPercent)} data-status={section.status} />
           </div>
         </td>
 
