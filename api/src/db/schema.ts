@@ -312,3 +312,17 @@ export const completedMarkerRequirement = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
 );
+
+export const customCard = pgTable(
+  'custom_card',
+  {
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    units: real('units').notNull().default(0),
+  },
+  (table) => [index('custom_card_user_id_idx').on(table.userId)],
+);
