@@ -119,20 +119,6 @@ const MinorSelector: FC = () => {
         disabled={minorsLoading}
         disableClearable
         className="minor-select"
-        slotProps={{
-          listbox: {
-            sx: {
-              padding: 0,
-            },
-          },
-          paper: {
-            sx: {
-              marginTop: 0,
-              borderRadius: '0 0 8px 8px',
-              overflow: 'hidden',
-            },
-          },
-        }}
         renderInput={(params) => (
           <TextField {...params} variant="outlined" size="small" placeholder="Select minors..." />
         )}

@@ -142,15 +142,6 @@ const CoursesSection: FC = () => {
         loading={loading}
         noOptionsText={inputValue ? 'No courses found' : ''}
         className="course-search-select"
-        slotProps={{
-          paper: {
-            sx: {
-              marginTop: 0,
-              borderRadius: '0 0 8px 8px',
-              overflow: 'hidden',
-            },
-          },
-        }}
         renderInput={(params) => (
           <TextField {...params} variant="outlined" size="small" placeholder="Search for a course to add..." />
         )}

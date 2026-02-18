@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-import { MenuItem, Select } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
@@ -231,37 +231,25 @@ const APExamsSection: FC = () => {
         <APCreditMenuTile key={exam.examName} exam={exam} />
       ))}
       <div className="ap-import-row">
-        <Select
+        <Autocomplete
           className="exam-input"
-          value={examName ?? ''}
-          onChange={(selectedOption) => setExamName(selectedOption.target.value)}
-          displayEmpty
-        >
-          <MenuItem disabled value="">
-            Add an AP Exam...
-          </MenuItem>
-          {apSelectOptions.map((opt) => (
-            <MenuItem key={opt.label} value={opt.label}>
-              {opt.label}
-            </MenuItem>
-          ))}
-        </Select>
+          options={apSelectOptions}
+          value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
+          onChange={(_event, option) => setExamName(option?.label ?? null)}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => (
+            <TextField {...params} variant="outlined" size="small" placeholder="Add an AP Exam..." />
+          )}
+        />
 
-        <Select
+        <Autocomplete
           className="score-input"
-          value={score ?? ''}
-          onChange={(selectedOption) => setScore(Number(selectedOption.target.value))}
-          displayEmpty
-        >
-          <MenuItem disabled value="">
-            Score
-          </MenuItem>
-          <MenuItem value={1}>1</MenuItem>
-          <MenuItem value={2}>2</MenuItem>
-          <MenuItem value={3}>3</MenuItem>
-          <MenuItem value={4}>4</MenuItem>
-          <MenuItem value={5}>5</MenuItem>
-        </Select>
+          options={[1, 2, 3, 4, 5]}
+          value={score}
+          onChange={(_event, value) => setScore(value)}
+          getOptionLabel={(option) => String(option)}
+          renderInput={(params) => <TextField {...params} variant="outlined" size="small" placeholder="Score" />}
+        />
       </div>
     </MenuSection>
   );
