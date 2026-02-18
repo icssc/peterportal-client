@@ -81,7 +81,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
-      searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
+      searchAPIResult('instructor', reviewToEdit.professorId).then((professor) => {
         if (professor) {
           const profTerms = sortTerms(getProfessorTerms(professor));
           const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
@@ -216,7 +216,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if in course context, select a professor
   const professorSelect = courseProp && (
     <FormControl error={showFormErrors && !professor}>
-      <FormLabel>Professor</FormLabel>
+      <FormLabel>Instructor</FormLabel>
       <Select
         name="professor"
         id="professor"
@@ -235,7 +235,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem
               key={ucinetid}
               value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this professor' : undefined}
+              title={alreadyReviewed ? 'You have already reviewed this instructor' : undefined}
               disabled={alreadyReviewed}
             >
               {name}

@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, useRef } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -13,9 +13,8 @@ import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@pet
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MajorCourseList from './MajorCourseList';
 
-function updateSelectedMajorAndSpecialization(plannerId: number, pairs: MajorSpecializationPair[]) {
-  if (!plannerId) return;
-  trpc.programs.saveSelectedMajorSpecPair.mutate({ plannerId, pairs });
+function updateSelectedMajorAndSpecialization(pairs: MajorSpecializationPair[]) {
+  trpc.programs.saveSelectedMajorSpecPair.mutate({ pairs });
 }
 
 interface MajorOption {
@@ -29,14 +28,9 @@ const MajorSelector: FC = () => {
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
   const [defaultPairs, setDefaultPairs] = useState<MajorSpecializationPair[]>([]);
 
-  const plans = useAppSelector((state) => state.roadmap.plans);
-  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const activePlanID = plans[planIndex].id;
   const [majorsLoading, setMajorsLoading] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  const planEffectRef = useRef<number | null>(null);
 
   // Initial Load Helpers
   const saveInitialMajorList = useCallback(
@@ -57,14 +51,14 @@ const MajorSelector: FC = () => {
 
   const saveMajors = useCallback(
     (majorsToSave: MajorWithSpecialization[]) => {
-      if (!activePlanID || !isLoggedIn) return;
+      if (!isLoggedIn) return;
       const pairs: MajorSpecializationPair[] = majorsToSave.map((m) => ({
         majorId: m.major.id,
         specializationId: m.selectedSpec?.id,
       }));
-      updateSelectedMajorAndSpecialization(activePlanID, pairs);
+      updateSelectedMajorAndSpecialization(pairs);
     },
-    [activePlanID, isLoggedIn],
+    [isLoggedIn],
   );
 
   const handleMajorChange = useCallback(
@@ -104,16 +98,14 @@ const MajorSelector: FC = () => {
   );
 
   useEffect(() => {
-    if (!majors.length || !activePlanID || !isLoggedIn) return;
-    if (planEffectRef.current === activePlanID) return;
+    if (!majors.length || !isLoggedIn) return;
     if (selectedMajors.length) return;
 
     setMajorsLoading(true);
 
     trpc.programs.getSavedMajorSpecPairs
-      .query(activePlanID)
+      .query()
       .then((pairs) => {
-        planEffectRef.current = activePlanID;
         const currentMajorIds = selectedMajors.map((m) => m.major.id);
         currentMajorIds.forEach((id) => dispatch(removeMajor(id)));
 
@@ -127,7 +119,7 @@ const MajorSelector: FC = () => {
       .finally(() => {
         setMajorsLoading(false);
       });
-  }, [dispatch, activePlanID, majors, isLoggedIn, selectedMajors]);
+  }, [dispatch, majors, isLoggedIn, selectedMajors]);
 
   const majorSelectOptions: MajorOption[] = majors.map((m) => ({
     value: m,
