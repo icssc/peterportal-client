@@ -2,7 +2,7 @@ import './ProfessorResult.scss';
 import React, { FC } from 'react';
 import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
+import { addPreview } from '../../../store/slices/previewSlice';
 import { addDelimiter } from '../../../helpers/util';
 import Link from 'next/link';
 import { CoursePreviewWithTerms } from '@peterportal/types';
@@ -50,7 +50,6 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     router.push(`?instructor=${encodeURIComponent(professor.ucinetid)}`);
-    dispatch(clearPreviews());
     dispatch(addPreview({ type: 'professor', id: professor.ucinetid }));
   };
 

@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { useRouter } from 'next/navigation';
 
 import { ProfessorGQLData } from '../../types/types';
-import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
+import { addPreview } from '../../store/slices/previewSlice';
 import { addDelimiter } from '../../helpers/util';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 
@@ -52,7 +52,6 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
 
   const onClickName = () => {
     router.push(`?instructor=${encodeURIComponent(props.ucinetid)}`);
-    dispatch(clearPreviews());
     dispatch(addPreview({ type: 'professor', id: props.ucinetid }));
   };
 

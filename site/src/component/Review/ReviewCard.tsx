@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { addPreview } from '../../store/slices/previewSlice';
 import { useCurrentPreview } from '../../hooks/preview';
+import { useRouter } from 'next/navigation';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -117,6 +118,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const profCache = useProfessorData(review.professorId);
+  const router = useRouter();
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
@@ -157,8 +159,10 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       if (!currentPreview) return;
       event.preventDefault();
       if (course) {
+        router.push(`?instructor=${encodeURIComponent(id)}`);
         dispatch(addPreview({ type: 'professor', id }));
       } else {
+        router.push(`?course=${encodeURIComponent(id)}`);
         dispatch(addPreview({ type: 'course', id }));
       }
     },
