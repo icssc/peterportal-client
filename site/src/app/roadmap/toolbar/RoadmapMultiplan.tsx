@@ -327,10 +327,12 @@ const RoadmapMultiplan: FC = () => {
 
       {/* Delete Roadmap Modal */}
       <Dialog open={delIdx !== -1} onClose={() => setDelIdx(-1)} fullWidth>
-        <DialogTitle>Delete Roadmap</DialogTitle>
+        <DialogTitle>{allPlans.length === 1 ? 'Clear Roadmap' : 'Delete Roadmap'}</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>
-            <DialogContentText>Are you sure you want to delete the roadmap "{newPlanName}"?</DialogContentText>
+            <DialogContentText>
+              Are you sure you want to {allPlans.length === 1 ? 'clear' : 'delete'} the roadmap "{newPlanName}"?
+            </DialogContentText>
           </Box>
         </DialogContent>
         <DialogActions>
