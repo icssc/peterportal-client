@@ -49,13 +49,18 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
+<<<<<<< preview-navigation
     router.push(`?instructor=${encodeURIComponent(professor.ucinetid)}`);
     dispatch(addPreview({ type: 'professor', id: professor.ucinetid }));
+=======
+    dispatch(clearPreviews());
+    dispatch(addPreview({ type: 'instructor', id: professor.ucinetid }));
+>>>>>>> main
   };
 
   return (
     <div className="professor-result">
-      <Link href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
+      <Link href={`/instructor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
         {professor.name}
       </Link>
       <p className="professor-synopsis">
