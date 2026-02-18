@@ -1,9 +1,7 @@
-import { FC, useState, useContext, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback } from 'react';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
-import Select from 'react-select';
-import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme } from '../../../helpers/courseRequirements';
+import { Autocomplete, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
@@ -186,7 +184,6 @@ const APCreditMenuTile: FC<{ exam: TransferWithUnread<TransferredAPExam> }> = ({
 const APExamsSection: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
-  const isDark = useContext(ThemeContext).darkMode;
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
   const [examName, setExamName] = useState<string | null>(null);
@@ -234,35 +231,25 @@ const APExamsSection: FC = () => {
         <APCreditMenuTile key={exam.examName} exam={exam} />
       ))}
       <div className="ap-import-row">
-        <div className="exam-input">
-          <Select
-            className="ppc-combobox"
-            classNamePrefix="ppc-combobox"
-            value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
-            options={apSelectOptions}
-            isSearchable
-            onChange={(selectedOption) => setExamName(selectedOption?.label || null)}
-            placeholder="Add an AP Exam..."
-            theme={(t) => comboboxTheme(t, isDark)}
-          />
-        </div>
-        <div className="score-input">
-          <Select
-            className="ppc-combobox"
-            classNamePrefix="ppc-combobox"
-            value={score ? { value: score, label: score.toString() } : null}
-            options={[
-              { value: 1, label: '1' },
-              { value: 2, label: '2' },
-              { value: 3, label: '3' },
-              { value: 4, label: '4' },
-              { value: 5, label: '5' },
-            ]}
-            onChange={(selectedOption) => setScore(selectedOption?.value || null)}
-            placeholder="Score"
-            theme={(t) => comboboxTheme(t, isDark)}
-          />
-        </div>
+        <Autocomplete
+          className="exam-input"
+          options={apSelectOptions}
+          value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
+          onChange={(_event, option) => setExamName(option?.label ?? null)}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => (
+            <TextField {...params} variant="outlined" size="small" placeholder="Add an AP Exam..." />
+          )}
+        />
+
+        <Autocomplete
+          className="score-input"
+          options={[1, 2, 3, 4, 5]}
+          value={score}
+          onChange={(_event, value) => setScore(value)}
+          getOptionLabel={(option) => String(option)}
+          renderInput={(params) => <TextField {...params} variant="outlined" size="small" placeholder="Score" />}
+        />
       </div>
     </MenuSection>
   );

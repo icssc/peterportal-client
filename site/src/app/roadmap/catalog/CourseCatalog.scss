@@ -1,18 +1,25 @@
 @use '../../../globals';
 
 .course-catalog {
-  .ppc-combobox {
+  .major-select,
+  .minor-select {
     margin-bottom: 12px;
-  }
 
-  .ppc-combobox__menu {
-    margin-top: 0;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
-  }
+    .MuiOutlinedInput-root {
+      position: relative;
 
-  .ppc-combobox__clear-indicator {
-    display: none;
+      &::before {
+        content: '';
+        position: absolute;
+        right: 32px;
+        top: 8px;
+        bottom: 8px;
+        width: 1px;
+        background-color: var(--mui-palette-divider);
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
   }
 
   .filter-group {
