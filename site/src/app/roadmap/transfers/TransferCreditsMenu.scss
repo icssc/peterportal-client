@@ -15,28 +15,6 @@
   .course-search-select {
     margin-bottom: 12px;
 
-    .MuiOutlinedInput-root {
-      border-radius: 4px;
-      background-color: var(--mui-palette-background-paper);
-
-      &:hover .MuiOutlinedInput-notchedOutline {
-        border-color: var(--mui-palette-tertiary-main);
-      }
-
-      &.Mui-focused .MuiOutlinedInput-notchedOutline {
-        border-color: var(--mui-palette-primary-main);
-        border-width: 1px;
-      }
-
-      &:not(.Mui-focused) .MuiOutlinedInput-notchedOutline {
-        border-color: var(--mui-palette-text-secondary);
-      }
-    }
-
-    .MuiOutlinedInput-notchedOutline {
-      border-color: var(--mui-palette-text-secondary);
-    }
-
     .MuiAutocomplete-endAdornment {
       display: none;
     }

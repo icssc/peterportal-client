@@ -15,7 +15,7 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse, FormControl, MenuItem, Select } from '@mui/material';
+import { Autocomplete, Collapse, TextField } from '@mui/material';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -146,43 +146,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       </div>
       <Collapse in={open} unmountOnExit>
         {hasSpecs && (
-          <FormControl size="small" fullWidth className="specialization-select">
-            <Select
-              value={selectedSpecIdOrSelected}
-              onChange={(e) => {
-                const id = e.target.value as string;
-                if (!id) {
-                  handleSpecializationChange(null);
-                  return;
-                }
-                const spec = specializations.find((s) => s.id === id);
-                if (spec) handleSpecializationChange({ value: spec, label: spec.name });
-              }}
-              displayEmpty
-              disabled={specsLoading}
-              variant="outlined"
-              MenuProps={{
-                slotProps: {
-                  paper: {
-                    sx: {
-                      marginTop: 0,
-                      borderRadius: '0 0 8px 8px',
-                      overflow: 'hidden',
-                    },
-                  },
-                },
-              }}
-            >
-              <MenuItem value="" disabled>
-                Select a specialization...
-              </MenuItem>
-              {specOptions.map((opt) => (
-                <MenuItem key={opt.value.id} value={opt.value.id}>
-                  {opt.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            className="specialization-select"
+            options={specOptions}
+            value={specOptions.find((s) => s.value.id === selectedSpecIdOrSelected) ?? null}
+            onChange={(_event, option) => handleSpecializationChange(option)}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+            disabled={specsLoading}
+            loading={specsLoading}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" size="small" placeholder="Select a specialization..." />
+            )}
+          />
         )}
         {hasSpecs && !majorWithSpec.selectedSpec ? (
           <p className="unselected-spec-notice">Please select a specialization to view requirements</p>

@@ -30,22 +30,6 @@
     color: var(--mui-palette-error-main);
   }
 
-  .MuiAutocomplete-root {
-    .MuiChip-root {
-      background-color: var(--mui-palette-action-hover);
-      color: var(--mui-palette-text-primary);
-      height: 24px;
-      font-size: 14px;
-      border-radius: 2px;
-
-      .MuiChip-deleteIcon {
-        color: var(--mui-palette-text-primary);
-        font-size: 16px;
-        margin: 0 4px 0 -4px;
-      }
-    }
-  }
-
   .anonymous-checkbox {
     margin-top: 16px;
   }
