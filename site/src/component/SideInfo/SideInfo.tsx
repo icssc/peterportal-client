@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button, Chip, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
@@ -11,6 +12,7 @@ import { toggleFormStatus, setShowToast } from '../../store/slices/reviewSlice';
 import { addPreview } from '../../store/slices/previewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+import { useRouter } from 'next/navigation';
 
 import Toast from '../../helpers/toast';
 
@@ -24,6 +26,9 @@ interface FeaturedInfoData {
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isStandalonePage = pathname !== '/' && pathname !== '/planner';
   if (averageReviews[reviewKey] === undefined) {
     return null;
   }
@@ -32,8 +37,12 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
   const { rating, difficulty, count } = averageReviews[reviewKey];
 
   const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
+    if (isStandalonePage) return;
     e.preventDefault();
-    dispatch(addPreview({ type: searchType == 'course' ? 'instructor' : 'course', id: reviewKey }));
+    const targetType: SearchType = searchType == 'course' ? 'instructor' : 'course';
+    const queryKey = targetType === 'course' ? 'course' : 'instructor';
+    router.push(`?${encodeURIComponent(queryKey)}=${encodeURIComponent(reviewKey)}`);
+    dispatch(addPreview({ type: targetType, id: reviewKey }));
   };
 
   return (
