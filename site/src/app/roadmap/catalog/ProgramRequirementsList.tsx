@@ -221,6 +221,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
   const showCourseCount = data.courses.length > 1 && 'courseCount' in data && data.courseCount !== data.courses.length;
+  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
 
   return (
     <>
@@ -228,7 +229,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
         <p className="requirement-label">
           <b>
             {data.label}
-            {showCourseCount ? ` \u2022 Pick ${data.courseCount}` : ''}
+            {showCourseCount && ` \u2022 (${completedCount}/${data.courseCount})`}
           </b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
