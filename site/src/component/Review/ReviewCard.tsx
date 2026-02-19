@@ -30,9 +30,9 @@ import {
   DialogContentText,
 } from '@mui/material';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { addPreview } from '../../store/slices/previewSlice';
-import { useCurrentPreview } from '../../hooks/preview';
 import { useRouter } from 'next/navigation';
 
 interface AuthorEditButtonsProps {
@@ -153,10 +153,11 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
-  const currentPreview = useCurrentPreview();
+  const pathname = usePathname();
+  const isStandalonePage = pathname !== '/' && pathname !== '/planner';
   const handleLinkClick = useCallback(
     (event: React.MouseEvent, id: string) => {
-      if (!currentPreview) return;
+      if (isStandalonePage) return;
       event.preventDefault();
       if (course) {
         router.push(`?instructor=${encodeURIComponent(id)}`);
@@ -166,7 +167,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         dispatch(addPreview({ type: 'course', id }));
       }
     },
-    [currentPreview, course, dispatch],
+    [isStandalonePage, course, dispatch, router],
   );
 
   useEffect(() => {

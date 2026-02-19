@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import './SideInfo.scss';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button, Chip, MenuItem, Select } from '@mui/material';
 
 import { CourseGQLData, ProfessorGQLData, SearchType } from '../../types/types';
@@ -26,6 +27,8 @@ interface FeaturedInfoData {
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const pathname = usePathname();
+  const isStandalonePage = pathname !== '/' && pathname !== '/planner';
   if (averageReviews[reviewKey] === undefined) {
     return null;
   }
@@ -34,6 +37,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
   const { rating, difficulty, count } = averageReviews[reviewKey];
 
   const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
+    if (isStandalonePage) return;
     e.preventDefault();
     const targetType: SearchType = searchType == 'course' ? 'instructor' : 'course';
     const queryKey = targetType === 'course' ? 'course' : 'instructor';
