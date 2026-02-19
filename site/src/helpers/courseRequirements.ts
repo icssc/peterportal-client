@@ -243,11 +243,30 @@ function getMatchingGECategory(label: string) {
   return categoryEntries.find((ent: [string, GETitle]) => filterFunction(ent[1]))?.[0] ?? null;
 }
 
+function findMatchingGETransfers(
+  requirement: ProgramRequirement,
+  transferredGEs: TransferredGE[],
+): TransferredGE | null {
+  const applicableGE = getMatchingGECategory(requirement.label.trim());
+
+  const selfMatch = transferredGEs.find((ge) => ge.geName === applicableGE) ?? null;
+
+  if (selfMatch) return selfMatch;
+
+  if (requirement.requirementType === 'Group') {
+    for (const child of requirement.requirements) {
+      const childMatch = findMatchingGETransfers(child, transferredGEs);
+      if (childMatch) return childMatch;
+    }
+  }
+
+  return null;
+}
+
 export function useMatchingGETransfer(requirement: ProgramRequirement): TransferredGE | null {
   const transferredGEs = useTransferredCredits().ge;
 
-  const applicableGE = getMatchingGECategory(requirement.label.trim());
-  return transferredGEs.find((ge) => ge.geName === applicableGE) ?? null;
+  return findMatchingGETransfers(requirement, transferredGEs);
 }
 
 function checkCourseListCompletion(

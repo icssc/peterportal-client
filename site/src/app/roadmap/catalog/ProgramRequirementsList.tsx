@@ -235,6 +235,8 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
 
+  console.log('course label', data.label);
+
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
@@ -299,6 +301,8 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
+
+  console.log('group label', data.label);
 
   return (
     <Badge
