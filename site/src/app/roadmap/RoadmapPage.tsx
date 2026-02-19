@@ -70,7 +70,7 @@ const RoadmapPage: FC = () => {
       const alreadyCourse = currentPreview && currentPreview.type === 'course' && currentPreview.id === course;
       if (alreadyCourse) return;
 
-      const existingInstructor = previews.find((p) => p.type === 'professor');
+      const existingInstructor = previews.find((p) => p.type === 'instructor');
       if (existingInstructor) {
         dispatch(addPreview({ type: 'course', id: course }));
       } else {
@@ -81,9 +81,16 @@ const RoadmapPage: FC = () => {
     }
 
     if (instructor) {
-      if (!(currentPreview && currentPreview.type === 'professor' && currentPreview.id === instructor)) {
+      const alreadyInstructor =
+        currentPreview && currentPreview.type === 'instructor' && currentPreview.id === instructor;
+      if (alreadyInstructor) return;
+
+      const existingCourse = previews.find((p) => p.type === 'course');
+      if (existingCourse) {
+        dispatch(addPreview({ type: 'instructor', id: instructor }));
+      } else {
         dispatch(clearPreviews());
-        dispatch(addPreview({ type: 'professor', id: instructor }));
+        dispatch(addPreview({ type: 'instructor', id: instructor }));
       }
       return;
     }

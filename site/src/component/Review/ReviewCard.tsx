@@ -160,7 +160,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       event.preventDefault();
       if (course) {
         router.push(`?instructor=${encodeURIComponent(id)}`);
-        dispatch(addPreview({ type: 'professor', id }));
+        dispatch(addPreview({ type: 'instructor', id }));
       } else {
         router.push(`?course=${encodeURIComponent(id)}`);
         dispatch(addPreview({ type: 'course', id }));

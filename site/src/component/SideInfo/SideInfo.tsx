@@ -35,7 +35,7 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
 
   const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
     e.preventDefault();
-    const targetType: SearchType = searchType == 'course' ? 'professor' : 'course';
+    const targetType: SearchType = searchType == 'course' ? 'instructor' : 'course';
     const queryKey = targetType === 'course' ? 'course' : 'instructor';
     router.push(`?${encodeURIComponent(queryKey)}=${encodeURIComponent(reviewKey)}`);
     dispatch(addPreview({ type: targetType, id: reviewKey }));
