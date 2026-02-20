@@ -7,7 +7,7 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
   CompletedCourseSet,
-  useMatchingGETransfer,
+  useMatchingGETransfers,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
 import { CourseGQLData } from '../../../types/types';
@@ -181,15 +181,17 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
 
 interface TransferCreditsTileProps {
   transferredGE: TransferredGE;
+  showGETitle?: boolean;
 }
 
-const TransferCreditsTile = ({ transferredGE }: TransferCreditsTileProps) => {
+const TransferCreditsTile = ({ transferredGE, showGETitle = false }: TransferCreditsTileProps) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
+  const title = showGETitle ? `Transfer Credits • ${transferredGE.geName}` : 'Transfer Credits';
 
   return (
     <MenuTile
-      title="Transfer Credits"
+      title={title}
       onClick={() => {
         if (isMobile) {
           dispatch(setShowMobileCreditsMenu(true));
@@ -217,7 +219,7 @@ interface CourseRequirementProps {
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
-  const geTransfers = useMatchingGETransfer(data);
+  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -234,8 +236,6 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
-
-  console.log('course label', data.label);
 
   return (
     <Badge
@@ -290,7 +290,7 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const geTransfers = useMatchingGETransfer(data);
+  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
@@ -301,9 +301,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
   const badgeColor = complete ? 'success' : 'inProgress';
-
-  console.log('group label', data.label);
-  console.log('group transfers', geTransfers);
+  const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (
     <Badge
@@ -322,7 +320,13 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
           <p className="requirement-label">
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
-          {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
+
+          {/** If there are multiple GE transfer categories that apply to fulfill this group, 
+          labels should be displayed to differentiate the multiple tiles*/}
+          {geTransfers.length > 0 &&
+            geTransfers.map((ge, i) => (
+              <TransferCreditsTile key={i} transferredGE={ge} showGETitle={multipleApplicableTransfers} />
+            ))}
 
           {data.requirements.map((r, i) => (
             <ProgramRequirementDisplay

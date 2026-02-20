@@ -262,7 +262,7 @@ function findMatchingGETransfers(requirement: ProgramRequirement, transferredGEs
   return matches;
 }
 
-export function useMatchingGETransfer(requirement: ProgramRequirement): TransferredGE[] {
+export function useMatchingGETransfers(requirement: ProgramRequirement): TransferredGE[] {
   const transferredGEs = useTransferredCredits().ge;
 
   return findMatchingGETransfers(requirement, transferredGEs);
