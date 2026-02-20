@@ -247,7 +247,8 @@ function findMatchingGETransfers(requirement: ProgramRequirement, transferredGEs
   const matches: TransferredGE[] = [];
 
   const applicableGE = getMatchingGECategory(requirement.label.trim());
-  const selfMatch = transferredGEs.find((ge) => ge.geName === applicableGE) ?? null;
+  const selfMatch =
+    transferredGEs.find((ge) => ge.geName === applicableGE && (ge.numberOfCourses > 0 || ge.units > 0)) ?? null;
   if (selfMatch) {
     matches.push(selfMatch);
     return matches;
