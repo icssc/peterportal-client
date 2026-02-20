@@ -243,27 +243,26 @@ function getMatchingGECategory(label: string) {
   return categoryEntries.find((ent: [string, GETitle]) => filterFunction(ent[1]))?.[0] ?? null;
 }
 
-function findMatchingGETransfers(
-  requirement: ProgramRequirement,
-  transferredGEs: TransferredGE[],
-): TransferredGE | null {
+function findMatchingGETransfers(requirement: ProgramRequirement, transferredGEs: TransferredGE[]): TransferredGE[] {
+  const matches: TransferredGE[] = [];
+
   const applicableGE = getMatchingGECategory(requirement.label.trim());
-
   const selfMatch = transferredGEs.find((ge) => ge.geName === applicableGE) ?? null;
-
-  if (selfMatch) return selfMatch;
+  if (selfMatch) {
+    matches.push(selfMatch);
+    return matches;
+  }
 
   if (requirement.requirementType === 'Group') {
     for (const child of requirement.requirements) {
-      const childMatch = findMatchingGETransfers(child, transferredGEs);
-      if (childMatch) return childMatch;
+      matches.push(...findMatchingGETransfers(child, transferredGEs));
     }
   }
 
-  return null;
+  return matches;
 }
 
-export function useMatchingGETransfer(requirement: ProgramRequirement): TransferredGE | null {
+export function useMatchingGETransfer(requirement: ProgramRequirement): TransferredGE[] {
   const transferredGEs = useTransferredCredits().ge;
 
   return findMatchingGETransfers(requirement, transferredGEs);

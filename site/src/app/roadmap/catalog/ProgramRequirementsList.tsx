@@ -217,7 +217,7 @@ interface CourseRequirementProps {
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
-  const geTransfer = useMatchingGETransfer(data);
+  const geTransfers = useMatchingGETransfer(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -240,7 +240,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
-      invisible={!geTransfer}
+      invisible={geTransfers.length === 0}
       variant="circular"
       color={badgeColor}
       anchorOrigin={{
@@ -256,7 +256,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
               <b>Complete {label} of the following:</b>
             </p>
           )}
-          {geTransfer && <TransferCreditsTile transferredGE={geTransfer} />}
+          {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
           <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
         </Collapse>
       </div>
@@ -290,7 +290,7 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const geTransfer = useMatchingGETransfer(data);
+  const geTransfers = useMatchingGETransfer(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
@@ -303,11 +303,12 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const badgeColor = complete ? 'success' : 'inProgress';
 
   console.log('group label', data.label);
+  console.log('group transfers', geTransfers);
 
   return (
     <Badge
       badgeContent={<SwapHorizIcon />}
-      invisible={!geTransfer}
+      invisible={geTransfers.length === 0}
       variant="circular"
       color={badgeColor}
       anchorOrigin={{
@@ -321,7 +322,8 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
           <p className="requirement-label">
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
-          {geTransfer && <TransferCreditsTile transferredGE={geTransfer} />}
+          {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
+
           {data.requirements.map((r, i) => (
             <ProgramRequirementDisplay
               key={i}
