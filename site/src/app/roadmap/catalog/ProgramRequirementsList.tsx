@@ -7,6 +7,7 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
   CompletedCourseSet,
+  useMatchingGETransfers,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
 import { CourseGQLData } from '../../../types/types';
@@ -18,19 +19,23 @@ import {
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
+  setSelectedSidebarTab,
   setShowAddCourse,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import { ProgramRequirement } from '@peterportal/types';
+import { ProgramRequirement, TransferredGE } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Checkbox, Collapse } from '@mui/material';
+import { Badge, Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import MenuTile from '../transfers/MenuTile';
+import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -174,6 +179,39 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
+interface TransferCreditsTileProps {
+  transferredGE: TransferredGE;
+  showGETitle?: boolean;
+}
+
+const TransferCreditsTile = ({ transferredGE, showGETitle = false }: TransferCreditsTileProps) => {
+  const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
+  const title = showGETitle ? `Transfer Credits • ${transferredGE.geName}` : 'Transfer Credits';
+
+  return (
+    <MenuTile
+      title={title}
+      onClick={() => {
+        if (isMobile) {
+          dispatch(setShowMobileCreditsMenu(true));
+        } else {
+          dispatch(setSelectedSidebarTab(0));
+        }
+      }}
+    >
+      <div className="transferred-ges">
+        <p>
+          Number of Courses: <span className="transferred-num">{transferredGE.numberOfCourses}</span>
+        </p>
+        <p>
+          Units Taken: <span className="transferred-num">{transferredGE.units}</span>
+        </p>
+      </div>
+    </MenuTile>
+  );
+};
+
 interface CourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
@@ -181,8 +219,8 @@ interface CourseRequirementProps {
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
+  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
-
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
@@ -197,19 +235,32 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
+  const badgeColor = complete ? 'success' : 'pending';
 
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        {showLabel && (
-          <p className="requirement-label">
-            <b>Complete {label} of the following:</b>
-          </p>
-        )}
-        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
-      </Collapse>
-    </div>
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={geTransfers.length === 0}
+      variant="circular"
+      color={badgeColor}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          {showLabel && (
+            <p className="requirement-label">
+              <b>Complete {label} of the following:</b>
+            </p>
+          )}
+          {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
+          <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+        </Collapse>
+      </div>
+    </Badge>
   );
 };
 
@@ -239,6 +290,7 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
+  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
@@ -248,25 +300,46 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
+  const badgeColor = complete ? 'success' : 'pending';
+  const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        <p className="requirement-label">
-          Complete <b>{data.requirementCount}</b> of the following series:
-        </p>
-        {data.requirements.map((r, i) => (
-          <ProgramRequirementDisplay
-            key={i}
-            storeKey={`${storeKey}-${i}`}
-            requirement={r}
-            nested
-            takenCourseIDs={takenCourseIDs}
-          />
-        ))}
-      </Collapse>
-    </div>
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={geTransfers.length === 0}
+      variant="circular"
+      color={badgeColor}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          <p className="requirement-label">
+            Complete <b>{data.requirementCount}</b> of the following series:
+          </p>
+
+          {/** If there are multiple GE transfer categories that apply to fulfill this group, 
+          labels should be displayed to differentiate the multiple tiles*/}
+          {geTransfers.length > 0 &&
+            geTransfers.map((ge, i) => (
+              <TransferCreditsTile key={i} transferredGE={ge} showGETitle={multipleApplicableTransfers} />
+            ))}
+
+          {data.requirements.map((r, i) => (
+            <ProgramRequirementDisplay
+              key={i}
+              storeKey={`${storeKey}-${i}`}
+              requirement={r}
+              nested
+              takenCourseIDs={takenCourseIDs}
+            />
+          ))}
+        </Collapse>
+      </div>
+    </Badge>
   );
 };
 
