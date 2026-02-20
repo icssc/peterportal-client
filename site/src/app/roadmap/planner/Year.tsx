@@ -59,6 +59,8 @@ const YearStats = ({ year }: YearStatsProps) => {
   let unitCount = 0;
   let courseCount = 0;
   year.quarters.forEach((quarter) => {
+    // Place where units get added
+    // need to figure out the "each course" part.
     quarter.courses.forEach((course) => {
       unitCount += course.minUnits;
       courseCount += 1;

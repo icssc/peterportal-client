@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -6,11 +6,11 @@ import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
-import { IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -75,7 +75,7 @@ interface CourseProps {
   onDelete?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
-  data: CourseGQLData;
+  data: PlannerCourseData;
 }
 
 const Course: FC<CourseProps> = (props) => {
@@ -104,6 +104,20 @@ const Course: FC<CourseProps> = (props) => {
    * text should be used in course tags, but not in the course-card-top in the Roadmap
    */
   const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+  const [inputUnit, setInputUnit] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputUnit(e.target.value);
+    console.log(inputUnit);
+  };
+
+  const keyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key == 'Enter') {
+      event.preventDefault();
+      console.log(inputUnit);
+      // update something
+    }
+  };
 
   return (
     <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
@@ -118,8 +132,25 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-
-          {isInRoadmap && <span className="units">{unitsText}</span>}
+          {isInRoadmap && minUnits === maxUnits && <span className="units">{unitsText}</span>}
+          {
+            // @todo have better unit submission
+            //       update UI after submission
+            //       replace "units" text placeholder
+            isInRoadmap && minUnits !== maxUnits && (
+              <div className="custom-units">
+                <TextField
+                  className="unit-input"
+                  defaultValue={2}
+                  size="small"
+                  fullWidth={false}
+                  onChange={handleChange}
+                  onKeyDown={keyPress}
+                />
+                <span className="units">{'units'}</span>
+              </div>
+            )
+          }
         </div>
         {isInRoadmap ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">

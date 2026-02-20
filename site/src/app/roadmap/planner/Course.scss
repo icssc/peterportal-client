@@ -163,3 +163,30 @@
     opacity: 1;
   }
 }
+
+// @todo adjust spacing + class names + overall looks
+.custom-units {
+  margin-left: auto;
+  color: inherit;
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+.custom-units .MuiInputBase-root {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.custom-units .MuiInputBase-input {
+  font-size: 14px;
+  padding: 2px 6px;
+  text-align: center;
+  color: inherit;
+}
+
+.unit-input {
+  width: 30px;
+  height: 2px;
+  padding-right: 8px;
+}
