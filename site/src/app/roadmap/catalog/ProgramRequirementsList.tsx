@@ -235,7 +235,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
-  const badgeColor = complete ? 'success' : 'inProgress';
+  const badgeColor = complete ? 'success' : 'pending';
 
   return (
     <Badge
@@ -300,7 +300,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
-  const badgeColor = complete ? 'success' : 'inProgress';
+  const badgeColor = complete ? 'success' : 'pending';
   const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (

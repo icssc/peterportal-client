@@ -74,6 +74,6 @@ declare module '@mui/material/Badge' {
     circular: true;
   }
   interface BadgePropsColorOverrides {
-    inProgress: true;
+    pending: true;
   }
 }
