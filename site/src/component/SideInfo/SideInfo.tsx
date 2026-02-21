@@ -11,6 +11,7 @@ import { toggleFormStatus, setShowToast } from '../../store/slices/reviewSlice';
 import { addPreview } from '../../store/slices/previewSlice';
 
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+import { useRouter } from 'next/navigation';
 
 import Toast from '../../helpers/toast';
 
@@ -24,6 +25,7 @@ interface FeaturedInfoData {
 
 const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageReviews, reviewKey, displayName }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   if (averageReviews[reviewKey] === undefined) {
     return null;
   }
@@ -33,7 +35,10 @@ const FeaturedInfo: FC<FeaturedInfoData> = ({ searchType, featureType, averageRe
 
   const handleLinkClick = (e: React.MouseEvent, reviewKey: string, searchType: SearchType) => {
     e.preventDefault();
-    dispatch(addPreview({ type: searchType == 'course' ? 'instructor' : 'course', id: reviewKey }));
+    const targetType: SearchType = searchType == 'course' ? 'instructor' : 'course';
+    const queryKey = targetType === 'course' ? 'course' : 'instructor';
+    router.push(`?${encodeURIComponent(queryKey)}=${encodeURIComponent(reviewKey)}`);
+    dispatch(addPreview({ type: targetType, id: reviewKey }));
   };
 
   return (
