@@ -194,6 +194,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
       ],
       transfers: roadmap.transfers,
       timestamp: roadmap.timestamp,
+      currentPlanIndex: roadmap.currentPlanIndex,
     };
   }
 }
@@ -259,8 +260,8 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
   return { accountRoadmap, localRoadmap };
 };
 
-function saveLocalRoadmap(planners: SavedPlannerData[]) {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners };
+function saveLocalRoadmap(planners: SavedPlannerData[], currentPlanIndex: number | undefined) {
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, currentPlanIndex };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
@@ -279,8 +280,9 @@ export const saveRoadmap = async (
   isLoggedIn: boolean,
   lastSavedPlanners: SavedPlannerData[] | null,
   planners: SavedPlannerData[],
+  currentPlanIndex?: number,
 ) => {
-  saveLocalRoadmap(planners);
+  saveLocalRoadmap(planners, currentPlanIndex);
 
   if (!isLoggedIn) return { success: true };
 
@@ -289,7 +291,7 @@ export const saveRoadmap = async (
 
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
-
+  changes.currentPlanIndex = currentPlanIndex;
   await trpc.roadmaps.save
     .mutate(changes)
     .then((lookup) => {
