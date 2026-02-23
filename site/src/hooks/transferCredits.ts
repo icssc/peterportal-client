@@ -26,7 +26,10 @@ import { TransferredGE, TransferredCourse, TransferredUncategorized, Transferred
 type CourseTreeItem = components['schemas']['coursesGrantedTree'] | string;
 function selectedRewardCourses(courses: CourseTreeItem, selectedIndex: number): string[] {
   if (typeof courses === 'string') return [courses];
-  if ('AND' in courses) return (courses.AND as CourseTreeItem[]).flatMap(selectedRewardCourses);
+  if ('AND' in courses)
+    return (courses.AND as CourseTreeItem[]).flatMap((item) => {
+      return selectedRewardCourses(item, selectedIndex);
+    });
   return selectedRewardCourses(courses.OR[selectedIndex], selectedIndex);
 }
 
