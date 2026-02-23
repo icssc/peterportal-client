@@ -136,7 +136,7 @@ const convertIntoSavedPlanner = (
       }
       quartersList.push({
         name: ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer2', 'Summer10wk'][Math.min(j, 5)] as QuarterName,
-        courses: courses.map((course) => ({ courseId: course })),
+        courses: courses,
       });
     }
     converted.content.push({

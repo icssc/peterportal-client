@@ -13,7 +13,6 @@ import {
   TransferredUncategorized,
   Prerequisite,
   PrerequisiteTree,
-  SavedPlannerCourseData,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
@@ -91,10 +90,7 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => ({
-        courseId: course.id,
-        userChosenUnits: course.userChosenUnits,
-      }));
+      savedQuarter.courses = quarter.courses.map((course) => course.id);
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -114,7 +110,7 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  let courses: SavedPlannerCourseData[] = [];
+  let courses: string[] = [];
   // get all courses in the planner
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
@@ -125,10 +121,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
   let courseLookup: BatchCourseData = {};
   // only send request if there are courses
   if (courses.length > 0) {
-    courseLookup = await searchAPIResults(
-      'courses',
-      courses.map((c) => c.courseId),
-    );
+    courseLookup = await searchAPIResults('courses', courses);
   }
 
   return new Promise((resolve) => {
@@ -140,12 +133,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
-        quarter.courses = savedQuarter.courses
-          .filter((course) => !!courseLookup[course.courseId])
-          .map((course) => ({
-            userChosenUnits: course.userChosenUnits,
-            ...courseLookup[course.courseId],
-          }));
+        quarter.courses = savedQuarter.courses.map((courseId) => courseLookup[courseId]).filter((course) => !!course);
 
         year.quarters.push(quarter);
       });

@@ -5,15 +5,9 @@ export const quarters = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'S
 export const quarterName = z.enum(quarters);
 export type QuarterName = z.infer<typeof quarterName>;
 
-const savedPlannerCourseData = z.object({
-  courseId: z.string(),
-  userChosenUnits: z.number().optional(),
-});
-export type SavedPlannerCourseData = z.infer<typeof savedPlannerCourseData>;
-
 export const savedPlannerQuarterData = z.object({
   name: quarterName,
-  courses: z.array(savedPlannerCourseData),
+  courses: z.array(z.string()),
 });
 export type SavedPlannerQuarterData = z.infer<typeof savedPlannerQuarterData>;
 
@@ -95,7 +89,7 @@ const plannerYearSaveInfo = plannerYearChangeIdentifier.omit({ id: true }).exten
 });
 
 const plannerQuarterSaveInfo = plannerQuarterChangeIdentifier.omit({ id: true }).extend({
-  data: z.object({ name: z.string().max(35), courses: z.array(savedPlannerCourseData) }),
+  data: z.object({ name: z.string().max(35), courses: z.array(z.string()) }),
 });
 
 export type PlannerSaveInfo = z.infer<typeof roadmapPlannerChange>;
