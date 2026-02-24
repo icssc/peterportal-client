@@ -1062,6 +1062,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "current_plan_index": {
+          "name": "current_plan_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
