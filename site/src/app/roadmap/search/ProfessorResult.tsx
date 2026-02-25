@@ -2,8 +2,9 @@ import './ProfessorResult.scss';
 import React, { FC } from 'react';
 import { ProfessorGQLData } from '../../../types/types';
 import { useAppDispatch } from '../../../store/hooks';
-import { setPreviewedCourse, setPreviewedProfessor } from '../../../store/slices/coursePreviewSlice';
+import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
 import { addDelimiter } from '../../../helpers/util';
+import Link from 'next/link';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 
 interface RecentlyTaughtListProps {
@@ -17,17 +18,17 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
     <>
       {addDelimiter(
         courses.slice(0, 10).map((c) => (
-          <a
+          <Link
             key={c.id}
             href={`/course/${c.id}`}
             className="course-link"
             onClick={(e) => {
               e.preventDefault();
-              dispatch(setPreviewedCourse(c.id));
+              dispatch(addPreview({ type: 'course', id: c.id }));
             }}
           >
             {c.department} {c.courseNumber}
-          </a>
+          </Link>
         )),
         ', ',
       )}
@@ -44,14 +45,15 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
 
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
-    dispatch(setPreviewedProfessor(professor.ucinetid));
+    dispatch(clearPreviews());
+    dispatch(addPreview({ type: 'instructor', id: professor.ucinetid }));
   };
 
   return (
     <div className="professor-result">
-      <a href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
+      <Link href={`/instructor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
         {professor.name}
-      </a>
+      </Link>
       <p className="professor-synopsis">
         {professor.title && <span className="professor-title">{professor.title}</span>}
 

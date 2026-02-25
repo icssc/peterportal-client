@@ -15,7 +15,6 @@ import {
   tags,
 } from '@peterportal/types';
 import trpc from '../../trpc';
-import ReCAPTCHA from 'react-google-recaptcha';
 import Select2 from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -78,7 +77,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [tagsOpen, setTagsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
-  const [captchaToken, setCaptchaToken] = useState('');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,7 +84,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
-      searchAPIResult('professor', reviewToEdit.professorId).then((professor) => {
+      searchAPIResult('instructor', reviewToEdit.professorId).then((professor) => {
         if (professor) {
           const profTerms = sortTerms(getProfessorTerms(professor));
           const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
@@ -147,7 +145,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setAttendance(reviewToEdit?.attendance ?? false);
     setSelectedTags(reviewToEdit?.tags ?? []);
     setContent(reviewToEdit?.content ?? '');
-    setCaptchaToken('');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
     setShowFormErrors(false);
   };
@@ -192,14 +189,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       return;
     }
 
-    // for new reviews: check if CAPTCHA is completed
-    if (!editing && !captchaToken) {
-      dispatch(setToastMsg('Please complete the CAPTCHA'));
-      dispatch(setToastSeverity('error'));
-      dispatch(setShowToast(true));
-      return;
-    }
-
     const review = {
       id: reviewToEdit?.id,
       professorId: professor,
@@ -216,7 +205,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       attendance: attendance,
       tags: selectedTags,
       updatedAt: editing ? new Date().toISOString() : undefined,
-      captchaToken,
     };
 
     postReview(review);
@@ -231,7 +219,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   // if in course context, select a professor
   const professorSelect = courseProp && (
     <FormControl error={showFormErrors && !professor}>
-      <FormLabel>Professor</FormLabel>
+      <FormLabel>Instructor</FormLabel>
       <Select
         name="professor"
         id="professor"
@@ -250,7 +238,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem
               key={ucinetid}
               value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this professor' : undefined}
+              title={alreadyReviewed ? 'You have already reviewed this instructor' : undefined}
               disabled={alreadyReviewed}
             >
               {name}
@@ -482,16 +470,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
               }}
             />
           </FormControl>
-
-          {!editing && (
-            <div className="g-recaptcha">
-              <ReCAPTCHA
-                sitekey="6Le6rfIUAAAAAOdqD2N-QUEW9nEtfeNyzkXucLm4" //
-                theme={darkMode ? 'dark' : 'light'}
-                onChange={(token) => setCaptchaToken(token ?? '')}
-              />
-            </div>
-          )}
 
           <FormControl className="anonymous-checkbox">
             <FormControlLabel
