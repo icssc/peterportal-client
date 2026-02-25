@@ -5,21 +5,6 @@
 
   .specialization-select {
     margin-bottom: 12px;
-
-    .MuiOutlinedInput-root {
-      position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        right: 32px;
-        top: 8px;
-        bottom: 8px;
-        width: 1px;
-        background-color: var(--mui-palette-divider);
-        pointer-events: none;
-      }
-    }
   }
 
   .header-tab {

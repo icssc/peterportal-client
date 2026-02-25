@@ -279,11 +279,8 @@ theme = createTheme(theme, {
             borderColor: 'var(--mui-palette-text-secondary)',
           },
           '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'var(--mui-palette-primary-main)',
-            borderWidth: 1,
-          },
-          "[data-theme='dark'] & .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: 'var(--mui-palette-secondary-main)',
+            borderWidth: 1,
           },
           '& .MuiChip-root': {
             backgroundColor: 'var(--mui-palette-action-hover)',
