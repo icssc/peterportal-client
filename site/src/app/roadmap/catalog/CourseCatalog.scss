@@ -1,18 +1,9 @@
 @use '../../../globals';
 
 .course-catalog {
-  .ppc-combobox {
+  .major-select,
+  .minor-select {
     margin-bottom: 12px;
-  }
-
-  .ppc-combobox__menu {
-    margin-top: 0;
-    border-radius: 0 0 8px 8px;
-    overflow: hidden;
-  }
-
-  .ppc-combobox__clear-indicator {
-    display: none;
   }
 
   .filter-group {
