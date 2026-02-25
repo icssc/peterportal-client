@@ -7,7 +7,7 @@ import AddYearPopup from '../planner/AddYearPopup';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Badge, Button, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
+import { Badge, Button, IconButton, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 import UndoIcon from '@mui/icons-material/UndoRounded';
 import RedoIcon from '@mui/icons-material/RedoRounded';
@@ -23,6 +23,8 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
   const showTransfers = useAppSelector((state) => state.transferCredits.showMobileCreditsMenu);
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
+  const currentRevisionIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
+  const revisions = useAppSelector((state) => state.roadmap.revisions);
 
   const handleUndo = () => {
     dispatch(undoRoadmapRevision());
@@ -55,12 +57,12 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
       </div>
       <div className="planner-actions">
         <ButtonGroup>
-          <Button variant="text" size="small" className="header-btn icon-only-btn" onClick={handleUndo}>
+          <IconButton size="small" onClick={handleUndo} disabled={currentRevisionIndex <= 0}>
             <UndoIcon />
-          </Button>
-          <Button variant="text" size="small" className="header-btn icon-only-btn" onClick={handleRedo}>
+          </IconButton>
+          <IconButton size="small" onClick={handleRedo} disabled={currentRevisionIndex >= revisions.length - 1}>
             <RedoIcon />
-          </Button>
+          </IconButton>
           <AddYearPopup buttonSize={buttonSize} />
           {isMobile && (
             <Badge color="error" variant="dot" invisible={!hasUnreadTransfers}>
