@@ -179,6 +179,31 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   );
 };
 
+interface GETransferBadgeProps {
+  transferredGEs: TransferredGE[];
+  complete?: boolean;
+  children: React.ReactNode;
+}
+
+const GETransferBadge = ({ transferredGEs, complete = false, children }: GETransferBadgeProps) => {
+  const badgeColor = complete ? 'success' : 'pending';
+
+  return (
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={transferredGEs.length === 0}
+      variant="circular"
+      color={badgeColor}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      {children}
+    </Badge>
+  );
+};
+
 interface TransferCreditsTileProps {
   transferredGE: TransferredGE;
   showGETitle?: boolean;
@@ -219,7 +244,6 @@ interface CourseRequirementProps {
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
-  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -235,19 +259,10 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
-  const badgeColor = complete ? 'success' : 'pending';
+  const geTransfers = useMatchingGETransfers(data);
 
   return (
-    <Badge
-      badgeContent={<SwapHorizIcon />}
-      invisible={geTransfers.length === 0}
-      variant="circular"
-      color={badgeColor}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-    >
+    <GETransferBadge transferredGEs={geTransfers} complete={complete}>
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
@@ -260,7 +275,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
           <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
         </Collapse>
       </div>
-    </Badge>
+    </GETransferBadge>
   );
 };
 
@@ -290,7 +305,6 @@ interface GroupRequirementProps {
   storeKey: string;
 }
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const geTransfers = useMatchingGETransfers(data);
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
@@ -300,20 +314,11 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
-  const badgeColor = complete ? 'success' : 'pending';
+  const geTransfers = useMatchingGETransfers(data);
   const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (
-    <Badge
-      badgeContent={<SwapHorizIcon />}
-      invisible={geTransfers.length === 0}
-      variant="circular"
-      color={badgeColor}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-    >
+    <GETransferBadge transferredGEs={geTransfers} complete={complete}>
       <div className={className}>
         <GroupHeader title={data.label} open={open} setOpen={setOpen} />
         <Collapse in={open} unmountOnExit>
@@ -339,7 +344,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
           ))}
         </Collapse>
       </div>
-    </Badge>
+    </GETransferBadge>
   );
 };
 
