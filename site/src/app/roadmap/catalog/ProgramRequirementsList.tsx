@@ -220,12 +220,17 @@ interface GroupedCourseRequirementProps {
 const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
+  const showCourseCount = data.courses.length > 1 && 'courseCount' in data && data.courseCount !== data.courses.length;
+  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
 
   return (
     <>
       <div className={className}>
         <p className="requirement-label">
-          <b>{data.label}</b>
+          <b>
+            {data.label}
+            {showCourseCount && ` \u2022 (${completedCount}/${data.courseCount})`}
+          </b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
       </div>
