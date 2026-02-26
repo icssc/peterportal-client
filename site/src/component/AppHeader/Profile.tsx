@@ -154,6 +154,8 @@ const ProfileThemeMenu = () => {
 - should the donate/about/feedback buttons have tooltips, like in AntAlmanac?
 - about modal still needs to be written
 - the feedback form is currently hard-coded, but since this is also used in <Footer />, it should be moved to a global file for constants
+  - the donate link is also hard-coded, and should also likely be moved into this global constants file
+- how much of this profile menu should be in `shared-components/`?
 
 */
 
@@ -161,7 +163,12 @@ const DonateAboutFeedbackButtons = () => {
   return (
     <List className="profile-popover-links">
       <ListItem>
-        <ListItemButton href={'https://venmo.com/u/ICSSC'} className="profile-popover-link" component="a">
+        <ListItemButton
+          href={'https://venmo.com/u/ICSSC'}
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
           <ListItemIcon>
             <FavoriteRoundedIcon />
           </ListItemIcon>
@@ -181,6 +188,7 @@ const DonateAboutFeedbackButtons = () => {
           href={'https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207'}
           className="profile-popover-link"
           component="a"
+          target="_blank"
         >
           <ListItemIcon>
             <AssignmentIcon />
@@ -195,27 +203,27 @@ const DonateAboutFeedbackButtons = () => {
 const AuthButton = () => {
   const isLoggedIn = useIsLoggedIn();
 
-  return isLoggedIn ? (
+  return (
     <List className="profile-popover-links">
-      <ListItem>
-        <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Log Out" />
-        </ListItemButton>
-      </ListItem>
-    </List>
-  ) : (
-    <List className="profile-popover-links">
-      <ListItem>
-        <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
-          <ListItemIcon>
-            <AccountCircleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Sign In" />
-        </ListItemButton>
-      </ListItem>
+      {isLoggedIn ? (
+        <ListItem>
+          <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
+      ) : (
+        <ListItem>
+          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign In" />
+          </ListItemButton>
+        </ListItem>
+      )}
     </List>
   );
 };
