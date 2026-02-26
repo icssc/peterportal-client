@@ -137,18 +137,8 @@ const UserInformation: FC<{ user: UserMetadata | null }> = ({ user }) => {
   );
 };
 
-const Profile = () => {
+const ProfileThemeMenu = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = !!anchorEl;
-
-  const handleClose = () => setAnchorEl(null);
-
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const user = useAppSelector((state) => state.user.user);
 
   const themeTabs: TabOption[] = [
     { value: 'light', label: 'Light', icon: <LightModeIcon /> },
@@ -166,6 +156,27 @@ const Profile = () => {
   };
 
   return (
+    <div className="profile-popover-theme-selector">
+      <h4>Theme</h4>
+      <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
+      <Divider />
+    </div>
+  );
+};
+
+const Profile = () => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = !!anchorEl;
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const user = useAppSelector((state) => state.user.user);
+
+  return (
     <div>
       <ProfileMenuButtons user={user} handleOpen={handleOpen} />
       <Popover
@@ -178,11 +189,7 @@ const Profile = () => {
       >
         <div>
           <UserInformation user={user} />
-          <div className="profile-popover-theme-selector">
-            <h4>Theme</h4>
-            <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-            <Divider />
-          </div>
+          <ProfileThemeMenu />
           <ProfileMenuLinks handleLinkClick={handleClose} />
         </div>
       </Popover>
