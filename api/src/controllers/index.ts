@@ -14,7 +14,7 @@ import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
 import departmentRouter from './department';
 import { externalAppRouter } from './external';
-import { customCoursesRouter } from './customCourses';
+import customCoursesRouter from './customCourses';
 
 export const appRouter = router({
   external: externalAppRouter,
