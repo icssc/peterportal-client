@@ -14,6 +14,9 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import FlagIcon from '@mui/icons-material/Flag';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+// import InfoIcon from '@mui/icons-material/Info';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import Divider from '@mui/material/Divider';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
@@ -144,6 +147,50 @@ const ProfileThemeMenu = () => {
   );
 };
 
+/*
+
+- throughout this profile component, why do we use List and ListItemButton instead of Stack and Button, like in <Footer /> and elsewhere?
+- should the donate/about/feedback buttons have tooltips, like in AntAlmanac?
+- about modal still needs to be written
+- the feedback form is currently hard-coded, but since this is also used in <Footer />, it should be moved to a global file for constants
+
+*/
+
+const DonateAboutFeedbackButtons = () => {
+  return (
+    <List className="profile-popover-links">
+      <ListItem>
+        <ListItemButton href={'https://venmo.com/u/ICSSC'} className="profile-popover-link" component="a">
+          <ListItemIcon>
+            <FavoriteRoundedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Donate" />
+        </ListItemButton>
+      </ListItem>
+      {/* <ListItem>
+        <ListItemButton href={'/about'} className="profile-popover-link" component={Link}>
+          <ListItemIcon>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText primary="About" />
+        </ListItemButton>
+      </ListItem> */}
+      <ListItem>
+        <ListItemButton
+          href={'https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207'}
+          className="profile-popover-link"
+          component="a"
+        >
+          <ListItemIcon>
+            <AssignmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Feedback" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+  );
+};
+
 const AuthButton = () => {
   const isLoggedIn = useIsLoggedIn();
 
@@ -200,6 +247,8 @@ const Profile = () => {
           <ProfileThemeMenu />
           <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
+          <Divider />
+          <DonateAboutFeedbackButtons />
           <Divider />
           <AuthButton />
         </div>
