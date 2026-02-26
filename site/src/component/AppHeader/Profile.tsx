@@ -1,10 +1,11 @@
 import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Divider } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
+
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -14,7 +15,10 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import FlagIcon from '@mui/icons-material/Flag';
-import Divider from '@mui/material/Divider';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+// import InfoIcon from '@mui/icons-material/Info';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
@@ -82,41 +86,22 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
           </ListItemButton>
         </ListItem>
       )}
-      {isLoggedIn ? (
-        <>
-          <ListItem>
-            <ListItemButton
-              className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
-              href="/reviews"
-              onClick={handleLinkClick}
-              component={Link}
-            >
-              <ListItemIcon>
-                <RateReviewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Your Reviews" />
-            </ListItemButton>
-          </ListItem>
-          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
-          <ListItem>
-            <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </>
-      ) : (
+      {isLoggedIn && (
         <ListItem>
-          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemButton
+            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
+            href="/reviews"
+            onClick={handleLinkClick}
+            component={Link}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <RateReviewIcon />
             </ListItemIcon>
-            <ListItemText primary="Sign In" />
+            <ListItemText primary="Your Reviews" />
           </ListItemButton>
         </ListItem>
       )}
+      {isLoggedIn && isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
     </List>
   );
 };
@@ -137,18 +122,8 @@ const UserInformation: FC<{ user: UserMetadata | null }> = ({ user }) => {
   );
 };
 
-const Profile = () => {
+const ProfileThemeMenu = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = !!anchorEl;
-
-  const handleClose = () => setAnchorEl(null);
-
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const user = useAppSelector((state) => state.user.user);
 
   const themeTabs: TabOption[] = [
     { value: 'light', label: 'Light', icon: <LightModeIcon /> },
@@ -166,6 +141,95 @@ const Profile = () => {
   };
 
   return (
+    <div className="profile-popover-theme-selector">
+      <h4>Theme</h4>
+      <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
+    </div>
+  );
+};
+
+const DonateAboutFeedbackButtons = () => {
+  return (
+    <List className="profile-popover-links">
+      <ListItem>
+        <ListItemButton
+          href={'https://venmo.com/u/ICSSC'}
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
+          <ListItemIcon>
+            <FavoriteRoundedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Donate" />
+        </ListItemButton>
+      </ListItem>
+      {/* <ListItem>
+        <ListItemButton href={'/about'} className="profile-popover-link" component={Link}>
+          <ListItemIcon>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText primary="About" />
+        </ListItemButton>
+      </ListItem> */}
+      <ListItem>
+        <ListItemButton
+          href={'https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207'}
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
+          <ListItemIcon>
+            <AssignmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Feedback" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+  );
+};
+
+const AuthButton = () => {
+  const isLoggedIn = useIsLoggedIn();
+
+  return (
+    <List className="profile-popover-links">
+      {isLoggedIn ? (
+        <ListItem>
+          <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Log Out" />
+          </ListItemButton>
+        </ListItem>
+      ) : (
+        <ListItem>
+          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sign In" />
+          </ListItemButton>
+        </ListItem>
+      )}
+    </List>
+  );
+};
+
+const Profile = () => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = !!anchorEl;
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const user = useAppSelector((state) => state.user.user);
+
+  return (
     <div>
       <ProfileMenuButtons user={user} handleOpen={handleOpen} />
       <Popover
@@ -178,12 +242,13 @@ const Profile = () => {
       >
         <div>
           <UserInformation user={user} />
-          <div className="profile-popover-theme-selector">
-            <h4>Theme</h4>
-            <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-            <Divider />
-          </div>
+          <ProfileThemeMenu />
+          <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
+          <Divider />
+          <DonateAboutFeedbackButtons />
+          <Divider />
+          <AuthButton />
         </div>
       </Popover>
     </div>
