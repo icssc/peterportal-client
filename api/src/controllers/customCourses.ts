@@ -50,5 +50,3 @@ export const customCoursesRouter = router({
     return true;
   }),
 });
-
-export default customCoursesRouter;
