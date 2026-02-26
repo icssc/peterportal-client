@@ -1,5 +1,5 @@
 'use client';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import {
   defaultPlan,
@@ -173,8 +173,6 @@ const RoadmapMultiplan: FC = () => {
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const isDuplicateName = () => allPlans.find((p) => p.name === newPlanName);
 
-  const name = allPlans[currentPlanIndex].name;
-
   const addNewPlan = (name: string) => {
     const yearPlans = deepCopy(initialPlanState.yearPlans);
     const revision = addPlanner(nextPlanTempId, name, yearPlans);
@@ -235,10 +233,6 @@ const RoadmapMultiplan: FC = () => {
 
     setEditIdx(-1);
   };
-
-  useEffect(() => {
-    document.title = `${name} | PeterPortal`;
-  }, [name]);
 
   const openHandler = () => {
     setShowAddPlan(true);
@@ -333,10 +327,12 @@ const RoadmapMultiplan: FC = () => {
 
       {/* Delete Roadmap Modal */}
       <Dialog open={delIdx !== -1} onClose={() => setDelIdx(-1)} fullWidth>
-        <DialogTitle>Delete Roadmap</DialogTitle>
+        <DialogTitle>{allPlans.length === 1 ? 'Clear Roadmap' : 'Delete Roadmap'}</DialogTitle>
         <DialogContent>
           <Box component="form" noValidate>
-            <DialogContentText>Are you sure you want to delete the roadmap "{newPlanName}"?</DialogContentText>
+            <DialogContentText>
+              Are you sure you want to {allPlans.length === 1 ? 'clear' : 'delete'} the roadmap "{newPlanName}"?
+            </DialogContentText>
           </Box>
         </DialogContent>
         <DialogActions>

@@ -29,7 +29,7 @@ export const searchSlice = createSlice({
     courseLevels: [] as string[],
     courseGeCategories: [] as string[],
     courseDepartments: [] as string[],
-    professors: {
+    instructors: {
       query: '',
       lastQuery: '',
       pageNumber: 0,
@@ -40,7 +40,7 @@ export const searchSlice = createSlice({
   reducers: {
     // Things that will trigger a new search
     setQuery: (state, action: PayloadAction<string>) => {
-      state.courses.query = state.professors.query = action.payload;
+      state.courses.query = state.instructors.query = action.payload;
       if (!action.payload) return;
 
       if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {

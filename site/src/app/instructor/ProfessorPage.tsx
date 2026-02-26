@@ -24,7 +24,7 @@ const ProfessorPage: FC<ProfessorPageProps> = ({ ucinetid: id }) => {
     if (id === undefined) return;
     if (professorGQLData) {
       setError('');
-      document.title = `${professorGQLData.name} | PeterPortal`;
+      document.title = `${professorGQLData.name} | AntAlmanac Planner`;
     }
   }, [id, professorGQLData]);
 
@@ -38,7 +38,7 @@ const ProfessorPage: FC<ProfessorPageProps> = ({ ucinetid: id }) => {
   } else {
     const sideInfo = (
       <SideInfo
-        searchType="professor"
+        searchType="instructor"
         name={professorGQLData.name}
         title={professorGQLData.title}
         description={professorGQLData.department}
