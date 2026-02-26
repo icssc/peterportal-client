@@ -148,17 +148,6 @@ const ProfileThemeMenu = () => {
   );
 };
 
-/*
-
-- throughout this profile component, why do we use List and ListItemButton instead of Stack and Button, like in <Footer /> and elsewhere?
-- should the donate/about/feedback buttons have tooltips, like in AntAlmanac?
-- about modal still needs to be written
-- the feedback form is currently hard-coded, but since this is also used in <Footer />, it should be moved to a global file for constants
-  - the donate link is also hard-coded, and should also likely be moved into this global constants file
-- how much of this profile menu should be in `shared-components/`?
-
-*/
-
 const DonateAboutFeedbackButtons = () => {
   return (
     <List className="profile-popover-links">
