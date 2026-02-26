@@ -169,13 +169,6 @@
       "when": 1770167251312,
       "tag": "0023_slim_gabe_jones",
       "breakpoints": true
-    },
-    {
-      "idx": 24,
-      "version": "7",
-      "when": 1771366693692,
-      "tag": "0024_large_oracle",
-      "breakpoints": true
     }
   ]
 }
