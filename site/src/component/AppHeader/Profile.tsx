@@ -159,7 +159,6 @@ const ProfileThemeMenu = () => {
     <div className="profile-popover-theme-selector">
       <h4>Theme</h4>
       <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-      <Divider />
     </div>
   );
 };
@@ -190,6 +189,7 @@ const Profile = () => {
         <div>
           <UserInformation user={user} />
           <ProfileThemeMenu />
+          <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
         </div>
       </Popover>
