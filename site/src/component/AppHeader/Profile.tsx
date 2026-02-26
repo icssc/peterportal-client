@@ -82,41 +82,22 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
           </ListItemButton>
         </ListItem>
       )}
-      {isLoggedIn ? (
-        <>
-          <ListItem>
-            <ListItemButton
-              className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
-              href="/reviews"
-              onClick={handleLinkClick}
-              component={Link}
-            >
-              <ListItemIcon>
-                <RateReviewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Your Reviews" />
-            </ListItemButton>
-          </ListItem>
-          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
-          <ListItem>
-            <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </>
-      ) : (
+      {isLoggedIn && (
         <ListItem>
-          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemButton
+            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
+            href="/reviews"
+            onClick={handleLinkClick}
+            component={Link}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <RateReviewIcon />
             </ListItemIcon>
-            <ListItemText primary="Sign In" />
+            <ListItemText primary="Your Reviews" />
           </ListItemButton>
         </ListItem>
       )}
+      {isLoggedIn && isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
     </List>
   );
 };
@@ -163,6 +144,34 @@ const ProfileThemeMenu = () => {
   );
 };
 
+const AuthButton = () => {
+  const isLoggedIn = useIsLoggedIn();
+
+  return isLoggedIn ? (
+    <List className="profile-popover-links">
+      <ListItem>
+        <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log Out" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+  ) : (
+    <List className="profile-popover-links">
+      <ListItem>
+        <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Sign In" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+  );
+};
+
 const Profile = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = !!anchorEl;
@@ -191,6 +200,8 @@ const Profile = () => {
           <ProfileThemeMenu />
           <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
+          <Divider />
+          <AuthButton />
         </div>
       </Popover>
     </div>
