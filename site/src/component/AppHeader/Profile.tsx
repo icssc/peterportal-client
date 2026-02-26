@@ -1,10 +1,11 @@
 import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Divider } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
+
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -17,7 +18,7 @@ import FlagIcon from '@mui/icons-material/Flag';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 // import InfoIcon from '@mui/icons-material/Info';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import Divider from '@mui/material/Divider';
+
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
