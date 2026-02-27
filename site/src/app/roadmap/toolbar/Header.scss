@@ -38,7 +38,10 @@
 
   .planner-actions {
     .MuiButtonGroup-root {
-      gap: 10px;
+      gap: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     padding-right: 2px;
@@ -54,6 +57,9 @@
       height: fit-content;
       border-radius: 4px;
       padding: 4px 8px 4px 10px;
+      border: none;
+      box-shadow: none;
+      min-width: auto;
 
       &[disabled] {
         color: var(--mui-palette-text-secondary);
