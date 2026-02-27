@@ -6,7 +6,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { MenuItem, Select } from '@mui/material';
+import { ListSubheader, MenuItem, Select, TextField } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -37,6 +37,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+  const [profSearch, setProfSearch] = useState('');
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -192,18 +193,27 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         <Select
           value={profCourseSelectedValue}
           onChange={(e) => updateProfCourse(e.target.value)}
-          renderValue={() => {
-            return selectedProfCourseName;
-          }}
+          onClose={() => setProfSearch('')}
+          renderValue={() => selectedProfCourseName}
           displayEmpty
         >
-          {profCourseOptions?.map((q) => {
-            return (
+          <ListSubheader sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              placeholder="Search"
+              value={profSearch}
+              onChange={(e) => setProfSearch(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </ListSubheader>
+          {profCourseOptions
+            ?.filter((q) => q.value === 'ALL' || q.text.toLowerCase().includes(profSearch.toLowerCase()))
+            .map((q) => (
               <MenuItem key={q.value} value={q.value}>
                 {q.text}
               </MenuItem>
-            );
-          })}
+            ))}
         </Select>
       </div>
 
