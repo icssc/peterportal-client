@@ -7,6 +7,7 @@ import MobilePopup from '../MobilePopup';
 import { useCallback, useEffect } from 'react';
 import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 import { useIsMobile } from '../../../helpers/util';
+import ScrollToTopButton from '../../../component/ScrollToTopButton/ScrollToTopButton';
 
 const MobileCourseCatalog = () => {
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
@@ -31,6 +32,7 @@ const MobileCourseCatalog = () => {
   return (
     <MobilePopup show={showSearch} onClose={closeSearch} id="sidebarScrollContainer">
       <CourseCatalog />
+      <ScrollToTopButton scrollableTarget="sidebarScrollContainer" raiseButton={true} />
     </MobilePopup>
   );
 };
