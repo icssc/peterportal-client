@@ -14,6 +14,7 @@ import { IconButton, TextField } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import EditIcon from '@mui/icons-material/Edit';
 import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
@@ -104,19 +105,40 @@ const Course: FC<CourseProps> = (props) => {
    * text should be used in course tags, but not in the course-card-top in the Roadmap
    */
   const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
-  const [inputUnit, setInputUnit] = useState('');
+  const [inputUnit, setInputUnit] = useState<string | null>(null); // whatever is in the textfield
+  const [varUnits, setVarUnits] = useState<number | null>(null); // actual variable unit count
+  const [editUnitOpened, setEditUnitOpened] = useState(false);
+  const [hasInputError, setHasInputError] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputUnit(e.target.value);
-    console.log(inputUnit);
+  const handleVariableUnitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const input = e.target.value;
+    const units = Number(input);
+    setInputUnit(input);
+
+    // @todo edit error message + differentiate between incorrect inputs
+    setHasInputError(Number.isNaN(units) || (input !== '' && (units < minUnits || units > maxUnits)));
   };
 
-  const keyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key == 'Enter') {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key == 'Enter' && !hasInputError) {
       event.preventDefault();
-      console.log(inputUnit);
-      // update something
+
+      setEditUnitOpened(false);
+
+      if (inputUnit === '') {
+        setVarUnits(null);
+      } else {
+        setVarUnits(Number(inputUnit));
+      }
+      setHasInputError(false);
+
+      // @todo update quarter and year unit count in slice or smthng
     }
+  };
+
+  const handleEditClick = () => {
+    setEditUnitOpened(true);
   };
 
   return (
@@ -134,20 +156,35 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{unitsText}</span>}
           {
-            // @todo have better unit submission
-            //       update UI after submission
-            //       replace "units" text placeholder
+            // @todo UI for the units resets when course is moved (remounts)
+            // @todo need to update to match roadmap model (store in slice?)
             isInRoadmap && minUnits !== maxUnits && (
               <div className="custom-units">
-                <TextField
-                  className="unit-input"
-                  defaultValue={2}
-                  size="small"
-                  fullWidth={false}
-                  onChange={handleChange}
-                  onKeyDown={keyPress}
-                />
-                <span className="units">{'units'}</span>
+                {editUnitOpened ? (
+                  <>
+                    <TextField
+                      className="unit-input"
+                      placeholder={unitsText}
+                      size="small"
+                      fullWidth={false}
+                      onChange={handleVariableUnitChange}
+                      onKeyDown={handleKeyPress}
+                      // autoFocus
+                      helperText={hasInputError ? 'bad input' : ''}
+                      error={hasInputError}
+                    />
+                    <span className="units">units</span>
+                  </>
+                ) : (
+                  <>
+                    <EditIcon onClick={handleEditClick} fontSize="small" />
+                    {varUnits ? (
+                      <span className="units">{varUnits + ' unit' + pluralize(varUnits)}</span>
+                    ) : (
+                      <span className="units">{unitsText}</span>
+                    )}
+                  </>
+                )}
               </div>
             )
           }
