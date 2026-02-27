@@ -61,19 +61,6 @@
       box-shadow: none;
       min-width: auto;
 
-      &.icon-only-btn {
-        width: 18px;
-        height: 18px;
-        padding: 0;
-        min-width: 18px;
-        opacity: 0.8;
-
-        svg {
-          width: 18px;
-          height: 18px;
-        }
-      }
-
       &[disabled] {
         color: var(--mui-palette-text-secondary);
       }
