@@ -9,8 +9,8 @@ import { setShowMobileCreditsMenu, clearUnreadTransfers } from '../../../store/s
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Button, IconButton, ButtonGroup, Paper, useMediaQuery } from '@mui/material';
 import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
-import UndoIcon from '@mui/icons-material/UndoRounded';
-import RedoIcon from '@mui/icons-material/RedoRounded';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 import { redoRoadmapRevision, undoRoadmapRevision } from '../../../store/slices/roadmapSlice';
 
 interface HeaderProps {
