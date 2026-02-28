@@ -13,8 +13,8 @@ import {
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
-import { planner, plannerMajor, plannerMinor } from '../db/schema';
-import { and, eq } from 'drizzle-orm';
+import { planner, userMajor, userMinor } from '../db/schema';
+import { eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
 const programTypeNames = ['major', 'minor', 'specialization'] as const;
@@ -30,7 +30,6 @@ const getAPIProgramData = async <T extends ProgramType>(programType: string): Pr
 };
 
 const zodMajorSpecPairSchema = z.object({
-  plannerId: z.number(),
   pairs: z.array(
     z.object({
       majorId: z.string(),
@@ -40,7 +39,6 @@ const zodMajorSpecPairSchema = z.object({
 });
 
 const zodMinorProgramSchema = z.object({
-  plannerId: z.number(),
   minorIds: z.array(z.string()),
 });
 
@@ -76,53 +74,65 @@ const programsRouter = router({
         .then((res) => res.data.requirements as ProgramRequirement[]);
       return response;
     }),
-  getSavedMajorSpecPairs: publicProcedure
-    .input(z.number())
-    .query(async ({ input: plannerId, ctx }): Promise<MajorSpecializationPair[]> => {
-      const userId = ctx.session.userId;
-      if (!userId) return [];
+  getSavedMajorSpecPairs: publicProcedure.query(async ({ ctx }): Promise<MajorSpecializationPair[]> => {
+    const userId = ctx.session.userId;
+    if (!userId) return [];
 
-      const res = await db
-        .select({ majorId: plannerMajor.majorId, specializationId: plannerMajor.specializationId })
-        .from(plannerMajor)
-        .innerJoin(planner, eq(planner.id, plannerMajor.plannerId))
-        .where(and(eq(plannerMajor.plannerId, plannerId), eq(planner.userId, userId)));
+    const pairs = await db
+      .select({ majorId: userMajor.majorId, specializationId: userMajor.specializationId })
+      .from(userMajor)
+      .where(eq(userMajor.userId, userId));
 
-      // undefined instead of null for return type consistency
-      (res as Partial<(typeof res)[0]>[]).forEach((r) => {
-        if (!r.specializationId) delete r.specializationId;
-      });
+    const res = pairs.map((p) => ({
+      ...p,
+      specializationId: p.specializationId ?? undefined,
+    }));
 
-      return res as MajorSpecializationPair[];
-    }),
-  getSavedMinors: publicProcedure
-    .input(z.number())
-    .query(async ({ input: plannerId, ctx }): Promise<MinorProgram[]> => {
-      const userId = ctx.session.userId;
-      if (!userId) return [];
+    return res;
+  }),
+  getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<MinorProgram[]> => {
+    const userId = ctx.session.userId;
+    if (!userId) return [];
 
-      const res = await db
-        .select({ minorId: plannerMinor.minorId })
-        .from(plannerMinor)
-        .innerJoin(planner, eq(planner.id, plannerMinor.plannerId))
-        .where(and(eq(plannerMinor.plannerId, plannerId), eq(planner.userId, userId)));
-      return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
-    }),
+    const res = await db.select({ minorId: userMinor.minorId }).from(userMinor).where(eq(userMinor.userId, userId));
+
+    return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
+  }),
   /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
-  saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input }) => {
-    const { plannerId, pairs } = input;
-    await db.delete(plannerMajor).where(eq(plannerMajor.plannerId, plannerId));
+  saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input, ctx }) => {
+    const userId = ctx.session.userId;
+    if (!userId) throw new Error('Unauthorized');
 
-    const rowsToInsert = pairs.map((p) => ({ plannerId, majorId: p.majorId, specializationId: p.specializationId }));
-    if (rowsToInsert.length) await db.insert(plannerMajor).values(rowsToInsert);
+    const { pairs } = input;
+
+    const rowsToInsert = pairs.map((p) => ({
+      userId,
+      majorId: p.majorId,
+      specializationId: p.specializationId,
+    }));
+
+    await db.transaction(async (tx) => {
+      await tx.delete(userMajor).where(eq(userMajor.userId, userId));
+      if (rowsToInsert.length) {
+        await tx.insert(userMajor).values(rowsToInsert);
+      }
+    });
   }),
   /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
-  saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input }) => {
-    const { plannerId, minorIds } = input;
-    await db.delete(plannerMinor).where(eq(plannerMinor.plannerId, plannerId));
+  saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input, ctx }) => {
+    const userId = ctx.session.userId;
+    if (!userId) throw new Error('Unauthorized');
 
-    const rowsToInsert = minorIds.map((minorId) => ({ plannerId, minorId }));
-    if (rowsToInsert.length) await db.insert(plannerMinor).values(rowsToInsert);
+    const { minorIds } = input;
+
+    const rowsToInsert = minorIds.map((minorId) => ({ userId, minorId }));
+
+    await db.transaction(async (tx) => {
+      await tx.delete(userMinor).where(eq(userMinor.userId, userId));
+      if (rowsToInsert.length) {
+        await tx.insert(userMinor).values(rowsToInsert);
+      }
+    });
   }),
   saveCHCSelection: publicProcedure
     .input(z.object({ plannerId: z.number(), chc: z.enum(['', 'CHC4', 'CHC2']) }))

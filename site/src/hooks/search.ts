@@ -94,7 +94,7 @@ export function useSearchTrigger() {
 
     const searches = [performSearch('courses', searchState.query, 0, courseFilters, signal)];
     if (!showMobileCatalog) {
-      const instructorSearch = performSearch('professors', searchState.query, 0, courseFilters, signal);
+      const instructorSearch = performSearch('instructors', searchState.query, 0, courseFilters, signal);
       searches.push(instructorSearch);
     }
 
@@ -103,12 +103,12 @@ export function useSearchTrigger() {
         // if a prof search is not triggered, we still want to clear old query results
         profRes ??= { count: 0, results: [], totalRank: 0 };
         handleFirstPageResults('courses', courseRes);
-        handleFirstPageResults('professors', profRes);
+        handleFirstPageResults('instructors', profRes);
         const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
         const eitherHasResults = courseRes.count > 0 || profRes.count > 0;
         if (showMobileCatalog || eitherHasResults) {
           // don't change if there are no results
-          dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'professors'));
+          dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'instructors'));
         }
       })
       .catch(handleSearchError);

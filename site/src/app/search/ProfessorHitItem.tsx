@@ -48,7 +48,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
 
   const onClickName = () => {
     dispatch(clearPreviews());
-    dispatch(addPreview({ type: 'professor', id: props.ucinetid }));
+    dispatch(addPreview({ type: 'instructor', id: props.ucinetid }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

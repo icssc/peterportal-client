@@ -11,7 +11,7 @@ import {
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { useClearedCourses } from '../../hooks/planner';
+import { useClearedCoursesUntil } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
 
 interface CoursePopoverProps {
@@ -20,7 +20,8 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
-  const clearedCourses = useClearedCourses();
+  const courseId = typeof course === 'string' ? '' : `${course.department} ${course.courseNumber}`;
+  const clearedCourses = useClearedCoursesUntil(courseId);
 
   if (typeof course === 'string') {
     return (

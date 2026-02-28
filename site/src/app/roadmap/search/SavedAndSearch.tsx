@@ -1,6 +1,5 @@
 import './SavedAndSearch.scss';
 import React, { FC } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
@@ -13,10 +12,12 @@ import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../planner/Course';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
-import { useClearedCourses } from '../../../hooks/planner';
+import { useClearedCoursesUntil } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
-import { setPageNumber, setSearchViewIndex } from '../../../store/slices/searchSlice';
+import { setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
+import InfiniteScrollContainer from '../../../component/InfiniteScrollContainer/InfiniteScrollContainer';
+import ScrollToTopButton from '../../../component/ScrollToTopButton/ScrollToTopButton';
 
 interface SearchResultsProps {
   viewIndex: SearchIndex;
@@ -24,27 +25,18 @@ interface SearchResultsProps {
 }
 
 const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => {
-  const dispatch = useAppDispatch();
-  const { pageNumber, count } = useAppSelector((state) => state.search[viewIndex]);
-
-  const updatePageNumber = () => {
-    dispatch(setPageNumber(pageNumber + 1));
-  };
-
   return (
-    <InfiniteScroll
-      dataLength={searchResults.length}
-      next={updatePageNumber}
-      hasMore={searchResults.length < count}
-      loader={<LoadingSpinner />}
+    <InfiniteScrollContainer
+      viewIndex={viewIndex}
+      searchResults={searchResults}
       scrollableTarget="sidebarScrollContainer"
     >
-      {viewIndex === 'professors' ? (
+      {viewIndex === 'instructors' ? (
         <ProfessorResultsContainer searchResults={searchResults as ProfessorGQLData[]} />
       ) : (
         <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
       )}
-    </InfiniteScroll>
+    </InfiniteScrollContainer>
   );
 };
 
@@ -52,9 +44,16 @@ interface CourseResultsContainerProps {
   searchResults: CourseGQLData[];
 }
 
+const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> = ({ course, addMode }) => {
+  const courseId = `${course.department} ${course.courseNumber}`;
+  const clearedCourses = useClearedCoursesUntil(courseId);
+  const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
+
+  return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} />;
+};
+
 const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults }) => {
   const isMobile = useIsMobile();
-  const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
 
   const setDraggedItem = (event: SortableEvent) => {
@@ -63,12 +62,12 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
   };
 
   // Deep copy because Sortable requires data to be extensible (non read-only). Must be done within component
-  searchResults = deepCopy(searchResults);
+  const copiedResults = deepCopy(searchResults);
 
   return (
     <ReactSortable
       {...courseSearchSortable}
-      list={searchResults}
+      list={copiedResults}
       onStart={setDraggedItem}
       disabled={isMobile}
       /**
@@ -77,12 +76,9 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
        */
       className={'roadmap-search-results' + (isMobile ? ' disabled' : '')}
     >
-      {searchResults.map((course, i) => {
-        const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
-        return (
-          <Course data={course} key={i} addMode={isMobile ? 'tap' : 'drag'} requiredCourses={missingPrerequisites} />
-        );
-      })}
+      {copiedResults.map((course, i) => (
+        <CourseResultItem key={i} course={course} addMode={isMobile ? 'tap' : 'drag'} />
+      ))}
     </ReactSortable>
   );
 };
@@ -113,7 +109,7 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   const dispatch = useAppDispatch();
 
   const singularIndexType = viewIndex.replace(/s$/, '');
-  const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'professors' : 'courses';
+  const otherIndexType: SearchIndex = viewIndex === 'courses' ? 'instructors' : 'courses';
 
   const resultsOther = useAppSelector((state) => state.search[otherIndexType].results);
 
@@ -152,6 +148,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const hasQuery = useAppSelector((state) => !!state.search[viewIndex].query);
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
+  const isMobile = useIsMobile();
 
   const searchResults = showSavedCourses ? savedCourses : results;
 
@@ -175,6 +172,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
+      {!isMobile && <ScrollToTopButton scrollableTarget="sidebarScrollContainer" />}
     </>
   );
 };

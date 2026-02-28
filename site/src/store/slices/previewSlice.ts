@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Preview {
-  type: 'course' | 'professor';
+  type: 'course' | 'instructor';
   id: string;
 }
 

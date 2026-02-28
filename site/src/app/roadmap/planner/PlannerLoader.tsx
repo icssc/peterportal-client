@@ -19,6 +19,7 @@ import {
   setToastMsg,
   setToastSeverity,
   setShowToast,
+  updateTempPlannerIds,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import {
@@ -98,19 +99,24 @@ const PlannerLoader: FC = () => {
   const saveRoadmapAndUpsertTransfers = useCallback(
     async (collapsedPlans: SavedPlannerData[]) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      const res = await saveRoadmap(isLoggedIn, null, collapsedPlans);
-      if (res && isLoggedIn) {
+      const result = await saveRoadmap(isLoggedIn, null, collapsedPlans);
+
+      if (result.success && isLoggedIn) {
         dispatch(setToastMsg('Roadmap saved to your account!'));
         dispatch(setToastSeverity('success'));
         dispatch(setShowToast(true));
-      } else if (res && !isLoggedIn) {
+      } else if (result.success && !isLoggedIn) {
         setToastMsg('Roadmap saved locally! Log in to save it to your account');
         dispatch(setToastSeverity('success'));
         dispatch(setShowToast(true));
-      } else if (!res) {
+      } else if (!result.success) {
         setToastMsg('Unable to save roadmap to your account');
         setToastSeverity('error');
         setShowToast(true);
+      }
+
+      if (result.success && result.plannerIdLookup) {
+        dispatch(updateTempPlannerIds(result.plannerIdLookup));
       }
 
       // upsert transfers
@@ -178,7 +184,10 @@ const PlannerLoader: FC = () => {
     dispatch(setInvalidCourses(invalidCourses));
   }, [dispatch, currentPlanData, transferred]);
 
+  const [overrideLoading, setOverrideLoading] = useState(false);
+
   const overrideAccountRoadmap = async () => {
+    setOverrideLoading(true);
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
@@ -205,10 +214,16 @@ const PlannerLoader: FC = () => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="inherit" variant="text" onClick={overrideAccountRoadmap}>
+        <Button
+          loading={overrideLoading}
+          disabled={overrideLoading}
+          color="inherit"
+          variant="text"
+          onClick={overrideAccountRoadmap}
+        >
           This Device
         </Button>
-        <Button variant="contained" onClick={() => setShowSyncModal(false)}>
+        <Button disabled={overrideLoading} variant="contained" onClick={() => setShowSyncModal(false)}>
           My Account
         </Button>
       </DialogActions>

@@ -15,9 +15,8 @@ export interface ScoreData {
   /** course id or ucinetid */
   id: string;
 }
-
-export type SearchIndex = 'courses' | 'professors';
-export type SearchType = 'course' | 'professor';
+export type SearchIndex = 'courses' | 'instructors';
+export type SearchType = 'course' | 'instructor';
 
 /**
  * Peter's Roadmaps Type Definitions

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true
+    unoptimized: true,
   },
   basePath: '/planner',
   async rewrites() {
@@ -9,7 +9,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: 'http://localhost:8080/planner/api/:path*',
-      }
+      },
     ];
   },
 
@@ -25,9 +25,14 @@ const nextConfig = {
         source: '/roadmap',
         destination: '/',
         permanent: true,
-      }
+      },
+      {
+        source: '/professor/:id',
+        destination: '/instructor/:id',
+        permanent: true,
+      },
     ];
-  }
+  },
 };
- 
-export default nextConfig
+
+export default nextConfig;

@@ -46,12 +46,12 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     dispatch(clearPreviews());
-    dispatch(addPreview({ type: 'professor', id: professor.ucinetid }));
+    dispatch(addPreview({ type: 'instructor', id: professor.ucinetid }));
   };
 
   return (
     <div className="professor-result">
-      <Link href={`/professor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
+      <Link href={`/instructor/${professor.ucinetid}`} className="professor-link" onClick={handleLinkClick}>
         {professor.name}
       </Link>
       <p className="professor-synopsis">
