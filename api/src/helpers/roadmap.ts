@@ -103,12 +103,13 @@ export async function setQuarterCourses(tx: TransactionType, quarters: PlannerQu
 
     if (quarter.data.courses.length === 0) return;
 
-    const rows = quarter.data.courses.map((courseId, index) => ({
+    const rows = quarter.data.courses.map((course, index) => ({
+      index,
       plannerId,
       startYear,
       quarterName,
-      courseId,
-      index,
+      courseId: course.courseId,
+      units: course.userChosenUnits,
     }));
     await tx.insert(plannerCourse).values(rows);
   });
