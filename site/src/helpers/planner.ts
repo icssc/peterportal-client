@@ -31,6 +31,8 @@ import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
 
+const latestRoadmapVersion = 5;
+
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
   return {
@@ -179,7 +181,7 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
         content: [defaultYear() as SavedPlannerYearData],
       },
     ],
-    version: 4,
+    version: latestRoadmapVersion,
   };
 
   let localRoadmap: LocalStorageRoadmapType | null = null;
@@ -269,7 +271,7 @@ function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
         })),
       })),
     })),
-    version: 4,
+    version: latestRoadmapVersion,
   };
 }
 
@@ -277,7 +279,7 @@ function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
 async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
   const localRoadmap = readLocalRoadmap();
 
-  if ('version' in localRoadmap && localRoadmap.version >= 4) return localRoadmap;
+  if ('version' in localRoadmap && localRoadmap.version >= 5) return localRoadmap;
 
   const legacyRoadmap = localRoadmap as LegacySavedRoadmap | LegacyRoadmap;
 
@@ -299,7 +301,7 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
 };
 
 function saveLocalRoadmap(planners: SavedPlannerData[]) {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, version: 4 };
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, version: latestRoadmapVersion };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
