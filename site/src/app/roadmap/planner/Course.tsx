@@ -177,9 +177,12 @@ const Course: FC<CourseProps> = (props) => {
                   </>
                 ) : (
                   <>
-                    <EditIcon onClick={handleEditClick} fontSize="small" />
+                    <IconButton className="course-edit-btn">
+                      <EditIcon onClick={handleEditClick} fontSize="small" />
+                    </IconButton>
+
                     {varUnits ? (
-                      <span className="units">{varUnits + ' unit' + pluralize(varUnits)}</span>
+                      <span className="units">{`${varUnits} unit${pluralize(varUnits)}`}</span>
                     ) : (
                       <span className="units">{unitsText}</span>
                     )}
