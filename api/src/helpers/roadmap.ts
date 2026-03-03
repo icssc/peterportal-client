@@ -25,7 +25,10 @@ export async function queryGetPlanners(where: SQL) {
         'quarters', (SELECT jsonb_agg(jsonb_build_object(
           'name', ${plannerQuarter.quarterName.name},
           'courses', (
-            SELECT COALESCE(jsonb_agg(pc.course_id ORDER BY pc.index ASC), '[]'::jsonb)
+            SELECT COALESCE(jsonb_agg(jsonb_build_object(
+              'courseId', pc.course_id,
+              'userChosenUnits', pc.units
+            ) ORDER BY pc.index ASC), '[]'::jsonb)
             FROM planner_course pc
             WHERE pc.planner_id = pq.planner_id
               AND pc.start_year = pq.start_year
