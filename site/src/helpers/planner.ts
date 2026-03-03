@@ -16,6 +16,7 @@ import {
   Prerequisite,
   PrerequisiteTree,
   SavedPlannerCourseData,
+  latestRoadmapVersion,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
@@ -30,8 +31,6 @@ import {
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
-
-const latestRoadmapVersion = 5;
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];

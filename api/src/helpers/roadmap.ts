@@ -14,7 +14,7 @@ import {
 
 export async function queryGetPlanners(where: SQL) {
   const planYearTableName = getTableConfig(plannerYear).name;
-  const planners = await db
+  const planners = (await db
     .select({
       id: planner.id,
       name: planner.name,
@@ -45,10 +45,15 @@ export async function queryGetPlanners(where: SQL) {
     .innerJoin(user, eq(planner.userId, user.id))
     .where(where)
     .groupBy(planner.id, planner.name)
-    .orderBy(asc(planner.id));
+    .orderBy(asc(planner.id))) as SavedPlannerData[];
 
-  (planners as SavedPlannerData[]).forEach((planner) =>
+  planners.forEach((planner) =>
     planner.content.forEach((year) => {
+      year.quarters.forEach((quarter) => {
+        quarter.courses.forEach((course) => {
+          if (course.userChosenUnits === null) delete course.userChosenUnits;
+        });
+      });
       year.quarters.sort((a, b) => quarters.indexOf(a.name) - quarters.indexOf(b.name));
     }),
   );

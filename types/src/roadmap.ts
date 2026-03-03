@@ -5,6 +5,8 @@ export const quarters = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'S
 export const quarterName = z.enum(quarters);
 export type QuarterName = z.infer<typeof quarterName>;
 
+export const latestRoadmapVersion = 5;
+
 const savedPlannerCourseData = z.object({
   courseId: z.string(),
   userChosenUnits: z.number().optional(),
