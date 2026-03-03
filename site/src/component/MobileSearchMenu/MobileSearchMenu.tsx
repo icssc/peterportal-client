@@ -1,10 +1,11 @@
 'use client';
 import './MobileSearchMenu.scss';
 import { FC } from 'react';
-import SearchHitContainer from '../SearchHitContainer/SearchHitContainer';
 import { useAppSelector } from '../../store/hooks';
-import SearchFilters from '../SearchFilters/SearchFilters';
 import { ResultsHeader } from '../../app/roadmap/search/SavedAndSearch';
+import SearchHitContainer from '../SearchHitContainer/SearchHitContainer';
+import SearchFilters from '../SearchFilters/SearchFilters';
+import ScrollToTopButton from '../ScrollToTopButton/ScrollToTopButton';
 
 const MobileSearchMenu: FC = () => {
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
@@ -18,6 +19,7 @@ const MobileSearchMenu: FC = () => {
         {hasCompletedQuery && showFilters && <SearchFilters />}
       </div>
       <SearchHitContainer />
+      <ScrollToTopButton scrollableTarget="mobileScrollContainer" />
     </div>
   );
 };

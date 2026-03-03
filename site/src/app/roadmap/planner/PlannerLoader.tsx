@@ -184,7 +184,10 @@ const PlannerLoader: FC = () => {
     dispatch(setInvalidCourses(invalidCourses));
   }, [dispatch, currentPlanData, transferred]);
 
+  const [overrideLoading, setOverrideLoading] = useState(false);
+
   const overrideAccountRoadmap = async () => {
+    setOverrideLoading(true);
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
@@ -211,10 +214,16 @@ const PlannerLoader: FC = () => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="inherit" variant="text" onClick={overrideAccountRoadmap}>
+        <Button
+          loading={overrideLoading}
+          disabled={overrideLoading}
+          color="inherit"
+          variant="text"
+          onClick={overrideAccountRoadmap}
+        >
           This Device
         </Button>
-        <Button variant="contained" onClick={() => setShowSyncModal(false)}>
+        <Button disabled={overrideLoading} variant="contained" onClick={() => setShowSyncModal(false)}>
           My Account
         </Button>
       </DialogActions>

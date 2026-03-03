@@ -1,6 +1,5 @@
 import './SavedAndSearch.scss';
 import React, { FC } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
@@ -15,8 +14,10 @@ import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
 import { useClearedCoursesUntil } from '../../../hooks/planner';
 import ProfessorResult from './ProfessorResult';
-import { setPageNumber, setSearchViewIndex } from '../../../store/slices/searchSlice';
+import { setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
+import InfiniteScrollContainer from '../../../component/InfiniteScrollContainer/InfiniteScrollContainer';
+import ScrollToTopButton from '../../../component/ScrollToTopButton/ScrollToTopButton';
 
 interface SearchResultsProps {
   viewIndex: SearchIndex;
@@ -24,19 +25,10 @@ interface SearchResultsProps {
 }
 
 const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => {
-  const dispatch = useAppDispatch();
-  const { pageNumber, count } = useAppSelector((state) => state.search[viewIndex]);
-
-  const updatePageNumber = () => {
-    dispatch(setPageNumber(pageNumber + 1));
-  };
-
   return (
-    <InfiniteScroll
-      dataLength={searchResults.length}
-      next={updatePageNumber}
-      hasMore={searchResults.length < count}
-      loader={<LoadingSpinner />}
+    <InfiniteScrollContainer
+      viewIndex={viewIndex}
+      searchResults={searchResults}
       scrollableTarget="sidebarScrollContainer"
     >
       {viewIndex === 'instructors' ? (
@@ -44,7 +36,7 @@ const SearchResults: FC<SearchResultsProps> = ({ viewIndex, searchResults }) => 
       ) : (
         <CourseResultsContainer searchResults={searchResults as CourseGQLData[]} />
       )}
-    </InfiniteScroll>
+    </InfiniteScrollContainer>
   );
 };
 
@@ -156,6 +148,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
   const hasQuery = useAppSelector((state) => !!state.search[viewIndex].query);
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
+  const isMobile = useIsMobile();
 
   const searchResults = showSavedCourses ? savedCourses : results;
 
@@ -179,6 +172,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
+      {!isMobile && <ScrollToTopButton scrollableTarget="sidebarScrollContainer" />}
     </>
   );
 };
