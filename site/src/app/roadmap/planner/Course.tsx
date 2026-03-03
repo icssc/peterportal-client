@@ -116,7 +116,7 @@ const Course: FC<CourseProps> = (props) => {
     const units = Number(input);
     setInputUnit(input);
 
-    // @todo edit error message + differentiate between incorrect inputs
+    // @todo edit error message
     setHasInputError(Number.isNaN(units) || (input !== '' && (units < minUnits || units > maxUnits)));
   };
 

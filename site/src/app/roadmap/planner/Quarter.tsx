@@ -84,8 +84,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     dispatch(reviseRoadmap(revision));
   };
 
-  // @todo when a course with variable units is moved, its units resets (remounted)
-  //       make it so that it doesn't do that.
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
     const quarterToChange = { startYear, quarter: data, courseIndex: event.newIndex! };
@@ -94,6 +92,11 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   };
 
   // @todo add something to account for unit change submission
+  //  const editCourseUnit = (event : SortableEvent => {
+  //
+  //
+  //
+  // }
 
   useEffect(() => {
     if (!moveCourseTrigger || activeCourseLoading) return; // nothing to add
