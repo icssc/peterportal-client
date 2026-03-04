@@ -16,7 +16,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import FlagIcon from '@mui/icons-material/Flag';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-// import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from '@mui/icons-material/Info';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import { usePathname } from 'next/navigation';
@@ -150,7 +150,7 @@ const ProfileThemeMenu = () => {
 
 const DonateAboutFeedbackButtons = () => {
   return (
-    <List className="profile-popover-links">
+    <List className="profile-popover-links horizontal-list">
       <ListItem>
         <ListItemButton
           href={'https://venmo.com/u/ICSSC'}
@@ -161,17 +161,22 @@ const DonateAboutFeedbackButtons = () => {
           <ListItemIcon>
             <FavoriteRoundedIcon />
           </ListItemIcon>
-          <ListItemText primary="Donate" />
+          <ListItemText primary="DONATE" />
         </ListItemButton>
       </ListItem>
-      {/* <ListItem>
-        <ListItemButton href={'/about'} className="profile-popover-link" component={Link}>
+      <ListItem>
+        <ListItemButton
+          href={'https://docs.icssc.club/docs/about/antalmanac/merge'}
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
           <ListItemIcon>
             <InfoIcon />
           </ListItemIcon>
-          <ListItemText primary="About" />
+          <ListItemText primary="ABOUT" />
         </ListItemButton>
-      </ListItem> */}
+      </ListItem>
       <ListItem>
         <ListItemButton
           href={'https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207'}
@@ -182,7 +187,7 @@ const DonateAboutFeedbackButtons = () => {
           <ListItemIcon>
             <AssignmentIcon />
           </ListItemIcon>
-          <ListItemText primary="Feedback" />
+          <ListItemText primary="FEEDBACK" />
         </ListItemButton>
       </ListItem>
     </List>
