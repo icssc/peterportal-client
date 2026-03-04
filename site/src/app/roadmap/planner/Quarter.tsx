@@ -91,13 +91,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     dispatch(reviseRoadmap(revision));
   };
 
-  // @todo add something to account for unit change submission
-  //  const editCourseUnit = (event : SortableEvent => {
-  //
-  //
-  //
-  // }
-
   useEffect(() => {
     if (!moveCourseTrigger || activeCourseLoading) return; // nothing to add
 
