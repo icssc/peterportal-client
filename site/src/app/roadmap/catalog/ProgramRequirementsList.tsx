@@ -204,13 +204,23 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
       <Collapse in={open} unmountOnExit>
         {showLabel && (
           <p className="requirement-label">
-            <b>Complete {label} of the following:</b>
+            <b>
+              Complete {label} of the following{CompletionHint(data, takenCourseIDs)}
+            </b>
           </p>
         )}
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
       </Collapse>
     </div>
   );
+};
+
+const CompletionHint = (data: ProgramRequirement<'Course' | 'Unit'>, takenCourseIDs: CompletedCourseSet) => {
+  const showCourseCount = data.courses.length > 0 && 'courseCount' in data;
+  const showUnitCount = 'unitCount' in data && data.unitCount > 0;
+  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
+  if (showCourseCount) return ` • (${completedCount}/${data.courseCount})`;
+  if (showUnitCount) return ` • (${completedCount}/${data.unitCount} units)`;
 };
 
 interface GroupedCourseRequirementProps {
@@ -220,8 +230,6 @@ interface GroupedCourseRequirementProps {
 const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
-  const showCourseCount = data.courses.length > 1 && 'courseCount' in data && data.courseCount !== data.courses.length;
-  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
 
   return (
     <>
@@ -229,7 +237,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
         <p className="requirement-label">
           <b>
             {data.label}
-            {showCourseCount && ` \u2022 (${completedCount}/${data.courseCount})`}
+            {CompletionHint(data, takenCourseIDs)}
           </b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
