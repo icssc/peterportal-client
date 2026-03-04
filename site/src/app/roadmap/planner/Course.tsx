@@ -10,7 +10,7 @@ import { CourseGQLData, PlannerCourseData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
-import { IconButton, TextField } from '@mui/material';
+import { IconButton, OutlinedInput, ClickAwayListener } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -106,7 +106,7 @@ const Course: FC<CourseProps> = (props) => {
    */
   const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
   const [inputUnit, setInputUnit] = useState<string | null>(null); // whatever is in the textfield
-  const [varUnits, setVarUnits] = useState<number | null>(null); // actual variable unit count
+  const [varUnits, setVarUnits] = useState<number | undefined>(undefined); // actual variable unit count
   const [editUnitOpened, setEditUnitOpened] = useState(false);
   const [hasInputError, setHasInputError] = useState(false);
 
@@ -120,20 +120,35 @@ const Course: FC<CourseProps> = (props) => {
     setHasInputError(Number.isNaN(units) || (input !== '' && (units < minUnits || units > maxUnits)));
   };
 
+  // Variable Unit Input Box Functions
+  const handleVarUnitSubmit = () => {
+    setEditUnitOpened(false);
+    if (inputUnit === '') {
+      setVarUnits(undefined);
+    } else {
+      setVarUnits(Number(inputUnit));
+    }
+    setHasInputError(false);
+
+    // @todo update quarter and year unit count in slice or smthng
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key == 'Enter' && !hasInputError) {
       event.preventDefault();
-
+      handleVarUnitSubmit();
+    }
+    if (event.key == 'Escape') {
+      event.preventDefault();
+      setVarUnits(undefined);
       setEditUnitOpened(false);
-
-      if (inputUnit === '') {
-        setVarUnits(null);
-      } else {
-        setVarUnits(Number(inputUnit));
-      }
-      setHasInputError(false);
-
-      // @todo update quarter and year unit count in slice or smthng
+    }
+  };
+  const handleClickAway = () => {
+    if (hasInputError) {
+      setEditUnitOpened(false);
+    } else {
+      handleVarUnitSubmit();
     }
   };
 
@@ -156,23 +171,25 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{unitsText}</span>}
           {
-            // @todo UI for the units resets when course is moved (remounts)
-            // @todo need to update to match roadmap model (store in slice?)
+            // @todo review UI for valid behavior + fix atrocious code
             isInRoadmap && minUnits !== maxUnits && (
               <div className="custom-units">
                 {editUnitOpened ? (
                   <>
-                    <TextField
-                      className="unit-input"
-                      placeholder={unitsText}
-                      size="small"
-                      fullWidth={false}
-                      onChange={handleVariableUnitChange}
-                      onKeyDown={handleKeyPress}
-                      // autoFocus
-                      helperText={hasInputError ? 'bad input' : ''}
-                      error={hasInputError}
-                    />
+                    <ClickAwayListener onClickAway={handleClickAway}>
+                      <OutlinedInput
+                        className="unit-input"
+                        placeholder={unitsText}
+                        onChange={handleVariableUnitChange}
+                        onKeyDown={handleKeyPress}
+                        size="small"
+                        fullWidth={false}
+                        error={hasInputError}
+                        /* eslint-disable-next-line jsx-a11y/no-autofocus */
+                        autoFocus
+                      />
+                    </ClickAwayListener>
+
                     <span className="units">units</span>
                   </>
                 ) : (

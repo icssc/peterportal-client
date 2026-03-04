@@ -169,25 +169,17 @@
 .custom-units {
   margin-left: auto;
   color: inherit;
-  align-items: center;
   display: flex;
+  align-items: center;
   gap: 4px;
-}
-.custom-units .MuiInputBase-root {
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
-.custom-units .MuiInputBase-input {
-  font-size: 14px;
-  padding: 2px 6px;
-  text-align: center;
-  color: inherit;
 }
 
 .unit-input {
   width: 36px;
-  height: 2px;
-  padding-right: 12px;
+}
+
+.unit-input input {
+  text-align: center;
+  padding: 2px 6px;
+  font-size: 14px;
 }
