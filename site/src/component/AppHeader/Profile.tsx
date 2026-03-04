@@ -249,10 +249,10 @@ const Profile = () => {
           <UserInformation user={user} />
           <ProfileThemeMenu />
           <Divider />
-          <ProfileMenuLinks handleLinkClick={handleClose} />
-          <Divider />
           <DonateAboutFeedbackButtons />
           <Divider />
+          <ProfileMenuLinks handleLinkClick={handleClose} />
+          {/* <Divider /> */}
           <AuthButton />
         </div>
       </Popover>
