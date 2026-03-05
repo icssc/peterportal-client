@@ -45,11 +45,11 @@
     }
   }
 
-  .profile-popover-theme-selector {
-    .MuiDivider-root {
-      margin: 4px 0 0;
-    }
+  .MuiDivider-root {
+    margin: 8px 0 0;
+  }
 
+  .profile-popover-theme-selector {
     h4 {
       font-size: 20px;
     }
@@ -81,6 +81,16 @@
 
     .MuiListItemIcon-root {
       color: var(--mui-palette-secondary-main);
+    }
+  }
+
+  .horizontal-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    & .MuiTypography-root {
+      font-size: 10px;
     }
   }
 }

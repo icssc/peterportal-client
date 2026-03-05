@@ -3,6 +3,7 @@ import { FC } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ICSSCLogo from './IcsscLogo';
+import { FEEDBACK_FORM_URL } from '../helpers/constants';
 
 const Footer: FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
@@ -45,7 +46,7 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
           size="large"
           color="inherit"
           startIcon={<AssignmentIcon />}
-          href="https://form.asana.com/?k=4h9ZTRkVUT9ZwfJrmvxDDw&d=1208267282546207"
+          href={FEEDBACK_FORM_URL}
           target="_blank"
         >
           Feedback
