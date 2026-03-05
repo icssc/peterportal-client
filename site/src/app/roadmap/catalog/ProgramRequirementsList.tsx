@@ -268,7 +268,9 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
         <Collapse in={open} unmountOnExit>
           {showLabel && (
             <p className="requirement-label">
-              <b>Complete {label} of the following:</b>
+              <b>
+                Complete {label} of the following{CompletionHint(data, takenCourseIDs)}
+              </b>
             </p>
           )}
           {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
@@ -277,6 +279,14 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
       </div>
     </GETransferBadge>
   );
+};
+
+const CompletionHint = (data: ProgramRequirement<'Course' | 'Unit'>, takenCourseIDs: CompletedCourseSet) => {
+  const showCourseCount = data.courses.length > 0 && 'courseCount' in data;
+  const showUnitCount = 'unitCount' in data && data.unitCount > 0;
+  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
+  if (showCourseCount) return ` • (${completedCount}/${data.courseCount})`;
+  if (showUnitCount) return ` • (${completedCount}/${data.unitCount} units)`;
 };
 
 interface GroupedCourseRequirementProps {
@@ -291,7 +301,10 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
     <>
       <div className={className}>
         <p className="requirement-label">
-          <b>{data.label}</b>
+          <b>
+            {data.label}
+            {CompletionHint(data, takenCourseIDs)}
+          </b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
       </div>
