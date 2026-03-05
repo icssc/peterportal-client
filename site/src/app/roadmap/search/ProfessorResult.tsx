@@ -1,8 +1,6 @@
 import './ProfessorResult.scss';
 import React, { FC } from 'react';
 import { ProfessorGQLData } from '../../../types/types';
-import { useAppDispatch } from '../../../store/hooks';
-import { addPreview } from '../../../store/slices/previewSlice';
 import { addDelimiter } from '../../../helpers/util';
 import Link from 'next/link';
 import { CoursePreviewWithTerms } from '@peterportal/types';
@@ -13,7 +11,6 @@ interface RecentlyTaughtListProps {
 }
 
 const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   return (
@@ -27,7 +24,6 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
             onClick={(e) => {
               e.preventDefault();
               router.push(`?course=${encodeURIComponent(c.id)}`);
-              dispatch(addPreview({ type: 'course', id: c.id }));
             }}
           >
             {c.department} {c.courseNumber}
@@ -41,7 +37,6 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
 };
 
 const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const courses = Object.values(professor.courses);
@@ -50,7 +45,6 @@ const ProfessorResult: FC<{ data: ProfessorGQLData }> = ({ data: professor }) =>
   const handleLinkClick = (event: React.MouseEvent) => {
     event.preventDefault();
     router.push(`?instructor=${encodeURIComponent(professor.ucinetid)}`);
-    dispatch(addPreview({ type: 'instructor', id: professor.ucinetid }));
   };
 
   return (

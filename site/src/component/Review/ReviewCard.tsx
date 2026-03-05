@@ -32,7 +32,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
-import { addPreview } from '../../store/slices/previewSlice';
 import { useRouter } from 'next/navigation';
 
 interface AuthorEditButtonsProps {
@@ -161,10 +160,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
       event.preventDefault();
       if (course) {
         router.push(`?instructor=${encodeURIComponent(id)}`);
-        dispatch(addPreview({ type: 'instructor', id }));
       } else {
         router.push(`?course=${encodeURIComponent(id)}`);
-        dispatch(addPreview({ type: 'course', id }));
       }
     },
     [isStandalonePage, course, dispatch, router],

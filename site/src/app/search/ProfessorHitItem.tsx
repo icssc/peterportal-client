@@ -1,10 +1,8 @@
 import { FC } from 'react';
 import './HitItem.scss';
-import { useAppDispatch } from '../../store/hooks';
 import { useRouter } from 'next/navigation';
 
 import { ProfessorGQLData } from '../../types/types';
-import { addPreview } from '../../store/slices/previewSlice';
 import { addDelimiter } from '../../helpers/util';
 import { CoursePreviewWithTerms } from '@peterportal/types';
 
@@ -15,7 +13,6 @@ interface RecentlyTaughtListProps {
 }
 
 const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   return (
@@ -30,7 +27,6 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
               e.preventDefault();
               e.stopPropagation();
               router.push(`?course=${encodeURIComponent(c.id)}`);
-              dispatch(addPreview({ type: 'course', id: c.id }));
             }}
           >
             {c.department} {c.courseNumber}
@@ -44,7 +40,6 @@ const RecentlyTaughtList: FC<RecentlyTaughtListProps> = ({ courses }) => {
 };
 
 const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProps) => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const courses = Object.values(props.courses);
@@ -52,7 +47,6 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
 
   const onClickName = () => {
     router.push(`?instructor=${encodeURIComponent(props.ucinetid)}`);
-    dispatch(addPreview({ type: 'instructor', id: props.ucinetid }));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
