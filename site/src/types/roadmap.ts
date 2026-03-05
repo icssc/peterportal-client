@@ -1,4 +1,4 @@
-import { InvalidCourseData, PlannerQuarterData, PlannerYearData } from './types';
+import { InvalidCourseData, PlannerCourseData, PlannerQuarterData, PlannerYearData } from './types';
 
 // Client-side Roadmaps
 
@@ -40,7 +40,15 @@ export interface PlannerQuarterEdit {
   after: PlannerQuarterChangeData;
 }
 
-export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit;
+// use this to change variable course units?
+export type PlannerCourseChangeData = PlannerCourseData | null;
+export interface PlannerCourseEdit {
+  type: 'course';
+  before: PlannerCourseChangeData;
+  after: PlannerCourseChangeData;
+}
+
+export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit | PlannerCourseEdit;
 
 export interface RoadmapRevision {
   timestamp: number;

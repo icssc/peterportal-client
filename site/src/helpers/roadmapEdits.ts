@@ -1,6 +1,13 @@
 import { QuarterName } from '@peterportal/types';
-import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapRevision } from '../types/roadmap';
-import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  PlannerEdit,
+  PlannerQuarterEdit,
+  PlannerYearEdit,
+  PlannerCourseEdit,
+  RoadmapPlan,
+  RoadmapRevision,
+} from '../types/roadmap';
+import { CourseGQLData, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -10,6 +17,7 @@ import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
 // addPlanner, removePlanner, updatePlannerName
 // addQuarter, removeQuarter, updateQuarterCourses
 
+//@todo make this work for PlannerCourseEdit type
 function createInverseRevision(revision: RoadmapRevision) {
   revision.edits.forEach((edit) => {
     const before = edit.before;
@@ -161,6 +169,22 @@ export function modifyQuarterCourse(
       startYear: addedTo.startYear,
       before: quarterCopy,
       after: { name: addedTo.quarter.name, courses: coursesAfter },
+    });
+  }
+
+  return createRevision(edits);
+}
+
+export function modifyVariableCourseUnit(course: PlannerCourseData, newUnit: number | undefined) {
+  const edits: PlannerCourseEdit[] = [];
+  if (course) {
+    edits.push({
+      type: 'course',
+      before: course,
+      after: {
+        ...course,
+        userChosenUnits: newUnit, // applying var unit changes
+      },
     });
   }
 

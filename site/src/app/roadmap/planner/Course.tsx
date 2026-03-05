@@ -7,7 +7,12 @@ import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData, PlannerCourseData } from '../../../types/types';
-import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
+import {
+  setActiveCourse,
+  setShowAddCourse,
+  setActiveMissingPrerequisites,
+  reviseRoadmap,
+} from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { IconButton, OutlinedInput, ClickAwayListener } from '@mui/material';
@@ -18,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
+import { modifyVariableCourseUnit } from '../../../helpers/roadmapEdits';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -110,6 +116,7 @@ const Course: FC<CourseProps> = (props) => {
   const [editUnitOpened, setEditUnitOpened] = useState(false);
   const [hasInputError, setHasInputError] = useState(false);
 
+  // Variable Unit Input Box Functions
   const handleVariableUnitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const input = e.target.value;
@@ -120,7 +127,6 @@ const Course: FC<CourseProps> = (props) => {
     setHasInputError(Number.isNaN(units) || (input !== '' && (units < minUnits || units > maxUnits)));
   };
 
-  // Variable Unit Input Box Functions
   const handleVarUnitSubmit = () => {
     setEditUnitOpened(false);
     if (inputUnit === '') {
@@ -130,7 +136,15 @@ const Course: FC<CourseProps> = (props) => {
     }
     setHasInputError(false);
 
-    // @todo update quarter and year unit count in slice or smthng
+    setCourseVariableUnit();
+  };
+
+  const setCourseVariableUnit = async () => {
+    const course = props.data;
+    if (course) {
+      const revision = modifyVariableCourseUnit(course, Number(inputUnit));
+      dispatch(reviseRoadmap(revision));
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {

@@ -113,6 +113,16 @@ export function applyQuarterEdit(
   yearToEdit.quarters[quarterIndex].courses = newData.courses;
 }
 
+// export function applyCourseEdit(
+//   plans: RoadmapPlan[],
+//   // plannerId: number,
+//   oldData: PlannerCourseData,
+//   newData: PlannerCourseData,
+// ) {
+//   // const planToEdit = plans.find((plan) => plan.id === plannerId);
+//   // const something = planToEdit?.content.yearPlans?.find();
+// }
+
 // Traversing the revision stack
 function getRevisionStack(history: RoadmapRevision[], start: number, end: number): RevisionStack {
   // Track number of positions changed
@@ -142,6 +152,11 @@ function updatePlannerFromRevisionStack(planners: RoadmapPlan[], stack: Revision
         return applyYearEdit(planners, edit.plannerId, edit[oldKey], edit[newKey]);
       case 'quarter': {
         return applyQuarterEdit(planners, edit.plannerId, edit.startYear, edit[oldKey], edit[newKey]);
+      }
+      // @todo looks like this is where course changes will be applied
+      case 'course': {
+        // would return applyCourseEdit or something?
+        // return applyCourseEdit(planners, edit[oldKey], edit[newKey]);
       }
     }
   });
