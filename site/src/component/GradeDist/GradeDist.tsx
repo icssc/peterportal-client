@@ -6,7 +6,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { ListSubheader, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -37,7 +37,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
-  const [profSearch, setProfSearch] = useState('');
 
   const fetchGradeDistData = useCallback(() => {
     let requests: Promise<GradesRaw>[];
@@ -166,8 +165,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedProfCourseName =
-    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Instructor';
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (
@@ -190,31 +187,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       )}
 
       <div className="gradedist-filter">
-        <Select
-          value={profCourseSelectedValue}
-          onChange={(e) => updateProfCourse(e.target.value)}
-          onClose={() => setProfSearch('')}
-          renderValue={() => selectedProfCourseName}
-          displayEmpty
-        >
-          <ListSubheader sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
-            <TextField
-              size="small"
-              fullWidth
-              placeholder="Search"
-              value={profSearch}
-              onChange={(e) => setProfSearch(e.target.value)}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-          </ListSubheader>
-          {profCourseOptions
-            ?.filter((q) => q.value === 'ALL' || q.text.toLowerCase().includes(profSearch.toLowerCase()))
-            .map((q) => (
-              <MenuItem key={q.value} value={q.value}>
-                {q.text}
-              </MenuItem>
-            ))}
-        </Select>
+        <Autocomplete
+          options={profCourseOptions ?? []}
+          getOptionLabel={(option) => option.text}
+          value={profCourseOptions?.find((o) => o.value === profCourseSelectedValue) ?? null}
+          onChange={(_, newValue) => updateProfCourse(newValue?.value ?? null)}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          renderInput={(params) => <TextField {...params} size="small" />}
+        />
       </div>
 
       <div className="gradedist-filter">
