@@ -47,7 +47,6 @@ const RoadmapPage: FC = () => {
   const handleClosePreview = () => {
     setShowPreview(false);
     setTimeout(() => {
-      dispatch(clearPreviews());
       router.push(pathname);
     }, transitionTime);
   };
