@@ -41,11 +41,15 @@ const CustomCourses = () => {
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
 
   useEffect(() => {
-    dispatch(addCustomCourse({ courseName: 'Custom Card Test', units: 4, description: 'Description' }));
+    const newId = 2;
+    dispatch(
+      addCustomCourse({ cardId: newId, courseName: `Custom Card ${newId}`, units: 4, description: 'Description' }),
+    );
   }, [dispatch]);
 
   const addCard = useCallback(() => {
-    dispatch(addCustomCourse({ courseName: '', units: 0, description: '' }));
+    const newId = 1;
+    dispatch(addCustomCourse({ cardId: newId, courseName: '', units: 0, description: '' }));
   }, [dispatch]);
 
   return (
@@ -66,13 +70,14 @@ const CustomCourses = () => {
         <div className="section-content">
           {userCustomCourses.map((course) => (
             <CustomCourseCard
-              key={course.courseName}
+              key={course.cardId}
+              cardId={course.cardId}
               courseName={course.courseName}
               units={course.units}
               description={course.description}
             />
           ))}
-          <CustomCourseCard courseName="" units={0} description="" />
+          <CustomCourseCard cardId={3} courseName="" units={0} description="" />
           <button className="add-card-button" type="button" onClick={addCard}>
             <AddIcon />
           </button>

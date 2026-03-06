@@ -8,16 +8,17 @@ import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 
 interface CustomCourseCardProps {
+  cardId: number;
   courseName: string;
   units: number;
   description: string;
 }
 
-export const CustomCourseCard: FC<CustomCourseCardProps> = ({ courseName, units, description }) => {
+export const CustomCourseCard: FC<CustomCourseCardProps> = ({ cardId, courseName, units, description }) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
   const onDelete = () => {
-    dispatch(removeCustomCourse(courseName));
+    dispatch(removeCustomCourse(cardId));
   };
 
   return (
