@@ -45,3 +45,22 @@
     }
   }
 }
+
+.custom-courses {
+  .section-content {
+    gap: 16px;
+
+    .add-card-button {
+      box-shadow: 0 0 2px 0 #60616680;
+      background: var(--mui-palette-overlay-overlay1);
+      border: 2px solid var(--mui-palette-divider);
+      border-radius: 8px;
+      height: auto;
+      font-size: 16px;
+      padding: 12px;
+      position: relative;
+      color: var(--mui-palette-divider);
+      align-items: center;
+    }
+  }
+}

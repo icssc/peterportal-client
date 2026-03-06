@@ -1,8 +1,9 @@
 import './Library.scss';
+import { useEffect, useState, useCallback } from 'react';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SavedCourseList from './SavedCourses';
 import { Collapse } from '@mui/material';
-import { useEffect, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import CustomCourseCard from './CustomCourseCard';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addCustomCourse } from '../../../store/slices/customCourseSlice';
@@ -38,8 +39,13 @@ const CustomCourses = () => {
   const toggleExpand = () => setOpen(!open);
   const dispatch = useAppDispatch();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
+
   useEffect(() => {
     dispatch(addCustomCourse({ courseName: 'Custom Card Test', units: 4, description: 'Description' }));
+  }, [dispatch]);
+
+  const addCard = useCallback(() => {
+    dispatch(addCustomCourse({ courseName: '', units: 0, description: '' }));
   }, [dispatch]);
 
   return (
@@ -57,15 +63,20 @@ const CustomCourses = () => {
         <ExpandMore expanded={open} onClick={toggleExpand} />
       </div>
       <Collapse in={open} unmountOnExit>
-        {userCustomCourses.map((course) => (
-          <CustomCourseCard
-            key={course.courseName}
-            courseName={course.courseName}
-            units={course.units}
-            description={course.description}
-          />
-        ))}
-        <CustomCourseCard courseName="" units={0} description="" />
+        <div className="section-content">
+          {userCustomCourses.map((course) => (
+            <CustomCourseCard
+              key={course.courseName}
+              courseName={course.courseName}
+              units={course.units}
+              description={course.description}
+            />
+          ))}
+          <CustomCourseCard courseName="" units={0} description="" />
+          <button className="add-card-button" type="button" onClick={addCard}>
+            <AddIcon />
+          </button>
+        </div>
       </Collapse>
     </div>
   );
