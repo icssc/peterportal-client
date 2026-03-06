@@ -60,9 +60,12 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
           <IconButton size="small" onClick={handleUndo} disabled={currentRevisionIndex <= 0}>
             <UndoIcon />
           </IconButton>
+
           <IconButton size="small" onClick={handleRedo} disabled={currentRevisionIndex >= revisions.length - 1}>
             <RedoIcon />
           </IconButton>
+        </ButtonGroup>
+        <ButtonGroup>
           <AddYearPopup buttonSize={buttonSize} />
           {isMobile && (
             <Badge color="error" variant="dot" invisible={!hasUnreadTransfers}>

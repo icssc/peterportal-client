@@ -37,11 +37,12 @@
   }
 
   .planner-actions {
+    display: flex;
+    gap: 16px;
+
     .MuiButtonGroup-root {
-      gap: 16px;
+      gap: 10px;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
     }
 
     padding-right: 2px;
