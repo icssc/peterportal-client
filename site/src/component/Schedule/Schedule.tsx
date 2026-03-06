@@ -139,7 +139,11 @@ const Schedule: FC<ScheduleProps> = (props) => {
             <span className="enrollment-percentage">{Math.round(enrollmentPercent)}%</span>
           </div>
           <div className="progress-bar">
-            <LinearProgress variant="determinate" value={enrollmentPercent} data-status={section.status} />
+            <LinearProgress
+              variant="determinate"
+              value={Math.min(enrollmentPercent, 100)}
+              data-status={section.status}
+            />
           </div>
         </td>
 
