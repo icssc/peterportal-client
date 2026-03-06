@@ -175,15 +175,26 @@ export function modifyQuarterCourse(
   return createRevision(edits);
 }
 
-export function modifyVariableCourseUnit(course: PlannerCourseData, newUnit: number | undefined) {
+export function modifyVariableCourseUnit(
+  plannerId: number,
+  startYear: number,
+  quarterName: QuarterName,
+  courseIndex: number,
+  course: PlannerCourseData,
+  newUnit: number | undefined,
+) {
   const edits: PlannerCourseEdit[] = [];
-  if (course) {
+  if (course && course.userChosenUnits !== newUnit) {
     edits.push({
       type: 'course',
+      plannerId,
+      startYear,
+      quarterName,
+      courseIndex,
       before: course,
       after: {
         ...course,
-        userChosenUnits: newUnit, // applying var unit changes
+        userChosenUnits: newUnit,
       },
     });
   }

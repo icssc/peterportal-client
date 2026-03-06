@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -7,12 +7,7 @@ import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
 import { CourseGQLData, PlannerCourseData } from '../../../types/types';
-import {
-  setActiveCourse,
-  setShowAddCourse,
-  setActiveMissingPrerequisites,
-  reviseRoadmap,
-} from '../../../store/slices/roadmapSlice';
+import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { IconButton, OutlinedInput, ClickAwayListener } from '@mui/material';
@@ -23,7 +18,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
-import { modifyVariableCourseUnit } from '../../../helpers/roadmapEdits';
 
 interface CourseNameAndInfoProps {
   data: CourseGQLData | string;
@@ -83,10 +77,11 @@ interface CourseProps {
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
   data: PlannerCourseData;
+  onSetVariableUnits?: (units: number | undefined) => void;
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, minUnits, maxUnits, terms, geList } = props.data;
+  const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
   const { requiredCourses, onDelete, openPopoverLeft } = props;
 
   const isInRoadmap = !!onDelete;
@@ -110,11 +105,14 @@ const Course: FC<CourseProps> = (props) => {
    * @todo merge conflict with variable units - when merging with var units, this
    * text should be used in course tags, but not in the course-card-top in the Roadmap
    */
-  const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
-  const [inputUnit, setInputUnit] = useState<string | null>(null); // whatever is in the textfield
-  const [varUnits, setVarUnits] = useState<number | undefined>(undefined); // actual variable unit count
+  const defaultUnitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+  const [inputUnit, setInputUnit] = useState(userChosenUnits?.toString() ?? '');
   const [editUnitOpened, setEditUnitOpened] = useState(false);
   const [hasInputError, setHasInputError] = useState(false);
+
+  useEffect(() => {
+    setInputUnit(userChosenUnits?.toString() ?? '');
+  }, [userChosenUnits]);
 
   // Variable Unit Input Box Functions
   const handleVariableUnitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,23 +126,10 @@ const Course: FC<CourseProps> = (props) => {
   };
 
   const handleVarUnitSubmit = () => {
+    const nextUnits = inputUnit === '' ? undefined : Number(inputUnit);
     setEditUnitOpened(false);
-    if (inputUnit === '') {
-      setVarUnits(undefined);
-    } else {
-      setVarUnits(Number(inputUnit));
-    }
     setHasInputError(false);
-
-    setCourseVariableUnit();
-  };
-
-  const setCourseVariableUnit = async () => {
-    const course = props.data;
-    if (course) {
-      const revision = modifyVariableCourseUnit(course, Number(inputUnit));
-      dispatch(reviseRoadmap(revision));
-    }
+    props.onSetVariableUnits?.(nextUnits);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -154,7 +139,7 @@ const Course: FC<CourseProps> = (props) => {
     }
     if (event.key == 'Escape') {
       event.preventDefault();
-      setVarUnits(undefined);
+      setInputUnit(userChosenUnits?.toString() ?? '');
       setEditUnitOpened(false);
     }
   };
@@ -167,8 +152,12 @@ const Course: FC<CourseProps> = (props) => {
   };
 
   const handleEditClick = () => {
+    setInputUnit(userChosenUnits?.toString() ?? '');
+    setHasInputError(false);
     setEditUnitOpened(true);
   };
+
+  const displayedUnits = userChosenUnits ?? undefined;
 
   return (
     <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
@@ -183,7 +172,7 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-          {isInRoadmap && minUnits === maxUnits && <span className="units">{unitsText}</span>}
+          {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {
             // @todo review UI for valid behavior + fix atrocious code
             isInRoadmap && minUnits !== maxUnits && (
@@ -193,7 +182,8 @@ const Course: FC<CourseProps> = (props) => {
                     <ClickAwayListener onClickAway={handleClickAway}>
                       <OutlinedInput
                         className="unit-input"
-                        placeholder={unitsText}
+                        placeholder={defaultUnitsText}
+                        value={inputUnit}
                         onChange={handleVariableUnitChange}
                         onKeyDown={handleKeyPress}
                         size="small"
@@ -212,10 +202,10 @@ const Course: FC<CourseProps> = (props) => {
                       <EditIcon onClick={handleEditClick} fontSize="small" />
                     </IconButton>
 
-                    {varUnits ? (
-                      <span className="units">{`${varUnits} unit${pluralize(varUnits)}`}</span>
+                    {displayedUnits ? (
+                      <span className="units">{`${displayedUnits} unit${pluralize(displayedUnits)}`}</span>
                     ) : (
-                      <span className="units">{unitsText}</span>
+                      <span className="units">{defaultUnitsText}</span>
                     )}
                   </>
                 )}
@@ -237,7 +227,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="course-info">
           <CourseSynopsis course={props.data} clampDescription={3} />
           <div className="course-tags">
-            {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
+            {`${defaultUnitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
             <RecentOfferingsTooltip terms={terms} />
           </div>
         </div>

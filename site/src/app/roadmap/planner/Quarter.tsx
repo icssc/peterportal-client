@@ -19,7 +19,12 @@ import { quarterSortable } from '../../../helpers/sortable';
 
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Button, Card } from '@mui/material';
-import { ModifiedQuarter, modifyQuarterCourse, reorderQuarterCourse } from '../../../helpers/roadmapEdits';
+import {
+  ModifiedQuarter,
+  modifyQuarterCourse,
+  modifyVariableCourseUnit,
+  reorderQuarterCourse,
+} from '../../../helpers/roadmapEdits';
 
 interface QuarterProps {
   yearIndex: number;
@@ -168,6 +173,10 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
             <Course
               key={index}
               data={course}
+              onSetVariableUnits={(units) => {
+                const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
+                if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+              }}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
