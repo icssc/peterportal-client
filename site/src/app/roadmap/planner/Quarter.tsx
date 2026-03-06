@@ -52,13 +52,18 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     let unitCount = 0;
     let courseCount = 0;
     data.courses.forEach((course) => {
-      unitCount += course.minUnits;
+      if (course.userChosenUnits) {
+        unitCount += course.userChosenUnits;
+      } else {
+        unitCount += course.minUnits;
+      }
+
       courseCount += 1;
     });
     return [unitCount, courseCount];
   };
 
-  const unitCount = calculateQuarterStats()[0];
+  let unitCount = calculateQuarterStats()[0];
 
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
@@ -175,6 +180,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               data={course}
               onSetVariableUnits={(units) => {
                 const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
+                unitCount = calculateQuarterStats()[0];
                 if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
               }}
               requiredCourses={requiredCourses}

@@ -175,6 +175,28 @@ export function modifyQuarterCourse(
   return createRevision(edits);
 }
 
+export function reorderQuarterCourse(
+  plannerId: number,
+  course: CourseGQLData,
+  oldIndex: number,
+  after: ModifiedQuarter,
+) {
+  const quarterCopy = deepCopy(after.quarter);
+
+  const coursesAfter = deepCopy(quarterCopy.courses);
+  coursesAfter.splice(oldIndex, 1);
+  coursesAfter.splice(after.courseIndex, 0, course);
+
+  const edit: PlannerQuarterEdit = {
+    type: 'quarter',
+    plannerId,
+    startYear: after.startYear,
+    before: quarterCopy,
+    after: { name: after.quarter.name, courses: coursesAfter },
+  };
+  return createRevision([edit]);
+}
+
 export function modifyVariableCourseUnit(
   plannerId: number,
   startYear: number,
@@ -200,26 +222,4 @@ export function modifyVariableCourseUnit(
   }
 
   return createRevision(edits);
-}
-
-export function reorderQuarterCourse(
-  plannerId: number,
-  course: CourseGQLData,
-  oldIndex: number,
-  after: ModifiedQuarter,
-) {
-  const quarterCopy = deepCopy(after.quarter);
-
-  const coursesAfter = deepCopy(quarterCopy.courses);
-  coursesAfter.splice(oldIndex, 1);
-  coursesAfter.splice(after.courseIndex, 0, course);
-
-  const edit: PlannerQuarterEdit = {
-    type: 'quarter',
-    plannerId,
-    startYear: after.startYear,
-    before: quarterCopy,
-    after: { name: after.quarter.name, courses: coursesAfter },
-  };
-  return createRevision([edit]);
 }
