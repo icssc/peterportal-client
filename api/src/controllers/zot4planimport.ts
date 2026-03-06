@@ -184,7 +184,7 @@ const convertIntoSavedRoadmap = (
 ): SavedRoadmap => {
   // Convert the individual components
   const convertedPlanner = convertIntoSavedPlanner(originalSchedule.years, scheduleName, startYear, temporaryId);
-  const res: SavedRoadmap = { planners: [convertedPlanner] };
+  const res: SavedRoadmap = { planners: [convertedPlanner], version: 1 };
   return res;
 };
 
