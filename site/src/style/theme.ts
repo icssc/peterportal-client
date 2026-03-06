@@ -241,6 +241,9 @@ theme = createTheme(theme, {
             padding: '8px 10px',
           },
         },
+        icon: {
+          color: 'var(--mui-palette-text-primary)',
+        },
       },
       variants: [xsmall],
     },
@@ -261,6 +264,45 @@ theme = createTheme(theme, {
       },
     },
     MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: 'var(--mui-palette-background-paper)',
+          },
+          '& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#d3d4d5',
+          },
+          "[data-theme='dark'] & .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+            borderColor: '#8886',
+          },
+          "[data-theme='dark'] & .MuiOutlinedInput-root:hover:not(.Mui-focused) .MuiOutlinedInput-notchedOutline": {
+            borderColor: 'var(--mui-palette-text-secondary)',
+          },
+          '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'var(--mui-palette-secondary-main)',
+            borderWidth: 1,
+          },
+          '& .MuiChip-root': {
+            backgroundColor: 'var(--mui-palette-action-hover)',
+            color: 'var(--mui-palette-text-primary)',
+            height: 24,
+            fontSize: 14,
+            borderRadius: 2,
+          },
+          '& .MuiChip-deleteIcon': {
+            color: 'var(--mui-palette-text-primary)',
+            fontSize: 16,
+            margin: '0 4px 0 -4px',
+          },
+          '& .MuiAutocomplete-endAdornment .MuiSvgIcon-root': {
+            color: 'var(--mui-palette-text-primary)',
+          },
+          '& .MuiOutlinedInput-root input::placeholder': {
+            color: 'var(--mui-palette-text-secondary)',
+            opacity: 1,
+          },
+        },
+      },
       variants: [xsmall],
     },
   },
