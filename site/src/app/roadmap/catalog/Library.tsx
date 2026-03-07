@@ -1,12 +1,12 @@
 import './Library.scss';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SavedCourseList from './SavedCourses';
 import { Collapse } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CustomCourseCard from './CustomCourseCard';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addCustomCourse } from '../../../store/slices/customCourseSlice';
+import { addCustomCourse, updateCustomCourse } from '../../../store/slices/customCourseSlice';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -40,17 +40,15 @@ const CustomCourses = () => {
   const dispatch = useAppDispatch();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
 
-  useEffect(() => {
-    const newId = 2;
-    dispatch(
-      addCustomCourse({ cardId: newId, courseName: `Custom Card ${newId}`, units: 4, description: 'Description' }),
-    );
-  }, [dispatch]);
-
   const addCard = useCallback(() => {
+    /** @todo replace cardId with actual id */
     const newId = 1;
     dispatch(addCustomCourse({ cardId: newId, courseName: '', units: 0, description: '' }));
   }, [dispatch]);
+
+  const handleUpdate = (cardId: number, courseName: string, units: number, description: string) => {
+    dispatch(updateCustomCourse({ cardId, courseName, units, description }));
+  };
 
   return (
     <div className="custom-courses">
@@ -75,9 +73,9 @@ const CustomCourses = () => {
               courseName={course.courseName}
               units={course.units}
               description={course.description}
+              handleUpdate={handleUpdate}
             />
           ))}
-          <CustomCourseCard cardId={3} courseName="" units={0} description="" />
           <button className="add-card-button" type="button" onClick={addCard}>
             <AddIcon />
           </button>

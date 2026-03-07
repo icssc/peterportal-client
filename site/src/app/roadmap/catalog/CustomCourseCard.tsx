@@ -1,5 +1,5 @@
 import './CustomCourseCard.scss';
-import { FC } from 'react';
+import { FC, useCallback, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { IconButton } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -12,13 +12,32 @@ interface CustomCourseCardProps {
   courseName: string;
   units: number;
   description: string;
+  handleUpdate: (cardId: number, courseName: string, units: number, description: string) => void;
 }
 
-export const CustomCourseCard: FC<CustomCourseCardProps> = ({ cardId, courseName, units, description }) => {
+export const CustomCourseCard: FC<CustomCourseCardProps> = ({
+  cardId,
+  courseName,
+  units,
+  description,
+  handleUpdate,
+}) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  const onDelete = () => {
+  const [newName, setNewName] = useState<string>(courseName);
+  const [newUnits, setNewUnits] = useState<number>(units);
+  const [newDescription, setNewDescription] = useState<string>(description);
+
+  const onDelete = useCallback(() => {
     dispatch(removeCustomCourse(cardId));
+  }, [dispatch, cardId]);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
+  };
+
+  const onBlur = () => {
+    handleUpdate(cardId, newName, newUnits, newDescription);
   };
 
   return (
@@ -30,16 +49,27 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ cardId, courseName
       )}
 
       <div className="course-card-top">
-        {courseName ? (
-          <span className="name">{courseName}</span>
-        ) : (
-          <span className="name">
-            <input className="name-input" placeholder="Course" />
-          </span>
-        )}
+        <span className="name">
+          <input
+            className="name-input"
+            value={newName ?? ''}
+            placeholder="Course"
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={onBlur}
+          />
+        </span>
 
         <span className="units">
-          {units ? `${units} units` : <input className="units-input" placeholder="Units" />}
+          <input
+            className="units-input"
+            type="number"
+            value={Number.isNaN(newUnits) ? '' : newUnits}
+            placeholder="Units"
+            onChange={(e) => setNewUnits(e.target.valueAsNumber)}
+            onKeyDown={handleKeyDown}
+            onBlur={onBlur}
+          />
         </span>
 
         <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
@@ -47,7 +77,14 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ cardId, courseName
         </IconButton>
       </div>
       <div className="course-description">
-        {description ? `${description}` : <input className="input" placeholder="Description" />}
+        <input
+          className="description-input"
+          value={newDescription ?? ''}
+          placeholder="Description"
+          onChange={(e) => setNewDescription(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={onBlur}
+        />
       </div>
     </div>
   );

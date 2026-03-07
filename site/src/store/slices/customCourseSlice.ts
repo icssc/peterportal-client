@@ -30,6 +30,6 @@ export const customCoursesSlice = createSlice({
   },
 });
 
-export const { addCustomCourse, removeCustomCourse } = customCoursesSlice.actions;
+export const { addCustomCourse, removeCustomCourse, updateCustomCourse } = customCoursesSlice.actions;
 
 export default customCoursesSlice.reducer;
