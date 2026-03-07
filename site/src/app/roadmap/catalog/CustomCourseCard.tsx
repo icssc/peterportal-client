@@ -8,20 +8,14 @@ import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 
 interface CustomCourseCardProps {
-  cardId: number;
+  id: number;
   courseName: string;
   units: number;
   description: string;
-  handleUpdate: (cardId: number, courseName: string, units: number, description: string) => void;
+  handleUpdate: (id: number, courseName: string, units: number, description: string) => void;
 }
 
-export const CustomCourseCard: FC<CustomCourseCardProps> = ({
-  cardId,
-  courseName,
-  units,
-  description,
-  handleUpdate,
-}) => {
+export const CustomCourseCard: FC<CustomCourseCardProps> = ({ id, courseName, units, description, handleUpdate }) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
   const [newName, setNewName] = useState<string>(courseName);
@@ -29,15 +23,15 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({
   const [newDescription, setNewDescription] = useState<string>(description);
 
   const onDelete = useCallback(() => {
-    dispatch(removeCustomCourse(cardId));
-  }, [dispatch, cardId]);
+    dispatch(removeCustomCourse(id));
+  }, [dispatch, id]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
   };
 
   const onBlur = () => {
-    handleUpdate(cardId, newName, newUnits, newDescription);
+    handleUpdate(id, newName, newUnits, newDescription);
   };
 
   return (

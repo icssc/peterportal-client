@@ -6,7 +6,9 @@ import { Collapse } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CustomCourseCard from './CustomCourseCard';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addCustomCourse, updateCustomCourse } from '../../../store/slices/customCourseSlice';
+import { addCustomCourse, updateCustomCourse, reorderCustomCourses } from '../../../store/slices/customCourseSlice';
+import { ReactSortable } from 'react-sortablejs';
+import { deepCopy } from '../../../helpers/util';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -39,15 +41,16 @@ const CustomCourses = () => {
   const toggleExpand = () => setOpen(!open);
   const dispatch = useAppDispatch();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
+  const customCoursesCopy = deepCopy(userCustomCourses);
 
   const addCard = useCallback(() => {
-    /** @todo replace cardId with actual id */
-    const newId = 1;
-    dispatch(addCustomCourse({ cardId: newId, courseName: '', units: 0, description: '' }));
+    /** @todo replace id with actual id */
+    const newId = Date.now();
+    dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
   }, [dispatch]);
 
-  const handleUpdate = (cardId: number, courseName: string, units: number, description: string) => {
-    dispatch(updateCustomCourse({ cardId, courseName, units, description }));
+  const handleUpdate = (id: number, courseName: string, units: number, description: string) => {
+    dispatch(updateCustomCourse({ id, courseName, units, description }));
   };
 
   return (
@@ -66,16 +69,34 @@ const CustomCourses = () => {
       </div>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
-          {userCustomCourses.map((course) => (
-            <CustomCourseCard
-              key={course.cardId}
-              cardId={course.cardId}
-              courseName={course.courseName}
-              units={course.units}
-              description={course.description}
-              handleUpdate={handleUpdate}
-            />
-          ))}
+          <ReactSortable
+            list={customCoursesCopy}
+            setList={() => {}}
+            handle=".course-drag-handle"
+            onEnd={(evt) => {
+              if (evt.oldIndex == null || evt.newIndex == null) return;
+              if (evt.oldIndex === evt.newIndex) return;
+
+              dispatch(
+                reorderCustomCourses({
+                  oldIndex: evt.oldIndex,
+                  newIndex: evt.newIndex,
+                }),
+              );
+            }}
+          >
+            {userCustomCourses.map((course) => (
+              <CustomCourseCard
+                key={course.id}
+                id={course.id}
+                courseName={course.courseName}
+                units={course.units}
+                description={course.description}
+                handleUpdate={handleUpdate}
+              />
+            ))}
+          </ReactSortable>
+
           <button className="add-card-button" type="button" onClick={addCard}>
             <AddIcon />
           </button>
