@@ -1,5 +1,5 @@
 import { router, userProcedure } from '../helpers/trpc';
-import { RoadmapDiffs, roadmapDiffs, SavedPlannerData, SavedRoadmap } from '@peterportal/types';
+import { latestRoadmapVersion, RoadmapDiffs, roadmapDiffs, SavedPlannerData, SavedRoadmap } from '@peterportal/types';
 import { db, TransactionType } from '../db';
 import { planner, user } from '../db/schema';
 import { and, count, eq, inArray } from 'drizzle-orm';
@@ -90,6 +90,7 @@ const roadmapsRouter = router({
     const roadmap: SavedRoadmap = {
       planners: planners as SavedPlannerData[],
       timestamp: timestamp[0].timestamp?.toISOString(),
+      version: latestRoadmapVersion,
     };
     return roadmap;
   }),
