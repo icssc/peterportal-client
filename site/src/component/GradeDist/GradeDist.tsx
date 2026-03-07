@@ -6,7 +6,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { MenuItem, Select } from '@mui/material';
+import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -165,8 +165,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedProfCourseName =
-    profCourseOptions?.find((p) => p.value === profCourseSelectedValue)?.text ?? 'Instructor';
   const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (
@@ -189,22 +187,14 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       )}
 
       <div className="gradedist-filter">
-        <Select
-          value={profCourseSelectedValue}
-          onChange={(e) => updateProfCourse(e.target.value)}
-          renderValue={() => {
-            return selectedProfCourseName;
-          }}
-          displayEmpty
-        >
-          {profCourseOptions?.map((q) => {
-            return (
-              <MenuItem key={q.value} value={q.value}>
-                {q.text}
-              </MenuItem>
-            );
-          })}
-        </Select>
+        <Autocomplete
+          options={profCourseOptions ?? []}
+          getOptionLabel={(option) => option.text}
+          value={profCourseOptions?.find((o) => o.value === profCourseSelectedValue) ?? null}
+          onChange={(_, newValue) => updateProfCourse(newValue?.value ?? null)}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          renderInput={(params) => <TextField {...params} size="small" />}
+        />
       </div>
 
       <div className="gradedist-filter">
