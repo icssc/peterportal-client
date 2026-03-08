@@ -1,9 +1,8 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import './ReviewForm.scss';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ReviewProps } from '../Review/Review';
-import ThemeContext from '../../style/theme-context';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -15,7 +14,6 @@ import {
   tags,
 } from '@peterportal/types';
 import trpc from '../../trpc';
-import ReCAPTCHA from 'react-google-recaptcha';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
@@ -56,7 +54,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
 }) => {
   const dispatch = useAppDispatch();
-  const { darkMode } = useContext(ThemeContext);
   const reviews = useAppSelector((state) => state.review.reviews);
   const isLoggedIn = useIsLoggedIn();
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
