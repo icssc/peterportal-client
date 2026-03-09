@@ -227,10 +227,10 @@ const TransferCreditsTile = ({ transferredGE, showGETitle = false }: TransferCre
     >
       <div className="transferred-ges">
         <p>
-          Number of Courses: <span className="transferred-num">{transferredGE.numberOfCourses}</span>
+          Number of Courses: <b>{transferredGE.numberOfCourses}</b>
         </p>
         <p>
-          Units Taken: <span className="transferred-num">{transferredGE.units}</span>
+          Units Taken: <b>{transferredGE.units}</b>
         </p>
       </div>
     </MenuTile>
