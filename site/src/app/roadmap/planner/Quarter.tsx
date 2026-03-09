@@ -175,6 +175,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
                 course={course}
                 handleUpdate={() => {}}
                 inRoadmap={true}
+                removeCourseAt={() => removeCourseAt(index)}
               />
             );
           }

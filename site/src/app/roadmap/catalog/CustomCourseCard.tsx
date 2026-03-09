@@ -12,9 +12,10 @@ interface CustomCourseCardProps {
   course: CustomCourse;
   handleUpdate: (customCourse: CustomCourse) => void;
   inRoadmap: boolean;
+  removeCourseAt?: () => void;
 }
 
-export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap }) => {
+export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap, removeCourseAt }) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
   const [newName, setNewName] = useState<string>(course.courseName);
@@ -73,7 +74,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
           )}
         </span>
 
-        <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
+        <IconButton className="course-delete-btn" onClick={!inRoadmap ? onDelete : removeCourseAt} aria-label="delete">
           <DeleteOutlineIcon className="course-delete-icon" />
         </IconButton>
       </div>
