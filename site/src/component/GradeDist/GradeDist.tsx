@@ -187,14 +187,31 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       )}
 
       <div className="gradedist-filter">
-        <Autocomplete
-          options={profCourseOptions ?? []}
-          getOptionLabel={(option) => option.text}
-          value={profCourseOptions?.find((o) => o.value === profCourseSelectedValue) ?? null}
-          onChange={(_, newValue) => updateProfCourse(newValue?.value ?? null)}
-          isOptionEqualToValue={(option, value) => option.value === value.value}
-          renderInput={(params) => <TextField {...params} size="small" />}
-        />
+        <Select
+          value={profCourseSelectedValue}
+          onChange={(e) => updateProfCourse(e.target.value)}
+          onClose={() => setProfSearch('')}
+          renderValue={() => selectedProfCourseName}
+          displayEmpty
+        >
+          <ListSubheader sx={{ display: 'flex', alignItems: 'center', py: 1 }}>
+            <TextField
+              size="small"
+              fullWidth
+              placeholder="Search"
+              value={profSearch}
+              onChange={(e) => setProfSearch(e.target.value)}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </ListSubheader>
+          {profCourseOptions
+            ?.filter((q) => q.value === 'ALL' || q.text.toLowerCase().includes(profSearch.toLowerCase()))
+            .map((q) => (
+              <MenuItem key={q.value} value={q.value}>
+                {q.text}
+              </MenuItem>
+            ))}
+        </Select>
       </div>
 
       <div className="gradedist-filter">
