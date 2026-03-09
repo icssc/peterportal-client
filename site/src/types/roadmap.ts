@@ -41,7 +41,6 @@ export interface PlannerQuarterEdit {
   after: PlannerQuarterChangeData;
 }
 
-// use this to change variable course units?
 export type PlannerCourseChangeData = PlannerCourseData | null;
 export interface PlannerCourseEdit {
   type: 'course';

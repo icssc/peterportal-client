@@ -174,7 +174,7 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {
-            // @todo review UI for valid behavior + fix atrocious code
+            // @todo fix atrocious code
             isInRoadmap && minUnits !== maxUnits && (
               <div className="custom-units">
                 {editUnitOpened ? (
