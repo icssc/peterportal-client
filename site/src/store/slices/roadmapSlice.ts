@@ -3,6 +3,7 @@ import { defaultYear } from '../../helpers/planner';
 import {
   CourseGQLData,
   CourseIdentifier,
+  CustomCourse,
   InvalidCourseData,
   PlannerQuarterData,
   PlannerYearData,
@@ -43,6 +44,10 @@ interface SetActiveCoursePayload {
   courseIndex?: number;
 }
 
+interface SetActiveCustomCoursePayload {
+  course: CustomCourse;
+}
+
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
@@ -64,6 +69,7 @@ export const roadmapSlice = createSlice({
     showMobileFullscreenSearch: false,
     /** Store the course data of the active dragging item */
     activeCourse: null as CourseGQLData | null,
+    activeCustomCourse: null as CustomCourse | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
     activeCourseLoading: false,
     /** Store missing prerequisites for courses when adding on mobile */
@@ -120,6 +126,7 @@ export const roadmapSlice = createSlice({
       }
       const { course, ...dragSource } = action.payload;
       state.activeCourse = course;
+      state.activeCustomCourse = null;
       state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
@@ -187,6 +194,13 @@ export const roadmapSlice = createSlice({
         plan.id = action.payload[plan.id] ?? plan.id;
       });
     },
+    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCustomCourse = null;
+        return;
+      }
+      state.activeCustomCourse = action.payload.course;
+    },
   },
 });
 
@@ -213,6 +227,7 @@ export const {
   setShowToast,
   setCHCSelection,
   updateTempPlannerIds,
+  setActiveCustomCourse,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

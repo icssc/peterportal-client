@@ -6,9 +6,12 @@ import { Collapse } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CustomCourseCard from './CustomCourseCard';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { addCustomCourse, updateCustomCourse, reorderCustomCourses } from '../../../store/slices/customCourseSlice';
+import { addCustomCourse, updateCustomCourse } from '../../../store/slices/customCourseSlice';
 import { ReactSortable } from 'react-sortablejs';
+import { customCourseSortable } from '../../../helpers/sortable';
 import { deepCopy } from '../../../helpers/util';
+import { CustomCourse } from '../../../types/types';
+import { setActiveCustomCourse } from '../../../store/slices/roadmapSlice';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -49,8 +52,8 @@ const CustomCourses = () => {
     dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
   }, [dispatch]);
 
-  const handleUpdate = (id: number, courseName: string, units: number, description: string) => {
-    dispatch(updateCustomCourse({ id, courseName, units, description }));
+  const handleUpdate = (course: CustomCourse) => {
+    dispatch(updateCustomCourse({ ...course }));
   };
 
   return (
@@ -71,29 +74,18 @@ const CustomCourses = () => {
         <div className="section-content">
           <ReactSortable
             list={customCoursesCopy}
+            sort={false}
             setList={() => {}}
-            handle=".course-drag-handle"
-            onEnd={(evt) => {
-              if (evt.oldIndex == null || evt.newIndex == null) return;
-              if (evt.oldIndex === evt.newIndex) return;
+            onStart={(evt) => {
+              const draggedCourse = userCustomCourses[evt.oldIndex!];
+              if (!draggedCourse) return;
 
-              dispatch(
-                reorderCustomCourses({
-                  oldIndex: evt.oldIndex,
-                  newIndex: evt.newIndex,
-                }),
-              );
+              dispatch(setActiveCustomCourse({ course: draggedCourse }));
             }}
+            {...customCourseSortable}
           >
             {userCustomCourses.map((course) => (
-              <CustomCourseCard
-                key={course.id}
-                id={course.id}
-                courseName={course.courseName}
-                units={course.units}
-                description={course.description}
-                handleUpdate={handleUpdate}
-              />
+              <CustomCourseCard key={course.id} course={course} handleUpdate={handleUpdate} inRoadmap={false} />
             ))}
           </ReactSortable>
 

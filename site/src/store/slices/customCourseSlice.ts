@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface CustomCourse {
-  id: number;
-  courseName: string;
-  units: number;
-  description: string;
-}
+import { CustomCourse } from '../../types/types';
 
 export const customCoursesSlice = createSlice({
   name: 'customCourses',
@@ -27,15 +21,9 @@ export const customCoursesSlice = createSlice({
         course.description = action.payload.description;
       }
     },
-    reorderCustomCourses: (state, action) => {
-      const { oldIndex, newIndex } = action.payload;
-      const movedCourse = state.userCustomCourses.splice(oldIndex, 1)[0];
-      state.userCustomCourses.splice(newIndex, 0, movedCourse);
-    },
   },
 });
 
-export const { addCustomCourse, removeCustomCourse, updateCustomCourse, reorderCustomCourses } =
-  customCoursesSlice.actions;
+export const { addCustomCourse, removeCustomCourse, updateCustomCourse } = customCoursesSlice.actions;
 
 export default customCoursesSlice.reducer;

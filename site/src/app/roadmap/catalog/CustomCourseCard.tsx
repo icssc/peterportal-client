@@ -6,32 +6,31 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useIsMobile } from '../../../helpers/util';
 import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
+import { CustomCourse } from '../../../types/types';
 
 interface CustomCourseCardProps {
-  id: number;
-  courseName: string;
-  units: number;
-  description: string;
-  handleUpdate: (id: number, courseName: string, units: number, description: string) => void;
+  course: CustomCourse;
+  handleUpdate: (customCourse: CustomCourse) => void;
+  inRoadmap: boolean;
 }
 
-export const CustomCourseCard: FC<CustomCourseCardProps> = ({ id, courseName, units, description, handleUpdate }) => {
+export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap }) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
-  const [newName, setNewName] = useState<string>(courseName);
-  const [newUnits, setNewUnits] = useState<number>(units);
-  const [newDescription, setNewDescription] = useState<string>(description);
+  const [newName, setNewName] = useState<string>(course.courseName);
+  const [newUnits, setNewUnits] = useState<number>(course.units);
+  const [newDescription, setNewDescription] = useState<string>(course.description);
 
   const onDelete = useCallback(() => {
-    dispatch(removeCustomCourse(id));
-  }, [dispatch, id]);
+    dispatch(removeCustomCourse(course.id));
+  }, [dispatch, course.id]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
   };
 
   const onBlur = () => {
-    handleUpdate(id, newName, newUnits, newDescription);
+    handleUpdate({ ...course, courseName: newName, units: newUnits, description: newDescription });
   };
 
   return (
@@ -44,26 +43,34 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ id, courseName, un
 
       <div className="course-card-top">
         <span className="name">
-          <input
-            className="name-input"
-            value={newName ?? ''}
-            placeholder="Course"
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={onBlur}
-          />
+          {!inRoadmap ? (
+            <input
+              className="name-input"
+              value={newName ?? ''}
+              placeholder="Course"
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onBlur={onBlur}
+            />
+          ) : (
+            <>{course.courseName}</>
+          )}
         </span>
 
         <span className="units">
-          <input
-            className="units-input"
-            type="number"
-            value={Number.isNaN(newUnits) ? '' : newUnits}
-            placeholder="Units"
-            onChange={(e) => setNewUnits(e.target.valueAsNumber)}
-            onKeyDown={handleKeyDown}
-            onBlur={onBlur}
-          />
+          {!inRoadmap ? (
+            <input
+              className="units-input"
+              type="number"
+              value={Number.isNaN(newUnits) ? '' : newUnits}
+              placeholder="Units"
+              onChange={(e) => setNewUnits(e.target.valueAsNumber)}
+              onKeyDown={handleKeyDown}
+              onBlur={onBlur}
+            />
+          ) : (
+            <>{course.units} units</>
+          )}
         </span>
 
         <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
@@ -71,14 +78,18 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ id, courseName, un
         </IconButton>
       </div>
       <div className="course-description">
-        <input
-          className="description-input"
-          value={newDescription ?? ''}
-          placeholder="Description"
-          onChange={(e) => setNewDescription(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={onBlur}
-        />
+        {!inRoadmap ? (
+          <input
+            className="description-input"
+            value={newDescription ?? ''}
+            placeholder="Description"
+            onChange={(e) => setNewDescription(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={onBlur}
+          />
+        ) : (
+          <>{course.description}</>
+        )}
       </div>
     </div>
   );
