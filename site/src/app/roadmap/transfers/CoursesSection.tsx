@@ -62,12 +62,15 @@ const CoursesSection: FC = () => {
     const abortController = new AbortController();
     const timeout = window.setTimeout(async () => {
       try {
-        const response = await trpc.search.get.query({
-          query: courseSearchValue,
-          skip: 0,
-          take: 10,
-          resultType: 'course',
-        });
+        const response = await trpc.search.get.query(
+          {
+            query: courseSearchValue,
+            skip: 0,
+            take: 10,
+            resultType: 'course',
+          },
+          { signal: abortController.signal },
+        );
         const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
         const newOptions: CourseSelectOption[] = courses.map((c) => ({
           value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
