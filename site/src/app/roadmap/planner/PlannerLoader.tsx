@@ -97,7 +97,11 @@ const PlannerLoader: FC = () => {
 
   // save function will update localStorage (thus comparisons above will work) and account roadmap
   const saveRoadmapAndUpsertTransfers = useCallback(
-    async (collapsedLocalPlans: SavedPlannerData[], collapsedAccountPlans: SavedPlannerData[] | null, currentPlanIndex?: number) => {
+    async (
+      collapsedLocalPlans: SavedPlannerData[],
+      collapsedAccountPlans: SavedPlannerData[] | null,
+      currentPlanIndex?: number,
+    ) => {
       // Cannot be called before format is upgraded from single to multi-planner
       const result = await saveRoadmap(isLoggedIn, collapsedAccountPlans, collapsedLocalPlans, currentPlanIndex);
 
@@ -191,7 +195,11 @@ const PlannerLoader: FC = () => {
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
-    await saveRoadmapAndUpsertTransfers(localRoadmap.planners, initialAccountRoadmap?.planners ?? null, localRoadmap.currentPlanIndex);
+    await saveRoadmapAndUpsertTransfers(
+      localRoadmap.planners,
+      initialAccountRoadmap?.planners ?? null,
+      localRoadmap.currentPlanIndex,
+    );
     const roadmapWithIds = await loadRoadmap(true).then((res) => res.accountRoadmap!);
 
     // Update frontend state to show local data
