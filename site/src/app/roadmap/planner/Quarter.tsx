@@ -54,8 +54,12 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const calculateQuarterStats = () => {
     let unitCount = 0;
     let courseCount = 0;
-    data.courses.forEach((course) => {
-      unitCount += course.minUnits;
+    courses.forEach((course) => {
+      if ('courseName' in course) {
+        unitCount += course.units;
+      } else {
+        unitCount += course.minUnits;
+      }
       courseCount += 1;
     });
     return [unitCount, courseCount];

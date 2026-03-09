@@ -63,7 +63,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
             <input
               className="units-input"
               type="number"
-              value={Number.isNaN(newUnits) ? '' : newUnits}
+              value={newUnits}
               placeholder="Units"
               onChange={(e) => setNewUnits(e.target.valueAsNumber)}
               onKeyDown={handleKeyDown}
