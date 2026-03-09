@@ -7,6 +7,7 @@ import { useIsMobile } from '../../../helpers/util';
 import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 import { CustomCourse } from '../../../types/types';
+import { removeCustomCourseFromRoadmap } from '../../../store/slices/roadmapSlice';
 
 interface CustomCourseCardProps {
   course: CustomCourse;
@@ -24,6 +25,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
 
   const onDelete = useCallback(() => {
     dispatch(removeCustomCourse(course.id));
+    dispatch(removeCustomCourseFromRoadmap(course.id));
   }, [dispatch, course.id]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -63,6 +65,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
             <input
               className="units-input"
               type="number"
+              min="0"
               value={newUnits}
               placeholder="Units"
               onChange={(e) => setNewUnits(e.target.valueAsNumber)}

@@ -202,16 +202,32 @@ export const roadmapSlice = createSlice({
       state.activeCustomCourse = action.payload.course;
     },
     updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
-      const updatedCourse = action.payload;
       state.plans.forEach((plan) => {
         plan.content.yearPlans.forEach((year) => {
           year.quarters.forEach((quarter) => {
             const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
             courses.forEach((course, index) => {
-              if ('courseName' in course && course.id === updatedCourse.id) {
-                quarter.courses[index] = updatedCourse as unknown as CourseGQLData;
+              if ('courseName' in course && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload as unknown as CourseGQLData;
               }
             });
+          });
+        });
+      });
+    },
+    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
+      const customCourseId = action.payload;
+
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            quarter.courses = courses.filter((course) => {
+              if ('courseName' in course) {
+                return course.id !== customCourseId;
+              }
+              return true;
+            }) as unknown as typeof quarter.courses;
           });
         });
       });
@@ -244,6 +260,7 @@ export const {
   updateTempPlannerIds,
   setActiveCustomCourse,
   updateRoadmapCustomCourse,
+  removeCustomCourseFromRoadmap,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
