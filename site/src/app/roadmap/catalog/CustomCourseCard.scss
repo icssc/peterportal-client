@@ -7,12 +7,13 @@
   font-size: 16px;
   padding: 12px;
   position: relative;
-  margin: 0px;
-
+  margin: 0;
   color: var(--mui-palette-secondary-main);
 
   display: grid;
-  grid-template-areas: 'A B' 'A C';
+  grid-template-areas:
+    'A B'
+    'A C';
   grid-template-columns: min-content auto;
   grid-template-rows: repeat(2, min-content);
   align-items: center;
@@ -22,7 +23,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: var(--mui-palette-secondary-main);
   }
 
   .course-drag-handle {
@@ -38,24 +38,32 @@
     }
   }
 
-  .course-and-info {
+  .course-card-top {
     grid-area: B;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .course-description {
+    grid-area: C;
+    min-width: 0;
   }
 
   .name {
     font-weight: bold;
-    color: var(--mui-palette-secondary-main);
+    min-width: 0;
   }
 
-  .course-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .description-input {
+    width: 75%;
+    min-width: 0;
   }
 
   .units {
     margin-left: auto;
-    color: inherit;
+    white-space: nowrap;
   }
 
   .units-input {
@@ -75,15 +83,52 @@
     }
   }
 
-  .course-description {
-    color: var(--mui-palette-secondary-main);
-
-    .input {
-      width: 70%;
-    }
-  }
-
   * {
     color: inherit !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .course {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    font-size: 14px;
+
+    .course-card-top {
+      display: flex;
+      align-items: center;
+    }
+
+    .name {
+      min-width: 0;
+    }
+
+    .name-input {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .units {
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .units-input {
+      width: 56px;
+      margin-left: auto;
+      margin-right: 2px;
+    }
+
+    .description-input {
+      width: 75%;
+      min-width: 0;
+    }
+
+    button.MuiIconButton-root {
+      margin: 0;
+      width: 32px;
+      height: 32px;
+    }
   }
 }
