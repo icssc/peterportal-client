@@ -11,7 +11,7 @@ import { ReactSortable } from 'react-sortablejs';
 import { customCourseSortable } from '../../../helpers/sortable';
 import { deepCopy } from '../../../helpers/util';
 import { CustomCourse } from '../../../types/types';
-import { setActiveCustomCourse } from '../../../store/slices/roadmapSlice';
+import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store/slices/roadmapSlice';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -54,6 +54,7 @@ const CustomCourses = () => {
 
   const handleUpdate = (course: CustomCourse) => {
     dispatch(updateCustomCourse({ ...course }));
+    dispatch(updateRoadmapCustomCourse(course));
   };
 
   return (

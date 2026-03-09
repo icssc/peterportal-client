@@ -201,6 +201,21 @@ export const roadmapSlice = createSlice({
       }
       state.activeCustomCourse = action.payload.course;
     },
+    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
+      const updatedCourse = action.payload;
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            courses.forEach((course, index) => {
+              if ('courseName' in course && course.id === updatedCourse.id) {
+                quarter.courses[index] = updatedCourse as unknown as CourseGQLData;
+              }
+            });
+          });
+        });
+      });
+    },
   },
 });
 
@@ -228,6 +243,7 @@ export const {
   setCHCSelection,
   updateTempPlannerIds,
   setActiveCustomCourse,
+  updateRoadmapCustomCourse,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
