@@ -186,7 +186,7 @@ const APExamsSection: FC = () => {
   const dispatch = useAppDispatch();
   const apExamInfo = useAppSelector((state) => state.transferCredits.apExamInfo);
   const userAPExams = useAppSelector((state) => state.transferCredits.userAPExams);
-  const [examName, setExamName] = useState<string | null>(null);
+  const [selectedExam, setSelectedExam] = useState<APExamOption | null>(null);
   const [score, setScore] = useState<number | null>(null);
 
   // Set selected rewards
@@ -199,6 +199,7 @@ const APExamsSection: FC = () => {
 
   // Save AP Exam to store
   useEffect(() => {
+    const examName = selectedExam?.label ?? null;
     if (!examName || !score) return;
     const examInfo = apExamInfo.find((exam) => exam.fullName === examName);
     const units = examInfo?.rewards?.find((r) => r.acceptableScores.includes(score))?.unitsGranted ?? 0;
@@ -208,10 +209,9 @@ const APExamsSection: FC = () => {
       if (isLoggedIn) trpc.transferCredits.addUserAPExam.mutate({ examName, score, units });
     }
 
-    // Remove exam from select options
-    setExamName(null);
+    setSelectedExam(null);
     setScore(null);
-  }, [dispatch, examName, score, apExamInfo, userAPExams, isLoggedIn]);
+  }, [dispatch, selectedExam, score, apExamInfo, userAPExams, isLoggedIn]);
 
   const baseSelectOptions: APExamOption[] = apExamInfo.map((exam) => ({
     value: exam,
@@ -234,9 +234,10 @@ const APExamsSection: FC = () => {
         <Autocomplete
           className="exam-input"
           options={apSelectOptions}
-          value={apSelectOptions.find((opt) => opt.label === examName) ?? null}
-          onChange={(_event, option) => setExamName(option?.label ?? null)}
+          value={selectedExam}
+          onChange={(_event, option) => setSelectedExam(option)}
           getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, value) => option.label === value.label}
           renderInput={(params) => (
             <TextField {...params} variant="outlined" size="small" placeholder="Add an AP Exam..." />
           )}
