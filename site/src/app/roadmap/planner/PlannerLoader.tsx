@@ -97,9 +97,9 @@ const PlannerLoader: FC = () => {
 
   // save function will update localStorage (thus comparisons above will work) and account roadmap
   const saveRoadmapAndUpsertTransfers = useCallback(
-    async (collapsedPlans: SavedPlannerData[], currentPlanIndex?: number) => {
+    async (collapsedLocalPlans: SavedPlannerData[], collapsedAccountPlans: SavedPlannerData[] | null, currentPlanIndex?: number) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      const result = await saveRoadmap(isLoggedIn, null, collapsedPlans, currentPlanIndex);
+      const result = await saveRoadmap(isLoggedIn, collapsedAccountPlans, collapsedLocalPlans, currentPlanIndex);
 
       if (result.success && isLoggedIn) {
         dispatch(setToastMsg('Roadmap saved to your account!'));
@@ -165,7 +165,7 @@ const PlannerLoader: FC = () => {
       if (initialAccountRoadmap) return setShowSyncModal(true);
 
       // Logged in + doesn't exist => update everything
-      saveRoadmapAndUpsertTransfers(initialLocalRoadmap.planners, initialLocalRoadmap.currentPlanIndex);
+      saveRoadmapAndUpsertTransfers(initialLocalRoadmap.planners, null, initialLocalRoadmap.currentPlanIndex);
     });
   }, [
     saveRoadmapAndUpsertTransfers,
@@ -184,11 +184,14 @@ const PlannerLoader: FC = () => {
     dispatch(setInvalidCourses(invalidCourses));
   }, [dispatch, currentPlanData, transferred]);
 
+  const [overrideLoading, setOverrideLoading] = useState(false);
+
   const overrideAccountRoadmap = async () => {
+    setOverrideLoading(true);
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
-    await saveRoadmapAndUpsertTransfers(localRoadmap.planners, localRoadmap.currentPlanIndex);
+    await saveRoadmapAndUpsertTransfers(localRoadmap.planners, initialAccountRoadmap?.planners ?? null, localRoadmap.currentPlanIndex);
     const roadmapWithIds = await loadRoadmap(true).then((res) => res.accountRoadmap!);
 
     // Update frontend state to show local data
@@ -211,10 +214,16 @@ const PlannerLoader: FC = () => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="inherit" variant="text" onClick={overrideAccountRoadmap}>
+        <Button
+          loading={overrideLoading}
+          disabled={overrideLoading}
+          color="inherit"
+          variant="text"
+          onClick={overrideAccountRoadmap}
+        >
           This Device
         </Button>
-        <Button variant="contained" onClick={() => setShowSyncModal(false)}>
+        <Button disabled={overrideLoading} variant="contained" onClick={() => setShowSyncModal(false)}>
           My Account
         </Button>
       </DialogActions>
