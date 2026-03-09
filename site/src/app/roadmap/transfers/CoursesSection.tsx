@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useRef } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import MenuSection, { SectionDescription } from './MenuSection';
 import MenuTile from './MenuTile';
@@ -46,22 +46,13 @@ const CourseCreditMenuTile: FC<{ course: TransferWithUnread<TransferredCourse> }
 const CoursesSection: FC = () => {
   const courses = useAppSelector((state) => state.transferCredits.transferredCourses);
   const [options, setOptions] = useState<CourseSelectOption[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [courseSearchValue, setCourseSearchValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const timeoutRef = useRef<number | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
 
   useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    if (!inputValue.trim()) {
+    if (!courseSearchValue.trim()) {
       setOptions([]);
       setLoading(false);
       return;
@@ -69,11 +60,14 @@ const CoursesSection: FC = () => {
 
     setLoading(true);
     const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
-    timeoutRef.current = window.setTimeout(async () => {
+    const timeout = window.setTimeout(async () => {
       try {
-        const response = await trpc.search.get.query({ query: inputValue, skip: 0, take: 10, resultType: 'course' });
+        const response = await trpc.search.get.query({
+          query: courseSearchValue,
+          skip: 0,
+          take: 10,
+          resultType: 'course',
+        });
         const courses = response.results.map((c) => c.result) as CourseAAPIResponse[];
         const newOptions: CourseSelectOption[] = courses.map((c) => ({
           value: { courseName: getCourseIdWithSpaces(c), units: c.maxUnits },
@@ -93,11 +87,10 @@ const CoursesSection: FC = () => {
     }, 300);
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearTimeout(timeout);
+      abortController.abort();
     };
-  }, [inputValue]);
+  }, [courseSearchValue]);
 
   const addCourse = (course: TransferredCourse) => {
     dispatch(addTransferredCourse(course));
@@ -126,21 +119,21 @@ const CoursesSection: FC = () => {
       <Autocomplete
         options={options}
         value={null}
-        inputValue={inputValue}
-        open={inputValue.length > 0 && (options.length > 0 || loading)}
+        inputValue={courseSearchValue}
+        open={courseSearchValue.length > 0 && (options.length > 0 || loading)}
         onInputChange={(_event, newInputValue) => {
-          setInputValue(newInputValue);
+          setCourseSearchValue(newInputValue);
         }}
         onChange={(_event, option) => {
           if (option) {
             addCourse(option.value);
-            setInputValue('');
+            setCourseSearchValue('');
             setOptions([]);
           }
         }}
         getOptionLabel={(option) => option.label}
         loading={loading}
-        noOptionsText={inputValue ? 'No courses found' : ''}
+        noOptionsText={courseSearchValue ? 'No courses found' : ''}
         className="course-search-select"
         renderInput={(params) => (
           <TextField {...params} variant="outlined" size="small" placeholder="Search for a course to add..." />
