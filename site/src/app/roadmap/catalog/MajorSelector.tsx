@@ -141,7 +141,12 @@ const MajorSelector: FC = () => {
         disableClearable
         className="major-select"
         renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" placeholder="Select majors..." />
+          <TextField
+            {...params}
+            variant="outlined"
+            size="small"
+            placeholder={selectedMajors.length === 0 ? 'Select majors...' : undefined}
+          />
         )}
       />
       {selectedMajors.map((data) => (

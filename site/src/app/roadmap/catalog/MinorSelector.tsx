@@ -112,7 +112,12 @@ const MinorSelector: FC = () => {
         disableClearable
         className="minor-select"
         renderInput={(params) => (
-          <TextField {...params} variant="outlined" size="small" placeholder="Select minors..." />
+          <TextField
+            {...params}
+            variant="outlined"
+            size="small"
+            placeholder={selectedMinors.length === 0 ? 'Select minors...' : undefined}
+          />
         )}
       />
       {selectedMinors.map((data) => (

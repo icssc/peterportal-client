@@ -438,7 +438,12 @@ const ReviewForm: FC<ReviewFormProps> = ({
               disableCloseOnSelect
               limitTags={3}
               renderInput={(params) => (
-                <TextField {...params} variant="outlined" size="small" placeholder="Select up to 3 tags" />
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  size="small"
+                  placeholder={selectedTags.length === 0 ? 'Select up to 3 tags' : undefined}
+                />
               )}
             />
           </FormControl>
