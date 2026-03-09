@@ -117,6 +117,7 @@ const CoursesSection: FC = () => {
       ))}
 
       <Autocomplete
+        className="course-search-select"
         options={options}
         value={null}
         inputValue={courseSearchValue}
@@ -134,7 +135,6 @@ const CoursesSection: FC = () => {
         getOptionLabel={(option) => option.label}
         loading={loading}
         noOptionsText={courseSearchValue ? 'No courses found' : ''}
-        className="course-search-select"
         renderInput={(params) => (
           <TextField {...params} variant="outlined" size="small" placeholder="Search for a course to add..." />
         )}
