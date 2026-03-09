@@ -265,7 +265,11 @@ function saveLocalRoadmap(planners: SavedPlannerData[], currentPlanIndex: number
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
-function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLookup: Record<number, number>) {
+function updateTempIdsInLocalRoadmap(
+  planners: SavedPlannerData[],
+  plannerIdLookup: Record<number, number>,
+  currentPlanIndex: number | undefined,
+) {
   if (Object.keys(plannerIdLookup).length == 0) return;
   const updatedPlanners = planners.map((planner) => {
     if (plannerIdLookup[planner.id]) {
@@ -273,7 +277,7 @@ function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLook
     }
     return planner;
   });
-  saveLocalRoadmap(updatedPlanners);
+  saveLocalRoadmap(updatedPlanners, currentPlanIndex);
 }
 
 export const saveRoadmap = async (
@@ -297,7 +301,7 @@ export const saveRoadmap = async (
     .then((lookup) => {
       plannerIdLookup = lookup;
       res = true;
-      updateTempIdsInLocalRoadmap(planners, plannerIdLookup);
+      updateTempIdsInLocalRoadmap(planners, plannerIdLookup, currentPlanIndex);
     })
     .catch(() => {
       res = false;
