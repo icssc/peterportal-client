@@ -204,7 +204,7 @@ const PlannerLoader: FC = () => {
   const syncAccount = async () => {
     setAccountLoading(true);
     if (!initialAccountRoadmap || !initialLocalRoadmap) return;
-    await saveRoadmapAndUpsertTransfers(initialAccountRoadmap.planners);
+    await saveRoadmapAndUpsertTransfers(initialAccountRoadmap.planners, null);
     setShowSyncModal(false);
   };
 
