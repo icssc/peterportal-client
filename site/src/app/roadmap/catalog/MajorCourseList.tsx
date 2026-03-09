@@ -121,12 +121,10 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       onSpecializationChange(major.id, updatedSpec);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setSpecialization({ majorId: major.id, specialization: updatedSpec }));
-      await fetchRequirements(major.id, updatedSpec?.id ?? null);
+      await fetchRequirements(major.id, updatedSpec?.id);
     },
     [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
   );
-
-  const selectedSpecIdOrSelected = majorWithSpec.selectedSpec?.id ?? selectedSpecId ?? '';
 
   const toggleExpand = () => setOpen(!open);
 
@@ -149,7 +147,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
           <Autocomplete
             className="specialization-select"
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === selectedSpecIdOrSelected) ?? null}
+            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id)) ?? null}
             onChange={(_event, option) => handleSpecializationChange(option)}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
