@@ -105,6 +105,7 @@ const MinorSelector: FC = () => {
         value={selectedMinors.map((m) => minorSelectOptions.find((o) => o.value.id === m.minor.id)!).filter(Boolean)}
         onChange={handleMinorChange}
         getOptionLabel={(option) => option.label}
+        getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
         loading={minorsLoading}
         disabled={minorsLoading}

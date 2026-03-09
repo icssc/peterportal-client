@@ -134,6 +134,7 @@ const MajorSelector: FC = () => {
         value={selectedMajors.map((m) => majorSelectOptions.find((o) => o.value.id === m.major.id)!).filter(Boolean)}
         onChange={handleMajorChange}
         getOptionLabel={(option) => option.label}
+        getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
         loading={majorsLoading}
         disabled={majorsLoading}
