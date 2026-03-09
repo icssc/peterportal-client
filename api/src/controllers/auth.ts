@@ -3,8 +3,17 @@ import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic
 import { db } from '../db';
 import { user } from '../db/schema';
 import { createOIDCClient } from '../config/oidc';
+import { SESSION_LENGTH } from '../config/constants';
 
 const router = express.Router();
+
+function clearSharedCookie(req: Request, res: Response) {
+  const isLocalhost = req.hostname === 'localhost';
+  res.clearCookie('icssc_logged_in', {
+    path: '/',
+    ...(isLocalhost ? {} : { domain: 'antalmanac.com' }),
+  });
+}
 
 interface OIDCUserInfo {
   sub: string;
@@ -62,7 +71,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
   res.cookie('icssc_logged_in', '1', {
     path: '/',
     ...(isLocalhost ? {} : { domain: 'antalmanac.com' }),
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: SESSION_LENGTH,
     sameSite: 'lax',
     secure: !isLocalhost,
   });
@@ -114,11 +123,7 @@ router.get('/google/callback', async function (req, res) {
 
   // Handle error=login_required from silent SSO attempt
   if (req.query.error === 'login_required') {
-    const isLocalhost = req.hostname === 'localhost';
-    res.clearCookie('icssc_logged_in', {
-      path: '/',
-      ...(isLocalhost ? {} : { domain: 'antalmanac.com' }),
-    });
+    clearSharedCookie(req, res);
     res.redirect(returnTo);
     return;
   }
@@ -183,12 +188,7 @@ router.get('/logout', function (req, res) {
     // clear the user cookie
     res.clearCookie('user');
 
-    // Clear shared SSO cookie
-    const isLocalhost = req.hostname === 'localhost';
-    res.clearCookie('icssc_logged_in', {
-      path: '/',
-      ...(isLocalhost ? {} : { domain: 'antalmanac.com' }),
-    });
+    clearSharedCookie(req, res);
 
     // Redirect to OIDC logout endpoint
     const logoutUrl = new URL(`${process.env.OIDC_ISSUER_URL}/logout`);
