@@ -71,7 +71,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
   const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
   const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
-  const [tagsOpen, setTagsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
@@ -433,19 +432,10 @@ const ReviewForm: FC<ReviewFormProps> = ({
               options={tags}
               value={selectedTags}
               onChange={(_event, newValue) => {
-                const limitedTags = newValue.slice(0, 3);
-                setSelectedTags(limitedTags);
-                if (limitedTags.length >= 3) {
-                  setTagsOpen(false);
-                }
+                setSelectedTags(newValue.slice(0, 3));
               }}
-              open={selectedTags.length < 3 && tagsOpen}
-              onOpen={() => setTagsOpen(true)}
-              onClose={() => setTagsOpen(false)}
               getOptionLabel={(option) => option}
-              getOptionDisabled={() => selectedTags.length >= 3}
               disableCloseOnSelect
-              disableClearable
               limitTags={3}
               renderInput={(params) => (
                 <TextField {...params} variant="outlined" size="small" placeholder="Select up to 3 tags" />
