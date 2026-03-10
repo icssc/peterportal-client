@@ -261,6 +261,20 @@ theme = createTheme(theme, {
       },
     },
     MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          '& .MuiChip-root': {
+            height: 24,
+            fontSize: 14,
+            borderRadius: 2,
+          },
+          '& .MuiChip-deleteIcon': {
+            color: 'var(--mui-palette-text-primary)',
+            fontSize: 16,
+            margin: '0 4px 0 -4px',
+          },
+        },
+      },
       variants: [xsmall],
     },
   },
