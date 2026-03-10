@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import ReviewCard from './ReviewCard';
-import ReviewForm from '../ReviewForm/ReviewForm';
+// import OldReviewForm from '../OldReviewForm/OldReviewForm';
 import './Review.scss';
 
 import {
@@ -19,6 +19,7 @@ import { ReviewData } from '@peterportal/types';
 import AddIcon from '@mui/icons-material/Add';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 export interface ReviewProps {
   course?: CourseGQLData;
@@ -223,7 +224,7 @@ const Review: FC<ReviewProps> = (props) => {
             </span>
           </Tooltip>
         </div>
-        <ReviewForm closeForm={closeForm} show={showForm} {...props} />
+        <ReviewForm open={showForm} handleClose={closeForm} {...props} />
       </>
     );
   }

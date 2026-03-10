@@ -6,7 +6,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import ReviewForm from '../ReviewForm/ReviewForm';
+// import OldReviewForm from '../OldReviewForm/OldReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { addPreview } from '../../store/slices/previewSlice';
 import { useCurrentPreview } from '../../hooks/preview';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -93,8 +94,8 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         course={course}
         professor={professor}
         reviewToEdit={review}
-        closeForm={closeReviewForm}
-        show={showReviewForm}
+        handleClose={closeReviewForm}
+        open={showReviewForm}
         editing
         terms={sortedTerms}
       />

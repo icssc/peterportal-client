@@ -1,23 +1,19 @@
-@use '../../globals';
+.review-form-dialog {
+  .MuiFormLabel-root {
+    color: var(--mui-palette-text-primary);
 
-.review-form-modal {
-  // "paper" refers to the component used internally to render the Dialog's content
-  .MuiDialog-paper {
-    width: 350px;
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    overflow-y: auto;
-  }
+    &.Mui-focused {
+      color: var(--mui-palette-text-primary);
+    }
 
-  .MuiDialogContentText-root {
-    margin-top: 4px;
-    font-size: 12px;
-    font-style: italic;
+    .MuiFormLabel-asterisk {
+      color: var(--mui-palette-error-main);
+    }
   }
 
   .year-quarter-row,
-  .grade-difficulty-row {
+  .grade-difficulty-row,
+  .course-professor-grade-row {
     display: flex;
     gap: 16px;
 
@@ -26,46 +22,16 @@
     }
   }
 
-  .rating-error .MuiRating-iconEmpty {
-    color: var(--mui-palette-error-main);
-  }
+  .MuiFormControlLabel-root {
+    margin-right: auto;
+    align-items: flex-start;
 
-  .tag-select {
-    .tag-select__menu {
-      margin-top: 0;
-      border-radius: 0 0 8px 8px;
-      overflow: hidden;
+    .MuiSwitch-root {
+      margin-left: -6px;
     }
 
-    .tag-select__menu-list {
-      padding: 0;
+    .MuiFormControlLabel-label {
+      font-size: 12px;
     }
-
-    .tag-select__control {
-      background-color: inherit;
-    }
-
-    .tag-select__control--is-focused {
-      border-color: var(--mui-palette-secondary-main);
-    }
-
-    .tag-select__value-container {
-      background-color: inherit;
-    }
-
-    .tag-select__multi-value {
-      background-color: var(--mui-palette-overlay-overlay2);
-    }
-  }
-
-  .anonymous-checkbox {
-    margin-top: 16px;
-  }
-
-  .review-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding-top: 16px;
   }
 }
