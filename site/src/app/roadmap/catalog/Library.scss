@@ -7,7 +7,7 @@
 }
 
 .custom-courses {
-  gap: 16px;
+  gap: 12px;
 }
 
 .saved-courses,
@@ -48,8 +48,6 @@
 
 .custom-courses {
   .section-content {
-    gap: 16px;
-
     .add-card-button {
       box-shadow: 0 0 2px 0 #60616680;
       background: var(--mui-palette-overlay-overlay1);
