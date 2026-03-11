@@ -194,6 +194,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
       ],
       transfers: roadmap.transfers,
       timestamp: roadmap.timestamp,
+      currentPlanIndex: roadmap.currentPlanIndex,
     };
   }
 }
@@ -259,12 +260,16 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
   return { accountRoadmap, localRoadmap };
 };
 
-function saveLocalRoadmap(planners: SavedPlannerData[]) {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners };
+function saveLocalRoadmap(planners: SavedPlannerData[], currentPlanIndex: number | undefined) {
+  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, currentPlanIndex };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
-function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLookup: Record<number, number>) {
+function updateTempIdsInLocalRoadmap(
+  planners: SavedPlannerData[],
+  plannerIdLookup: Record<number, number>,
+  currentPlanIndex: number | undefined,
+) {
   if (Object.keys(plannerIdLookup).length == 0) return;
   const updatedPlanners = planners.map((planner) => {
     if (plannerIdLookup[planner.id]) {
@@ -272,15 +277,16 @@ function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLook
     }
     return planner;
   });
-  saveLocalRoadmap(updatedPlanners);
+  saveLocalRoadmap(updatedPlanners, currentPlanIndex);
 }
 
 export const saveRoadmap = async (
   isLoggedIn: boolean,
   lastSavedPlanners: SavedPlannerData[] | null,
   planners: SavedPlannerData[],
+  currentPlanIndex?: number,
 ) => {
-  saveLocalRoadmap(planners);
+  saveLocalRoadmap(planners, currentPlanIndex);
 
   if (!isLoggedIn) return { success: true };
 
@@ -289,13 +295,13 @@ export const saveRoadmap = async (
 
   const changes = compareRoadmaps(lastSavedPlanners ?? [], planners);
   changes.overwrite = !lastSavedPlanners;
-
+  changes.currentPlanIndex = currentPlanIndex;
   await trpc.roadmaps.save
     .mutate(changes)
     .then((lookup) => {
       plannerIdLookup = lookup;
       res = true;
-      updateTempIdsInLocalRoadmap(planners, plannerIdLookup);
+      updateTempIdsInLocalRoadmap(planners, plannerIdLookup, currentPlanIndex);
     })
     .catch(() => {
       res = false;
