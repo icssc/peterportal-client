@@ -45,7 +45,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
           <ListItemIcon>
             <PlaylistAddCheckIcon />
           </ListItemIcon>
-          <ListItemText primary="Verify Reviews" />
+          <ListItemText primary="VERIFY REVIEWS" />
         </ListItemButton>
       </ListItem>
       <ListItem>
@@ -58,7 +58,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
           <ListItemIcon>
             <FlagIcon />
           </ListItemIcon>
-          <ListItemText primary="View Reports" />
+          <ListItemText primary="VIEW REPORTS" />
         </ListItemButton>
       </ListItem>
     </>
@@ -75,14 +75,14 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
   const isLoggedIn = useIsLoggedIn();
 
   return (
-    <List className="profile-popover-links">
+    <List className="profile-popover-links profile-menu-links">
       {isMobile && (
         <ListItem>
           <ListItemButton href="https://antalmanac.com" className="profile-popover-link" component="a">
             <ListItemIcon>
               <EventNoteIcon />
             </ListItemIcon>
-            <ListItemText primary="Go to Scheduler" />
+            <ListItemText primary="GO TO SCHEDULER" />
           </ListItemButton>
         </ListItem>
       )}
@@ -97,7 +97,7 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
             <ListItemIcon>
               <RateReviewIcon />
             </ListItemIcon>
-            <ListItemText primary="Your Reviews" />
+            <ListItemText primary="YOUR REVIEWS" />
           </ListItemButton>
         </ListItem>
       )}
@@ -150,7 +150,7 @@ const ProfileThemeMenu = () => {
 
 const DonateAboutFeedbackButtons = () => {
   return (
-    <List className="profile-popover-links horizontal-list">
+    <List className="profile-popover-links donate-about-feedback-buttons">
       <ListItem>
         <ListItemButton href="https://venmo.com/u/ICSSC" className="profile-popover-link" component="a" target="_blank">
           <ListItemIcon>
@@ -193,14 +193,14 @@ const AuthButton = () => {
   const isLoggedIn = useIsLoggedIn();
 
   return (
-    <List className="profile-popover-links">
+    <List className="profile-popover-links profile-menu-links">
       {isLoggedIn ? (
         <ListItem>
           <ListItemButton href="/planner/api/users/auth/logout" className="profile-popover-link" component="a">
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText primary="Log Out" />
+            <ListItemText primary="LOG OUT" />
           </ListItemButton>
         </ListItem>
       ) : (
@@ -247,7 +247,6 @@ const Profile = () => {
           <DonateAboutFeedbackButtons />
           <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
-          {/* <Divider /> */}
           <AuthButton />
         </div>
       </Popover>
