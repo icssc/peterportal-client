@@ -37,7 +37,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
     <>
       <ListItem>
         <ListItemButton
-          className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
+          className={'profile-popover-link' + (pathname === '/admin/verify' ? ' active' : '')}
           href="/admin/verify"
           onClick={onClose}
           component={Link}
@@ -50,7 +50,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
       </ListItem>
       <ListItem>
         <ListItemButton
-          className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
+          className={'profile-popover-link' + (pathname === '/admin/reports' ? ' active' : '')}
           href="/admin/reports"
           onClick={onClose}
           component={Link}
@@ -148,15 +148,20 @@ const ProfileThemeMenu = () => {
   );
 };
 
-const DonateAboutFeedbackButtons = () => {
+const ExternalLinksRow = () => {
   return (
-    <List className="profile-popover-links donate-about-feedback-buttons">
+    <List className="profile-popover-links external-links-row">
       <ListItem>
-        <ListItemButton href="https://venmo.com/u/ICSSC" className="profile-popover-link" component="a" target="_blank">
+        <ListItemButton
+          href="https://antalmanac.com/feedback"
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
           <ListItemIcon>
-            <FavoriteRoundedIcon />
+            <AssignmentIcon />
           </ListItemIcon>
-          <ListItemText primary="DONATE" />
+          <ListItemText primary="FEEDBACK" />
         </ListItemButton>
       </ListItem>
       <ListItem>
@@ -173,16 +178,11 @@ const DonateAboutFeedbackButtons = () => {
         </ListItemButton>
       </ListItem>
       <ListItem>
-        <ListItemButton
-          href="https://antalmanac.com/feedback"
-          className="profile-popover-link"
-          component="a"
-          target="_blank"
-        >
+        <ListItemButton href="https://venmo.com/u/ICSSC" className="profile-popover-link" component="a" target="_blank">
           <ListItemIcon>
-            <AssignmentIcon />
+            <FavoriteRoundedIcon />
           </ListItemIcon>
-          <ListItemText primary="FEEDBACK" />
+          <ListItemText primary="DONATE" />
         </ListItemButton>
       </ListItem>
     </List>
@@ -244,7 +244,7 @@ const Profile = () => {
           <UserInformation user={user} />
           <ProfileThemeMenu />
           <Divider />
-          <DonateAboutFeedbackButtons />
+          <ExternalLinksRow />
           <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
           <AuthButton />

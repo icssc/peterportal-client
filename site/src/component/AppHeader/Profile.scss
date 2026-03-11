@@ -3,6 +3,10 @@
     font-size: 18px;
   }
 
+  .MuiListItemButton-root {
+    height: 38px;
+  }
+
   .MuiPaper-root {
     border: 1px solid var(--mui-palette-overlay-overlay2);
     border-radius: var(--mui-shape-borderRadiusLg);
@@ -66,6 +70,10 @@
     .tab-selector {
       background-color: var(--mui-palette-overlay-overlay2);
     }
+
+    .MuiSvgIcon-root {
+      font-size: 18px;
+    }
   }
 
   .profile-popover-links {
@@ -77,38 +85,45 @@
 
     .MuiListItemButton-root {
       padding-inline: 10px;
-      border-radius: var(--mui-shape-borderRadiusLg);
+      border-radius: var(--mui-shape-borderRadius);
     }
 
     .MuiListItemIcon-root {
       min-width: 32px;
     }
-  }
 
-  .profile-popover-link.active {
-    color: var(--mui-palette-secondary-main);
-
-    .MuiListItemIcon-root {
+    .profile-popover-link.active {
       color: var(--mui-palette-secondary-main);
+
+      .MuiSvgIcon-root {
+        color: var(--mui-palette-secondary-main);
+      }
     }
   }
 
-  .donate-about-feedback-buttons {
+  .external-links-row {
     display: flex;
     justify-content: space-between;
 
     & .MuiTypography-root {
-      font-size: 10px;
+      font-size: 10.75px;
+      font-weight: 500;
     }
 
     .MuiSvgIcon-root {
       font-size: 22px;
+      color: var(--mui-palette-text-primary);
     }
   }
 
   .profile-menu-links {
     .MuiTypography-root {
       font-size: 12px;
+      font-weight: 500;
+    }
+
+    .MuiSvgIcon-root {
+      color: var(--mui-palette-text-primary);
     }
   }
 }
