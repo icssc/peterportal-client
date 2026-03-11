@@ -209,7 +209,7 @@ const AuthButton = () => {
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
-            <ListItemText primary="Sign In" />
+            <ListItemText primary="SIGN IN" />
           </ListItemButton>
         </ListItem>
       )}
