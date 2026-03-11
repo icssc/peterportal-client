@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { quarterDisplayNames } from '../../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useMemo } from 'react';
 import {
   createQuarterCourseLoadingPlaceholder,
   reviseRoadmap,
@@ -48,22 +49,18 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const currentPlan = useAppSelector(selectCurrentPlan);
   const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
 
-  const calculateQuarterStats = () => {
+  // Calculate Quarter Stats
+  const unitCount = useMemo(() => {
     let unitCount = 0;
-    let courseCount = 0;
     data.courses.forEach((course) => {
       if (course.userChosenUnits) {
         unitCount += course.userChosenUnits;
       } else {
         unitCount += course.minUnits;
       }
-
-      courseCount += 1;
     });
-    return [unitCount, courseCount];
-  };
-
-  let unitCount = calculateQuarterStats()[0];
+    return unitCount;
+  }, [data]);
 
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
@@ -180,7 +177,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               data={course}
               onSetVariableUnits={(units) => {
                 const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
-                unitCount = calculateQuarterStats()[0];
                 if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
               }}
               requiredCourses={requiredCourses}
