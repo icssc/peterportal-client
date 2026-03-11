@@ -10,16 +10,22 @@ import {
   setActiveCourse,
   showMobileCatalog,
 } from '../../../store/slices/roadmapSlice';
-import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
+import { CourseGQLData, CourseIdentifier, CustomCourse, PlannerQuarterData } from '../../../types/types';
 import './Quarter.scss';
 
 import Course from './Course';
+import CustomCourseCard from '../catalog/CustomCourseCard';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../../helpers/sortable';
 
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Button, Card } from '@mui/material';
-import { ModifiedQuarter, modifyQuarterCourse, reorderQuarterCourse } from '../../../helpers/roadmapEdits';
+import {
+  ModifiedQuarter,
+  modifyQuarterCourse,
+  reorderQuarterCourse,
+  modifyCustomQuarterCourse,
+} from '../../../helpers/roadmapEdits';
 
 interface QuarterProps {
   yearIndex: number;
@@ -38,16 +44,22 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<CourseIdentifier | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeCustomCourse = useAppSelector((state) => state.roadmap.activeCustomCourse);
   const activeCourseDraggedFrom = useAppSelector((state) => state.roadmap.activeCourseDragSource);
   const isDragging = activeCourse !== null;
   const currentPlan = useAppSelector(selectCurrentPlan);
   const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
+  const courses = data.courses as (CourseGQLData | CustomCourse)[];
 
   const calculateQuarterStats = () => {
     let unitCount = 0;
     let courseCount = 0;
-    data.courses.forEach((course) => {
-      unitCount += course.minUnits;
+    courses.forEach((course) => {
+      if ('courseName' in course) {
+        unitCount += course.units;
+      } else {
+        unitCount += course.minUnits;
+      }
       courseCount += 1;
     });
     return [unitCount, courseCount];
@@ -80,6 +92,12 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
       quarter: data,
       courseIndex: event.newIndex!,
     };
+    if (activeCustomCourse) {
+      const revision = modifyCustomQuarterCourse(currentPlan.id, activeCustomCourse, addToQuarter);
+      dispatch(reviseRoadmap(revision));
+      return;
+    }
+    if (!activeCourse) return;
     const revision = modifyQuarterCourse(currentPlan.id, activeCourse!, sourceQuarter, addToQuarter);
     dispatch(reviseRoadmap(revision));
   };
@@ -153,7 +171,19 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         }}
         {...quarterSortable}
       >
-        {data.courses.map((course, index) => {
+        {courses.map((course, index) => {
+          if ('courseName' in course) {
+            return (
+              <CustomCourseCard
+                key={`custom-${course.id}-${index}`}
+                course={course}
+                handleUpdate={() => {}}
+                inRoadmap={true}
+                removeCourseAt={() => removeCourseAt(index)}
+              />
+            );
+          }
+
           let requiredCourses: string[] = null!;
           // if this is an invalid course, set the required courses
           invalidCourses.forEach((ic) => {
