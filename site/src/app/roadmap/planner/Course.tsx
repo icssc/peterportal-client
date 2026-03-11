@@ -9,13 +9,12 @@ import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../
 import { CourseGQLData, PlannerCourseData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-
-import { IconButton, OutlinedInput, ClickAwayListener } from '@mui/material';
+import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import EditIcon from '@mui/icons-material/Edit';
 import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
+import CustomUnits from './CustomUnits';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
 
@@ -82,7 +81,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, onDelete, openPopoverLeft } = props;
+  const { requiredCourses, onDelete, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -108,54 +107,10 @@ const Course: FC<CourseProps> = (props) => {
   const defaultUnitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
   const [inputUnit, setInputUnit] = useState(userChosenUnits?.toString() ?? '');
   const [editUnitOpened, setEditUnitOpened] = useState(false);
-  const [hasInputError, setHasInputError] = useState(false);
 
   useEffect(() => {
     setInputUnit(userChosenUnits?.toString() ?? '');
   }, [userChosenUnits]);
-
-  // Variable Unit Input Box Functions
-  const handleVariableUnitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const input = e.target.value;
-    const units = Number(input);
-    setInputUnit(input);
-
-    // @todo edit error message
-    setHasInputError(Number.isNaN(units) || (input !== '' && (units < minUnits || units > maxUnits)));
-  };
-
-  const handleVarUnitSubmit = () => {
-    const nextUnits = inputUnit === '' ? undefined : Number(inputUnit);
-    setEditUnitOpened(false);
-    setHasInputError(false);
-    props.onSetVariableUnits?.(nextUnits);
-  };
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key == 'Enter' && !hasInputError) {
-      event.preventDefault();
-      handleVarUnitSubmit();
-    }
-    if (event.key == 'Escape') {
-      event.preventDefault();
-      setInputUnit(userChosenUnits?.toString() ?? '');
-      setEditUnitOpened(false);
-    }
-  };
-  const handleClickAway = () => {
-    if (hasInputError) {
-      setEditUnitOpened(false);
-    } else {
-      handleVarUnitSubmit();
-    }
-  };
-
-  const handleEditClick = () => {
-    setInputUnit(userChosenUnits?.toString() ?? '');
-    setHasInputError(false);
-    setEditUnitOpened(true);
-  };
 
   const displayedUnits = userChosenUnits ?? undefined;
 
@@ -173,45 +128,20 @@ const Course: FC<CourseProps> = (props) => {
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
-          {
-            // @todo fix atrocious code
-            isInRoadmap && minUnits !== maxUnits && (
-              <div className="custom-units">
-                {editUnitOpened ? (
-                  <>
-                    <ClickAwayListener onClickAway={handleClickAway}>
-                      <OutlinedInput
-                        className="unit-input"
-                        placeholder={defaultUnitsText}
-                        value={inputUnit}
-                        onChange={handleVariableUnitChange}
-                        onKeyDown={handleKeyPress}
-                        size="small"
-                        fullWidth={false}
-                        error={hasInputError}
-                        /* eslint-disable-next-line jsx-a11y/no-autofocus */
-                        autoFocus
-                      />
-                    </ClickAwayListener>
-
-                    <span className="units">units</span>
-                  </>
-                ) : (
-                  <>
-                    <IconButton className="course-edit-btn">
-                      <EditIcon onClick={handleEditClick} fontSize="small" />
-                    </IconButton>
-
-                    {displayedUnits ? (
-                      <span className="units">{`${displayedUnits} unit${pluralize(displayedUnits)}`}</span>
-                    ) : (
-                      <span className="units">{defaultUnitsText}</span>
-                    )}
-                  </>
-                )}
-              </div>
-            )
-          }
+          {isInRoadmap && minUnits !== maxUnits && (
+            <CustomUnits
+              inputUnit={inputUnit}
+              setInputUnit={setInputUnit}
+              userChosenUnits={userChosenUnits}
+              displayedUnits={displayedUnits}
+              defaultUnitsText={defaultUnitsText}
+              editUnitOpened={editUnitOpened}
+              setEditUnitOpened={setEditUnitOpened}
+              minUnits={minUnits}
+              maxUnits={maxUnits}
+              onSetVariableUnits={onSetVariableUnits}
+            />
+          )}
         </div>
         {isInRoadmap ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
