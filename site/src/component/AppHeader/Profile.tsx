@@ -25,7 +25,6 @@ import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme, UserMetadata } from '@peterportal/types';
 import { useIsMobile } from '../../helpers/util';
-import { FEEDBACK_FORM_URL } from '../../helpers/constants';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
 
@@ -79,7 +78,7 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
     <List className="profile-popover-links">
       {isMobile && (
         <ListItem>
-          <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
+          <ListItemButton href="https://antalmanac.com" className="profile-popover-link" component="a">
             <ListItemIcon>
               <EventNoteIcon />
             </ListItemIcon>
@@ -153,12 +152,7 @@ const DonateAboutFeedbackButtons = () => {
   return (
     <List className="profile-popover-links horizontal-list">
       <ListItem>
-        <ListItemButton
-          href={'https://venmo.com/u/ICSSC'}
-          className="profile-popover-link"
-          component="a"
-          target="_blank"
-        >
+        <ListItemButton href="https://venmo.com/u/ICSSC" className="profile-popover-link" component="a" target="_blank">
           <ListItemIcon>
             <FavoriteRoundedIcon />
           </ListItemIcon>
@@ -167,7 +161,7 @@ const DonateAboutFeedbackButtons = () => {
       </ListItem>
       <ListItem>
         <ListItemButton
-          href={'https://docs.icssc.club/docs/about/antalmanac/merge'}
+          href="https://docs.icssc.club/docs/about/antalmanac/merge"
           className="profile-popover-link"
           component="a"
           target="_blank"
@@ -179,7 +173,12 @@ const DonateAboutFeedbackButtons = () => {
         </ListItemButton>
       </ListItem>
       <ListItem>
-        <ListItemButton href={FEEDBACK_FORM_URL} className="profile-popover-link" component="a" target="_blank">
+        <ListItemButton
+          href="https://antalmanac.com/feedback"
+          className="profile-popover-link"
+          component="a"
+          target="_blank"
+        >
           <ListItemIcon>
             <AssignmentIcon />
           </ListItemIcon>
@@ -197,7 +196,7 @@ const AuthButton = () => {
     <List className="profile-popover-links">
       {isLoggedIn ? (
         <ListItem>
-          <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
+          <ListItemButton href="/planner/api/users/auth/logout" className="profile-popover-link" component="a">
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -206,7 +205,7 @@ const AuthButton = () => {
         </ListItem>
       ) : (
         <ListItem>
-          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemButton href="/planner/api/users/auth/google" className="profile-popover-link" component="a">
             <ListItemIcon>
               <AccountCircleIcon />
             </ListItemIcon>
