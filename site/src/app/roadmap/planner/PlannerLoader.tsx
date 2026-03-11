@@ -204,7 +204,7 @@ const PlannerLoader: FC = () => {
   const syncAccount = async () => {
     setAccountLoading(true);
     if (!initialAccountRoadmap || !initialLocalRoadmap) return;
-    await saveRoadmapAndUpsertTransfers(initialAccountRoadmap.planners, null);
+    await saveRoadmap(isLoggedIn, initialAccountRoadmap?.planners ?? null, initialAccountRoadmap?.planners ?? null);
     setShowSyncModal(false);
   };
 
@@ -236,7 +236,7 @@ const PlannerLoader: FC = () => {
           loading={accountLoading}
           disabled={overrideLoading || accountLoading}
           variant="contained"
-          onClick={() => syncAccount()}
+          onClick={syncAccount}
         >
           My Account
         </Button>
