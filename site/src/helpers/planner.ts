@@ -18,6 +18,7 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
+  CustomCourse,
   InvalidCourseData,
   PlannerData,
   PlannerQuarterData,
@@ -90,7 +91,12 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => course.id);
+      savedQuarter.courses = quarter.courses.map((course) => {
+        if ('courseName' in (course as unknown as CustomCourse)) {
+          return `CUSTOM#${(course as unknown as CustomCourse).id}`;
+        }
+        return course.id;
+      });
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -131,11 +137,20 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
-
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
-        quarter.courses = savedQuarter.courses.map((courseId) => courseLookup[courseId]).filter((course) => !!course);
+        quarter.courses = savedQuarter.courses
+          .map((courseId) => {
+            const customMatch = /^CUSTOM#(\d+)$/.exec(courseId);
+            if (customMatch) {
+              const id = Number.parseInt(customMatch[1], 10);
+              const placeholder: CustomCourse = { id, courseName: '', units: 0, description: '' };
+              return placeholder as unknown as PlannerQuarterData['courses'][number];
+            }
+            return courseLookup[courseId];
+          })
+          .filter((course) => !!course);
 
         year.quarters.push(quarter);
       });

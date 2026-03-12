@@ -7,6 +7,9 @@ export const customCoursesSlice = createSlice({
     userCustomCourses: [] as CustomCourse[],
   },
   reducers: {
+    setCustomCourses: (state, action: PayloadAction<CustomCourse[]>) => {
+      state.userCustomCourses = action.payload;
+    },
     addCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
       state.userCustomCourses.push(action.payload);
     },
@@ -24,6 +27,6 @@ export const customCoursesSlice = createSlice({
   },
 });
 
-export const { addCustomCourse, removeCustomCourse, updateCustomCourse } = customCoursesSlice.actions;
+export const { setCustomCourses, addCustomCourse, removeCustomCourse, updateCustomCourse } = customCoursesSlice.actions;
 
 export default customCoursesSlice.reducer;
