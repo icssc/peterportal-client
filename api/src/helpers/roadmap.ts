@@ -25,7 +25,17 @@ export async function queryGetPlanners(where: SQL) {
         'quarters', (SELECT jsonb_agg(jsonb_build_object(
           'name', ${plannerQuarter.quarterName.name},
           'courses', (
-            SELECT COALESCE(jsonb_agg(pc.course_id ORDER BY pc.index ASC), '[]'::jsonb)
+            SELECT COALESCE(
+              jsonb_agg(
+                CASE
+                  WHEN pc.course_id = 'CUSTOM' AND pc.custom_card_id IS NOT NULL
+                    THEN ('CUSTOM#' || pc.custom_card_id::text)
+                  ELSE pc.course_id
+                END
+                ORDER BY pc.index ASC
+              ),
+              '[]'::jsonb
+            )
             FROM planner_course pc
             WHERE pc.planner_id = pq.planner_id
               AND pc.start_year = pq.start_year
@@ -103,13 +113,18 @@ export async function setQuarterCourses(tx: TransactionType, quarters: PlannerQu
 
     if (quarter.data.courses.length === 0) return;
 
-    const rows = quarter.data.courses.map((courseId, index) => ({
-      plannerId,
-      startYear,
-      quarterName,
-      courseId,
-      index,
-    }));
+    const rows = quarter.data.courses.map((courseId, index) => {
+      const match = /^CUSTOM#(\d+)$/.exec(courseId);
+      const customCardId = match ? Number.parseInt(match[1], 10) : null;
+      return {
+        plannerId,
+        startYear,
+        quarterName,
+        courseId: customCardId !== null ? 'CUSTOM' : courseId,
+        customCardId,
+        index,
+      };
+    });
     await tx.insert(plannerCourse).values(rows);
   });
   await Promise.all(updates);
