@@ -49,6 +49,10 @@
     cursor: pointer;
   }
 
+  .group-header-btns {
+    white-space: nowrap;
+  }
+
   .group-header svg.bi {
     flex-shrink: 0;
   }

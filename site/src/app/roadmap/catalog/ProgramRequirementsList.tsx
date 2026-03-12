@@ -193,12 +193,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, ove
             }}
           />
         )}
-        <Dialog
-          open={isOverride}
-          onClose={() => {
-            showIsOverride(false);
-          }}
-        >
+        <Dialog open={isOverride} onClose={() => showIsOverride(false)}>
           <DialogTitle>Confirm Force Completion</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -211,21 +206,22 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, ove
               color="inherit"
               variant="text"
               onClick={(e) => {
+                e.stopPropagation();
+                showIsOverride(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={(e) => {
                 setOverride(true);
                 showIsOverride(false);
                 e.stopPropagation();
               }}
             >
               Force Complete
-            </Button>
-            <Button
-              variant="contained"
-              onClick={(e) => {
-                e.stopPropagation();
-                showIsOverride(false);
-              }}
-            >
-              Cancel
             </Button>
           </DialogActions>
         </Dialog>
