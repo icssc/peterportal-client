@@ -178,57 +178,59 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, ove
       }}
     >
       <b>{title}</b>
-      {open && (
-        <Checkbox
-          name={'override-' + storeKey}
-          checked={overridden}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!overridden) {
-              showIsOverride(true);
-            } else {
-              setOverride(false);
-            }
+      <div className="group-header-btns">
+        {open && (
+          <Checkbox
+            name={'override-' + storeKey}
+            checked={overridden}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!overridden) {
+                showIsOverride(true);
+              } else {
+                setOverride(false);
+              }
+            }}
+          />
+        )}
+        <Dialog
+          open={isOverride}
+          onClose={() => {
+            showIsOverride(false);
           }}
-        />
-      )}
-      <Dialog
-        open={isOverride}
-        onClose={() => {
-          showIsOverride(false);
-        }}
-      >
-        <DialogTitle>Confirm Force Completion</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to force complete this requirement for Peter's Roadmap? You should only do this if you
-            are sure the courses you've taken satisfy it.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="inherit"
-            variant="text"
-            onClick={(e) => {
-              setOverride(true);
-              showIsOverride(false);
-              e.stopPropagation();
-            }}
-          >
-            Force Complete
-          </Button>
-          <Button
-            variant="contained"
-            onClick={(e) => {
-              e.stopPropagation();
-              showIsOverride(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+        >
+          <DialogTitle>Confirm Force Completion</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to force complete this requirement for Peter's Roadmap? You should only do this if
+              you are sure the courses you've taken satisfy it.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="inherit"
+              variant="text"
+              onClick={(e) => {
+                setOverride(true);
+                showIsOverride(false);
+                e.stopPropagation();
+              }}
+            >
+              Force Complete
+            </Button>
+            <Button
+              variant="contained"
+              onClick={(e) => {
+                e.stopPropagation();
+                showIsOverride(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+      </div>
     </div>
   );
 };
