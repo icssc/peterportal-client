@@ -8,6 +8,8 @@ import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 import { CustomCourse } from '../../../types/types';
 import { removeCustomCourseFromRoadmap } from '../../../store/slices/roadmapSlice';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import trpc from '../../../trpc';
 
 interface CustomCourseCardProps {
   course: CustomCourse;
@@ -19,21 +21,44 @@ interface CustomCourseCardProps {
 export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap, removeCourseAt }) => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
+  const isLoggedIn = useIsLoggedIn();
   const [newName, setNewName] = useState<string>(course.courseName);
   const [newUnits, setNewUnits] = useState<number>(course.units);
   const [newDescription, setNewDescription] = useState<string>(course.description);
 
-  const onDelete = useCallback(() => {
+  const onDelete = useCallback(async () => {
+    if (isLoggedIn) {
+      await trpc.customCourses.deleteCustomCard.mutate(course.id);
+    }
     dispatch(removeCustomCourse(course.id));
     dispatch(removeCustomCourseFromRoadmap(course.id));
-  }, [dispatch, course.id]);
+  }, [dispatch, course.id, isLoggedIn]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
   };
 
-  const onBlur = () => {
-    handleUpdate({ ...course, courseName: newName, units: newUnits, description: newDescription });
+  const onBlur = async () => {
+    const updated: CustomCourse = { ...course, courseName: newName, units: newUnits, description: newDescription };
+
+    if (!isLoggedIn) {
+      handleUpdate(updated);
+      return;
+    }
+
+    if (updated.courseName.trim().length === 0) {
+      handleUpdate(updated);
+      return;
+    }
+
+    await trpc.customCourses.editCustomCard.mutate({
+      id: updated.id,
+      name: updated.courseName,
+      description: updated.description,
+      units: updated.units,
+    });
+
+    handleUpdate(updated);
   };
 
   return (

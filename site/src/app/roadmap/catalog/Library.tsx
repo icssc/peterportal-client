@@ -12,6 +12,8 @@ import { customCourseSortable } from '../../../helpers/sortable';
 import { deepCopy } from '../../../helpers/util';
 import { CustomCourse } from '../../../types/types';
 import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store/slices/roadmapSlice';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import trpc from '../../../trpc';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -43,14 +45,21 @@ const CustomCourses = () => {
   const [open, setOpen] = useState(true);
   const toggleExpand = () => setOpen(!open);
   const dispatch = useAppDispatch();
+  const isLoggedIn = useIsLoggedIn();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
   const customCoursesCopy = deepCopy(userCustomCourses);
 
   const addCard = useCallback(() => {
-    /** @todo replace id with actual id */
-    const newId = Date.now();
-    dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
-  }, [dispatch]);
+    if (!isLoggedIn) {
+      const newId = Date.now();
+      dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
+      return;
+    }
+
+    trpc.customCourses.addCustomCard
+      .mutate({ name: ' ', description: '', units: 0 })
+      .then((id) => dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' })));
+  }, [dispatch, isLoggedIn]);
 
   const handleUpdate = (course: CustomCourse) => {
     dispatch(updateCustomCourse({ ...course }));
