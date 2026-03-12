@@ -241,10 +241,8 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const complete = useCompletionCheck(takenCourseIDs, data).done;
 
   const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
-  // const isLoggedIn = useIsLoggedIn();
 
   const setOverride = (override: boolean) => {
-    // setOverrideComplete(data.label, override, isLoggedIn);
     dispatch(setOverrideComplete({ overrideName: storeKey, override }));
   };
 
@@ -329,10 +327,8 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const dispatch = useAppDispatch();
 
   const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
-  // const isLoggedIn = useIsLoggedIn();
 
   const setOverride = (override: boolean) => {
-    // setOverrideComplete(data.label, override, isLoggedIn);
     dispatch(setOverrideComplete({ overrideName: storeKey, override }));
   };
 
