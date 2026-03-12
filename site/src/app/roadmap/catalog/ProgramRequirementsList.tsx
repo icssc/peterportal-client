@@ -23,7 +23,11 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
-import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
+import {
+  setGroupExpanded,
+  setMarkerComplete,
+  setOverrideComplete,
+} from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
@@ -153,10 +157,13 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
 
 interface GroupHeaderProps {
   title: string;
+  storeKey: string;
   open: boolean;
   setOpen: React.Dispatch<boolean>;
+  overridden: boolean;
+  setOverride: React.Dispatch<boolean>;
 }
-const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
+const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, overridden, setOverride }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
     <div
@@ -169,6 +176,16 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
       }}
     >
       <b>{title}</b>
+      {open && (
+        <Checkbox
+          name={'override-' + storeKey}
+          checked={overridden}
+          onClick={(e) => {
+            setOverride(!overridden);
+            e.stopPropagation();
+          }}
+        />
+      )}
       <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
     </div>
   );
@@ -183,6 +200,14 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
 
+  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+  // const isLoggedIn = useIsLoggedIn();
+
+  const setOverride = (override: boolean) => {
+    // setOverrideComplete(data.label, override, isLoggedIn);
+    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+  };
+
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
@@ -196,11 +221,18 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
 
   return (
     <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      <GroupHeader
+        title={data.label}
+        storeKey={storeKey}
+        open={open}
+        setOpen={setOpen}
+        overridden={overridden}
+        setOverride={setOverride}
+      />
       <Collapse in={open} unmountOnExit>
         {showLabel && (
           <p className="requirement-label">
@@ -243,15 +275,30 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
 
+  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+  // const isLoggedIn = useIsLoggedIn();
+
+  const setOverride = (override: boolean) => {
+    // setOverrideComplete(data.label, override, isLoggedIn);
+    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+  };
+
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
 
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
 
   return (
     <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      <GroupHeader
+        title={data.label}
+        storeKey={storeKey}
+        open={open}
+        setOpen={setOpen}
+        overridden={overridden}
+        setOverride={setOverride}
+      />
       <Collapse in={open} unmountOnExit>
         <p className="requirement-label">
           Complete <b>{data.requirementCount}</b> of the following series:
