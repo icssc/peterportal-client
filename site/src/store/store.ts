@@ -13,6 +13,7 @@ import courseCatalogReducer from './slices/courseCatalogSlice';
 import departmentsReducer from './slices/departmentsSlice';
 import { UserSliceState } from '@peterportal/types';
 import professorSliceReducer from './slices/professorSlice';
+import customCoursesReducer from './slices/customCourseSlice';
 
 const reducer = {
   preview: previewReducer,
@@ -28,6 +29,7 @@ const reducer = {
   courseCatalog: courseCatalogReducer,
   departments: departmentsReducer,
   professors: professorSliceReducer,
+  customCourses: customCoursesReducer,
 };
 
 export function generateStore(user: UserSliceState) {

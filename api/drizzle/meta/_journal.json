@@ -176,6 +176,13 @@
       "when": 1771366693692,
       "tag": "0024_large_oracle",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1773304037220,
+      "tag": "0025_romantic_stranger",
+      "breakpoints": true
     }
   ]
 }

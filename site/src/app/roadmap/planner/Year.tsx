@@ -12,7 +12,7 @@ import {
 } from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
 
-import { PlannerYearData } from '../../../types/types';
+import { CourseGQLData, CustomCourse, PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
 
 import {
@@ -59,8 +59,13 @@ const YearStats = ({ year }: YearStatsProps) => {
   let unitCount = 0;
   let courseCount = 0;
   year.quarters.forEach((quarter) => {
-    quarter.courses.forEach((course) => {
-      unitCount += course.minUnits;
+    const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+    courses.forEach((course) => {
+      if ('courseName' in course) {
+        unitCount += course.units;
+      } else {
+        unitCount += course.minUnits;
+      }
       courseCount += 1;
     });
   });
