@@ -1,5 +1,6 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   COMPLETE_ALL_TEXT,
   formatRequirements,
@@ -165,6 +166,7 @@ interface GroupHeaderProps {
 }
 const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, overridden, setOverride }) => {
   const className = `group-header ${open ? 'open' : ''}`;
+  const [isOverride, showIsOverride] = useState(false);
   return (
     <div
       className={className}
@@ -181,11 +183,51 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, ove
           name={'override-' + storeKey}
           checked={overridden}
           onClick={(e) => {
-            setOverride(!overridden);
             e.stopPropagation();
+            if (!overridden) {
+              showIsOverride(true);
+            } else {
+              setOverride(false);
+            }
           }}
         />
       )}
+      <Dialog
+        open={isOverride}
+        onClose={() => {
+          showIsOverride(false);
+        }}
+      >
+        <DialogTitle>Confirm Force Completion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to force complete this requirement for Peter's Roadmap? You should only do this if you
+            are sure the courses you've taken satisfy it.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="inherit"
+            variant="text"
+            onClick={(e) => {
+              setOverride(true);
+              showIsOverride(false);
+              e.stopPropagation();
+            }}
+          >
+            Force Complete
+          </Button>
+          <Button
+            variant="contained"
+            onClick={(e) => {
+              e.stopPropagation();
+              showIsOverride(false);
+            }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
       <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
     </div>
   );
