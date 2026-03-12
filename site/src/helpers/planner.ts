@@ -110,18 +110,20 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  let courses: string[] = [];
+  let allCourseIds: string[] = [];
   // get all courses in the planner
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
-      courses = courses.concat(quarter.courses);
+      allCourseIds = allCourseIds.concat(quarter.courses);
     }),
   );
-  // get the course data for all courses
+
+  // separate official courses from custom courses
+  const officialCourseIds = allCourseIds.filter((id) => !/^CUSTOM#\d+$/.test(id));
+
   let courseLookup: BatchCourseData = {};
-  // only send request if there are courses
-  if (courses.length > 0) {
-    courseLookup = await searchAPIResults('courses', courses);
+  if (officialCourseIds.length > 0) {
+    courseLookup = await searchAPIResults('courses', officialCourseIds);
   }
 
   return new Promise((resolve) => {
