@@ -23,8 +23,13 @@ const Planner: FC = () => {
     // sum up all courses
     const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
     courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount++;
+      if (course.userChosenUnits) {
+        unitCount += course.userChosenUnits;
+      } else {
+        unitCount += course.minUnits;
+      }
+
+      courseCount += 1;
     });
 
     // add in transfer courses

@@ -60,7 +60,11 @@ const YearStats = ({ year }: YearStatsProps) => {
   let courseCount = 0;
   year.quarters.forEach((quarter) => {
     quarter.courses.forEach((course) => {
-      unitCount += course.minUnits;
+      if (course.userChosenUnits) {
+        unitCount += course.userChosenUnits;
+      } else {
+        unitCount += course.minUnits;
+      }
       courseCount += 1;
     });
   });
