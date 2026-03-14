@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import './RoadmapPage.scss';
 import Planner from './planner/Planner';
 import MobileCourseCatalog from './catalog/MobileCourseCatalog';
@@ -15,14 +15,10 @@ import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
-import { clearPreviews, removePreview } from '../../store/slices/previewSlice';
-import { useCurrentPreview } from '../../hooks/preview';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
-
-  const previews = useAppSelector((state) => state.preview.previewStack);
-
   const dispatch = useAppDispatch();
 
   const toastMsg = useAppSelector((state) => state.roadmap.toastMsg);
@@ -30,39 +26,88 @@ const RoadmapPage: FC = () => {
   const showToast = useAppSelector((state) => state.roadmap.showToast);
   const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
-  const [showPreview, setShowPreview] = useState(false);
   const theme = useTheme();
   const transitionTime = theme.transitions.duration.shortest;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-  const handleCloseToast = () => {
-    dispatch(setShowToast(false));
-  };
+  const courseParam = searchParams.get('course');
+  const instructorParam = searchParams.get('instructor');
+  const currentPreview = courseParam
+    ? ({ type: 'course', id: courseParam } as const)
+    : instructorParam
+      ? ({ type: 'instructor', id: instructorParam } as const)
+      : null;
 
+  const [showPreview, setShowPreview] = useState(false);
+  useEffect(() => {
+    if (currentPreview) setShowPreview(true);
+    else setShowPreview(false);
+  }, [currentPreview]);
+
+  const depthRef = useRef(0);
+  const [previewDepth, setPreviewDepth] = useState(0);
+  useEffect(() => {
+    const original = history.pushState.bind(history);
+    history.pushState = function (...args: Parameters<typeof history.pushState>) {
+      const urlArg = args[2];
+      if (urlArg != null) {
+        const url = new URL(urlArg.toString(), window.location.href);
+        const newDepth =
+          url.searchParams.has('course') || url.searchParams.has('instructor') ? depthRef.current + 1 : 0;
+        depthRef.current = newDepth;
+        args[0] = { ...args[0], __previewDepth: newDepth };
+        queueMicrotask(() => setPreviewDepth(newDepth));
+      }
+      return original(...args);
+    };
+    return () => {
+      history.pushState = original;
+    };
+  }, []);
+
+  useEffect(() => {
+    const onPopState = (e: PopStateEvent) => {
+      const newDepth = e.state?.__previewDepth ?? 0;
+      depthRef.current = newDepth;
+      setPreviewDepth(newDepth);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const handleCloseToast = () => dispatch(setShowToast(false));
   const fullscreenActive = isMobile && showFullscreenSearch;
 
   const handleClosePreview = () => {
     setShowPreview(false);
     setTimeout(() => {
-      dispatch(clearPreviews());
+      router.push(pathname);
     }, transitionTime);
   };
 
   const handleBackPreview = () => {
-    dispatch(removePreview());
+    router.back();
   };
 
-  useEffect(() => {
-    if (previews.length > 0) setShowPreview(true);
-  }, [previews]);
-
-  const currentPreview = useCurrentPreview();
   const resultPreview = (
     <div>
       {currentPreview &&
         (currentPreview.type === 'course' ? (
-          <CoursePreview courseId={currentPreview.id} onClose={handleClosePreview} onBack={handleBackPreview} />
+          <CoursePreview
+            courseId={currentPreview.id}
+            onClose={handleClosePreview}
+            onBack={handleBackPreview}
+            showBack={previewDepth > 1}
+          />
         ) : (
-          <ProfessorPreview netid={currentPreview.id} onClose={handleClosePreview} onBack={handleBackPreview} />
+          <ProfessorPreview
+            netid={currentPreview.id}
+            onClose={handleClosePreview}
+            onBack={handleBackPreview}
+            showBack={previewDepth > 1}
+          />
         ))}
     </div>
   );
