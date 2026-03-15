@@ -7,6 +7,9 @@ export type QuarterName = z.infer<typeof quarterName>;
 
 export const latestRoadmapVersion = 5;
 
+// Specify CHC variants
+export const chcVariant = z.enum(['', 'CHC4', 'CHC2']);
+
 const savedPlannerCourseData = z.object({
   courseId: z.string(),
   userChosenUnits: z.number().optional(),
@@ -30,7 +33,7 @@ export const savedPlannerData = z.object({
   id: z.number(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
-  chc: z.enum(['', 'CHC4', 'CHC2']).optional(),
+  chc: chcVariant.optional(),
 });
 export type SavedPlannerData = z.infer<typeof savedPlannerData>;
 
@@ -74,7 +77,7 @@ const legacySavedPlannerData = z.object({
   id: z.number(),
   name: z.string().max(35),
   content: z.array(legacySavedPlannerYearData),
-  chc: z.enum(['', 'CHC4', 'CHC2']).optional(),
+  chc: chcVariant.optional(),
 });
 
 export const legacySavedRoadmap = z.object({
