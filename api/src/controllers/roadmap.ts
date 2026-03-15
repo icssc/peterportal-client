@@ -35,7 +35,7 @@ function extractPlannerId(change: RoadmapChange): number {
 async function validatePlannerIds(input: RoadmapDiffs, userId: number) {
   const plannerIds = Object.entries(input)
     .filter(([key]) => !['overwrite', 'currentPlanIndex'].includes(key))
-    .flatMap(([, value]) => (Array.isArray(value) ? (value as RoadmapChange[]) : []))
+    .flatMap(([, value]) => value as RoadmapChange[])
     .map(extractPlannerId);
   const uniquePlanIds = [...new Set(plannerIds.filter((id) => id > 0))];
 
