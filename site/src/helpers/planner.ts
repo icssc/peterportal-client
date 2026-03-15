@@ -277,7 +277,12 @@ function updateTempIdsInLocalRoadmap(
     }
     return planner;
   });
-  saveLocalRoadmap(updatedPlanners, currentPlanIndex);
+  const roadmap: SavedRoadmap = {
+    timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
+    planners: updatedPlanners,
+    currentPlanIndex: currentPlanIndex,
+  };
+  localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
 export const saveRoadmap = async (
@@ -286,9 +291,16 @@ export const saveRoadmap = async (
   planners: SavedPlannerData[],
   currentPlanIndex?: number,
 ) => {
-  saveLocalRoadmap(planners, currentPlanIndex);
-
-  if (!isLoggedIn) return { success: true };
+  if (!isLoggedIn) {
+    saveLocalRoadmap(planners, currentPlanIndex);
+    return { success: true };
+  } else {
+    const roadmap: SavedRoadmap = {
+      timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
+      planners: planners,
+    };
+    localStorage.setItem('roadmap', JSON.stringify(roadmap));
+  }
 
   let res = false;
   let plannerIdLookup: Record<number, number> = {};
