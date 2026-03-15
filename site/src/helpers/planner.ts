@@ -256,7 +256,7 @@ function addIdsToLocalRoadmap(roadmap: LegacySavedRoadmap): LegacySavedRoadmap {
   return roadmap;
 }
 
-// Supporting Variable Units
+// Changes courses in quarters from strings to objects
 function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
   return {
     ...roadmap,
