@@ -1,7 +1,19 @@
 import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Divider } from '@mui/material';
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Popover,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+} from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
@@ -148,44 +160,117 @@ const ProfileThemeMenu = () => {
   );
 };
 
-const ExternalLinksRow = () => {
+interface AboutDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const AboutDialog = ({ open, onClose }: AboutDialogProps) => {
   return (
-    <List className="profile-popover-links external-links-row">
-      <ListItem>
-        <ListItemButton
-          href="https://antalmanac.com/feedback"
-          className="profile-popover-link"
-          component="a"
-          target="_blank"
-        >
-          <ListItemIcon>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="FEEDBACK" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem>
-        <ListItemButton
-          href="https://docs.icssc.club/docs/about/antalmanac/merge"
-          className="profile-popover-link"
-          component="a"
-          target="_blank"
-        >
-          <ListItemIcon>
-            <InfoIcon />
-          </ListItemIcon>
-          <ListItemText primary="ABOUT" />
-        </ListItemButton>
-      </ListItem>
-      <ListItem>
-        <ListItemButton href="https://venmo.com/u/ICSSC" className="profile-popover-link" component="a" target="_blank">
-          <ListItemIcon>
-            <FavoriteRoundedIcon />
-          </ListItemIcon>
-          <ListItemText primary="DONATE" />
-        </ListItemButton>
-      </ListItem>
-    </List>
+    <Dialog open={open} onClose={onClose} className="about-dialog" maxWidth="sm" fullWidth>
+      <DialogTitle>About</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          AntAlmanac Planner is a course discovery and four-year planning tool for UCI students.
+          <br />
+          <br />
+          AntAlmanac Planner was originally created in 2020 as <b>PeterPortal</b> by a team led by{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://github.com/uci-mars">
+            @uci-mars
+          </a>
+          . In February 2026, PeterPortal merged with AntAlmanac. Following the merger, PeterPortal was rebranded as{' '}
+          <b>AntAlmanac Planner</b>, while the existing AntAlmanac became <b>AntAlmanac Scheduler</b>.
+          <br />
+          <br />
+          This website is maintained by the{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://studentcouncil.ics.uci.edu/">
+            ICS Student Council
+          </a>{' '}
+          Projects Committee and built by students from the UCI community. Interested in helping out? Join the{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/GzF76D7UhY">
+            ICSSC Projects Discord
+          </a>{' '}
+          or explore our{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://github.com/icssc/peterportal-client">
+            repo on GitHub
+          </a>
+          .
+          <br />
+          <br />
+          To support the ongoing development and enhancement of AntAlmanac, consider making a{' '}
+          <a target="_blank" rel="noopener noreferrer" href="https://venmo.com/u/ICSSC">
+            donation
+          </a>
+          ; your generosity helps us continue our mission.
+          <br />
+          <br />
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/icssc/peterportal-client/graphs/contributors"
+          >
+            <img
+              src="https://contrib.rocks/image?repo=icssc/peterportal-client"
+              width="100%"
+              alt="AntAlmanac Planner Contributors"
+            />
+          </a>
+        </DialogContentText>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ExternalLinksRow = () => {
+  const [aboutOpen, setAboutOpen] = useState(false);
+
+  return (
+    <>
+      <List className="profile-popover-links external-links-row">
+        <ListItem>
+          <ListItemButton
+            href="https://antalmanac.com/feedback"
+            className="profile-popover-link"
+            component="a"
+            target="_blank"
+          >
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="FEEDBACK" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            // href="https://docs.icssc.club/docs/about/antalmanac/merge"
+            className="profile-popover-link"
+            onClick={() => setAboutOpen(true)}
+            // component="a"
+            // target="_blank"
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary="ABOUT" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            href="https://venmo.com/u/ICSSC"
+            className="profile-popover-link"
+            component="a"
+            target="_blank"
+          >
+            <ListItemIcon>
+              <FavoriteRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary="DONATE" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
+    </>
   );
 };
 
