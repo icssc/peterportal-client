@@ -27,7 +27,9 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
           {title} {headerItems}
         </div>
         <hr />
-        {units !== undefined && <UnitsContainer units={units} setUnits={setUnits} />}
+        {units !== undefined && (
+          <UnitsContainer units={units} setUnits={setUnits} minUnits={0} maxUnits={undefined} source="MenuTile" />
+        )}
         {deleteFn && (
           <IconButton className="delete-btn" onClick={deleteFn}>
             <DeleteOutlineIcon />

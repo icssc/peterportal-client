@@ -1,24 +1,28 @@
 import { pluralize } from '../../helpers/util';
-import './transfers/MenuTile.scss';
+import './UnitsContainer.scss';
 import { FC, FormEvent, useState } from 'react';
 
-import CheckIcon from '@mui/icons-material/Check';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import CheckIcon from '@mui/icons-material/Check';
 import { IconButton } from '@mui/material';
 
-// placed in roadmap directory for now
+// @todo placed in roadmap directory for now, find somewhere to place later
 interface UnitsContainerProps {
-  units: number;
+  units: number | undefined;
   setUnits?: (value: number) => void;
+  minUnits: number | undefined;
+  maxUnits: number | undefined;
+  source: string;
 }
-const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
+const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, maxUnits, source }) => {
   const [editing, setEditing] = useState(false);
 
   if (!editing || !setUnits) {
     return (
       <>
         <p className="units-display">
-          {units} {pluralize(units, 'units', 'unit')}
+          {source === 'MenuTile' || units ? units : `${minUnits}-${maxUnits}`} {}
+          {pluralize(units!, 'units', 'unit')}
         </p>
         {setUnits && (
           <IconButton onClick={() => setEditing(true)}>
@@ -43,10 +47,11 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits }) => {
       <input
         className="units-input"
         type="number"
-        placeholder="Units"
+        placeholder={maxUnits !== undefined ? `${minUnits}-${maxUnits}` : 'Units'}
         name="units"
         defaultValue={units}
-        min="0"
+        min={minUnits ? minUnits : '0'}
+        max={maxUnits ? maxUnits : undefined}
         step="any"
         autoFocus
       />

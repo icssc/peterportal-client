@@ -14,7 +14,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
-import CustomUnits from './CustomUnits';
+import UnitsContainer from '../UnitsContainer';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
 
@@ -105,14 +105,11 @@ const Course: FC<CourseProps> = (props) => {
    * text should be used in course tags, but not in the course-card-top in the Roadmap
    */
   const defaultUnitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
-  const [inputUnit, setInputUnit] = useState(userChosenUnits?.toString() ?? '');
-  const [editUnitOpened, setEditUnitOpened] = useState(false);
+  const [unit, setUnit] = useState(userChosenUnits ?? undefined);
 
   useEffect(() => {
-    setInputUnit(userChosenUnits?.toString() ?? '');
+    setUnit(userChosenUnits ?? undefined);
   }, [userChosenUnits]);
-
-  const displayedUnits = userChosenUnits ?? undefined;
 
   return (
     <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
@@ -129,18 +126,15 @@ const Course: FC<CourseProps> = (props) => {
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {isInRoadmap && minUnits !== maxUnits && (
-            <CustomUnits
-              inputUnit={inputUnit}
-              setInputUnit={setInputUnit}
-              userChosenUnits={userChosenUnits}
-              displayedUnits={displayedUnits}
-              defaultUnitsText={defaultUnitsText}
-              editUnitOpened={editUnitOpened}
-              setEditUnitOpened={setEditUnitOpened}
-              minUnits={minUnits}
-              maxUnits={maxUnits}
-              onSetVariableUnits={onSetVariableUnits}
-            />
+            <div className="custom-units">
+              <UnitsContainer
+                units={unit}
+                setUnits={onSetVariableUnits}
+                minUnits={minUnits}
+                maxUnits={maxUnits}
+                source="Course"
+              />
+            </div>
           )}
         </div>
         {isInRoadmap ? (
