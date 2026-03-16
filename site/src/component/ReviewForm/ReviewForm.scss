@@ -30,34 +30,6 @@
     color: var(--mui-palette-error-main);
   }
 
-  .tag-select {
-    .tag-select__menu {
-      margin-top: 0;
-      border-radius: 0 0 8px 8px;
-      overflow: hidden;
-    }
-
-    .tag-select__menu-list {
-      padding: 0;
-    }
-
-    .tag-select__control {
-      background-color: inherit;
-    }
-
-    .tag-select__control--is-focused {
-      border-color: var(--mui-palette-secondary-main);
-    }
-
-    .tag-select__value-container {
-      background-color: inherit;
-    }
-
-    .tag-select__multi-value {
-      background-color: var(--mui-palette-overlay-overlay2);
-    }
-  }
-
   .anonymous-checkbox {
     margin-top: 16px;
   }
