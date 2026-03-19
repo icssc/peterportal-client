@@ -54,40 +54,4 @@
   button.delete-btn {
     margin-inline: -4px;
   }
-
-  form {
-    display: contents;
-  }
-  input {
-    max-width: 44px;
-    text-align: center;
-    padding: 2px 4px;
-    height: 20px;
-    margin-right: 2px;
-  }
-
-  // Hide the number adjustment arrows on number inputs for spacing reasons
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  // Firefox
-  input[type='number'] {
-    appearance: textfield;
-    -moz-appearance: textfield;
-  }
-
-  select {
-    font-size: 12px;
-  }
-
-  .units-display {
-    white-space: nowrap;
-    margin-right: 2px;
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
 }
