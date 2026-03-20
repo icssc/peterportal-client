@@ -1,1 +1,0 @@
-ALTER TABLE "user" ADD COLUMN "current_plan_index" integer DEFAULT 0 NOT NULL;
