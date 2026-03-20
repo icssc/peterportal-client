@@ -1,5 +1,6 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   COMPLETE_ALL_TEXT,
   formatRequirements,
@@ -23,7 +24,11 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement } from '@peterportal/types';
-import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
+import {
+  setGroupExpanded,
+  setMarkerComplete,
+  setOverrideComplete,
+} from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
@@ -153,11 +158,15 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
 
 interface GroupHeaderProps {
   title: string;
+  storeKey: string;
   open: boolean;
   setOpen: React.Dispatch<boolean>;
+  overridden: boolean;
+  setOverride: React.Dispatch<boolean>;
 }
-const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
+const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, overridden, setOverride }) => {
   const className = `group-header ${open ? 'open' : ''}`;
+  const [isOverride, showIsOverride] = useState(false);
   return (
     <div
       className={className}
@@ -169,7 +178,55 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
       }}
     >
       <b>{title}</b>
-      <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+      <div className="group-header-btns">
+        {open && (
+          <Checkbox
+            name={'override-' + storeKey}
+            checked={overridden}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!overridden) {
+                showIsOverride(true);
+              } else {
+                setOverride(false);
+              }
+            }}
+          />
+        )}
+        <Dialog open={isOverride} onClose={() => showIsOverride(false)}>
+          <DialogTitle>Confirm Force Completion</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to force complete this requirement for Peter's Roadmap? You should only do this if
+              you are sure the courses you've taken satisfy it.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="inherit"
+              variant="text"
+              onClick={(e) => {
+                e.stopPropagation();
+                showIsOverride(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={(e) => {
+                setOverride(true);
+                showIsOverride(false);
+                e.stopPropagation();
+              }}
+            >
+              Force Complete
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+      </div>
     </div>
   );
 };
@@ -182,6 +239,12 @@ interface CourseRequirementProps {
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
+
+  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+
+  const setOverride = (override: boolean) => {
+    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+  };
 
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
@@ -196,11 +259,18 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
 
   return (
     <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      <GroupHeader
+        title={data.label}
+        storeKey={storeKey}
+        open={open}
+        setOpen={setOpen}
+        overridden={overridden}
+        setOverride={setOverride}
+      />
       <Collapse in={open} unmountOnExit>
         {showLabel && (
           <p className="requirement-label">
@@ -256,15 +326,28 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
 
+  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+
+  const setOverride = (override: boolean) => {
+    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+  };
+
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
 
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
 
   return (
     <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+      <GroupHeader
+        title={data.label}
+        storeKey={storeKey}
+        open={open}
+        setOpen={setOpen}
+        overridden={overridden}
+        setOverride={setOverride}
+      />
       <Collapse in={open} unmountOnExit>
         <p className="requirement-label">
           Complete <b>{data.requirementCount}</b> of the following series:
