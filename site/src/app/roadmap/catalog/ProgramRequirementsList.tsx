@@ -161,17 +161,68 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   );
 };
 
+interface ConfirmOverrideModalProps {
+  showOverrideModal: boolean;
+  setShowOverrideModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOverride: (override: boolean) => void;
+}
+const ConfirmOverrideModal = ({ showOverrideModal, setShowOverrideModal, setOverride }: ConfirmOverrideModalProps) => {
+  const currentPlannerName = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].name);
+
+  return (
+    <Dialog
+      open={showOverrideModal}
+      onClose={() => setShowOverrideModal(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      <DialogTitle>Confirm Force Completion</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to force complete this requirement for {currentPlannerName}? You should only do this if
+          you are sure the courses you've taken satisfy it.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          color="inherit"
+          variant="text"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOverrideModal(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={(e) => {
+            setOverride(true);
+            setShowOverrideModal(false);
+            e.stopPropagation();
+          }}
+        >
+          Force Complete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 interface GroupHeaderProps {
   title: string;
-  storeKey: string;
   open: boolean;
   setOpen: React.Dispatch<boolean>;
+  requirementId: string;
   overridden: boolean;
-  setOverride: React.Dispatch<boolean>;
+  setOverride: (override: boolean) => void;
 }
-const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, overridden, setOverride }) => {
+const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen, requirementId, overridden, setOverride }) => {
   const className = `group-header ${open ? 'open' : ''}`;
-  const [isOverride, showIsOverride] = useState(false);
+  const [showOverrideModal, setShowOverrideModal] = useState(false);
+
   return (
     <div
       className={className}
@@ -186,50 +237,23 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, storeKey, open, setOpen, ove
       <div className="group-header-btns">
         {open && (
           <Checkbox
-            name={'override-' + storeKey}
+            name={'override-' + requirementId}
             checked={overridden}
             onClick={(e) => {
               e.stopPropagation();
               if (!overridden) {
-                showIsOverride(true);
+                setShowOverrideModal(true);
               } else {
                 setOverride(false);
               }
             }}
           />
         )}
-        <Dialog open={isOverride} onClose={() => showIsOverride(false)}>
-          <DialogTitle>Confirm Force Completion</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to force complete this requirement for Peter's Roadmap? You should only do this if
-              you are sure the courses you've taken satisfy it.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="inherit"
-              variant="text"
-              onClick={(e) => {
-                e.stopPropagation();
-                showIsOverride(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={(e) => {
-                setOverride(true);
-                showIsOverride(false);
-                e.stopPropagation();
-              }}
-            >
-              Force Complete
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ConfirmOverrideModal
+          showOverrideModal={showOverrideModal}
+          setShowOverrideModal={setShowOverrideModal}
+          setOverride={setOverride}
+        />
         <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
       </div>
     </div>
@@ -303,10 +327,12 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
 
-  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+  const overridden = useAppSelector(
+    (state) => state.courseRequirements.overriddenRequirements[data.requirementId] ?? false,
+  );
 
   const setOverride = (override: boolean) => {
-    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+    dispatch(setOverrideComplete({ overrideName: data.requirementId, override: override }));
   };
 
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
@@ -332,7 +358,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
       <div className={className}>
         <GroupHeader
           title={data.label}
-          storeKey={storeKey}
+          requirementId={data.requirementId}
           open={open}
           setOpen={setOpen}
           overridden={overridden}
@@ -395,10 +421,12 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
   const dispatch = useAppDispatch();
 
-  const overridden = useAppSelector((state) => state.courseRequirements.overriddenRequirements[storeKey] ?? false);
+  const overridden = useAppSelector(
+    (state) => state.courseRequirements.overriddenRequirements[data.requirementId] ?? false,
+  );
 
   const setOverride = (override: boolean) => {
-    dispatch(setOverrideComplete({ overrideName: storeKey, override }));
+    dispatch(setOverrideComplete({ overrideName: data.requirementId, override: override }));
   };
 
   const setOpen = (isOpen: boolean) => {
@@ -415,7 +443,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
       <div className={className}>
         <GroupHeader
           title={data.label}
-          storeKey={storeKey}
+          requirementId={data.requirementId}
           open={open}
           setOpen={setOpen}
           overridden={overridden}
