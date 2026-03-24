@@ -294,11 +294,17 @@ theme = createTheme(theme, {
             height: 24,
             fontSize: 14,
             borderRadius: 2,
+            maxWidth: 'calc(100% - 96px)',
           },
           '& .MuiChip-deleteIcon': {
             color: 'var(--mui-palette-text-primary)',
             fontSize: 16,
             margin: '0 4px 0 -4px',
+          },
+        },
+        inputRoot: {
+          '& .MuiAutocomplete-input': {
+            minWidth: 48,
           },
         },
       },
