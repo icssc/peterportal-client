@@ -46,6 +46,12 @@
     }
   }
 
+  .additional-details {
+    .MuiFormHelperText-root {
+      text-align: right;
+    }
+  }
+
   .MuiFormControlLabel-root {
     margin-right: auto;
     align-items: flex-start;

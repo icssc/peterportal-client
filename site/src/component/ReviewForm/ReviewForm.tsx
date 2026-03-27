@@ -66,8 +66,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
 
-  const [content, setContent] = useState(reviewToEdit?.content ?? '');
-
   const quickTagOptions = [
     'Textbook Required',
     'Mandatory Attendance',
@@ -77,6 +75,10 @@ const ReviewForm: FC<ReviewFormProps> = ({
     'Heavy Workload',
     'Extra Credit',
   ];
+
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
+
+  const wordCount = content.match(/\S+/g)?.length ?? 0;
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
@@ -371,22 +373,19 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </div>
       </FormControl>
 
-      <FormControl>
+      <FormControl className="additional-details">
         {' '}
-        {/* @todo: resizable */}
+        {/* @todo: efficiency */}
         <FormLabel>Write a Review</FormLabel>
         <TextField
           multiline
           variant="outlined"
           placeholder="Share your experience — what should future students know about this course? "
+          helperText={`${wordCount}/500 words`}
           onChange={(e) => setContent(e.target.value)}
+          error={wordCount > 500}
           value={content}
-          minRows={2}
-          slotProps={{
-            htmlInput: {
-              maxLength: 500,
-            },
-          }}
+          minRows={5}
         />
       </FormControl>
     </Box>
