@@ -4,8 +4,6 @@ import React, { FC, useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Chip,
   Dialog,
   DialogActions,
@@ -77,7 +75,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   ];
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
-
   const wordCount = content.match(/\S+/g)?.length ?? 0;
 
   useEffect(() => {
@@ -303,10 +300,19 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </FormControl>
       </div>
 
-      <Card variant="outlined" className="rating-sliders">
-        <CardContent>
-          <FormControl fullWidth>
+      <div className="rating-sliders">
+        <FormControl fullWidth>
+          <div className="quality-label">
             <FormLabel>Quality Rating</FormLabel>
+            <DialogContentText>Overall experience</DialogContentText>
+          </div>
+
+          <div className="labeled-slider">
+            <div className="slider-value-labels">
+              <span>Poor</span>
+              <span>Excellent</span>
+            </div>
+
             <Slider
               color="secondary"
               value={quality}
@@ -316,18 +322,27 @@ const ReviewForm: FC<ReviewFormProps> = ({
               max={5}
               step={1}
               marks={[
-                { value: 1, label: '1' },
-                { value: 2, label: '2' },
-                { value: 3, label: '3' },
-                { value: 4, label: '4' },
-                { value: 5, label: '5' },
+                // @todo: scuffed....
+                { value: 1, label: '•' },
+                { value: 2, label: '•' },
+                { value: 3, label: '•' },
+                { value: 4, label: '•' },
+                { value: 5, label: '•' },
               ]}
-              valueLabelDisplay="auto"
             />
-          </FormControl>
+          </div>
+        </FormControl>
 
-          <FormControl fullWidth>
+        <FormControl fullWidth>
+          <div className="quality-label">
             <FormLabel>Difficulty Level</FormLabel>
+          </div>
+
+          <div className="labeled-slider">
+            <div className="slider-value-labels">
+              <span>Very Easy</span>
+              <span>Very Hard</span>
+            </div>
             <Slider
               color="secondary"
               value={difficulty}
@@ -337,17 +352,16 @@ const ReviewForm: FC<ReviewFormProps> = ({
               max={5}
               step={1}
               marks={[
-                { value: 1, label: '1' },
-                { value: 2, label: '2' },
-                { value: 3, label: '3' },
-                { value: 4, label: '4' },
-                { value: 5, label: '5' },
+                { value: 1, label: '•' },
+                { value: 2, label: '•' },
+                { value: 3, label: '•' },
+                { value: 4, label: '•' },
+                { value: 5, label: '•' },
               ]}
-              valueLabelDisplay="auto"
             />
-          </FormControl>
-        </CardContent>
-      </Card>
+          </div>
+        </FormControl>
+      </div>
 
       <FormControl className="quick-tags">
         {' '}
