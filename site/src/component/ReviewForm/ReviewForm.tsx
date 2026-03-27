@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -56,10 +57,26 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
 
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const handleTagChange = (tag: string) => {
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+  };
+
   const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
+
+  const quickTagOptions = [
+    'Textbook Required',
+    'Mandatory Attendance',
+    'Fast-Paced Class',
+    'Project Based',
+    'Test Heavy',
+    'Heavy Workload',
+    'Extra Credit',
+  ];
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
@@ -284,7 +301,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </FormControl>
       </div>
 
-      <Card variant="outlined">
+      <Card variant="outlined" className="rating-sliders">
         <CardContent>
           <FormControl fullWidth>
             <FormLabel>Quality Rating</FormLabel>
@@ -330,6 +347,30 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </CardContent>
       </Card>
 
+      <FormControl className="quick-tags">
+        {' '}
+        {/* @todo: edit type for tags*/}
+        <div className="quick-tags-label">
+          <FormLabel>Quick Tags</FormLabel>
+          <DialogContentText>Select all that apply</DialogContentText>
+        </div>
+        <div className="quick-tags-select">
+          {quickTagOptions.map((tag) => {
+            const selected = selectedTags.includes(tag);
+            return (
+              <Chip
+                key={tag}
+                label={tag}
+                clickable
+                color={selected ? 'secondary' : 'default'}
+                variant={selected ? 'filled' : 'outlined'}
+                onClick={() => handleTagChange(tag)}
+              />
+            );
+          })}
+        </div>
+      </FormControl>
+
       <FormControl>
         {' '}
         {/* @todo: resizable */}
@@ -366,6 +407,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           value={anonymous}
           control={
             <Switch
+              color="secondary"
               checked={anonymous}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setAnonymous(event.target.checked);

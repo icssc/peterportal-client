@@ -22,6 +22,30 @@
     }
   }
 
+  .quick-tags {
+    .quick-tags-label {
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      margin-bottom: 8px;
+
+      .MuiDialogContentText-root {
+        font-size: 12px;
+      }
+    }
+
+    .quick-tags-select {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .MuiChip-root {
+        padding: 10px;
+      }
+    }
+  }
+
   .MuiFormControlLabel-root {
     margin-right: auto;
     align-items: flex-start;
