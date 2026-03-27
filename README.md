@@ -48,7 +48,21 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
 - [TypeScript](https://www.typescriptlang.org/) - JavaScript with type-checking.
 
 ## History
+AntAlmanac Planner was originally created in 2020 under the name **PeterPortal** by a team of ICSSC Projects Committee members led by @uci-mars, motivated by students aiming to develop an application that unified fragmented course information and long-term planning resources.
 
+In February 2026, PeterPortal [merged](https://docs.icssc.club/docs/about/antalmanac/merge) with [AntAlmanac](https://github.com/icssc/AntAlmanac/) into one ultimate course planning platform. Following the merger, PeterPortal was rebranded as **AntAlmanac Planner**, while the original AntAlmanac became **AntAlmanac Scheduler**.
+
+Year|Project Lead
+:-:|:-:
+2020-2021|@uci-mars
+2021-2022|@chenaaron3
+2022-2023|@ethanwong16
+2023-2024|@js0mmer
+2024-2025|@Awesome-E
+2025-2026|@CadenLee2
+
+# Contributing
+We welcome all open-source contributions! Here is a rough guide on how to contribute:
 
 ## First time setup
 
@@ -95,6 +109,10 @@ git clone https://github.com/<your username>/peterportal-client
 
 6. (Optional) Set up your own PostgreSQL database and Google OAuth to be able to test features that require signing in such as leaving reviews or saving roadmaps to your account. Add additional variables/secrets to the .env file from the previous step.
 
+**Have any questions or need some help? Feel free to join the [ICSSC Projects Discord](https://discord.gg/GzF76D7UhY) and ask around in the `#peterportal` channel!**
+  
+> ⚠️ Note: Anteater API requires a special API key in order for search functionality to work. If you'd like to work on a feature relating to this, please send a message in our Discord.
+
 ## Open Source Contribution Guide
 
 1. Choose an issue you would like to work on under the issues tab. Leave a comment letting us know you'll work on this issue.
@@ -117,22 +135,14 @@ git checkout -b [branch name]
 
 Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `pnpm run dev`
 
-## Our Mission
-
-🎇 Our mission is to improve the UCI student experience with course planning
-
-## Where does the data come from?
+# Where does the data come from?
 
 We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [Anteater API](https://github.com/icssc/anteater-api)).
 
-## Bug Report
+# Disclaimer
 
-🐞 If you encountered any issues or bug, please open an issue @ https://github.com/icssc/peterportal-client/issues/new
+Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we receive from UCI. Please take this into consideration while using the Website.
 
-## Other Disclaimer
+# Terms & Conditions
 
-✅ Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we receive from UCI. Please take this into consideration while using the Website.
-
-## Terms & Conditions
-
-📜 There are no hard policies at the moment for utilizing this tool. However, please refrain from abusing the Website by methods such as: sending excessive amount of requests in a small period of time or purposely looking to exploit the system.
+There are no hard policies at the moment for utilizing this tool. However, please refrain from abusing the website by methods such as: sending excessive amount of requests in a small period of time or purposely looking to exploit the system.
