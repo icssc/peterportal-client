@@ -1,4 +1,13 @@
-import { anonymousName, grades, ReviewData, ReviewGrade } from '@peterportal/types';
+import {
+  anonymousName,
+  EditReviewSubmission,
+  grades,
+  ReviewData,
+  ReviewGrade,
+  ReviewSubmission,
+  ReviewTags,
+  tags,
+} from '@peterportal/types';
 import { ReviewProps } from '../Review/Review';
 import React, { FC, useEffect, useState } from 'react';
 import {
@@ -21,8 +30,10 @@ import {
 } from '@mui/material';
 import './ReviewForm.scss';
 import { getProfessorTerms, getQuarters, getYears } from '../../helpers/reviews';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
+import trpc from '../../trpc';
+import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 
 interface ReviewFormProps extends ReviewProps {
   open: boolean;
@@ -40,6 +51,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   course: courseProp,
   terms: termsProp,
 }) => {
+  const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
 
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
@@ -55,24 +67,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
 
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<ReviewTags[]>([]);
 
-  const handleTagChange = (tag: string) => {
+  const handleTagChange = (tag: ReviewTags) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
-  const [quality, setQuality] = useState<number>(reviewToEdit?.rating ?? 3);
+  const [quality, setQuality] = useState<number>(reviewToEdit?.quality ?? 3);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
-
-  const quickTagOptions = [
-    'Textbook Required',
-    'Mandatory Attendance',
-    'Fast-Paced Class',
-    'Project Based',
-    'Test Heavy',
-    'Heavy Workload',
-    'Extra Credit',
-  ];
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const wordCount = content.match(/\S+/g)?.length ?? 0;
@@ -119,6 +121,50 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
   }
 
+  const resetForm = () => {
+    // @todo: move to helper
+    setYearTaken(yearTakenDefault);
+    setQuarterTaken(quarterTakenDefault);
+    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
+    setGradeReceived(reviewToEdit?.gradeReceived);
+    setDifficulty(reviewToEdit?.difficulty);
+    setQuality(reviewToEdit?.quality ?? 3);
+    setSelectedTags(reviewToEdit?.tags ?? []);
+    setContent(reviewToEdit?.content ?? '');
+    setAnonymous(reviewToEdit?.userDisplay === anonymousName);
+    // setShowFormErrors(false);
+  };
+
+  const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
+    // @todo: move to helper
+    setSubmitting(true);
+    try {
+      if (editing) {
+        await trpc.reviews.edit.mutate(review as EditReviewSubmission);
+        dispatch(editReview(review as EditReviewSubmission));
+        dispatch(setToastMsg('Your review has been edited successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      } else {
+        const res = await trpc.reviews.add.mutate(review);
+        dispatch(addReview(res));
+        dispatch(setToastMsg('Your review has been submitted successfully!'));
+        dispatch(setToastSeverity('success'));
+        dispatch(setShowToast(true));
+      }
+    } catch (e) {
+      dispatch(setToastMsg((e as Error).message));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
+    } finally {
+      setSubmitting(false);
+    }
+
+    if (!editing) resetForm();
+    handleClose();
+  };
+
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
     // validate form
     setSubmitting(true);
@@ -133,25 +179,22 @@ const ReviewForm: FC<ReviewFormProps> = ({
     //   return;
     // }
 
-    // const review = {
-    //   id: reviewToEdit?.id,
-    //   professorId: professor,
-    //   courseId: course,
-    //   anonymous: anonymous,
-    //   content: content,
-    //   rating: rating,
-    //   difficulty: difficulty!,
-    //   gradeReceived: gradeReceived!,
-    //   forCredit: true,
-    //   quarter: yearTaken + ' ' + quarterTaken,
-    //   takeAgain: takeAgain,
-    //   textbook: textbook,
-    //   attendance: attendance,
-    //   tags: selectedTags,
-    //   updatedAt: editing ? new Date().toISOString() : undefined,
-    // };
+    const review = {
+      id: reviewToEdit?.id,
+      professorId: professor,
+      courseId: course,
+      anonymous: anonymous,
+      content: content,
+      quality: quality,
+      difficulty: difficulty!,
+      gradeReceived: gradeReceived!,
+      forCredit: true,
+      quarter: yearTaken + ' ' + quarterTaken,
+      tags: selectedTags,
+      updatedAt: editing ? new Date().toISOString() : undefined,
+    };
 
-    // postReview(review);
+    postReview(review);
   };
 
   const alreadyReviewedCourseProf = (courseId: string, professorId: string) => {
@@ -371,7 +414,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           <DialogContentText>Select all that apply</DialogContentText>
         </div>
         <div className="quick-tags-select">
-          {quickTagOptions.map((tag) => {
+          {tags.map((tag) => {
             const selected = selectedTags.includes(tag);
             return (
               <Chip

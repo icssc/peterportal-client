@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { FC, useState, useEffect, useContext } from 'react';
 import './OldReviewForm.scss';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';

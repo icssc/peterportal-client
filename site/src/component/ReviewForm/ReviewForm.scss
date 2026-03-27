@@ -1,4 +1,7 @@
 .review-form-dialog {
+  .MuiDialog-paper {
+    width: 500px;
+  }
   .MuiFormLabel-root {
     color: var(--mui-palette-text-primary);
 
@@ -76,10 +79,6 @@
       flex-direction: row;
       flex-wrap: wrap;
       gap: 8px;
-
-      .MuiChip-root {
-        padding: 10px;
-      }
     }
   }
 
