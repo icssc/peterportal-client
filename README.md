@@ -1,42 +1,54 @@
-![petr](site/src/asset/peterportal-banner-logo.svg)
+![AntAlmanac Logo](site/src/asset/logo.svg)
 
-## About
+# About
 
-PeterPortal is a web application designed to aid UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources in the application to improve the user experience when planning course schedules.
+AntAlmanac Planner is a web application designed to aid UCI students with course discovery and planning. We consolidate public data available on multiple UCI sources via [Anteater API](https://docs.icssc.club/docs/about/anteaterapi) to improve the user experience when planning course schedules. Features include:
 
-Features include:
+- **A drag-and-drop multi-year course planner**:
+  - Select multiple majors and minors
+  - Import your unofficial transcript via [StudentAccess](https://www.reg.uci.edu/access/student/transcript/?seg=U) to automatically fill in your roadmap to date
+  - View how your planned roadmap fulfills your **major**, **specialization**, **minor**, and **GE** requirements
+  - Import any **transferred courses**, **AP exams**, and **GE/Elective credits**
 
-- Course catalog with:
-  - Grade distribution graphs/charts
-  - Visual prerequisite trees
-  - Schedule of classes
-  - Reviews
+![Roadmap](assets/roadmap2.png)
 
-![catalogue](assets/catalogue.png)
-![coursepage](assets/coursepage.png)
+- **Course Search**:
+  - Recent offerings 
+  - Grade distribution visualizations
+  - Visual prerequisite tree
+  - Historic Schedule of Classes data
+  - Reviews from UCI students
 
-- Professor catalog with:
-  - Schedule of classes
-  - Grade distribution graphs/charts
-  - Reviews
+![Course Search](assets/coursesearch.png)
+![Course Page](assets/coursepage.png)
 
-![professors](assets/professors.png)
- 
-- Peter's Roadmap, a drag-and-drop 4-year course planner
+- **Instructor Search**:
+  - Grade distribution visualizations
+  - Historic Schedule of Classes data
+  - Reviews from UCI students
+  
+![Instructor Search](assets/instructorsearch.png)
 
-![roadmap](assets/roadmap.png)
+## Technology
 
-## 🔨 Built with
+### Frontend
+- [React](https://react.dev/) - Library to build dynamic, component-based UIs.
+- [Next.js](https://nextjs.org/) - React framework with server-side rendering.
+- [Material UI](https://mui.com/material-ui/) - React component library that implements Google's Material Design. 
 
-- [Anteater API](https://github.com/icssc/anteater-api)
-- Express
-- React
-- tRPC
-- SST
-- PostgreSQL
-- Drizzle ORM
-- TypeScript
-- Next.js
+### Backend
+- [Anteater API](https://github.com/icssc/anteater-api) - API maintained by ICSSC for retrieving UCI data.
+- [Express](https://expressjs.com/) - Minimalist backend framework for Node.js.
+- [tRPC](https://trpc.io/) - Library for type-safe APIs.
+- [PostgreSQL](https://www.postgresql.org/) - Relational database for storing user data and schedules.
+- [Drizzle ORM](https://orm.drizzle.team/) - high-performance type-safe SQL-like access layer.
+
+### Tooling
+- [SST](https://sst.dev/) - Infrastructure as code framework for AWS deployment.
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript with type-checking.
+
+## History
+
 
 ## First time setup
 
