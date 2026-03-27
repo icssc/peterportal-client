@@ -23,7 +23,7 @@ export const reviewSubmission = z.object({
   courseId: z.string(),
   anonymous: z.boolean(),
   content: z.string().optional(),
-  quality: z.number().min(1).max(5),
+  rating: z.number().min(1).max(5),
   difficulty: z.number().min(1).max(5),
   gradeReceived: gradesEnum,
   forCredit: z.boolean(),

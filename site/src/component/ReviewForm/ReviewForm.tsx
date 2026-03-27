@@ -56,7 +56,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
   const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
-  const [submitting, setSubmitting] = useState(false);
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
@@ -73,11 +72,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
-  const [quality, setQuality] = useState<number>(reviewToEdit?.quality ?? 3);
+  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const wordCount = content.match(/\S+/g)?.length ?? 0;
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const [showFormErrors, setShowFormErrors] = useState(false);
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
@@ -129,11 +132,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
     setDifficulty(reviewToEdit?.difficulty);
-    setQuality(reviewToEdit?.quality ?? 3);
+    setRating(reviewToEdit?.rating ?? 3);
     setSelectedTags(reviewToEdit?.tags ?? []);
     setContent(reviewToEdit?.content ?? '');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
-    // setShowFormErrors(false);
+    setShowFormErrors(false);
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
@@ -169,15 +172,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // validate form
     setSubmitting(true);
 
-    // const form = event.currentTarget;
-    // const valid = form.checkValidity();
+    const form = event.currentTarget;
+    const valid = form.checkValidity();
     event.preventDefault();
     event.stopPropagation();
 
-    // if (!valid) {
-    //   setShowFormErrors(true);
-    //   return;
-    // }
+    if (!valid) {
+      setShowFormErrors(true);
+      return;
+    }
 
     const review = {
       id: reviewToEdit?.id,
@@ -185,7 +188,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       courseId: course,
       anonymous: anonymous,
       content: content,
-      quality: quality,
+      rating: rating,
       difficulty: difficulty!,
       gradeReceived: gradeReceived!,
       forCredit: true,
@@ -273,12 +276,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const reviewFormContent = (
     <Box component="form" noValidate onSubmit={submitForm}>
       <div className="year-quarter-row">
-        <FormControl>
+        <FormControl error={showFormErrors && !yearTaken}>
           <FormLabel required>Year</FormLabel>
           <Select
             name="year"
             id="year"
             required
+            error={showFormErrors && !yearTaken}
             onChange={(e) => setYearTaken(e.target.value)}
             value={yearTaken}
             displayEmpty
@@ -293,12 +297,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
             ))}
           </Select>
         </FormControl>
-        <FormControl>
+        <FormControl error={showFormErrors && !quarterTaken}>
           <FormLabel required>Quarter</FormLabel>
           <Select
             name="quarter"
             id="quarter"
             required
+            error={showFormErrors && !quarterTaken}
             onChange={(e) => setQuarterTaken(e.target.value)}
             value={quarterTaken}
             displayEmpty
@@ -306,9 +311,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem disabled value="">
               Select quarter
             </MenuItem>
-            {quarters?.map((term) => (
-              <MenuItem key={term} value={term}>
-                {term}
+            {quarters?.map((quarter) => (
+              <MenuItem key={quarter} value={quarter}>
+                {quarter}
               </MenuItem>
             ))}
           </Select>
@@ -358,8 +363,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
             <Slider
               color="secondary"
-              value={quality}
-              onChange={(_, value) => setQuality(value as number)}
+              value={rating}
+              onChange={(_, value) => setRating(value as number)}
               defaultValue={3}
               min={1}
               max={5}
@@ -430,11 +435,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </div>
       </FormControl>
 
-      <FormControl className="additional-details">
+      <FormControl className="additional-details" error={wordCount > 500}>
         {' '}
         {/* @todo: efficiency */}
         <FormLabel>Write a Review</FormLabel>
-        <TextField
+        <TextField // @todo: persist error on hover
           multiline
           variant="outlined"
           placeholder="Share your experience — what should future students know about this course? "
