@@ -8,12 +8,12 @@ export type ReviewGrade = z.infer<typeof gradesEnum>;
 
 export const tags = [
   'Textbook Required',
-  'Mandatory Attendance',
-  'Fast-Paced Class',
+  'Mandatory Lecture',
+  'Mandatory Discussion',
+  'Curved',
+  'Extra Credit',
   'Project Based',
   'Test Heavy',
-  'Heavy Workload',
-  'Extra Credit',
 ] as const;
 export const tagsEnum = z.enum(tags);
 export type ReviewTags = z.infer<typeof tagsEnum>;
