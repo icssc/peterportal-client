@@ -73,7 +73,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
-  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
+  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty ?? 3);
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const wordCount = content.match(/\S+/g)?.length ?? 0;
@@ -274,7 +274,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   );
 
   const reviewFormContent = (
-    <Box component="form" noValidate onSubmit={submitForm}>
+    <>
       <div className="year-quarter-row">
         <FormControl error={showFormErrors && !yearTaken}>
           <FormLabel required>Year</FormLabel>
@@ -450,7 +450,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           minRows={5}
         />
       </FormControl>
-    </Box>
+    </>
   );
 
   return (
@@ -460,31 +460,32 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <DialogContentText>{courseProp?.title}</DialogContentText> {/* if professor, put something?*/}
         {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
       </DialogTitle>
+      <Box component="form" noValidate onSubmit={submitForm}>
+        <DialogContent>{reviewFormContent}</DialogContent>
 
-      <DialogContent>{reviewFormContent}</DialogContent>
-
-      <DialogActions>
-        <FormControlLabel
-          value={anonymous}
-          control={
-            <Switch
-              color="secondary"
-              checked={anonymous}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setAnonymous(event.target.checked);
-              }}
-            />
-          }
-          label="Post Anonymously"
-          labelPlacement="top"
-        />
-        <Button variant="text" color="inherit" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button type="submit" loading={submitting}>
-          Submit Review
-        </Button>
-      </DialogActions>
+        <DialogActions>
+          <FormControlLabel
+            value={anonymous}
+            control={
+              <Switch
+                color="secondary"
+                checked={anonymous}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setAnonymous(event.target.checked);
+                }}
+              />
+            }
+            label="Post Anonymously"
+            labelPlacement="top"
+          />
+          <Button variant="text" color="inherit" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={submitting}>
+            Submit Review
+          </Button>
+        </DialogActions>
+      </Box>
     </Dialog>
   );
 };
