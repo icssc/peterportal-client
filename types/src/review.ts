@@ -25,7 +25,7 @@ export const reviewSubmission = z.object({
   content: z.string().optional(),
   rating: z.number().min(1).max(5),
   difficulty: z.number().min(1).max(5),
-  gradeReceived: gradesEnum,
+  gradeReceived: gradesEnum.optional(),
   forCredit: z.boolean(),
   quarter: z.string(),
   tags: z.array(tagsEnum),

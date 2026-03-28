@@ -334,7 +334,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
             </div>
             <div className="reviewcard-detail">
               <p>
-                <b>Grade:</b> {review.gradeReceived}
+                <b>Grade:</b> {review.gradeReceived ?? 'Prefer not to say'}
               </p>
               <p>
                 <b>Would Take Again:</b> {review.takeAgain ? 'Yes' : 'No'}

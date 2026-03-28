@@ -64,7 +64,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
-  const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
+  const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived ?? undefined);
 
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>([]);
 
@@ -190,7 +190,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       content: content,
       rating: rating,
       difficulty: difficulty!,
-      gradeReceived: gradeReceived!,
+      gradeReceived: gradeReceived,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
       tags: selectedTags,
@@ -326,19 +326,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
         <FormControl>
           {' '}
-          {/* @todo: Prefer not to say */}
           <FormLabel>Grade Received</FormLabel>
           <Select
             name="grade"
             id="grade"
-            required
-            onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
+            onChange={(e) => setGradeReceived(e.target.value ? (e.target.value as ReviewGrade) : undefined)}
             value={gradeReceived ?? ''}
             displayEmpty
           >
-            <MenuItem disabled value="">
-              Prefer not to say
-            </MenuItem>
+            <MenuItem value="">Prefer not to say</MenuItem>
             {grades.map((grade) => (
               <MenuItem key={grade} value={grade}>
                 {grade}

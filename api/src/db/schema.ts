@@ -56,7 +56,7 @@ export const review = pgTable(
     content: text('content'),
     rating: integer('rating').notNull(),
     difficulty: integer('difficulty').notNull(),
-    gradeReceived: text('grade_received').notNull(),
+    gradeReceived: text('grade_received'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at'),
     forCredit: boolean('for_credit').notNull(),
