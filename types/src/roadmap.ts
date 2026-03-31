@@ -57,9 +57,10 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 
 // Bundle planner and transfer data in one object
 export const savedRoadmap = z.object({
-  timestamp: z.string().optional(),
   planners: z.array(savedPlannerData),
   version: z.number(),
+  timestamp: z.string().optional(),
+  currentPlanIndex: z.number().optional(),
 });
 
 export const legacySavedPlannerQuarterData = z.object({
@@ -84,6 +85,7 @@ export const legacySavedRoadmap = z.object({
   timestamp: z.string().optional(),
   planners: z.array(legacySavedPlannerData),
   transfers: z.array(legacyTransfer).optional().describe('Used for legacy transfers only'),
+  currentPlanIndex: z.number().optional(),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
@@ -96,6 +98,7 @@ export interface LegacyRoadmap {
   planner: LegacySavedPlannerYearData[];
   transfers: LegacyTransfer[];
   timestamp?: string;
+  currentPlanIndex?: number;
 }
 
 // Roadmap Diffs
@@ -156,6 +159,7 @@ export const roadmapDiffs = plannerDiffs.extend({
   deletedPlanners: z.array(plannerChangeIdentifier),
   newPlanners: z.array(roadmapPlannerChange),
   overwrite: z.boolean().optional(),
+  currentPlanIndex: z.number().optional(),
 });
 
 export type PlannerQuarterDiffs = z.infer<typeof plannerQuarterDiffs>;
