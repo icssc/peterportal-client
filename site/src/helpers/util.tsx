@@ -6,6 +6,7 @@ import {
   BatchProfessorData,
   SearchType,
   CourseWithTermsLookup,
+  PlannerCourseData,
 } from '../types/types';
 import trpc from '../trpc';
 import { CourseAAPIResponse, GETitle, ProfessorAAPIResponse } from '@peterportal/types';
@@ -169,4 +170,20 @@ export function addDelimiter(items: ReactNode[], between: ReactNode, last?: Reac
 
 export function checkModalOpen() {
   return !!document.querySelector('body > :is(.MuiModal-root)');
+}
+
+export function calculateTotalUnits(courses: PlannerCourseData[]) {
+  let unitCount = 0;
+  let courseCount = 0;
+
+  courses.forEach((course) => {
+    if (course.userChosenUnits) {
+      unitCount += course.userChosenUnits;
+    } else {
+      unitCount += course.minUnits;
+    }
+
+    courseCount += 1;
+  });
+  return { unitCount, courseCount };
 }

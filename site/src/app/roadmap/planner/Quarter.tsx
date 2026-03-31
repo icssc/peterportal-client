@@ -1,7 +1,7 @@
 'use client';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { quarterDisplayNames } from '../../../helpers/planner';
-import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
+import { deepCopy, useIsMobile, pluralize, calculateTotalUnits } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useMemo } from 'react';
 import {
@@ -51,14 +51,9 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
 
   // Calculate Quarter Stats
   const unitCount = useMemo(() => {
-    let unitCount = 0;
-    data.courses.forEach((course) => {
-      if (course.userChosenUnits) {
-        unitCount += course.userChosenUnits;
-      } else {
-        unitCount += course.minUnits;
-      }
-    });
+    const courses = data.courses;
+    const { unitCount } = calculateTotalUnits(courses);
+
     return unitCount;
   }, [data]);
 
