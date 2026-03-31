@@ -315,6 +315,7 @@ function updateTempIdsInLocalRoadmap(planners: SavedPlannerData[], plannerIdLook
   const roadmap: SavedRoadmap = {
     timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
     planners: updatedPlanners,
+    version: latestRoadmapVersion,
   };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
@@ -331,6 +332,7 @@ export const saveRoadmap = async (
     const roadmap: SavedRoadmap = {
       timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
       planners: planners,
+      version: latestRoadmapVersion,
     };
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
   }
