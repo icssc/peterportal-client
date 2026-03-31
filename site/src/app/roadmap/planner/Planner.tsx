@@ -10,6 +10,7 @@ import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import Footer from '../../../shared-components/Footer';
 import QuarterInfo from '../QuarterInfo/QuarterInfo';
+import Disclaimer from '../Disclaimer/Disclaimer';
 import { CourseGQLData, CustomCourse } from '../../../types/types';
 
 const Planner: FC = () => {
@@ -62,6 +63,7 @@ const Planner: FC = () => {
       <div className="app-footer">
         <Footer />
         <QuarterInfo />
+        <Disclaimer />
       </div>
     </div>
   );

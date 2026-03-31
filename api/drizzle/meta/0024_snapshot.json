@@ -1,5 +1,5 @@
 {
-  "id": "22b87a81-b6e9-41a6-9bb6-744298ef13bb",
+  "id": "0f55d110-2818-4791-92ad-b295961d1bc6",
   "prevId": "4285a98d-9508-4ec7-ab3c-ac54c8192aec",
   "version": "7",
   "dialect": "postgresql",
@@ -39,87 +39,6 @@
           "columns": ["user_id", "marker_name"]
         }
       },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.custom_card": {
-      "name": "custom_card",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "custom_card_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "units": {
-          "name": "units",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        }
-      },
-      "indexes": {
-        "custom_card_user_id_idx": {
-          "name": "custom_card_user_id_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "custom_card_user_id_user_id_fk": {
-          "name": "custom_card_user_id_user_id_fk",
-          "tableFrom": "custom_card",
-          "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -1143,6 +1062,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "current_plan_index": {
+          "name": "current_plan_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
