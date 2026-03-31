@@ -6,7 +6,6 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import CheckIcon from '@mui/icons-material/Check';
 import { IconButton } from '@mui/material';
 
-// @todo placed in roadmap directory for now, find somewhere to place later
 interface UnitsContainerProps {
   units: number | undefined;
   setUnits?: (value: number) => void;

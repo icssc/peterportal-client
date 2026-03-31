@@ -17,7 +17,6 @@ import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
 // addPlanner, removePlanner, updatePlannerName
 // addQuarter, removeQuarter, updateQuarterCourses
 
-//@todo make this work for PlannerCourseEdit type
 function createInverseRevision(revision: RoadmapRevision) {
   revision.edits.forEach((edit) => {
     const before = edit.before;
