@@ -10,7 +10,8 @@ import {
   setToastSeverity,
   setShowToast,
 } from '../../../store/slices/roadmapSlice';
-import { calculateTotalUnits, pluralize } from '../../../helpers/util';
+import { pluralize } from '../../../helpers/util';
+import { calculateTotalUnits } from '../../../helpers/planner';
 
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';

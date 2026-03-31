@@ -11,7 +11,7 @@ import { useTransferredCredits } from '../../../hooks/transferCredits';
 import Footer from '../../../shared-components/Footer';
 import QuarterInfo from '../QuarterInfo/QuarterInfo';
 import Disclaimer from '../Disclaimer/Disclaimer';
-import { calculateTotalUnits } from '../../../helpers/util';
+import { calculateTotalUnits } from '../../../helpers/planner';
 
 const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);

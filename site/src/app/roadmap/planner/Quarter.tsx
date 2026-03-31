@@ -1,7 +1,7 @@
 'use client';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { quarterDisplayNames } from '../../../helpers/planner';
-import { deepCopy, useIsMobile, pluralize, calculateTotalUnits } from '../../../helpers/util';
+import { quarterDisplayNames, calculateTotalUnits } from '../../../helpers/planner';
+import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useMemo } from 'react';
 import {

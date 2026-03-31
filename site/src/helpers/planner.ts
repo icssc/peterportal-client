@@ -23,6 +23,7 @@ import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
   InvalidCourseData,
+  PlannerCourseData,
   PlannerData,
   PlannerQuarterData,
   PlannerYearData,
@@ -487,3 +488,19 @@ export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisit
   const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
+
+export function calculateTotalUnits(courses: PlannerCourseData[]) {
+  let unitCount = 0;
+  let courseCount = 0;
+
+  courses.forEach((course) => {
+    if (course.userChosenUnits) {
+      unitCount += course.userChosenUnits;
+    } else {
+      unitCount += course.minUnits;
+    }
+
+    courseCount += 1;
+  });
+  return { unitCount, courseCount };
+}
