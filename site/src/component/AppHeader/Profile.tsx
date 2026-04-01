@@ -1,10 +1,11 @@
 import React, { FC, useContext, useState } from 'react';
 import ThemeContext from '../../style/theme-context';
 
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Popover, Divider } from '@mui/material';
 import './Profile.scss';
 
 import Link from 'next/link';
+
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -14,7 +15,10 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import FlagIcon from '@mui/icons-material/Flag';
-import Divider from '@mui/material/Divider';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import InfoIcon from '@mui/icons-material/Info';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '../../store/hooks';
 import Image from 'next/image';
@@ -23,6 +27,7 @@ import { Theme, UserMetadata } from '@peterportal/types';
 import { useIsMobile } from '../../helpers/util';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
+import AboutDialog from './AboutDialog';
 
 interface AdminProfileLinksProps {
   pathname: string | null;
@@ -33,7 +38,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
     <>
       <ListItem>
         <ListItemButton
-          className={'profile-popover__link' + (pathname === '/admin/verify' ? ' active' : '')}
+          className={'profile-popover-link' + (pathname === '/admin/verify' ? ' active' : '')}
           href="/admin/verify"
           onClick={onClose}
           component={Link}
@@ -41,12 +46,12 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
           <ListItemIcon>
             <PlaylistAddCheckIcon />
           </ListItemIcon>
-          <ListItemText primary="Verify Reviews" />
+          <ListItemText primary="VERIFY REVIEWS" />
         </ListItemButton>
       </ListItem>
       <ListItem>
         <ListItemButton
-          className={'profile-popover__link' + (pathname === '/admin/reports' ? ' active' : '')}
+          className={'profile-popover-link' + (pathname === '/admin/reports' ? ' active' : '')}
           href="/admin/reports"
           onClick={onClose}
           component={Link}
@@ -54,7 +59,7 @@ const AdminProfileLinks = ({ pathname, onClose }: AdminProfileLinksProps) => {
           <ListItemIcon>
             <FlagIcon />
           </ListItemIcon>
-          <ListItemText primary="View Reports" />
+          <ListItemText primary="VIEW REPORTS" />
         </ListItemButton>
       </ListItem>
     </>
@@ -71,52 +76,33 @@ const ProfileMenuLinks: FC<ProfileMenuLinksProps> = ({ handleLinkClick }) => {
   const isLoggedIn = useIsLoggedIn();
 
   return (
-    <List className="profile-popover-links">
+    <List className="profile-popover-links profile-menu-links">
       {isMobile && (
         <ListItem>
-          <ListItemButton href={'https://antalmanac.com'} className="profile-popover-link" component="a">
+          <ListItemButton href="https://antalmanac.com" className="profile-popover-link" component="a">
             <ListItemIcon>
               <EventNoteIcon />
             </ListItemIcon>
-            <ListItemText primary="Go to Scheduler" />
+            <ListItemText primary="GO TO SCHEDULER" />
           </ListItemButton>
         </ListItem>
       )}
-      {isLoggedIn ? (
-        <>
-          <ListItem>
-            <ListItemButton
-              className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
-              href="/reviews"
-              onClick={handleLinkClick}
-              component={Link}
-            >
-              <ListItemIcon>
-                <RateReviewIcon />
-              </ListItemIcon>
-              <ListItemText primary="Your Reviews" />
-            </ListItemButton>
-          </ListItem>
-          {isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
-          <ListItem>
-            <ListItemButton href={'/planner/api/users/auth/logout'} className="profile-popover-link" component="a">
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Log Out" />
-            </ListItemButton>
-          </ListItem>
-        </>
-      ) : (
+      {isLoggedIn && (
         <ListItem>
-          <ListItemButton href={'/planner/api/users/auth/google'} className="profile-popover-link" component="a">
+          <ListItemButton
+            className={'profile-popover-link' + (pathname === '/reviews' ? ' active' : '')}
+            href="/reviews"
+            onClick={handleLinkClick}
+            component={Link}
+          >
             <ListItemIcon>
-              <AccountCircleIcon />
+              <RateReviewIcon />
             </ListItemIcon>
-            <ListItemText primary="Sign In" />
+            <ListItemText primary="YOUR REVIEWS" />
           </ListItemButton>
         </ListItem>
       )}
+      {isLoggedIn && isAdmin && <AdminProfileLinks pathname={pathname} onClose={handleLinkClick} />}
     </List>
   );
 };
@@ -137,18 +123,8 @@ const UserInformation: FC<{ user: UserMetadata | null }> = ({ user }) => {
   );
 };
 
-const Profile = () => {
+const ProfileThemeMenu = () => {
   const { darkMode, setTheme, usingSystemTheme } = useContext(ThemeContext);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = !!anchorEl;
-
-  const handleClose = () => setAnchorEl(null);
-
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const user = useAppSelector((state) => state.user.user);
 
   const themeTabs: TabOption[] = [
     { value: 'light', label: 'Light', icon: <LightModeIcon /> },
@@ -166,6 +142,107 @@ const Profile = () => {
   };
 
   return (
+    <div className="profile-popover-theme-selector">
+      <h4>Theme</h4>
+      <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
+    </div>
+  );
+};
+
+const ExternalLinksRow = () => {
+  const [aboutOpen, setAboutOpen] = useState(false);
+
+  return (
+    <>
+      <List className="profile-popover-links external-links-row">
+        <ListItem>
+          <ListItemButton
+            href="https://antalmanac.com/feedback"
+            className="profile-popover-link"
+            component="a"
+            target="_blank"
+          >
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="FEEDBACK" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            // href="https://docs.icssc.club/docs/about/antalmanac/merge"
+            className="profile-popover-link"
+            onClick={() => setAboutOpen(true)}
+            // component="a"
+            // target="_blank"
+          >
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
+            <ListItemText primary="ABOUT" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            href="https://venmo.com/u/ICSSC"
+            className="profile-popover-link"
+            component="a"
+            target="_blank"
+          >
+            <ListItemIcon>
+              <FavoriteRoundedIcon />
+            </ListItemIcon>
+            <ListItemText primary="DONATE" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
+    </>
+  );
+};
+
+const AuthButton = () => {
+  const isLoggedIn = useIsLoggedIn();
+
+  return (
+    <List className="profile-popover-links profile-menu-links">
+      {isLoggedIn ? (
+        <ListItem>
+          <ListItemButton href="/planner/api/users/auth/logout" className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="LOG OUT" />
+          </ListItemButton>
+        </ListItem>
+      ) : (
+        <ListItem>
+          <ListItemButton href="/planner/api/users/auth/google" className="profile-popover-link" component="a">
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="SIGN IN" />
+          </ListItemButton>
+        </ListItem>
+      )}
+    </List>
+  );
+};
+
+const Profile = () => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const open = !!anchorEl;
+
+  const handleClose = () => setAnchorEl(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const user = useAppSelector((state) => state.user.user);
+
+  return (
     <div>
       <ProfileMenuButtons user={user} handleOpen={handleOpen} />
       <Popover
@@ -178,12 +255,12 @@ const Profile = () => {
       >
         <div>
           <UserInformation user={user} />
-          <div className="profile-popover-theme-selector">
-            <h4>Theme</h4>
-            <TabSelector tabs={themeTabs} selectedTab={getCurrentTheme()} onTabChange={handleThemeChange} />
-            <Divider />
-          </div>
+          <ProfileThemeMenu />
+          <Divider />
+          <ExternalLinksRow />
+          <Divider />
           <ProfileMenuLinks handleLinkClick={handleClose} />
+          <AuthButton />
         </div>
       </Popover>
     </div>
