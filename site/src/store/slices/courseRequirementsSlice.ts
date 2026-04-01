@@ -30,6 +30,7 @@ const courseRequirementsSlice = createSlice({
     geRequirements: [] as ProgramRequirement[],
     completedMarkers: {} as Record<string, boolean>,
     expandedGroups: {} as ExpandedGroupsList,
+    overriddenRequirements: {} as Record<string, boolean>,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -100,6 +101,9 @@ const courseRequirementsSlice = createSlice({
     setMarkerComplete: (state, action: PayloadAction<{ markerName: string; complete: boolean }>) => {
       state.completedMarkers[action.payload.markerName] = action.payload.complete;
     },
+    setOverrideComplete: (state, action: PayloadAction<{ overrideName: string; override: boolean }>) => {
+      state.overriddenRequirements[action.payload.overrideName] = action.payload.override;
+    },
     initializeCompletedMarkers: (state, action: PayloadAction<string[]>) => {
       action.payload.forEach((markerName) => {
         state.completedMarkers[markerName] = true;
@@ -129,6 +133,7 @@ export const {
   setMinorRequirements,
   setGERequirements,
   setMarkerComplete,
+  setOverrideComplete,
   initializeCompletedMarkers,
   setGroupExpanded,
 } = courseRequirementsSlice.actions;
