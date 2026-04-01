@@ -75,12 +75,17 @@ export const roadmapSlice = createSlice({
     toastMsg: '',
     toastSeverity: 'info' as ToastSeverity,
     showToast: false,
+    selectedSidebarTab: 1,
   },
   reducers: {
     // Roadmap Window State
 
-    setInitialPlannerData: (state, action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number }>) => {
+    setInitialPlannerData: (
+      state,
+      action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number; currentPlanIndex?: number }>,
+    ) => {
       state.plans = action.payload.plans;
+      state.currentPlanIndex = action.payload.currentPlanIndex ?? 0;
       const revision: RoadmapRevision = {
         timestamp: action.payload.timestamp ?? Date.now(),
         edits: [],
@@ -100,10 +105,15 @@ export const roadmapSlice = createSlice({
       state.currentRevisionIndex++;
     },
     undoRoadmapRevision: (state) => {
+      if (state.currentRevisionIndex <= 0) return;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex - 1);
       state.currentRevisionIndex--;
+      if (state.currentPlanIndex > state.plans.length - 1) {
+        state.currentPlanIndex = state.plans.length - 1;
+      }
     },
     redoRoadmapRevision: (state) => {
+      if (state.currentRevisionIndex >= state.revisions.length - 1) return;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
     },
@@ -187,6 +197,9 @@ export const roadmapSlice = createSlice({
         plan.id = action.payload[plan.id] ?? plan.id;
       });
     },
+    setSelectedSidebarTab: (state, action: PayloadAction<number>) => {
+      state.selectedSidebarTab = action.payload;
+    },
   },
 });
 
@@ -213,6 +226,7 @@ export const {
   setShowToast,
   setCHCSelection,
   updateTempPlannerIds,
+  setSelectedSidebarTab,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
