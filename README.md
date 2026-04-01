@@ -40,7 +40,7 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
 - [Anteater API](https://github.com/icssc/anteater-api) - API maintained by ICSSC for retrieving UCI data.
 - [Express](https://expressjs.com/) - Minimalist backend framework for Node.js.
 - [tRPC](https://trpc.io/) - Library for type-safe APIs.
-- [PostgreSQL](https://www.postgresql.org/) - Relational database for storing user data and schedules.
+- [PostgreSQL](https://www.postgresql.org/) - Relational database for storing user data and planners.
 - [Drizzle ORM](https://orm.drizzle.team/) - high-performance type-safe SQL-like access layer.
 
 ### Tooling
@@ -48,7 +48,7 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
 - [TypeScript](https://www.typescriptlang.org/) - JavaScript with type-checking.
 
 ## History
-AntAlmanac Planner was originally created in 2020 under the name **PeterPortal** by a team of ICSSC Projects Committee members led by @uci-mars, motivated by students aiming to develop an application that unified fragmented course information and long-term planning resources.
+AntAlmanac Planner was originally created in 2020 under the name **PeterPortal** by a team of ICSSC Projects Committee members led by @uci-mars, aiming to unify fragmented course information and long-term planning resources in one application.
 
 In February 2026, PeterPortal [merged](https://docs.icssc.club/docs/about/antalmanac/merge) with [AntAlmanac](https://github.com/icssc/AntAlmanac/) into one ultimate course planning platform. Following the merger, PeterPortal was rebranded as **AntAlmanac Planner**, while the original AntAlmanac became **AntAlmanac Scheduler**.
 
@@ -141,7 +141,7 @@ We consolidate our data directly from official UCI sources such as: UCI Catalogu
 
 # Disclaimer
 
-Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we receive from UCI. Please take this into consideration while using the Website.
+Although we consolidate our data directly from official UCI sources, this application is by no means an official UCI tool. We strive to keep our data as accurate as possible with the limited support we receive from UCI. Please take this into consideration while using the website.
 
 # Terms & Conditions
 
