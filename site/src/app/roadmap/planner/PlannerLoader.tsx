@@ -189,6 +189,7 @@ const PlannerLoader: FC = () => {
     initialAccountRoadmap,
     initialLocalRoadmap,
     roadmapLoaded,
+    dispatch,
   ]);
 
   // Validate Courses on change
