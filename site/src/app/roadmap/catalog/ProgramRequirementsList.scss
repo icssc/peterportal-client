@@ -72,7 +72,8 @@
   }
 
   .group-header-btns {
-    white-space: nowrap;
+    display: flex;
+    gap: 10px;
   }
 
   .group-header svg.bi {
