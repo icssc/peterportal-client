@@ -28,6 +28,9 @@ export const reviewSubmission = z.object({
   gradeReceived: gradesEnum.optional(),
   forCredit: z.boolean(),
   quarter: z.string(),
+  takeAgain: z.boolean().optional(),
+  textbook: z.boolean().optional(),
+  attendance: z.boolean().optional(),
   tags: z.array(tagsEnum),
   updatedAt: z.string().optional(),
 });
