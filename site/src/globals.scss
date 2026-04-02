@@ -140,6 +140,7 @@ $mui-transition-time: 268ms;
   .year {
     border: none;
     outline: 1px solid black;
+    outline-offset: -1px;
   }
 
   .year,
