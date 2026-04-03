@@ -115,9 +115,9 @@ git clone https://github.com/<your username>/peterportal-client
 
 ## Open Source Contribution Guide
 
-1. Choose an issue you would like to work on under the issues tab. Leave a comment letting us know you'll work on this issue.
+1. Choose an issue you would like to work on under the issues tab. Leave a comment requesting to work on this issue and wait for confirmation that it is not already assigned.
 
-2. We recommend you switch to a branch you will be working on for each feature.
+2. Switch to a branch you will be working on for each issue (pick a name that's relevant).
 
 ```
 git checkout -b [branch name]
