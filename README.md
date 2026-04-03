@@ -20,7 +20,6 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
   - Reviews from UCI students
 
 ![Course Search](assets/coursesearch.png)
-![Course Page](assets/coursepage.png)
 
 - **Instructor Search**:
   - Grade distribution visualizations
