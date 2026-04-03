@@ -53,12 +53,12 @@ In February 2026, PeterPortal [merged](https://docs.icssc.club/docs/about/antalm
 
 Year|Project Lead
 :-:|:-:
-2020-2021|@uci-mars
-2021-2022|@chenaaron3
-2022-2023|@ethanwong16
-2023-2024|@js0mmer
-2024-2025|@Awesome-E
-2025-2026|@CadenLee2
+2020 - 2021|@uci-mars
+2021 - 2022|@chenaaron3
+2022 - 2023|@ethanwong16
+2023 - 2024|@js0mmer
+2024 - 2025|@Awesome-E
+2025 - Present|@CadenLee2
 
 # Contributing
 We welcome all open-source contributions! Here is a rough guide on how to contribute:
