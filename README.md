@@ -10,7 +10,7 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
   - View how your planned roadmap fulfills your **major**, **specialization**, **minor**, and **GE** requirements
   - Import any **transferred courses**, **AP exams**, and **GE/Elective credits**
 
-![Roadmap](assets/roadmap2.png)
+![Roadmap](assets/roadmap.png)
 
 - **Course Search**:
   - Recent offerings 
