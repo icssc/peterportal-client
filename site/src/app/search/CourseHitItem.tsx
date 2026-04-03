@@ -4,27 +4,25 @@ import './HitItem.scss';
 import RecentOfferingsTooltip from '../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
 import { CourseSynopsis } from '../../component/CourseInfo/CourseInfo';
 
-import { useAppDispatch } from '../../store/hooks';
 import { CourseGQLData } from '../../types/types';
 import { getCourseTags } from '../../helpers/util';
 import { useSavedCourses } from '../../hooks/savedCourses';
+import { useRouter } from 'next/navigation';
 
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
 const CourseHitItem: FC<CourseHitItemProps> = (props) => {
-  const dispatch = useAppDispatch();
+  const router = useRouter();
   const { saveCourse, unsaveCourse, isCourseSaved } = useSavedCourses();
   const courseIsSaved = isCourseSaved(props);
   const pillData = getCourseTags(props); // data to be displayed in pills
 
   const onClickName = () => {
-    dispatch(clearPreviews());
-    dispatch(addPreview({ type: 'course', id: props.id }));
+    router.push(`?course=${encodeURIComponent(props.id)}`);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
