@@ -380,7 +380,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </FormControl>
 
         <FormControl fullWidth className="difficulty-slider">
-          <div className="quality-label">
+          <div className="difficulty-label">
             <FormLabel>Difficulty Level</FormLabel>
           </div>
 
