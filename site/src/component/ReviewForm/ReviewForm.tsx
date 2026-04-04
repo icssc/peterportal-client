@@ -169,9 +169,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
-    // validate form
-    setSubmitting(true);
-
     const form = event.currentTarget;
     const valid = form.checkValidity();
     event.preventDefault();
@@ -179,8 +176,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     if (!valid) {
       setShowFormErrors(true);
+      setSubmitting(false);
       return;
     }
+
+    setSubmitting(true);
 
     const review = {
       id: reviewToEdit?.id,
