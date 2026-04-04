@@ -132,7 +132,7 @@ div.quarter-list {
     /* If you change the base quarter width, you may need to adjust the hard-coded value
     below such that it's between the natural breakpoint between 1 to 2 quarters and
     2 to 3 quarters */
-    @media only screen and (min-width: #{1250px + $base-quarter-width * ($i - 2)}) {
+    @media only screen and (min-width: #{1229px + $base-quarter-width * ($i - 2)}) {
       &[data-max-quarter-count='#{$i}'] div.quarter-list {
         grid-template-columns: repeat($i, 1fr);
       }
