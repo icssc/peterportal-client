@@ -62,7 +62,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
-  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+  const [instructor, setInstructorName] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived ?? undefined);
 
@@ -128,7 +128,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // @todo: move to helper
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
-    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setInstructorName(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
     setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
     setDifficulty(reviewToEdit?.difficulty);
@@ -184,7 +184,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     const review = {
       id: reviewToEdit?.id,
-      professorId: professor,
+      professorId: instructor,
       courseId: course,
       anonymous: anonymous,
       content: content,
@@ -208,14 +208,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in course context, select a professor
   const professorSelect = courseProp && (
-    <FormControl>
+    <FormControl error={showFormErrors && !instructor}>
       <FormLabel required>Instructor</FormLabel>
       <Select
         name="professor"
         id="professor"
         required
-        onChange={(e) => setProfessor(e.target.value)}
-        value={professor}
+        error={showFormErrors && !instructor}
+        onChange={(e) => setInstructorName(e.target.value)}
+        value={instructor}
         displayEmpty
       >
         <MenuItem disabled value="">
@@ -241,12 +242,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // if in professor context, select a course
   const courseSelect = professorProp && (
-    <FormControl>
+    <FormControl error={showFormErrors && !course}>
       <FormLabel required>Course Taken</FormLabel>
       <Select
         name="course"
         id="course"
         required
+        error={showFormErrors && !course}
         onChange={(e) => setCourse(e.target.value)}
         value={course}
         displayEmpty
