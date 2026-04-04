@@ -347,7 +347,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </div>
 
       <div className="rating-sliders">
-        <FormControl fullWidth>
+        <FormControl fullWidth className="quality-slider">
           <div className="quality-label">
             <FormLabel>Quality Rating</FormLabel>
             <DialogContentText>Overall experience</DialogContentText>
@@ -379,7 +379,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           </div>
         </FormControl>
 
-        <FormControl fullWidth>
+        <FormControl fullWidth className="difficulty-slider">
           <div className="quality-label">
             <FormLabel>Difficulty Level</FormLabel>
           </div>
@@ -445,7 +445,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
           onChange={(e) => setContent(e.target.value)}
           error={wordCount > 500}
           value={content}
-          minRows={5}
+          minRows={4}
         />
       </FormControl>
     </>

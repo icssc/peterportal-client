@@ -14,6 +14,10 @@
     }
   }
 
+  .MuiDialogTitle-root {
+    margin-bottom: -16px;
+  }
+
   .year-quarter-row,
   .grade-difficulty-row,
   .course-professor-grade-row {
@@ -27,19 +31,23 @@
 
   .rating-sliders {
     padding: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     border-radius: 4px;
     border: 1px solid oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
 
-    .quality-label {
-      // @todo: refactor into same style as below?
-      display: flex;
-      align-items: end;
-      gap: 4px;
-      margin-bottom: 8px;
+    .quality-slider {
+      margin-bottom: 4px;
 
-      .MuiDialogContentText-root {
-        font-size: 12px;
+      .quality-label {
+        // @todo: refactor into same style as below?
+        display: flex;
+        align-items: end;
+        gap: 4px;
+        margin-bottom: 8px;
+
+        .MuiDialogContentText-root {
+          font-size: 12px;
+        }
       }
     }
 
@@ -99,5 +107,9 @@
     .MuiFormControlLabel-label {
       font-size: 12px;
     }
+  }
+
+  .MuiDialogActions-root {
+    margin-top: -12px;
   }
 }
