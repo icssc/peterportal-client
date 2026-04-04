@@ -206,8 +206,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
     );
   };
 
-  // if in course context, select a professor
-  const professorSelect = courseProp && (
+  // if in course context, select an instructor
+  const instructorSelect = courseProp && (
     <FormControl error={showFormErrors && !instructor}>
       <FormLabel required>Instructor</FormLabel>
       <Select
@@ -220,7 +220,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         displayEmpty
       >
         <MenuItem disabled value="">
-          Select one of the following...
+          Select instructor
         </MenuItem>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
@@ -240,7 +240,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     </FormControl>
   );
 
-  // if in professor context, select a course
+  // if in instructor context, select a course
   const courseSelect = professorProp && (
     <FormControl error={showFormErrors && !course}>
       <FormLabel required>Course Taken</FormLabel>
@@ -254,7 +254,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         displayEmpty
       >
         <MenuItem disabled value="">
-          Select one of the following...
+          Select course
         </MenuItem>
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
@@ -323,7 +323,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </div>
 
       <div className="course-professor-grade-row">
-        {courseProp && professorSelect}
+        {courseProp && instructorSelect}
         {professorProp && courseSelect}
 
         <FormControl>

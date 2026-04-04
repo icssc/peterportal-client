@@ -16,6 +16,10 @@
 
   .MuiDialogTitle-root {
     margin-bottom: -16px;
+
+    .MuiDialogContentText-root {
+      font-size: 12px;
+    }
   }
 
   .year-quarter-row,
