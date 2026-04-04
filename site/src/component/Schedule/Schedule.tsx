@@ -164,6 +164,13 @@ const Schedule: FC<ScheduleProps> = (props) => {
             {section.status}
           </div>
         </td>
+        <td className="data-col">
+          {section.webURL && (
+            <Link href={section.webURL} rel="noopener noreferrer" target="_blank">
+              Link
+            </Link>
+          )}
+        </td>
       </tr>
     );
   };
@@ -231,6 +238,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 <th>WL</th>
                 <th>Rstr</th>
                 <th>Status</th>
+                <th>Link</th>
               </tr>
             </thead>
             <tbody>{sectionElements}</tbody>
