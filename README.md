@@ -40,7 +40,7 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
 - [Express](https://expressjs.com/) - Minimalist backend framework for Node.js.
 - [tRPC](https://trpc.io/) - Library for type-safe APIs.
 - [PostgreSQL](https://www.postgresql.org/) - Relational database for storing user data and planners.
-- [Drizzle ORM](https://orm.drizzle.team/) - high-performance type-safe SQL-like access layer.
+- [Drizzle ORM](https://orm.drizzle.team/) - High-performance type-safe SQL-like access layer.
 
 ### Tooling
 - [SST](https://sst.dev/) - Infrastructure as code framework for AWS deployment.
@@ -63,7 +63,7 @@ Year|Project Lead
 # Contributing
 We welcome all open-source contributions! Here is a rough guide on how to contribute:
 
-## First time setup
+## First Time Setup
 
 ### Prerequisites
 
@@ -83,7 +83,7 @@ We welcome all open-source contributions! Here is a rough guide on how to contri
 
 3. Run `pnpm install` to install all node dependencies for the site and API. This may take a few minutes.
 
-4. Setup the appropriate environment variables provided by the project lead.
+4. Set up the appropriate environment variables provided by the project lead.
 
 5. Switch to a branch you will be working on for your current task (pick a name that's relevant to the issue).
    ```
@@ -124,7 +124,7 @@ git checkout -b [branch name]
 
 3. Once your feature is ready, [open a pull request](https://github.com/icssc/peterportal-client/compare) and a member from our team will review it. Follow the pull request template.
 
-## Running the project locally (after setup)
+## Running the Project Locally (After Setup)
 
 1. Open a terminal in the root directory of the repo.
 
@@ -134,7 +134,7 @@ git checkout -b [branch name]
 
 Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `pnpm run dev`
 
-# Where does the data come from?
+# Where Does the Data Come From?
 
 We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [Anteater API](https://github.com/icssc/anteater-api)).
 
