@@ -1,3 +1,4 @@
+.menu-tile,
 .custom-units {
   form {
     display: contents;
@@ -9,7 +10,6 @@
     height: 20px;
     margin-right: 2px;
   }
-
   button.MuiIconButton-root {
     color: inherit;
     width: 24px;
@@ -19,7 +19,6 @@
       font-size: 18px;
     }
   }
-  .menu-tile,
 
   // Hide the number adjustment arrows on number inputs for spacing reasons
   input::-webkit-outer-spin-button,
@@ -35,14 +34,6 @@
 
   select {
     font-size: 12px;
-  }
-
-  .custom-units {
-    margin-left: auto;
-    color: inherit;
-    display: flex;
-    align-items: center;
-    gap: 4px;
   }
 
   .units-display {
