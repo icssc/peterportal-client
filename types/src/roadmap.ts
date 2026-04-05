@@ -7,7 +7,6 @@ export type QuarterName = z.infer<typeof quarterName>;
 
 export const latestRoadmapVersion = 5;
 
-// Specify CHC variants
 export const chcVariant = z.enum(['', 'CHC4', 'CHC2']);
 
 const savedPlannerCourseData = z.object({

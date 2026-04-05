@@ -21,7 +21,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, ma
       <>
         <p className="units-display">
           {source === 'MenuTile' || units ? units : `${minUnits}-${maxUnits}`} {}
-          {pluralize(units!, 'units', 'unit')}
+          {pluralize(units ?? 0, 'units', 'unit')}
         </p>
         {setUnits && (
           <IconButton onClick={() => setEditing(true)}>
