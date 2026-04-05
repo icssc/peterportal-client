@@ -5,7 +5,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/material';
 import UnreadDot from '../../../component/UnreadDot/UnreadDot';
 
-import UnitsContainer from '../UnitsContainer';
+import UnitsContainer from '../CustomUnitsContainer';
 
 export interface MenuTileProps {
   children?: ReactNode;
