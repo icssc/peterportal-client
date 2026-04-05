@@ -313,3 +313,23 @@ export const completedMarkerRequirement = pgTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
 );
+
+export const override = pgTable(
+  'override',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+
+    plannerId: integer('planner_id')
+      .references(() => planner.id, { onDelete: 'cascade' })
+      .notNull(),
+
+    requirement: text('requirement').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.plannerId, table.requirement] }),
+
+    index('override_user_planner_idx').on(table.userId, table.plannerId),
+  ],
+);
