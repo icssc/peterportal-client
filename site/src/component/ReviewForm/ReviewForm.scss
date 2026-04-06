@@ -2,6 +2,7 @@
   .MuiDialog-paper {
     width: 500px;
   }
+
   .MuiFormLabel-root {
     color: var(--mui-palette-text-primary);
 
@@ -15,11 +16,15 @@
   }
 
   .MuiDialogTitle-root {
-    margin-bottom: -16px;
+    padding-bottom: 4px;
 
     .MuiDialogContentText-root {
       font-size: 12px;
     }
+  }
+
+  .MuiDialogContent-root {
+    padding-bottom: 8px;
   }
 
   .year-quarter-row,
@@ -108,20 +113,17 @@
     }
   }
 
-  .MuiFormControlLabel-root {
+  .anonymous-switch {
     margin-right: auto;
     align-items: flex-start;
+    transform: translateY(-8px);
 
     .MuiSwitch-root {
-      margin-left: -6px;
+      margin: -6px -6px;
     }
 
     .MuiFormControlLabel-label {
       font-size: 12px;
     }
-  }
-
-  .MuiDialogActions-root {
-    margin-top: -12px;
   }
 }

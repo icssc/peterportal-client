@@ -463,6 +463,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
         <DialogActions>
           <FormControlLabel
+            className="anonymous-switch"
             value={anonymous}
             control={
               <Switch
