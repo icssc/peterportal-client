@@ -1,4 +1,4 @@
-import { router, userProcedure } from '../helpers/trpc';
+import { router, userProcedure, publicProcedure } from '../helpers/trpc';
 import {
   RoadmapDiffs,
   roadmapDiffs,
@@ -23,6 +23,7 @@ import {
   updateYears,
 } from '../helpers/roadmap';
 import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 type RoadmapChange = RoadmapItemDeletion | RoadmapSaveInfo;
 
@@ -105,6 +106,19 @@ const roadmapsRouter = router({
       currentPlanIndex: users[0].currentPlanIndex ?? undefined,
     };
     return roadmap;
+  }),
+  /**
+   * Get a roadmap by its shareId
+   */
+  getByShareId: publicProcedure.input(z.object({ shareId: z.string() })).query(async ({ input }) => {
+    const planners = await queryGetPlanners(eq(planner.shareId, input.shareId));
+    if (planners.length === 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Shared planner not found',
+      });
+    }
+    return planners[0];
   }),
   /**
    * Save a user's roadmap
