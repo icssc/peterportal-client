@@ -238,7 +238,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 <th>WL</th>
                 <th>Rstr</th>
                 <th>Status</th>
-                <th>Link</th>
+                <th>Syllabus</th>
               </tr>
             </thead>
             <tbody>{sectionElements}</tbody>
