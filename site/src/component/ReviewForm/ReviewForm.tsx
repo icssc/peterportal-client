@@ -180,6 +180,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
       return;
     }
 
+    if (wordCount > 500) {
+      setShowFormErrors(true);
+      return;
+    }
+
     setSubmitting(true);
 
     const review = {
