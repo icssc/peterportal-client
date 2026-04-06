@@ -134,6 +134,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();
     setTimestamps(timestamps.slice());
+    document.body.classList.add('dragging');
   };
 
   const courseIDs = courses.map((c) => ({ id: c }));
@@ -142,6 +143,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
       {...programRequirementsSortable}
       list={courseIDs}
       onStart={setDraggedItem}
+      onEnd={() => document.body.classList.remove('dragging')}
       disabled={isMobile}
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >

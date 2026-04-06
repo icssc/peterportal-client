@@ -120,6 +120,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     const course = data.courses[event.oldIndex!];
     // set data for which quarter it's being dragged from
     dispatch(setActiveCourse({ course, startYear, quarter: data, courseIndex: event.oldIndex! }));
+    document.body.classList.add('dragging');
   };
 
   return (
@@ -149,6 +150,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         onAdd={addCourse} // add course, drag from another quarter
         onSort={sortCourse} // drag within a quarter
         onEnd={() => {
+          document.body.classList.remove('dragging');
           if (!activeCourseLoading) dispatch(setActiveCourse(null));
         }}
         {...quarterSortable}
