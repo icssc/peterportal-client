@@ -61,7 +61,7 @@ const darkPalette: PaletteOptions = {
   },
   background: {
     default: '#121212',
-    paper: '#1e1e1e',
+    paper: '#2a2a2a',
   },
   text: {
     primary: '#fff',
@@ -187,6 +187,13 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundImage: 'none',
+        },
+      },
+    },
     MuiFormControl: {
       styleOverrides: {
         root: {
@@ -234,6 +241,13 @@ theme = createTheme(theme, {
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
           },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
         },
       },
     },
