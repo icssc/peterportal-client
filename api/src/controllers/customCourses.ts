@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { router, userProcedure } from '../helpers/trpc';
 import { db } from '../db';
 import { customCard, plannerCourse } from '../db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 
 const zodCustomCardInput = z.object({
   name: z.string(),
@@ -16,7 +16,11 @@ const zodCustomCardUpdate = zodCustomCardInput.extend({
 
 export const customCoursesRouter = router({
   getCustomCards: userProcedure.query(async ({ ctx }) => {
-    return await db.select().from(customCard).where(eq(customCard.userId, ctx.session.userId!));
+    return await db
+      .select()
+      .from(customCard)
+      .where(eq(customCard.userId, ctx.session.userId!))
+      .orderBy(asc(customCard.id));
   }),
 
   addCustomCard: userProcedure.input(zodCustomCardInput).mutation(async ({ input, ctx }) => {
