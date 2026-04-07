@@ -39,14 +39,16 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
   };
 
   const onBlur = async () => {
-    const updated: CustomCourse = { ...course, courseName: newName, units: newUnits, description: newDescription };
+    const rawUnits = newUnits;
+    const units = Number.isFinite(rawUnits) && rawUnits >= 0 ? rawUnits : 0;
+    const updated: CustomCourse = {
+      ...course,
+      courseName: newName ?? '',
+      units,
+      description: newDescription ?? '',
+    };
 
     if (!isLoggedIn) {
-      handleUpdate(updated);
-      return;
-    }
-
-    if (updated.courseName.trim().length === 0) {
       handleUpdate(updated);
       return;
     }
@@ -91,9 +93,12 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               className="units-input"
               type="number"
               min="0"
-              value={newUnits}
+              value={Number.isFinite(newUnits) ? newUnits : ''}
               placeholder="Units"
-              onChange={(e) => setNewUnits(e.target.valueAsNumber)}
+              onChange={(e) => {
+                const v = e.target.valueAsNumber;
+                setNewUnits(Number.isFinite(v) ? v : NaN);
+              }}
               onKeyDown={handleKeyDown}
               onBlur={onBlur}
             />

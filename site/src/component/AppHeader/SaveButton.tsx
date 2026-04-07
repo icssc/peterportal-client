@@ -3,11 +3,13 @@ import { useSaveRoadmap } from '../../hooks/planner';
 import { Button } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { useAppSelector } from '../../store/hooks';
+import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
 const SaveButton: FC = () => {
   const { handler: saveRoadmap } = useSaveRoadmap();
   const roadmapLoading = useAppSelector((state) => state.roadmap.roadmapLoading);
   const customCoursesLoaded = useAppSelector((state) => state.customCourses.customCoursesLoaded);
+  const isLoggedIn = useIsLoggedIn();
 
   const [saveInProgress, setSaveInProgress] = useState(false);
 
@@ -23,7 +25,7 @@ const SaveButton: FC = () => {
       size="medium"
       startIcon={<SaveIcon />}
       loading={saveInProgress}
-      disabled={roadmapLoading || !customCoursesLoaded}
+      disabled={roadmapLoading || (isLoggedIn && !customCoursesLoaded)}
       onClick={handleSave}
       color="inherit"
     >

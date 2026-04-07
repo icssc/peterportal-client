@@ -5,7 +5,7 @@ import { customCard, plannerCourse } from '../db/schema';
 import { and, eq } from 'drizzle-orm';
 
 const zodCustomCardInput = z.object({
-  name: z.string().min(1),
+  name: z.string(),
   description: z.string(),
   units: z.number().min(0),
 });

@@ -57,7 +57,7 @@ const CustomCourses = () => {
     }
 
     trpc.customCourses.addCustomCard
-      .mutate({ name: ' ', description: '', units: 0 })
+      .mutate({ name: '', description: '', units: 0 })
       .then((id) => dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' })));
   }, [dispatch, isLoggedIn]);
 
