@@ -23,6 +23,11 @@ function createOrGetRouter() {
   } else if (isStaging($app.stage)) {
     const stagingRouter = new sst.aws.Router('AntAlmanacRouter', {
       domain: getDomainConfig(),
+      transform: {
+        cachePolicy(_, opts) {
+          opts.id = '92d18877-845e-47e7-97e6-895382b1bf7c';
+        },
+      },
     });
     return stagingRouter;
   } else if (isPeterPortalLegacy($app.stage)) {

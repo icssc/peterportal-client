@@ -61,7 +61,7 @@ const darkPalette: PaletteOptions = {
   },
   background: {
     default: '#121212',
-    paper: '#1e1e1e',
+    paper: '#2a2a2a',
   },
   text: {
     primary: '#fff',
@@ -120,6 +120,33 @@ const xsmall = {
 
 theme = createTheme(theme, {
   components: {
+    MuiBadge: {
+      styleOverrides: {
+        root: {
+          variants: [
+            {
+              props: { variant: 'circular' },
+              style: {
+                '& .MuiBadge-badge': {
+                  borderRadius: '50%',
+                  width: 26,
+                  height: 26,
+                },
+              },
+            },
+            {
+              props: { color: 'pending' },
+              style: {
+                '& .MuiBadge-badge': {
+                  backgroundColor: '#B8B8B8',
+                  color: 'white',
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
     MuiButton: {
       variants: [xsmall],
       defaultProps: {
@@ -157,6 +184,13 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           color: 'inherit',
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundImage: 'none',
         },
       },
     },
@@ -207,6 +241,13 @@ theme = createTheme(theme, {
           '&:hover:not(:focus-within) .MuiOutlinedInput-notchedOutline': {
             borderColor: 'var(--mui-palette-text-secondary)',
           },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
         },
       },
     },

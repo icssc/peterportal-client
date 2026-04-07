@@ -7,6 +7,7 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/material';
 import UnreadDot from '../../../component/UnreadDot/UnreadDot';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 interface UnitsContainerProps {
   units: number;
@@ -68,11 +69,12 @@ export interface MenuTileProps {
   /** Additional items to include alongsite the title */
   headerItems?: ReactNode;
   unread?: boolean;
+  onClick?: () => void;
 }
 
-const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems, unread }) => {
+const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems, unread, onClick }) => {
   return (
-    <div className="menu-tile">
+    <ClickableDiv className="menu-tile" onClick={onClick}>
       <UnreadDot show={unread ?? false} displayFullNewText={true} />
       <div className="tile-info">
         <div className="name">
@@ -87,7 +89,7 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         )}
       </div>
       {children}
-    </div>
+    </ClickableDiv>
   );
 };
 
