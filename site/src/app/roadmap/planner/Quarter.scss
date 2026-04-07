@@ -60,7 +60,7 @@ div.quarter {
   background-color: transparent;
 
   .quarter-header {
-    background-color: #8881;
+    background-color: var(--mui-palette-background-paper);
     position: relative;
     display: flex;
     justify-content: space-between;

@@ -9,7 +9,6 @@ import { reviseRoadmap, setSavedRevisionIndex, updateTempPlannerIds } from '../s
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
-import { SavedPlannerData } from '@peterportal/types';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();
@@ -57,7 +56,6 @@ export function useSaveRoadmap() {
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
-  const customCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
 
   const handler = async () => {
     // generate before and after from the current state
@@ -66,28 +64,7 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const validCustomIds = new Set(customCourses.map((c) => c.id));
-    const pruneInvalidCustomCourses = (plans: SavedPlannerData[]): SavedPlannerData[] =>
-      plans.map((planner) => ({
-        ...planner,
-        content: planner.content.map((year) => ({
-          ...year,
-          quarters: year.quarters.map((quarter) => ({
-            ...quarter,
-            courses: quarter.courses.filter((courseId) => {
-              const match = /^CUSTOM#(\d+)$/.exec(courseId);
-              if (!match) return true;
-              const id = Number.parseInt(match[1], 10);
-              return validCustomIds.has(id);
-            }),
-          })),
-        })),
-      }));
-
-    const prunedPrevious = pruneInvalidCustomCourses(collapsedPrevious);
-    const prunedCurrent = pruneInvalidCustomCourses(collapsedCurrent);
-
-    const result = await saveRoadmap(isLoggedIn, prunedPrevious, prunedCurrent);
+    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
 
     if (result.success && isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved to your account!'));

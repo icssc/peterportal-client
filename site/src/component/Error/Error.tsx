@@ -4,7 +4,7 @@ import noResultsImg from '../../asset/no-results-crop.webp';
 import Image from 'next/image';
 
 interface ErrorProps {
-  message: string;
+  message?: string;
 }
 
 const Error: FC<ErrorProps> = (props) => {

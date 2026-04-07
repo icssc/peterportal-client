@@ -81,12 +81,17 @@ export const roadmapSlice = createSlice({
     toastMsg: '',
     toastSeverity: 'info' as ToastSeverity,
     showToast: false,
+    selectedSidebarTab: 1,
   },
   reducers: {
     // Roadmap Window State
 
-    setInitialPlannerData: (state, action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number }>) => {
+    setInitialPlannerData: (
+      state,
+      action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number; currentPlanIndex?: number }>,
+    ) => {
       state.plans = action.payload.plans;
+      state.currentPlanIndex = action.payload.currentPlanIndex ?? 0;
       const revision: RoadmapRevision = {
         timestamp: action.payload.timestamp ?? Date.now(),
         edits: [],
@@ -106,10 +111,15 @@ export const roadmapSlice = createSlice({
       state.currentRevisionIndex++;
     },
     undoRoadmapRevision: (state) => {
+      if (state.currentRevisionIndex <= 0) return;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex - 1);
       state.currentRevisionIndex--;
+      if (state.currentPlanIndex > state.plans.length - 1) {
+        state.currentPlanIndex = state.plans.length - 1;
+      }
     },
     redoRoadmapRevision: (state) => {
+      if (state.currentRevisionIndex >= state.revisions.length - 1) return;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
     },
@@ -128,6 +138,46 @@ export const roadmapSlice = createSlice({
       state.activeCourse = course;
       state.activeCustomCourse = null;
       state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
+    },
+    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCustomCourse = null;
+        return;
+      }
+      state.activeCourse = null;
+      state.activeCourseDragSource = null;
+      state.activeCustomCourse = action.payload.course;
+    },
+    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            courses.forEach((course, index) => {
+              if ('courseName' in course && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload as unknown as CourseGQLData;
+              }
+            });
+          });
+        });
+      });
+    },
+    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
+      const customCourseId = action.payload;
+
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            quarter.courses = courses.filter((course) => {
+              if ('courseName' in course) {
+                return course.id !== customCourseId;
+              }
+              return true;
+            }) as unknown as typeof quarter.courses;
+          });
+        });
+      });
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
       state.activeCourseLoading = action.payload;
@@ -194,43 +244,8 @@ export const roadmapSlice = createSlice({
         plan.id = action.payload[plan.id] ?? plan.id;
       });
     },
-    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
-      if (!action.payload) {
-        state.activeCustomCourse = null;
-        return;
-      }
-      state.activeCustomCourse = action.payload.course;
-    },
-    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
-      state.plans.forEach((plan) => {
-        plan.content.yearPlans.forEach((year) => {
-          year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            courses.forEach((course, index) => {
-              if ('courseName' in course && course.id === action.payload.id) {
-                quarter.courses[index] = action.payload as unknown as CourseGQLData;
-              }
-            });
-          });
-        });
-      });
-    },
-    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
-      const customCourseId = action.payload;
-
-      state.plans.forEach((plan) => {
-        plan.content.yearPlans.forEach((year) => {
-          year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            quarter.courses = courses.filter((course) => {
-              if ('courseName' in course) {
-                return course.id !== customCourseId;
-              }
-              return true;
-            }) as unknown as typeof quarter.courses;
-          });
-        });
-      });
+    setSelectedSidebarTab: (state, action: PayloadAction<number>) => {
+      state.selectedSidebarTab = action.payload;
     },
   },
 });
@@ -261,6 +276,7 @@ export const {
   setActiveCustomCourse,
   updateRoadmapCustomCourse,
   removeCustomCourseFromRoadmap,
+  setSelectedSidebarTab,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

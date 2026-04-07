@@ -25,6 +25,7 @@ export const user = pgTable(
     picture: text('picture').notNull(),
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
+    currentPlanIndex: integer('current_plan_index').notNull().default(0),
   },
   (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
 );
@@ -55,14 +56,14 @@ export const review = pgTable(
     content: text('content'),
     rating: integer('rating').notNull(),
     difficulty: integer('difficulty').notNull(),
-    gradeReceived: text('grade_received').notNull(),
+    gradeReceived: text('grade_received'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at'),
     forCredit: boolean('for_credit').notNull(),
     quarter: text('quarter').notNull(),
-    takeAgain: boolean('take_again').notNull(),
-    textbook: boolean('textbook').notNull(),
-    attendance: boolean('attendance').notNull(),
+    takeAgain: boolean('take_again'),
+    textbook: boolean('textbook'),
+    attendance: boolean('attendance'),
     tags: text('tags').array(),
     verified: boolean('verified').notNull().default(false),
   },
@@ -330,4 +331,24 @@ export const completedMarkerRequirement = pgTable(
     markerName: text('marker_name').notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
+);
+
+export const override = pgTable(
+  'override',
+  {
+    userId: integer('user_id')
+      .references(() => user.id)
+      .notNull(),
+
+    plannerId: integer('planner_id')
+      .references(() => planner.id, { onDelete: 'cascade' })
+      .notNull(),
+
+    requirement: text('requirement').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.plannerId, table.requirement] }),
+
+    index('override_user_planner_idx').on(table.userId, table.plannerId),
+  ],
 );
