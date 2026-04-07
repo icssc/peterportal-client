@@ -50,16 +50,10 @@ const CustomCourses = () => {
   const customCoursesCopy = deepCopy(userCustomCourses);
 
   const addCard = useCallback(() => {
-    if (!isLoggedIn) {
-      const newId = Date.now();
-      dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
-      return;
-    }
-
     trpc.customCourses.addCustomCard
       .mutate({ name: '', description: '', units: 0 })
       .then((id) => dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' })));
-  }, [dispatch, isLoggedIn]);
+  }, [dispatch]);
 
   const handleUpdate = (course: CustomCourse) => {
     dispatch(updateCustomCourse({ ...course }));
@@ -82,26 +76,32 @@ const CustomCourses = () => {
       </div>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
-          <ReactSortable
-            list={customCoursesCopy}
-            sort={false}
-            setList={() => {}}
-            onStart={(evt) => {
-              const draggedCourse = userCustomCourses[evt.oldIndex!];
-              if (!draggedCourse) return;
+          {!isLoggedIn ? (
+            <p className="custom-cards-logged-out">Log in to use custom cards!</p>
+          ) : (
+            <>
+              <ReactSortable
+                list={customCoursesCopy}
+                sort={false}
+                setList={() => {}}
+                onStart={(evt) => {
+                  const draggedCourse = userCustomCourses[evt.oldIndex!];
+                  if (!draggedCourse) return;
 
-              dispatch(setActiveCustomCourse({ course: draggedCourse }));
-            }}
-            {...customCourseSortable}
-          >
-            {userCustomCourses.map((course) => (
-              <CustomCourseCard key={course.id} course={course} handleUpdate={handleUpdate} inRoadmap={false} />
-            ))}
-          </ReactSortable>
+                  dispatch(setActiveCustomCourse({ course: draggedCourse }));
+                }}
+                {...customCourseSortable}
+              >
+                {userCustomCourses.map((course) => (
+                  <CustomCourseCard key={course.id} course={course} handleUpdate={handleUpdate} inRoadmap={false} />
+                ))}
+              </ReactSortable>
 
-          <button className="add-card-button" type="button" onClick={addCard}>
-            <AddIcon />
-          </button>
+              <button className="add-card-button" type="button" onClick={addCard}>
+                <AddIcon />
+              </button>
+            </>
+          )}
         </div>
       </Collapse>
     </div>

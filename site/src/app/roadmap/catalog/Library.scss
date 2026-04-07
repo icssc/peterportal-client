@@ -48,6 +48,13 @@
 
 .custom-courses {
   .section-content {
+    .custom-cards-logged-out {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
     .add-card-button {
       box-shadow: 0 0 2px 0 #60616680;
       background: var(--mui-palette-overlay-overlay1);
