@@ -1,8 +1,9 @@
 'use client';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { quarterDisplayNames } from '../../../helpers/planner';
+import { quarterDisplayNames, calculateTotalUnits } from '../../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useMemo } from 'react';
 import {
   createQuarterCourseLoadingPlaceholder,
   reviseRoadmap,
@@ -19,7 +20,12 @@ import { quarterSortable } from '../../../helpers/sortable';
 
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { Button, Card } from '@mui/material';
-import { ModifiedQuarter, modifyQuarterCourse, reorderQuarterCourse } from '../../../helpers/roadmapEdits';
+import {
+  ModifiedQuarter,
+  modifyQuarterCourse,
+  modifyVariableCourseUnit,
+  reorderQuarterCourse,
+} from '../../../helpers/roadmapEdits';
 
 interface QuarterProps {
   yearIndex: number;
@@ -43,17 +49,13 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const currentPlan = useAppSelector(selectCurrentPlan);
   const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
 
-  const calculateQuarterStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
-    data.courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount += 1;
-    });
-    return [unitCount, courseCount];
-  };
+  // Calculate Quarter Stats
+  const unitCount = useMemo(() => {
+    const courses = data.courses;
+    const { unitCount } = calculateTotalUnits(courses);
 
-  const unitCount = calculateQuarterStats()[0];
+    return unitCount;
+  }, [data]);
 
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
@@ -168,6 +170,10 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
             <Course
               key={index}
               data={course}
+              onSetVariableUnits={(units) => {
+                const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
+                if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+              }}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
