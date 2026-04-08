@@ -414,8 +414,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </FormControl>
 
       <FormControl className="additional-details" error={wordCount > 500}>
-        {' '}
-        {/* @todo: efficiency */}
         <FormLabel>Write a Review</FormLabel>
         <TextField
           multiline
@@ -435,7 +433,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     <Dialog open={open} onClose={handleClose} className="review-form-dialog">
       <DialogTitle>
         {editing ? `Edit Review for ${reviewHeadingName}` : `Review ${reviewHeadingName}`}
-        <DialogContentText>{courseProp?.title}</DialogContentText> {/* if professor, put something?*/}
+        <DialogContentText>{courseProp?.title}</DialogContentText>
         {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
       </DialogTitle>
       <Box component="form" noValidate onSubmit={submitForm}>
