@@ -88,6 +88,7 @@ $mui-transition-time: 268ms;
       width: 0 !important;
     }
   }
+
   html,
   body,
   .planner {
@@ -97,10 +98,10 @@ $mui-transition-time: 268ms;
     print-color-adjust: exact;
     box-decoration-break: clone;
   }
+
   * {
     background-color: white !important;
     color: black !important;
-    outline-color: black !important;
     overflow: visible !important;
   }
 
@@ -121,6 +122,7 @@ $mui-transition-time: 268ms;
       display: flex;
       flex-direction: column;
       justify-content: left;
+      border: 1px solid black !important;
 
       * {
         text-wrap: wrap !important;
@@ -139,7 +141,7 @@ $mui-transition-time: 268ms;
 
   .year {
     border: none;
-    outline: 1px solid black;
+    outline: 1px solid black !important;
     outline-offset: -1px;
   }
 
@@ -147,11 +149,16 @@ $mui-transition-time: 268ms;
   .quarter,
   .roadmap-course {
     break-inside: avoid-page !important;
-    outline: 1px solid black !important;
+  }
+
+  .quarter {
+    margin: 0 !important;
+    border: 1px solid black !important;
+    overflow: hidden !important;
   }
 
   .quarter-list {
-    outline: 1px solid black;
+    gap: 0 !important;
   }
 
   .quarter-header {
