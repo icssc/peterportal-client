@@ -88,7 +88,7 @@ const roadmapPlannerChange = z.object({
 });
 
 const plannerYearSaveInfo = plannerYearChangeIdentifier.omit({ id: true }).extend({
-  data: z.object({ startYear: z.number().int(), name: z.string().max(35) }),
+  data: z.object({ startYear: z.number().int(), name: z.string().max(35), collapsed: z.boolean() }),
 });
 
 const plannerQuarterSaveInfo = plannerQuarterChangeIdentifier.omit({ id: true }).extend({

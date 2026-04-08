@@ -88,7 +88,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
 
   const handleDeleteYear = () => {
     setShow(false);
-    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.quarters);
+    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.collapsed, year.quarters);
     dispatch(reviseRoadmap(revision));
   };
 
@@ -133,6 +133,22 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     setShowEditYear(true);
   };
 
+  const handleCollapseClick = () => {
+    const newCollapsed = showContent;
+    setShowContent(!showContent);
+    const revision = modifyPlannerYear(currentPlan.id, data, {
+      newName: data.name,
+      newStartYear: data.startYear,
+      newCollapsed: newCollapsed,
+      addedQuarters: [],
+      removedQuarters: [],
+    });
+    // console.log('revision:', JSON.stringify(revision));
+
+    // undoing and redoing, behavior for collapsing and expanding on the same
+    if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+  };
+
   return (
     <Card className="year" ref={yearContainerRef} variant="outlined">
       <div className="year-header">
@@ -148,7 +164,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           <ExpandMore
             expanded={showContent}
-            onClick={() => setShowContent(!showContent)}
+            onClick={handleCollapseClick}
             aria-expanded={showContent}
             aria-label="expand planner"
           />
@@ -190,6 +206,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           const revision = modifyPlannerYear(currentPlan.id, data, {
             newName: name,
             newStartYear: startYear,
+            newCollapsed: data.collapsed,
             addedQuarters,
             removedQuarters,
           });
