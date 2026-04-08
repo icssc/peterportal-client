@@ -96,6 +96,7 @@ const YearModal: FC<YearModalProps> = (props) => {
     saveHandler({
       startYear: year,
       name: name.trim(),
+      collapsed: false, // @TODO shouldn't hardcode to false, but unable to recreate issue
       quarters: quarters.filter((q) => q.checked).map((q) => ({ name: q.id, courses: [] })),
     });
   };
