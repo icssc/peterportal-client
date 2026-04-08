@@ -1,6 +1,6 @@
-﻿{
-  "id": "0f55d110-2818-4791-92ad-b295961d1bc6",
-  "prevId": "4285a98d-9508-4ec7-ab3c-ac54c8192aec",
+{
+  "id": "fa7342a7-39ab-43a3-96ab-03db8ba8705b",
+  "prevId": "0f55d110-2818-4791-92ad-b295961d1bc6",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -573,19 +573,19 @@
           "name": "take_again",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "textbook": {
           "name": "textbook",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "attendance": {
           "name": "attendance",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "tags": {
           "name": "tags",

@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import './RequirementsListSelector.scss';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RequirementsTabName, setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
 import TabSelector from './../sidebar/TabSelector';
@@ -22,7 +23,7 @@ const RequirementsListSelector: FC = () => {
   };
 
   return (
-    <div>
+    <div className="requirements-list-selector">
       <TabSelector tabs={tabs} selectedTab={selectedTab} onTabChange={handleTabChange} />
     </div>
   );

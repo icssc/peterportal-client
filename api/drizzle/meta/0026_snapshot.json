@@ -1,6 +1,6 @@
-﻿{
-  "id": "0f55d110-2818-4791-92ad-b295961d1bc6",
-  "prevId": "4285a98d-9508-4ec7-ab3c-ac54c8192aec",
+{
+  "id": "96ab7c2b-2dbf-497e-aa15-a1fd037caa87",
+  "prevId": "fa7342a7-39ab-43a3-96ab-03db8ba8705b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -542,7 +542,7 @@
           "name": "grade_received",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -573,19 +573,19 @@
           "name": "take_again",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "textbook": {
           "name": "textbook",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "attendance": {
           "name": "attendance",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "tags": {
           "name": "tags",
