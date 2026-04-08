@@ -3,6 +3,7 @@ import { defaultYear } from '../../helpers/planner';
 import {
   CourseGQLData,
   CourseIdentifier,
+  CustomCourse,
   InvalidCourseData,
   PlannerQuarterData,
   PlannerYearData,
@@ -43,6 +44,10 @@ interface SetActiveCoursePayload {
   courseIndex?: number;
 }
 
+interface SetActiveCustomCoursePayload {
+  course: CustomCourse;
+}
+
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
@@ -64,6 +69,7 @@ export const roadmapSlice = createSlice({
     showMobileFullscreenSearch: false,
     /** Store the course data of the active dragging item */
     activeCourse: null as CourseGQLData | null,
+    activeCustomCourse: null as CustomCourse | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
     activeCourseLoading: false,
     /** Store missing prerequisites for courses when adding on mobile */
@@ -130,6 +136,7 @@ export const roadmapSlice = createSlice({
       }
       const { course, ...dragSource } = action.payload;
       state.activeCourse = course;
+      state.activeCustomCourse = null;
       state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
@@ -200,6 +207,44 @@ export const roadmapSlice = createSlice({
     setSelectedSidebarTab: (state, action: PayloadAction<number>) => {
       state.selectedSidebarTab = action.payload;
     },
+    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCustomCourse = null;
+        return;
+      }
+      state.activeCustomCourse = action.payload.course;
+    },
+    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            courses.forEach((course, index) => {
+              if ('courseName' in course && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload as unknown as CourseGQLData;
+              }
+            });
+          });
+        });
+      });
+    },
+    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
+      const customCourseId = action.payload;
+
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
+            quarter.courses = courses.filter((course) => {
+              if ('courseName' in course) {
+                return course.id !== customCourseId;
+              }
+              return true;
+            }) as unknown as typeof quarter.courses;
+          });
+        });
+      });
+    },
   },
 });
 
@@ -227,6 +272,9 @@ export const {
   setCHCSelection,
   updateTempPlannerIds,
   setSelectedSidebarTab,
+  setActiveCustomCourse,
+  updateRoadmapCustomCourse,
+  removeCustomCourseFromRoadmap,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

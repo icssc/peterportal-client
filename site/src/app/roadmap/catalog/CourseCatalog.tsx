@@ -8,7 +8,7 @@ import GERequiredCourseList from './GERequiredCourseList';
 import MajorSelector from './MajorSelector';
 import MinorSelector from './MinorSelector';
 import RequirementsListSelector from './RequirementsListSelector';
-import SavedCourseList from './SavedCourses';
+import Library from './Library';
 
 const CloseRoadmapSearchButton = () => {
   const isMobile = useIsMobile();
@@ -36,7 +36,7 @@ export const CourseCatalog = () => {
       {selectedCourseList === 'Major' && <MajorSelector />}
       {selectedCourseList === 'Minor' && <MinorSelector />}
       {selectedCourseList === 'GE' && <GERequiredCourseList />}
-      {selectedCourseList === 'Saved' && <SavedCourseList />}
+      {selectedCourseList === 'Library' && <Library />}
       {selectedCourseList === 'Search' && <SavedAndSearch showSavedCoursesOnEmpty />}
 
       <CloseRoadmapSearchButton />

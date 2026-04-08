@@ -11,6 +11,7 @@ import { useTransferredCredits } from '../../../hooks/transferCredits';
 import Footer from '../../../shared-components/Footer';
 import QuarterInfo from '../QuarterInfo/QuarterInfo';
 import Disclaimer from '../Disclaimer/Disclaimer';
+import { CourseGQLData, CustomCourse } from '../../../types/types';
 
 const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
@@ -21,9 +22,17 @@ const Planner: FC = () => {
     let unitCount = 0;
     let courseCount = 0;
     // sum up all courses
-    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
+    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses) as (
+      | CourseGQLData
+      | CustomCourse
+    )[];
+
     courses.forEach((course) => {
-      unitCount += course.minUnits;
+      if ('courseName' in course) {
+        unitCount += Number.isNaN(course.units) ? 0 : course.units;
+      } else {
+        unitCount += course.minUnits;
+      }
       courseCount++;
     });
 
