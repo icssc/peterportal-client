@@ -2,6 +2,7 @@ import './MenuSection.scss';
 import { FC, ReactNode, useState } from 'react';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 export const SectionDescription: FC<{ children: ReactNode }> = ({ children }) => {
   return <p className="section-description">{children}</p>;
@@ -18,18 +19,10 @@ const MenuSection: FC<MenuSectionProps> = ({ title, children }) => {
 
   return (
     <div className="transfer-credits-section">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4>{title}</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">{children}</div>
       </Collapse>
