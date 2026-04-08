@@ -15,6 +15,7 @@ export const savedPlannerYearData = z.object({
   startYear: z.number(),
   name: z.string().max(35),
   quarters: z.array(savedPlannerQuarterData),
+  collapsed: z.boolean(),
 });
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 

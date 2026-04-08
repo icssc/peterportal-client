@@ -119,7 +119,7 @@ interface YearProps {
 
 const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
-  const [showContent, setShowContent] = useState(true);
+  const [showContent, setShowContent] = useState(!data.collapsed);
   const [showEditYear, setShowEditYear] = useState(false);
   const [showDeleteYear, setShowDeleteYear] = useState(false);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
