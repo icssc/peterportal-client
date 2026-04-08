@@ -7,7 +7,10 @@
 }
 
 .custom-courses {
-  gap: 12px;
+  gap: 4px;
+  .section-content .custom-card {
+    border-radius: 8px;
+  }
 }
 
 .saved-courses,
@@ -51,7 +54,7 @@
     .add-card-button {
       box-shadow: 0 0 2px 0 #60616680;
       background: var(--mui-palette-overlay-overlay1);
-      border: 2px solid var(--mui-palette-divider);
+      border: 0px;
       border-radius: 8px;
       height: auto;
       font-size: 16px;
