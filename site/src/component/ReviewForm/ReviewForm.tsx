@@ -29,7 +29,7 @@ import {
   TextField,
 } from '@mui/material';
 import './ReviewForm.scss';
-import { getProfessorTerms, getQuarters, getYears } from '../../helpers/reviews';
+import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears } from '../../helpers/reviews';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
@@ -53,6 +53,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
+  const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
 
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
   const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
@@ -114,16 +115,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       }
     }
   }, [yearTaken, terms, quarterTaken]);
-
-  function getReviewHeadingName() {
-    if (!courseProp && !professorProp) {
-      return `${reviewToEdit?.courseId}`;
-    } else if (courseProp) {
-      return `${courseProp?.department} ${courseProp?.courseNumber}`;
-    } else {
-      return `${professorProp?.name}`;
-    }
-  }
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
@@ -401,8 +392,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       </div>
 
       <FormControl className="quick-tags">
-        {' '}
-        {/* @todo: edit type for tags*/}
         <div className="quick-tags-label">
           <FormLabel>Quick Tags</FormLabel>
           <DialogContentText>Select all that apply</DialogContentText>
@@ -428,7 +417,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {' '}
         {/* @todo: efficiency */}
         <FormLabel>Write a Review</FormLabel>
-        <TextField // @todo: persist error on hover
+        <TextField
           multiline
           variant="outlined"
           placeholder="Share your experience — what should future students know about this course? "
@@ -445,7 +434,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   return (
     <Dialog open={open} onClose={handleClose} className="review-form-dialog">
       <DialogTitle>
-        {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
+        {editing ? `Edit Review for ${reviewHeadingName}` : `Review ${reviewHeadingName}`}
         <DialogContentText>{courseProp?.title}</DialogContentText> {/* if professor, put something?*/}
         {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
       </DialogTitle>
