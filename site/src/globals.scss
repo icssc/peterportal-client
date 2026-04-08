@@ -168,4 +168,12 @@ $mui-transition-time: 268ms;
       background-color: #eeeeee !important;
     }
   }
+
+  .MuiButton-root {
+    display: none !important;
+
+    * {
+      display: none !important;
+    }
+  }
 }
