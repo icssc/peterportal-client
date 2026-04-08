@@ -11,6 +11,7 @@ import {
   setShowToast,
 } from '../../../store/slices/roadmapSlice';
 import { pluralize } from '../../../helpers/util';
+import { calculateTotalUnits } from '../../../helpers/planner';
 
 import { PlannerYearData } from '../../../types/types';
 import EditYearModal from './YearModal';
@@ -56,14 +57,9 @@ interface YearStatsProps {
   year: PlannerYearData;
 }
 const YearStats = ({ year }: YearStatsProps) => {
-  let unitCount = 0;
-  let courseCount = 0;
-  year.quarters.forEach((quarter) => {
-    quarter.courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount += 1;
-    });
-  });
+  const courses = year.quarters.flatMap((quarter) => quarter.courses);
+
+  const { unitCount, courseCount } = calculateTotalUnits(courses);
 
   return (
     <p className="year-stats">
