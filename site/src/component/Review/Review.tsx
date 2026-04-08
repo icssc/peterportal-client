@@ -1,6 +1,5 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import ReviewCard from './ReviewCard';
-// import OldReviewForm from '../OldReviewForm/OldReviewForm';
 import './Review.scss';
 
 import {

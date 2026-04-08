@@ -6,7 +6,6 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-// import OldReviewForm from '../OldReviewForm/OldReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';

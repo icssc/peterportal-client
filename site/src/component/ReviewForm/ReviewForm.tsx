@@ -74,6 +74,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
   const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty ?? 3);
+  const sliderMarks = [...Array(5).keys()].map((k) => ({ value: k + 1, label: '•' }));
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
   const wordCount = content.match(/\S+/g)?.length ?? 0;
@@ -125,7 +126,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }
 
   const resetForm = () => {
-    // @todo: move to helper
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
     setInstructorName(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
@@ -140,7 +140,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
-    // @todo: move to helper
     setSubmitting(true);
     try {
       if (editing) {
@@ -372,14 +371,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               min={1}
               max={5}
               step={1}
-              marks={[
-                // @todo: scuffed....
-                { value: 1, label: '•' },
-                { value: 2, label: '•' },
-                { value: 3, label: '•' },
-                { value: 4, label: '•' },
-                { value: 5, label: '•' },
-              ]}
+              marks={sliderMarks}
             />
           </div>
         </FormControl>
@@ -402,13 +394,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
               min={1}
               max={5}
               step={1}
-              marks={[
-                { value: 1, label: '•' },
-                { value: 2, label: '•' },
-                { value: 3, label: '•' },
-                { value: 4, label: '•' },
-                { value: 5, label: '•' },
-              ]}
+              marks={sliderMarks}
             />
           </div>
         </FormControl>
