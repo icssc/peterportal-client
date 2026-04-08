@@ -36,6 +36,7 @@ import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import MenuTile from '../transfers/MenuTile';
 import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -164,18 +165,10 @@ interface GroupHeaderProps {
 const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
-    <div
-      className={className}
-      role="button"
-      tabIndex={0}
-      onClick={() => setOpen(!open)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') setOpen(!open);
-      }}
-    >
+    <ClickableDiv className={className} onClick={() => setOpen(!open)}>
       <b>{title}</b>
       <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
-    </div>
+    </ClickableDiv>
   );
 };
 

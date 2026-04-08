@@ -452,6 +452,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "collapsed": {
+          "name": "collapsed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},

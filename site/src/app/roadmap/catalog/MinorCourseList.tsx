@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 function getCoursesForMinor(programId: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
@@ -55,18 +56,10 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   return (
     <div className="major-section">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4 className="major-name">{minorReqs.minor.name}</h4>
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         {resultsLoading ? (
           <LoadingSpinner />
