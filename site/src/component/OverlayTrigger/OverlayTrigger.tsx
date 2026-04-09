@@ -36,7 +36,7 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
   const open = Boolean(anchorEl);
 
   const showPopover = (event: React.MouseEvent<HTMLElement>) => {
-    if (disabled) {
+    if (disabled || document.body.classList.contains('dragging')) {
       return;
     }
 
