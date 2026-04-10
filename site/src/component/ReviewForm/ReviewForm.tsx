@@ -1,9 +1,3 @@
-import React, { FC, useState, useEffect, useContext } from 'react';
-import './ReviewForm.scss';
-import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { ReviewProps } from '../Review/Review';
-import ThemeContext from '../../style/theme-context';
 import {
   anonymousName,
   EditReviewSubmission,
@@ -14,41 +8,43 @@ import {
   ReviewTags,
   tags,
 } from '@peterportal/types';
-import trpc from '../../trpc';
-import Select2 from 'react-select';
-import { comboboxTheme } from '../../helpers/courseRequirements';
-import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
-import { searchAPIResult, sortTerms } from '../../helpers/util';
+import { ReviewProps } from '../Review/Review';
+import React, { FC, useEffect, useState } from 'react';
 import {
-  Button,
   Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
-  FormLabel,
-  MenuItem,
-  Rating,
-  Select,
-  TextField,
+  Button,
+  Chip,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  MenuItem,
+  Select,
+  Slider,
+  Switch,
+  TextField,
 } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import './ReviewForm.scss';
+import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears } from '../../helpers/reviews';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { searchAPIResult, sortTerms } from '../../helpers/util';
+import trpc from '../../trpc';
+import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
 
 interface ReviewFormProps extends ReviewProps {
-  closeForm: () => void;
-  show: boolean;
+  open: boolean;
+  handleClose: () => void;
   editing?: boolean;
   reviewToEdit?: ReviewData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({
-  closeForm,
-  show,
+  open,
+  handleClose,
   editing,
   reviewToEdit,
   professor: professorProp,
@@ -56,54 +52,57 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
 }) => {
   const dispatch = useAppDispatch();
-  const { darkMode } = useContext(ThemeContext);
   const reviews = useAppSelector((state) => state.review.reviews);
-  const isLoggedIn = useIsLoggedIn();
+  const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
+
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
-  const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
+  const [instructorName, setInstructorName] = useState(professorProp?.name ?? '');
+  const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
-  const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+  const [instructor, setInstructor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
-  const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived);
-  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty);
-  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
-  const [takeAgain, setTakeAgain] = useState<boolean>(reviewToEdit?.takeAgain ?? false);
-  const [textbook, setTextbook] = useState<boolean>(reviewToEdit?.textbook ?? false);
-  const [attendance, setAttendance] = useState<boolean>(reviewToEdit?.attendance ?? false);
-  const [tagsOpen, setTagsOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<ReviewTags[]>(reviewToEdit?.tags ?? []);
-  const [content, setContent] = useState(reviewToEdit?.content ?? '');
-  const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
-  const [showFormErrors, setShowFormErrors] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived ?? undefined);
 
-  // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
+  const [selectedTags, setSelectedTags] = useState<ReviewTags[]>([]);
+  const handleTagChange = (tag: ReviewTags) => {
+    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+  };
+
+  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
+  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
+  const sliderMarks = [...Array(5).keys()].map((k) => ({ value: k + 1, label: '•' }));
+
+  const [content, setContent] = useState(reviewToEdit?.content ?? '');
+  const wordCount = content.match(/\S+/g)?.length ?? 0;
+
+  const [submitting, setSubmitting] = useState(false);
+  const [showFormErrors, setShowFormErrors] = useState(false);
+
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
-      searchAPIResult('instructor', reviewToEdit.professorId).then((professor) => {
-        if (professor) {
-          const profTerms = sortTerms(getProfessorTerms(professor));
-          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+      searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
+        if (instructor) {
+          const instrTerms = sortTerms(getProfessorTerms(instructor));
+          const newYears = [...new Set(instrTerms.map((t) => t.split(' ')[0]))];
           const newQuarters = [
-            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
+            ...new Set(instrTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
           ];
 
-          setTerms(profTerms);
+          setTerms(instrTerms);
           setYears(newYears);
           setQuarters(newQuarters);
           setYearTaken(yearTakenDefault);
           setQuarterTaken(quarterTakenDefault);
-          setProfessorName(professor.name);
+          setInstructorName(instructor.name);
         }
       });
     }
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
 
-  // when a year or quarter is selected, update the valid quarters accordingly
   useEffect(() => {
     if (yearTaken) {
       const newQuarters = getQuarters(terms, yearTaken);
@@ -115,34 +114,14 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
   }, [yearTaken, terms, quarterTaken]);
 
-  useEffect(() => {
-    if (show) {
-      // form opened
-      // if not logged in, close the form
-      if (!isLoggedIn) {
-        dispatch(setToastMsg('You must be logged in to add a review!'));
-        dispatch(setToastSeverity('error'));
-        dispatch(setShowToast(true));
-        closeForm();
-      }
-
-      setShowFormErrors(false);
-    }
-    // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show]);
-
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
-    setProfessor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setInstructor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
     setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
-    setDifficulty(reviewToEdit?.difficulty);
+    setDifficulty(reviewToEdit?.difficulty ?? 3);
     setRating(reviewToEdit?.rating ?? 3);
-    setTakeAgain(reviewToEdit?.takeAgain ?? false);
-    setTextbook(reviewToEdit?.textbook ?? false);
-    setAttendance(reviewToEdit?.attendance ?? false);
     setSelectedTags(reviewToEdit?.tags ?? []);
     setContent(reviewToEdit?.content ?? '');
     setAnonymous(reviewToEdit?.userDisplay === anonymousName);
@@ -150,7 +129,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const postReview = async (review: ReviewSubmission | EditReviewSubmission) => {
-    setIsSubmitting(true);
+    setSubmitting(true);
     try {
       if (editing) {
         await trpc.reviews.edit.mutate(review as EditReviewSubmission);
@@ -170,39 +149,38 @@ const ReviewForm: FC<ReviewFormProps> = ({
       dispatch(setToastSeverity('error'));
       dispatch(setShowToast(true));
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
 
     if (!editing) resetForm();
-    closeForm();
+    handleClose();
   };
 
   const submitForm = (event: React.FormEvent<HTMLFormElement>) => {
-    // validate form
     const form = event.currentTarget;
     const valid = form.checkValidity();
     event.preventDefault();
     event.stopPropagation();
 
-    if (!valid) {
+    if (!valid || wordCount > 500) {
       setShowFormErrors(true);
+      setSubmitting(false);
       return;
     }
 
+    setSubmitting(true);
+
     const review = {
       id: reviewToEdit?.id,
-      professorId: professor,
+      professorId: instructor,
       courseId: course,
       anonymous: anonymous,
       content: content,
       rating: rating,
-      difficulty: difficulty!,
-      gradeReceived: gradeReceived!,
+      difficulty: difficulty,
+      gradeReceived: gradeReceived,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
-      takeAgain: takeAgain,
-      textbook: textbook,
-      attendance: attendance,
       tags: selectedTags,
       updatedAt: editing ? new Date().toISOString() : undefined,
     };
@@ -210,30 +188,31 @@ const ReviewForm: FC<ReviewFormProps> = ({
     postReview(review);
   };
 
-  const alreadyReviewedCourseProf = (courseId: string, professorId: string) => {
+  const alreadyReviewedCourseInstr = (courseId: string, professorId: string) => {
     return reviews.some(
       (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
     );
   };
 
-  // if in course context, select a professor
-  const professorSelect = courseProp && (
-    <FormControl error={showFormErrors && !professor}>
-      <FormLabel>Instructor</FormLabel>
+  // if in course context, select an instructor
+  const instructorSelect = courseProp && (
+    <FormControl error={showFormErrors && !instructor}>
+      <FormLabel required>Instructor</FormLabel>
       <Select
         name="professor"
         id="professor"
         required
-        onChange={(e) => setProfessor(e.target.value)}
-        value={professor}
+        error={showFormErrors && !instructor}
+        onChange={(e) => setInstructor(e.target.value)}
+        value={instructor}
         displayEmpty
       >
         <MenuItem disabled value="">
-          Select one of the following...
+          Select instructor
         </MenuItem>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
+          const alreadyReviewed = alreadyReviewedCourseInstr(courseProp?.id, ucinetid);
           return (
             <MenuItem
               key={ucinetid}
@@ -246,29 +225,29 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Select>
-      {showFormErrors && !professor && <FormHelperText>Missing professor</FormHelperText>}
     </FormControl>
   );
 
-  // if in professor context, select a course
+  // if in instructor context, select a course
   const courseSelect = professorProp && (
     <FormControl error={showFormErrors && !course}>
-      <FormLabel>Course Taken</FormLabel>
+      <FormLabel required>Course Taken</FormLabel>
       <Select
         name="course"
         id="course"
         required
+        error={showFormErrors && !course}
         onChange={(e) => setCourse(e.target.value)}
         value={course}
         displayEmpty
       >
         <MenuItem disabled value="">
-          Select one of the following...
+          Select course
         </MenuItem>
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
             professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
+          const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
           return (
             <MenuItem
               key={courseID}
@@ -281,218 +260,203 @@ const ReviewForm: FC<ReviewFormProps> = ({
           );
         })}
       </Select>
-      {showFormErrors && !course && <FormHelperText>Missing course</FormHelperText>}
     </FormControl>
   );
 
-  function getReviewHeadingName() {
-    if (!courseProp && !professorProp) {
-      return `${reviewToEdit?.courseId}`;
-    } else if (courseProp) {
-      return `${courseProp?.department} ${courseProp?.courseNumber}`;
-    } else {
-      return `${professorProp?.name}`;
-    }
-  }
+  const reviewFormContent = (
+    <>
+      <div className="year-quarter-row">
+        <FormControl error={showFormErrors && !yearTaken}>
+          <FormLabel required>Year</FormLabel>
+          <Select
+            name="year"
+            id="year"
+            required
+            error={showFormErrors && !yearTaken}
+            onChange={(e) => setYearTaken(e.target.value)}
+            value={yearTaken}
+            displayEmpty
+          >
+            <MenuItem disabled value="">
+              Select year
+            </MenuItem>
+            {years?.map((term) => (
+              <MenuItem key={term} value={term}>
+                {term}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl error={showFormErrors && !quarterTaken}>
+          <FormLabel required>Quarter</FormLabel>
+          <Select
+            name="quarter"
+            id="quarter"
+            required
+            error={showFormErrors && !quarterTaken}
+            onChange={(e) => setQuarterTaken(e.target.value)}
+            value={quarterTaken}
+            displayEmpty
+          >
+            <MenuItem disabled value="">
+              Select quarter
+            </MenuItem>
+            {quarters?.map((quarter) => (
+              <MenuItem key={quarter} value={quarter}>
+                {quarter}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
 
-  const reviewForm = (
-    <Dialog open={show} onClose={closeForm} className="review-form-modal">
-      <DialogTitle>
-        {editing ? `Edit Review for ${getReviewHeadingName()}` : `Review ${getReviewHeadingName()}`}
-        {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
-      </DialogTitle>
-      <DialogContent>
-        <Box component="form" noValidate onSubmit={submitForm}>
-          <div className="year-quarter-row">
-            <FormControl error={showFormErrors && !yearTaken}>
-              <FormLabel>Year</FormLabel>
-              <Select
-                name="year"
-                id="year"
-                required
-                onChange={(e) => setYearTaken(e.target.value)}
-                value={yearTaken}
-                displayEmpty
-              >
-                <MenuItem disabled value="">
-                  Select
-                </MenuItem>
-                {years?.map((term) => (
-                  <MenuItem key={term} value={term}>
-                    {term}
-                  </MenuItem>
-                ))}
-              </Select>
-              {showFormErrors && !yearTaken && <FormHelperText>Missing year</FormHelperText>}
-            </FormControl>
-            <FormControl error={showFormErrors && !quarterTaken}>
-              <FormLabel>Quarter</FormLabel>
-              <Select
-                name="quarter"
-                id="quarter"
-                required
-                onChange={(e) => setQuarterTaken(e.target.value)}
-                value={quarterTaken}
-                displayEmpty
-              >
-                <MenuItem disabled value="">
-                  Select
-                </MenuItem>
-                {quarters?.map((term) => (
-                  <MenuItem key={term} value={term}>
-                    {term}
-                  </MenuItem>
-                ))}
-              </Select>
-              {showFormErrors && !quarterTaken && <FormHelperText>Missing quarter</FormHelperText>}
-            </FormControl>
+      <div className="course-professor-grade-row">
+        {courseProp && instructorSelect}
+        {professorProp && courseSelect}
+
+        <FormControl>
+          <FormLabel>Grade Received</FormLabel>
+          <Select
+            name="grade"
+            id="grade"
+            onChange={(e) => setGradeReceived(e.target.value ? (e.target.value as ReviewGrade) : undefined)}
+            value={gradeReceived ?? ''}
+            displayEmpty
+          >
+            <MenuItem value="">Prefer not to say</MenuItem>
+            {grades.map((grade) => (
+              <MenuItem key={grade} value={grade}>
+                {grade}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+
+      <div className="rating-sliders">
+        <FormControl fullWidth className="quality-slider">
+          <div className="quality-label rating-label">
+            <FormLabel>Quality Rating</FormLabel>
+            <DialogContentText>Overall experience</DialogContentText>
           </div>
 
-          {professorSelect}
-          {courseSelect}
+          <div className="labeled-slider">
+            <div className="slider-value-labels">
+              <span>Poor</span>
+              <span>Excellent</span>
+            </div>
 
-          <div className="grade-difficulty-row">
-            <FormControl error={showFormErrors && !gradeReceived}>
-              <FormLabel>Grade</FormLabel>
-              <Select
-                name="grade"
-                id="grade"
-                required
-                onChange={(e) => setGradeReceived(e.target.value as ReviewGrade)}
-                value={gradeReceived ?? ''}
-                displayEmpty
-              >
-                <MenuItem disabled value="">
-                  Select
-                </MenuItem>
-                {grades.map((grade) => (
-                  <MenuItem key={grade} value={grade}>
-                    {grade}
-                  </MenuItem>
-                ))}
-              </Select>
-              {showFormErrors && !gradeReceived && <FormHelperText>Missing grade</FormHelperText>}
-            </FormControl>
-
-            <FormControl error={showFormErrors && !difficulty}>
-              <FormLabel>Difficulty</FormLabel>
-              <Select
-                name="difficulty"
-                id="difficulty"
-                required
-                onChange={(e: SelectChangeEvent) => setDifficulty(parseInt(e.target.value))}
-                value={difficulty?.toString() ?? ''}
-                displayEmpty
-              >
-                <MenuItem disabled={true} value="">
-                  Select
-                </MenuItem>
-                {[1, 2, 3, 4, 5].map((difficulty) => (
-                  <MenuItem key={difficulty} value={difficulty}>
-                    {difficulty}
-                  </MenuItem>
-                ))}
-              </Select>
-              {showFormErrors && !difficulty && <FormHelperText>Missing difficulty</FormHelperText>}
-            </FormControl>
-          </div>
-
-          <FormControl error={showFormErrors && !rating}>
-            <FormLabel>Rating</FormLabel>
-            <Rating
-              className={showFormErrors && !rating ? 'rating-error' : ''}
-              size="large"
+            <Slider
+              color="secondary"
+              value={rating}
+              onChange={(_, value) => setRating(value as number)}
               defaultValue={3}
-              onChange={(_, newValue) => {
-                setRating(newValue ?? 0);
-              }}
+              min={1}
+              max={5}
+              step={1}
+              marks={sliderMarks}
             />
-            {showFormErrors && !rating && <FormHelperText>Missing rating</FormHelperText>}
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Course Details</FormLabel>
-
-            <FormControlLabel
-              label="Would Take Again"
-              control={<Checkbox checked={!!takeAgain} onChange={(e) => setTakeAgain(e.target.checked)} />}
-            ></FormControlLabel>
-
-            <FormControlLabel
-              label="Requires Textbook"
-              control={<Checkbox checked={!!textbook} onChange={(e) => setTextbook(e.target.checked)} />}
-            />
-
-            <FormControlLabel
-              label="Mandatory Attendance"
-              control={<Checkbox checked={!!attendance} onChange={(e) => setAttendance(e.target.checked)} />}
-            />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Tags</FormLabel>
-            <Select2
-              isMulti
-              options={tags.map((tag) => ({ label: tag, value: tag }))}
-              value={selectedTags.map((tag) => ({ label: tag, value: tag }))}
-              onChange={(selected) => {
-                const newTags = selected.map((opt) => opt.value);
-                setSelectedTags(newTags);
-                if (newTags.length > 3) {
-                  setTagsOpen(false);
-                }
-              }}
-              onMenuOpen={() => setTagsOpen(true)}
-              onMenuClose={() => setTagsOpen(false)}
-              menuIsOpen={selectedTags.length < 3 && tagsOpen}
-              isOptionDisabled={() => selectedTags.length >= 3}
-              placeholder="Select up to 3 tags"
-              closeMenuOnSelect={false}
-              theme={(t) => comboboxTheme(t, darkMode)}
-              className="tag-select"
-              classNamePrefix="tag-select"
-            />
-          </FormControl>
-
-          <FormControl className="additional-details">
-            <FormLabel>Additional Details</FormLabel>
-            <TextField
-              multiline
-              variant="outlined"
-              placeholder="The course was pretty good."
-              onChange={(e) => setContent(e.target.value)}
-              value={content}
-              minRows={2}
-              slotProps={{
-                htmlInput: {
-                  maxLength: 500,
-                },
-              }}
-            />
-          </FormControl>
-
-          <FormControl className="anonymous-checkbox">
-            <FormControlLabel
-              label="Post as Anonymous"
-              control={<Checkbox checked={anonymous} onChange={(e) => setAnonymous(e.target.checked)} />}
-            />
-          </FormControl>
-
-          <div className="review-form-actions">
-            {/* Using this over FormActions since we don't want actions to be sticky over the form */}
-            <Button variant="text" color="inherit" onClick={closeForm}>
-              Cancel
-            </Button>
-            <Button type="submit" loading={isSubmitting}>
-              Submit Review
-            </Button>
           </div>
-        </Box>
-      </DialogContent>
-    </Dialog>
+        </FormControl>
+
+        <FormControl fullWidth className="difficulty-slider">
+          <div className="difficulty-label rating-label">
+            <FormLabel>Difficulty Level</FormLabel>
+          </div>
+
+          <div className="labeled-slider">
+            <div className="slider-value-labels">
+              <span>Very Easy</span>
+              <span>Very Hard</span>
+            </div>
+            <Slider
+              color="secondary"
+              value={difficulty}
+              onChange={(_, value) => setDifficulty(value as number)}
+              defaultValue={3}
+              min={1}
+              max={5}
+              step={1}
+              marks={sliderMarks}
+            />
+          </div>
+        </FormControl>
+      </div>
+
+      <FormControl className="quick-tags">
+        <div className="quick-tags-label">
+          <FormLabel>Quick Tags</FormLabel>
+          <DialogContentText>Select all that apply</DialogContentText>
+        </div>
+        <div className="quick-tags-select">
+          {tags.map((tag) => {
+            const selected = selectedTags.includes(tag);
+            return (
+              <Chip
+                key={tag}
+                label={tag}
+                clickable
+                color={selected ? 'secondary' : 'default'}
+                variant={selected ? 'filled' : 'outlined'}
+                onClick={() => handleTagChange(tag)}
+              />
+            );
+          })}
+        </div>
+      </FormControl>
+
+      <FormControl className="additional-details" error={wordCount > 500}>
+        <FormLabel>Write a Review</FormLabel>
+        <TextField
+          multiline
+          variant="outlined"
+          placeholder="Share your experience — what should future students know about this course? "
+          helperText={`${wordCount}/500 words`}
+          onChange={(e) => setContent(e.target.value)}
+          error={wordCount > 500}
+          value={content}
+          minRows={4}
+        />
+      </FormControl>
+    </>
   );
 
-  return reviewForm;
+  return (
+    <Dialog open={open} onClose={handleClose} className="review-form-dialog">
+      <DialogTitle>
+        {editing ? `Edit Review for ${reviewHeadingName}` : `Review ${reviewHeadingName}`}
+        <DialogContentText>{courseProp?.title}</DialogContentText>
+        {editing && <DialogContentText>{`You are editing your review for ${instructorName}.`}</DialogContentText>}
+      </DialogTitle>
+      <Box component="form" noValidate onSubmit={submitForm}>
+        <DialogContent>{reviewFormContent}</DialogContent>
+
+        <DialogActions>
+          <FormControlLabel
+            className="anonymous-switch"
+            value={anonymous}
+            control={
+              <Switch
+                color="secondary"
+                checked={anonymous}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setAnonymous(event.target.checked);
+                }}
+              />
+            }
+            label="Post Anonymously"
+            labelPlacement="top"
+          />
+          <Button variant="text" color="inherit" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={submitting}>
+            Submit Review
+          </Button>
+        </DialogActions>
+      </Box>
+    </Dialog>
+  );
 };
 
 export default ReviewForm;
