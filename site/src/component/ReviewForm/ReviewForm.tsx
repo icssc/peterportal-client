@@ -343,7 +343,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
       <div className="rating-sliders">
         <FormControl fullWidth className="quality-slider">
-          <div className="quality-label">
+          <div className="quality-label rating-label">
             <FormLabel>Quality Rating</FormLabel>
             <DialogContentText>Overall experience</DialogContentText>
           </div>
@@ -368,7 +368,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </FormControl>
 
         <FormControl fullWidth className="difficulty-slider">
-          <div className="difficulty-label">
+          <div className="difficulty-label rating-label">
             <FormLabel>Difficulty Level</FormLabel>
           </div>
 
