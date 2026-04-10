@@ -73,7 +73,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   };
 
   const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
-  const [difficulty, setDifficulty] = useState<number | undefined>(reviewToEdit?.difficulty ?? 3);
+  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
   const sliderMarks = [...Array(5).keys()].map((k) => ({ value: k + 1, label: '•' }));
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
@@ -177,7 +177,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       anonymous: anonymous,
       content: content,
       rating: rating,
-      difficulty: difficulty!,
+      difficulty: difficulty,
       gradeReceived: gradeReceived,
       forCredit: true,
       quarter: yearTaken + ' ' + quarterTaken,
