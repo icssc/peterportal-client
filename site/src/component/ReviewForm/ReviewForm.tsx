@@ -56,19 +56,18 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
 
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
-  const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
+  const [instructorName, setInstructorName] = useState(professorProp?.name ?? '');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
   const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
   const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
-  const [instructor, setInstructorName] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+  const [instructor, setInstructor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
   const [gradeReceived, setGradeReceived] = useState<ReviewGrade | undefined>(reviewToEdit?.gradeReceived ?? undefined);
 
   const [selectedTags, setSelectedTags] = useState<ReviewTags[]>([]);
-
   const handleTagChange = (tag: ReviewTags) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
@@ -81,25 +80,24 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const wordCount = content.match(/\S+/g)?.length ?? 0;
 
   const [submitting, setSubmitting] = useState(false);
-
   const [showFormErrors, setShowFormErrors] = useState(false);
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
-      searchAPIResult('instructor', reviewToEdit.professorId).then((professor) => {
-        if (professor) {
-          const profTerms = sortTerms(getProfessorTerms(professor));
-          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
+      searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
+        if (instructor) {
+          const instrTerms = sortTerms(getProfessorTerms(instructor));
+          const newYears = [...new Set(instrTerms.map((t) => t.split(' ')[0]))];
           const newQuarters = [
-            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
+            ...new Set(instrTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
           ];
 
-          setTerms(profTerms);
+          setTerms(instrTerms);
           setYears(newYears);
           setQuarters(newQuarters);
           setYearTaken(yearTakenDefault);
           setQuarterTaken(quarterTakenDefault);
-          setProfessorName(professor.name);
+          setInstructorName(instructor.name);
         }
       });
     }
@@ -119,7 +117,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
-    setInstructorName(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
+    setInstructor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
     setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
     setDifficulty(reviewToEdit?.difficulty);
@@ -164,14 +162,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
     event.preventDefault();
     event.stopPropagation();
 
-    if (!valid) {
+    if (!valid || wordCount > 500) {
       setShowFormErrors(true);
       setSubmitting(false);
-      return;
-    }
-
-    if (wordCount > 500) {
-      setShowFormErrors(true);
       return;
     }
 
@@ -195,7 +188,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     postReview(review);
   };
 
-  const alreadyReviewedCourseProf = (courseId: string, professorId: string) => {
+  const alreadyReviewedCourseInstr = (courseId: string, professorId: string) => {
     return reviews.some(
       (review) => review.courseId === courseId && review.professorId === professorId && review.authored,
     );
@@ -210,7 +203,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         id="professor"
         required
         error={showFormErrors && !instructor}
-        onChange={(e) => setInstructorName(e.target.value)}
+        onChange={(e) => setInstructor(e.target.value)}
         value={instructor}
         displayEmpty
       >
@@ -219,7 +212,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </MenuItem>
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
+          const alreadyReviewed = alreadyReviewedCourseInstr(courseProp?.id, ucinetid);
           return (
             <MenuItem
               key={ucinetid}
@@ -254,7 +247,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {Object.keys(professorProp?.courses).map((courseID) => {
           const name =
             professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
-          const alreadyReviewed = alreadyReviewedCourseProf(courseID, professorProp?.ucinetid);
+          const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
           return (
             <MenuItem
               key={courseID}
@@ -322,7 +315,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {professorProp && courseSelect}
 
         <FormControl>
-          {' '}
           <FormLabel>Grade Received</FormLabel>
           <Select
             name="grade"
@@ -434,7 +426,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
       <DialogTitle>
         {editing ? `Edit Review for ${reviewHeadingName}` : `Review ${reviewHeadingName}`}
         <DialogContentText>{courseProp?.title}</DialogContentText>
-        {editing && <DialogContentText>{`You are editing your review for ${professorName}.`}</DialogContentText>}
+        {editing && <DialogContentText>{`You are editing your review for ${instructorName}.`}</DialogContentText>}
       </DialogTitle>
       <Box component="form" noValidate onSubmit={submitForm}>
         <DialogContent>{reviewFormContent}</DialogContent>
