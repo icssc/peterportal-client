@@ -120,7 +120,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setInstructor(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
     setCourse(courseProp?.id ?? reviewToEdit?.courseId ?? '');
     setGradeReceived(reviewToEdit?.gradeReceived);
-    setDifficulty(reviewToEdit?.difficulty);
+    setDifficulty(reviewToEdit?.difficulty ?? 3);
     setRating(reviewToEdit?.rating ?? 3);
     setSelectedTags(reviewToEdit?.tags ?? []);
     setContent(reviewToEdit?.content ?? '');
