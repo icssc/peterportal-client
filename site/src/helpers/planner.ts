@@ -8,17 +8,22 @@ import {
   SavedPlannerYearData,
   SavedRoadmap,
   LegacyTransfer,
+  LegacySavedRoadmap,
+  LegacySavedPlannerYearData,
   TransferredAPExam,
   TransferredCourse,
   TransferredUncategorized,
   Prerequisite,
   PrerequisiteTree,
+  SavedPlannerCourseData,
+  latestRoadmapVersion,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
   InvalidCourseData,
+  PlannerCourseData,
   PlannerData,
   PlannerQuarterData,
   PlannerYearData,
@@ -96,7 +101,10 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => course.id);
+      savedQuarter.courses = quarter.courses.map((course) => ({
+        courseId: course.id,
+        userChosenUnits: course.userChosenUnits,
+      }));
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -116,7 +124,7 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  let courses: string[] = [];
+  let courses: SavedPlannerCourseData[] = [];
   // get all courses in the planner
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
@@ -127,7 +135,10 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
   let courseLookup: BatchCourseData = {};
   // only send request if there are courses
   if (courses.length > 0) {
-    courseLookup = await searchAPIResults('courses', courses);
+    courseLookup = await searchAPIResults(
+      'courses',
+      courses.map((c) => c.courseId),
+    );
   }
 
   return new Promise((resolve) => {
@@ -144,7 +155,12 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
-        quarter.courses = savedQuarter.courses.map((courseId) => courseLookup[courseId]).filter((course) => !!course);
+        quarter.courses = savedQuarter.courses
+          .filter((course) => !!courseLookup[course.courseId])
+          .map((course) => ({
+            userChosenUnits: course.userChosenUnits,
+            ...courseLookup[course.courseId],
+          }));
 
         year.quarters.push(quarter);
       });
@@ -165,7 +181,7 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap;
+type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap | LegacySavedRoadmap;
 
 export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
   const emptyRoadmap: SavedRoadmap = {
@@ -176,9 +192,10 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
         content: [defaultYear() as SavedPlannerYearData],
       },
     ],
+    version: latestRoadmapVersion,
   };
 
-  let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
+  let localRoadmap: LocalStorageRoadmapType | null = null;
   try {
     localRoadmap = JSON.parse(localStorage.roadmap);
   } catch {
@@ -189,7 +206,7 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
 }
 
 // Adding Multiplan
-function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+function addMultiPlanToRoadmap(roadmap: LegacySavedRoadmap | LegacyRoadmap): LegacySavedRoadmap {
   if ('planners' in roadmap) {
     // if already in multiplanner format, everything is good
     return roadmap;
@@ -200,7 +217,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
         {
           id: -1,
           name: defaultPlan.name,
-          content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
+          content: normalizePlannerQuarterNames((roadmap as { planner: LegacySavedPlannerYearData[] }).planner),
         },
       ],
       transfers: roadmap.transfers,
@@ -211,7 +228,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
 }
 
 // Upgrading Transfers
-async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
+async function saveUpgradedTransfers(roadmapToSave: LegacySavedRoadmap, transfers: LegacyTransfer[]) {
   if (!transfers.length) return false; // nothing to convert
 
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
@@ -233,7 +250,7 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Leg
  * Updates the format of transferred credits in localStorage before data is used by other parts of the app
  * @param roadmap The roadmap whose transfers to upgrade
  */
-async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
+async function upgradeLegacyTransfers(roadmap: LegacySavedRoadmap): Promise<LegacySavedRoadmap> {
   const legacyTransfers = roadmap.transfers ?? [];
   const updatedRoadmap = { ...roadmap };
   delete updatedRoadmap.transfers;
@@ -242,7 +259,7 @@ async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadm
 }
 
 // Adding IDs to roadmaps
-function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
+function addIdsToLocalRoadmap(roadmap: LegacySavedRoadmap): LegacySavedRoadmap {
   let nextId = Math.min(0, ...roadmap.planners.map((p) => p.id ?? 0)) - 1;
   roadmap.planners.forEach((p) => {
     if (p.id) return;
@@ -252,13 +269,37 @@ function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
   return roadmap;
 }
 
+// Changes courses in quarters from strings to objects
+function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
+  return {
+    ...roadmap,
+    planners: roadmap.planners.map((p) => ({
+      ...p,
+      content: p.content.map((year) => ({
+        ...year,
+        quarters: year.quarters.map((quarter) => ({
+          ...quarter,
+          courses: quarter.courses.map((course) => ({ courseId: course })),
+        })),
+      })),
+    })),
+    version: latestRoadmapVersion,
+  };
+}
+
 // Upgrading Entire Roadmap
 async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
   const localRoadmap = readLocalRoadmap();
-  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
+
+  if ('version' in localRoadmap && localRoadmap.version >= 5) return localRoadmap;
+
+  const legacyRoadmap = localRoadmap as LegacySavedRoadmap | LegacyRoadmap;
+
+  const roadmapWithMultiPlan = addMultiPlanToRoadmap(legacyRoadmap);
   const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
   const roadmapWithIds = addIdsToLocalRoadmap(roadmapWithoutLegacyTransfers);
-  return roadmapWithIds;
+  const roadmapWithVariableUnits = supportVariableUnits(roadmapWithIds);
+  return roadmapWithVariableUnits;
 }
 
 /**
@@ -272,7 +313,12 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
 };
 
 function saveLocalRoadmap(planners: SavedPlannerData[], currentPlanIndex: number | undefined) {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, currentPlanIndex };
+  const roadmap: SavedRoadmap = {
+    timestamp: new Date().toISOString(),
+    planners,
+    currentPlanIndex,
+    version: latestRoadmapVersion,
+  };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
@@ -292,6 +338,7 @@ function updateTempIdsInLocalRoadmap(
     timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
     planners: updatedPlanners,
     currentPlanIndex: currentPlanIndex,
+    version: latestRoadmapVersion,
   };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
@@ -309,6 +356,8 @@ export const saveRoadmap = async (
     const roadmap: SavedRoadmap = {
       timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
       planners: planners,
+      currentPlanIndex: currentPlanIndex,
+      version: latestRoadmapVersion,
     };
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
   }
@@ -333,7 +382,7 @@ export const saveRoadmap = async (
   return { success: res, plannerIdLookup: plannerIdLookup };
 };
 
-function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
+function normalizePlannerQuarterNames(yearPlans: LegacySavedPlannerYearData[]) {
   return yearPlans.map((year) => ({
     ...year,
     quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
@@ -463,3 +512,19 @@ export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisit
   const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
+
+export function calculateTotalUnits(courses: PlannerCourseData[]) {
+  let unitCount = 0;
+  let courseCount = 0;
+
+  courses.forEach((course) => {
+    if (course.userChosenUnits) {
+      unitCount += course.userChosenUnits;
+    } else {
+      unitCount += course.minUnits;
+    }
+
+    courseCount += 1;
+  });
+  return { unitCount, courseCount };
+}

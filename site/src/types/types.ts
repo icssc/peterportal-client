@@ -32,7 +32,11 @@ export interface PlannerYearData {
 
 export interface PlannerQuarterData {
   name: QuarterName;
-  courses: CourseGQLData[];
+  courses: PlannerCourseData[];
+}
+
+export interface PlannerCourseData extends CourseGQLData {
+  userChosenUnits?: number;
 }
 
 /** @todo delete these identifier traits once everything is in revision */
