@@ -137,7 +137,13 @@ function groupIntoYears(qtrs: { startYear: number; quarterData: PlannerQuarterDa
       const yearIdx = Object.keys(years).length + 1;
 
       if (years[q.startYear]) years[q.startYear].quarters.push(q.quarterData);
-      else years[q.startYear] = { startYear: q.startYear, name: 'Year ' + yearIdx, quarters: [q.quarterData] };
+      else
+        years[q.startYear] = {
+          startYear: q.startYear,
+          name: 'Year ' + yearIdx,
+          collapsed: false,
+          quarters: [q.quarterData],
+        };
 
       return years;
     },

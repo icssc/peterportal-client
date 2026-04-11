@@ -41,6 +41,7 @@ export function defaultYear() {
     quarters: quarterNames.map((quarter) => {
       return { name: quarter, courses: [] };
     }),
+    collapsed: false,
   } as PlannerYearData | SavedPlannerYearData;
 }
 
@@ -92,7 +93,12 @@ export const makeUniquePlanName = (plannerName: string, allPlans: RoadmapPlan[])
 export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] => {
   const savedPlanner: SavedPlannerYearData[] = [];
   planner.forEach((year) => {
-    const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
+    const savedYear: SavedPlannerYearData = {
+      startYear: year.startYear,
+      name: year.name,
+      quarters: [],
+      collapsed: year.collapsed,
+    };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
       savedQuarter.courses = quarter.courses.map((course) => ({
@@ -139,7 +145,12 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
     const planner: PlannerData = [];
 
     savedPlanner.forEach((savedYear) => {
-      const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
+      const year: PlannerYearData = {
+        startYear: savedYear.startYear,
+        name: savedYear.name,
+        quarters: [],
+        collapsed: savedYear.collapsed,
+      };
 
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
@@ -266,6 +277,7 @@ function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
       ...p,
       content: p.content.map((year) => ({
         ...year,
+        collapsed: false,
         quarters: year.quarters.map((quarter) => ({
           ...quarter,
           courses: quarter.courses.map((course) => ({ courseId: course })),

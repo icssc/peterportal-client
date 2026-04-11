@@ -84,7 +84,7 @@ const DeleteYearModal = ({ show, setShow, yearName, yearIndex }: DeleteYearModal
 
   const handleDeleteYear = () => {
     setShow(false);
-    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.quarters);
+    const revision = deletePlannerYear(currentPlan.id, year.startYear, year.name, year.collapsed, year.quarters);
     dispatch(reviseRoadmap(revision));
   };
 
@@ -115,7 +115,7 @@ interface YearProps {
 
 const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const dispatch = useAppDispatch();
-  const [showContent, setShowContent] = useState(true);
+  const [showContent, setShowContent] = useState(!data.collapsed);
   const [showEditYear, setShowEditYear] = useState(false);
   const [showDeleteYear, setShowDeleteYear] = useState(false);
   const [placeholderYear, setPlaceholderYear] = useState(data.startYear);
@@ -127,6 +127,22 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
     setPlaceholderYear(data.startYear);
     setPlaceholderName(data.name);
     setShowEditYear(true);
+  };
+
+  const handleCollapseClick = () => {
+    const newCollapsed = showContent;
+    setShowContent(!showContent);
+    const revision = modifyPlannerYear(currentPlan.id, data, {
+      newName: data.name,
+      newStartYear: data.startYear,
+      newCollapsed: newCollapsed,
+      addedQuarters: [],
+      removedQuarters: [],
+    });
+    // console.log('revision:', JSON.stringify(revision));
+
+    // undoing and redoing, behavior for collapsing and expanding on the same
+    if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
   };
 
   return (
@@ -144,7 +160,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
 
           <ExpandMore
             expanded={showContent}
-            onClick={() => setShowContent(!showContent)}
+            onClick={handleCollapseClick}
             aria-expanded={showContent}
             aria-label="expand planner"
           />
@@ -186,6 +202,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
           const revision = modifyPlannerYear(currentPlan.id, data, {
             newName: name,
             newStartYear: startYear,
+            newCollapsed: data.collapsed,
             addedQuarters,
             removedQuarters,
           });
