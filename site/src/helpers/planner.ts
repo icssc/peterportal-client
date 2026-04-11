@@ -16,7 +16,6 @@ import {
   Prerequisite,
   PrerequisiteTree,
   SavedPlannerCourseData,
-  CustomCourse,
   latestRoadmapVersion,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
@@ -532,7 +531,7 @@ export function calculateTotalUnits(courses: (PlannerCourseData | CustomCourse)[
   let courseCount = 0;
 
   courses.forEach((course) => {
-    if (course.userChosenUnits) {
+    if ('userChosenUnits' in course && course.userChosenUnits) {
       unitCount += course.userChosenUnits;
     } else if ('courseName' in course) {
       /** @todo better way of determining whether this is a custom course: helper function isCustomCourse */
