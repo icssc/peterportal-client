@@ -8,11 +8,16 @@ import {
   SavedPlannerYearData,
   SavedRoadmap,
   LegacyTransfer,
+  LegacySavedRoadmap,
+  LegacySavedPlannerYearData,
   TransferredAPExam,
   TransferredCourse,
   TransferredUncategorized,
   Prerequisite,
   PrerequisiteTree,
+  SavedPlannerCourseData,
+  CustomCourse,
+  latestRoadmapVersion,
 } from '@peterportal/types';
 import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
@@ -20,6 +25,7 @@ import {
   BatchCourseData,
   CustomCourse,
   InvalidCourseData,
+  PlannerCourseData,
   PlannerData,
   PlannerQuarterData,
   PlannerYearData,
@@ -28,6 +34,16 @@ import {
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
+
+/** If a custom course ID, get its ID number; otherwise, null */
+export function getCustomId(courseId: string): number | null {
+  const customMatch = /^CUSTOM#(\d+)$/.exec(courseId);
+  if (customMatch) {
+    return parseInt(customMatch[1], 10);
+  } else {
+    return null;
+  }
+}
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -93,9 +109,12 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
       savedQuarter.courses = quarter.courses.map((course) => {
         if ('courseName' in (course as unknown as CustomCourse)) {
-          return `CUSTOM#${(course as unknown as CustomCourse).id}`;
+          return { courseId: `CUSTOM#${(course as unknown as CustomCourse).id}` };
         }
-        return course.id;
+        return {
+          courseId: course.id,
+          userChosenUnits: course.userChosenUnits,
+        };
       });
       savedYear.quarters.push(savedQuarter);
     });
@@ -116,20 +135,23 @@ export const collapseAllPlanners = (plans: RoadmapPlan[]): SavedPlannerData[] =>
 // query the lost information from collapsing
 
 export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promise<PlannerData> => {
-  let allCourseIds: string[] = [];
+  let courses: SavedPlannerCourseData[] = [];
   // get all courses in the planner
   savedPlanner.forEach((year) =>
     year.quarters.forEach((quarter) => {
-      allCourseIds = allCourseIds.concat(quarter.courses);
+      courses = courses.concat(quarter.courses);
     }),
   );
 
   // separate official courses from custom courses
-  const officialCourseIds = allCourseIds.filter((id) => !/^CUSTOM#\d+$/.test(id));
+  const officialCourses = courses.filter((course) => !getCustomId(course.courseId));
 
   let courseLookup: BatchCourseData = {};
-  if (officialCourseIds.length > 0) {
-    courseLookup = await searchAPIResults('courses', officialCourseIds);
+  if (officialCourses.length > 0) {
+    courseLookup = await searchAPIResults(
+      'courses',
+      officialCourses.map((c) => c.courseId),
+    );
   }
 
   return new Promise((resolve) => {
@@ -141,16 +163,18 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
         quarter.courses = savedQuarter.courses
-          .map((courseId) => {
-            const customMatch = /^CUSTOM#(\d+)$/.exec(courseId);
-            if (customMatch) {
-              const id = Number.parseInt(customMatch[1], 10);
-              const placeholder: CustomCourse = { id, courseName: '', units: 0, description: '' };
+          .filter((course) => getCustomId(course.courseId) || !!courseLookup[course.courseId])
+          .map((course) => {
+            const customMatchId = getCustomId(course.courseId);
+            if (customMatchId) {
+              const placeholder: CustomCourse = { id: customMatchId, courseName: '', units: 0, description: '' };
               return placeholder as unknown as PlannerQuarterData['courses'][number];
             }
-            return courseLookup[courseId];
-          })
-          .filter((course) => !!course);
+            return {
+              userChosenUnits: course.userChosenUnits,
+              ...courseLookup[course.courseId],
+            };
+          });
 
         year.quarters.push(quarter);
       });
@@ -171,7 +195,7 @@ export const expandAllPlanners = async (plans: SavedPlannerData[]): Promise<Road
   );
 };
 
-type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap;
+type LocalStorageRoadmapType = SavedRoadmap | LegacyRoadmap | LegacySavedRoadmap;
 
 export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
   const emptyRoadmap: SavedRoadmap = {
@@ -182,9 +206,10 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
         content: [defaultYear() as SavedPlannerYearData],
       },
     ],
+    version: latestRoadmapVersion,
   };
 
-  let localRoadmap: SavedRoadmap | LegacyRoadmap | null = null;
+  let localRoadmap: LocalStorageRoadmapType | null = null;
   try {
     localRoadmap = JSON.parse(localStorage.roadmap);
   } catch {
@@ -195,7 +220,7 @@ export function readLocalRoadmap<T extends LocalStorageRoadmapType>(): T {
 }
 
 // Adding Multiplan
-function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoadmap {
+function addMultiPlanToRoadmap(roadmap: LegacySavedRoadmap | LegacyRoadmap): LegacySavedRoadmap {
   if ('planners' in roadmap) {
     // if already in multiplanner format, everything is good
     return roadmap;
@@ -206,7 +231,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
         {
           id: -1,
           name: defaultPlan.name,
-          content: normalizePlannerQuarterNames((roadmap as { planner: SavedPlannerYearData[] }).planner),
+          content: normalizePlannerQuarterNames((roadmap as { planner: LegacySavedPlannerYearData[] }).planner),
         },
       ],
       transfers: roadmap.transfers,
@@ -217,7 +242,7 @@ function addMultiPlanToRoadmap(roadmap: SavedRoadmap | LegacyRoadmap): SavedRoad
 }
 
 // Upgrading Transfers
-async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: LegacyTransfer[]) {
+async function saveUpgradedTransfers(roadmapToSave: LegacySavedRoadmap, transfers: LegacyTransfer[]) {
   if (!transfers.length) return false; // nothing to convert
 
   const response = await trpc.transferCredits.convertUserLegacyTransfers.query(transfers);
@@ -239,7 +264,7 @@ async function saveUpgradedTransfers(roadmapToSave: SavedRoadmap, transfers: Leg
  * Updates the format of transferred credits in localStorage before data is used by other parts of the app
  * @param roadmap The roadmap whose transfers to upgrade
  */
-async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadmap> {
+async function upgradeLegacyTransfers(roadmap: LegacySavedRoadmap): Promise<LegacySavedRoadmap> {
   const legacyTransfers = roadmap.transfers ?? [];
   const updatedRoadmap = { ...roadmap };
   delete updatedRoadmap.transfers;
@@ -248,7 +273,7 @@ async function upgradeLegacyTransfers(roadmap: SavedRoadmap): Promise<SavedRoadm
 }
 
 // Adding IDs to roadmaps
-function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
+function addIdsToLocalRoadmap(roadmap: LegacySavedRoadmap): LegacySavedRoadmap {
   let nextId = Math.min(0, ...roadmap.planners.map((p) => p.id ?? 0)) - 1;
   roadmap.planners.forEach((p) => {
     if (p.id) return;
@@ -258,13 +283,37 @@ function addIdsToLocalRoadmap(roadmap: SavedRoadmap): SavedRoadmap {
   return roadmap;
 }
 
+// Changes courses in quarters from strings to objects
+function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
+  return {
+    ...roadmap,
+    planners: roadmap.planners.map((p) => ({
+      ...p,
+      content: p.content.map((year) => ({
+        ...year,
+        quarters: year.quarters.map((quarter) => ({
+          ...quarter,
+          courses: quarter.courses.map((course) => ({ courseId: course })),
+        })),
+      })),
+    })),
+    version: latestRoadmapVersion,
+  };
+}
+
 // Upgrading Entire Roadmap
 async function upgradeLocalRoadmap(): Promise<SavedRoadmap> {
   const localRoadmap = readLocalRoadmap();
-  const roadmapWithMultiPlan = addMultiPlanToRoadmap(localRoadmap);
+
+  if ('version' in localRoadmap && localRoadmap.version >= 5) return localRoadmap;
+
+  const legacyRoadmap = localRoadmap as LegacySavedRoadmap | LegacyRoadmap;
+
+  const roadmapWithMultiPlan = addMultiPlanToRoadmap(legacyRoadmap);
   const roadmapWithoutLegacyTransfers = await upgradeLegacyTransfers(roadmapWithMultiPlan);
   const roadmapWithIds = addIdsToLocalRoadmap(roadmapWithoutLegacyTransfers);
-  return roadmapWithIds;
+  const roadmapWithVariableUnits = supportVariableUnits(roadmapWithIds);
+  return roadmapWithVariableUnits;
 }
 
 /**
@@ -278,7 +327,12 @@ export const loadRoadmap = async (isLoggedIn: boolean) => {
 };
 
 function saveLocalRoadmap(planners: SavedPlannerData[], currentPlanIndex: number | undefined) {
-  const roadmap: SavedRoadmap = { timestamp: new Date().toISOString(), planners, currentPlanIndex };
+  const roadmap: SavedRoadmap = {
+    timestamp: new Date().toISOString(),
+    planners,
+    currentPlanIndex,
+    version: latestRoadmapVersion,
+  };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
 
@@ -298,6 +352,7 @@ function updateTempIdsInLocalRoadmap(
     timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
     planners: updatedPlanners,
     currentPlanIndex: currentPlanIndex,
+    version: latestRoadmapVersion,
   };
   localStorage.setItem('roadmap', JSON.stringify(roadmap));
 }
@@ -315,6 +370,8 @@ export const saveRoadmap = async (
     const roadmap: SavedRoadmap = {
       timestamp: JSON.parse(localStorage.getItem('roadmap') ?? '{}')?.timestamp ?? new Date().toISOString(),
       planners: planners,
+      currentPlanIndex: currentPlanIndex,
+      version: latestRoadmapVersion,
     };
     localStorage.setItem('roadmap', JSON.stringify(roadmap));
   }
@@ -339,7 +396,7 @@ export const saveRoadmap = async (
   return { success: res, plannerIdLookup: plannerIdLookup };
 };
 
-function normalizePlannerQuarterNames(yearPlans: SavedPlannerYearData[]) {
+function normalizePlannerQuarterNames(yearPlans: LegacySavedPlannerYearData[]) {
   return yearPlans.map((year) => ({
     ...year,
     quarters: year.quarters.map((quarter) => ({ ...quarter, name: normalizeQuarterName(quarter.name) })),
@@ -469,3 +526,22 @@ export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisit
   const missingPrerequisites = Array.from(validatePrerequisites(input));
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
+
+export function calculateTotalUnits(courses: (PlannerCourseData | CustomCourse)[]) {
+  let unitCount = 0;
+  let courseCount = 0;
+
+  courses.forEach((course) => {
+    if (course.userChosenUnits) {
+      unitCount += course.userChosenUnits;
+    } else if ('courseName' in course) {
+      /** @todo better way of determining whether this is a custom course: helper function isCustomCourse */
+      unitCount += course.units;
+    } else {
+      unitCount += course.minUnits;
+    }
+
+    courseCount += 1;
+  });
+  return { unitCount, courseCount };
+}

@@ -14,7 +14,7 @@ import {
 
 export async function queryGetPlanners(where: SQL) {
   const planYearTableName = getTableConfig(plannerYear).name;
-  const planners = await db
+  const planners = (await db
     .select({
       id: planner.id,
       name: planner.name,
@@ -29,8 +29,11 @@ export async function queryGetPlanners(where: SQL) {
               jsonb_agg(
                 CASE
                   WHEN pc.course_id = 'CUSTOM' AND pc.custom_card_id IS NOT NULL
-                    THEN ('CUSTOM#' || pc.custom_card_id::text)
-                  ELSE pc.course_id
+                    THEN jsonb_build_object('courseId', ('CUSTOM#' || pc.custom_card_id::text))
+                  ELSE jsonb_build_object(
+                    'courseId', pc.course_id,
+                    'userChosenUnits', pc.units
+                  )
                 END
                 ORDER BY pc.index ASC
               ),
@@ -52,10 +55,15 @@ export async function queryGetPlanners(where: SQL) {
     .innerJoin(user, eq(planner.userId, user.id))
     .where(where)
     .groupBy(planner.id, planner.name)
-    .orderBy(asc(planner.id));
+    .orderBy(asc(planner.id))) as SavedPlannerData[];
 
-  (planners as SavedPlannerData[]).forEach((planner) =>
+  planners.forEach((planner) =>
     planner.content.forEach((year) => {
+      year.quarters.forEach((quarter) => {
+        quarter.courses.forEach((course) => {
+          if (course.userChosenUnits === null) delete course.userChosenUnits;
+        });
+      });
       year.quarters.sort((a, b) => quarters.indexOf(a.name) - quarters.indexOf(b.name));
     }),
   );
@@ -113,16 +121,17 @@ export async function setQuarterCourses(tx: TransactionType, quarters: PlannerQu
 
     if (quarter.data.courses.length === 0) return;
 
-    const rows = quarter.data.courses.map((courseId, index) => {
-      const match = /^CUSTOM#(\d+)$/.exec(courseId);
+    const rows = quarter.data.courses.map((course, index) => {
+      const match = /^CUSTOM#(\d+)$/.exec(course.courseId);
       const customCardId = match ? Number.parseInt(match[1], 10) : null;
       return {
+        index,
         plannerId,
         startYear,
         quarterName,
-        courseId: customCardId !== null ? 'CUSTOM' : courseId,
+        courseId: customCardId !== null ? 'CUSTOM' : course.courseId,
         customCardId,
-        index,
+        units: course.userChosenUnits,
       };
     });
     await tx.insert(plannerCourse).values(rows);

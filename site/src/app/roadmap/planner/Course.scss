@@ -127,6 +127,7 @@
     }
 
     .course-drag-handle,
+    .course-edit-btn,
     .course-delete-btn {
       color: inherit;
     }
@@ -162,4 +163,12 @@
   to {
     opacity: 1;
   }
+}
+
+.custom-units {
+  margin-left: auto;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
