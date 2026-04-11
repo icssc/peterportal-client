@@ -197,6 +197,20 @@
       "when": 1775064207208,
       "tag": "0027_loud_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1775200000000,
+      "tag": "0028_custom_card",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1775300000000,
+      "tag": "0029_planner_course_custom_card",
+      "breakpoints": true
     }
   ]
 }
