@@ -277,6 +277,7 @@ function supportVariableUnits(roadmap: LegacySavedRoadmap): SavedRoadmap {
       ...p,
       content: p.content.map((year) => ({
         ...year,
+        collapsed: false,
         quarters: year.quarters.map((quarter) => ({
           ...quarter,
           courses: quarter.courses.map((course) => ({ courseId: course })),
