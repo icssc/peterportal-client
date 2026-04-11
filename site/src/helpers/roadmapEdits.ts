@@ -1,6 +1,13 @@
 import { QuarterName } from '@peterportal/types';
-import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapRevision } from '../types/roadmap';
-import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  PlannerEdit,
+  PlannerQuarterEdit,
+  PlannerYearEdit,
+  PlannerCourseEdit,
+  RoadmapPlan,
+  RoadmapRevision,
+} from '../types/roadmap';
+import { CourseGQLData, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -187,4 +194,31 @@ export function reorderQuarterCourse(
     after: { name: after.quarter.name, courses: coursesAfter },
   };
   return createRevision([edit]);
+}
+
+export function modifyVariableCourseUnit(
+  plannerId: number,
+  startYear: number,
+  quarterName: QuarterName,
+  courseIndex: number,
+  course: PlannerCourseData,
+  newUnit: number | undefined,
+) {
+  const edits: PlannerCourseEdit[] = [];
+  if (course && course.userChosenUnits !== newUnit) {
+    edits.push({
+      type: 'course',
+      plannerId,
+      startYear,
+      quarterName,
+      courseIndex,
+      before: course,
+      after: {
+        ...course,
+        userChosenUnits: newUnit,
+      },
+    });
+  }
+
+  return createRevision(edits);
 }
