@@ -89,3 +89,10 @@ export interface BatchProfessorData {
 }
 
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];
+
+export interface CustomCourse {
+  id: number;
+  courseName: string;
+  units: number;
+  description: string;
+}

@@ -10,6 +10,7 @@ import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import Footer from '../../../shared-components/Footer';
 import QuarterInfo from '../QuarterInfo/QuarterInfo';
+import { CourseGQLData, CustomCourse } from '../../../types/types';
 import Disclaimer from '../Disclaimer/Disclaimer';
 import { calculateTotalUnits } from '../../../helpers/planner';
 
@@ -20,7 +21,10 @@ const Planner: FC = () => {
 
   const calculatePlannerOverviewStats = () => {
     // sum up all courses
-    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
+    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses) as (
+      | CourseGQLData
+      | CustomCourse
+    )[];
 
     let { unitCount, courseCount } = calculateTotalUnits(courses);
 

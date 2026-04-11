@@ -11,10 +11,11 @@ import {
   setActiveCourse,
   showMobileCatalog,
 } from '../../../store/slices/roadmapSlice';
-import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
+import { CourseGQLData, CourseIdentifier, CustomCourse, PlannerQuarterData } from '../../../types/types';
 import './Quarter.scss';
 
 import Course from './Course';
+import CustomCourseCard from '../catalog/CustomCourseCard';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { quarterSortable } from '../../../helpers/sortable';
 
@@ -23,9 +24,11 @@ import { Button, Card } from '@mui/material';
 import {
   ModifiedQuarter,
   modifyQuarterCourse,
-  modifyVariableCourseUnit,
   reorderQuarterCourse,
+  modifyCustomQuarterCourse,
+  modifyVariableCourseUnit,
 } from '../../../helpers/roadmapEdits';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface QuarterProps {
   yearIndex: number;
@@ -44,10 +47,13 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<CourseIdentifier | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
+  const activeCustomCourse = useAppSelector((state) => state.roadmap.activeCustomCourse);
   const activeCourseDraggedFrom = useAppSelector((state) => state.roadmap.activeCourseDragSource);
+  const isLoggedIn = useIsLoggedIn();
   const isDragging = activeCourse !== null;
   const currentPlan = useAppSelector(selectCurrentPlan);
   const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
+  const courses = data.courses as (CourseGQLData | CustomCourse)[];
 
   // Calculate Quarter Stats
   const unitCount = useMemo(() => {
@@ -82,6 +88,13 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
       quarter: data,
       courseIndex: event.newIndex!,
     };
+    if (activeCustomCourse) {
+      if (!isLoggedIn) return;
+      const revision = modifyCustomQuarterCourse(currentPlan.id, activeCustomCourse, addToQuarter);
+      dispatch(reviseRoadmap(revision));
+      return;
+    }
+    if (!activeCourse) return;
     const revision = modifyQuarterCourse(currentPlan.id, activeCourse!, sourceQuarter, addToQuarter);
     dispatch(reviseRoadmap(revision));
   };
@@ -155,7 +168,26 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         }}
         {...quarterSortable}
       >
-        {data.courses.map((course, index) => {
+        {courses.map((course, index) => {
+          if ('courseName' in course) {
+            if (!isLoggedIn) {
+              return (
+                <div key={`custom-${course.id}-${index}`} className="quarter-custom-course-logged-out">
+                  <p>Log in to use custom cards!</p>
+                </div>
+              );
+            }
+            return (
+              <CustomCourseCard
+                key={`custom-${course.id}-${index}`}
+                course={course}
+                handleUpdate={() => {}}
+                inRoadmap={true}
+                removeCourseAt={() => removeCourseAt(index)}
+              />
+            );
+          }
+
           let requiredCourses: string[] = null!;
           // if this is an invalid course, set the required courses
           invalidCourses.forEach((ic) => {

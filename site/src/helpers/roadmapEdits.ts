@@ -7,7 +7,7 @@ import {
   RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
-import { CourseGQLData, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import { CourseGQLData, CustomCourse, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -170,6 +170,33 @@ export function modifyQuarterCourse(
       after: { name: addedTo.quarter.name, courses: coursesAfter },
     });
   }
+
+  return createRevision(edits);
+}
+
+export function modifyCustomQuarterCourse(plannerId: number, course: CustomCourse, addedTo: ModifiedQuarter) {
+  const edits: PlannerQuarterEdit[] = [];
+
+  // Remove loading placeholders
+  const quarterCopy = deepCopy(addedTo.quarter);
+  quarterCopy.courses = addedTo.quarter.courses.filter((c) => c.id !== LOADING_COURSE_PLACEHOLDER.id);
+
+  const coursesAfter = deepCopy(quarterCopy.courses);
+  const index = addedTo.courseIndex;
+
+  // Insert the custom course directly
+  coursesAfter.splice(index, 0, course as unknown as CourseGQLData);
+
+  edits.push({
+    type: 'quarter',
+    plannerId,
+    startYear: addedTo.startYear,
+    before: quarterCopy,
+    after: {
+      name: addedTo.quarter.name,
+      courses: coursesAfter,
+    },
+  });
 
   return createRevision(edits);
 }

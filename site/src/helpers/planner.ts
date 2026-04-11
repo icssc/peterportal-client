@@ -22,6 +22,7 @@ import { searchAPIResults } from './util';
 import { defaultPlan } from '../store/slices/roadmapSlice';
 import {
   BatchCourseData,
+  CustomCourse,
   InvalidCourseData,
   PlannerCourseData,
   PlannerData,
@@ -32,6 +33,16 @@ import {
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
+
+/** If a custom course ID, get its ID number; otherwise, null */
+export function getCustomId(courseId: string): number | null {
+  const customMatch = /^CUSTOM#(\d+)$/.exec(courseId);
+  if (customMatch) {
+    return parseInt(customMatch[1], 10);
+  } else {
+    return null;
+  }
+}
 
 export function defaultYear() {
   const quarterNames: QuarterName[] = ['Fall', 'Winter', 'Spring'];
@@ -95,10 +106,15 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     const savedYear: SavedPlannerYearData = { startYear: year.startYear, name: year.name, quarters: [] };
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
-      savedQuarter.courses = quarter.courses.map((course) => ({
-        courseId: course.id,
-        userChosenUnits: course.userChosenUnits,
-      }));
+      savedQuarter.courses = quarter.courses.map((course) => {
+        if ('courseName' in (course as unknown as CustomCourse)) {
+          return { courseId: `CUSTOM#${(course as unknown as CustomCourse).id}` };
+        }
+        return {
+          courseId: course.id,
+          userChosenUnits: course.userChosenUnits,
+        };
+      });
       savedYear.quarters.push(savedQuarter);
     });
     savedPlanner.push(savedYear);
@@ -125,13 +141,15 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
       courses = courses.concat(quarter.courses);
     }),
   );
-  // get the course data for all courses
+
+  // separate official courses from custom courses
+  const officialCourses = courses.filter((course) => !getCustomId(course.courseId));
+
   let courseLookup: BatchCourseData = {};
-  // only send request if there are courses
-  if (courses.length > 0) {
+  if (officialCourses.length > 0) {
     courseLookup = await searchAPIResults(
       'courses',
-      courses.map((c) => c.courseId),
+      officialCourses.map((c) => c.courseId),
     );
   }
 
@@ -140,16 +158,22 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
 
     savedPlanner.forEach((savedYear) => {
       const year: PlannerYearData = { startYear: savedYear.startYear, name: savedYear.name, quarters: [] };
-
       savedYear.quarters.forEach((savedQuarter) => {
         const quarter: PlannerQuarterData = { name: savedQuarter.name, courses: [] };
 
         quarter.courses = savedQuarter.courses
-          .filter((course) => !!courseLookup[course.courseId])
-          .map((course) => ({
-            userChosenUnits: course.userChosenUnits,
-            ...courseLookup[course.courseId],
-          }));
+          .filter((course) => getCustomId(course.courseId) || !!courseLookup[course.courseId])
+          .map((course) => {
+            const customMatchId = getCustomId(course.courseId);
+            if (customMatchId) {
+              const placeholder: CustomCourse = { id: customMatchId, courseName: '', units: 0, description: '' };
+              return placeholder as unknown as PlannerQuarterData['courses'][number];
+            }
+            return {
+              userChosenUnits: course.userChosenUnits,
+              ...courseLookup[course.courseId],
+            };
+          });
 
         year.quarters.push(quarter);
       });
@@ -502,13 +526,16 @@ export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisit
   return missingPrerequisites.length ? missingPrerequisites : undefined;
 };
 
-export function calculateTotalUnits(courses: PlannerCourseData[]) {
+export function calculateTotalUnits(courses: (PlannerCourseData | CustomCourse)[]) {
   let unitCount = 0;
   let courseCount = 0;
 
   courses.forEach((course) => {
-    if (course.userChosenUnits) {
+    if ('userChosenUnits' in course && course.userChosenUnits) {
       unitCount += course.userChosenUnits;
+    } else if ('courseName' in course) {
+      /** @todo better way of determining whether this is a custom course: helper function isCustomCourse */
+      unitCount += course.units;
     } else {
       unitCount += course.minUnits;
     }
