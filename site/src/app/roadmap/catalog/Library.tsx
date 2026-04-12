@@ -14,24 +14,17 @@ import { CustomCourse } from '../../../types/types';
 import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
   const toggleExpand = () => setOpen(!open);
   return (
     <div className="saved-courses">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4>Saved</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
           <SavedCourseList />
@@ -62,18 +55,10 @@ const CustomCourses = () => {
 
   return (
     <div className="custom-courses">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4>Custom Cards</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
           {!isLoggedIn ? (

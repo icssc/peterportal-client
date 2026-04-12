@@ -83,7 +83,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               onBlur={onBlur}
             />
           ) : (
-            <>{course.courseName}</>
+            course.courseName
           )}
         </span>
 
