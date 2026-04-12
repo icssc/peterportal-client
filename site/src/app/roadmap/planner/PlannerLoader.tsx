@@ -216,6 +216,22 @@ const PlannerLoader: FC = () => {
     setShowSyncModal(false);
   };
 
+  const getRelativeTime = (timestamp: string | undefined) => {
+    if (!timestamp) return 'Unknown';
+    const diff = new Date(timestamp).getTime() - Date.now();
+    const seconds = Math.round(diff / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+    if (Math.abs(seconds) < 60) return rtf.format(seconds, 'second');
+    if (Math.abs(minutes) < 60) return rtf.format(minutes, 'minute');
+    if (Math.abs(hours) < 24) return rtf.format(hours, 'hour');
+    return rtf.format(days, 'day');
+  };
+
   const countRoadmapStats = (roadmap: SavedRoadmap) => {
     const lastEdited = roadmap?.timestamp ? new Date(roadmap.timestamp).toLocaleString() : 'Unknown';
     const roadmapCount = roadmap.planners.length;
@@ -256,15 +272,27 @@ const PlannerLoader: FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
           <div>
             <DialogContentText>This Device</DialogContentText>
-            <DialogContentText>Last edited: {localLastEdited}</DialogContentText>
-            <DialogContentText>{localRoadmapCount} roadmaps</DialogContentText>
-            <DialogContentText>{localCourseCount} courses</DialogContentText>
+            <DialogContentText>
+              Last edited: <strong>{getRelativeTime(localLastEdited)}</strong>
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{localRoadmapCount}</strong> roadmaps
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{localCourseCount}</strong> courses
+            </DialogContentText>
           </div>
           <div>
             <DialogContentText>My Account</DialogContentText>
-            <DialogContentText>Last edited: {syncedLastEdited}</DialogContentText>
-            <DialogContentText>{syncedRoadmapCount} roadmaps</DialogContentText>
-            <DialogContentText>{syncedCourseCount} courses</DialogContentText>
+            <DialogContentText>
+              Last edited: <strong>{getRelativeTime(syncedLastEdited)}</strong>
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{syncedRoadmapCount}</strong> roadmaps
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{syncedCourseCount}</strong> courses
+            </DialogContentText>
           </div>
         </div>
       </DialogContent>
