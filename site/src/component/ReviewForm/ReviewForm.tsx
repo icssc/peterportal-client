@@ -55,13 +55,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const reviews = useAppSelector((state) => state.review.reviews);
   const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
 
-  const [terms, setTerms] = useState<string[]>(termsProp ?? []);
+  const [terms, setTerms] = useState(termsProp ?? []);
   const [instructorName, setInstructorName] = useState(professorProp?.name ?? '');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
+  const [years, setYears] = useState(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
+  const [quarters, setQuarters] = useState(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [instructor, setInstructor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -72,8 +72,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
-  const [rating, setRating] = useState<number>(reviewToEdit?.rating ?? 3);
-  const [difficulty, setDifficulty] = useState<number>(reviewToEdit?.difficulty ?? 3);
+  const [rating, setRating] = useState(reviewToEdit?.rating ?? 3);
+  const [difficulty, setDifficulty] = useState(reviewToEdit?.difficulty ?? 3);
   const sliderMarks = [...Array(5).keys()].map((k) => ({ value: k + 1, label: '•' }));
 
   const [content, setContent] = useState(reviewToEdit?.content ?? '');
