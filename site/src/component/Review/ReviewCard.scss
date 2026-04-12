@@ -16,18 +16,64 @@
 
 .reviewcard-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: 0;
+
+  .reviewcard-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+
+    .MuiIconButton-root {
+      color: var(--mui-palette-text-secondary);
+    }
+  }
+
+  .reviewcard-header-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+  }
 
   .reviewcard-identifier {
-    font-weight: bold;
-    font-size: 20px;
+    font-weight: 600;
+    font-size: 17px;
     margin: 0;
     a {
       color: var(--mui-palette-text-primary);
     }
     word-break: break-word;
+  }
+
+  .reviewcard-author {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .reviewcard-author-name {
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--mui-palette-text-secondary);
+    }
+
+    .reviewcard-author-verified {
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 14px;
+        height: 14px;
+        color: #90b3f9;
+      }
+    }
+  }
+
+  .reviewcard-date {
+    font-size: 12px;
+    color: var(--mui-palette-text-secondary);
+    white-space: nowrap;
   }
 
   .edit-buttons {
@@ -39,8 +85,11 @@
   }
 
   @media (max-width: 500px) {
-    flex-direction: column;
-    gap: 10px;
+    .reviewcard-header-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
   }
 }
 

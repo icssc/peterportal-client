@@ -14,9 +14,7 @@ import { sortTerms } from '../../helpers/util';
 import { getProfessorTerms } from '../../helpers/reviews';
 import { useProfessorData } from '../../hooks/professorReviews';
 
-import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import {
   Button,
@@ -28,7 +26,11 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
+  Menu,
+  MenuItem,
+  Divider,
 } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { addPreview } from '../../store/slices/previewSlice';
@@ -40,14 +42,25 @@ interface AuthorEditButtonsProps {
   professor?: ProfessorGQLData;
 }
 
-const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reportFormOpen, setReportFormOpen] = useState(false);
+  const open = Boolean(anchorEl);
 
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const deleteReview = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
@@ -57,6 +70,7 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
 
   const openReviewForm = () => {
     setShowReviewForm(true);
+    handleMenuClose();
     document.body.style.overflow = 'hidden';
   };
 
@@ -65,14 +79,31 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
     document.body.style.overflow = 'visible';
   };
 
+  const openReportForm = () => {
+    setReportFormOpen(true);
+    handleMenuClose();
+  };
+
   return (
     <>
-      <IconButton onClick={openReviewForm}>
-        <EditIcon />
+      <IconButton onClick={handleMenuOpen}>
+        <MoreVertIcon />
       </IconButton>
-      <IconButton onClick={() => setShowDeleteModal(true)}>
-        <DeleteOutlineIcon />
-      </IconButton>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+        <MenuItem onClick={openReportForm}>Report</MenuItem>
+        {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
+        {review.authored && (
+          <MenuItem
+            onClick={() => {
+              setShowDeleteModal(true);
+              handleMenuClose();
+            }}
+          >
+            Delete
+          </MenuItem>
+        )}
+      </Menu>
+
       <Dialog open={showDeleteModal} onClose={() => setShowDeleteModal(false)} fullWidth>
         <DialogTitle>Delete Review</DialogTitle>
         <DialogContent>
@@ -89,6 +120,7 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
           </Button>
         </DialogActions>
       </Dialog>
+
       <ReviewForm
         course={course}
         professor={professor}
@@ -97,6 +129,13 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         show={showReviewForm}
         editing
         terms={sortedTerms}
+      />
+
+      <ReportForm
+        showForm={reportFormOpen}
+        reviewId={review.id}
+        reviewContent={review.content}
+        closeForm={() => setReportFormOpen(false)}
       />
     </>
   );
@@ -109,7 +148,7 @@ interface ReviewCardProps {
   children?: ReactNode;
 }
 
-const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }) => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
@@ -165,6 +204,17 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     [currentPreview, course, dispatch],
   );
 
+  const formatQuarter = (quarter: string): string => {
+    const [year, term] = quarter.split(' ');
+    const termMap: Record<string, string> = {
+      Fall: 'F',
+      Winter: 'W',
+      Spring: 'Sp',
+      Summer: 'Su',
+    };
+    return `${termMap[term] ?? term}${year.slice(-2)}`;
+  };
+
   useEffect(() => {
     // if loading then return
     if (!profCache) {
@@ -178,24 +228,32 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = (
-          <Link
-            href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
-            onClick={(e) => handleLinkClick(e, review.courseId)}
-          >
-            {courseName}
-          </Link>
+          <span>
+            <Link
+              href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
+              onClick={(e) => handleLinkClick(e, review.courseId)}
+            >
+              {courseName}
+            </Link>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
         const profLink = (
-          <Link
-            href={{ pathname: `/instructor/${review.professorId}` }}
-            onClick={(e) => handleLinkClick(e, review.professorId)}
-          >
-            {profName}
-          </Link>
+          <span>
+            <Link
+              href={{ pathname: `/instructor/${review.professorId}` }}
+              onClick={(e) => handleLinkClick(e, review.professorId)}
+            >
+              {profName}
+            </Link>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(profLink);
       } else {
@@ -203,11 +261,13 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const courseName = foundCourseAndProfName?.courseName ?? review.courseId;
         const profName = foundCourseAndProfName?.profName ?? review.professorId;
         const courseAndProfLink = (
-          <div>
+          <span>
             <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
             {' • '}
             <Link href={{ pathname: `/instructor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
-          </div>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(courseAndProfLink);
       }
@@ -215,7 +275,16 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache, handleLinkClick]);
+  }, [
+    course,
+    review.courseId,
+    review.quarter,
+    professor,
+    review.professorId,
+    fetchCourseAndProfName,
+    profCache,
+    handleLinkClick,
+  ]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -286,12 +355,27 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   return (
     <Card variant="outlined" className="reviewcard">
       <div className="reviewcard-header">
-        <h3 className="reviewcard-identifier">
-          {loadingIdentifier ? <Skeleton variant="text" animation="wave" width={210} /> : identifier}
-        </h3>
-        <div className="edit-buttons">
-          {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
-          {children}
+        <div className="reviewcard-header-top">
+          <h3 className="reviewcard-identifier">
+            {loadingIdentifier ? <Skeleton variant="text" animation="wave" width={210} /> : identifier}
+          </h3>
+          <ThreeDotsMenu review={review} course={course} professor={professor} />
+        </div>
+        <Divider />
+        <div className="reviewcard-header-bottom">
+          <div className="reviewcard-author">
+            <span className="reviewcard-author-name">{review.userDisplay}</span>
+            {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
+            {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
+          </div>
+          <span className="reviewcard-date">
+            {new Date(review.createdAt).toLocaleString('default', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })}
+            {review.updatedAt && <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>}
+          </span>
         </div>
       </div>
 
