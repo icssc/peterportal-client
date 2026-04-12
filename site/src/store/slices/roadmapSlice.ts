@@ -11,6 +11,7 @@ import {
   RoadmapPlanState,
   RoadmapRevision,
 } from '../../types/types';
+import { isCustomCourse } from '../../helpers/customCourses';
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
@@ -152,10 +153,9 @@ export const roadmapSlice = createSlice({
       state.plans.forEach((plan) => {
         plan.content.yearPlans.forEach((year) => {
           year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            courses.forEach((course, index) => {
-              if ('courseName' in course && course.id === action.payload.id) {
-                quarter.courses[index] = action.payload as unknown as CourseGQLData;
+            quarter.courses.forEach((course, index) => {
+              if (isCustomCourse(course) && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload;
               }
             });
           });
@@ -168,13 +168,12 @@ export const roadmapSlice = createSlice({
       state.plans.forEach((plan) => {
         plan.content.yearPlans.forEach((year) => {
           year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            quarter.courses = courses.filter((course) => {
-              if ('courseName' in course) {
+            quarter.courses = quarter.courses.filter((course) => {
+              if (isCustomCourse(course)) {
                 return course.id !== customCourseId;
               }
               return true;
-            }) as unknown as typeof quarter.courses;
+            });
           });
         });
       });
