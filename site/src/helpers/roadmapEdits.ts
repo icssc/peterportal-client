@@ -7,7 +7,13 @@ import {
   RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
-import { CourseGQLData, CustomCourse, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  PlannerQuarterCourse,
+  CustomCourse,
+  PlannerCourseData,
+  PlannerQuarterData,
+  PlannerYearData,
+} from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -112,7 +118,12 @@ export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearDat
   return createRevision(edits);
 }
 
-export function addPlannerQuarter(plannerId: number, startYear: number, name: QuarterName, courses: CourseGQLData[]) {
+export function addPlannerQuarter(
+  plannerId: number,
+  startYear: number,
+  name: QuarterName,
+  courses: PlannerQuarterCourse[],
+) {
   const edit: PlannerQuarterEdit = {
     type: 'quarter',
     plannerId,
@@ -131,7 +142,7 @@ export interface ModifiedQuarter {
 }
 export function modifyQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   removedFrom: ModifiedQuarter | null,
   addedTo: ModifiedQuarter | null,
 ) {
@@ -185,7 +196,7 @@ export function modifyCustomQuarterCourse(plannerId: number, course: CustomCours
   const index = addedTo.courseIndex;
 
   // Insert the custom course directly
-  coursesAfter.splice(index, 0, course as unknown as CourseGQLData);
+  coursesAfter.splice(index, 0, course);
 
   edits.push({
     type: 'quarter',
@@ -203,7 +214,7 @@ export function modifyCustomQuarterCourse(plannerId: number, course: CustomCours
 
 export function reorderQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   oldIndex: number,
   after: ModifiedQuarter,
 ) {
