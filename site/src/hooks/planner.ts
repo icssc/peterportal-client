@@ -9,6 +9,8 @@ import { reviseRoadmap, setSavedRevisionIndex, updateTempPlannerIds } from '../s
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
+import { PlannerCourseData } from '../types/types';
+import { isCustomCourse } from '../helpers/customCourses';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();
@@ -35,7 +37,9 @@ export function useClearedCoursesUntil(courseId: string): Set<string> {
 
     for (const year of currentPlan) {
       for (const quarter of year.quarters) {
-        const ids = quarter.courses.map((c) => `${c.department} ${c.courseNumber}`);
+        const ids = quarter.courses
+          .filter((c): c is PlannerCourseData => !isCustomCourse(c))
+          .map((c) => `${c.department} ${c.courseNumber}`);
 
         if (ids.includes(courseId)) {
           return takenSoFar;

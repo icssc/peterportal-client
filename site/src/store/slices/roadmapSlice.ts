@@ -47,6 +47,9 @@ interface SetActiveCoursePayload {
 
 interface SetActiveCustomCoursePayload {
   course: CustomCourse;
+  startYear?: number;
+  quarter?: PlannerQuarterData;
+  courseIndex?: number;
 }
 
 export const roadmapSlice = createSlice({
@@ -143,11 +146,13 @@ export const roadmapSlice = createSlice({
     setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
       if (!action.payload) {
         state.activeCustomCourse = null;
+        state.activeCourseDragSource = null;
         return;
       }
+      const { course, ...dragSource } = action.payload;
       state.activeCourse = null;
-      state.activeCourseDragSource = null;
-      state.activeCustomCourse = action.payload.course;
+      state.activeCustomCourse = course;
+      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
     },
     updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
       state.plans.forEach((plan) => {
