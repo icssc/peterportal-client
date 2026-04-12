@@ -139,9 +139,7 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       addedQuarters: [],
       removedQuarters: [],
     });
-    // console.log('revision:', JSON.stringify(revision));
 
-    // undoing and redoing, behavior for collapsing and expanding on the same
     if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
   };
 
