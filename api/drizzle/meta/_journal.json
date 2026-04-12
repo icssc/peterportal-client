@@ -201,8 +201,22 @@
     {
       "idx": 28,
       "version": "7",
+      "when": 1775200000000,
+      "tag": "0028_custom_card",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1775300000000,
+      "tag": "0029_planner_course_custom_card",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
       "when": 1775545146544,
-      "tag": "0028_whole_nehzno",
+      "tag": "0030_whole_nehzno",
       "breakpoints": true
     }
   ]

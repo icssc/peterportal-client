@@ -1,6 +1,6 @@
 {
-  "id": "e5ce080f-dd32-49d5-be79-70aacc7d84d0",
-  "prevId": "58a55613-eb11-4de3-97c2-b464cf9f637c",
+  "id": "c9dbabc6-63e7-4131-b827-e440dc85cf66",
+  "prevId": "e5ce080f-dd32-49d5-be79-70aacc7d84d0",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -316,6 +316,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "custom_card_id": {
+          "name": "custom_card_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "units": {
           "name": "units",
           "type": "real",
@@ -325,6 +331,15 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "planner_course_custom_card_id_custom_card_id_fk": {
+          "name": "planner_course_custom_card_id_custom_card_id_fk",
+          "tableFrom": "planner_course",
+          "tableTo": "custom_card",
+          "columnsFrom": ["custom_card_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
         "planner_course_planner_id_start_year_quarter_name_planner_quarter_planner_id_start_year_quarter_name_fk": {
           "name": "planner_course_planner_id_start_year_quarter_name_planner_quarter_planner_id_start_year_quarter_name_fk",
           "tableFrom": "planner_course",
@@ -343,7 +358,12 @@
       },
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "planner_course_custom_card_id_check": {
+          "name": "planner_course_custom_card_id_check",
+          "value": "(\"planner_course\".\"custom_card_id\" IS NOT NULL) = (\"planner_course\".\"course_id\" = 'CUSTOM')"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.planner_major": {

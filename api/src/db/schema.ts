@@ -119,6 +119,20 @@ export const plannerQuarter = pgTable(
   ],
 );
 
+export const customCard = pgTable(
+  'custom_card',
+  {
+    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    units: real('units').notNull().default(0),
+  },
+  (table) => [index('custom_card_user_id_idx').on(table.userId)],
+);
+
 export const plannerCourse = pgTable(
   'planner_course',
   {
@@ -127,6 +141,7 @@ export const plannerCourse = pgTable(
     quarterName: text('quarter_name').notNull(),
     index: integer('index').notNull(),
     courseId: text('course_id').notNull(),
+    customCardId: integer('custom_card_id').references(() => customCard.id, { onDelete: 'set null' }),
     units: real('units'),
   },
   (table) => [
@@ -135,6 +150,10 @@ export const plannerCourse = pgTable(
       columns: [table.plannerId, table.startYear, table.quarterName],
       foreignColumns: [plannerQuarter.plannerId, plannerQuarter.startYear, plannerQuarter.quarterName],
     }).onDelete('cascade'),
+    check(
+      'planner_course_custom_card_id_check',
+      sql`(${table.customCardId} IS NOT NULL) = (${table.courseId} = 'CUSTOM')`,
+    ),
   ],
 );
 
