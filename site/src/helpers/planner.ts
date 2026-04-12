@@ -30,6 +30,7 @@ import {
   PlannerYearData,
   RoadmapPlan,
 } from '../types/types';
+import { isCustomCourse } from './customCourses';
 import trpc from '../trpc';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
@@ -107,8 +108,8 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
     year.quarters.forEach((quarter) => {
       const savedQuarter: SavedPlannerQuarterData = { name: quarter.name, courses: [] };
       savedQuarter.courses = quarter.courses.map((course) => {
-        if ('courseName' in (course as unknown as CustomCourse)) {
-          return { courseId: `CUSTOM#${(course as unknown as CustomCourse).id}` };
+        if (isCustomCourse(course)) {
+          return { courseId: `CUSTOM#${course.id}` };
         }
         return {
           courseId: course.id,
@@ -167,7 +168,7 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
             const customMatchId = getCustomId(course.courseId);
             if (customMatchId) {
               const placeholder: CustomCourse = { id: customMatchId, courseName: '', units: 0, description: '' };
-              return placeholder as unknown as PlannerQuarterData['courses'][number];
+              return placeholder;
             }
             return {
               userChosenUnits: course.userChosenUnits,
@@ -410,8 +411,13 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
   const missing = new Set<string>();
   currentPlanData.forEach((year, yearIndex) => {
     year.quarters.forEach((quarter, quarterIndex) => {
-      const taking: Set<string> = new Set(quarter.courses.map((c) => c.department + ' ' + c.courseNumber));
+      const taking: Set<string> = new Set(
+        quarter.courses
+          .filter((c): c is PlannerCourseData => !isCustomCourse(c))
+          .map((c) => c.department + ' ' + c.courseNumber),
+      );
       quarter.courses.forEach((course, courseIndex) => {
+        if (isCustomCourse(course)) return;
         if (!course.prerequisiteTree) return;
 
         const prerequisite = course.prerequisiteTree;
@@ -439,7 +445,9 @@ export const validatePlanner = (transferNames: string[], currentPlanData: Planne
 export const getAllCoursesFromPlan = (plan: RoadmapPlan['content']) => {
   return plan.yearPlans.flatMap((yearPlan) =>
     yearPlan.quarters.flatMap((quarter) =>
-      quarter.courses.map((course) => course.department + ' ' + course.courseNumber),
+      quarter.courses
+        .filter((course): course is PlannerCourseData => !isCustomCourse(course))
+        .map((course) => course.department + ' ' + course.courseNumber),
     ),
   );
 };
@@ -533,8 +541,7 @@ export function calculateTotalUnits(courses: (PlannerCourseData | CustomCourse)[
   courses.forEach((course) => {
     if ('userChosenUnits' in course && course.userChosenUnits) {
       unitCount += course.userChosenUnits;
-    } else if ('courseName' in course) {
-      /** @todo better way of determining whether this is a custom course: helper function isCustomCourse */
+    } else if (isCustomCourse(course)) {
       unitCount += course.units;
     } else {
       unitCount += course.minUnits;
@@ -544,3 +551,5 @@ export function calculateTotalUnits(courses: (PlannerCourseData | CustomCourse)[
   });
   return { unitCount, courseCount };
 }
+
+export { isCustomCourse } from './customCourses';
