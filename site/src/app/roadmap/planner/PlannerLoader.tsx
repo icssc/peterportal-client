@@ -216,6 +216,30 @@ const PlannerLoader: FC = () => {
     setShowSyncModal(false);
   };
 
+  const countRoadmapStats = (roadmap: SavedRoadmap) => {
+    const lastEdited = roadmap?.timestamp ? new Date(roadmap.timestamp).toLocaleString() : 'Unknown';
+    const roadmapCount = roadmap.planners.length;
+    const courseCount = roadmap.planners
+      .flatMap((planner) => planner.content)
+      .flatMap((year) => year.quarters)
+      .reduce((total, quarter) => total + quarter.courses.length, 0);
+
+    return { lastEdited, roadmapCount, courseCount };
+  };
+
+  // stats for synced roadmap
+  const {
+    lastEdited: syncedLastEdited,
+    roadmapCount: syncedRoadmapCount,
+    courseCount: syncedCourseCount,
+  } = initialAccountRoadmap ? countRoadmapStats(initialAccountRoadmap) : { roadmapCount: 0, courseCount: 0 };
+
+  const {
+    lastEdited: localLastEdited,
+    roadmapCount: localRoadmapCount,
+    courseCount: localCourseCount,
+  } = initialLocalRoadmap ? countRoadmapStats(initialLocalRoadmap) : { roadmapCount: 0, courseCount: 0 };
+
   return (
     <Dialog
       open={showSyncModal}
@@ -229,6 +253,20 @@ const PlannerLoader: FC = () => {
           This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
           your roadmap from?
         </DialogContentText>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+          <div>
+            <DialogContentText>This Device</DialogContentText>
+            <DialogContentText>Last edited: {localLastEdited}</DialogContentText>
+            <DialogContentText>{localRoadmapCount} roadmaps</DialogContentText>
+            <DialogContentText>{localCourseCount} courses</DialogContentText>
+          </div>
+          <div>
+            <DialogContentText>My Account</DialogContentText>
+            <DialogContentText>Last edited: {syncedLastEdited}</DialogContentText>
+            <DialogContentText>{syncedRoadmapCount} roadmaps</DialogContentText>
+            <DialogContentText>{syncedCourseCount} courses</DialogContentText>
+          </div>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button
