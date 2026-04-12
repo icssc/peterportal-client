@@ -43,7 +43,7 @@
   }
 
   .rating-sliders {
-    padding: 16px;
+    padding: 16px 20px;
     margin-bottom: 12px;
     border-radius: 4px;
     border: 1px solid oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
@@ -72,7 +72,6 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      padding: 0 8px;
 
       .slider-value-labels {
         display: flex;
