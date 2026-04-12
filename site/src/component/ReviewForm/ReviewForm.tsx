@@ -410,7 +410,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <TextField
           multiline
           variant="outlined"
-          placeholder="Share your experience — what should future students know about this course? "
+          placeholder="Share your experience — what should future students know about this course?"
           helperText={`${wordCount}/500 words`}
           onChange={(e) => setContent(e.target.value)}
           error={wordCount > 500}
