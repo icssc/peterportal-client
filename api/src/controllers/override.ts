@@ -43,6 +43,24 @@ const overrideRouter = router({
           and(eq(override.plannerId, plannerId), eq(override.userId, userId), eq(override.requirement, requirement)),
         );
     }),
+
+  getOverrides: userProcedure
+    .input(
+      z.object({
+        plannerId: z.number(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { plannerId } = input;
+      const userId = ctx.session.userId!;
+
+      const overrides = await db
+        .select({ requirement: override.requirement })
+        .from(override)
+        .where(and(eq(override.userId, userId), eq(override.plannerId, plannerId)));
+
+      return overrides.map((o) => o.requirement);
+    }),
 });
 
 export default overrideRouter;
