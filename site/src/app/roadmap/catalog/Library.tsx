@@ -12,24 +12,18 @@ import { customCourseSortable } from '../../../helpers/sortable';
 import { deepCopy } from '../../../helpers/util';
 import { CustomCourse } from '../../../types/types';
 import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store/slices/roadmapSlice';
+import trpc from '../../../trpc';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
   const toggleExpand = () => setOpen(!open);
   return (
     <div className="saved-courses">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4>Saved</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
           <SavedCourseList />
@@ -47,9 +41,9 @@ const CustomCourses = () => {
   const customCoursesCopy = deepCopy(userCustomCourses);
 
   const addCard = useCallback(() => {
-    /** @todo replace id with actual id */
-    const newId = Date.now();
-    dispatch(addCustomCourse({ id: newId, courseName: '', units: 0, description: '' }));
+    trpc.customCourses.addCustomCard
+      .mutate({ name: '', description: '', units: 0 })
+      .then((id) => dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' })));
   }, [dispatch]);
 
   const handleUpdate = (course: CustomCourse) => {

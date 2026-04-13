@@ -11,6 +11,7 @@ import {
   RoadmapPlanState,
   RoadmapRevision,
 } from '../../types/types';
+import { isCustomCourse } from '../../helpers/customCourses';
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
@@ -46,6 +47,9 @@ interface SetActiveCoursePayload {
 
 interface SetActiveCustomCoursePayload {
   course: CustomCourse;
+  startYear?: number;
+  quarter?: PlannerQuarterData;
+  courseIndex?: number;
 }
 
 export const roadmapSlice = createSlice({
@@ -139,6 +143,43 @@ export const roadmapSlice = createSlice({
       state.activeCustomCourse = null;
       state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
     },
+    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCustomCourse = null;
+        state.activeCourseDragSource = null;
+        return;
+      }
+      const { course, ...dragSource } = action.payload;
+      state.activeCourse = null;
+      state.activeCustomCourse = course;
+      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
+    },
+    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            quarter.courses.forEach((course, index) => {
+              if (isCustomCourse(course) && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload;
+              }
+            });
+          });
+        });
+      });
+    },
+    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
+      const customCourseId = action.payload;
+
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            quarter.courses = quarter.courses.filter(
+              (course) => !(isCustomCourse(course) && course.id === customCourseId),
+            );
+          });
+        });
+      });
+    },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
       state.activeCourseLoading = action.payload;
     },
@@ -207,44 +248,6 @@ export const roadmapSlice = createSlice({
     setSelectedSidebarTab: (state, action: PayloadAction<number>) => {
       state.selectedSidebarTab = action.payload;
     },
-    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
-      if (!action.payload) {
-        state.activeCustomCourse = null;
-        return;
-      }
-      state.activeCustomCourse = action.payload.course;
-    },
-    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
-      state.plans.forEach((plan) => {
-        plan.content.yearPlans.forEach((year) => {
-          year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            courses.forEach((course, index) => {
-              if ('courseName' in course && course.id === action.payload.id) {
-                quarter.courses[index] = action.payload as unknown as CourseGQLData;
-              }
-            });
-          });
-        });
-      });
-    },
-    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
-      const customCourseId = action.payload;
-
-      state.plans.forEach((plan) => {
-        plan.content.yearPlans.forEach((year) => {
-          year.quarters.forEach((quarter) => {
-            const courses = quarter.courses as (CourseGQLData | CustomCourse)[];
-            quarter.courses = courses.filter((course) => {
-              if ('courseName' in course) {
-                return course.id !== customCourseId;
-              }
-              return true;
-            }) as unknown as typeof quarter.courses;
-          });
-        });
-      });
-    },
   },
 });
 
@@ -271,10 +274,10 @@ export const {
   setShowToast,
   setCHCSelection,
   updateTempPlannerIds,
-  setSelectedSidebarTab,
   setActiveCustomCourse,
   updateRoadmapCustomCourse,
   removeCustomCourseFromRoadmap,
+  setSelectedSidebarTab,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type

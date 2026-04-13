@@ -1,16 +1,19 @@
 'use client';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { quarterDisplayNames } from '../../../helpers/planner';
+import { quarterDisplayNames, calculateTotalUnits } from '../../../helpers/planner';
 import { deepCopy, useIsMobile, pluralize } from '../../../helpers/util';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { useMemo } from 'react';
 import {
   createQuarterCourseLoadingPlaceholder,
   reviseRoadmap,
   selectCurrentPlan,
   setActiveCourse,
+  setActiveCustomCourse,
   showMobileCatalog,
 } from '../../../store/slices/roadmapSlice';
-import { CourseGQLData, CourseIdentifier, CustomCourse, PlannerQuarterData } from '../../../types/types';
+import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
+import { isCustomCourse } from '../../../helpers/customCourses';
 import './Quarter.scss';
 
 import Course from './Course';
@@ -24,8 +27,9 @@ import {
   ModifiedQuarter,
   modifyQuarterCourse,
   reorderQuarterCourse,
-  modifyCustomQuarterCourse,
+  modifyVariableCourseUnit,
 } from '../../../helpers/roadmapEdits';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
 interface QuarterProps {
   yearIndex: number;
@@ -46,26 +50,19 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
   const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
   const activeCustomCourse = useAppSelector((state) => state.roadmap.activeCustomCourse);
   const activeCourseDraggedFrom = useAppSelector((state) => state.roadmap.activeCourseDragSource);
-  const isDragging = activeCourse !== null;
+  const isLoggedIn = useIsLoggedIn();
+  const isDragging = activeCourse !== null || activeCustomCourse !== null;
   const currentPlan = useAppSelector(selectCurrentPlan);
   const startYear = currentPlan.content.yearPlans[yearIndex].startYear;
-  const courses = data.courses as (CourseGQLData | CustomCourse)[];
+  const courses = data.courses;
 
-  const calculateQuarterStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
-    courses.forEach((course) => {
-      if ('courseName' in course) {
-        unitCount += course.units;
-      } else {
-        unitCount += course.minUnits;
-      }
-      courseCount += 1;
-    });
-    return [unitCount, courseCount];
-  };
+  // Calculate Quarter Stats
+  const unitCount = useMemo(() => {
+    const courses = data.courses;
+    const { unitCount } = calculateTotalUnits(courses);
 
-  const unitCount = calculateQuarterStats()[0];
+    return unitCount;
+  }, [data]);
 
   const coursesCopy = deepCopy(data.courses); // Sortable requires data to be extensible (non read-only)
 
@@ -93,7 +90,8 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
       courseIndex: event.newIndex!,
     };
     if (activeCustomCourse) {
-      const revision = modifyCustomQuarterCourse(currentPlan.id, activeCustomCourse, addToQuarter);
+      if (!isLoggedIn) return;
+      const revision = modifyQuarterCourse(currentPlan.id, activeCustomCourse, sourceQuarter, addToQuarter);
       dispatch(reviseRoadmap(revision));
       return;
     }
@@ -104,8 +102,10 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
 
   const sortCourse = (event: SortableEvent) => {
     if (event.from !== event.to) return;
+    const courseToReorder = activeCustomCourse ?? activeCourse;
+    if (!courseToReorder) return;
     const quarterToChange = { startYear, quarter: data, courseIndex: event.newIndex! };
-    const revision = reorderQuarterCourse(currentPlan.id, activeCourse!, event.oldIndex!, quarterToChange);
+    const revision = reorderQuarterCourse(currentPlan.id, courseToReorder, event.oldIndex!, quarterToChange);
     dispatch(reviseRoadmap(revision));
   };
 
@@ -136,8 +136,11 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
 
   const setDraggedItem = (event: SortableEvent) => {
     const course = data.courses[event.oldIndex!];
-    // set data for which quarter it's being dragged from
-    dispatch(setActiveCourse({ course, startYear, quarter: data, courseIndex: event.oldIndex! }));
+    if (isCustomCourse(course)) {
+      dispatch(setActiveCustomCourse({ course, startYear, quarter: data, courseIndex: event.oldIndex! }));
+    } else {
+      dispatch(setActiveCourse({ course, startYear, quarter: data, courseIndex: event.oldIndex! }));
+    }
   };
 
   return (
@@ -167,12 +170,22 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
         onAdd={addCourse} // add course, drag from another quarter
         onSort={sortCourse} // drag within a quarter
         onEnd={() => {
-          if (!activeCourseLoading) dispatch(setActiveCourse(null));
+          if (!activeCourseLoading) {
+            dispatch(setActiveCourse(null));
+            dispatch(setActiveCustomCourse(null));
+          }
         }}
         {...quarterSortable}
       >
         {courses.map((course, index) => {
           if ('courseName' in course) {
+            if (!isLoggedIn) {
+              return (
+                <div key={`custom-${course.id}-${index}`} className="quarter-custom-course-logged-out">
+                  <p>Log in to use custom cards!</p>
+                </div>
+              );
+            }
             return (
               <CustomCourseCard
                 key={`custom-${course.id}-${index}`}
@@ -198,6 +211,10 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
             <Course
               key={index}
               data={course}
+              onSetVariableUnits={(units) => {
+                const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
+                if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+              }}
               requiredCourses={requiredCourses}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
