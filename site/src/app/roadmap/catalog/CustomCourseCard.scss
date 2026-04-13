@@ -1,0 +1,134 @@
+.course {
+  box-shadow: 0 0 2px 0 #60616680;
+  background: var(--mui-palette-overlay-overlay1);
+  border: 2px solid var(--mui-palette-divider);
+  border-radius: 8px;
+  height: auto;
+  font-size: 16px;
+  padding: 12px;
+  position: relative;
+  margin: 0;
+  color: var(--mui-palette-secondary-main);
+
+  display: grid;
+  grid-template-areas:
+    'A B'
+    'A C';
+  grid-template-columns: min-content auto;
+  grid-template-rows: repeat(2, min-content);
+  align-items: center;
+
+  .title {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .course-drag-handle {
+    grid-area: A;
+    position: relative;
+    left: -6px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .course-card-top {
+    grid-area: B;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .course-description {
+    grid-area: C;
+    min-width: 0;
+  }
+
+  .name {
+    font-weight: bold;
+    min-width: 0;
+  }
+
+  .description-input {
+    width: 75%;
+    min-width: 0;
+  }
+
+  .units {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .units-input {
+    width: 45px;
+    margin-left: auto;
+    margin-right: 2px;
+  }
+
+  button.MuiIconButton-root {
+    width: 24px;
+    height: 24px;
+    margin: -8px 0;
+    margin-right: -4px;
+
+    .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+  }
+
+  * {
+    color: inherit !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .course {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    font-size: 14px;
+
+    .course-card-top {
+      display: flex;
+      align-items: center;
+    }
+
+    .name {
+      min-width: 0;
+    }
+
+    .name-input {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .units {
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .units-input {
+      width: 56px;
+      margin-left: auto;
+      margin-right: 2px;
+    }
+
+    .description-input {
+      width: 75%;
+      min-width: 0;
+    }
+
+    button.MuiIconButton-root {
+      margin: 0;
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
