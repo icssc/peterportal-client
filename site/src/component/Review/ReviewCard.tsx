@@ -88,16 +88,67 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
     handleMenuClose();
   };
 
+  const menuItemSx = {
+    width: 'calc(100% - 8px)',
+    height: '22px',
+    borderRadius: '4px',
+    border: '1px solid var(--mui-palette-text-secondary)',
+    color: 'var(--mui-palette-secondary-main)',
+    fontFamily: 'Roboto',
+    fontWeight: 600,
+    fontSize: '12px',
+    padding: '0',
+    mx: '4px',
+    my: '2px',
+    justifyContent: 'center',
+    textAlign: 'center',
+    boxSizing: 'border-box',
+    minHeight: 'unset',
+  };
+
   return (
     <>
       <IconButton onClick={handleMenuOpen}>
         <MoreVertIcon />
       </IconButton>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-        <MenuItem onClick={openReportForm}>Report</MenuItem>
-        {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+        slotProps={{
+          paper: {
+            sx: {
+              width: '96px',
+              minWidth: 'unset',
+              borderRadius: '8px',
+              border: '1px solid var(--mui-palette-text-secondary)',
+              overflow: 'hidden',
+              boxSizing: 'border-box',
+            },
+          },
+          list: {
+            sx: {
+              padding: '4px 0',
+              width: '100%',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            },
+          },
+        }}
+      >
+        <MenuItem sx={menuItemSx} onClick={openReportForm}>
+          Report
+        </MenuItem>
+        {review.authored && (
+          <MenuItem sx={menuItemSx} onClick={openReviewForm}>
+            Edit
+          </MenuItem>
+        )}
         {review.authored && (
           <MenuItem
+            sx={menuItemSx}
             onClick={() => {
               setShowDeleteModal(true);
               handleMenuClose();

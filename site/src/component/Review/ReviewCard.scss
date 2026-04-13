@@ -130,11 +130,11 @@
   }
 
   .rating-quality {
-    background-color: #305db7;
+    background-color: var(--mui-palette-primary-main);
   }
 
   .rating-difficulty {
-    background-color: #90b3f9;
+    background-color: var(--mui-palette-secondary-main);
   }
   .rating-label {
     font-size: 8px;
@@ -271,7 +271,7 @@
       padding: 5px 0 5px 5px;
       height: 20px;
       border-radius: 3px;
-      border: 1px solid #88888866;
+      border: 1px solid var(--mui-palette-text-secondary);
       background: transparent;
       color: inherit;
       font-family: Roboto;
@@ -288,10 +288,10 @@
 
       &.colored-upvote {
         background: transparent;
-        border-color: #88888866;
+        border-color: var(--mui-palette-text-secondary);
 
         svg {
-          color: #90b3f9;
+          color: var(--mui-palette-secondary-main);
           width: 15.5px;
           height: 15.5px;
           font-size: 15.5px;
@@ -300,10 +300,10 @@
 
       &.colored-downvote {
         background: transparent;
-        border-color: #88888866;
+        border-color: var(--mui-palette-text-secondary);
 
         svg {
-          color: #90b3f9;
+          color: var(--mui-palette-secondary-main);
           width: 15.5px;
           height: 15.5px;
           font-size: 15.5px;
