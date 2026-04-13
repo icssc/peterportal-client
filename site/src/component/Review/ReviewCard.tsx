@@ -16,6 +16,10 @@ import { useProfessorData } from '../../hooks/professorReviews';
 
 import PersonIcon from '@mui/icons-material/Person';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import {
   Button,
   IconButton,
@@ -154,7 +158,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   const isLoggedIn = useIsLoggedIn();
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
-  const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const profCache = useProfessorData(review.professorId);
 
   const fetchCourseAndProfName = useCallback(async () => {
@@ -324,10 +327,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
     }
   };
 
-  const openReportForm = () => {
-    setReportFormOpen(true);
-  };
-
   const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
   const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
 
@@ -400,13 +399,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
       {tags.length > 0 && (
         <div className="reviewcard-tags">
           {tags.map((tag) => (
-            <Chip size="small" color="primary" key={tag} label={tag} />
+            <Chip size="small" key={tag} label={tag} />
           ))}
         </div>
       )}
       <div className="reviewcard-footer" id={review.id.toString()}>
         <div className="reviewcard-voting">
-          <p className="reviewcard-voting-question">Helpful?</p>
           <div className="reviewcard-voting-buttons">
             <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
               <span>
@@ -416,7 +414,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
                   disabled={!isLoggedIn}
                   style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
                 >
-                  &#9650;
+                  {review.userVote === 1 ? <ThumbUpIcon fontSize="small" /> : <ThumbUpOffAltIcon fontSize="small" />}
+                  {review.score > 0 ? review.score : 0}
                 </button>
               </span>
             </Tooltip>
@@ -429,21 +428,17 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
                   disabled={!isLoggedIn}
                   style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
                 >
-                  &#9660;
+                  {review.userVote === -1 ? (
+                    <ThumbDownIcon fontSize="small" />
+                  ) : (
+                    <ThumbDownOffAltIcon fontSize="small" />
+                  )}
+                  {review.score < 0 ? Math.abs(review.score) : 0}
                 </button>
               </span>
             </Tooltip>
           </div>
         </div>
-        <button className="add-report-button" onClick={openReportForm}>
-          Report...
-        </button>
-        <ReportForm
-          showForm={reportFormOpen}
-          reviewId={review.id}
-          reviewContent={review.content}
-          closeForm={() => setReportFormOpen(false)}
-        />
       </div>
     </Card>
   );
