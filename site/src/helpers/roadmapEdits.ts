@@ -179,33 +179,6 @@ export function modifyQuarterCourse(
   return createRevision(edits);
 }
 
-export function modifyCustomQuarterCourse(plannerId: number, course: CustomCourse, addedTo: ModifiedQuarter) {
-  const edits: PlannerQuarterEdit[] = [];
-
-  // Remove loading placeholders
-  const quarterCopy = deepCopy(addedTo.quarter);
-  quarterCopy.courses = addedTo.quarter.courses.filter((c) => c.id !== LOADING_COURSE_PLACEHOLDER.id);
-
-  const coursesAfter = deepCopy(quarterCopy.courses);
-  const index = addedTo.courseIndex;
-
-  // Insert the custom course directly
-  coursesAfter.splice(index, 0, course as unknown as CourseGQLData);
-
-  edits.push({
-    type: 'quarter',
-    plannerId,
-    startYear: addedTo.startYear,
-    before: quarterCopy,
-    after: {
-      name: addedTo.quarter.name,
-      courses: coursesAfter,
-    },
-  });
-
-  return createRevision(edits);
-}
-
 export function reorderQuarterCourse(
   plannerId: number,
   course: PlannerQuarterCourse,
