@@ -139,8 +139,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
         {hasSpecs && (
           <Autocomplete
             className="specialization-select"
+            disableClearable
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id)) ?? null}
+            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id))}
             onChange={(_event, option) => handleSpecializationChange(option)}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
