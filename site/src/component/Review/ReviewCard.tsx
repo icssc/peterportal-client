@@ -381,11 +381,11 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
 
       <div className="reviewcard-content">
         <div className="reviewcard-ratings">
-          <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
+          <div className="rating rating-quality">
             <div className="rating-label">Quality</div>
             <div className="rating-value">{review.rating}</div>
           </div>
-          <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}>
+          <div className="rating rating-difficulty">
             <div className="rating-label">Difficulty</div>
             <div className="rating-value">{review.difficulty}</div>
           </div>

@@ -117,39 +117,36 @@
 
   .rating {
     border-radius: var(--mui-shape-borderRadiusLg);
-    width: 72px;
-    height: 72px;
+    width: 49px;
+    height: 49px;
+    border-radius: 8px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
+    gap: 2px;
+  }
+
+  .rating-quality {
+    background-color: #305db7;
+  }
+
+  .rating-difficulty {
+    background-color: #90b3f9;
   }
   .rating-label {
-    line-height: 1rem;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 8px;
+    font-weight: 400;
+    text-align: center;
+    line-height: 100%;
   }
   .rating-value {
-    line-height: 33px;
-    font-size: 36px;
-  }
-  // color scheme for numerical ratings
-  // reversed for difficulty so 1 => r5, etc.
-  .r1 {
-    background-color: var(--mui-palette-reviews-red);
-  }
-  .r2 {
-    background-color: var(--mui-palette-reviews-orange);
-  }
-  .r3 {
-    background-color: var(--mui-palette-reviews-yellow);
-  }
-  .r4 {
-    background-color: var(--mui-palette-reviews-green);
-  }
-  .r5 {
-    background-color: var(--mui-palette-reviews-blue);
+    font-size: 30px;
+    font-weight: 400;
+    text-align: center;
+    line-height: 100%;
   }
 }
 
