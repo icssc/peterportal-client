@@ -12,6 +12,7 @@ import { customCourseSortable } from '../../../helpers/sortable';
 import { deepCopy } from '../../../helpers/util';
 import { CustomCourse } from '../../../types/types';
 import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store/slices/roadmapSlice';
+import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
@@ -37,6 +38,7 @@ const CustomCourses = () => {
   const [open, setOpen] = useState(true);
   const toggleExpand = () => setOpen(!open);
   const dispatch = useAppDispatch();
+  const isLoggedIn = useIsLoggedIn();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
   const customCoursesCopy = deepCopy(userCustomCourses);
 
@@ -53,40 +55,38 @@ const CustomCourses = () => {
 
   return (
     <div className="custom-courses">
-      <div
-        className="header-tab"
-        role="button"
-        tabIndex={0}
-        onClick={toggleExpand}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') toggleExpand();
-        }}
-      >
+      <ClickableDiv className="header-tab" onClick={toggleExpand}>
         <h4>Custom Cards</h4>
         <ExpandMore expanded={open} onClick={toggleExpand} />
-      </div>
+      </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <div className="section-content">
-          <ReactSortable
-            list={customCoursesCopy}
-            sort={false}
-            setList={() => {}}
-            onStart={(evt) => {
-              const draggedCourse = userCustomCourses[evt.oldIndex!];
-              if (!draggedCourse) return;
+          {!isLoggedIn ? (
+            <p className="custom-cards-logged-out">Log in to use custom cards!</p>
+          ) : (
+            <>
+              <ReactSortable
+                list={customCoursesCopy}
+                sort={false}
+                setList={() => {}}
+                onStart={(evt) => {
+                  const draggedCourse = userCustomCourses[evt.oldIndex!];
+                  if (!draggedCourse) return;
 
-              dispatch(setActiveCustomCourse({ course: draggedCourse }));
-            }}
-            {...customCourseSortable}
-          >
-            {userCustomCourses.map((course) => (
-              <CustomCourseCard key={course.id} course={course} handleUpdate={handleUpdate} inRoadmap={false} />
-            ))}
-          </ReactSortable>
+                  dispatch(setActiveCustomCourse({ course: draggedCourse }));
+                }}
+                {...customCourseSortable}
+              >
+                {userCustomCourses.map((course) => (
+                  <CustomCourseCard key={course.id} course={course} handleUpdate={handleUpdate} inRoadmap={false} />
+                ))}
+              </ReactSortable>
 
-          <button className="add-card-button" type="button" onClick={addCard}>
-            <AddIcon />
-          </button>
+              <button className="add-card-button" type="button" onClick={addCard}>
+                <AddIcon />
+              </button>
+            </>
+          )}
         </div>
       </Collapse>
     </div>
