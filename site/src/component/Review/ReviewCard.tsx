@@ -391,39 +391,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
           </div>
         </div>
         <div className="reviewcard-info">
-          <div className="reviewcard-details">
-            <div className="reviewcard-detail">
-              <p>
-                <b>Posted on:</b>
-                {' ' +
-                  new Date(review.createdAt).toLocaleString('default', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                {review.updatedAt && (
-                  <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
-                )}
-              </p>
-              <div className="reviewcard-author">
-                <b>Posted by:</b>
-                <p className="reviewcard-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
-                {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
-              </div>
-              <p>
-                <b>Quarter:</b> {review.quarter}
-              </p>
-            </div>
-            <div className="reviewcard-detail">
-              <p>
-                <b>Grade:</b> {review.gradeReceived}
-              </p>
-              <p>
-                <b>Would Take Again:</b> {review.takeAgain ? 'Yes' : 'No'}
-              </p>
-            </div>
-          </div>
+          <p>
+            Grade: <b>{review.gradeReceived}</b>
+          </p>
           <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
       </div>
