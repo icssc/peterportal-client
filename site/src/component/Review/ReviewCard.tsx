@@ -415,7 +415,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
                   style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
                 >
                   {review.userVote === 1 ? <ThumbUpIcon fontSize="small" /> : <ThumbUpOffAltIcon fontSize="small" />}
-                  {review.score > 0 ? review.score : 0}
                 </button>
               </span>
             </Tooltip>
