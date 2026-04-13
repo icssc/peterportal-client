@@ -122,6 +122,7 @@ const CoursesSection: FC = () => {
       <Autocomplete
         className="course-search-select"
         options={options}
+        filterOptions={(x) => x}
         value={null}
         inputValue={courseSearchValue}
         open={courseSearchValue.length > 0 && (options.length > 0 || loading)}
