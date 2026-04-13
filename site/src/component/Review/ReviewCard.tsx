@@ -396,46 +396,44 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
           <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
       </div>
-      {tags.length > 0 && (
-        <div className="reviewcard-tags">
-          {tags.map((tag) => (
-            <Chip size="small" key={tag} label={tag} />
-          ))}
-        </div>
-      )}
-      <div className="reviewcard-footer" id={review.id.toString()}>
-        <div className="reviewcard-voting">
-          <div className="reviewcard-voting-buttons">
-            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-              <span>
-                <button
-                  className={upvoteClassname}
-                  onClick={upvote}
-                  disabled={!isLoggedIn}
-                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
-                >
-                  {review.userVote === 1 ? <ThumbUpIcon fontSize="small" /> : <ThumbUpOffAltIcon fontSize="small" />}
-                </button>
-              </span>
-            </Tooltip>
-            <p className="reviewcard-voting-count">{review.score}</p>
-            <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-              <span>
-                <button
-                  className={downvoteClassname}
-                  onClick={downvote}
-                  disabled={!isLoggedIn}
-                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
-                >
-                  {review.userVote === -1 ? (
-                    <ThumbDownIcon fontSize="small" />
-                  ) : (
-                    <ThumbDownOffAltIcon fontSize="small" />
-                  )}
-                  {review.score < 0 ? Math.abs(review.score) : 0}
-                </button>
-              </span>
-            </Tooltip>
+      <div className="reviewcard-footer-row">
+        {tags.length > 0 && (
+          <div className="reviewcard-tags">
+            {tags.map((tag) => (
+              <Chip size="small" key={tag} label={tag} />
+            ))}
+          </div>
+        )}
+        <div className="reviewcard-footer" id={review.id.toString()}>
+          <div className="reviewcard-voting">
+            <div className="reviewcard-voting-buttons">
+              <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+                <span>
+                  <button
+                    className={upvoteClassname}
+                    onClick={upvote}
+                    disabled={!isLoggedIn}
+                    style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                  >
+                    <span>{review.score > 0 ? review.score : 0}</span>
+                    {review.userVote === 1 ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
+                  </button>
+                </span>
+              </Tooltip>
+              <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
+                <span>
+                  <button
+                    className={downvoteClassname}
+                    onClick={downvote}
+                    disabled={!isLoggedIn}
+                    style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                  >
+                    <span>{review.score < 0 ? Math.abs(review.score) : 0}</span>
+                    {review.userVote === -1 ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
+                  </button>
+                </span>
+              </Tooltip>
+            </div>
           </div>
         </div>
       </div>

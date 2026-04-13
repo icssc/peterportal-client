@@ -221,57 +221,96 @@
   }
 }
 
-.reviewcard-tags {
+.reviewcard-footer-row {
   display: flex;
   flex-direction: row;
-  justify-content: left;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   gap: 8px;
 }
 
-.reviewcard-voting {
+.reviewcard-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .MuiChip-root {
+    border-radius: 10px;
+    font-family: Roboto;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 100%;
+  }
+}
+
+.reviewcard-voting-buttons {
   display: flex;
   flex-direction: row;
+  gap: 8px;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: bold;
-  height: 20px;
+}
 
-  * {
-    margin: 0px;
-  }
+.reviewcard-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 
-  .reviewcard-voting-buttons {
+  .reviewcard-voting {
     display: flex;
     flex-direction: row;
+    gap: 8px;
     align-items: center;
-    gap: 0.25rem;
-  }
-  .upvote,
-  .downvote {
-    padding: 0px;
-    border: none;
-    height: fit-content;
-    background-color: transparent;
-    transition: 0.25s;
-    font-size: 20px;
-  }
-  .colored-upvote {
-    color: var(--mui-palette-primary-main);
-  }
-  .colored-downvote {
-    color: var(--mui-palette-error-main);
-  }
-}
+    width: 76px;
+    height: 20px;
 
-.add-report-button {
-  border: none;
-  background-color: transparent;
-  text-decoration: underline;
-  padding: 0;
-}
-.add-report-button:hover {
-  color: var(--mui-palette-text-primary);
+    button {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      width: 36px;
+      padding: 5px 0 5px 5px;
+      height: 20px;
+      border-radius: 3px;
+      border: 1px solid #88888866;
+      background: transparent;
+      color: inherit;
+      font-family: Roboto;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 100%;
+      cursor: pointer;
+
+      svg {
+        width: 17px;
+        height: 17px;
+        font-size: 17px;
+      }
+
+      &.colored-upvote {
+        background: transparent;
+        border-color: #88888866;
+
+        svg {
+          color: #90b3f9;
+          width: 15.5px;
+          height: 15.5px;
+          font-size: 15.5px;
+        }
+      }
+
+      &.colored-downvote {
+        background: transparent;
+        border-color: #88888866;
+
+        svg {
+          color: #90b3f9;
+          width: 15.5px;
+          height: 15.5px;
+          font-size: 15.5px;
+        }
+      }
+    }
+  }
 }
 
 // screen width is less than or equal to 599px
