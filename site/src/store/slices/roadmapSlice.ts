@@ -173,12 +173,9 @@ export const roadmapSlice = createSlice({
       state.plans.forEach((plan) => {
         plan.content.yearPlans.forEach((year) => {
           year.quarters.forEach((quarter) => {
-            quarter.courses = quarter.courses.filter((course) => {
-              if (isCustomCourse(course)) {
-                return course.id !== customCourseId;
-              }
-              return true;
-            });
+            quarter.courses = quarter.courses.filter(
+              (course) => !(isCustomCourse(course) && course.id === customCourseId),
+            );
           });
         });
       });
