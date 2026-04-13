@@ -29,7 +29,7 @@ function getCoursesForMajor(programId: string) {
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
-  if (!programId) return [];
+  if (!programId || programId === 'NA') return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
 }
 
@@ -52,6 +52,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
+
+  if (specOptions.length > 0 && !major.specializationRequired) {
+    const noSpec = { id: 'NA', majorId: major.id, name: 'No Specialization' };
+    specOptions.unshift({ value: noSpec, label: noSpec.name });
+  }
 
   const dispatch = useAppDispatch();
 
