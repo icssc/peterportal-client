@@ -62,13 +62,13 @@
   }
 
   .name-input {
-    color: white !important;
+    color: white;
   }
 
   .description-input {
     width: 75%;
     min-width: 0;
-    color: white !important;
+    color: white;
   }
 
   .units {
@@ -80,7 +80,6 @@
     width: 45px;
     margin-left: auto;
     margin-right: 2px;
-    color: white !important;
   }
 
   button.MuiIconButton-root {
@@ -88,13 +87,10 @@
     height: 24px;
     margin: -8px 0;
     margin-right: -4px;
+    color: inherit;
 
     .MuiSvgIcon-root {
       font-size: 20px;
     }
-  }
-
-  * {
-    color: inherit !important;
   }
 }
