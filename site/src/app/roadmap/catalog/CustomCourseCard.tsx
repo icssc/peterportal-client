@@ -3,7 +3,6 @@ import { FC, useCallback, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { IconButton } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { useIsMobile } from '../../../helpers/util';
 import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 import { CustomCourse } from '../../../types/types';
@@ -20,8 +19,8 @@ interface CustomCourseCardProps {
 
 export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap, removeCourseAt }) => {
   const dispatch = useAppDispatch();
-  const isMobile = useIsMobile();
   const isLoggedIn = useIsLoggedIn();
+
   const [newName, setNewName] = useState<string>(course.courseName);
   const [newUnits, setNewUnits] = useState<number>(course.units);
   const [newDescription, setNewDescription] = useState<string>(course.description);
@@ -64,12 +63,10 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
   };
 
   return (
-    <div className="course">
-      {!isMobile && (
-        <div className="course-drag-handle">
-          <DragIndicatorIcon />
-        </div>
-      )}
+    <div className="custom-card">
+      <div className="course-drag-handle">
+        <DragIndicatorIcon />
+      </div>
 
       <div className="course-card-top">
         <span className="name">

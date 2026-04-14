@@ -7,7 +7,13 @@
 }
 
 .custom-courses {
-  gap: 12px;
+  gap: 4px;
+  .section-content .custom-card {
+    border: 0px;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
 }
 
 .saved-courses,
@@ -48,17 +54,9 @@
 
 .custom-courses {
   .section-content {
-    .custom-cards-logged-out {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 1.5;
-    }
-
     .add-card-button {
       box-shadow: 0 0 2px 0 #60616680;
       background: var(--mui-palette-overlay-overlay1);
-      border: 2px solid var(--mui-palette-divider);
       border-radius: 8px;
       height: auto;
       font-size: 16px;
@@ -66,6 +64,12 @@
       position: relative;
       color: var(--mui-palette-divider);
       align-items: center;
+      border: 1px solid transparent;
+
+      &:hover {
+        outline: 1px solid var(--mui-palette-divider);
+        cursor: pointer;
+      }
     }
   }
 }
