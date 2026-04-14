@@ -1,5 +1,5 @@
 import './MajorCourseList.scss';
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import ThemeContext from '../../../style/theme-context';
@@ -53,7 +53,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
   const noSpecId = 'NO_SPEC';
-  const noSpec = { id: noSpecId, majorId: major.id, name: 'No Specialization' };
+  const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
 
   if (specOptions.length > 0 && !major.specializationRequired) {
     specOptions.unshift({ value: noSpec, label: noSpec.name });
