@@ -271,7 +271,7 @@
       padding: 5px 0 5px 5px;
       height: 20px;
       border-radius: 3px;
-      border: 1px solid var(--mui-palette-text-secondary);
+      border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
       background: transparent;
       color: inherit;
       font-family: Roboto;
@@ -288,7 +288,6 @@
 
       &.colored-upvote {
         background: transparent;
-        border-color: var(--mui-palette-text-secondary);
 
         svg {
           color: var(--mui-palette-secondary-main);
@@ -300,7 +299,6 @@
 
       &.colored-downvote {
         background: transparent;
-        border-color: var(--mui-palette-text-secondary);
 
         svg {
           color: var(--mui-palette-secondary-main);
