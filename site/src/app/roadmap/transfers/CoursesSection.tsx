@@ -122,7 +122,7 @@ const CoursesSection: FC = () => {
       <Autocomplete
         className="course-search-select"
         options={options}
-        filterOptions={(x) => x}
+        filterOptions={(option) => option} // disable built-in filtering to show all options from the server
         value={null}
         inputValue={courseSearchValue}
         open={courseSearchValue.length > 0 && (options.length > 0 || loading)}
