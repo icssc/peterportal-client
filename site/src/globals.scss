@@ -103,6 +103,7 @@ $mui-transition-time: 268ms;
     background-color: white !important;
     color: black !important;
     overflow: visible !important;
+    float: none !important;
   }
 
   button[aria-label='delete'] {
@@ -115,9 +116,6 @@ $mui-transition-time: 268ms;
   }
 
   .quarter-course-list {
-    display: grid !important;
-    grid-auto-rows: 1fr;
-
     .roadmap-course {
       display: flex;
       flex-direction: column;
