@@ -27,6 +27,7 @@ export interface PlannerYearData {
   startYear: number;
   name: string;
   quarters: PlannerQuarterData[];
+  collapsed: boolean;
 }
 
 export interface PlannerQuarterData {
