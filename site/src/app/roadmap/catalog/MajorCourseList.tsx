@@ -110,6 +110,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     dispatch,
     fetchRequirements,
     hasSpecs,
+    noSpec,
     major.id,
     majorWithSpec.requirements.length,
     selectedSpecId,
