@@ -315,7 +315,7 @@ theme = createTheme(theme, {
             height: 24,
             fontSize: 14,
             borderRadius: 2,
-            maxWidth: 'calc(100% - 96px)',
+            maxWidth: 'calc(100% - 93px)',
           },
           '& .MuiChip-deleteIcon': {
             color: 'var(--mui-palette-text-primary)',
