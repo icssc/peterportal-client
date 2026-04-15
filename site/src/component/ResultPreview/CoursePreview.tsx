@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
+import PreviewNavBar from './PreviewNavBar';
 
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
@@ -53,25 +54,33 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
 
   return (
     <div className="preview-body">
-      <ResultPageSection title={data.title}>
-        <CourseSummary course={data} />
-      </ResultPageSection>
+      <div id="preview-details">
+        <ResultPageSection title={data.title}>
+          <CourseSummary course={data} />
+        </ResultPageSection>
+      </div>
 
-      <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist course={data} />
-      </ResultPageSection>
+      <div id="preview-grades">
+        <ResultPageSection title="📊 Grade Distribution">
+          <GradeDist course={data} />
+        </ResultPageSection>
+      </div>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule
-          key={data.id}
-          courseID={data.department + ' ' + data.courseNumber}
-          termsOffered={sortTerms(data.terms)}
-        />
-      </ResultPageSection>
+      <div id="preview-schedule">
+        <ResultPageSection title="🗓️ Schedule of Classes">
+          <Schedule
+            key={data.id}
+            courseID={data.department + ' ' + data.courseNumber}
+            termsOffered={sortTerms(data.terms)}
+          />
+        </ResultPageSection>
+      </div>
 
-      <ResultPageSection title="💬 Reviews">
-        <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
-      </ResultPageSection>
+      <div id="preview-reviews">
+        <ResultPageSection title="💬 Reviews">
+          <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
+        </ResultPageSection>
+      </div>
     </div>
   );
 };
@@ -125,6 +134,7 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
+        <PreviewNavBar />
         <Button
           variant="contained"
           color="inherit"
