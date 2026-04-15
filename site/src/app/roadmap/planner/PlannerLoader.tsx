@@ -216,6 +216,46 @@ const PlannerLoader: FC = () => {
     setShowSyncModal(false);
   };
 
+  const getRelativeTime = (timestamp: string | undefined) => {
+    if (!timestamp) return 'Unknown';
+    const diff = new Date(timestamp).getTime() - Date.now();
+    const seconds = Math.round(diff / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+    if (Math.abs(seconds) < 60) return rtf.format(seconds, 'second');
+    if (Math.abs(minutes) < 60) return rtf.format(minutes, 'minute');
+    if (Math.abs(hours) < 24) return rtf.format(hours, 'hour');
+    return rtf.format(days, 'day');
+  };
+
+  const countRoadmapStats = (roadmap: SavedRoadmap) => {
+    const lastEdited = roadmap?.timestamp ? new Date(roadmap.timestamp).toLocaleString() : 'Unknown';
+    const roadmapCount = roadmap.planners.length;
+    const courseCount = roadmap.planners
+      .flatMap((planner) => planner.content)
+      .flatMap((year) => year.quarters)
+      .reduce((total, quarter) => total + quarter.courses.length, 0);
+
+    return { lastEdited, roadmapCount, courseCount };
+  };
+
+  // stats for synced roadmap
+  const {
+    lastEdited: syncedLastEdited,
+    roadmapCount: syncedRoadmapCount,
+    courseCount: syncedCourseCount,
+  } = initialAccountRoadmap ? countRoadmapStats(initialAccountRoadmap) : { roadmapCount: 0, courseCount: 0 };
+
+  const {
+    lastEdited: localLastEdited,
+    roadmapCount: localRoadmapCount,
+    courseCount: localCourseCount,
+  } = initialLocalRoadmap ? countRoadmapStats(initialLocalRoadmap) : { roadmapCount: 0, courseCount: 0 };
+
   return (
     <Dialog
       open={showSyncModal}
@@ -229,6 +269,32 @@ const PlannerLoader: FC = () => {
           This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
           your roadmap from?
         </DialogContentText>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+          <div>
+            <DialogContentText>This Device</DialogContentText>
+            <DialogContentText>
+              Last edited: <strong>{getRelativeTime(localLastEdited)}</strong>
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{localRoadmapCount}</strong> roadmaps
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{localCourseCount}</strong> courses
+            </DialogContentText>
+          </div>
+          <div>
+            <DialogContentText>My Account</DialogContentText>
+            <DialogContentText>
+              Last edited: <strong>{getRelativeTime(syncedLastEdited)}</strong>
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{syncedRoadmapCount}</strong> roadmaps
+            </DialogContentText>
+            <DialogContentText>
+              <strong>{syncedCourseCount}</strong> courses
+            </DialogContentText>
+          </div>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button
