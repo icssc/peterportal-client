@@ -1,0 +1,91 @@
+.custom-card {
+  box-shadow: 0 0 2px 0 #60616680;
+  background: var(--mui-palette-overlay-overlay1);
+  border: 1px solid var(--border-secondary);
+  margin-left: -1px;
+  margin-right: -1px;
+  height: 73px;
+  font-size: 16px;
+  padding: 12px;
+  position: relative;
+  color: var(--mui-palette-secondary-main);
+
+  display: grid;
+  grid-template-areas:
+    'A B'
+    'A C';
+  grid-template-columns: min-content auto;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+
+  .title {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .course-drag-handle {
+    grid-area: A;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    left: -6px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .course-card-top {
+    grid-area: B;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .course-description {
+    grid-area: C;
+    min-width: 0;
+  }
+
+  .name {
+    font-weight: bold;
+    min-width: 0;
+  }
+
+  .description-input {
+    width: 75%;
+    min-width: 0;
+  }
+
+  .units {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .units-input {
+    width: 45px;
+    margin-left: auto;
+    margin-right: 2px;
+  }
+
+  button.MuiIconButton-root {
+    width: 24px;
+    height: 24px;
+    margin: -8px 0;
+    margin-right: -4px;
+    color: inherit;
+
+    .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+  }
+}

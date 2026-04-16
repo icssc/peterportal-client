@@ -11,7 +11,8 @@ import {
   useMatchingGETransfers,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
+import { isCustomCourse } from '../../../helpers/customCourses';
 import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
@@ -41,6 +42,7 @@ import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import MenuTile from '../transfers/MenuTile';
 import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -224,15 +226,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen, requirementId
   const [showOverrideModal, setShowOverrideModal] = useState(false);
 
   return (
-    <div
-      className={className}
-      role="button"
-      tabIndex={0}
-      onClick={() => setOpen(!open)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') setOpen(!open);
-      }}
-    >
+    <ClickableDiv className={className} onClick={() => setOpen(!open)}>
       <b>{title}</b>
       <div className="group-header-btns">
         {open && (
@@ -256,7 +250,7 @@ const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen, requirementId
         />
         <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
       </div>
-    </div>
+    </ClickableDiv>
   );
 };
 
@@ -549,6 +543,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
   const roadmapCourseMap = yearPlans
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
+    .filter((course): course is PlannerCourseData => !isCustomCourse(course))
     .map((course) => [course.id, { units: course.minUnits }]);
   const transferCourseMap = transferredCourses.map((t) => [
     t.courseName.replace(/\s/g, ''),

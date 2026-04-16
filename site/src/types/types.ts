@@ -31,8 +31,14 @@ export interface PlannerYearData {
 
 export interface PlannerQuarterData {
   name: QuarterName;
-  courses: CourseGQLData[];
+  courses: PlannerQuarterCourse[];
 }
+
+export interface PlannerCourseData extends CourseGQLData {
+  userChosenUnits?: number;
+}
+
+export type PlannerQuarterCourse = PlannerCourseData | CustomCourse;
 
 /** @todo delete these identifier traits once everything is in revision */
 // Specify the location of a year
@@ -85,3 +91,10 @@ export interface BatchProfessorData {
 }
 
 export type SearchResultData = CourseGQLData[] | ProfessorGQLData[];
+
+export interface CustomCourse {
+  id: number;
+  courseName: string;
+  units: number;
+  description: string;
+}
