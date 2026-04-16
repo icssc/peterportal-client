@@ -17,6 +17,7 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
 import { useProfessorData } from '../../hooks/professorReviews';
+import PreviewNavBar from './PreviewNavBar';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -47,27 +48,35 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
 
   return (
     <div className="preview-body">
-      <SideInfo
-        className="professor-summary"
-        searchType="instructor"
-        name={data.name}
-        title={data.title}
-        description={data.department}
-        tags={[data.ucinetid, ...data.shortenedNames]}
-        professor={data}
-      />
+      <div id="preview-details">
+        <SideInfo
+          className="professor-summary"
+          searchType="instructor"
+          name={data.name}
+          title={data.title}
+          description={data.department}
+          tags={[data.ucinetid, ...data.shortenedNames]}
+          professor={data}
+        />
+      </div>
 
-      <ResultPageSection title="📊 Grade Distribution">
-        <GradeDist professor={data} />
-      </ResultPageSection>
+      <div id="preview-grades">
+        <ResultPageSection title="📊 Grade Distribution">
+          <GradeDist professor={data} />
+        </ResultPageSection>
+      </div>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
-        <Schedule professorIDs={data.shortenedNames} termsOffered={unionTerms(data.courses)} />
-      </ResultPageSection>
+      <div id="preview-schedule">
+        <ResultPageSection title="🗓️ Schedule of Classes">
+          <Schedule professorIDs={data.shortenedNames} termsOffered={unionTerms(data.courses)} />
+        </ResultPageSection>
+      </div>
 
-      <ResultPageSection title="💬 Reviews">
-        <Review professor={data} terms={sortTerms(getProfessorTerms(data))} />
-      </ResultPageSection>
+      <div id="preview-reviews">
+        <ResultPageSection title="💬 Reviews">
+          <Review professor={data} terms={sortTerms(getProfessorTerms(data))} />
+        </ResultPageSection>
+      </div>
     </div>
   );
 };
@@ -121,6 +130,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
+        <PreviewNavBar />
         <Button
           variant="contained"
           color="inherit"

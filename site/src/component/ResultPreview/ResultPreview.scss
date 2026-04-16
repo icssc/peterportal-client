@@ -42,6 +42,34 @@
     margin-right: auto;
   }
 
+  .preview-nav-bar {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 7px;
+    padding: 5px;
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    background-color: var(--mui-palette-Button-inheritContainedBg);
+  }
+
+  .preview-nav-button.MuiButton-root {
+    margin: 0;
+    border-radius: 8px;
+    background-color: var(--mui-palette-background-paper);
+    font-weight: 700;
+    text-transform: capitalize;
+
+    &:hover {
+      background-color: var(--mui-palette-background-paper);
+    }
+
+    &.active {
+      color: var(--mui-palette-secondary-main);
+    }
+  }
+
   // Target the Twemoji wrapper since we can't add a class name to it
   > div:last-child {
     height: 100%;
@@ -57,5 +85,11 @@
     margin-inline: auto;
     max-width: 1000px;
     margin-bottom: 32px;
+  }
+
+  @media (max-width: globals.$mobile-cutoff) {
+    .preview-nav-bar {
+      display: none;
+    }
   }
 }
