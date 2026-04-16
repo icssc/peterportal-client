@@ -304,21 +304,23 @@ theme = createTheme(theme, {
     MuiAutocomplete: {
       styleOverrides: {
         root: {
+          // prevents empty blank line when line above is filled with chips
+          '&:not(.Mui-focused)': {
+            'input:not(:first-child)': {
+              maxWidth: 0,
+              minWidth: 0,
+            },
+          },
           '& .MuiChip-root': {
             height: 24,
             fontSize: 14,
             borderRadius: 2,
-            maxWidth: 'calc(100% - 96px)',
+            maxWidth: 'calc(100% - 93px)',
           },
           '& .MuiChip-deleteIcon': {
             color: 'var(--mui-palette-text-primary)',
             fontSize: 16,
             margin: '0 4px 0 -4px',
-          },
-        },
-        inputRoot: {
-          '& .MuiAutocomplete-input': {
-            minWidth: 48,
           },
         },
       },
