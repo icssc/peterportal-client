@@ -1,23 +1,39 @@
-@use '../../globals';
-
-.review-form-modal {
-  // "paper" refers to the component used internally to render the Dialog's content
+.review-form-dialog {
   .MuiDialog-paper {
-    width: 350px;
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    overflow-y: auto;
+    width: 500px;
   }
 
-  .MuiDialogContentText-root {
-    margin-top: 4px;
-    font-size: 12px;
-    font-style: italic;
+  .MuiInputBase-root {
+    background-color: var(--mui-palette-overlay-overlay3);
+  }
+
+  .MuiFormLabel-root {
+    color: var(--mui-palette-text-primary);
+
+    &.Mui-focused {
+      color: var(--mui-palette-text-primary);
+    }
+
+    .MuiFormLabel-asterisk {
+      color: var(--mui-palette-error-main);
+    }
+  }
+
+  .MuiDialogTitle-root {
+    padding-bottom: 4px;
+
+    .MuiDialogContentText-root {
+      font-size: 12px;
+    }
+  }
+
+  .MuiDialogContent-root {
+    padding-bottom: 8px;
   }
 
   .year-quarter-row,
-  .grade-difficulty-row {
+  .grade-difficulty-row,
+  .course-instructor-grade-row {
     display: flex;
     gap: 16px;
 
@@ -26,46 +42,97 @@
     }
   }
 
-  .rating-error .MuiRating-iconEmpty {
-    color: var(--mui-palette-error-main);
+  .course-instructor-grade-row:has(> :only-child) {
+    margin-bottom: 16px;
   }
 
-  .tag-select {
-    .tag-select__menu {
-      margin-top: 0;
-      border-radius: 0 0 8px 8px;
-      overflow: hidden;
+  .rating-sliders {
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    border: 1px solid oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
+    background-color: var(--mui-palette-overlay-overlay3);
+
+    .rating-label {
+      margin-bottom: 4px;
     }
 
-    .tag-select__menu-list {
-      padding: 0;
+    .quality-slider {
+      margin-bottom: 4px;
+
+      .quality-label {
+        display: flex;
+        align-items: end;
+        gap: 4px;
+
+        .MuiDialogContentText-root {
+          font-size: 12px;
+          margin-left: 4px;
+        }
+      }
     }
 
-    .tag-select__control {
-      background-color: inherit;
-    }
+    .labeled-slider {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
 
-    .tag-select__control--is-focused {
-      border-color: var(--mui-palette-secondary-main);
-    }
+      .slider-value-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--mui-palette-text-secondary);
+        margin-bottom: -8px;
+      }
 
-    .tag-select__value-container {
-      background-color: inherit;
-    }
-
-    .tag-select__multi-value {
-      background-color: var(--mui-palette-overlay-overlay2);
+      .MuiSlider-markLabel {
+        margin-top: -6px;
+        font-size: 16px;
+      }
     }
   }
 
-  .anonymous-checkbox {
-    margin-top: 16px;
+  .quick-tags {
+    .MuiChip-outlined {
+      background-color: var(--mui-palette-overlay-overlay3);
+    }
+
+    .quick-tags-label {
+      display: flex;
+      align-items: end;
+      gap: 4px;
+      margin-bottom: 8px;
+
+      .MuiDialogContentText-root {
+        font-size: 12px;
+      }
+    }
+
+    .quick-tags-select {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
   }
 
-  .review-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding-top: 16px;
+  .additional-details {
+    .MuiFormHelperText-root {
+      text-align: right;
+    }
+  }
+
+  .anonymous-switch {
+    margin-right: auto;
+    align-items: flex-start;
+    transform: translateY(-8px);
+
+    .MuiSwitch-root {
+      margin: -6px -6px;
+    }
+
+    .MuiFormControlLabel-label {
+      font-size: 12px;
+    }
   }
 }
