@@ -199,8 +199,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
     <FormControl error={showFormErrors && !instructor}>
       <FormLabel required>Instructor</FormLabel>
       <Select
-        name="professor"
-        id="professor"
         required
         error={showFormErrors && !instructor}
         onChange={(e) => setInstructor(e.target.value)}
@@ -233,8 +231,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
     <FormControl error={showFormErrors && !course}>
       <FormLabel required>Course Taken</FormLabel>
       <Select
-        name="course"
-        id="course"
         required
         error={showFormErrors && !course}
         onChange={(e) => setCourse(e.target.value)}
@@ -269,8 +265,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <FormControl error={showFormErrors && !yearTaken}>
           <FormLabel required>Year</FormLabel>
           <Select
-            name="year"
-            id="year"
             required
             error={showFormErrors && !yearTaken}
             onChange={(e) => setYearTaken(e.target.value)}
@@ -290,8 +284,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <FormControl error={showFormErrors && !quarterTaken}>
           <FormLabel required>Quarter</FormLabel>
           <Select
-            name="quarter"
-            id="quarter"
             required
             error={showFormErrors && !quarterTaken}
             onChange={(e) => setQuarterTaken(e.target.value)}
@@ -310,15 +302,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
         </FormControl>
       </div>
 
-      <div className="course-professor-grade-row">
+      <div className="course-instructor-grade-row">
         {courseProp && instructorSelect}
         {professorProp && courseSelect}
 
         <FormControl>
           <FormLabel>Grade Received</FormLabel>
           <Select
-            name="grade"
-            id="grade"
             onChange={(e) => setGradeReceived(e.target.value ? (e.target.value as ReviewGrade) : undefined)}
             value={gradeReceived ?? ''}
             displayEmpty

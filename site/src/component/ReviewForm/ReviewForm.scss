@@ -33,13 +33,17 @@
 
   .year-quarter-row,
   .grade-difficulty-row,
-  .course-professor-grade-row {
+  .course-instructor-grade-row {
     display: flex;
     gap: 16px;
 
     > .MuiFormControl-root {
       flex: 1;
     }
+  }
+
+  .course-instructor-grade-row:has(> :only-child) {
+    margin-bottom: 16px;
   }
 
   .rating-sliders {
