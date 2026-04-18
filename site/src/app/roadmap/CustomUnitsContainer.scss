@@ -1,0 +1,49 @@
+.menu-tile,
+.custom-units {
+  form {
+    display: contents;
+  }
+  input {
+    max-width: 44px;
+    text-align: center;
+    padding: 2px 4px;
+    height: 20px;
+    margin-right: 2px;
+  }
+  button.MuiIconButton-root {
+    color: inherit;
+    width: 24px;
+    height: 24px;
+    margin: -8px -4px;
+    .MuiSvgIcon-root {
+      font-size: 18px;
+    }
+  }
+
+  // Hide the number adjustment arrows on number inputs for spacing reasons
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  // Firefox
+  input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  select {
+    font-size: 12px;
+  }
+
+  .units-display {
+    white-space: nowrap;
+    margin: 0 2px 0 0;
+    display: flex;
+    align-items: center;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}

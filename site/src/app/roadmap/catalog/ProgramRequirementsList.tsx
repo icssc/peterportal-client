@@ -7,9 +7,11 @@ import {
   saveMarkerCompletion,
   useCompletionCheck,
   CompletedCourseSet,
+  useMatchingGETransfers,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
+import { isCustomCourse } from '../../../helpers/customCourses';
 import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
@@ -18,19 +20,24 @@ import {
   setActiveCourse,
   setActiveCourseLoading,
   setActiveMissingPrerequisites,
+  setSelectedSidebarTab,
   setShowAddCourse,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import { ProgramRequirement } from '@peterportal/types';
+import { ProgramRequirement, TransferredGE } from '@peterportal/types';
 import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { Checkbox, Collapse } from '@mui/material';
+import { Badge, Checkbox, Collapse } from '@mui/material';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import MenuTile from '../transfers/MenuTile';
+import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
+import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -159,18 +166,68 @@ interface GroupHeaderProps {
 const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
   const className = `group-header ${open ? 'open' : ''}`;
   return (
-    <div
-      className={className}
-      role="button"
-      tabIndex={0}
-      onClick={() => setOpen(!open)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') setOpen(!open);
-      }}
-    >
+    <ClickableDiv className={className} onClick={() => setOpen(!open)}>
       <b>{title}</b>
       <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
-    </div>
+    </ClickableDiv>
+  );
+};
+
+interface GETransferBadgeProps {
+  transferredGEs: TransferredGE[];
+  complete?: boolean;
+  children: React.ReactNode;
+}
+
+const GETransferBadge = ({ transferredGEs, complete = false, children }: GETransferBadgeProps) => {
+  const badgeColor = complete ? 'success' : 'pending';
+
+  return (
+    <Badge
+      badgeContent={<SwapHorizIcon />}
+      invisible={transferredGEs.length === 0}
+      variant="circular"
+      color={badgeColor}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      {children}
+    </Badge>
+  );
+};
+
+interface TransferCreditsTileProps {
+  transferredGE: TransferredGE;
+  showGETitle?: boolean;
+}
+
+const TransferCreditsTile = ({ transferredGE, showGETitle = false }: TransferCreditsTileProps) => {
+  const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
+  const title = showGETitle ? `Transfer Credits • ${transferredGE.geName}` : 'Transfer Credits';
+
+  return (
+    <MenuTile
+      title={title}
+      onClick={() => {
+        if (isMobile) {
+          dispatch(setShowMobileCreditsMenu(true));
+        } else {
+          dispatch(setSelectedSidebarTab(0));
+        }
+      }}
+    >
+      <div className="transferred-ges">
+        <p>
+          Number of Courses: <b>{transferredGE.numberOfCourses}</b>
+        </p>
+        <p>
+          Units Taken: <b>{transferredGE.units}</b>
+        </p>
+      </div>
+    </MenuTile>
   );
 };
 
@@ -182,7 +239,6 @@ interface CourseRequirementProps {
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
-
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
@@ -197,20 +253,34 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
   const className = `group-requirement${complete ? ' completed' : ''}`;
+  const geTransfers = useMatchingGETransfers(data);
 
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        {showLabel && (
-          <p className="requirement-label">
-            <b>Complete {label} of the following:</b>
-          </p>
-        )}
-        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
-      </Collapse>
-    </div>
+    <GETransferBadge transferredGEs={geTransfers} complete={complete}>
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          {showLabel && (
+            <p className="requirement-label">
+              <b>
+                Complete {label} of the following{CompletionHint(data, takenCourseIDs)}
+              </b>
+            </p>
+          )}
+          {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
+          <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+        </Collapse>
+      </div>
+    </GETransferBadge>
   );
+};
+
+const CompletionHint = (data: ProgramRequirement<'Course' | 'Unit'>, takenCourseIDs: CompletedCourseSet) => {
+  const showCourseCount = data.courses.length > 0 && 'courseCount' in data;
+  const showUnitCount = 'unitCount' in data && data.unitCount > 0;
+  const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
+  if (showCourseCount) return ` • (${completedCount}/${data.courseCount})`;
+  if (showUnitCount) return ` • (${completedCount}/${data.unitCount} units)`;
 };
 
 interface GroupedCourseRequirementProps {
@@ -225,7 +295,10 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
     <>
       <div className={className}>
         <p className="requirement-label">
-          <b>{data.label}</b>
+          <b>
+            {data.label}
+            {CompletionHint(data, takenCourseIDs)}
+          </b>
         </p>
         <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
       </div>
@@ -248,25 +321,37 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   };
 
   const className = `group-requirement${complete ? ' completed' : ''}`;
+  const geTransfers = useMatchingGETransfers(data);
+  const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (
-    <div className={className}>
-      <GroupHeader title={data.label} open={open} setOpen={setOpen} />
-      <Collapse in={open} unmountOnExit>
-        <p className="requirement-label">
-          Complete <b>{data.requirementCount}</b> of the following series:
-        </p>
-        {data.requirements.map((r, i) => (
-          <ProgramRequirementDisplay
-            key={i}
-            storeKey={`${storeKey}-${i}`}
-            requirement={r}
-            nested
-            takenCourseIDs={takenCourseIDs}
-          />
-        ))}
-      </Collapse>
-    </div>
+    <GETransferBadge transferredGEs={geTransfers} complete={complete}>
+      <div className={className}>
+        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <Collapse in={open} unmountOnExit>
+          <p className="requirement-label">
+            Complete <b>{data.requirementCount}</b> of the following series:
+          </p>
+
+          {/** If there are multiple GE transfer categories that apply to fulfill this group, 
+          labels should be displayed to differentiate the multiple tiles*/}
+          {geTransfers.length > 0 &&
+            geTransfers.map((ge, i) => (
+              <TransferCreditsTile key={i} transferredGE={ge} showGETitle={multipleApplicableTransfers} />
+            ))}
+
+          {data.requirements.map((r, i) => (
+            <ProgramRequirementDisplay
+              key={i}
+              storeKey={`${storeKey}-${i}`}
+              requirement={r}
+              nested
+              takenCourseIDs={takenCourseIDs}
+            />
+          ))}
+        </Collapse>
+      </div>
+    </GETransferBadge>
   );
 };
 
@@ -343,6 +428,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
   const roadmapCourseMap = yearPlans
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
+    .filter((course): course is PlannerCourseData => !isCustomCourse(course))
     .map((course) => [course.id, { units: course.minUnits }]);
   const transferCourseMap = transferredCourses.map((t) => [
     t.courseName.replace(/\s/g, ''),
