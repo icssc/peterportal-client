@@ -10,7 +10,9 @@ import { getTotalUnitsFromTransfers } from '../../../helpers/transferCredits';
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import Footer from '../../../shared-components/Footer';
 import QuarterInfo from '../QuarterInfo/QuarterInfo';
+import { PlannerQuarterCourse } from '../../../types/types';
 import Disclaimer from '../Disclaimer/Disclaimer';
+import { calculateTotalUnits } from '../../../helpers/planner';
 
 const Planner: FC = () => {
   const currentPlanData = useAppSelector(selectYearPlans);
@@ -18,14 +20,10 @@ const Planner: FC = () => {
   const transferred = useTransferredCredits();
 
   const calculatePlannerOverviewStats = () => {
-    let unitCount = 0;
-    let courseCount = 0;
     // sum up all courses
-    const courses = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
-    courses.forEach((course) => {
-      unitCount += course.minUnits;
-      courseCount++;
-    });
+    const courses: PlannerQuarterCourse[] = currentPlanData.flatMap((year) => year.quarters).flatMap((q) => q.courses);
+
+    let { unitCount, courseCount } = calculateTotalUnits(courses);
 
     // add in transfer courses
     courseCount += transferred.courses.length;

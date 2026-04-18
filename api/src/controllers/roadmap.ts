@@ -6,6 +6,7 @@ import {
   SavedRoadmap,
   RoadmapItemDeletion,
   RoadmapSaveInfo,
+  latestRoadmapVersion,
 } from '@peterportal/types';
 import { db, TransactionType } from '../db';
 import { planner, user } from '../db/schema';
@@ -103,6 +104,7 @@ const roadmapsRouter = router({
       planners: planners as SavedPlannerData[],
       timestamp: users[0].timestamp?.toISOString(),
       currentPlanIndex: users[0].currentPlanIndex ?? undefined,
+      version: latestRoadmapVersion,
     };
     return roadmap;
   }),
