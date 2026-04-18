@@ -129,12 +129,12 @@ interface CourseListProps {
 }
 const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
 
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();
     setTimestamps(timestamps.slice());
-    document.body.classList.add('dragging');
   };
 
   const courseIDs = courses.map((c) => ({ id: c }));
@@ -143,7 +143,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
       {...programRequirementsSortable}
       list={courseIDs}
       onStart={setDraggedItem}
-      onEnd={() => document.body.classList.remove('dragging')}
+      onEnd={() => dispatch(setActiveCourse(null))}
       disabled={isMobile}
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >

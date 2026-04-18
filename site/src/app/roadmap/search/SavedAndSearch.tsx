@@ -59,7 +59,6 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
   const setDraggedItem = (event: SortableEvent) => {
     const course = searchResults[event.oldIndex!];
     dispatch(setActiveCourse({ course }));
-    document.body.classList.add('dragging');
   };
 
   // Deep copy because Sortable requires data to be extensible (non read-only). Must be done within component
@@ -70,7 +69,7 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
       {...courseSearchSortable}
       list={copiedResults}
       onStart={setDraggedItem}
-      onEnd={() => document.body.classList.remove('dragging')}
+      onEnd={() => dispatch(setActiveCourse(null))}
       disabled={isMobile}
       /**
        * @todo merge classNames for `roadmap-search-results` for courses + profs after getting
