@@ -6,7 +6,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
+import { ListSubheader, MenuItem, Select, TextField } from '@mui/material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
