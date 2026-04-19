@@ -88,24 +88,6 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
     handleMenuClose();
   };
 
-  const menuItemSx = {
-    width: 'calc(100% - 8px)',
-    height: '22px',
-    borderRadius: '4px',
-    border: '1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 50%, transparent)',
-    color: 'var(--mui-palette-secondary-main)',
-    fontFamily: 'Roboto',
-    fontWeight: 600,
-    fontSize: '12px',
-    padding: '0',
-    mx: '4px',
-    my: '2px',
-    justifyContent: 'center',
-    textAlign: 'center',
-    boxSizing: 'border-box',
-    minHeight: 'unset',
-  };
-
   return (
     <>
       <IconButton
@@ -146,17 +128,17 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
           },
         }}
       >
-        <MenuItem sx={menuItemSx} onClick={openReportForm}>
+        <MenuItem className="review-menu-item" onClick={openReportForm}>
           Report
         </MenuItem>
         {review.authored && (
-          <MenuItem sx={menuItemSx} onClick={openReviewForm}>
+          <MenuItem className="review-menu-item" onClick={openReviewForm}>
             Edit
           </MenuItem>
         )}
         {review.authored && (
           <MenuItem
-            sx={menuItemSx}
+            className="review-menu-item"
             onClick={() => {
               setShowDeleteModal(true);
               handleMenuClose();
@@ -432,7 +414,16 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               month: '2-digit',
               day: '2-digit',
             })}
-            {review.updatedAt && <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>}
+            {review.updatedAt && (
+              <span className="subtext edit-time">
+                {' '}(edited {new Date(review.updatedAt).toLocaleString('default', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                })}
+                )
+              </span>
+            )}
           </span>
         </div>
       </div>
