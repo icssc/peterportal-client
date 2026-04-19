@@ -158,8 +158,13 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     }
   }, [currentProf, currentCourse, createQuarterEntries, gradeDistData]);
 
+  const [profSearch, setProfSearch] = useState('');
+
   const profCourseOptions = props.course ? profEntries : courseEntries;
   const profCourseSelectedValue = props.course ? currentProf : currentCourse;
+  const selectedProfCourseName =
+    profCourseOptions?.find((q) => q.value === profCourseSelectedValue)?.text ??
+    (props.course ? 'Instructor' : 'Course');
   const updateProfCourse = (value: string | null) => {
     if (props.course) setCurrentProf(value!);
     else setCurrentCourse(value!);
