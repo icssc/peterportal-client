@@ -108,7 +108,15 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
 
   return (
     <>
-      <IconButton onClick={handleMenuOpen}>
+      <IconButton
+        onClick={handleMenuOpen}
+        sx={{
+          color: 'var(--mui-palette-text-secondary)',
+          width: '32px',
+          height: '32px',
+          padding: '4px',
+        }}
+      >
         <MoreVertIcon />
       </IconButton>
       <Menu
