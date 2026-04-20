@@ -232,7 +232,7 @@ const PlannerLoader: FC = () => {
   };
 
   const getRelativeTime = (timestamp: string | undefined) => {
-    if (!timestamp) return 'Unknown';
+    if (!timestamp) return undefined;
     const diff = new Date(timestamp).getTime() - Date.now();
     const seconds = Math.round(diff / 1000);
     const minutes = Math.round(seconds / 60);
@@ -248,7 +248,7 @@ const PlannerLoader: FC = () => {
   };
 
   const countRoadmapStats = (roadmap: SavedRoadmap) => {
-    const lastEdited = roadmap?.timestamp ? new Date(roadmap.timestamp).toLocaleString() : 'Unknown';
+    const lastEdited = roadmap?.timestamp ? new Date(roadmap.timestamp).toLocaleString() : undefined;
     const roadmapCount = roadmap.planners.length;
     const courseCount = roadmap.planners
       .flatMap((planner) => planner.content)
