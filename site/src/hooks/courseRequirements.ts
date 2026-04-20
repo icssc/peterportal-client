@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { loadMarkerCompletion, loadOverriddenRequirements } from '../helpers/courseRequirements';
 import { useIsLoggedIn } from './isLoggedIn';
+import { selectCurrentPlan } from '../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { initializeCompletedMarkers, initializeOverriddenRequirements } from '../store/slices/courseRequirementsSlice';
 
@@ -16,13 +17,11 @@ export function useLoadCompletedMarkers() {
   }, [dispatch, isLoggedIn]);
 }
 
-export function useLoadOveriddenRequirements() {
+export function useLoadOverriddenRequirements() {
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
-  const plans = useAppSelector((state) => state.roadmap.plans);
-  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const activePlanID = plans[planIndex]?.id;
+  const activePlanID = useAppSelector(selectCurrentPlan)?.id;
 
   useEffect(() => {
     if (!activePlanID) return;

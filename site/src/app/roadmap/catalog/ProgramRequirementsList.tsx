@@ -24,6 +24,7 @@ import {
   setActiveMissingPrerequisites,
   setSelectedSidebarTab,
   setShowAddCourse,
+  selectCurrentPlan,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
@@ -323,9 +324,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
-  const plans = useAppSelector((state) => state.roadmap.plans);
-  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const activePlanID = plans[planIndex]?.id;
+  const activePlanID = useAppSelector(selectCurrentPlan)?.id;
 
   const overridden = useAppSelector(
     (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
@@ -424,9 +423,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
-  const plans = useAppSelector((state) => state.roadmap.plans);
-  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
-  const activePlanID = plans[planIndex]?.id;
+  const activePlanID = useAppSelector(selectCurrentPlan)?.id;
 
   const overridden = useAppSelector(
     (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
