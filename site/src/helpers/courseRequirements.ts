@@ -392,7 +392,7 @@ export async function loadOverriddenRequirements(plannerId: number, isLoggedIn: 
   } else {
     let overriddenRequirements: string[] = [];
     try {
-      overriddenRequirements = JSON.parse(localStorage.getItem(`roadmap__savedRequirements__${plannerId}`) || '{}');
+      overriddenRequirements = JSON.parse(localStorage.getItem(`roadmap__savedRequirements__${plannerId}`) || '[]');
     } catch {
       /* ignore */
     }
