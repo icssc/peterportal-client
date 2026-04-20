@@ -1,6 +1,6 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -284,9 +284,22 @@ const PlannerLoader: FC = () => {
           This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
           your roadmap from?
         </DialogContentText>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+        <Divider sx={{ my: 1 }} />
+        {/* Displayed Info */}
+        <div
+          className="displayed-info"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+            marginTop: '16px',
+            marginBottom: '12px',
+          }}
+        >
           <div>
-            <DialogContentText>This Device</DialogContentText>
+            <DialogContentText>
+              <strong>This Device</strong>
+            </DialogContentText>
             <DialogContentText>
               Last edited: <strong>{getRelativeTime(localLastEdited)}</strong>
             </DialogContentText>
@@ -296,9 +309,23 @@ const PlannerLoader: FC = () => {
             <DialogContentText>
               <strong>{localCourseCount}</strong> courses
             </DialogContentText>
+            {/* <DialogActions>
+              <Button
+                loading={overrideLoading}
+                disabled={overrideLoading || accountLoading}
+                color="inherit"
+                variant="text"
+                onClick={overrideAccountRoadmap}
+                sx={{ justifyContent: 'flex-start', padding: 0 }}
+              >
+                This Devicee
+              </Button>
+            </DialogActions> */}
           </div>
           <div>
-            <DialogContentText>My Account</DialogContentText>
+            <DialogContentText>
+              <strong>My Account</strong>
+            </DialogContentText>
             <DialogContentText>
               Last edited: <strong>{getRelativeTime(syncedLastEdited)}</strong>
             </DialogContentText>
@@ -310,7 +337,13 @@ const PlannerLoader: FC = () => {
             </DialogContentText>
           </div>
         </div>
+        <Divider sx={{ my: 1 }} />
+        <DialogContentText sx={{ color: 'red' }}>
+          * Warning: Loading from <strong>THIS DEVICE</strong> will erase all of your synced data from your account...
+          and whatever warning text
+        </DialogContentText>
       </DialogContent>
+
       <DialogActions>
         <Button
           loading={overrideLoading}
