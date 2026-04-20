@@ -40,7 +40,6 @@ const PreviewNavBar = () => {
   }, []);
 
   const scrollToSection = (id: string) => {
-    setActiveSection(id);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 

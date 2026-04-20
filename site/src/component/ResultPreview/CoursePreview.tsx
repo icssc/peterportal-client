@@ -54,33 +54,25 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
 
   return (
     <div className="preview-body">
-      <div id="preview-details">
-        <ResultPageSection title={data.title}>
-          <CourseSummary course={data} />
-        </ResultPageSection>
-      </div>
+      <ResultPageSection id="preview-details" title={data.title}>
+        <CourseSummary course={data} />
+      </ResultPageSection>
 
-      <div id="preview-grades">
-        <ResultPageSection title="📊 Grade Distribution">
-          <GradeDist course={data} />
-        </ResultPageSection>
-      </div>
+      <ResultPageSection id="preview-grades" title="📊 Grade Distribution">
+        <GradeDist course={data} />
+      </ResultPageSection>
 
-      <div id="preview-schedule">
-        <ResultPageSection title="🗓️ Schedule of Classes">
-          <Schedule
-            key={data.id}
-            courseID={data.department + ' ' + data.courseNumber}
-            termsOffered={sortTerms(data.terms)}
-          />
-        </ResultPageSection>
-      </div>
+      <ResultPageSection id="preview-schedule" title="🗓️ Schedule of Classes">
+        <Schedule
+          key={data.id}
+          courseID={data.department + ' ' + data.courseNumber}
+          termsOffered={sortTerms(data.terms)}
+        />
+      </ResultPageSection>
 
-      <div id="preview-reviews">
-        <ResultPageSection title="💬 Reviews">
-          <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
-        </ResultPageSection>
-      </div>
+      <ResultPageSection id="preview-reviews" title="💬 Reviews">
+        <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
+      </ResultPageSection>
     </div>
   );
 };
