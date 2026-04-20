@@ -390,7 +390,12 @@ export async function loadOverriddenRequirements(plannerId: number, isLoggedIn: 
     const response = await trpc.override.getOverrides.query({ plannerId: plannerId });
     return response;
   } else {
-    const overriddenRequirements: string[] = [];
+    let overriddenRequirements: string[] = [];
+    try {
+      overriddenRequirements = JSON.parse(localStorage.getItem(`roadmap__savedRequirements__${plannerId}`) || '{}');
+    } catch {
+      /* ignore */
+    }
     return overriddenRequirements;
   }
 }
@@ -405,5 +410,9 @@ export async function saveOverriddenRequirement(
     const operationName = override ? 'addOverride' : 'deleteOverride';
     const operation = trpc.override[operationName];
     await operation.mutate({ plannerId: plannerId, requirement: requirement });
+  } else {
+    const overriddenRequirements = new Set(await loadOverriddenRequirements(plannerId, false));
+    overriddenRequirements[override ? 'add' : 'delete'](requirement);
+    localStorage.setItem(`roadmap__savedRequirements__${plannerId}`, JSON.stringify([...overriddenRequirements]));
   }
 }
