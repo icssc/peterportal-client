@@ -24,8 +24,6 @@ export function useLoadOveriddenRequirements() {
   const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const activePlanID = plans[planIndex]?.id;
 
-  console.log('loading new override requirements for ' + activePlanID);
-
   useEffect(() => {
     if (!activePlanID) return;
     loadOverriddenRequirements(activePlanID, isLoggedIn).then((overriddenRequirements) => {
