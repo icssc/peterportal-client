@@ -20,6 +20,8 @@ import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
+const noSpecId = 'NO_SPEC';
+
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
@@ -29,7 +31,7 @@ function getCoursesForMajor(programId: string) {
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
-  if (!programId || programId === 'NO_SPEC') return [];
+  if (!programId || programId === noSpecId) return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
 }
 
@@ -52,7 +54,6 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
-  const noSpecId = 'NO_SPEC';
   const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
 
   if (specOptions.length > 0 && !major.specializationRequired) {
