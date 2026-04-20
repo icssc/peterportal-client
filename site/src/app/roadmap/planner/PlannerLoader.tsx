@@ -19,6 +19,7 @@ import {
   setToastMsg,
   setToastSeverity,
   setShowToast,
+  updateRoadmapCustomCourse,
   updateTempPlannerIds,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -34,6 +35,7 @@ import trpc from '../../../trpc';
 import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
+import { setCustomCourses } from '../../../store/slices/customCourseSlice';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -159,6 +161,18 @@ const PlannerLoader: FC = () => {
       setRoadmapLoaded(true);
 
       if (!isLoggedIn) return;
+
+      trpc.customCourses.getCustomCards.query().then((cards) => {
+        const customCourses = cards.map((c) => ({
+          id: c.id,
+          courseName: c.name,
+          units: c.units,
+          description: c.description,
+        }));
+        dispatch(setCustomCourses(customCourses));
+        customCourses.forEach((course) => dispatch(updateRoadmapCustomCourse(course)));
+      });
+
       const isLocalNewer =
         new Date(initialLocalRoadmap.timestamp ?? 0) > new Date(initialAccountRoadmap?.timestamp ?? 0);
 
@@ -179,6 +193,7 @@ const PlannerLoader: FC = () => {
     initialAccountRoadmap,
     initialLocalRoadmap,
     roadmapLoaded,
+    dispatch,
   ]);
 
   // Validate Courses on change
