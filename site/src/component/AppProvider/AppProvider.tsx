@@ -10,7 +10,7 @@ import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { useSetSchedule } from '../../hooks/schedule';
 import { useLoadDepartments } from '../../hooks/departments';
 import { UserData } from '@peterportal/types';
-import { useLoadCompletedMarkers } from '../../hooks/courseRequirements';
+import { useLoadCompletedMarkers, useLoadOveriddenRequirements } from '../../hooks/courseRequirements';
 import { useLoadTransferredCredits } from '../../hooks/transferCredits';
 import PlannerLoader from '../../app/roadmap/planner/PlannerLoader';
 import { AutoSignIn } from '../AutoSignIn/AutoSignIn';
@@ -18,6 +18,7 @@ import { AutoSignIn } from '../AutoSignIn/AutoSignIn';
 const UserDataLoader: FC = () => {
   useLoadSavedCourses();
   useLoadCompletedMarkers();
+  useLoadOveriddenRequirements();
   useLoadTransferredCredits();
   useSetSchedule();
   useLoadDepartments();

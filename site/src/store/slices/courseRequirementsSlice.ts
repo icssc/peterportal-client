@@ -30,7 +30,7 @@ const courseRequirementsSlice = createSlice({
     geRequirements: [] as ProgramRequirement[],
     completedMarkers: {} as Record<string, boolean>,
     expandedGroups: {} as ExpandedGroupsList,
-    overriddenRequirements: {} as Record<string, boolean>,
+    overriddenRequirements: {} as Record<number, Record<string, boolean>>,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -101,12 +101,24 @@ const courseRequirementsSlice = createSlice({
     setMarkerComplete: (state, action: PayloadAction<{ markerName: string; complete: boolean }>) => {
       state.completedMarkers[action.payload.markerName] = action.payload.complete;
     },
-    setOverrideComplete: (state, action: PayloadAction<{ overrideName: string; override: boolean }>) => {
-      state.overriddenRequirements[action.payload.overrideName] = action.payload.override;
-    },
     initializeCompletedMarkers: (state, action: PayloadAction<string[]>) => {
       action.payload.forEach((markerName) => {
         state.completedMarkers[markerName] = true;
+      });
+    },
+    setRequirementOverride: (
+      state,
+      action: PayloadAction<{ plannerId: number; requirement: string; override: boolean }>,
+    ) => {
+      if (!state.overriddenRequirements[action.payload.plannerId]) {
+        state.overriddenRequirements[action.payload.plannerId] = {};
+      }
+      state.overriddenRequirements[action.payload.plannerId][action.payload.requirement] = action.payload.override;
+    },
+    initializeOverriddenRequirements: (state, action: PayloadAction<{ plannerId: number; requirements: string[] }>) => {
+      state.overriddenRequirements[action.payload.plannerId] = {};
+      action.payload.requirements.forEach((requirement) => {
+        state.overriddenRequirements[action.payload.plannerId][requirement] = true;
       });
     },
     setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
@@ -133,8 +145,9 @@ export const {
   setMinorRequirements,
   setGERequirements,
   setMarkerComplete,
-  setOverrideComplete,
   initializeCompletedMarkers,
+  setRequirementOverride,
+  initializeOverriddenRequirements,
   setGroupExpanded,
 } = courseRequirementsSlice.actions;
 

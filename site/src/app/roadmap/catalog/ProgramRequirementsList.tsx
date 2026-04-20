@@ -9,6 +9,7 @@ import {
   useCompletionCheck,
   CompletedCourseSet,
   useMatchingGETransfers,
+  saveOverriddenRequirement,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
 import { CourseGQLData, PlannerCourseData } from '../../../types/types';
@@ -30,7 +31,7 @@ import { ProgramRequirement, TransferredGE } from '@peterportal/types';
 import {
   setGroupExpanded,
   setMarkerComplete,
-  setOverrideComplete,
+  setRequirementOverride,
 } from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
@@ -318,15 +319,22 @@ interface CourseRequirementProps {
   storeKey: string;
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
+  const isLoggedIn = useIsLoggedIn();
+  const dispatch = useAppDispatch();
+
+  const plans = useAppSelector((state) => state.roadmap.plans);
+  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const activePlanID = plans[planIndex]?.id;
 
   const overridden = useAppSelector(
-    (state) => state.courseRequirements.overriddenRequirements[data.requirementId] ?? false,
+    (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
   );
 
   const setOverride = (override: boolean) => {
-    dispatch(setOverrideComplete({ overrideName: data.requirementId, override: override }));
+    if (!activePlanID) return;
+    saveOverriddenRequirement(activePlanID, data.requirementId, override, isLoggedIn);
+    dispatch(setRequirementOverride({ plannerId: activePlanID, requirement: data.requirementId, override: override }));
   };
 
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
@@ -413,14 +421,21 @@ interface GroupRequirementProps {
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+  const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
 
+  const plans = useAppSelector((state) => state.roadmap.plans);
+  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const activePlanID = plans[planIndex]?.id;
+
   const overridden = useAppSelector(
-    (state) => state.courseRequirements.overriddenRequirements[data.requirementId] ?? false,
+    (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
   );
 
   const setOverride = (override: boolean) => {
-    dispatch(setOverrideComplete({ overrideName: data.requirementId, override: override }));
+    if (!activePlanID) return;
+    saveOverriddenRequirement(activePlanID, data.requirementId, override, isLoggedIn);
+    dispatch(setRequirementOverride({ plannerId: activePlanID, requirement: data.requirementId, override: override }));
   };
 
   const setOpen = (isOpen: boolean) => {

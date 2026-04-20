@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { loadMarkerCompletion } from '../helpers/courseRequirements';
+import { loadMarkerCompletion, loadOverriddenRequirements } from '../helpers/courseRequirements';
 import { useIsLoggedIn } from './isLoggedIn';
-import { useAppDispatch } from '../store/hooks';
-import { initializeCompletedMarkers } from '../store/slices/courseRequirementsSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { initializeCompletedMarkers, initializeOverriddenRequirements } from '../store/slices/courseRequirementsSlice';
 
 export function useLoadCompletedMarkers() {
   const isLoggedIn = useIsLoggedIn();
@@ -14,4 +14,22 @@ export function useLoadCompletedMarkers() {
       dispatch(initializeCompletedMarkers(completedMarkers));
     });
   }, [dispatch, isLoggedIn]);
+}
+
+export function useLoadOveriddenRequirements() {
+  const isLoggedIn = useIsLoggedIn();
+  const dispatch = useAppDispatch();
+
+  const plans = useAppSelector((state) => state.roadmap.plans);
+  const planIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
+  const activePlanID = plans[planIndex]?.id;
+
+  console.log('loading new override requirements for ' + activePlanID);
+
+  useEffect(() => {
+    if (!activePlanID) return;
+    loadOverriddenRequirements(activePlanID, isLoggedIn).then((overriddenRequirements) => {
+      dispatch(initializeOverriddenRequirements({ plannerId: activePlanID, requirements: overriddenRequirements }));
+    });
+  }, [dispatch, activePlanID, isLoggedIn]);
 }

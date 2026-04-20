@@ -384,3 +384,26 @@ export async function saveMarkerCompletion(markerName: string, complete: boolean
     localStorage.roadmap__savedMarkers = JSON.stringify([...completedMarkers]);
   }
 }
+
+export async function loadOverriddenRequirements(plannerId: number, isLoggedIn: boolean): Promise<string[]> {
+  if (isLoggedIn) {
+    const response = await trpc.override.getOverrides.query({ plannerId: plannerId });
+    return response;
+  } else {
+    const overriddenRequirements: string[] = [];
+    return overriddenRequirements;
+  }
+}
+
+export async function saveOverriddenRequirement(
+  plannerId: number,
+  requirement: string,
+  override: boolean,
+  isLoggedIn: boolean,
+): Promise<void> {
+  if (isLoggedIn) {
+    const operationName = override ? 'addOverride' : 'deleteOverride';
+    const operation = trpc.override[operationName];
+    await operation.mutate({ plannerId: plannerId, requirement: requirement });
+  }
+}
