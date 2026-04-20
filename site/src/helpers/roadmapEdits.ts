@@ -7,7 +7,7 @@ import {
   RoadmapPlan,
   RoadmapRevision,
 } from '../types/roadmap';
-import { CourseGQLData, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import { PlannerQuarterCourse, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -130,7 +130,12 @@ export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearDat
   return createRevision(edits);
 }
 
-export function addPlannerQuarter(plannerId: number, startYear: number, name: QuarterName, courses: CourseGQLData[]) {
+export function addPlannerQuarter(
+  plannerId: number,
+  startYear: number,
+  name: QuarterName,
+  courses: PlannerQuarterCourse[],
+) {
   const edit: PlannerQuarterEdit = {
     type: 'quarter',
     plannerId,
@@ -149,7 +154,7 @@ export interface ModifiedQuarter {
 }
 export function modifyQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   removedFrom: ModifiedQuarter | null,
   addedTo: ModifiedQuarter | null,
 ) {
@@ -194,7 +199,7 @@ export function modifyQuarterCourse(
 
 export function reorderQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   oldIndex: number,
   after: ModifiedQuarter,
 ) {
