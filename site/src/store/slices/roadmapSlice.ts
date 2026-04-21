@@ -95,7 +95,7 @@ export const roadmapSlice = createSlice({
       action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number; currentPlanIndex?: number }>,
     ) => {
       state.plans = action.payload.plans;
-      state.currentPlanIndex = action.payload.currentPlanIndex ?? 0;
+      state.currentPlanIndex = Math.min(action.payload.currentPlanIndex ?? 0, action.payload.plans.length - 1);
       const revision: RoadmapRevision = {
         timestamp: action.payload.timestamp ?? Date.now(),
         edits: [],
