@@ -10,7 +10,8 @@ import {
   useMatchingGETransfers,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
+import { isCustomCourse } from '../../../helpers/customCourses';
 import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
@@ -129,6 +130,7 @@ interface CourseListProps {
 }
 const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
 
   const setDraggedItem = async (event: SortableEvent) => {
@@ -142,6 +144,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
       {...programRequirementsSortable}
       list={courseIDs}
       onStart={setDraggedItem}
+      onEnd={() => dispatch(setActiveCourse(null))}
       disabled={isMobile}
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >
@@ -427,6 +430,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
   const roadmapCourseMap = yearPlans
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
+    .filter((course): course is PlannerCourseData => !isCustomCourse(course))
     .map((course) => [course.id, { units: course.minUnits }]);
   const transferCourseMap = transferredCourses.map((t) => [
     t.courseName.replace(/\s/g, ''),
