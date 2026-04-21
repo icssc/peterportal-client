@@ -1,5 +1,5 @@
 'use client';
-import { FC, useRef, useState } from 'react';
+import { FC, useRef, useState, useEffect } from 'react';
 import './Year.scss';
 import Quarter from './Quarter';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -123,6 +123,10 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
   const yearContainerRef = useRef<HTMLDivElement>(null);
   const currentPlan = useAppSelector(selectCurrentPlan);
 
+  useEffect(() => {
+    setCollapsed(data.collapsed);
+  }, [data.collapsed]);
+
   const handleEditYearClick = () => {
     setPlaceholderYear(data.startYear);
     setPlaceholderName(data.name);
@@ -140,7 +144,9 @@ const Year: FC<YearProps> = ({ yearIndex, data }) => {
       removedQuarters: [],
     });
 
-    if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
+    if (revision.edits.length > 0) {
+      dispatch(reviseRoadmap(revision));
+    }
   };
 
   return (
