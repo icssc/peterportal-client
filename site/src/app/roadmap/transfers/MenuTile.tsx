@@ -38,7 +38,7 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         {units !== undefined && (
           <UnitsContainer
             units={units}
-            setUnits={handleUnitsChange}
+            setUnits={setUnits ? handleUnitsChange : undefined}
             minUnits={0}
             maxUnits={undefined}
             source="MenuTile"
