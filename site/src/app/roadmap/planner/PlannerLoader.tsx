@@ -296,6 +296,7 @@ const PlannerLoader: FC = () => {
             marginBottom: '12px',
           }}
         >
+          {/* 'This Device' column */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <DialogContentText>
               <strong>This Device</strong>
@@ -323,7 +324,7 @@ const PlannerLoader: FC = () => {
               Warning: Loading from this device can override your synced account data.
             </DialogContentText>
           </div>
-
+          {/* 'My Account' column */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <DialogContentText>
               <strong>My Account</strong>
