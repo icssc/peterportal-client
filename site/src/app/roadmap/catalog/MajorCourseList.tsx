@@ -1,5 +1,5 @@
 import './MajorCourseList.scss';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
