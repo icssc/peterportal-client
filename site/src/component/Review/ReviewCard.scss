@@ -63,9 +63,8 @@
       align-items: center;
 
       svg {
-        width: 14px;
-        height: 14px;
-        color: #90b3f9;
+        font-size: 14px;
+        color: var(--mui-palette-secondary-main);
       }
     }
   }
