@@ -25,6 +25,7 @@ export const savedPlannerYearData = z.object({
   startYear: z.number(),
   name: z.string().max(35),
   quarters: z.array(savedPlannerQuarterData),
+  collapsed: z.boolean(),
 });
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 
@@ -126,7 +127,7 @@ const roadmapPlannerChange = z.object({
 });
 
 const plannerYearSaveInfo = plannerYearChangeIdentifier.omit({ id: true }).extend({
-  data: z.object({ startYear: z.number().int(), name: z.string().max(35) }),
+  data: z.object({ startYear: z.number().int(), name: z.string().max(35), collapsed: z.boolean() }),
 });
 
 const plannerQuarterSaveInfo = plannerQuarterChangeIdentifier.omit({ id: true }).extend({
