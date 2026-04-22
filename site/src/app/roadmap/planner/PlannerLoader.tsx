@@ -284,7 +284,7 @@ const PlannerLoader: FC = () => {
           This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
           your roadmap from?
         </DialogContentText>
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 4 }} />
         {/* Displayed Info */}
         <div
           className="displayed-info"
