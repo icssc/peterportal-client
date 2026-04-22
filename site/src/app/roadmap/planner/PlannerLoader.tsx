@@ -319,6 +319,9 @@ const PlannerLoader: FC = () => {
             >
               This Device
             </Button>
+            <DialogContentText sx={{ marginTop: 2, fontSize: 12, color: 'red' }}>
+              Warning: Loading from this device can override your synced account data.
+            </DialogContentText>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
