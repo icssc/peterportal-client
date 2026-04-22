@@ -13,7 +13,9 @@ import usersRouter from './users';
 import searchRouter from './search';
 import zot4PlanImportRouter from './zot4planimport';
 import departmentRouter from './department';
+import overrideRouter from './override';
 import { externalAppRouter } from './external';
+import { customCoursesRouter } from './customCourses';
 
 export const appRouter = router({
   external: externalAppRouter,
@@ -31,6 +33,8 @@ export const appRouter = router({
   users: usersRouter,
   zot4PlanImport: zot4PlanImportRouter,
   departments: departmentRouter,
+  customCourses: customCoursesRouter,
+  override: overrideRouter,
 });
 
 // Export only the type of a router!
