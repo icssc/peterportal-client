@@ -16,6 +16,7 @@ import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 import PreviewNavBar from './PreviewNavBar';
+import { PreviewArrowNav } from './PreviewNavBar';
 
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
@@ -140,7 +141,10 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
         <CourseBookmarkButton course={courseData} disabled={isLoading} />
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
-        <CoursePreviewContent data={courseData} />
+        <>
+          <CoursePreviewContent data={courseData} />
+          <PreviewArrowNav />
+        </>
       </Twemoji>
     </div>
   );

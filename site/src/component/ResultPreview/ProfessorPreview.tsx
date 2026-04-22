@@ -18,6 +18,7 @@ import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
 import { useProfessorData } from '../../hooks/professorReviews';
 import PreviewNavBar from './PreviewNavBar';
+import { PreviewArrowNav } from './PreviewNavBar';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -136,7 +137,10 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
         </Button>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
-        <ProfessorPreviewContent data={professorData} />
+        <>
+          <ProfessorPreviewContent data={professorData} />
+          <PreviewArrowNav />
+        </>
       </Twemoji>
     </div>
   );
