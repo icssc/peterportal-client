@@ -289,24 +289,11 @@
         font-size: 17px;
       }
 
-      &.colored-upvote {
+      &.colored-vote {
         background: transparent;
 
         svg {
           color: var(--mui-palette-secondary-main);
-          width: 15.5px;
-          height: 15.5px;
-          font-size: 15.5px;
-        }
-      }
-
-      &.colored-downvote {
-        background: transparent;
-
-        svg {
-          color: var(--mui-palette-secondary-main);
-          width: 15.5px;
-          height: 15.5px;
           font-size: 15.5px;
         }
       }

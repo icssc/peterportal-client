@@ -368,8 +368,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
     }
   };
 
-  const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
-  const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
+  const upvoteClassname = review.userVote === 1 ? 'upvote colored-vote' : 'upvote';
+  const downvoteClassname = review.userVote === -1 ? 'downvote colored-vote' : 'downvote';
 
   const tooltipProps = {
     placement: 'top' as const,
@@ -416,7 +416,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
             })}
             {review.updatedAt && (
               <span className="subtext edit-time">
-                {' '}(edited {new Date(review.updatedAt).toLocaleString('default', {
+                {' '}
+                (edited{' '}
+                {new Date(review.updatedAt).toLocaleString('default', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',
