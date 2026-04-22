@@ -115,7 +115,7 @@ const PlannerLoaderModal: FC<PlannerLoaderProps> = ({
             >
               This Device
             </Button>
-            <DialogContentText sx={{ marginTop: 2, fontSize: 12, color: 'red' }}>
+            <DialogContentText sx={{ marginTop: 2, fontSize: 12, color: 'var(--mui-palette-error-main)' }}>
               Warning: Loading from this device can override your synced account data.
             </DialogContentText>
           </div>
