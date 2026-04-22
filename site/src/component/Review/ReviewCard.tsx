@@ -392,6 +392,14 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
 
+  const displayReviewDate = (date: string | Date) => {
+    return new Date(date).toLocaleString('default', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
   return (
     <Card variant="outlined" className="reviewcard">
       <div className="reviewcard-header">
@@ -409,22 +417,9 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
             {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
           </div>
           <span className="reviewcard-date">
-            {new Date(review.createdAt).toLocaleString('default', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            })}
+            {displayReviewDate(review.createdAt)}
             {review.updatedAt && (
-              <span className="subtext edit-time">
-                {' '}
-                (edited{' '}
-                {new Date(review.updatedAt).toLocaleString('default', {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                })}
-                )
-              </span>
+              <span className="subtext edit-time"> (edited {displayReviewDate(review.updatedAt)})</span>
             )}
           </span>
         </div>
