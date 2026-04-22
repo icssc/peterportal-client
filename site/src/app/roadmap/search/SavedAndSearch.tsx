@@ -69,6 +69,7 @@ const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults
       {...courseSearchSortable}
       list={copiedResults}
       onStart={setDraggedItem}
+      onEnd={() => dispatch(setActiveCourse(null))}
       disabled={isMobile}
       /**
        * @todo merge classNames for `roadmap-search-results` for courses + profs after getting

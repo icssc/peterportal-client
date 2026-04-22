@@ -3,6 +3,7 @@ import { defaultYear } from '../../helpers/planner';
 import {
   CourseGQLData,
   CourseIdentifier,
+  CustomCourse,
   InvalidCourseData,
   PlannerQuarterData,
   PlannerYearData,
@@ -10,6 +11,7 @@ import {
   RoadmapPlanState,
   RoadmapRevision,
 } from '../../types/types';
+import { isCustomCourse } from '../../helpers/customCourses';
 import type { RootState } from '../store';
 import { restoreRevision } from '../../helpers/roadmap';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
@@ -43,6 +45,13 @@ interface SetActiveCoursePayload {
   courseIndex?: number;
 }
 
+interface SetActiveCustomCoursePayload {
+  course: CustomCourse;
+  startYear?: number;
+  quarter?: PlannerQuarterData;
+  courseIndex?: number;
+}
+
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
@@ -64,6 +73,7 @@ export const roadmapSlice = createSlice({
     showMobileFullscreenSearch: false,
     /** Store the course data of the active dragging item */
     activeCourse: null as CourseGQLData | null,
+    activeCustomCourse: null as CustomCourse | null,
     /** true if we start dragging a course whose info hasn't fully loaded yet, i.e. from Degree Requirements */
     activeCourseLoading: false,
     /** Store missing prerequisites for courses when adding on mobile */
@@ -85,7 +95,7 @@ export const roadmapSlice = createSlice({
       action: PayloadAction<{ plans: RoadmapPlan[]; timestamp: number; currentPlanIndex?: number }>,
     ) => {
       state.plans = action.payload.plans;
-      state.currentPlanIndex = action.payload.currentPlanIndex ?? 0;
+      state.currentPlanIndex = Math.min(action.payload.currentPlanIndex ?? 0, action.payload.plans.length - 1);
       const revision: RoadmapRevision = {
         timestamp: action.payload.timestamp ?? Date.now(),
         edits: [],
@@ -130,7 +140,45 @@ export const roadmapSlice = createSlice({
       }
       const { course, ...dragSource } = action.payload;
       state.activeCourse = course;
+      state.activeCustomCourse = null;
       state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
+    },
+    setActiveCustomCourse: (state, action: PayloadAction<SetActiveCustomCoursePayload | null>) => {
+      if (!action.payload) {
+        state.activeCustomCourse = null;
+        state.activeCourseDragSource = null;
+        return;
+      }
+      const { course, ...dragSource } = action.payload;
+      state.activeCourse = null;
+      state.activeCustomCourse = course;
+      state.activeCourseDragSource = dragSource.quarter ? dragSource : null;
+    },
+    updateRoadmapCustomCourse: (state, action: PayloadAction<CustomCourse>) => {
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            quarter.courses.forEach((course, index) => {
+              if (isCustomCourse(course) && course.id === action.payload.id) {
+                quarter.courses[index] = action.payload;
+              }
+            });
+          });
+        });
+      });
+    },
+    removeCustomCourseFromRoadmap: (state, action: PayloadAction<number>) => {
+      const customCourseId = action.payload;
+
+      state.plans.forEach((plan) => {
+        plan.content.yearPlans.forEach((year) => {
+          year.quarters.forEach((quarter) => {
+            quarter.courses = quarter.courses.filter(
+              (course) => !(isCustomCourse(course) && course.id === customCourseId),
+            );
+          });
+        });
+      });
     },
     setActiveCourseLoading: (state, action: PayloadAction<boolean>) => {
       state.activeCourseLoading = action.payload;
@@ -226,6 +274,9 @@ export const {
   setShowToast,
   setCHCSelection,
   updateTempPlannerIds,
+  setActiveCustomCourse,
+  updateRoadmapCustomCourse,
+  removeCustomCourseFromRoadmap,
   setSelectedSidebarTab,
 } = roadmapSlice.actions;
 
