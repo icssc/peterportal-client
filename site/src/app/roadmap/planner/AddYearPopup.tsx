@@ -47,8 +47,8 @@ const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
       dispatch(setShowToast(true));
       return;
     }
-
-    const revision = addPlannerYear(currentPlan.id, startYear, name, quarters);
+    const collapsed = false;
+    const revision = addPlannerYear(currentPlan.id, startYear, name, collapsed, quarters);
     dispatch(reviseRoadmap(revision));
     setShowModal(false);
   };

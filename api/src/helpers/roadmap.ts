@@ -22,6 +22,7 @@ export async function queryGetPlanners(where: SQL) {
       content: sql.raw(`jsonb_agg(jsonb_build_object(
         'name', ${planYearTableName}."${plannerYear.name.name}",
         'startYear', ${planYearTableName}."${plannerYear.startYear.name}",
+        'collapsed', ${planYearTableName}."${plannerYear.collapsed.name}",
         'quarters', (SELECT jsonb_agg(jsonb_build_object(
           'name', ${plannerQuarter.quarterName.name},
           'courses', (
@@ -143,7 +144,7 @@ export async function updateYears(tx: TransactionType, years: PlannerYearSaveInf
   const updates = years.map(async (year) => {
     await tx
       .update(plannerYear)
-      .set({ name: year.data.name })
+      .set({ name: year.data.name, collapsed: year.data.collapsed })
       .where(and(eq(plannerYear.plannerId, year.plannerId), eq(plannerYear.startYear, year.data.startYear)));
   });
   await Promise.all(updates);
@@ -186,6 +187,7 @@ export async function createYears(tx: TransactionType, years: PlannerYearSaveInf
         plannerId: year.plannerId,
         startYear: year.data.startYear,
         name: year.data.name,
+        collapsed: year.data.collapsed,
       })),
     )
     .onConflictDoNothing();
