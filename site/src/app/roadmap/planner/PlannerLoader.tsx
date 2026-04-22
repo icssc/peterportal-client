@@ -1,6 +1,6 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogContentText, DialogTitle, Divider } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -292,11 +292,11 @@ const PlannerLoader: FC = () => {
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gap: '16px',
-            marginTop: '16px',
+            marginTop: '12px',
             marginBottom: '12px',
           }}
         >
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <DialogContentText>
               <strong>This Device</strong>
             </DialogContentText>
@@ -309,20 +309,19 @@ const PlannerLoader: FC = () => {
             <DialogContentText>
               <strong>{localCourseCount}</strong> courses
             </DialogContentText>
-            {/* <DialogActions>
-              <Button
-                loading={overrideLoading}
-                disabled={overrideLoading || accountLoading}
-                color="inherit"
-                variant="text"
-                onClick={overrideAccountRoadmap}
-                sx={{ justifyContent: 'flex-start', padding: 0 }}
-              >
-                This Devicee
-              </Button>
-            </DialogActions> */}
+            <Button
+              loading={overrideLoading}
+              disabled={overrideLoading || accountLoading}
+              color="error"
+              variant="contained"
+              onClick={overrideAccountRoadmap}
+              sx={{ marginTop: 4, alignSelf: 'flex-start' }}
+            >
+              This Device
+            </Button>
           </div>
-          <div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <DialogContentText>
               <strong>My Account</strong>
             </DialogContentText>
@@ -335,34 +334,18 @@ const PlannerLoader: FC = () => {
             <DialogContentText>
               <strong>{syncedCourseCount}</strong> courses
             </DialogContentText>
+            <Button
+              loading={accountLoading}
+              disabled={overrideLoading || accountLoading}
+              variant="contained"
+              onClick={syncAccount}
+              sx={{ marginTop: 4, alignSelf: 'flex-start' }}
+            >
+              My Account
+            </Button>
           </div>
         </div>
-        <Divider sx={{ my: 1 }} />
-        <DialogContentText sx={{ color: 'red' }}>
-          * Warning: Loading from <strong>THIS DEVICE</strong> will erase all of your synced data from your account...
-          and whatever warning text
-        </DialogContentText>
       </DialogContent>
-
-      <DialogActions>
-        <Button
-          loading={overrideLoading}
-          disabled={overrideLoading || accountLoading}
-          color="inherit"
-          variant="text"
-          onClick={overrideAccountRoadmap}
-        >
-          This Device
-        </Button>
-        <Button
-          loading={accountLoading}
-          disabled={overrideLoading || accountLoading}
-          variant="contained"
-          onClick={syncAccount}
-        >
-          My Account
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };
