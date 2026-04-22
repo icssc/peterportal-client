@@ -2,6 +2,7 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Popover } from '@mui/material';
 import './OverlayTrigger.scss';
+import { useAppSelector } from '../../store/hooks';
 
 interface OverlayTriggerProps {
   popoverContent: ReactNode;
@@ -34,9 +35,10 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+  const activeCourse = useAppSelector((state) => state.roadmap.activeCourse);
 
   const showPopover = (event: React.MouseEvent<HTMLElement>) => {
-    if (disabled) {
+    if (disabled || activeCourse) {
       return;
     }
 

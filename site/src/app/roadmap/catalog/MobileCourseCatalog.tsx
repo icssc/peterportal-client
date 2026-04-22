@@ -18,10 +18,10 @@ const MobileCourseCatalog = () => {
   const closeSearch = useCallback(() => dispatch(hideMobileCatalog()), [dispatch]);
 
   useEffect(() => {
-    if (isMobile && selectedCourseList === 'Saved') {
-      dispatch(setSelectedTab('Search'));
+    if (isMobile && selectedCourseList === 'Library') {
+      dispatch(setSelectedTab('Library'));
     } else if (!isMobile && selectedCourseList === 'Search') {
-      dispatch(setSelectedTab('Saved'));
+      dispatch(setSelectedTab('Library'));
     }
   }, [isMobile, selectedCourseList, dispatch]);
 

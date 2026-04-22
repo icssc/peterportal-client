@@ -18,6 +18,8 @@ import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Autocomplete, Collapse, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
+const noSpecId = 'NO_SPEC';
+
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
@@ -27,7 +29,7 @@ function getCoursesForMajor(programId: string) {
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
-  if (!programId) return [];
+  if (!programId || programId === noSpecId) return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
 }
 
@@ -49,6 +51,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
+  const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
+
+  if (specOptions.length > 0 && !major.specializationRequired) {
+    specOptions.unshift({ value: noSpec, label: noSpec.name });
+  }
 
   const dispatch = useAppDispatch();
 
@@ -89,14 +96,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
     const specs = await getMajorSpecializations(major.id);
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
+
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
       await fetchRequirements(major.id, foundSpec?.id);
+    } else if (selectedSpecId === noSpecId) {
+      dispatch(setSpecialization({ majorId: major.id, specialization: noSpec }));
+      await fetchRequirements(major.id, null);
     }
   }, [
     dispatch,
     fetchRequirements,
     hasSpecs,
+    noSpec,
     major.id,
     majorWithSpec.requirements.length,
     selectedSpecId,
