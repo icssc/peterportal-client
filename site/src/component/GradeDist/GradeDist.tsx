@@ -188,9 +188,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
       <div className="gradedist-filter">
         <Autocomplete
-          disableClearable
           options={profCourseOptions ?? []}
-          value={profCourseOptions?.find((q) => q.value === profCourseSelectedValue)}
+          value={profCourseOptions?.find((q) => q.value === profCourseSelectedValue) ?? null}
           onChange={(_, newValue) => updateProfCourse(newValue?.value ?? null)}
           getOptionLabel={(option) => option.text}
           isOptionEqualToValue={(option, value) => option.value === value.value}

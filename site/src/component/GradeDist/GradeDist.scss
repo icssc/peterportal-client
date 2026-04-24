@@ -29,6 +29,9 @@
   .MuiAutocomplete-root {
     width: 200px;
   }
+  .MuiAutocomplete-clearIndicator {
+    display: none;
+  }
 }
 
 #grade-dist-label {
