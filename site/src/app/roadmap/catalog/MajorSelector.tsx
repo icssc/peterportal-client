@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
@@ -126,6 +126,12 @@ const MajorSelector: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
+  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
+    // logic to check if input matches abbreviation
+
+    return options.filter((option) => option.label.toLowerCase().includes(state.inputValue.toLowerCase()));
+  };
+
   return (
     <>
       <Autocomplete
@@ -136,6 +142,7 @@ const MajorSelector: FC = () => {
         getOptionLabel={(option) => option.label}
         getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        filterOptions={filterMajorOptions}
         loading={majorsLoading}
         disabled={majorsLoading}
         disableClearable
