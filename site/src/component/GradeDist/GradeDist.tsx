@@ -21,6 +21,8 @@ interface Entry {
 
 type ChartTypes = 'bar' | 'pie';
 
+const ALL_INSTRUCTORS = { value: 'ALL', text: 'All Instructors' };
+
 const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
 const GradeDist: FC<GradeDistProps> = (props) => {
@@ -72,7 +74,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
    */
   const createProfEntries = useCallback(() => {
     const professors: Set<string> = new Set();
-    const result: Entry[] = [{ value: 'ALL', text: 'All Instructors' }];
+    const result: Entry[] = [ALL_INSTRUCTORS];
 
     gradeDistData!.forEach((match) => match.instructors.forEach((prof) => professors.add(prof)));
 
@@ -188,8 +190,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
       <div className="gradedist-filter">
         <Autocomplete
-          options={profCourseOptions ?? []}
-          value={profCourseOptions?.find((q) => q.value === profCourseSelectedValue) ?? null}
+          disableClearable
+          options={profCourseOptions ?? [ALL_INSTRUCTORS]}
+          value={profCourseOptions?.find((q) => q.value === profCourseSelectedValue) ?? ALL_INSTRUCTORS}
           onChange={(_, newValue) => updateProfCourse(newValue?.value ?? null)}
           getOptionLabel={(option) => option.text}
           isOptionEqualToValue={(option, value) => option.value === value.value}
