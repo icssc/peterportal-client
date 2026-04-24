@@ -23,8 +23,6 @@
   .MuiInputBase-root {
     width: 200px;
     .MuiInputBase-input {
-      // @todo: try to get rid of this, likely through a variant
-      background-color: var(--mui-palette-overlay-overlay1);
       width: 150px;
     }
   }
