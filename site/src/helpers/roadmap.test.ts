@@ -13,6 +13,7 @@ const plannerA: RoadmapPlan = {
       {
         startYear: 2020,
         name: 'Planner A Year',
+        collapsed: false,
         quarters: [],
       },
     ],
@@ -28,6 +29,7 @@ const plannerB: RoadmapPlan = {
       {
         startYear: 2023,
         name: 'Planner B Year',
+        collapsed: false,
         quarters: [],
       },
     ],
@@ -74,12 +76,12 @@ describe('applyPlannerYearEdit', () => {
 
   it('Does nothing when the planner ID does not exist', () => {
     const nonExistentId = 999;
-    applyYearEdit(roadmapPlans, nonExistentId, null, { startYear: 2025, name: 'New Year' });
+    applyYearEdit(roadmapPlans, nonExistentId, null, { startYear: 2025, name: 'New Year', collapsed: false });
     expect(roadmapPlans).toEqual([plannerA, plannerB]);
   });
 
   it('Adds a new year when there is no old data', () => {
-    const newYearData: PlannerYearChangeData = { startYear: 2025, name: 'New Year' };
+    const newYearData: PlannerYearChangeData = { startYear: 2025, name: 'New Year', collapsed: false };
     applyYearEdit(roadmapPlans, 1, null, newYearData);
 
     const expectedYears = [plannerA.content.yearPlans[0], { ...newYearData, quarters: [] }];
@@ -92,7 +94,7 @@ describe('applyPlannerYearEdit', () => {
   });
 
   it('Removes a year when there is no new data', () => {
-    const yearToRemove: PlannerYearChangeData = { startYear: 2020, name: 'Planner A Year' };
+    const yearToRemove: PlannerYearChangeData = { startYear: 2020, name: 'Planner A Year', collapsed: false };
     applyYearEdit(roadmapPlans, 1, yearToRemove, null);
 
     const expectedPlannerA: RoadmapPlan = {
@@ -104,8 +106,8 @@ describe('applyPlannerYearEdit', () => {
   });
 
   it('Updates a year matching the old startYear to have the new properties', () => {
-    const oldYearData: PlannerYearChangeData = { startYear: 2020, name: 'Old Name' };
-    const newYearData: PlannerYearChangeData = { startYear: 2022, name: 'New Name' };
+    const oldYearData: PlannerYearChangeData = { startYear: 2020, name: 'Old Name', collapsed: false };
+    const newYearData: PlannerYearChangeData = { startYear: 2022, name: 'New Name', collapsed: false };
 
     applyYearEdit(roadmapPlans, 1, oldYearData, newYearData);
 
@@ -135,8 +137,8 @@ describe('applyPlannerYearEdit', () => {
 
     roadmapPlans = [plannerWithQuarters, plannerB];
 
-    const oldYearData: PlannerYearChangeData = { startYear: 2020, name: 'Old Name' };
-    const newYearData: PlannerYearChangeData = { startYear: 2022, name: 'New Name' };
+    const oldYearData: PlannerYearChangeData = { startYear: 2020, name: 'Old Name', collapsed: false };
+    const newYearData: PlannerYearChangeData = { startYear: 2022, name: 'New Name', collapsed: false };
 
     applyYearEdit(roadmapPlans, 1, oldYearData, newYearData);
 
@@ -152,7 +154,7 @@ describe('applyPlannerYearEdit', () => {
   });
 
   it('Reorders years to preserve startYear ordering', () => {
-    const addedYear: PlannerYearChangeData = { startYear: 2010, name: 'Older Year' };
+    const addedYear: PlannerYearChangeData = { startYear: 2010, name: 'Older Year', collapsed: false };
 
     applyYearEdit(roadmapPlans, 1, null, addedYear);
     const expectedYearData = { ...addedYear, quarters: [] };
@@ -222,7 +224,7 @@ describe('applyPlannerQuarterEdit', () => {
       name: 'Planner A',
       id: firstPlannerId,
       content: {
-        yearPlans: [{ startYear: firstStartYear, name: 'Planner A Year', quarters: [] }],
+        yearPlans: [{ startYear: firstStartYear, name: 'Planner A Year', collapsed: false, quarters: [] }],
         invalidCourses: [],
       },
     };

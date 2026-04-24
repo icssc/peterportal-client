@@ -309,7 +309,10 @@ function comparePlannerYearPair(
   );
 
   if (before && before.name !== after.name) {
-    const yearUpdate = { name: after.name, startYear: after.startYear };
+    const yearUpdate = { name: after.name, startYear: after.startYear, collapsed: after.collapsed };
+    plannerDiffs.updatedYears.push({ data: yearUpdate, plannerId });
+  } else if (before && before.collapsed !== after.collapsed) {
+    const yearUpdate = { name: after.name, startYear: after.startYear, collapsed: after.collapsed };
     plannerDiffs.updatedYears.push({ data: yearUpdate, plannerId });
   }
 
