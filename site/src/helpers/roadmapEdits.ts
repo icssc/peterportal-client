@@ -35,7 +35,7 @@ export function addPlanner(id: number, name: string, yearPlans: PlannerYearData[
   };
 
   const otherEdits = yearPlans
-    .flatMap((year) => addPlannerYear(id, year.startYear, year.name, year.quarters))
+    .flatMap((year) => addPlannerYear(id, year.startYear, year.name, year.collapsed, year.quarters))
     .flatMap((revision) => revision.edits);
 
   return createRevision([plannerEdit, ...otherEdits]);
@@ -54,12 +54,18 @@ export function updatePlannerName(current: RoadmapPlan, newName: string) {
   return createRevision([edit]);
 }
 
-export function addPlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
+export function addPlannerYear(
+  plannerId: number,
+  startYear: number,
+  name: string,
+  collapsed = false,
+  quarters: PlannerQuarterData[],
+) {
   const yearEdit: PlannerYearEdit = {
     type: 'year',
     plannerId,
     before: null,
-    after: { name, startYear },
+    after: { name, startYear, collapsed },
   };
 
   const otherEdits = quarters
@@ -69,18 +75,25 @@ export function addPlannerYear(plannerId: number, startYear: number, name: strin
   return createRevision([yearEdit, ...otherEdits]);
 }
 
-export function deletePlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
-  return createInverseRevision(addPlannerYear(plannerId, startYear, name, quarters));
+export function deletePlannerYear(
+  plannerId: number,
+  startYear: number,
+  name: string,
+  collapsed: boolean,
+  quarters: PlannerQuarterData[],
+) {
+  return createInverseRevision(addPlannerYear(plannerId, startYear, name, collapsed, quarters));
 }
 
 interface ModifyPlannerYearOptions {
   newName: string;
   newStartYear: number;
+  newCollapsed: boolean;
   removedQuarters: PlannerQuarterData[];
   addedQuarters: PlannerQuarterData[];
 }
 export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearData, options: ModifyPlannerYearOptions) {
-  const { name, startYear } = currentYear;
+  const { name, startYear, collapsed } = currentYear;
   const newStartYear = options.newStartYear ?? startYear;
   const edits = [];
 
@@ -90,14 +103,19 @@ export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearDat
 
   if (removeQuarterEdits) edits.push(...removeQuarterEdits);
 
-  if (options.newName !== name || options.newStartYear !== startYear) {
+  if (
+    options.newName !== name ||
+    options.newStartYear !== startYear ||
+    options.newCollapsed !== currentYear.collapsed
+  ) {
     const yearEdit: PlannerYearEdit = {
       type: 'year',
       plannerId,
-      before: { name, startYear },
+      before: { name, startYear, collapsed },
       after: {
         name: options.newName ?? name,
         startYear: newStartYear,
+        collapsed: options.newCollapsed,
       },
     };
     edits.push(yearEdit);

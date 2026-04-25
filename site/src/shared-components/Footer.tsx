@@ -3,6 +3,7 @@ import { FC } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ICSSCLogo from './IcsscLogo';
+import { FEEDBACK_FORM_URL } from '../helpers/constants';
 
 const Footer: FC<{ className?: string }> = ({ className }) => {
   const theme = useTheme();
@@ -45,8 +46,9 @@ const Footer: FC<{ className?: string }> = ({ className }) => {
           size="large"
           color="inherit"
           startIcon={<AssignmentIcon />}
-          href="https://antalmanac.com/feedback"
+          href={FEEDBACK_FORM_URL}
           target="_blank"
+          rel="noopener noreferrer"
         >
           Feedback
         </Button>
