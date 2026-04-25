@@ -53,7 +53,7 @@ const DesktopRoadmapSidebar = () => {
       <div className="sidebar-content" id="sidebarScrollContainer">
         {selectedIndex === 0 && <TransferCreditsMenu />}
         {selectedIndex === 1 && <CourseCatalog />}
-        {selectedIndex === 2 && <SavedAndSearch />}
+        {selectedIndex === 2 && <SavedAndSearch autoFocusSearch />}
       </div>
     </div>
   );
