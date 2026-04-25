@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useSaveRoadmap } from '../../hooks/planner';
 import { Button } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
@@ -12,11 +12,27 @@ const SaveButton: FC = () => {
   const isLoggedIn = useIsLoggedIn();
 
   const [saveInProgress, setSaveInProgress] = useState(false);
+  const saveDisabled = roadmapLoading || (isLoggedIn && !customCoursesLoaded) || saveInProgress;
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
+    if (saveDisabled) return;
     setSaveInProgress(true);
     saveRoadmap().finally(() => setSaveInProgress(false));
-  };
+  }, [saveDisabled, saveRoadmap]);
+
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 's') return;
+      if (!event.ctrlKey && !event.metaKey) return;
+
+      event.preventDefault();
+      if (event.repeat) return;
+      handleSave();
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [handleSave]);
 
   return (
     <Button
@@ -25,7 +41,7 @@ const SaveButton: FC = () => {
       size="medium"
       startIcon={<SaveIcon />}
       loading={saveInProgress}
-      disabled={roadmapLoading || (isLoggedIn && !customCoursesLoaded)}
+      disabled={saveDisabled}
       onClick={handleSave}
       color="inherit"
     >
