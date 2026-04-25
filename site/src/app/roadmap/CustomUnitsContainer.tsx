@@ -8,7 +8,7 @@ import { IconButton } from '@mui/material';
 
 interface UnitsContainerProps {
   units: number | undefined;
-  setUnits?: (value: number) => void;
+  setUnits?: (value: number | undefined) => void;
   minUnits: number | undefined;
   maxUnits: number | undefined;
   source: string;
@@ -36,7 +36,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, ma
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
     const unitsValue = parseFloat(formData.get('units') as string);
-    setUnits(unitsValue);
+    setUnits(isNaN(unitsValue) ? undefined : unitsValue);
     setEditing(false);
   };
 

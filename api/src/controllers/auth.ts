@@ -2,8 +2,9 @@ import express, { Request, Response } from 'express';
 import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic';
 import { db } from '../db';
 import { user } from '../db/schema';
-import { createOIDCClient } from '../config/oidc';
+import { buildRedirectUri, createOIDCClient } from '../config/oidc';
 import { SESSION_LENGTH } from '../config/constants';
+import { isNativeIosApp } from '../helpers/platform';
 
 const router = express.Router();
 
@@ -87,12 +88,14 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
  */
 router.get('/google', async function (req, res) {
   try {
-    const oidcClient = createOIDCClient();
+    const redirectUri = buildRedirectUri(isNativeIosApp(req));
+    const oidcClient = createOIDCClient(redirectUri);
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
 
     req.session.oauthState = state;
     req.session.codeVerifier = codeVerifier;
+    req.session.oauthRedirectUri = redirectUri;
     req.session.returnTo = req.headers.referer;
 
     const authUrl = oidcClient.createAuthorizationURLWithPKCE(
@@ -140,10 +143,13 @@ router.get('/google/callback', async function (req, res) {
       return;
     }
 
+    const redirectUri = req.session.oauthRedirectUri ?? buildRedirectUri(isNativeIosApp(req));
+
     delete req.session.oauthState;
     delete req.session.codeVerifier;
+    delete req.session.oauthRedirectUri;
 
-    const oidcClient = createOIDCClient();
+    const oidcClient = createOIDCClient(redirectUri);
     const tokens = await oidcClient.validateAuthorizationCode(
       `${process.env.OIDC_ISSUER_URL}/token`,
       code,
@@ -177,6 +183,24 @@ router.get('/google/callback', async function (req, res) {
     console.error('Error in OIDC callback:', error);
     res.redirect('/?error=callback_failed');
   }
+});
+
+/**
+ * Fallback for the native-only callback path.
+ *
+ * In the normal native flow, ASWebAuthenticationSession captures the callback
+ * URL via AASA before any network request is made, and the iOS wrapper rewrites
+ * `/callback/native` → `/callback` before loading it in the WKWebView. The
+ * server should therefore never see this path.
+ *
+ * This route exists as a safety net for the narrow window where AASA has not
+ * yet propagated (fresh install, Apple CDN cache miss on iOS 17.4+): the flow
+ * still recovers gracefully inside the WKWebView instead of 404ing.
+ */
+router.get('/google/callback/native', function (req, res) {
+  const queryIndex = req.originalUrl.indexOf('?');
+  const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+  res.redirect(302, `/planner/api/users/auth/google/callback${query}`);
 });
 
 /**
