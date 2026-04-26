@@ -13,7 +13,7 @@ jobs:
   build_and_deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
-    # don't run if labeled "no deploy" && don't run on PRs from forks
+    # only run with command `/deploy shared=true` && don't run on PRs from forks
     if: github.event.client_payload.github.payload.pull_request.head.repo.full_name == github.repository && github.event.client_payload.slash_command.args.named.shared == 'true'
     environment:
       name: staging-shared
