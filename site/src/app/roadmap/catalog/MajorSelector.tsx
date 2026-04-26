@@ -127,8 +127,8 @@ const MajorSelector: FC = () => {
   }));
 
   // @TODO function that gets abbrevations from a major using first capital letter
-  // @TODO make custom sorting (ex computer science before cog sci for cs)
 
+  // test abbreviations
   const SAMPLE_MAJOR_ABBREVIATIONS: Record<string, string[]> = {
     CS: ['Computer Science', 'Cognitive Sciences'],
     CSE: ['Computer Science and Engineering'],
@@ -138,33 +138,29 @@ const MajorSelector: FC = () => {
   const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
     const input = state.inputValue.trim().toUpperCase();
 
-    // check if input is an abbreviation
-    const expandedTerms: string[] = [state.inputValue];
+    // list of majors that match abbreviation
+    const majorAbbrMatches: string[] = [];
 
-    // track which full names came from abbreviations
-    const abbrTerms: string[] = [];
-
-    for (const [abbr, fullName] of Object.entries(SAMPLE_MAJOR_ABBREVIATIONS)) {
-      if (abbr.startsWith(input)) {
-        expandedTerms.push(...fullName);
-        abbrTerms.push(...fullName);
+    if (input) {
+      for (const [abbr, fullName] of Object.entries(SAMPLE_MAJOR_ABBREVIATIONS)) {
+        if (abbr.startsWith(input)) {
+          majorAbbrMatches.push(...fullName);
+        }
       }
     }
+    const abbrFiltered = options.filter((option) =>
+      majorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    );
 
     // list of filtered majors
-    const filtered = options.filter((option) =>
-      expandedTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    const filtered = options.filter(
+      (option) =>
+        option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
+        !abbrFiltered.some((a) => a.value.id === option.value.id),
     );
 
-    // split between abbreviated and not abbreviated
-    const abbrFiltered = filtered.filter((option) =>
-      abbrTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
-    );
-    const nonAbbrFiltered = filtered.filter(
-      (option) => !abbrTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
-    );
-
-    return [...abbrFiltered, ...nonAbbrFiltered];
+    // abbreviated matches first
+    return [...abbrFiltered, ...filtered];
   };
 
   return (
