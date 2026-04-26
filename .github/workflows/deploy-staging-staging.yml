@@ -36,7 +36,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: staging-shared
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.client_payload.github.payload.pull_request.head.sha }}
           description: Staging deployment for PR #${{ github.event.pull_request.number }}
 
       # TODO (@cadenlee2): Remove this stage once SST fixes compat with Pulumi
