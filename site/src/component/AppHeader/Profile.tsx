@@ -25,6 +25,7 @@ import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme, UserMetadata } from '@peterportal/types';
 import { useIsMobile } from '../../helpers/util';
+import { FEEDBACK_FORM_URL } from '../../helpers/constants';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
 import AboutDialog from './AboutDialog';
@@ -157,10 +158,11 @@ const ExternalLinksRow = () => {
       <List className="profile-popover-links external-links-row">
         <ListItem>
           <ListItemButton
-            href="https://antalmanac.com/feedback"
+            href={FEEDBACK_FORM_URL}
             className="profile-popover-link"
             component="a"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <ListItemIcon>
               <AssignmentIcon />
