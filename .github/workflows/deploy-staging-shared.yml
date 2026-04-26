@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.github.payload.pull_request.head.sha }}
 
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
