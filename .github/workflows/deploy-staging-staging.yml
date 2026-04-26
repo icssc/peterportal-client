@@ -1,25 +1,20 @@
 name: Deploy staging-shared
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
   repository_dispatch:
     types:
       - deploy-command
 
 # do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
 concurrency:
-  group: staging-${{ github.event.pull_request.number }}
+  group: staging-shared
 
 jobs:
   build_and_deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
     # don't run if labeled "no deploy" && don't run on PRs from forks
-    if: (!contains(github.event.pull_request.labels.*.name, 'no deploy')) && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'branding-changes'
+    if: github.event.client_payload.github.payload.pull_request.head.repo.full_name == github.repository && github.event.client_payload.slash_command.args.named.shared == 'true'
     environment:
       name: staging-shared
       url: https://staging-shared.antalmanac.com/planner
