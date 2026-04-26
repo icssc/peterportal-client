@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -126,14 +126,23 @@ const MajorSelector: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
-  // @TODO function that gets abbrevations from a major using first capital letter
-
-  // test abbreviations
-  const SAMPLE_MAJOR_ABBREVIATIONS: Record<string, string[]> = {
-    CS: ['Computer Science', 'Cognitive Sciences'],
-    CSE: ['Computer Science and Engineering'],
-    BIM: ['Business Information Management'],
+  const getAbbreviation = (name: string): string => {
+    return name
+      .split(' ')
+      .filter((word) => word[0] !== word[0].toLowerCase() && word[0] === word[0].toUpperCase())
+      .map((word) => word[0])
+      .join('');
   };
+
+  const majorAbbreviations = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const major of majors) {
+      const abbr = getAbbreviation(major.name);
+      if (!map[abbr]) map[abbr] = [];
+      map[abbr].push(major.name);
+    }
+    return map;
+  }, [majors]);
 
   const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
     const input = state.inputValue.trim().toUpperCase();
@@ -142,7 +151,7 @@ const MajorSelector: FC = () => {
     const majorAbbrMatches: string[] = [];
 
     if (input) {
-      for (const [abbr, fullName] of Object.entries(SAMPLE_MAJOR_ABBREVIATIONS)) {
+      for (const [abbr, fullName] of Object.entries(majorAbbreviations)) {
         if (abbr.startsWith(input)) {
           majorAbbrMatches.push(...fullName);
         }
