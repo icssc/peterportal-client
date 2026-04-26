@@ -126,10 +126,45 @@ const MajorSelector: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
-  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
-    // logic to check if input matches abbreviation
+  // @TODO function that gets abbrevations from a major using first capital letter
+  // @TODO make custom sorting (ex computer science before cog sci for cs)
 
-    return options.filter((option) => option.label.toLowerCase().includes(state.inputValue.toLowerCase()));
+  const SAMPLE_MAJOR_ABBREVIATIONS: Record<string, string[]> = {
+    CS: ['Computer Science', 'Cognitive Sciences'],
+    CSE: ['Computer Science and Engineering'],
+    BIM: ['Business Information Management'],
+  };
+
+  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
+    const input = state.inputValue.trim().toUpperCase();
+
+    // check if input is an abbreviation
+    const expandedTerms: string[] = [state.inputValue];
+
+    // track which full names came from abbreviations
+    const abbrTerms: string[] = [];
+
+    for (const [abbr, fullName] of Object.entries(SAMPLE_MAJOR_ABBREVIATIONS)) {
+      if (abbr.startsWith(input)) {
+        expandedTerms.push(...fullName);
+        abbrTerms.push(...fullName);
+      }
+    }
+
+    // list of filtered majors
+    const filtered = options.filter((option) =>
+      expandedTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    );
+
+    // split between abbreviated and not abbreviated
+    const abbrFiltered = filtered.filter((option) =>
+      abbrTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    );
+    const nonAbbrFiltered = filtered.filter(
+      (option) => !abbrTerms.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    );
+
+    return [...abbrFiltered, ...nonAbbrFiltered];
   };
 
   return (
