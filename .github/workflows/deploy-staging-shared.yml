@@ -3,7 +3,7 @@ name: Deploy staging-shared
 on:
   repository_dispatch:
     types:
-      - deploy-command
+      - deploy-shared-command
 
 # do not cancel in progress, SST will be stuck in a "locked" state if cancelled mid-deployment
 concurrency:
@@ -14,7 +14,7 @@ jobs:
     name: Build and deploy
     runs-on: ubuntu-latest
     # only run with command `/deploy shared=true` && don't run on PRs from forks
-    if: github.event.client_payload.github.payload.pull_request.head.repo.full_name == github.repository && github.event.client_payload.slash_command.args.named.shared == 'true'
+    if: github.event.client_payload.github.payload.pull_request.head.repo.full_name == github.repository
     environment:
       name: staging-shared
       url: https://staging-shared.antalmanac.com/planner
