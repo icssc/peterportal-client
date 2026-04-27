@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
@@ -97,6 +97,53 @@ const MinorSelector: FC = () => {
     label: `${m.name}`,
   }));
 
+  const getAbbreviation = (name: string): string => {
+    return name
+      .slice(9)
+      .split(' ')
+      .filter((word) => word[0] !== word[0].toLowerCase() && word[0] === word[0].toUpperCase())
+      .map((word) => word[0])
+      .join('');
+  };
+
+  const minorAbbreviations = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    for (const minor of minors) {
+      const abbr = getAbbreviation(minor.name);
+      if (!map[abbr]) map[abbr] = [];
+      map[abbr].push(minor.name);
+    }
+    return map;
+  }, [minors]);
+
+  const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) => {
+    const input = state.inputValue.trim().toUpperCase();
+
+    // list of minors that match abbreviation
+    const minorAbbrMatches: string[] = [];
+
+    if (input) {
+      for (const [abbr, fullName] of Object.entries(minorAbbreviations)) {
+        if (abbr.startsWith(input)) {
+          minorAbbrMatches.push(...fullName);
+        }
+      }
+    }
+    const abbrFiltered = options.filter((option) =>
+      minorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    );
+
+    // list of filtered minors
+    const filtered = options.filter(
+      (option) =>
+        option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
+        !abbrFiltered.some((a) => a.value.id === option.value.id),
+    );
+
+    // abbreviated matches first
+    return [...abbrFiltered, ...filtered];
+  };
+
   return (
     <>
       <Autocomplete
@@ -107,6 +154,7 @@ const MinorSelector: FC = () => {
         getOptionLabel={(option) => option.label}
         getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        filterOptions={filterMinorOptions}
         loading={minorsLoading}
         disabled={minorsLoading}
         disableClearable
