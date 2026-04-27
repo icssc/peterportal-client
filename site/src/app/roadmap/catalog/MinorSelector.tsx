@@ -103,34 +103,6 @@ const MinorSelector: FC = () => {
   const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) =>
     filterOptionsWithAbbreviations(options, state, minorAbbreviations);
 
-  // const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) => {
-  //   const input = state.inputValue.trim().toUpperCase();
-
-  //   // list of minors that match abbreviation
-  //   const minorAbbrMatches: string[] = [];
-
-  //   if (input) {
-  //     for (const [abbr, fullName] of Object.entries(minorAbbreviations)) {
-  //       if (abbr.startsWith(input)) {
-  //         minorAbbrMatches.push(...fullName);
-  //       }
-  //     }
-  //   }
-  //   const abbrFiltered = options.filter((option) =>
-  //     minorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
-  //   );
-
-  //   // list of filtered minors
-  //   const filtered = options.filter(
-  //     (option) =>
-  //       option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
-  //       !abbrFiltered.some((a) => a.value.id === option.value.id),
-  //   );
-
-  //   // abbreviated matches first
-  //   return [...abbrFiltered, ...filtered];
-  // };
-
   return (
     <>
       <Autocomplete

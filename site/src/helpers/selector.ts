@@ -37,7 +37,7 @@ export const filterOptionsWithAbbreviations = <T extends { label: string; value:
   }
 
   const abbrFiltered = options.filter((option) =>
-    abbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+    abbrMatches.some((fullName) => option.label.toLowerCase().includes(fullName.toLowerCase())),
   );
   // list of filtered majors/minors not part of abbreviations
   const filtered = options.filter(
