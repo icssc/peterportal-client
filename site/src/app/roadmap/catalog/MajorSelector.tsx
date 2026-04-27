@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
-import { mapAbbreviations } from '../../../helpers/selector';
+import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 import {
   addMajor,
   removeMajor,
@@ -129,33 +129,8 @@ const MajorSelector: FC = () => {
 
   const majorAbbreviations = useMemo(() => mapAbbreviations(majors), [majors]);
 
-  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
-    const input = state.inputValue.trim().toUpperCase();
-
-    // list of majors that match abbreviation
-    const majorAbbrMatches: string[] = [];
-
-    if (input) {
-      for (const [abbr, fullName] of Object.entries(majorAbbreviations)) {
-        if (abbr.startsWith(input)) {
-          majorAbbrMatches.push(...fullName);
-        }
-      }
-    }
-    const abbrFiltered = options.filter((option) =>
-      majorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
-    );
-
-    // list of filtered majors
-    const filtered = options.filter(
-      (option) =>
-        option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
-        !abbrFiltered.some((a) => a.value.id === option.value.id),
-    );
-
-    // abbreviated matches first
-    return [...abbrFiltered, ...filtered];
-  };
+  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) =>
+    filterOptionsWithAbbreviations(options, state, majorAbbreviations);
 
   return (
     <>

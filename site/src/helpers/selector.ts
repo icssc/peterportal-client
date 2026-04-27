@@ -19,14 +19,15 @@ export const mapAbbreviations = (items: { name: string }[]): Record<string, stri
   return map;
 };
 
-export const filterByAbbreviation = <T extends { label: string; value: { id: string } }>(
+export const filterOptionsWithAbbreviations = <T extends { label: string; value: { id: string } }>(
   options: T[],
   state: FilterOptionsState<T>,
   abbreviations: Record<string, string[]>,
 ): T[] => {
   const input = state.inputValue.trim().toUpperCase();
-  const abbrMatches: string[] = [];
 
+  // list of majors/minors that match abbreviation
+  const abbrMatches: string[] = [];
   if (input) {
     for (const [abbr, fullName] of Object.entries(abbreviations)) {
       if (abbr.startsWith(input)) {
@@ -38,7 +39,7 @@ export const filterByAbbreviation = <T extends { label: string; value: { id: str
   const abbrFiltered = options.filter((option) =>
     abbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
   );
-
+  // list of filtered majors/minors not part of abbreviations
   const filtered = options.filter(
     (option) =>
       option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&

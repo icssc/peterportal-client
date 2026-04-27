@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
-import { mapAbbreviations } from '../../../helpers/selector';
+import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 
 function updateSelectedMinors(minorIds: string[]) {
   trpc.programs.saveSelectedMinor.mutate({ minorIds });
@@ -100,33 +100,36 @@ const MinorSelector: FC = () => {
 
   const minorAbbreviations = useMemo(() => mapAbbreviations(minors), [minors]);
 
-  const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) => {
-    const input = state.inputValue.trim().toUpperCase();
+  const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) =>
+    filterOptionsWithAbbreviations(options, state, minorAbbreviations);
 
-    // list of minors that match abbreviation
-    const minorAbbrMatches: string[] = [];
+  // const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) => {
+  //   const input = state.inputValue.trim().toUpperCase();
 
-    if (input) {
-      for (const [abbr, fullName] of Object.entries(minorAbbreviations)) {
-        if (abbr.startsWith(input)) {
-          minorAbbrMatches.push(...fullName);
-        }
-      }
-    }
-    const abbrFiltered = options.filter((option) =>
-      minorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
-    );
+  //   // list of minors that match abbreviation
+  //   const minorAbbrMatches: string[] = [];
 
-    // list of filtered minors
-    const filtered = options.filter(
-      (option) =>
-        option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
-        !abbrFiltered.some((a) => a.value.id === option.value.id),
-    );
+  //   if (input) {
+  //     for (const [abbr, fullName] of Object.entries(minorAbbreviations)) {
+  //       if (abbr.startsWith(input)) {
+  //         minorAbbrMatches.push(...fullName);
+  //       }
+  //     }
+  //   }
+  //   const abbrFiltered = options.filter((option) =>
+  //     minorAbbrMatches.some((term) => option.label.toLowerCase().includes(term.toLowerCase())),
+  //   );
 
-    // abbreviated matches first
-    return [...abbrFiltered, ...filtered];
-  };
+  //   // list of filtered minors
+  //   const filtered = options.filter(
+  //     (option) =>
+  //       option.label.toLowerCase().includes(state.inputValue.toLowerCase()) &&
+  //       !abbrFiltered.some((a) => a.value.id === option.value.id),
+  //   );
+
+  //   // abbreviated matches first
+  //   return [...abbrFiltered, ...filtered];
+  // };
 
   return (
     <>
