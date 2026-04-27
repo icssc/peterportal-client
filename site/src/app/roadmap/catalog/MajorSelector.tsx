@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
+import { mapAbbreviations } from '../../../helpers/selector';
 import {
   addMajor,
   removeMajor,
@@ -126,23 +127,7 @@ const MajorSelector: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
-  const getAbbreviation = (name: string): string => {
-    return name
-      .split(' ')
-      .filter((word) => word[0] !== word[0].toLowerCase() && word[0] === word[0].toUpperCase())
-      .map((word) => word[0])
-      .join('');
-  };
-
-  const majorAbbreviations = useMemo(() => {
-    const map: Record<string, string[]> = {};
-    for (const major of majors) {
-      const abbr = getAbbreviation(major.name);
-      if (!map[abbr]) map[abbr] = [];
-      map[abbr].push(major.name);
-    }
-    return map;
-  }, [majors]);
+  const majorAbbreviations = useMemo(() => mapAbbreviations(majors), [majors]);
 
   const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) => {
     const input = state.inputValue.trim().toUpperCase();

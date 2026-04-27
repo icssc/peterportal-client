@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
+import { mapAbbreviations } from '../../../helpers/selector';
 
 function updateSelectedMinors(minorIds: string[]) {
   trpc.programs.saveSelectedMinor.mutate({ minorIds });
@@ -97,24 +98,7 @@ const MinorSelector: FC = () => {
     label: `${m.name}`,
   }));
 
-  const getAbbreviation = (name: string): string => {
-    return name
-      .slice(9)
-      .split(' ')
-      .filter((word) => word[0] !== word[0].toLowerCase() && word[0] === word[0].toUpperCase())
-      .map((word) => word[0])
-      .join('');
-  };
-
-  const minorAbbreviations = useMemo(() => {
-    const map: Record<string, string[]> = {};
-    for (const minor of minors) {
-      const abbr = getAbbreviation(minor.name);
-      if (!map[abbr]) map[abbr] = [];
-      map[abbr].push(minor.name);
-    }
-    return map;
-  }, [minors]);
+  const minorAbbreviations = useMemo(() => mapAbbreviations(minors), [minors]);
 
   const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) => {
     const input = state.inputValue.trim().toUpperCase();
