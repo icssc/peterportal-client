@@ -112,7 +112,10 @@ const Course: FC<CourseProps> = (props) => {
   }, [userChosenUnits]);
 
   return (
-    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+    <div
+      className={`course ${isInRoadmap ? 'roadmap-course' : ''} ${isMobile && isInRoadmap ? 'course-mobile-drag-handle' : ''}`}
+      {...tappableCourseProps}
+    >
       {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />
