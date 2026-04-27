@@ -51,6 +51,7 @@ const AppHeader: FC = () => {
       <div className="navbar-nav">
         <div className="navbar-left">
           <LogoAndSwitcher />
+          <p>hey</p>
         </div>
 
         {/* Search */}
