@@ -13,8 +13,8 @@ jobs:
   build_and_deploy:
     name: Build and deploy
     runs-on: ubuntu-latest
-    # only run with command `/deploy shared=true` && don't run on PRs from forks
-    if: github.event.client_payload.github.payload.pull_request.head.repo.full_name == github.repository
+    # only run with command `/deploy-shared` && don't run on PRs from forks
+    if: github.event.client_payload.pull_request.head.repo.full_name == github.repository
     environment:
       name: staging-shared
       url: https://staging-shared.antalmanac.com/planner
@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.github.payload.pull_request.head.sha }}
+          ref: ${{ github.event.client_payload.pull_request.head.sha }}
 
       - name: Setup pnpm
         uses: ./.github/actions/setup-pnpm
@@ -38,8 +38,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: staging-shared
-          ref: ${{ github.event.client_payload.github.payload.pull_request.head.sha }}
-          description: Staging deployment for PR #${{ github.event.client_payload.github.payload.pull_request.number }}
+          ref: ${{ github.event.client_payload.pull_request.head.sha }}
+          description: Staging deployment for PR #${{ github.event.client_payload.pull_request.number }}
 
       # TODO (@cadenlee2): Remove this stage once SST fixes compat with Pulumi
       # https://github.com/anomalyco/sst/issues/6314
