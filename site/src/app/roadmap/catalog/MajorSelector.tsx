@@ -1,7 +1,8 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
+import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 import {
   addMajor,
   removeMajor,
@@ -126,6 +127,11 @@ const MajorSelector: FC = () => {
     label: `${m.name}, ${m.type}`,
   }));
 
+  const majorAbbreviations = useMemo(() => mapAbbreviations(majors), [majors]);
+
+  const filterMajorOptions = (options: MajorOption[], state: FilterOptionsState<MajorOption>) =>
+    filterOptionsWithAbbreviations(options, state, majorAbbreviations);
+
   return (
     <>
       <Autocomplete
@@ -136,6 +142,7 @@ const MajorSelector: FC = () => {
         getOptionLabel={(option) => option.label}
         getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        filterOptions={filterMajorOptions}
         loading={majorsLoading}
         disabled={majorsLoading}
         disableClearable
