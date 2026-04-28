@@ -16,6 +16,42 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
   const isMobile = useIsMobile();
   const overlayRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef(0);
+
+  useEffect(() => {
+    const element = popupRef.current;
+    if (!element) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+      element.style.transition = 'none';
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (e.changedTouches[0].clientY - touchStartY.current > 100) {
+        onClose();
+      }
+      element.style.transform = '';
+      element.style.transition = '';
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const delta = e.touches[0].clientY - touchStartY.current;
+      if (delta > 0) {
+        element.style.transform = `translateY(${delta}px)`;
+      }
+    };
+
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchend', handleTouchEnd);
+    element.addEventListener('touchmove', handleTouchMove);
+
+    return () => {
+      element.removeEventListener('touchstart', handleTouchStart);
+      element.removeEventListener('touchend', handleTouchEnd);
+      element.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [show, onClose]);
 
   useEffect(() => {
     if (!isMobile) return;
