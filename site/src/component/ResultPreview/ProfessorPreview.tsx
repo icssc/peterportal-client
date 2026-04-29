@@ -17,6 +17,8 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
 import { useProfessorData } from '../../hooks/professorReviews';
+import PreviewNavBar from './PreviewNavBar';
+import { PreviewArrowNav } from './PreviewNavBar';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -48,6 +50,7 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   return (
     <div className="preview-body">
       <SideInfo
+        id="preview-details"
         className="professor-summary"
         searchType="instructor"
         name={data.name}
@@ -57,15 +60,15 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
         professor={data}
       />
 
-      <ResultPageSection title="📊 Grade Distribution">
+      <ResultPageSection id="preview-grades" title="📊 Grade Distribution">
         <GradeDist professor={data} />
       </ResultPageSection>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
+      <ResultPageSection id="preview-schedule" title="🗓️ Schedule of Classes">
         <Schedule professorIDs={data.shortenedNames} termsOffered={unionTerms(data.courses)} />
       </ResultPageSection>
 
-      <ResultPageSection title="💬 Reviews">
+      <ResultPageSection id="preview-reviews" title="💬 Reviews">
         <Review professor={data} terms={sortTerms(getProfessorTerms(data))} />
       </ResultPageSection>
     </div>
@@ -121,6 +124,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
+        <PreviewNavBar />
         <Button
           variant="contained"
           color="inherit"
@@ -133,7 +137,10 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
         </Button>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
-        <ProfessorPreviewContent data={professorData} />
+        <>
+          <ProfessorPreviewContent data={professorData} />
+          <PreviewArrowNav />
+        </>
       </Twemoji>
     </div>
   );
