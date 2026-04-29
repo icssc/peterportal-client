@@ -30,6 +30,7 @@ const courseRequirementsSlice = createSlice({
     geRequirements: [] as ProgramRequirement[],
     completedMarkers: {} as Record<string, boolean>,
     expandedGroups: {} as ExpandedGroupsList,
+    overriddenRequirements: {} as Record<number, Record<string, boolean>>,
   },
   reducers: {
     setSelectedTab: (state, action: PayloadAction<RequirementsTabName>) => {
@@ -105,6 +106,21 @@ const courseRequirementsSlice = createSlice({
         state.completedMarkers[markerName] = true;
       });
     },
+    setRequirementOverride: (
+      state,
+      action: PayloadAction<{ plannerId: number; requirement: string; override: boolean }>,
+    ) => {
+      if (!state.overriddenRequirements[action.payload.plannerId]) {
+        state.overriddenRequirements[action.payload.plannerId] = {};
+      }
+      state.overriddenRequirements[action.payload.plannerId][action.payload.requirement] = action.payload.override;
+    },
+    initializeOverriddenRequirements: (state, action: PayloadAction<{ plannerId: number; requirements: string[] }>) => {
+      state.overriddenRequirements[action.payload.plannerId] = {};
+      action.payload.requirements.forEach((requirement) => {
+        state.overriddenRequirements[action.payload.plannerId][requirement] = true;
+      });
+    },
     setGroupExpanded: (state, action: PayloadAction<{ storeKey: string; expanded: boolean }>) => {
       if (action.payload.expanded) {
         state.expandedGroups[action.payload.storeKey] = true;
@@ -130,6 +146,8 @@ export const {
   setGERequirements,
   setMarkerComplete,
   initializeCompletedMarkers,
+  setRequirementOverride,
+  initializeOverriddenRequirements,
   setGroupExpanded,
 } = courseRequirementsSlice.actions;
 
