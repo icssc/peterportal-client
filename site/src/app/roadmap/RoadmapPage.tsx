@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState, useMemo } from 'react';
 import './RoadmapPage.scss';
 import Planner from './planner/Planner';
 import MobileCourseCatalog from './catalog/MobileCourseCatalog';
@@ -16,6 +16,7 @@ import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu'
 import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePreviewDepth } from '../../hooks/usePreviewDepth';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -34,49 +35,20 @@ const RoadmapPage: FC = () => {
 
   const courseParam = searchParams.get('course');
   const instructorParam = searchParams.get('instructor');
-  const currentPreview = courseParam
-    ? ({ type: 'course', id: courseParam } as const)
-    : instructorParam
-      ? ({ type: 'instructor', id: instructorParam } as const)
-      : null;
-
+  const currentPreview = useMemo(() => {
+    return courseParam
+      ? ({ type: 'course', id: courseParam } as const)
+      : instructorParam
+        ? ({ type: 'instructor', id: instructorParam } as const)
+        : null;
+  }, [courseParam, instructorParam]);
   const [showPreview, setShowPreview] = useState(false);
   useEffect(() => {
     if (currentPreview) setShowPreview(true);
     else setShowPreview(false);
   }, [currentPreview]);
 
-  const depthRef = useRef(0);
-  const [previewDepth, setPreviewDepth] = useState(0);
-  useEffect(() => {
-    const original = history.pushState.bind(history);
-    history.pushState = function (...args: Parameters<typeof history.pushState>) {
-      const urlArg = args[2];
-      if (urlArg != null) {
-        const url = new URL(urlArg.toString(), window.location.href);
-        const newDepth =
-          url.searchParams.has('course') || url.searchParams.has('instructor') ? depthRef.current + 1 : 0;
-        depthRef.current = newDepth;
-        args[0] = { ...args[0], __previewDepth: newDepth };
-        queueMicrotask(() => setPreviewDepth(newDepth));
-      }
-      return original(...args);
-    };
-    return () => {
-      history.pushState = original;
-    };
-  }, []);
-
-  useEffect(() => {
-    const onPopState = (e: PopStateEvent) => {
-      const newDepth = e.state?.__previewDepth ?? 0;
-      depthRef.current = newDepth;
-      setPreviewDepth(newDepth);
-    };
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-
+  const previewDepth = usePreviewDepth();
   const handleCloseToast = () => dispatch(setShowToast(false));
   const fullscreenActive = isMobile && showFullscreenSearch;
 

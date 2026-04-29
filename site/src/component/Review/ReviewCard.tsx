@@ -164,7 +164,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         router.push(`?course=${encodeURIComponent(id)}`);
       }
     },
-    [isStandalonePage, course, dispatch, router],
+    [isStandalonePage, course, router],
   );
 
   useEffect(() => {
