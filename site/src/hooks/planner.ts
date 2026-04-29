@@ -86,6 +86,8 @@ export function useSaveRoadmap() {
     }
 
     dispatch(setSavedRevisionIndex(currIdx));
+
+    return result;
   };
 
   return { handler };
