@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { CourseGQLData } from '../../types/types';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
@@ -9,6 +9,9 @@ import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { GradesRaw } from '@peterportal/types';
+import { fetchGradeDistDataRaw } from '../GradeDist/GradeDist';
+import { getAggregateClassGradeData } from '../GradeDist/Pie';
 
 interface CourseProp {
   course: CourseGQLData;
@@ -35,11 +38,11 @@ export const CourseSynopsis: FC<CourseProp> = ({ course, clampDescription = 0 })
   );
 };
 
-export const PrerequisiteText: FC<CourseProp> = ({ course }) => {
+export const PrerequisiteText: FC<CourseProp> = ({ course, clampDescription = 0 }) => {
   if (!course.prerequisiteText) return <></>;
 
   return (
-    <p>
+    <p style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
       <b>Prerequisites:</b> {course.prerequisiteText}
     </p>
   );
@@ -68,7 +71,29 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
         Already completed? Click the "Credits" tab in the sidebar to add{' '}
         {pluralize(requiredCourses.length, 'these prerequisites', 'this prerequisite')}.
       </div>
+      <br />
     </div>
+  );
+};
+
+export const AverageGPAText: FC<CourseProp> = ({ course }) => {
+  const [gradeDistDataRaw, setGradeDistDataRaw] = useState<GradesRaw>([]);
+
+  useEffect(() => {
+    fetchGradeDistDataRaw({ course })
+      .then(setGradeDistDataRaw)
+      .catch((error) => {
+        setGradeDistDataRaw([]);
+        console.error(error);
+      });
+  }, [course]);
+
+  const aggregateGradeData = getAggregateClassGradeData(gradeDistDataRaw, 'ALL', 'ALL', 'ALL');
+
+  return (
+    <p>
+      <b>Average GPA:</b> {aggregateGradeData.averageGPA}
+    </p>
   );
 };
 

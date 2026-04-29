@@ -8,6 +8,7 @@ import {
   CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  AverageGPAText,
   PreviousOfferingsRow,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
@@ -45,10 +46,11 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
         <CourseBookmarkButton course={course} />
       </div>
       <br />
-      <CourseSynopsis course={course} />
-      <PrerequisiteText course={course} />
+      <CourseSynopsis course={course} clampDescription={4} />
+      <PrerequisiteText course={course} clampDescription={4} />
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+      <AverageGPAText course={course} />
       <PreviousOfferingsRow course={course} />
     </div>
   );

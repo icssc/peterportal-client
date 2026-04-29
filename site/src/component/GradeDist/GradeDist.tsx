@@ -25,6 +25,25 @@ const ALL_INSTRUCTORS = { value: 'ALL', text: 'All Instructors' };
 
 const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
+export async function fetchGradeDistDataRaw(props: GradeDistProps): Promise<GradesRaw> {
+  let requests: Promise<GradesRaw>[];
+  // course context
+  if (props.course) {
+    const params = {
+      department: props.course.department,
+      number: props.course.courseNumber,
+    };
+    requests = [trpc.courses.grades.query(params)];
+  } else if (props.professor) {
+    requests = props.professor.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
+  } else {
+    return [];
+  }
+
+  const res = await Promise.all(requests);
+  return res.flat();
+}
+
 const GradeDist: FC<GradeDistProps> = (props) => {
   /*
    * Initialize a GradeDist block on the webpage.
@@ -41,26 +60,13 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
 
   const fetchGradeDistData = useCallback(() => {
-    let requests: Promise<GradesRaw>[];
-    // course context
-    if (props.course) {
-      const params = {
-        department: props.course.department,
-        number: props.course.courseNumber,
-      };
-      requests = [trpc.courses.grades.query(params)];
-    } else if (props.professor) {
-      requests = props.professor.shortenedNames.map((name) => trpc.professors.grades.query({ name }));
-    }
-
-    Promise.all(requests!)
-      .then((res) => res.flat())
+    fetchGradeDistDataRaw(props)
       .then(setGradeDistData)
       .catch((error) => {
         setGradeDistData([]);
         console.error(error.response);
       });
-  }, [props.course, props.professor]);
+  }, [props]);
 
   // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
