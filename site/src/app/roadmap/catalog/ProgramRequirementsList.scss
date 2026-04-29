@@ -57,6 +57,7 @@
 
   .group-header {
     display: flex;
+    justify-content: space-between;
     gap: 8px;
     align-items: center;
     color: var(--mui-palette-secondary-main);
@@ -68,6 +69,11 @@
     width: 100%;
     font-size: inherit;
     cursor: pointer;
+  }
+
+  .group-header-btns {
+    display: flex;
+    gap: 10px;
   }
 
   .group-header svg.bi {
@@ -127,6 +133,7 @@
   .expand-requirements {
     margin-block: -8px;
     margin-right: -4px;
+    margin-left: 0;
     padding: 4px;
     color: inherit;
 
