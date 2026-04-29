@@ -246,6 +246,9 @@ const ExportButton = () => {
     setSelectedQuarterName(nextSelection.quarterName);
   }, [showModal, allPlans, currentPlan.id, selectedRoadmapId, selectedYearStart, selectedQuarterName]);
 
+  const roadmapHasNoCourses = () =>
+    !roadmapYears.some((y) => (y.quarters || []).some((q) => (q.courses ?? []).length > 0));
+
   return (
     <>
       <Button
@@ -277,51 +280,54 @@ const ExportButton = () => {
                 ))}
               </Select>
             </FormControl>
+            {roadmapHasNoCourses() ? (
+              <p>This roadmap has no courses to export.</p>
+            ) : (
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="export-year-label">Year</InputLabel>
+                  <Select
+                    labelId="export-year-label"
+                    label="Year"
+                    value={selectedYearStart ?? ''}
+                    onChange={handleYearChange}
+                    renderValue={(val) => {
+                      const year = roadmapYears.find((y) => String(y.startYear) === String(val));
+                      return year ? <YearDisplayWithRange year={year} /> : '';
+                    }}
+                  >
+                    {roadmapYears.map((year) => {
+                      const hasCourses = year.quarters.some((q) => (q.courses ?? []).length > 0);
+                      return (
+                        <MenuItem key={year.startYear} value={String(year.startYear)} disabled={!hasCourses}>
+                          <YearDisplayWithRange year={year} />
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-              <FormControl fullWidth disabled={roadmapYears.length === 0}>
-                <InputLabel id="export-year-label">Year</InputLabel>
-                <Select
-                  labelId="export-year-label"
-                  label="Year"
-                  value={selectedYearStart ?? ''}
-                  onChange={handleYearChange}
-                  renderValue={(val) => {
-                    const year = roadmapYears.find((y) => String(y.startYear) === String(val));
-                    return year ? <YearDisplayWithRange year={year} /> : '';
-                  }}
-                >
-                  {roadmapYears.map((year) => {
-                    const hasCourses = year.quarters.some((q) => (q.courses ?? []).length > 0);
-                    return (
-                      <MenuItem key={year.startYear} value={String(year.startYear)} disabled={!hasCourses}>
-                        <YearDisplayWithRange year={year} />
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth disabled={yearQuarters.length === 0}>
-                <InputLabel id="export-quarter-label">Quarter</InputLabel>
-                <Select
-                  labelId="export-quarter-label"
-                  label="Quarter"
-                  value={selectedQuarterName ?? ''}
-                  onChange={handleQuarterChange}
-                  renderValue={(val) => quarterDisplayNames[val as QuarterName] ?? ''}
-                >
-                  {yearQuarters.map((quarter) => {
-                    const isDisabled = (quarter.courses ?? []).length === 0;
-                    return (
-                      <MenuItem key={quarter.name} value={quarter.name} disabled={isDisabled}>
-                        {quarterDisplayNames[quarter.name]}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Box>
+                <FormControl fullWidth disabled={yearQuarters.length === 0}>
+                  <InputLabel id="export-quarter-label">Quarter</InputLabel>
+                  <Select
+                    labelId="export-quarter-label"
+                    label="Quarter"
+                    value={selectedQuarterName ?? ''}
+                    onChange={handleQuarterChange}
+                    renderValue={(val) => quarterDisplayNames[val as QuarterName] ?? ''}
+                  >
+                    {yearQuarters.map((quarter) => {
+                      const isDisabled = (quarter.courses ?? []).length === 0;
+                      return (
+                        <MenuItem key={quarter.name} value={quarter.name} disabled={isDisabled}>
+                          {quarterDisplayNames[quarter.name]}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
 
             {selectedYear && (
               <>
