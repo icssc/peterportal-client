@@ -41,7 +41,7 @@ const AppHeader: FC = () => {
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
-            <SearchModule index="courses" />
+            <SearchModule index="courses" autoFocusInput />
           </div>
         </div>
       </header>

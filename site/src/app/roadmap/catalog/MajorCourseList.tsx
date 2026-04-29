@@ -1,9 +1,7 @@
 import './MajorCourseList.scss';
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -17,8 +15,10 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { Autocomplete, Collapse, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+
+const noSpecId = 'NO_SPEC';
 
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
@@ -29,7 +29,7 @@ function getCoursesForMajor(programId: string) {
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
-  if (!programId) return [];
+  if (!programId || programId === noSpecId) return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
 }
 
@@ -41,7 +41,6 @@ interface MajorCourseListProps {
 
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const storeKeyPrefix = `major-${majorWithSpec.major.id}`;
-  const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
@@ -52,6 +51,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const { major, selectedSpec, specializations } = majorWithSpec;
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
+  const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
+
+  if (specOptions.length > 0 && !major.specializationRequired) {
+    specOptions.unshift({ value: noSpec, label: noSpec.name });
+  }
 
   const dispatch = useAppDispatch();
 
@@ -92,14 +96,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
     const specs = await getMajorSpecializations(major.id);
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
+
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
       await fetchRequirements(major.id, foundSpec?.id);
+    } else if (selectedSpecId === noSpecId) {
+      dispatch(setSpecialization({ majorId: major.id, specialization: noSpec }));
+      await fetchRequirements(major.id, null);
     }
   }, [
     dispatch,
     fetchRequirements,
     hasSpecs,
+    noSpec,
     major.id,
     majorWithSpec.requirements.length,
     selectedSpecId,
@@ -118,14 +127,14 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
-      const updatedSpec = data?.value || null;
+      const updatedSpec = data?.value ?? null;
       if (updatedSpec?.id === selectedSpecId) return;
 
       setResultsLoading(true);
-      onSpecializationChange(major.id, data?.value ?? null);
+      onSpecializationChange(major.id, updatedSpec);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setSpecialization({ majorId: major.id, specialization: updatedSpec }));
-      await fetchRequirements(major.id, updatedSpec?.id || null);
+      await fetchRequirements(major.id, updatedSpec?.id);
     },
     [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
   );
@@ -140,16 +149,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         {hasSpecs && (
-          <Select
+          <Autocomplete
+            className="specialization-select"
+            disableClearable
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
-            isDisabled={specsLoading}
-            isLoading={specsLoading}
-            onChange={handleSpecializationChange}
-            className="ppc-combobox"
-            classNamePrefix="ppc-combobox"
-            placeholder="Select a specialization..."
-            theme={(t) => comboboxTheme(t, isDark)}
+            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id))}
+            onChange={(_event, option) => handleSpecializationChange(option)}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+            disabled={specsLoading}
+            loading={specsLoading}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" size="small" placeholder="Select a specialization..." />
+            )}
           />
         )}
         {hasSpecs && !majorWithSpec.selectedSpec ? (
