@@ -90,55 +90,14 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
 
   return (
     <>
-      <IconButton
-        onClick={handleMenuOpen}
-        sx={{
-          color: 'var(--mui-palette-text-secondary)',
-          width: '32px',
-          height: '32px',
-          padding: '4px',
-        }}
-      >
+      <IconButton onClick={handleMenuOpen}>
         <MoreVertIcon />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenuClose}
-        slotProps={{
-          paper: {
-            sx: {
-              width: '96px',
-              minWidth: 'unset',
-              borderRadius: '8px',
-              border: '1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent)',
-              overflow: 'hidden',
-              boxSizing: 'border-box',
-            },
-          },
-          list: {
-            sx: {
-              padding: '4px 0',
-              width: '100%',
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            },
-          },
-        }}
-      >
-        <MenuItem className="review-menu-item" onClick={openReportForm}>
-          Report
-        </MenuItem>
-        {review.authored && (
-          <MenuItem className="review-menu-item" onClick={openReviewForm}>
-            Edit
-          </MenuItem>
-        )}
+      <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} className="review-menu">
+        <MenuItem onClick={openReportForm}>Report</MenuItem>
+        {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
         {review.authored && (
           <MenuItem
-            className="review-menu-item"
             onClick={() => {
               setShowDeleteModal(true);
               handleMenuClose();
