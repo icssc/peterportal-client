@@ -83,6 +83,16 @@ const ExportButton = () => {
   const selectedYear = roadmapYears.find((year) => String(year.startYear) === selectedYearStart);
   const yearQuarters = selectedYear?.quarters ?? [];
 
+  const openExportModal = () => {
+    if (!isLoggedIn) {
+      dispatch(setToastMsg('Sign in to export your roadmap'));
+      dispatch(setToastSeverity('info'));
+      dispatch(setShowToast(true));
+      return;
+    }
+    setShowModal(true);
+  };
+
   const handleClose = () => {
     setShowModal(false);
     setSelectedRoadmapId('');
@@ -244,7 +254,7 @@ const ExportButton = () => {
         size="medium"
         color="inherit"
         startIcon={<IosShare />}
-        onClick={() => setShowModal(true)}
+        onClick={openExportModal}
       >
         Export
       </Button>
