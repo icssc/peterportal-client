@@ -414,29 +414,19 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
           <div className="reviewcard-voting">
             <div className="reviewcard-voting-buttons">
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-                <span>
-                  <button
-                    className={upvoteClassname}
-                    onClick={upvote}
-                    disabled={!isLoggedIn}
-                    style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
-                  >
-                    <span>{review.score > 0 ? review.score : 0}</span>
+                <span className={upvoteClassname}>
+                  <span className="vote-count">{review.score > 0 ? review.score : 0}</span>
+                  <IconButton onClick={upvote} disabled={!isLoggedIn} size="small">
                     {review.userVote === 1 ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
-                  </button>
+                  </IconButton>
                 </span>
               </Tooltip>
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-                <span>
-                  <button
-                    className={downvoteClassname}
-                    onClick={downvote}
-                    disabled={!isLoggedIn}
-                    style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
-                  >
-                    <span>{review.score < 0 ? Math.abs(review.score) : 0}</span>
+                <span className={downvoteClassname}>
+                  <span className="vote-count">{review.score < 0 ? Math.abs(review.score) : 0}</span>
+                  <IconButton onClick={downvote} disabled={!isLoggedIn} size="small">
                     {review.userVote === -1 ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
-                  </button>
+                  </IconButton>
                 </span>
               </Tooltip>
             </div>
