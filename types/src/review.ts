@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const anonymousName = 'anonymous_petr';
+export const anonymousName = 'Anonymous Peter';
 
 export const grades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F', 'P', 'NP'] as const;
 export const gradesEnum = z.enum(grades);
