@@ -75,6 +75,8 @@ const ExportButton = () => {
   const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
   const [saving, setSaving] = useState(false);
+  const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
+  const lastSavedIndex = useAppSelector((state) => state.roadmap.savedRevisionIndex);
 
   const selectedRoadmap = allPlans.find((plan) => String(plan.id) === selectedRoadmapId);
   const roadmapYears = selectedRoadmap?.content.yearPlans ?? [];
@@ -153,7 +155,7 @@ const ExportButton = () => {
           dispatch(setShowToast(true));
           return;
         }
-      } else {
+      } else if (currentIndex !== lastSavedIndex) {
         await saveRoadmap();
       }
     } finally {
@@ -174,6 +176,8 @@ const ExportButton = () => {
     selectedYearStart,
     dispatch,
     saveRoadmap,
+    currentIndex,
+    lastSavedIndex,
   ]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -334,7 +338,7 @@ const ExportButton = () => {
             disabled={saving || !selectedRoadmap || !selectedYear || !selectedQuarterName}
             startIcon={saving ? <CircularProgress size={18} color="inherit" /> : undefined}
           >
-            {saving ? 'Saving…' : 'Export'}
+            {saving ? 'Saving…' : currentIndex !== lastSavedIndex ? 'Save & Export' : 'Export'}
           </Button>
         </DialogActions>
       </Dialog>
