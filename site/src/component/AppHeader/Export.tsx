@@ -13,6 +13,7 @@ import {
   MenuItem,
   Select,
   Typography,
+  Divider,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { IosShare } from '@mui/icons-material';
@@ -307,6 +308,19 @@ const ExportButton = () => {
                 </Select>
               </FormControl>
             </Box>
+
+            {selectedYear && (
+              <>
+                <Divider></Divider>
+                <Box>
+                  <strong>Courses to Export: </strong>
+                  {selectedYear.quarters
+                    .find((q) => q.name === selectedQuarterName)
+                    ?.courses?.map((course) => course.id)
+                    .join(', ') ?? 'None'}
+                </Box>
+              </>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
