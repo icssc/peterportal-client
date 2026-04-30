@@ -18,7 +18,7 @@ import {
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { IosShare } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
-import { quarterDisplayNames } from '../../helpers/planner';
+import { isCustomCourse, quarterDisplayNames } from '../../helpers/planner';
 import { type QuarterName } from '@peterportal/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
@@ -247,7 +247,9 @@ const ExportButton = () => {
   }, [showModal, allPlans, currentPlan.id, selectedRoadmapId, selectedYearStart, selectedQuarterName]);
 
   const roadmapHasNoCourses = () =>
-    !roadmapYears.some((y) => (y.quarters || []).some((q) => (q.courses ?? []).length > 0));
+    !roadmapYears.some((y) =>
+      (y.quarters || []).some((q) => (q.courses.filter((c) => !isCustomCourse(c)) ?? []).length > 0),
+    );
 
   return (
     <>
@@ -336,7 +338,8 @@ const ExportButton = () => {
                   <strong>Courses to Export: </strong>
                   {selectedYear.quarters
                     .find((q) => q.name === selectedQuarterName)
-                    ?.courses?.map((course) => course.id)
+                    ?.courses?.filter((course) => !isCustomCourse(course))
+                    .map((course) => course.id)
                     .join(', ') ?? 'None'}
                 </Box>
               </>
