@@ -9,9 +9,8 @@ import { IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { GradesRaw } from '@peterportal/types';
-import { fetchGradeDistDataRaw } from '../GradeDist/GradeDist';
-import { getAggregateClassGradeData } from '../GradeDist/Pie';
+import { fetchGradeDistData } from '../GradeDist/GradeDist';
+import { getAggregateGradeData, GradesAggregate } from '../../helpers/gradeDist.ts';
 
 interface CourseProp {
   course: CourseGQLData;
@@ -77,22 +76,28 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
 };
 
 export const AverageGPAText: FC<CourseProp> = ({ course }) => {
-  const [gradeDistDataRaw, setGradeDistDataRaw] = useState<GradesRaw>([]);
+  const [aggregateGradeData, setAggregateGradeData] = useState<GradesAggregate | null>(null);
 
   useEffect(() => {
-    fetchGradeDistDataRaw({ course })
-      .then(setGradeDistDataRaw)
+    fetchGradeDistData({ course })
+      .then((data) => {
+        const aggregateData = getAggregateGradeData(data, 'ALL', 'ALL', 'ALL');
+        setAggregateGradeData(aggregateData);
+      })
       .catch((error) => {
-        setGradeDistDataRaw([]);
+        setAggregateGradeData(null);
         console.error(error);
       });
   }, [course]);
 
-  const aggregateGradeData = getAggregateClassGradeData(gradeDistDataRaw, 'ALL', 'ALL', 'ALL');
+  let displayAverageGPA = 'Loading...';
+  if (aggregateGradeData != null) {
+    displayAverageGPA = aggregateGradeData.averageGPA === 'NaN' ? 'N/A' : aggregateGradeData.averageGPA;
+  }
 
   return (
     <p>
-      <b>Average GPA:</b> {aggregateGradeData.averageGPA}
+      <b>Average GPA:</b> {displayAverageGPA}
     </p>
   );
 };

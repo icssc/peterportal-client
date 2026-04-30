@@ -2,11 +2,9 @@ import { Component } from 'react';
 import { ResponsivePie, PieTooltipProps } from '@nivo/pie';
 
 import { GradesRaw } from '@peterportal/types';
+import { getAggregateGradeData } from '../../helpers/gradeDist.ts';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getCssVariable } from '../../helpers/styling.ts';
-
-const gradeScale = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-'];
-const gpaScale = [4.0, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0, 7];
 
 interface Slice {
   id: 'A' | 'B' | 'C' | 'D' | 'F' | 'P' | 'NP';
@@ -22,87 +20,6 @@ interface PieProps {
   course?: string;
 }
 
-interface GradeAggregateData {
-  gradeACount: number;
-  gradeBCount: number;
-  gradeCCount: number;
-  gradeDCount: number;
-  gradeFCount: number;
-  gradePCount: number;
-  gradeNPCount: number;
-  total: number;
-  totalPNP: number;
-  averageGPA: string;
-  averageGrade: string;
-  averagePNP: string;
-}
-
-function gpaToGradeConverter(gpa: string): string {
-  let i;
-  for (i = 0; Number(gpa) < gpaScale[i]; i++);
-  return gradeScale[i];
-}
-
-export function getAggregateClassGradeData(
-  gradeData: GradesRaw,
-  professor: string | undefined,
-  quarter: string,
-  course: string | undefined,
-): GradeAggregateData {
-  const classGradeData: GradeAggregateData = {
-    gradeACount: 0,
-    gradeBCount: 0,
-    gradeCCount: 0,
-    gradeDCount: 0,
-    gradeFCount: 0,
-    gradePCount: 0,
-    gradeNPCount: 0,
-    total: 0,
-    totalPNP: 0,
-    averageGPA: '',
-    averageGrade: '',
-    averagePNP: '',
-  };
-
-  let sum = 0;
-
-  gradeData.forEach((data) => {
-    const quarterMatch = quarter === 'ALL' || data.quarter + ' ' + data.year === quarter;
-    const profMatch = professor === 'ALL' || data.instructors.includes(professor ?? '');
-    const courseMatch = course === 'ALL' || data.department + ' ' + data.courseNumber === course;
-    if (quarterMatch && (profMatch || courseMatch)) {
-      classGradeData.gradeACount += data.gradeACount;
-      classGradeData.gradeBCount += data.gradeBCount;
-      classGradeData.gradeCCount += data.gradeCCount;
-      classGradeData.gradeDCount += data.gradeDCount;
-      classGradeData.gradeFCount += data.gradeFCount;
-      classGradeData.gradePCount += data.gradePCount;
-      classGradeData.gradeNPCount += data.gradeNPCount;
-      sum += 4.0 * data.gradeACount + 3.0 * data.gradeBCount + 2.0 * data.gradeCCount + 1.0 * data.gradeDCount;
-      classGradeData.total +=
-        data.gradeACount +
-        data.gradeBCount +
-        data.gradeCCount +
-        data.gradeDCount +
-        data.gradeFCount +
-        data.gradePCount +
-        data.gradeNPCount;
-      classGradeData.totalPNP += data.gradePCount + data.gradeNPCount;
-
-      if (data.gradePCount >= data.gradeNPCount) {
-        classGradeData.averagePNP = 'P';
-      } else {
-        classGradeData.averagePNP = 'NP';
-      }
-    }
-  });
-
-  classGradeData.averageGPA = (sum / (classGradeData.total - classGradeData.totalPNP)).toFixed(1);
-  classGradeData.averageGrade = gpaToGradeConverter(classGradeData.averageGPA);
-
-  return classGradeData;
-}
-
 export default class Pie extends Component<PieProps> {
   total = 0;
   totalPNP = 0;
@@ -113,24 +30,24 @@ export default class Pie extends Component<PieProps> {
   getClassData = (): Slice[] => {
     const { professor, quarter, course } = this.props;
 
-    const aggregateClassGradeData = getAggregateClassGradeData(this.props.gradeData, professor, quarter, course);
-    this.total = aggregateClassGradeData.total;
-    this.totalPNP = aggregateClassGradeData.totalPNP;
-    this.averageGPA = aggregateClassGradeData.averageGPA;
-    this.averageGrade = aggregateClassGradeData.averageGrade;
-    this.averagePNP = aggregateClassGradeData.averagePNP;
+    const aggregateGradeData = getAggregateGradeData(this.props.gradeData, professor, quarter, course);
+    this.total = aggregateGradeData.total;
+    this.totalPNP = aggregateGradeData.totalPNP;
+    this.averageGPA = aggregateGradeData.averageGPA;
+    this.averageGrade = aggregateGradeData.averageGrade;
+    this.averagePNP = aggregateGradeData.averagePNP;
 
     const pnpData: Slice[] = [
       {
         id: 'P',
         label: 'P',
-        value: aggregateClassGradeData.gradePCount,
+        value: aggregateGradeData.gradePCount,
         color: getCssVariable('--mui-palette-chart-pass'),
       },
       {
         id: 'NP',
         label: 'NP',
-        value: aggregateClassGradeData.gradeNPCount,
+        value: aggregateGradeData.gradeNPCount,
         color: getCssVariable('--mui-palette-chart-noPass'),
       },
     ];
@@ -143,31 +60,31 @@ export default class Pie extends Component<PieProps> {
       {
         id: 'A',
         label: 'A',
-        value: aggregateClassGradeData.gradeACount,
+        value: aggregateGradeData.gradeACount,
         color: getCssVariable('--mui-palette-chart-blue'),
       },
       {
         id: 'B',
         label: 'B',
-        value: aggregateClassGradeData.gradeBCount,
+        value: aggregateGradeData.gradeBCount,
         color: getCssVariable('--mui-palette-chart-green'),
       },
       {
         id: 'C',
         label: 'C',
-        value: aggregateClassGradeData.gradeCCount,
+        value: aggregateGradeData.gradeCCount,
         color: getCssVariable('--mui-palette-chart-yellow'),
       },
       {
         id: 'D',
         label: 'D',
-        value: aggregateClassGradeData.gradeDCount,
+        value: aggregateGradeData.gradeDCount,
         color: getCssVariable('--mui-palette-chart-orange'),
       },
       {
         id: 'F',
         label: 'F',
-        value: aggregateClassGradeData.gradeFCount,
+        value: aggregateGradeData.gradeFCount,
         color: getCssVariable('--mui-palette-chart-red'),
       },
     ];

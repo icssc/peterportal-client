@@ -25,7 +25,7 @@ const ALL_INSTRUCTORS = { value: 'ALL', text: 'All Instructors' };
 
 const quarterOrder: QuarterName[] = ['Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2', 'Fall'];
 
-export async function fetchGradeDistDataRaw(props: GradeDistProps): Promise<GradesRaw> {
+export async function fetchGradeDistData(props: GradeDistProps): Promise<GradesRaw> {
   let requests: Promise<GradesRaw>[];
   // course context
   if (props.course) {
@@ -59,8 +59,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
 
-  const fetchGradeDistData = useCallback(() => {
-    fetchGradeDistDataRaw(props)
+  const fetchGradeData = useCallback(() => {
+    fetchGradeDistData(props)
       .then(setGradeDistData)
       .catch((error) => {
         setGradeDistData([]);
@@ -71,8 +71,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   // reset any data from a previous course or professor, get new data for course or professor
   useEffect(() => {
     setGradeDistData(null!);
-    fetchGradeDistData();
-  }, [fetchGradeDistData]);
+    fetchGradeData();
+  }, [fetchGradeData]);
 
   /*
    * Create an array of objects to feed into the professor dropdown menu.
