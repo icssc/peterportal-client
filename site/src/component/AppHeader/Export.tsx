@@ -30,6 +30,7 @@ import {
 } from '../../store/slices/roadmapSlice';
 import { useSaveRoadmap } from '../../hooks/planner';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import './Export.scss';
 
 // Parse currentWeek like "Week 5 • Spring Quarter 2026"
 const parseCurrentWeek = (weekString: string): { week: number; quarter: QuarterName; year: number } | null => {
@@ -179,9 +180,11 @@ const quarterYearOffsets: Record<QuarterName, number> = {
 };
 
 const YearDisplayWithRange = ({ year }: { year: { name: string; startYear: number } }) => (
-  <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
-    <Typography variant="body2">{year.name}</Typography>
-    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+  <Box className="year-display">
+    <Typography variant="body2" className="year-display__name">
+      {year.name}
+    </Typography>
+    <Typography variant="caption" className="year-display__range">
       {year.startYear}-{year.startYear + 1}
     </Typography>
   </Box>
@@ -449,7 +452,7 @@ const ExportButton = () => {
       <Dialog open={showModal} onClose={handleClose} className="changelog-modal" maxWidth="xs" fullWidth>
         <DialogTitle>Export to Scheduler</DialogTitle>
         <DialogContent>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2, pt: 1 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} className="export-form">
             <FormControl fullWidth>
               <InputLabel id="export-roadmap-label">Roadmap</InputLabel>
               <Select
@@ -466,9 +469,9 @@ const ExportButton = () => {
               </Select>
             </FormControl>
             {roadmapHasNoCourses() ? (
-              <p>This roadmap has no courses to export.</p>
+              <p className="export-form__no-courses">This roadmap has no courses to export.</p>
             ) : (
-              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+              <Box className="export-form__year-quarter-grid">
                 <FormControl fullWidth>
                   <InputLabel id="export-year-label">Year</InputLabel>
                   <Select
@@ -517,24 +520,15 @@ const ExportButton = () => {
               <>
                 <Divider></Divider>
                 {scheduleWarning && (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      p: 1.5,
-                      backgroundColor: 'action.hover',
-                      borderRadius: 1,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <WarningAmber sx={{ color: 'warning.main', flexShrink: 0, mt: 0.5 }} />
-                    <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                  <Box className="export-form__schedule-warning">
+                    <WarningAmber className="export-form__schedule-warning-icon" />
+                    <Typography variant="body2" className="export-form__schedule-warning-text">
                       {scheduleWarning}
                     </Typography>
                   </Box>
                 )}
-                <Box>
-                  <strong>Courses to Export: </strong>
+                <Box className="export-form__courses-list">
+                  <span className="export-form__courses-list-label">Courses to Export:</span>
                   {selectedYear.quarters
                     .find((q) => q.name === selectedQuarterName)
                     ?.courses?.filter((course) => !isCustomCourse(course))

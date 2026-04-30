@@ -1,0 +1,64 @@
+// Export button and dialog styles
+// Spacing unit: MUI uses 8px base unit
+
+.export-form {
+  display: grid;
+  gap: 16px; // spacing(2)
+  padding-top: 8px; // spacing(1)
+
+  &__year-quarter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px; // spacing(2)
+  }
+
+  &__schedule-warning {
+    display: flex;
+    gap: 8px; // spacing(1)
+    padding: 12px; // spacing(1.5)
+    background-color: var(--mui-palette-action-hover);
+    border-radius: var(--mui-shape-borderRadius);
+    align-items: flex-start;
+
+    &-icon {
+      color: var(--mui-palette-warning-main);
+      flex-shrink: 0;
+      margin-top: 4px; // spacing(0.5)
+    }
+
+    &-text {
+      color: var(--mui-palette-text-primary);
+    }
+  }
+
+  &__no-courses {
+    padding: 0;
+    margin: 0;
+  }
+
+  &__courses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; // spacing(1)
+
+    &-label {
+      font-weight: 700;
+    }
+  }
+}
+
+// Year display component within dropdown
+.year-display {
+  display: flex;
+  flex-direction: row;
+  gap: 8px; // spacing(1)
+  align-items: center;
+
+  &__name {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__range {
+    color: var(--mui-palette-text-secondary);
+  }
+}
