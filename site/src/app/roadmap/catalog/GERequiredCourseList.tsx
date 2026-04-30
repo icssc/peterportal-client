@@ -49,7 +49,7 @@ const CHCRequirements: FC = () => {
       setRequirements(formattedReqs);
       setLoading(false);
     });
-  }, [selection, requirements.length]);
+  }, [selection]);
 
   const handleSelectionChange = (newSelection: ChcTrackSelection) => {
     dispatch(setCHCSelection({ plannerId: currentPlan.id, chc: newSelection }));
