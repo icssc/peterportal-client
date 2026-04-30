@@ -254,7 +254,7 @@ const ExportButton = () => {
       );
       if (!released) {
         setScheduleWarning(
-          `The schedule for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available yet.`,
+          `The Schedule of Classes for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available.`,
         );
       }
     }
@@ -274,7 +274,7 @@ const ExportButton = () => {
       const released = isScheduleReleased(firstQuarterWithCourses.name, parseInt(yearStart, 10), currentWeek);
       if (!released) {
         setScheduleWarning(
-          `The schedule for ${quarterDisplayNames[firstQuarterWithCourses.name]} ${yearStart} may not be available yet.`,
+          `The Schedule of Classes for ${quarterDisplayNames[firstQuarterWithCourses.name]} ${yearStart} may not be available.`,
         );
       }
     }
@@ -290,7 +290,7 @@ const ExportButton = () => {
       const released = isScheduleReleased(quarterName as QuarterName, parseInt(selectedYearStart, 10), currentWeek);
       if (!released) {
         setScheduleWarning(
-          `The schedule for ${quarterDisplayNames[quarterName as QuarterName] ?? quarterName} ${selectedYearStart} may not be available yet.`,
+          `The Schedule of Classes for ${quarterDisplayNames[quarterName as QuarterName] ?? quarterName} ${selectedYearStart} may not be available.`,
         );
       }
     }
@@ -426,7 +426,7 @@ const ExportButton = () => {
       );
       if (!released) {
         setScheduleWarning(
-          `The schedule for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available yet.`,
+          `The Schedule of Classes for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available.`,
         );
       }
     }
