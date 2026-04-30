@@ -70,9 +70,10 @@ const isScheduleReleased = (
   currentWeek: { week: number; quarter: QuarterName; year: number } | null,
   now: Date = new Date(),
 ): boolean => {
-  // Summer schedules are always released March 1
+  // Summer schedules are released on March 1 of the target year's calendar year
   if (targetQuarter.includes('Summer')) {
-    return now.getMonth() >= 2 || (now.getMonth() === 2 && now.getDate() >= 1);
+    const summerReleaseDate = new Date(targetYear, 2, 1);
+    return now >= summerReleaseDate;
   }
 
   // Regular quarters: released Saturday of week 5 of the previous quarter
