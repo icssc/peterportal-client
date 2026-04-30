@@ -16,7 +16,7 @@ import {
   Divider,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { IosShare } from '@mui/icons-material';
+import { IosShare, WarningAmber } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 import { isCustomCourse, quarterDisplayNames } from '../../helpers/planner';
 import { type QuarterName } from '@peterportal/types';
@@ -31,17 +31,142 @@ import {
 import { useSaveRoadmap } from '../../hooks/planner';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 
+// Parse currentWeek like "Week 5 • Spring Quarter 2026"
+const parseCurrentWeek = (weekString: string): { week: number; quarter: QuarterName; year: number } | null => {
+  const match = weekString.match(/Week (\d+) • (\w+) Quarter (\d+)/);
+  if (!match) return null;
+  const [, weekStr, quarterStr, yearStr] = match;
+  const week = parseInt(weekStr, 10);
+  const year = parseInt(yearStr, 10);
+  // Map quarter string to QuarterName
+  const quarterMap: Record<string, QuarterName> = {
+    Fall: 'Fall',
+    Winter: 'Winter',
+    Spring: 'Spring',
+    Summer: 'Summer1', // Fallback to Summer1 if just "Summer"
+  };
+  const quarter = (quarterMap[quarterStr] ?? quarterStr) as QuarterName;
+  return { week, quarter, year };
+};
+
+const getQuarterOrder = (quarter: QuarterName): number => {
+  const order: Record<QuarterName, number> = {
+    Fall: 0,
+    Winter: 1,
+    Spring: 2,
+    Summer1: 2.3,
+    Summer10wk: 2.5,
+    Summer2: 2.7,
+  };
+  return order[quarter] ?? 0;
+};
+
+// Determine if a quarter's schedule has been released
+const isScheduleReleased = (
+  targetQuarter: QuarterName,
+  targetYear: number,
+  currentWeek: { week: number; quarter: QuarterName; year: number } | null,
+  now: Date = new Date(),
+): boolean => {
+  // Summer schedules are always released March 1
+  if (targetQuarter.includes('Summer')) {
+    return now.getMonth() >= 2 || (now.getMonth() === 2 && now.getDate() >= 1);
+  }
+
+  // Regular quarters: released Saturday of week 5 of the previous quarter
+  if (!currentWeek) return false;
+
+  // Get previous quarter
+  const prevQuarterOrder = getQuarterOrder(targetQuarter) - 1;
+  let prevAcademicYear = targetYear;
+  let prevQuarterName: QuarterName = 'Fall';
+
+  if (prevQuarterOrder < 0) {
+    prevAcademicYear -= 1;
+    prevQuarterName = 'Spring'; // Previous quarter before Fall is Spring of previous year
+  } else {
+    const quarters: QuarterName[] = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'Summer2'];
+    prevQuarterName = quarters.find((q) => getQuarterOrder(q) === prevQuarterOrder) ?? 'Fall';
+  }
+
+  const currentAcademicYear = currentWeek.quarter === 'Fall' ? currentWeek.year : currentWeek.year - 1;
+
+  // Check if current time is at or past week 5 of the previous quarter
+  if (currentAcademicYear > prevAcademicYear) {
+    return true;
+  }
+  if (
+    currentAcademicYear === prevAcademicYear &&
+    getQuarterOrder(currentWeek.quarter) > getQuarterOrder(prevQuarterName)
+  ) {
+    return true;
+  }
+  if (currentAcademicYear === prevAcademicYear && currentWeek.quarter === prevQuarterName && currentWeek.week > 5) {
+    return true;
+  }
+
+  return false;
+};
+
+// Get next quarter chronologically that has courses
+const getNextQuarterWithCourses = (
+  roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: unknown[] }[] }[],
+  currentWeek: { week: number; quarter: QuarterName; year: number } | null,
+): { yearStart: string; quarterName: string } => {
+  // Flatten all quarters with their years
+  const allQuartersWithYears: Array<{
+    yearStart: number;
+    quarterName: QuarterName;
+  }> = [];
+
+  for (const year of roadmapYears) {
+    for (const quarter of year.quarters) {
+      if ((quarter.courses ?? []).length > 0) {
+        allQuartersWithYears.push({
+          yearStart: year.startYear,
+          quarterName: quarter.name,
+        });
+      }
+    }
+  }
+
+  if (allQuartersWithYears.length === 0) {
+    return { yearStart: '', quarterName: '' };
+  }
+
+  // If no current week info, just return the first one with courses
+  if (!currentWeek) {
+    const first = allQuartersWithYears[0];
+    return { yearStart: String(first.yearStart), quarterName: first.quarterName };
+  }
+
+  allQuartersWithYears.sort((a, b) => {
+    const yearDiff = a.yearStart - b.yearStart;
+    if (yearDiff !== 0) return yearDiff;
+    return getQuarterOrder(a.quarterName) - getQuarterOrder(b.quarterName);
+  });
+
+  const currentAcademicYear = currentWeek.quarter === 'Fall' ? currentWeek.year : currentWeek.year - 1;
+  const currentQuarterOrder = getQuarterOrder(currentWeek.quarter);
+
+  for (const qtr of allQuartersWithYears) {
+    if (qtr.yearStart > currentAcademicYear) {
+      return { yearStart: String(qtr.yearStart), quarterName: qtr.quarterName };
+    }
+    if (qtr.yearStart === currentAcademicYear && getQuarterOrder(qtr.quarterName) > currentQuarterOrder) {
+      return { yearStart: String(qtr.yearStart), quarterName: qtr.quarterName };
+    }
+  }
+
+  // If no future quarter with courses, return the first one
+  return { yearStart: String(allQuartersWithYears[0].yearStart), quarterName: allQuartersWithYears[0].quarterName };
+};
+
 const getDefaultExportSelection = (
   roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: unknown[] }[] }[],
+  currentWeek: { week: number; quarter: QuarterName; year: number } | null,
 ) => {
-  const firstYear = roadmapYears.find((y) => y.quarters.some((q) => (q.courses ?? []).length > 0));
-  if (!firstYear) return { yearStart: '', quarterName: '' };
-
-  const firstQuarter = firstYear.quarters.find((q) => (q.courses ?? []).length > 0);
-  return {
-    yearStart: String(firstYear.startYear),
-    quarterName: firstQuarter?.name ?? '',
-  };
+  return getNextQuarterWithCourses(roadmapYears, currentWeek);
 };
 
 const quarterYearOffsets: Record<QuarterName, number> = {
@@ -69,6 +194,7 @@ const ExportButton = () => {
   const [selectedYearStart, setSelectedYearStart] = useState('');
   const [selectedQuarterName, setSelectedQuarterName] = useState('');
   const [autoExport, setAutoExport] = useState(false);
+  const [scheduleWarning, setScheduleWarning] = useState('');
   const allPlans = useAppSelector(selectAllPlans);
   const currentPlan = useAppSelector(selectCurrentPlan);
   const { handler: saveRoadmap } = useSaveRoadmap();
@@ -77,6 +203,9 @@ const ExportButton = () => {
   const [saving, setSaving] = useState(false);
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSavedIndex = useAppSelector((state) => state.roadmap.savedRevisionIndex);
+  const schedule = useAppSelector((state) => state.schedule);
+
+  const currentWeek = parseCurrentWeek(schedule?.currentWeek ?? '');
 
   const selectedRoadmap = allPlans.find((plan) => String(plan.id) === selectedRoadmapId);
   const roadmapYears = selectedRoadmap?.content.yearPlans ?? [];
@@ -98,6 +227,7 @@ const ExportButton = () => {
     setSelectedRoadmapId('');
     setSelectedYearStart('');
     setSelectedQuarterName('');
+    setScheduleWarning('');
   };
 
   const handleRoadmapChange = (event: SelectChangeEvent<string>) => {
@@ -106,10 +236,25 @@ const ExportButton = () => {
 
     const roadmap = allPlans.find((plan) => String(plan.id) === roadmapId);
     const nextSelection = roadmap
-      ? getDefaultExportSelection(roadmap.content.yearPlans)
+      ? getDefaultExportSelection(roadmap.content.yearPlans, currentWeek)
       : { yearStart: '', quarterName: '' };
     setSelectedYearStart(nextSelection.yearStart);
     setSelectedQuarterName(nextSelection.quarterName);
+    setScheduleWarning('');
+
+    // Check if schedule is released for the selected quarter
+    if (nextSelection.quarterName && nextSelection.yearStart) {
+      const released = isScheduleReleased(
+        nextSelection.quarterName as QuarterName,
+        parseInt(nextSelection.yearStart, 10),
+        currentWeek,
+      );
+      if (!released) {
+        setScheduleWarning(
+          `The schedule for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available yet.`,
+        );
+      }
+    }
   };
 
   const handleYearChange = (event: SelectChangeEvent<string>) => {
@@ -119,10 +264,33 @@ const ExportButton = () => {
     const year = roadmapYears.find((planYear) => String(planYear.startYear) === yearStart);
     const firstQuarterWithCourses = year?.quarters.find((q) => (q.courses ?? []).length > 0);
     setSelectedQuarterName(firstQuarterWithCourses?.name ?? '');
+    setScheduleWarning('');
+
+    // Check if schedule is released
+    if (firstQuarterWithCourses) {
+      const released = isScheduleReleased(firstQuarterWithCourses.name, parseInt(yearStart, 10), currentWeek);
+      if (!released) {
+        setScheduleWarning(
+          `The schedule for ${quarterDisplayNames[firstQuarterWithCourses.name]} ${yearStart} may not be available yet.`,
+        );
+      }
+    }
   };
 
   const handleQuarterChange = (event: SelectChangeEvent<string>) => {
-    setSelectedQuarterName(event.target.value);
+    const quarterName = event.target.value;
+    setSelectedQuarterName(quarterName);
+    setScheduleWarning('');
+
+    // Check if schedule is released for this quarter
+    if (quarterName && selectedYearStart) {
+      const released = isScheduleReleased(quarterName as QuarterName, parseInt(selectedYearStart, 10), currentWeek);
+      if (!released) {
+        setScheduleWarning(
+          `The schedule for ${quarterDisplayNames[quarterName as QuarterName] ?? quarterName} ${selectedYearStart} may not be available yet.`,
+        );
+      }
+    }
   };
 
   const handleExport = useCallback(async () => {
@@ -228,11 +396,11 @@ const ExportButton = () => {
       );
 
       if (!selectedYearObj) {
-        const nextSelection = getDefaultExportSelection(alreadySelected.content.yearPlans);
+        const nextSelection = getDefaultExportSelection(alreadySelected.content.yearPlans, currentWeek);
         setSelectedYearStart(nextSelection.yearStart);
         setSelectedQuarterName(nextSelection.quarterName);
       } else if (!selectedYearObj.quarters.some((q) => q.name === selectedQuarterName)) {
-        const nextSelection = getDefaultExportSelection(alreadySelected.content.yearPlans);
+        const nextSelection = getDefaultExportSelection(alreadySelected.content.yearPlans, currentWeek);
         setSelectedQuarterName(nextSelection.quarterName);
       }
 
@@ -240,11 +408,26 @@ const ExportButton = () => {
     }
 
     const roadmap = allPlans.find((plan) => plan.id === currentPlan.id) ?? allPlans[0];
-    const nextSelection = getDefaultExportSelection(roadmap.content.yearPlans);
+    const nextSelection = getDefaultExportSelection(roadmap.content.yearPlans, currentWeek);
     setSelectedRoadmapId(String(roadmap.id));
     setSelectedYearStart(nextSelection.yearStart);
     setSelectedQuarterName(nextSelection.quarterName);
-  }, [showModal, allPlans, currentPlan.id, selectedRoadmapId, selectedYearStart, selectedQuarterName]);
+    setScheduleWarning('');
+
+    // Check if schedule is released for the default selection
+    if (nextSelection.quarterName && nextSelection.yearStart) {
+      const released = isScheduleReleased(
+        nextSelection.quarterName as QuarterName,
+        parseInt(nextSelection.yearStart, 10),
+        currentWeek,
+      );
+      if (!released) {
+        setScheduleWarning(
+          `The schedule for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available yet.`,
+        );
+      }
+    }
+  }, [showModal, allPlans, currentPlan.id, selectedRoadmapId, selectedYearStart, selectedQuarterName, currentWeek]);
 
   const roadmapHasNoCourses = () =>
     !roadmapYears.some((y) =>
@@ -330,10 +513,26 @@ const ExportButton = () => {
                 </FormControl>
               </Box>
             )}
-
             {selectedYear && (
               <>
                 <Divider></Divider>
+                {scheduleWarning && (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 1,
+                      p: 1.5,
+                      backgroundColor: 'action.hover',
+                      borderRadius: 1,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <WarningAmber sx={{ color: 'warning.main', flexShrink: 0, mt: 0.5 }} />
+                    <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                      {scheduleWarning}
+                    </Typography>
+                  </Box>
+                )}
                 <Box>
                   <strong>Courses to Export: </strong>
                   {selectedYear.quarters
