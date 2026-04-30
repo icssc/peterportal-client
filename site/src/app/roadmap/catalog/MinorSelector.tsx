@@ -77,11 +77,11 @@ const MinorSelector: FC = () => {
 
   useEffect(() => {
     if (!minors.length || !isLoggedIn) return;
-    // if (selectedMinors.length) return;
     if (hasFetchedSelectedMinors.current) return;
     hasFetchedSelectedMinors.current = true;
 
     setMinorsLoading(true);
+
     trpc.programs.getSavedMinors
       .query()
       .then((minorIds) => {
