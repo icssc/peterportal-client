@@ -179,6 +179,16 @@ const quarterYearOffsets: Record<QuarterName, number> = {
   Summer10wk: 1,
 };
 
+const getExportTermYear = (roadmapYearStart: number, quarterName: QuarterName) =>
+  roadmapYearStart + (quarterYearOffsets[quarterName] ?? 0);
+
+const getScheduleWarningText = (quarterName: QuarterName, roadmapYearStart: number) => {
+  const exportYear = getExportTermYear(roadmapYearStart, quarterName);
+  const quarterLabel = quarterDisplayNames[quarterName] ?? quarterName;
+
+  return `The Schedule of Classes for ${quarterLabel} ${exportYear} may be unavailable.`;
+};
+
 const YearDisplayWithRange = ({ year }: { year: { name: string; startYear: number } }) => (
   <Box className="year-display">
     <Typography variant="body2" className="year-display__name">
@@ -247,15 +257,14 @@ const ExportButton = () => {
 
     // Check if schedule is released for the selected quarter
     if (nextSelection.quarterName && nextSelection.yearStart) {
+      const exportYearStart = parseInt(nextSelection.yearStart, 10);
       const released = isScheduleReleased(
         nextSelection.quarterName as QuarterName,
-        parseInt(nextSelection.yearStart, 10),
+        getExportTermYear(exportYearStart, nextSelection.quarterName as QuarterName),
         currentWeek,
       );
       if (!released) {
-        setScheduleWarning(
-          `The Schedule of Classes for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available.`,
-        );
+        setScheduleWarning(getScheduleWarningText(nextSelection.quarterName as QuarterName, exportYearStart));
       }
     }
   };
@@ -271,11 +280,14 @@ const ExportButton = () => {
 
     // Check if schedule is released
     if (firstQuarterWithCourses) {
-      const released = isScheduleReleased(firstQuarterWithCourses.name, parseInt(yearStart, 10), currentWeek);
+      const exportYearStart = parseInt(yearStart, 10);
+      const released = isScheduleReleased(
+        firstQuarterWithCourses.name,
+        getExportTermYear(exportYearStart, firstQuarterWithCourses.name),
+        currentWeek,
+      );
       if (!released) {
-        setScheduleWarning(
-          `The Schedule of Classes for ${quarterDisplayNames[firstQuarterWithCourses.name]} ${yearStart} may not be available.`,
-        );
+        setScheduleWarning(getScheduleWarningText(firstQuarterWithCourses.name, exportYearStart));
       }
     }
   };
@@ -287,11 +299,14 @@ const ExportButton = () => {
 
     // Check if schedule is released for this quarter
     if (quarterName && selectedYearStart) {
-      const released = isScheduleReleased(quarterName as QuarterName, parseInt(selectedYearStart, 10), currentWeek);
+      const exportYearStart = parseInt(selectedYearStart, 10);
+      const released = isScheduleReleased(
+        quarterName as QuarterName,
+        getExportTermYear(exportYearStart, quarterName as QuarterName),
+        currentWeek,
+      );
       if (!released) {
-        setScheduleWarning(
-          `The Schedule of Classes for ${quarterDisplayNames[quarterName as QuarterName] ?? quarterName} ${selectedYearStart} may not be available.`,
-        );
+        setScheduleWarning(getScheduleWarningText(quarterName as QuarterName, exportYearStart));
       }
     }
   };
@@ -419,15 +434,14 @@ const ExportButton = () => {
 
     // Check if schedule is released for the default selection
     if (nextSelection.quarterName && nextSelection.yearStart) {
+      const exportYearStart = parseInt(nextSelection.yearStart, 10);
       const released = isScheduleReleased(
         nextSelection.quarterName as QuarterName,
-        parseInt(nextSelection.yearStart, 10),
+        getExportTermYear(exportYearStart, nextSelection.quarterName as QuarterName),
         currentWeek,
       );
       if (!released) {
-        setScheduleWarning(
-          `The Schedule of Classes for ${quarterDisplayNames[nextSelection.quarterName as QuarterName] ?? nextSelection.quarterName} ${nextSelection.yearStart} may not be available.`,
-        );
+        setScheduleWarning(getScheduleWarningText(nextSelection.quarterName as QuarterName, exportYearStart));
       }
     }
   }, [showModal, allPlans, currentPlan.id, selectedRoadmapId, selectedYearStart, selectedQuarterName, currentWeek]);
