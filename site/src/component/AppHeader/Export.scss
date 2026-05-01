@@ -53,6 +53,10 @@
   flex-direction: row;
   gap: 8px; // spacing(1)
   align-items: center;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &__name {
     font-variant-numeric: tabular-nums;
@@ -60,5 +64,7 @@
 
   &__range {
     color: var(--mui-palette-text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }
