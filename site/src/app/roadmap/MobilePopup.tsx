@@ -20,6 +20,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
 
   useEffect(() => {
     const element = popupRef.current;
+    const overlay = overlayRef.current;
     if (!element) return;
 
     const handleTouchStart = (e: TouchEvent) => {
@@ -28,28 +29,50 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches[0].clientY - touchStartY.current > 100) {
+      if (e.changedTouches[0].clientY - touchStartY.current > 400 && element.scrollTop === 0) {
         onClose();
       }
       element.style.transform = '';
       element.style.transition = '';
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
+    const handleTouchMovePopup = (e: TouchEvent) => {
+      const delta = e.touches[0].clientY - touchStartY.current;
+      if (delta > 0 && element.scrollTop === 0) {
+        element.style.transform = `translateY(${delta}px)`;
+      }
+    };
+
+    const handleOverlayTouchEnd = (e: TouchEvent) => {
+      if (e.changedTouches[0].clientY - touchStartY.current > 50) {
+        onClose();
+      }
+      element.style.transform = '';
+      element.style.transition = '';
+    };
+
+    const handleOverlayTouchMove = (e: TouchEvent) => {
       const delta = e.touches[0].clientY - touchStartY.current;
       if (delta > 0) {
         element.style.transform = `translateY(${delta}px)`;
       }
     };
 
-    element.addEventListener('touchstart', handleTouchStart);
-    element.addEventListener('touchend', handleTouchEnd);
-    element.addEventListener('touchmove', handleTouchMove);
+    element?.addEventListener('touchstart', handleTouchStart);
+    element?.addEventListener('touchend', handleTouchEnd);
+    element?.addEventListener('touchmove', handleTouchMovePopup);
+
+    overlay?.addEventListener('touchstart', handleTouchStart);
+    overlay?.addEventListener('touchend', handleOverlayTouchEnd);
+    overlay?.addEventListener('touchmove', handleOverlayTouchMove);
 
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handleTouchMove);
+      element.removeEventListener('touchmove', handleTouchMovePopup);
+      element.removeEventListener('touchstart', handleTouchStart);
+      element.removeEventListener('touchend', handleOverlayTouchEnd);
+      element.removeEventListener('touchmove', handleOverlayTouchMove);
     };
   }, [show, onClose]);
 
