@@ -184,6 +184,9 @@ const quarterYearOffsets: Record<QuarterName, number> = {
 const getExportTermYear = (roadmapYearStart: number, quarterName: QuarterName) =>
   roadmapYearStart + (quarterYearOffsets[quarterName] ?? 0);
 
+const getScheduleReleaseComparisonYear = (roadmapYearStart: number, quarterName: QuarterName) =>
+  quarterName.includes('Summer') ? getExportTermYear(roadmapYearStart, quarterName) : roadmapYearStart;
+
 const getScheduleWarningText = (quarterName: QuarterName, roadmapYearStart: number) => {
   const exportYear = getExportTermYear(roadmapYearStart, quarterName);
   const quarterLabel = quarterDisplayNames[quarterName] ?? quarterName;
@@ -260,11 +263,8 @@ const ExportButton = () => {
     // Check if schedule is released for the selected quarter
     if (nextSelection.quarterName && nextSelection.yearStart) {
       const exportYearStart = parseInt(nextSelection.yearStart, 10);
-      const released = isScheduleReleased(
-        nextSelection.quarterName as QuarterName,
-        getExportTermYear(exportYearStart, nextSelection.quarterName as QuarterName),
-        currentWeek,
-      );
+      const releaseYear = getScheduleReleaseComparisonYear(exportYearStart, nextSelection.quarterName as QuarterName);
+      const released = isScheduleReleased(nextSelection.quarterName as QuarterName, releaseYear, currentWeek);
       if (!released) {
         setScheduleWarning(getScheduleWarningText(nextSelection.quarterName as QuarterName, exportYearStart));
       }
@@ -283,11 +283,8 @@ const ExportButton = () => {
     // Check if schedule is released
     if (firstQuarterWithCourses) {
       const exportYearStart = parseInt(yearStart, 10);
-      const released = isScheduleReleased(
-        firstQuarterWithCourses.name,
-        getExportTermYear(exportYearStart, firstQuarterWithCourses.name),
-        currentWeek,
-      );
+      const releaseYear = getScheduleReleaseComparisonYear(exportYearStart, firstQuarterWithCourses.name);
+      const released = isScheduleReleased(firstQuarterWithCourses.name, releaseYear, currentWeek);
       if (!released) {
         setScheduleWarning(getScheduleWarningText(firstQuarterWithCourses.name, exportYearStart));
       }
@@ -302,11 +299,8 @@ const ExportButton = () => {
     // Check if schedule is released for this quarter
     if (quarterName && selectedYearStart) {
       const exportYearStart = parseInt(selectedYearStart, 10);
-      const released = isScheduleReleased(
-        quarterName as QuarterName,
-        getExportTermYear(exportYearStart, quarterName as QuarterName),
-        currentWeek,
-      );
+      const releaseYear = getScheduleReleaseComparisonYear(exportYearStart, quarterName as QuarterName);
+      const released = isScheduleReleased(quarterName as QuarterName, releaseYear, currentWeek);
       if (!released) {
         setScheduleWarning(getScheduleWarningText(quarterName as QuarterName, exportYearStart));
       }
@@ -437,11 +431,8 @@ const ExportButton = () => {
     // Check if schedule is released for the default selection
     if (nextSelection.quarterName && nextSelection.yearStart) {
       const exportYearStart = parseInt(nextSelection.yearStart, 10);
-      const released = isScheduleReleased(
-        nextSelection.quarterName as QuarterName,
-        getExportTermYear(exportYearStart, nextSelection.quarterName as QuarterName),
-        currentWeek,
-      );
+      const releaseYear = getScheduleReleaseComparisonYear(exportYearStart, nextSelection.quarterName as QuarterName);
+      const released = isScheduleReleased(nextSelection.quarterName as QuarterName, releaseYear, currentWeek);
       if (!released) {
         setScheduleWarning(getScheduleWarningText(nextSelection.quarterName as QuarterName, exportYearStart));
       }
