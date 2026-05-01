@@ -20,6 +20,7 @@ import { IosShare, WarningAmber } from '@mui/icons-material';
 import { CircularProgress } from '@mui/material';
 import { isCustomCourse, quarterDisplayNames } from '../../helpers/planner';
 import { type QuarterName } from '@peterportal/types';
+import type { PlannerQuarterCourse } from '../../types/types';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import {
   selectAllPlans,
@@ -69,9 +70,10 @@ const isScheduleReleased = (
   currentWeek: { week: number; quarter: QuarterName; year: number } | null,
   now: Date = new Date(),
 ): boolean => {
-  // Summer schedules are always released March 1
+  // Summer schedules are released on March 1 of the target year's calendar year
   if (targetQuarter.includes('Summer')) {
-    return now.getMonth() >= 2 || (now.getMonth() === 2 && now.getDate() >= 1);
+    const summerReleaseDate = new Date(targetYear, 2, 1);
+    return now >= summerReleaseDate;
   }
 
   // Regular quarters: released Saturday of week 5 of the previous quarter
@@ -111,7 +113,7 @@ const isScheduleReleased = (
 
 // Get next quarter chronologically that has courses
 const getNextQuarterWithCourses = (
-  roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: unknown[] }[] }[],
+  roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: PlannerQuarterCourse[] }[] }[],
   currentWeek: { week: number; quarter: QuarterName; year: number } | null,
 ): { yearStart: string; quarterName: string } => {
   // Flatten all quarters with their years
@@ -122,7 +124,7 @@ const getNextQuarterWithCourses = (
 
   for (const year of roadmapYears) {
     for (const quarter of year.quarters) {
-      if ((quarter.courses ?? []).length > 0) {
+      if ((quarter.courses ?? []).some((c) => !isCustomCourse(c))) {
         allQuartersWithYears.push({
           yearStart: year.startYear,
           quarterName: quarter.name,
@@ -164,7 +166,7 @@ const getNextQuarterWithCourses = (
 };
 
 const getDefaultExportSelection = (
-  roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: unknown[] }[] }[],
+  roadmapYears: { startYear: number; quarters: { name: QuarterName; courses?: PlannerQuarterCourse[] }[] }[],
   currentWeek: { week: number; quarter: QuarterName; year: number } | null,
 ) => {
   return getNextQuarterWithCourses(roadmapYears, currentWeek);
@@ -274,7 +276,7 @@ const ExportButton = () => {
     setSelectedYearStart(yearStart);
 
     const year = roadmapYears.find((planYear) => String(planYear.startYear) === yearStart);
-    const firstQuarterWithCourses = year?.quarters.find((q) => (q.courses ?? []).length > 0);
+    const firstQuarterWithCourses = year?.quarters.find((q) => (q.courses ?? []).some((c) => !isCustomCourse(c)));
     setSelectedQuarterName(firstQuarterWithCourses?.name ?? '');
     setScheduleWarning('');
 
@@ -499,7 +501,7 @@ const ExportButton = () => {
                     }}
                   >
                     {roadmapYears.map((year) => {
-                      const hasCourses = year.quarters.some((q) => (q.courses ?? []).length > 0);
+                      const hasCourses = year.quarters.some((q) => (q.courses ?? []).some((c) => !isCustomCourse(c)));
                       return (
                         <MenuItem key={year.startYear} value={String(year.startYear)} disabled={!hasCourses}>
                           <YearDisplayWithRange year={year} />
@@ -519,7 +521,7 @@ const ExportButton = () => {
                     renderValue={(val) => quarterDisplayNames[val as QuarterName] ?? ''}
                   >
                     {yearQuarters.map((quarter) => {
-                      const isDisabled = (quarter.courses ?? []).length === 0;
+                      const isDisabled = !(quarter.courses ?? []).some((c) => !isCustomCourse(c));
                       return (
                         <MenuItem key={quarter.name} value={quarter.name} disabled={isDisabled}>
                           {quarterDisplayNames[quarter.name]}
