@@ -87,7 +87,10 @@ export const planner = pgTable(
     shareId: text('share_id'),
     chc: text('chc'),
   },
-  (table) => [index('planners_user_id_idx').on(table.userId)],
+  (table) => [
+    index('planners_user_id_idx').on(table.userId),
+    unique('unique_planner_user_id_name').on(table.userId, table.name),
+  ],
 );
 
 export const plannerYear = pgTable(
