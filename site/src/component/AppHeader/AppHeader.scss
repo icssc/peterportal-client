@@ -34,11 +34,12 @@
     letter-spacing: 0;
 
     @media (max-width: globals.$mobile-cutoff) {
-      margin-inline: 4px;
-      &[aria-label] {
-        min-width: 0;
-        width: 32px;
-        padding: 4px;
+      &.MuiIconButton-root {
+        margin-right: 4px;
+      }
+
+      .MuiSvgIcon-root {
+        font-size: 20px;
       }
     }
   }

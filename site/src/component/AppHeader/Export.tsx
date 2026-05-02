@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import {
   Box,
   Button,
+  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
@@ -206,9 +207,13 @@ const YearDisplayWithRange = ({ year }: { year: { name: string; startYear: numbe
   </Box>
 );
 
-const ExportButton = () => {
+interface ExportDialogProps {
+  showModal: boolean;
+  setShowModal: (s: boolean) => void;
+}
+
+const ExportDialog = ({ showModal, setShowModal }: ExportDialogProps) => {
   const searchParams = useSearchParams();
-  const [showModal, setShowModal] = useState(false);
   const [selectedRoadmapId, setSelectedRoadmapId] = useState('');
   const [selectedYearStart, setSelectedYearStart] = useState('');
   const [selectedQuarterName, setSelectedQuarterName] = useState('');
@@ -223,7 +228,6 @@ const ExportButton = () => {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSavedIndex = useAppSelector((state) => state.roadmap.savedRevisionIndex);
   const schedule = useAppSelector((state) => state.schedule);
-  const isMobile = useIsMobile();
 
   const currentWeek = parseCurrentWeek(schedule?.currentWeek ?? '');
 
@@ -231,16 +235,6 @@ const ExportButton = () => {
   const roadmapYears = selectedRoadmap?.content.yearPlans ?? [];
   const selectedYear = roadmapYears.find((year) => String(year.startYear) === selectedYearStart);
   const yearQuarters = selectedYear?.quarters ?? [];
-
-  const openExportModal = () => {
-    if (!isLoggedIn) {
-      dispatch(setToastMsg('Sign in to export your roadmap'));
-      dispatch(setToastSeverity('info'));
-      dispatch(setShowToast(true));
-      return;
-    }
-    setShowModal(true);
-  };
 
   const handleClose = () => {
     setShowModal(false);
@@ -392,7 +386,7 @@ const ExportButton = () => {
       setShowModal(true);
       setAutoExport(true);
     }
-  }, [searchParams, allPlans.length, isLoggedIn]);
+  }, [setShowModal, searchParams, allPlans.length, isLoggedIn]);
 
   // Auto-trigger export after restoring from URL params
   useEffect(() => {
@@ -447,123 +441,152 @@ const ExportButton = () => {
     );
 
   return (
-    <>
-      <Button
-        className="header-button"
-        variant="text"
-        size="medium"
-        color="inherit"
-        startIcon={!isMobile && <IosShare />}
-        onClick={openExportModal}
-        aria-label="Export"
-      >
-        {isMobile ? <IosShare /> : 'Export'}
-      </Button>
-      <Dialog open={showModal} onClose={handleClose} className="changelog-modal" maxWidth="xs" fullWidth>
-        <DialogTitle>Export to Scheduler</DialogTitle>
-        <DialogContent>
-          <Box component="form" noValidate onSubmit={handleSubmit} className="export-form">
-            <FormControl fullWidth>
-              <InputLabel id="export-roadmap-label">Roadmap</InputLabel>
-              <Select
-                labelId="export-roadmap-label"
-                label="Roadmap"
-                value={selectedRoadmapId ?? ''}
-                onChange={handleRoadmapChange}
-              >
-                {allPlans.map((plan) => (
-                  <MenuItem key={plan.id} value={String(plan.id)}>
-                    {plan.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {roadmapHasNoCourses() ? (
-              <p className="export-form__no-courses">This roadmap has no courses to export.</p>
-            ) : (
-              <Box className="export-form__year-quarter-grid">
-                <FormControl fullWidth>
-                  <InputLabel id="export-year-label">Year</InputLabel>
-                  <Select
-                    labelId="export-year-label"
-                    label="Year"
-                    value={selectedYearStart ?? ''}
-                    onChange={handleYearChange}
-                    renderValue={(val) => {
-                      const year = roadmapYears.find((y) => String(y.startYear) === String(val));
-                      return year ? <YearDisplayWithRange year={year} /> : '';
-                    }}
-                  >
-                    {roadmapYears.map((year) => {
-                      const hasCourses = year.quarters.some((q) => (q.courses ?? []).some((c) => !isCustomCourse(c)));
-                      return (
-                        <MenuItem key={year.startYear} value={String(year.startYear)} disabled={!hasCourses}>
-                          <YearDisplayWithRange year={year} />
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+    <Dialog open={showModal} onClose={handleClose} className="changelog-modal" maxWidth="xs" fullWidth>
+      <DialogTitle>Export to Scheduler</DialogTitle>
+      <DialogContent>
+        <Box component="form" noValidate onSubmit={handleSubmit} className="export-form">
+          <FormControl fullWidth>
+            <InputLabel id="export-roadmap-label">Roadmap</InputLabel>
+            <Select
+              labelId="export-roadmap-label"
+              label="Roadmap"
+              value={selectedRoadmapId ?? ''}
+              onChange={handleRoadmapChange}
+            >
+              {allPlans.map((plan) => (
+                <MenuItem key={plan.id} value={String(plan.id)}>
+                  {plan.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {roadmapHasNoCourses() ? (
+            <p className="export-form__no-courses">This roadmap has no courses to export.</p>
+          ) : (
+            <Box className="export-form__year-quarter-grid">
+              <FormControl fullWidth>
+                <InputLabel id="export-year-label">Year</InputLabel>
+                <Select
+                  labelId="export-year-label"
+                  label="Year"
+                  value={selectedYearStart ?? ''}
+                  onChange={handleYearChange}
+                  renderValue={(val) => {
+                    const year = roadmapYears.find((y) => String(y.startYear) === String(val));
+                    return year ? <YearDisplayWithRange year={year} /> : '';
+                  }}
+                >
+                  {roadmapYears.map((year) => {
+                    const hasCourses = year.quarters.some((q) => (q.courses ?? []).some((c) => !isCustomCourse(c)));
+                    return (
+                      <MenuItem key={year.startYear} value={String(year.startYear)} disabled={!hasCourses}>
+                        <YearDisplayWithRange year={year} />
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
 
-                <FormControl fullWidth disabled={yearQuarters.length === 0}>
-                  <InputLabel id="export-quarter-label">Quarter</InputLabel>
-                  <Select
-                    labelId="export-quarter-label"
-                    label="Quarter"
-                    value={selectedQuarterName ?? ''}
-                    onChange={handleQuarterChange}
-                    renderValue={(val) => quarterDisplayNames[val as QuarterName] ?? ''}
-                  >
-                    {yearQuarters.map((quarter) => {
-                      const isDisabled = !(quarter.courses ?? []).some((c) => !isCustomCourse(c));
-                      return (
-                        <MenuItem key={quarter.name} value={quarter.name} disabled={isDisabled}>
-                          {quarterDisplayNames[quarter.name]}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              </Box>
-            )}
-            {selectedYear && (
-              <>
-                <Divider></Divider>
-                {scheduleWarning && (
-                  <Box className="export-form__schedule-warning">
-                    <WarningAmber className="export-form__schedule-warning-icon" />
-                    <Typography variant="body2" className="export-form__schedule-warning-text">
-                      {scheduleWarning}
-                    </Typography>
-                  </Box>
-                )}
-                <Box className="export-form__courses-list">
-                  <span className="export-form__courses-list-label">Courses to Export:</span>
-                  {selectedYear.quarters
-                    .find((q) => q.name === selectedQuarterName)
-                    ?.courses?.filter((course) => !isCustomCourse(course))
-                    .map((course) => course.id)
-                    .join(', ') ?? 'None'}
+              <FormControl fullWidth disabled={yearQuarters.length === 0}>
+                <InputLabel id="export-quarter-label">Quarter</InputLabel>
+                <Select
+                  labelId="export-quarter-label"
+                  label="Quarter"
+                  value={selectedQuarterName ?? ''}
+                  onChange={handleQuarterChange}
+                  renderValue={(val) => quarterDisplayNames[val as QuarterName] ?? ''}
+                >
+                  {yearQuarters.map((quarter) => {
+                    const isDisabled = !(quarter.courses ?? []).some((c) => !isCustomCourse(c));
+                    return (
+                      <MenuItem key={quarter.name} value={quarter.name} disabled={isDisabled}>
+                        {quarterDisplayNames[quarter.name]}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+          {selectedYear && (
+            <>
+              <Divider></Divider>
+              {scheduleWarning && (
+                <Box className="export-form__schedule-warning">
+                  <WarningAmber className="export-form__schedule-warning-icon" />
+                  <Typography variant="body2" className="export-form__schedule-warning-text">
+                    {scheduleWarning}
+                  </Typography>
                 </Box>
-              </>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" color="inherit" onClick={handleClose}>
-            Close
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleExport}
-            disabled={saving || !selectedRoadmap || !selectedYear || !selectedQuarterName}
-            startIcon={saving ? <CircularProgress size={18} color="inherit" /> : undefined}
-          >
-            {saving ? 'Saving…' : currentIndex !== lastSavedIndex ? 'Save & Export' : 'Export'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+              )}
+              <Box className="export-form__courses-list">
+                <span className="export-form__courses-list-label">Courses to Export:</span>
+                {selectedYear.quarters
+                  .find((q) => q.name === selectedQuarterName)
+                  ?.courses?.filter((course) => !isCustomCourse(course))
+                  .map((course) => course.id)
+                  .join(', ') ?? 'None'}
+              </Box>
+            </>
+          )}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="text" color="inherit" onClick={handleClose}>
+          Close
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleExport}
+          disabled={saving || !selectedRoadmap || !selectedYear || !selectedQuarterName}
+          startIcon={saving ? <CircularProgress size={18} color="inherit" /> : undefined}
+        >
+          {saving ? 'Saving…' : currentIndex !== lastSavedIndex ? 'Save & Export' : 'Export'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+const ExportButton = () => {
+  const isMobile = useIsMobile();
+  const isLoggedIn = useIsLoggedIn();
+  const dispatch = useAppDispatch();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const openExportModal = () => {
+    if (!isLoggedIn) {
+      dispatch(setToastMsg('Sign in to export your roadmap'));
+      dispatch(setToastSeverity('info'));
+      dispatch(setShowToast(true));
+      return;
+    }
+    setShowModal(true);
+  };
+
+  return (
+    <>
+      {!isMobile && (
+        <Button
+          className="header-button"
+          variant="text"
+          size="medium"
+          color="inherit"
+          startIcon={<IosShare />}
+          onClick={openExportModal}
+          aria-label="Export"
+        >
+          Export
+        </Button>
+      )}
+      {isMobile && (
+        <IconButton onClick={openExportModal} color="inherit" className="header-button">
+          <IosShare />
+        </IconButton>
+      )}
+      <ExportDialog showModal={showModal} setShowModal={setShowModal} />
     </>
   );
 };
