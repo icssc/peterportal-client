@@ -30,7 +30,7 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false 
 
 export const CourseSynopsis: FC<CourseProp> = ({ course, clampDescription = 0 }) => {
   return (
-    <p className="course-synopsis" style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
+    <p className="course-info-clamp" style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
       <b className="title">{course.title}</b>
       <span className="description">{course.description}</span>
     </p>
@@ -41,7 +41,7 @@ export const PrerequisiteText: FC<CourseProp> = ({ course, clampDescription = 0 
   if (!course.prerequisiteText) return <></>;
 
   return (
-    <p style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
+    <p className="course-info-clamp" style={clampDescription ? { WebkitLineClamp: clampDescription } : {}}>
       <b>Prerequisites:</b> {course.prerequisiteText}
     </p>
   );
