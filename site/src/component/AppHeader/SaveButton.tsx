@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { useAppSelector } from '../../store/hooks';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
+import { useIsMobile } from '../../helpers/util';
 
 const SaveButton: FC = () => {
   const { handler: saveRoadmap } = useSaveRoadmap();
@@ -13,6 +14,7 @@ const SaveButton: FC = () => {
 
   const [saveInProgress, setSaveInProgress] = useState(false);
   const saveDisabled = roadmapLoading || (isLoggedIn && !customCoursesLoaded) || saveInProgress;
+  const isMobile = useIsMobile();
 
   const handleSave = useCallback(() => {
     if (saveDisabled) return;
@@ -39,13 +41,14 @@ const SaveButton: FC = () => {
       className="header-button"
       variant="text"
       size="medium"
-      startIcon={<SaveIcon />}
+      startIcon={!isMobile && <SaveIcon />}
       loading={saveInProgress}
       disabled={saveDisabled}
       onClick={handleSave}
       color="inherit"
+      aria-label="Save"
     >
-      Save
+      {isMobile ? <SaveIcon /> : 'Save'}
     </Button>
   );
 };

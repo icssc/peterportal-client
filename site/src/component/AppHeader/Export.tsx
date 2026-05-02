@@ -32,6 +32,7 @@ import {
 import { useSaveRoadmap } from '../../hooks/planner';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import './Export.scss';
+import { useIsMobile } from '../../helpers/util';
 
 // Parse currentWeek like "Week 5 • Spring Quarter 2026"
 const parseCurrentWeek = (weekString: string): { week: number; quarter: QuarterName; year: number } | null => {
@@ -222,6 +223,7 @@ const ExportButton = () => {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSavedIndex = useAppSelector((state) => state.roadmap.savedRevisionIndex);
   const schedule = useAppSelector((state) => state.schedule);
+  const isMobile = useIsMobile();
 
   const currentWeek = parseCurrentWeek(schedule?.currentWeek ?? '');
 
@@ -451,10 +453,11 @@ const ExportButton = () => {
         variant="text"
         size="medium"
         color="inherit"
-        startIcon={<IosShare />}
+        startIcon={!isMobile && <IosShare />}
         onClick={openExportModal}
+        aria-label="Export"
       >
-        Export
+        {isMobile ? <IosShare /> : 'Export'}
       </Button>
       <Dialog open={showModal} onClose={handleClose} className="changelog-modal" maxWidth="xs" fullWidth>
         <DialogTitle>Export to Scheduler</DialogTitle>

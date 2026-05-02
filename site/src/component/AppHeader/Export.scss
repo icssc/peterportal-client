@@ -1,12 +1,18 @@
+@use '../../globals';
+
 .export-form {
   display: grid;
   gap: 16px;
   padding-top: 8px;
 
   &__year-quarter-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: row;
     gap: 16px;
+
+    @media (max-width: globals.$mobile-cutoff) {
+      flex-direction: column;
+    }
   }
 
   &__schedule-warning {
