@@ -32,10 +32,9 @@
   .header-button {
     font-size: 12.25px;
     letter-spacing: 0;
-    height: 32px;
-    margin-inline: 4px;
 
     @media (max-width: globals.$mobile-cutoff) {
+      margin-inline: 4px;
       &[aria-label] {
         min-width: 0;
         width: 32px;
