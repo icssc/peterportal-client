@@ -32,8 +32,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { useRouter } from 'next/navigation';
-import { addPreview } from '../../store/slices/previewSlice';
-import { useCurrentPreview } from '../../hooks/preview';
 import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface AuthorEditButtonsProps {

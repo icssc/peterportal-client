@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation';
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
 import ClickableDiv from '../../component/ClickableDiv/ClickableDiv';
 
 interface CourseHitItemProps extends CourseGQLData {}
