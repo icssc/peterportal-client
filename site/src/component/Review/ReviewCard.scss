@@ -67,7 +67,6 @@
   .reviewcard-date {
     font-size: 12px;
     color: var(--mui-palette-text-secondary);
-    white-space: nowrap;
   }
 
   .edit-buttons {
@@ -132,14 +131,10 @@
   }
   .rating-label {
     font-size: 10px;
-    font-weight: 400;
-    text-align: center;
     line-height: 100%;
   }
   .rating-value {
     font-size: 30px;
-    font-weight: 400;
-    text-align: center;
     line-height: 100%;
   }
 }
@@ -270,7 +265,6 @@
 
       .MuiIconButton-root {
         padding: 2px;
-        border-radius: 0 3px 3px 0;
         color: var(--mui-palette-text-secondary);
 
         svg {
