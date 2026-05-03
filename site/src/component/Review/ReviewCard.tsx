@@ -10,7 +10,7 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { sortTerms } from '../../helpers/util';
-import { getProfessorTerms } from '../../helpers/reviews';
+import { getProfessorTerms, formatQuarter, displayReviewDate } from '../../helpers/reviews';
 import { useProfessorData } from '../../hooks/professorReviews';
 
 import PersonIcon from '@mui/icons-material/Person';
@@ -207,17 +207,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
     [currentPreview, course, dispatch],
   );
 
-  const formatQuarter = (quarter: string): string => {
-    const [year, term] = quarter.split(' ');
-    const termMap: Record<string, string> = {
-      Fall: 'F',
-      Winter: 'W',
-      Spring: 'Sp',
-      Summer: 'Su',
-    };
-    return `${termMap[term] ?? term}${year.slice(-2)}`;
-  };
-
   useEffect(() => {
     // if loading then return
     if (!profCache) {
@@ -327,9 +316,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
     }
   };
 
-  const upvoteClassname = review.userVote === 1 ? 'upvote colored-vote' : 'upvote';
-  const downvoteClassname = review.userVote === -1 ? 'downvote colored-vote' : 'downvote';
-
   const tooltipProps = {
     placement: 'top' as const,
     slotProps: createTooltipOffset(0, -10),
@@ -350,14 +336,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   const tags: string[] = review.tags?.slice() ?? [];
   if (review.textbook) tags.unshift('Requires textbook');
   if (review.attendance) tags.unshift('Mandatory attendance');
-
-  const displayReviewDate = (date: string | Date) => {
-    return new Date(date).toLocaleString('default', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  };
 
   return (
     <Card variant="outlined" className="reviewcard">
@@ -414,7 +392,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
           <div className="reviewcard-voting">
             <div className="reviewcard-voting-buttons">
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-                <span className={upvoteClassname}>
+                <span className={`upvote${review.userVote === 1 ? ' colored-vote' : ''}`}>
                   <span className="vote-count">{review.score > 0 ? review.score : 0}</span>
                   <IconButton onClick={upvote} disabled={!isLoggedIn} size="small">
                     {review.userVote === 1 ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
@@ -422,7 +400,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
                 </span>
               </Tooltip>
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-                <span className={downvoteClassname}>
+                <span className={`downvote${review.userVote === -1 ? ' colored-vote' : ''}`}>
                   <span className="vote-count">{review.score < 0 ? Math.abs(review.score) : 0}</span>
                   <IconButton onClick={downvote} disabled={!isLoggedIn} size="small">
                     {review.userVote === -1 ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
