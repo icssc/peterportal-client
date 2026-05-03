@@ -17,7 +17,6 @@
 .reviewcard-header {
   display: flex;
   flex-direction: column;
-  gap: 0;
 
   .reviewcard-header-top {
     display: flex;
@@ -49,7 +48,7 @@
   .reviewcard-author {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0;
 
     .reviewcard-author-name {
       font-weight: 500;
