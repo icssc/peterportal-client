@@ -23,11 +23,12 @@ interface CourseNameAndInfoProps {
   popupListener?: (open: boolean) => void;
   openPopoverLeft?: boolean;
   requiredCourses?: string[];
+  quarterMismatch?: string;
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
 }
 export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
-  const { data, openPopoverLeft, requiredCourses, popupListener, alwaysCollapse } = props;
+  const { data, openPopoverLeft, requiredCourses, quarterMismatch, popupListener, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const dispatch = useAppDispatch();
@@ -46,7 +47,9 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     dispatch(addPreview({ type: 'course', id: courseID }));
   };
 
-  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} />;
+  const popoverContent = (
+    <CoursePopover course={data} requiredCourses={requiredCourses} quarterMismatch={quarterMismatch} />
+  );
 
   return (
     <OverlayTrigger
@@ -60,11 +63,10 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         <Link className="name" href={courseRoute} target="_blank" rel="noopener noreferrer" onClick={handleLinkClick}>
           {courseID}
         </Link>
-        {requiredCourses && (
-          <span className="warning-container">
-            <WarningAmberIcon />
-          </span>
-        )}
+        <span className="warning-container">
+          {requiredCourses && <WarningAmberIcon />}
+          {quarterMismatch && <WarningAmberIcon className="warning-secondary" />}
+        </span>
       </span>
     </OverlayTrigger>
   );
@@ -72,6 +74,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 
 interface CourseProps {
   requiredCourses?: string[];
+  quarterMismatch?: string;
   onDelete?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
@@ -81,7 +84,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, onDelete, openPopoverLeft, onSetVariableUnits } = props;
+  const { requiredCourses, quarterMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -125,7 +128,7 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
-            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
+            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses, quarterMismatch }} />
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {isInRoadmap && minUnits !== maxUnits && (
