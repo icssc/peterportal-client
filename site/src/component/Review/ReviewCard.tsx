@@ -377,7 +377,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
         </div>
         <div className="reviewcard-info">
           <p>
-            Grade: <b>{review.gradeReceived}</b>
+            Grade: <b>{review.gradeReceived ?? 'Prefer not to say'}</b>
           </p>
           <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
