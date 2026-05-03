@@ -394,7 +394,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
                 <span className={`upvote${review.userVote === 1 ? ' colored-vote' : ''}`}>
                   <span className="vote-count">{review.score > 0 ? review.score : 0}</span>
-                  <IconButton onClick={upvote} disabled={!isLoggedIn} size="small">
+                  <IconButton
+                    onClick={upvote}
+                    disabled={!isLoggedIn}
+                    size="small"
+                    style={{ color: review.userVote === 1 ? 'var(--mui-palette-secondary-main)' : undefined }}
+                  >
                     {review.userVote === 1 ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
                   </IconButton>
                 </span>
@@ -402,7 +407,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
                 <span className={`downvote${review.userVote === -1 ? ' colored-vote' : ''}`}>
                   <span className="vote-count">{review.score < 0 ? Math.abs(review.score) : 0}</span>
-                  <IconButton onClick={downvote} disabled={!isLoggedIn} size="small">
+                  <IconButton
+                    onClick={downvote}
+                    disabled={!isLoggedIn}
+                    size="small"
+                    style={{ color: review.userVote === -1 ? 'var(--mui-palette-secondary-main)' : undefined }}
+                  >
                     {review.userVote === -1 ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
                   </IconButton>
                 </span>
