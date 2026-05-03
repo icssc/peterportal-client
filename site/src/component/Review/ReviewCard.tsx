@@ -35,9 +35,9 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
-import { addPreview } from '../../store/slices/previewSlice';
-import { useCurrentPreview } from '../../hooks/preview';
+import { useRouter } from 'next/navigation';
 import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface AuthorEditButtonsProps {
@@ -159,6 +159,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
   const profCache = useProfessorData(review.professorId);
+  const router = useRouter();
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
@@ -193,18 +194,19 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
     }
   }, [review.courseId, profCache]);
 
-  const currentPreview = useCurrentPreview();
+  const pathname = usePathname();
+  const isStandalonePage = pathname !== '/' && pathname !== '/planner';
   const handleLinkClick = useCallback(
     (event: React.MouseEvent, id: string) => {
-      if (!currentPreview) return;
+      if (isStandalonePage) return;
       event.preventDefault();
       if (course) {
-        dispatch(addPreview({ type: 'instructor', id }));
+        router.push(`?instructor=${encodeURIComponent(id)}`);
       } else {
-        dispatch(addPreview({ type: 'course', id }));
+        router.push(`?course=${encodeURIComponent(id)}`);
       }
     },
-    [currentPreview, course, dispatch],
+    [isStandalonePage, course, router],
   );
 
   useEffect(() => {
