@@ -1,6 +1,5 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -19,6 +18,7 @@ import {
   setToastMsg,
   setToastSeverity,
   setShowToast,
+  updateRoadmapCustomCourse,
   updateTempPlannerIds,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -34,6 +34,8 @@ import trpc from '../../../trpc';
 import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
+import { setCustomCourses } from '../../../store/slices/customCourseSlice';
+import PlannerLoaderModal from './PlannerLoaderModal';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -89,7 +91,7 @@ const PlannerLoader: FC = () => {
     async (roadmap: SavedRoadmap) => {
       const plans = await expandAllPlanners(roadmap.planners);
       const timestamp = new Date(roadmap.timestamp ?? Date.now()).getTime();
-      dispatch(setInitialPlannerData({ plans, timestamp }));
+      dispatch(setInitialPlannerData({ plans, timestamp, currentPlanIndex: roadmap.currentPlanIndex ?? 0 }));
       dispatch(setRoadmapLoading(false));
     },
     [dispatch],
@@ -97,9 +99,13 @@ const PlannerLoader: FC = () => {
 
   // save function will update localStorage (thus comparisons above will work) and account roadmap
   const saveRoadmapAndUpsertTransfers = useCallback(
-    async (collapsedLocalPlans: SavedPlannerData[], collapsedAccountPlans: SavedPlannerData[] | null) => {
+    async (
+      collapsedLocalPlans: SavedPlannerData[],
+      collapsedAccountPlans: SavedPlannerData[] | null,
+      currentPlanIndex?: number,
+    ) => {
       // Cannot be called before format is upgraded from single to multi-planner
-      const result = await saveRoadmap(isLoggedIn, collapsedAccountPlans, collapsedLocalPlans);
+      const result = await saveRoadmap(isLoggedIn, collapsedAccountPlans, collapsedLocalPlans, currentPlanIndex);
 
       if (result.success && isLoggedIn) {
         dispatch(setToastMsg('Roadmap saved to your account!'));
@@ -155,6 +161,18 @@ const PlannerLoader: FC = () => {
       setRoadmapLoaded(true);
 
       if (!isLoggedIn) return;
+
+      trpc.customCourses.getCustomCards.query().then((cards) => {
+        const customCourses = cards.map((c) => ({
+          id: c.id,
+          courseName: c.name,
+          units: c.units,
+          description: c.description,
+        }));
+        dispatch(setCustomCourses(customCourses));
+        customCourses.forEach((course) => dispatch(updateRoadmapCustomCourse(course)));
+      });
+
       const isLocalNewer =
         new Date(initialLocalRoadmap.timestamp ?? 0) > new Date(initialAccountRoadmap?.timestamp ?? 0);
 
@@ -165,7 +183,7 @@ const PlannerLoader: FC = () => {
       if (initialAccountRoadmap) return setShowSyncModal(true);
 
       // Logged in + doesn't exist => update everything
-      saveRoadmapAndUpsertTransfers(initialLocalRoadmap.planners, null);
+      saveRoadmapAndUpsertTransfers(initialLocalRoadmap.planners, null, initialLocalRoadmap.currentPlanIndex);
     });
   }, [
     saveRoadmapAndUpsertTransfers,
@@ -175,6 +193,7 @@ const PlannerLoader: FC = () => {
     initialAccountRoadmap,
     initialLocalRoadmap,
     roadmapLoaded,
+    dispatch,
   ]);
 
   // Validate Courses on change
@@ -191,7 +210,11 @@ const PlannerLoader: FC = () => {
     const localRoadmap = readLocalRoadmap<SavedRoadmap>();
 
     // Update the account roadmap using local data
-    await saveRoadmapAndUpsertTransfers(localRoadmap.planners, initialAccountRoadmap?.planners ?? null);
+    await saveRoadmapAndUpsertTransfers(
+      localRoadmap.planners,
+      initialAccountRoadmap?.planners ?? null,
+      localRoadmap.currentPlanIndex,
+    );
     const roadmapWithIds = await loadRoadmap(true).then((res) => res.accountRoadmap!);
 
     // Update frontend state to show local data
@@ -199,35 +222,26 @@ const PlannerLoader: FC = () => {
     setShowSyncModal(false);
   };
 
+  const [accountLoading, setAccountLoading] = useState(false);
+
+  const syncAccount = async () => {
+    setAccountLoading(true);
+    if (!initialAccountRoadmap || !initialLocalRoadmap) return;
+    await saveRoadmap(isLoggedIn, initialAccountRoadmap?.planners ?? null, initialAccountRoadmap?.planners ?? null);
+    setShowSyncModal(false);
+  };
+
   return (
-    <Dialog
+    <PlannerLoaderModal
       open={showSyncModal}
-      onClose={() => {
-        setShowSyncModal(false);
-      }}
-    >
-      <DialogTitle>Roadmap Out of Sync</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
-          your roadmap from?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          loading={overrideLoading}
-          disabled={overrideLoading}
-          color="inherit"
-          variant="text"
-          onClick={overrideAccountRoadmap}
-        >
-          This Device
-        </Button>
-        <Button disabled={overrideLoading} variant="contained" onClick={() => setShowSyncModal(false)}>
-          My Account
-        </Button>
-      </DialogActions>
-    </Dialog>
+      onClose={setShowSyncModal}
+      overrideLoading={overrideLoading}
+      accountLoading={accountLoading}
+      initialAccountRoadmap={initialAccountRoadmap}
+      initialLocalRoadmap={initialLocalRoadmap}
+      overrideAccountRoadmap={overrideAccountRoadmap}
+      syncAccount={syncAccount}
+    />
   );
 };
 

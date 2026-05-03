@@ -12,8 +12,10 @@
     font-weight: 600;
   }
 
-  .ppc-combobox__menu {
-    font-size: 14px;
+  .course-search-select {
+    .MuiAutocomplete-endAdornment {
+      display: none;
+    }
   }
 }
 

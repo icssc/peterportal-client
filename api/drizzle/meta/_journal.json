@@ -169,6 +169,55 @@
       "when": 1770167251312,
       "tag": "0023_slim_gabe_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1774042165637,
+      "tag": "0024_hesitant_wong",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1774649718434,
+      "tag": "0025_keen_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1774686285699,
+      "tag": "0026_great_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1775064207208,
+      "tag": "0027_loud_klaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1775200000000,
+      "tag": "0028_custom_card",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1775300000000,
+      "tag": "0029_planner_course_custom_card",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1775545146544,
+      "tag": "0030_whole_nehzno",
+      "breakpoints": true
     }
   ]
 }

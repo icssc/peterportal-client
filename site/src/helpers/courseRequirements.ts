@@ -5,13 +5,12 @@ import {
   MajorSpecialization,
   MinorProgram,
   ProgramRequirement,
+  TransferredGE,
 } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
-import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
-import { getCssVariable } from './styling';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -62,27 +61,6 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
 
-export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
-  const themeCopy = { ...theme, colors: { ...theme.colors } };
-
-  themeCopy.colors.primary = getCssVariable('--mui-palette-secondary-main'); // box border
-  themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
-  themeCopy.colors.primary25 = `color-mix(in oklab, var(--mui-palette-primary-main) 50%, transparent)`; // hover
-
-  if (darkMode) {
-    const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-    Object.entries(theme.colors).forEach(([key]) => {
-      if (key.startsWith('neutral')) {
-        const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
-        const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
-        themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
-      }
-    });
-  }
-
-  return themeCopy;
-};
-
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
  * @param requirements The raw course requirements, as returned from the API
@@ -100,6 +78,7 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
         requirementType: 'Course',
         label: builtGroup.label,
         courseCount: builtGroup.requirementCount,
+        requirementId: builtGroup.requirementId,
         courses: (builtGroup.requirements as ProgramRequirement<'Course'>[]).map((c) => c.courses[0]),
       };
       computedRequirements.push(courseReqs);
@@ -120,6 +99,7 @@ export function collapseSingletonRequirements(requirements: ProgramRequirement[]
       requirementCount: 0,
       label: COMPLETE_ALL_TEXT,
       requirements: [],
+      requirementId: r.requirementId,
     };
     builtGroup.requirements.push(r);
     builtGroup.requirementCount++;
@@ -179,7 +159,11 @@ export function coerceEmptyRequirement(requirement: ProgramRequirement): Program
   if (requirement.requirementType === 'Course' && !requirement.courses.length) {
     // Some course requirements don't provide a list of courses from the API. For these cases,
     // treat them as a Marker so the user can manually mark as complete.
-    return { requirementType: 'Marker', label: requirement.label };
+    return {
+      requirementType: 'Marker',
+      label: requirement.label,
+      requirementId: requirement.requirementId,
+    };
   } else {
     return requirement;
   }
@@ -240,6 +224,32 @@ function getMatchingGECategory(label: string) {
 
   // key of the matching entry, if it exists
   return categoryEntries.find((ent: [string, GETitle]) => filterFunction(ent[1]))?.[0] ?? null;
+}
+
+function findMatchingGETransfers(requirement: ProgramRequirement, transferredGEs: TransferredGE[]): TransferredGE[] {
+  const matches: TransferredGE[] = [];
+
+  const applicableGE = getMatchingGECategory(requirement.label.trim());
+  const selfMatch =
+    transferredGEs.find((ge) => ge.geName === applicableGE && (ge.numberOfCourses > 0 || ge.units > 0)) ?? null;
+  if (selfMatch) {
+    matches.push(selfMatch);
+    return matches;
+  }
+
+  if (requirement.requirementType === 'Group') {
+    for (const child of requirement.requirements) {
+      matches.push(...findMatchingGETransfers(child, transferredGEs));
+    }
+  }
+
+  return matches;
+}
+
+export function useMatchingGETransfers(requirement: ProgramRequirement): TransferredGE[] {
+  const transferredGEs = useTransferredCredits().ge;
+
+  return findMatchingGETransfers(requirement, transferredGEs);
 }
 
 function checkCourseListCompletion(
@@ -349,5 +359,37 @@ export async function saveMarkerCompletion(markerName: string, complete: boolean
     const completedMarkers = new Set(await loadMarkerCompletion(false));
     completedMarkers[complete ? 'add' : 'delete'](markerName);
     localStorage.roadmap__savedMarkers = JSON.stringify([...completedMarkers]);
+  }
+}
+
+export async function loadOverriddenRequirements(plannerId: number, isLoggedIn: boolean): Promise<string[]> {
+  if (isLoggedIn) {
+    const response = await trpc.override.getOverrides.query({ plannerId: plannerId });
+    return response;
+  } else {
+    let overriddenRequirements: string[] = [];
+    try {
+      overriddenRequirements = JSON.parse(localStorage.getItem(`roadmap__savedRequirements__${plannerId}`) || '[]');
+    } catch {
+      /* ignore */
+    }
+    return overriddenRequirements;
+  }
+}
+
+export async function saveOverriddenRequirement(
+  plannerId: number,
+  requirement: string,
+  override: boolean,
+  isLoggedIn: boolean,
+): Promise<void> {
+  if (isLoggedIn) {
+    const operationName = override ? 'addOverride' : 'deleteOverride';
+    const operation = trpc.override[operationName];
+    await operation.mutate({ plannerId: plannerId, requirement: requirement });
+  } else {
+    const overriddenRequirements = new Set(await loadOverriddenRequirements(plannerId, false));
+    overriddenRequirements[override ? 'add' : 'delete'](requirement);
+    localStorage.setItem(`roadmap__savedRequirements__${plannerId}`, JSON.stringify([...overriddenRequirements]));
   }
 }

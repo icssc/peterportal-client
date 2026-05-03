@@ -6,7 +6,6 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import ReportForm from '../ReportForm/ReportForm';
 import { selectReviews, setReviews } from '../../store/slices/reviewSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import ReviewForm from '../ReviewForm/ReviewForm';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
@@ -33,6 +32,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
 import { useRouter } from 'next/navigation';
+import { addPreview } from '../../store/slices/previewSlice';
+import { useCurrentPreview } from '../../hooks/preview';
+import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface AuthorEditButtonsProps {
   review: ReviewData;
@@ -93,8 +95,8 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         course={course}
         professor={professor}
         reviewToEdit={review}
-        closeForm={closeReviewForm}
-        show={showReviewForm}
+        handleClose={closeReviewForm}
+        open={showReviewForm}
         editing
         terms={sortedTerms}
       />
@@ -335,7 +337,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
             </div>
             <div className="reviewcard-detail">
               <p>
-                <b>Grade:</b> {review.gradeReceived}
+                <b>Grade:</b> {review.gradeReceived ?? 'Prefer not to say'}
               </p>
               <p>
                 <b>Would Take Again:</b> {review.takeAgain ? 'Yes' : 'No'}

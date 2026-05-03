@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import { Chip, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import { addPreview, clearPreviews } from '../../store/slices/previewSlice';
+import ClickableDiv from '../../component/ClickableDiv/ClickableDiv';
 
 interface CourseHitItemProps extends CourseGQLData {}
 
@@ -25,12 +27,6 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
     router.push(`?course=${encodeURIComponent(props.id)}`);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      onClickName();
-    }
-  };
-
   const toggleSaveCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (courseIsSaved) {
@@ -41,7 +37,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
   };
 
   return (
-    <div className="hit-item course-hit" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
+    <ClickableDiv className="hit-item course-hit" onClick={onClickName}>
       <div className="course-hit-id">
         <div>
           <p className="hit-name">
@@ -67,7 +63,7 @@ const CourseHitItem: FC<CourseHitItemProps> = (props) => {
           ))}
         </div>
       </div>
-    </div>
+    </ClickableDiv>
   );
 };
 

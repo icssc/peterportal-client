@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ProfessorGQLData } from '../../types/types';
 import { addDelimiter } from '../../helpers/util';
 import { CoursePreviewWithTerms } from '@peterportal/types';
+import ClickableDiv from '../../component/ClickableDiv/ClickableDiv';
 
 interface ProfessorHitItemProps extends ProfessorGQLData {}
 
@@ -49,14 +50,8 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
     router.push(`?instructor=${encodeURIComponent(props.ucinetid)}`);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      onClickName();
-    }
-  };
-
   return (
-    <div className="hit-item professor-hit" tabIndex={0} role="button" onClick={onClickName} onKeyDown={onKeyDown}>
+    <ClickableDiv className="hit-item professor-hit" onClick={onClickName}>
       <div className="name-container">
         <div>
           <p className="hit-name">{props.name}</p>
@@ -79,7 +74,7 @@ const ProfessorHitItem: FC<ProfessorHitItemProps> = (props: ProfessorHitItemProp
           )}
         </p>
       </div>
-    </div>
+    </ClickableDiv>
   );
 };
 

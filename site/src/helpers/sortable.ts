@@ -1,5 +1,5 @@
 import { ReactSortableProps, SortableOptions } from 'react-sortablejs';
-import { CourseGQLData } from '../types/types';
+import { CourseGQLData, CustomCourse, PlannerQuarterCourse } from '../types/types';
 
 const baseSortable: SortableOptions = {
   animation: 150,
@@ -8,11 +8,18 @@ const baseSortable: SortableOptions = {
   fallbackTolerance: 4,
 };
 
-export const quarterSortable: SortableOptions & Partial<ReactSortableProps<CourseGQLData>> = {
+export const quarterSortable: SortableOptions & Partial<ReactSortableProps<PlannerQuarterCourse>> = {
+  ...baseSortable,
+  setList: () => {},
+  handle: '.course-drag-handle, .course-mobile-drag-handle',
+  group: { name: 'courses' },
+};
+
+export const customCourseSortable: SortableOptions & Partial<ReactSortableProps<CustomCourse>> = {
   ...baseSortable,
   setList: () => {},
   handle: '.course-drag-handle',
-  group: { name: 'courses' },
+  group: { name: 'courses', pull: 'clone', put: false },
 };
 
 export const courseSearchSortable: SortableOptions & Partial<ReactSortableProps<CourseGQLData>> = {

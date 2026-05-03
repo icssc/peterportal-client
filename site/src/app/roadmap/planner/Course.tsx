@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import './Course.scss';
 
 import RecentOfferingsTooltip from '../../../component/RecentOfferingsTooltip/RecentOfferingsTooltip';
@@ -6,14 +6,15 @@ import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-
 import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { addPreview, clearPreviews } from '../../../store/slices/previewSlice';
+import UnitsContainer from '../CustomUnitsContainer';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -75,12 +76,13 @@ interface CourseProps {
   onDelete?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
-  data: CourseGQLData;
+  data: PlannerCourseData;
+  onSetVariableUnits?: (units: number | undefined) => void;
 }
 
 const Course: FC<CourseProps> = (props) => {
-  const { title, courseLevel, minUnits, maxUnits, terms, geList } = props.data;
-  const { requiredCourses, onDelete, openPopoverLeft } = props;
+  const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
+  const { requiredCourses, onDelete, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -103,10 +105,18 @@ const Course: FC<CourseProps> = (props) => {
    * @todo merge conflict with variable units - when merging with var units, this
    * text should be used in course tags, but not in the course-card-top in the Roadmap
    */
-  const unitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+  const defaultUnitsText = `${minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} unit${pluralize(maxUnits)}`;
+  const [unit, setUnit] = useState(userChosenUnits ?? undefined);
+
+  useEffect(() => {
+    setUnit(userChosenUnits ?? undefined);
+  }, [userChosenUnits]);
 
   return (
-    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+    <div
+      className={`course ${isInRoadmap ? 'roadmap-course' : ''} ${isMobile && isInRoadmap ? 'course-mobile-drag-handle' : ''}`}
+      {...tappableCourseProps}
+    >
       {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />
@@ -118,8 +128,18 @@ const Course: FC<CourseProps> = (props) => {
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
             <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses }} />
           </span>
-
-          {isInRoadmap && <span className="units">{unitsText}</span>}
+          {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
+          {isInRoadmap && minUnits !== maxUnits && (
+            <div className="custom-units">
+              <UnitsContainer
+                units={unit}
+                setUnits={onSetVariableUnits}
+                minUnits={minUnits}
+                maxUnits={maxUnits}
+                source="Course"
+              />
+            </div>
+          )}
         </div>
         {isInRoadmap ? (
           <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
@@ -135,7 +155,7 @@ const Course: FC<CourseProps> = (props) => {
         <div className="course-info">
           <CourseSynopsis course={props.data} clampDescription={3} />
           <div className="course-tags">
-            {`${unitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
+            {`${defaultUnitsText} • ${formattedCourseLevel} • ${geTags.length > 0 ? geTags + ' • ' : ''}`}
             <RecentOfferingsTooltip terms={terms} />
           </div>
         </div>
