@@ -207,10 +207,15 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
           });
 
           const searchPrevYears = 2;
-          const termYear = quarterIndex === 0 ? startYear - 1 : startYear;
+          const currentDate = new Date();
+          const currentStartYear =
+            currentDate.getMonth() >= 8 ? currentDate.getFullYear() : currentDate.getFullYear() - 1;
+          const useYear = Math.min(currentStartYear, startYear);
+          const termYear = quarterIndex === 0 ? useYear : useYear + 1;
           let mismatch = true;
-          for (let i = 0; i < searchPrevYears; i++) {
+          for (let i = 0; i <= searchPrevYears; i++) {
             const term = `${termYear - i} ${quarterTitle}`;
+            console.log(term);
             if (course.terms.includes(term)) {
               mismatch = false;
               break;
