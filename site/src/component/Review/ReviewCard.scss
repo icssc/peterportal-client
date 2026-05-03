@@ -57,10 +57,7 @@
     }
 
     .reviewcard-author-verified {
-      display: flex;
-      align-items: center;
-
-      svg {
+      .MuiSvgIcon-root {
         font-size: 14px;
         color: var(--mui-palette-secondary-main);
       }
