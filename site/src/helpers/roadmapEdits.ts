@@ -1,6 +1,13 @@
 import { QuarterName } from '@peterportal/types';
-import { PlannerEdit, PlannerQuarterEdit, PlannerYearEdit, RoadmapPlan, RoadmapRevision } from '../types/roadmap';
-import { CourseGQLData, PlannerQuarterData, PlannerYearData } from '../types/types';
+import {
+  PlannerEdit,
+  PlannerQuarterEdit,
+  PlannerYearEdit,
+  PlannerCourseEdit,
+  RoadmapPlan,
+  RoadmapRevision,
+} from '../types/roadmap';
+import { PlannerQuarterCourse, PlannerCourseData, PlannerQuarterData, PlannerYearData } from '../types/types';
 import { createRevision } from './roadmap';
 import { deepCopy } from './util';
 import { LOADING_COURSE_PLACEHOLDER } from './courseRequirements';
@@ -28,7 +35,7 @@ export function addPlanner(id: number, name: string, yearPlans: PlannerYearData[
   };
 
   const otherEdits = yearPlans
-    .flatMap((year) => addPlannerYear(id, year.startYear, year.name, year.quarters))
+    .flatMap((year) => addPlannerYear(id, year.startYear, year.name, year.collapsed, year.quarters))
     .flatMap((revision) => revision.edits);
 
   return createRevision([plannerEdit, ...otherEdits]);
@@ -47,12 +54,18 @@ export function updatePlannerName(current: RoadmapPlan, newName: string) {
   return createRevision([edit]);
 }
 
-export function addPlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
+export function addPlannerYear(
+  plannerId: number,
+  startYear: number,
+  name: string,
+  collapsed = false,
+  quarters: PlannerQuarterData[],
+) {
   const yearEdit: PlannerYearEdit = {
     type: 'year',
     plannerId,
     before: null,
-    after: { name, startYear },
+    after: { name, startYear, collapsed },
   };
 
   const otherEdits = quarters
@@ -62,18 +75,25 @@ export function addPlannerYear(plannerId: number, startYear: number, name: strin
   return createRevision([yearEdit, ...otherEdits]);
 }
 
-export function deletePlannerYear(plannerId: number, startYear: number, name: string, quarters: PlannerQuarterData[]) {
-  return createInverseRevision(addPlannerYear(plannerId, startYear, name, quarters));
+export function deletePlannerYear(
+  plannerId: number,
+  startYear: number,
+  name: string,
+  collapsed: boolean,
+  quarters: PlannerQuarterData[],
+) {
+  return createInverseRevision(addPlannerYear(plannerId, startYear, name, collapsed, quarters));
 }
 
 interface ModifyPlannerYearOptions {
   newName: string;
   newStartYear: number;
+  newCollapsed: boolean;
   removedQuarters: PlannerQuarterData[];
   addedQuarters: PlannerQuarterData[];
 }
 export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearData, options: ModifyPlannerYearOptions) {
-  const { name, startYear } = currentYear;
+  const { name, startYear, collapsed } = currentYear;
   const newStartYear = options.newStartYear ?? startYear;
   const edits = [];
 
@@ -83,14 +103,19 @@ export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearDat
 
   if (removeQuarterEdits) edits.push(...removeQuarterEdits);
 
-  if (options.newName !== name || options.newStartYear !== startYear) {
+  if (
+    options.newName !== name ||
+    options.newStartYear !== startYear ||
+    options.newCollapsed !== currentYear.collapsed
+  ) {
     const yearEdit: PlannerYearEdit = {
       type: 'year',
       plannerId,
-      before: { name, startYear },
+      before: { name, startYear, collapsed },
       after: {
         name: options.newName ?? name,
         startYear: newStartYear,
+        collapsed: options.newCollapsed,
       },
     };
     edits.push(yearEdit);
@@ -105,7 +130,12 @@ export function modifyPlannerYear(plannerId: number, currentYear: PlannerYearDat
   return createRevision(edits);
 }
 
-export function addPlannerQuarter(plannerId: number, startYear: number, name: QuarterName, courses: CourseGQLData[]) {
+export function addPlannerQuarter(
+  plannerId: number,
+  startYear: number,
+  name: QuarterName,
+  courses: PlannerQuarterCourse[],
+) {
   const edit: PlannerQuarterEdit = {
     type: 'quarter',
     plannerId,
@@ -124,7 +154,7 @@ export interface ModifiedQuarter {
 }
 export function modifyQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   removedFrom: ModifiedQuarter | null,
   addedTo: ModifiedQuarter | null,
 ) {
@@ -169,7 +199,7 @@ export function modifyQuarterCourse(
 
 export function reorderQuarterCourse(
   plannerId: number,
-  course: CourseGQLData,
+  course: PlannerQuarterCourse,
   oldIndex: number,
   after: ModifiedQuarter,
 ) {
@@ -187,4 +217,31 @@ export function reorderQuarterCourse(
     after: { name: after.quarter.name, courses: coursesAfter },
   };
   return createRevision([edit]);
+}
+
+export function modifyVariableCourseUnit(
+  plannerId: number,
+  startYear: number,
+  quarterName: QuarterName,
+  courseIndex: number,
+  course: PlannerCourseData,
+  newUnit: number | undefined,
+) {
+  const edits: PlannerCourseEdit[] = [];
+  if (course && course.userChosenUnits !== newUnit) {
+    edits.push({
+      type: 'course',
+      plannerId,
+      startYear,
+      quarterName,
+      courseIndex,
+      before: course,
+      after: {
+        ...course,
+        userChosenUnits: newUnit,
+      },
+    });
+  }
+
+  return createRevision(edits);
 }

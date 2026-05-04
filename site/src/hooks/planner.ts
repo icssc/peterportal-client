@@ -9,6 +9,8 @@ import { reviseRoadmap, setSavedRevisionIndex, updateTempPlannerIds } from '../s
 import { deepCopy } from '../helpers/util';
 import { restoreRevision } from '../helpers/roadmap';
 import { setToastMsg, setToastSeverity, setShowToast } from '../store/slices/roadmapSlice';
+import { PlannerCourseData } from '../types/types';
+import { isCustomCourse } from '../helpers/customCourses';
 
 export function useClearedCourses() {
   const { courses, ap, apInfo } = useTransferredCredits();
@@ -35,7 +37,9 @@ export function useClearedCoursesUntil(courseId: string): Set<string> {
 
     for (const year of currentPlan) {
       for (const quarter of year.quarters) {
-        const ids = quarter.courses.map((c) => `${c.department} ${c.courseNumber}`);
+        const ids = quarter.courses
+          .filter((c): c is PlannerCourseData => !isCustomCourse(c))
+          .map((c) => `${c.department} ${c.courseNumber}`);
 
         if (ids.includes(courseId)) {
           return takenSoFar;
@@ -53,7 +57,6 @@ export function useSaveRoadmap() {
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
   const planners = useAppSelector((state) => state.roadmap.plans);
-  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
@@ -65,7 +68,7 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, currentPlanIndex);
+    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
 
     if (result.success && isLoggedIn) {
       dispatch(setToastMsg('Roadmap saved to your account!'));
@@ -86,6 +89,8 @@ export function useSaveRoadmap() {
     }
 
     dispatch(setSavedRevisionIndex(currIdx));
+
+    return result;
   };
 
   return { handler };

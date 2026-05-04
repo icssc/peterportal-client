@@ -14,7 +14,7 @@ import {
 
 export async function queryGetPlanners(where: SQL) {
   const planYearTableName = getTableConfig(plannerYear).name;
-  const planners = await db
+  const planners = (await db
     .select({
       id: planner.id,
       shareId: planner.shareId,
@@ -23,10 +23,24 @@ export async function queryGetPlanners(where: SQL) {
       content: sql.raw(`jsonb_agg(jsonb_build_object(
         'name', ${planYearTableName}."${plannerYear.name.name}",
         'startYear', ${planYearTableName}."${plannerYear.startYear.name}",
+        'collapsed', ${planYearTableName}."${plannerYear.collapsed.name}",
         'quarters', (SELECT jsonb_agg(jsonb_build_object(
           'name', ${plannerQuarter.quarterName.name},
           'courses', (
-            SELECT COALESCE(jsonb_agg(pc.course_id ORDER BY pc.index ASC), '[]'::jsonb)
+            SELECT COALESCE(
+              jsonb_agg(
+                CASE
+                  WHEN pc.course_id = 'CUSTOM' AND pc.custom_card_id IS NOT NULL
+                    THEN jsonb_build_object('courseId', ('CUSTOM#' || pc.custom_card_id::text))
+                  ELSE jsonb_build_object(
+                    'courseId', pc.course_id,
+                    'userChosenUnits', pc.units
+                  )
+                END
+                ORDER BY pc.index ASC
+              ),
+              '[]'::jsonb
+            )
             FROM planner_course pc
             WHERE pc.planner_id = pq.planner_id
               AND pc.start_year = pq.start_year
@@ -43,10 +57,15 @@ export async function queryGetPlanners(where: SQL) {
     .innerJoin(user, eq(planner.userId, user.id))
     .where(where)
     .groupBy(planner.id, planner.name)
-    .orderBy(asc(planner.id));
+    .orderBy(asc(planner.id))) as SavedPlannerData[];
 
-  (planners as SavedPlannerData[]).forEach((planner) =>
+  planners.forEach((planner) =>
     planner.content.forEach((year) => {
+      year.quarters.forEach((quarter) => {
+        quarter.courses.forEach((course) => {
+          if (course.userChosenUnits === null) delete course.userChosenUnits;
+        });
+      });
       year.quarters.sort((a, b) => quarters.indexOf(a.name) - quarters.indexOf(b.name));
     }),
   );
@@ -104,14 +123,20 @@ export async function setQuarterCourses(tx: TransactionType, quarters: PlannerQu
 
     if (quarter.data.courses.length === 0) return;
 
-    const rows = quarter.data.courses.map((courseId, index) => ({
-      plannerId,
-      startYear,
-      quarterName,
-      courseId,
-      index,
-    }));
-    await tx.insert(plannerCourse).values(rows).onConflictDoNothing();
+    const rows = quarter.data.courses.map((course, index) => {
+      const match = /^CUSTOM#(\d+)$/.exec(course.courseId);
+      const customCardId = match ? Number.parseInt(match[1], 10) : null;
+      return {
+        index,
+        plannerId,
+        startYear,
+        quarterName,
+        courseId: customCardId !== null ? 'CUSTOM' : course.courseId,
+        customCardId,
+        units: course.userChosenUnits,
+      };
+    });
+    await tx.insert(plannerCourse).values(rows);
   });
   await Promise.all(updates);
 }
@@ -120,7 +145,7 @@ export async function updateYears(tx: TransactionType, years: PlannerYearSaveInf
   const updates = years.map(async (year) => {
     await tx
       .update(plannerYear)
-      .set({ name: year.data.name })
+      .set({ name: year.data.name, collapsed: year.data.collapsed })
       .where(and(eq(plannerYear.plannerId, year.plannerId), eq(plannerYear.startYear, year.data.startYear)));
   });
   await Promise.all(updates);
@@ -163,6 +188,7 @@ export async function createYears(tx: TransactionType, years: PlannerYearSaveInf
         plannerId: year.plannerId,
         startYear: year.data.startYear,
         name: year.data.name,
+        collapsed: year.data.collapsed,
       })),
     )
     .onConflictDoNothing();

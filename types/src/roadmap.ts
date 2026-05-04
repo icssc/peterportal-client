@@ -5,9 +5,19 @@ export const quarters = ['Fall', 'Winter', 'Spring', 'Summer1', 'Summer10wk', 'S
 export const quarterName = z.enum(quarters);
 export type QuarterName = z.infer<typeof quarterName>;
 
+export const latestRoadmapVersion = 5;
+
+export const chcVariant = z.enum(['', 'CHC4', 'CHC2']);
+
+const savedPlannerCourseData = z.object({
+  courseId: z.string(),
+  userChosenUnits: z.number().optional(),
+});
+export type SavedPlannerCourseData = z.infer<typeof savedPlannerCourseData>;
+
 export const savedPlannerQuarterData = z.object({
   name: quarterName,
-  courses: z.array(z.string()),
+  courses: z.array(savedPlannerCourseData),
 });
 export type SavedPlannerQuarterData = z.infer<typeof savedPlannerQuarterData>;
 
@@ -15,6 +25,7 @@ export const savedPlannerYearData = z.object({
   startYear: z.number(),
   name: z.string().max(35),
   quarters: z.array(savedPlannerQuarterData),
+  collapsed: z.boolean(),
 });
 export type SavedPlannerYearData = z.infer<typeof savedPlannerYearData>;
 
@@ -23,7 +34,7 @@ export const savedPlannerData = z.object({
   shareId: z.string().optional(),
   name: z.string().max(35),
   content: z.array(savedPlannerYearData),
-  chc: z.enum(['', 'CHC4', 'CHC2']).optional(),
+  chc: chcVariant.optional(),
 });
 export type SavedPlannerData = z.infer<typeof savedPlannerData>;
 
@@ -48,15 +59,44 @@ export type ExtendedTransferData = z.infer<typeof extendedTransferData>;
 // Bundle planner and transfer data in one object
 export const savedRoadmap = z.object({
   planners: z.array(savedPlannerData),
-  transfers: z.array(legacyTransfer).optional().describe('Used for legacy transfers only'),
+  version: z.number(),
   timestamp: z.string().optional(),
+  currentPlanIndex: z.number().optional(),
+});
+
+export const legacySavedPlannerQuarterData = z.object({
+  name: quarterName,
+  courses: z.array(z.string()),
+});
+
+const legacySavedPlannerYearData = z.object({
+  startYear: z.number(),
+  name: z.string().max(35),
+  quarters: z.array(legacySavedPlannerQuarterData),
+});
+
+const legacySavedPlannerData = z.object({
+  id: z.number(),
+  name: z.string().max(35),
+  content: z.array(legacySavedPlannerYearData),
+  chc: chcVariant.optional(),
+});
+
+export const legacySavedRoadmap = z.object({
+  timestamp: z.string().optional(),
+  planners: z.array(legacySavedPlannerData),
+  transfers: z.array(legacyTransfer).optional().describe('Used for legacy transfers only'),
   currentPlanIndex: z.number().optional(),
 });
 
 export type SavedRoadmap = z.infer<typeof savedRoadmap>;
 
+export type LegacySavedRoadmap = z.infer<typeof legacySavedRoadmap>;
+
+export type LegacySavedPlannerYearData = z.infer<typeof legacySavedPlannerYearData>;
+
 export interface LegacyRoadmap {
-  planner: SavedPlannerYearData[];
+  planner: LegacySavedPlannerYearData[];
   transfers: LegacyTransfer[];
   timestamp?: string;
   currentPlanIndex?: number;
@@ -88,11 +128,11 @@ const roadmapPlannerChange = z.object({
 });
 
 const plannerYearSaveInfo = plannerYearChangeIdentifier.omit({ id: true }).extend({
-  data: z.object({ startYear: z.number().int(), name: z.string().max(35) }),
+  data: z.object({ startYear: z.number().int(), name: z.string().max(35), collapsed: z.boolean() }),
 });
 
 const plannerQuarterSaveInfo = plannerQuarterChangeIdentifier.omit({ id: true }).extend({
-  data: z.object({ name: z.string().max(35), courses: z.array(z.string()) }),
+  data: z.object({ name: z.string().max(35), courses: z.array(savedPlannerCourseData) }),
 });
 
 export type PlannerSaveInfo = z.infer<typeof roadmapPlannerChange>;

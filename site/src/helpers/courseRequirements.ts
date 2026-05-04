@@ -8,11 +8,9 @@ import {
   TransferredGE,
 } from '@peterportal/types';
 import { CourseGQLData } from '../types/types';
-import { Theme } from 'react-select';
 import { useAppSelector } from '../store/hooks';
 import trpc from '../trpc';
 import { useTransferredCredits, TransferredCourseWithType } from '../hooks/transferCredits';
-import { getCssVariable } from './styling';
 
 export const COMPLETE_ALL_TEXT = 'Complete all of the following';
 export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
@@ -62,27 +60,6 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
 
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
-
-export const comboboxTheme = (theme: Theme, darkMode: boolean) => {
-  const themeCopy = { ...theme, colors: { ...theme.colors } };
-
-  themeCopy.colors.primary = getCssVariable('--mui-palette-secondary-main'); // box border
-  themeCopy.colors.primary50 = getCssVariable('--mui-palette-secondary-main'); // active
-  themeCopy.colors.primary25 = `color-mix(in oklab, var(--mui-palette-primary-main) 50%, transparent)`; // hover
-
-  if (darkMode) {
-    const neutralIncrements = [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
-    Object.entries(theme.colors).forEach(([key]) => {
-      if (key.startsWith('neutral')) {
-        const index = neutralIncrements.indexOf(parseInt(key.replace('neutral', '')));
-        const opposite = ('neutral' + neutralIncrements.at(-1 - index)) as keyof Theme['colors'];
-        themeCopy.colors[key as keyof Theme['colors']] = theme.colors[opposite];
-      }
-    });
-  }
-
-  return themeCopy;
-};
 
 /**
  * Groups consectutive single-course requirements into one group requirement where all courses must be completed
@@ -382,5 +359,37 @@ export async function saveMarkerCompletion(markerName: string, complete: boolean
     const completedMarkers = new Set(await loadMarkerCompletion(false));
     completedMarkers[complete ? 'add' : 'delete'](markerName);
     localStorage.roadmap__savedMarkers = JSON.stringify([...completedMarkers]);
+  }
+}
+
+export async function loadOverriddenRequirements(plannerId: number, isLoggedIn: boolean): Promise<string[]> {
+  if (isLoggedIn) {
+    const response = await trpc.override.getOverrides.query({ plannerId: plannerId });
+    return response;
+  } else {
+    let overriddenRequirements: string[] = [];
+    try {
+      overriddenRequirements = JSON.parse(localStorage.getItem(`roadmap__savedRequirements__${plannerId}`) || '[]');
+    } catch {
+      /* ignore */
+    }
+    return overriddenRequirements;
+  }
+}
+
+export async function saveOverriddenRequirement(
+  plannerId: number,
+  requirement: string,
+  override: boolean,
+  isLoggedIn: boolean,
+): Promise<void> {
+  if (isLoggedIn) {
+    const operationName = override ? 'addOverride' : 'deleteOverride';
+    const operation = trpc.override[operationName];
+    await operation.mutate({ plannerId: plannerId, requirement: requirement });
+  } else {
+    const overriddenRequirements = new Set(await loadOverriddenRequirements(plannerId, false));
+    overriddenRequirements[override ? 'add' : 'delete'](requirement);
+    localStorage.setItem(`roadmap__savedRequirements__${plannerId}`, JSON.stringify([...overriddenRequirements]));
   }
 }

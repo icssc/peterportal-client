@@ -3,22 +3,9 @@ import { ProgramRequirement } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { useSavedCourses } from '../../../hooks/savedCourses';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { useEffect } from 'react';
 import { setGroupExpanded } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch } from '../../../store/hooks';
-
-const NoSavedCourses = () => {
-  return (
-    <>
-      <h4>No Saved Courses!</h4>
-      <p>
-        You have no saved courses yet! When you click the <BookmarkBorderIcon /> button from the course info tooltip or
-        course preview page, it will show up here!
-      </p>
-    </>
-  );
-};
 
 const SavedCourseList = () => {
   const resultsLoading = false;
@@ -54,7 +41,6 @@ const SavedCourseList = () => {
   }, [dispatch, requirements]);
 
   if (resultsLoading) return <LoadingSpinner />;
-  if (!savedCourses.length) return <NoSavedCourses />;
 
   return (
     <div className="saved-courses">

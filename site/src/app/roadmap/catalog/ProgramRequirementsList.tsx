@@ -1,5 +1,6 @@
 import './ProgramRequirementsList.scss';
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   COMPLETE_ALL_TEXT,
   formatRequirements,
@@ -8,9 +9,11 @@ import {
   useCompletionCheck,
   CompletedCourseSet,
   useMatchingGETransfers,
+  saveOverriddenRequirement,
 } from '../../../helpers/courseRequirements';
 import { CourseNameAndInfo } from '../planner/Course';
-import { CourseGQLData } from '../../../types/types';
+import { CourseGQLData, PlannerCourseData } from '../../../types/types';
+import { isCustomCourse } from '../../../helpers/customCourses';
 import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
@@ -21,11 +24,16 @@ import {
   setActiveMissingPrerequisites,
   setSelectedSidebarTab,
   setShowAddCourse,
+  selectCurrentPlan,
 } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { ProgramRequirement, TransferredGE } from '@peterportal/types';
-import { setGroupExpanded, setMarkerComplete } from '../../../store/slices/courseRequirementsSlice';
+import {
+  setGroupExpanded,
+  setMarkerComplete,
+  setRequirementOverride,
+} from '../../../store/slices/courseRequirementsSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { useClearedCourses } from '../../../hooks/planner';
 import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks/transferCredits';
@@ -129,6 +137,7 @@ interface CourseListProps {
 }
 const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
 
   const setDraggedItem = async (event: SortableEvent) => {
@@ -142,6 +151,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
       {...programRequirementsSortable}
       list={courseIDs}
       onStart={setDraggedItem}
+      onEnd={() => dispatch(setActiveCourse(null))}
       disabled={isMobile}
       className={'group-courses' + (isMobile ? ' disabled' : '')}
     >
@@ -157,17 +167,93 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   );
 };
 
+interface ConfirmOverrideModalProps {
+  showOverrideModal: boolean;
+  setShowOverrideModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOverride: (override: boolean) => void;
+}
+const ConfirmOverrideModal = ({ showOverrideModal, setShowOverrideModal, setOverride }: ConfirmOverrideModalProps) => {
+  const currentPlannerName = useAppSelector((state) => state.roadmap.plans[state.roadmap.currentPlanIndex].name);
+
+  return (
+    <Dialog
+      open={showOverrideModal}
+      onClose={() => setShowOverrideModal(false)}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
+      <DialogTitle>Confirm Force Completion</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to force complete this requirement for {currentPlannerName}? You should only do this if
+          you are sure the courses you've taken satisfy it.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          color="inherit"
+          variant="text"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowOverrideModal(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={(e) => {
+            setOverride(true);
+            setShowOverrideModal(false);
+            e.stopPropagation();
+          }}
+        >
+          Force Complete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 interface GroupHeaderProps {
   title: string;
   open: boolean;
   setOpen: React.Dispatch<boolean>;
+  requirementId: string;
+  overridden: boolean;
+  setOverride: (override: boolean) => void;
 }
-const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen }) => {
+const GroupHeader: FC<GroupHeaderProps> = ({ title, open, setOpen, requirementId, overridden, setOverride }) => {
   const className = `group-header ${open ? 'open' : ''}`;
+  const [showOverrideModal, setShowOverrideModal] = useState(false);
+
   return (
     <ClickableDiv className={className} onClick={() => setOpen(!open)}>
       <b>{title}</b>
-      <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+      <div className="group-header-btns">
+        {open && (
+          <Checkbox
+            name={'override-' + requirementId}
+            checked={overridden}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!overridden) {
+                setShowOverrideModal(true);
+              } else {
+                setOverride(false);
+              }
+            }}
+          />
+        )}
+        <ConfirmOverrideModal
+          showOverrideModal={showOverrideModal}
+          setShowOverrideModal={setShowOverrideModal}
+          setOverride={setOverride}
+        />
+        <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+      </div>
     </ClickableDiv>
   );
 };
@@ -236,8 +322,22 @@ interface CourseRequirementProps {
   storeKey: string;
 }
 const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
-  const dispatch = useAppDispatch();
   const complete = useCompletionCheck(takenCourseIDs, data).done;
+  const isLoggedIn = useIsLoggedIn();
+  const dispatch = useAppDispatch();
+
+  const activePlanID = useAppSelector(selectCurrentPlan)?.id;
+
+  const overridden = useAppSelector(
+    (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
+  );
+
+  const setOverride = (override: boolean) => {
+    if (!activePlanID) return;
+    saveOverriddenRequirement(activePlanID, data.requirementId, override, isLoggedIn);
+    dispatch(setRequirementOverride({ plannerId: activePlanID, requirement: data.requirementId, override: override }));
+  };
+
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
 
   const setOpen = (isOpen: boolean) => {
@@ -251,13 +351,22 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
+
   const geTransfers = useMatchingGETransfers(data);
 
   return (
     <GETransferBadge transferredGEs={geTransfers} complete={complete}>
       <div className={className}>
-        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <GroupHeader
+          title={data.label}
+          requirementId={data.requirementId}
+          open={open}
+          setOpen={setOpen}
+          overridden={overridden}
+          setOverride={setOverride}
+        />
         <Collapse in={open} unmountOnExit>
           {showLabel && (
             <p className="requirement-label">
@@ -313,20 +422,41 @@ interface GroupRequirementProps {
 const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+  const isLoggedIn = useIsLoggedIn();
   const dispatch = useAppDispatch();
+
+  const activePlanID = useAppSelector(selectCurrentPlan)?.id;
+
+  const overridden = useAppSelector(
+    (state) => state.courseRequirements.overriddenRequirements[activePlanID]?.[data.requirementId] ?? false,
+  );
+
+  const setOverride = (override: boolean) => {
+    if (!activePlanID) return;
+    saveOverriddenRequirement(activePlanID, data.requirementId, override, isLoggedIn);
+    dispatch(setRequirementOverride({ plannerId: activePlanID, requirement: data.requirementId, override: override }));
+  };
 
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKey, expanded: isOpen }));
   };
 
-  const className = `group-requirement${complete ? ' completed' : ''}`;
+  const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
+
   const geTransfers = useMatchingGETransfers(data);
   const multipleApplicableTransfers = geTransfers.length > 1;
 
   return (
     <GETransferBadge transferredGEs={geTransfers} complete={complete}>
       <div className={className}>
-        <GroupHeader title={data.label} open={open} setOpen={setOpen} />
+        <GroupHeader
+          title={data.label}
+          requirementId={data.requirementId}
+          open={open}
+          setOpen={setOpen}
+          overridden={overridden}
+          setOverride={setOverride}
+        />
         <Collapse in={open} unmountOnExit>
           <p className="requirement-label">
             Complete <b>{data.requirementCount}</b> of the following series:
@@ -427,6 +557,7 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
   const roadmapCourseMap = yearPlans
     .flatMap((year) => year.quarters)
     .flatMap((quarter) => quarter.courses)
+    .filter((course): course is PlannerCourseData => !isCustomCourse(course))
     .map((course) => [course.id, { units: course.minUnits }]);
   const transferCourseMap = transferredCourses.map((t) => [
     t.courseName.replace(/\s/g, ''),

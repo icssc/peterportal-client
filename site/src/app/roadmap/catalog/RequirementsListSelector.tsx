@@ -9,7 +9,7 @@ const RequirementsListSelector: FC = () => {
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
   const selectedTab = useAppSelector((state) => state.courseRequirements.selectedTab);
-  const lastTab = isMobile ? 'Search' : 'Saved';
+  const lastTab = isMobile ? 'Search' : 'Library';
 
   const tabs = [
     { value: 'Major', label: 'Major' },

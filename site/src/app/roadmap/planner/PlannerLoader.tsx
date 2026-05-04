@@ -1,6 +1,5 @@
 'use client';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   collapseAllPlanners,
   expandAllPlanners,
@@ -19,6 +18,7 @@ import {
   setToastMsg,
   setToastSeverity,
   setShowToast,
+  updateRoadmapCustomCourse,
   updateTempPlannerIds,
 } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
@@ -34,6 +34,8 @@ import trpc from '../../../trpc';
 import { setDataLoadState } from '../../../store/slices/transferCreditsSlice';
 import { compareRoadmaps, restoreRevision } from '../../../helpers/roadmap';
 import { deepCopy } from '../../../helpers/util';
+import { setCustomCourses } from '../../../store/slices/customCourseSlice';
+import PlannerLoaderModal from './PlannerLoaderModal';
 
 function useCheckUnsavedChanges() {
   const currentIndex = useAppSelector((state) => state.roadmap.currentRevisionIndex);
@@ -159,6 +161,18 @@ const PlannerLoader: FC = () => {
       setRoadmapLoaded(true);
 
       if (!isLoggedIn) return;
+
+      trpc.customCourses.getCustomCards.query().then((cards) => {
+        const customCourses = cards.map((c) => ({
+          id: c.id,
+          courseName: c.name,
+          units: c.units,
+          description: c.description,
+        }));
+        dispatch(setCustomCourses(customCourses));
+        customCourses.forEach((course) => dispatch(updateRoadmapCustomCourse(course)));
+      });
+
       const isLocalNewer =
         new Date(initialLocalRoadmap.timestamp ?? 0) > new Date(initialAccountRoadmap?.timestamp ?? 0);
 
@@ -179,6 +193,7 @@ const PlannerLoader: FC = () => {
     initialAccountRoadmap,
     initialLocalRoadmap,
     roadmapLoaded,
+    dispatch,
   ]);
 
   // Validate Courses on change
@@ -217,39 +232,16 @@ const PlannerLoader: FC = () => {
   };
 
   return (
-    <Dialog
+    <PlannerLoaderModal
       open={showSyncModal}
-      onClose={() => {
-        setShowSyncModal(false);
-      }}
-    >
-      <DialogTitle>Roadmap Out of Sync</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          This device's saved roadmap has newer changes than the one saved to your account. Where would you like to load
-          your roadmap from?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          loading={overrideLoading}
-          disabled={overrideLoading || accountLoading}
-          color="inherit"
-          variant="text"
-          onClick={overrideAccountRoadmap}
-        >
-          This Device
-        </Button>
-        <Button
-          loading={accountLoading}
-          disabled={overrideLoading || accountLoading}
-          variant="contained"
-          onClick={syncAccount}
-        >
-          My Account
-        </Button>
-      </DialogActions>
-    </Dialog>
+      onClose={setShowSyncModal}
+      overrideLoading={overrideLoading}
+      accountLoading={accountLoading}
+      initialAccountRoadmap={initialAccountRoadmap}
+      initialLocalRoadmap={initialLocalRoadmap}
+      overrideAccountRoadmap={overrideAccountRoadmap}
+      syncAccount={syncAccount}
+    />
   );
 };
 

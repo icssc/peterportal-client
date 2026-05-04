@@ -17,6 +17,7 @@ import {
 } from '@peterportal/types';
 import {
   FullPlannerChangeData,
+  PlannerCourseChangeData,
   PlannerQuarterChangeData,
   PlannerYearChangeData,
   RevisionDirection,
@@ -113,6 +114,35 @@ export function applyQuarterEdit(
   yearToEdit.quarters[quarterIndex].courses = newData.courses;
 }
 
+export function applyCourseEdit(
+  plans: RoadmapPlan[],
+  plannerId: number,
+  startYear: number,
+  quarterName: string,
+  courseIndex: number,
+  oldData: PlannerCourseChangeData,
+  newData: PlannerCourseChangeData,
+) {
+  if (!oldData && !newData) return;
+
+  const planToEdit = plans.find((plan) => plan.id === plannerId);
+  const yearToEdit = planToEdit?.content?.yearPlans?.find((year) => year.startYear === startYear);
+  const quarterToEdit = yearToEdit?.quarters?.find((quarter) => quarter.name === quarterName);
+  if (!quarterToEdit) return;
+
+  if (!oldData) {
+    if (newData) quarterToEdit.courses.splice(courseIndex, 0, newData);
+    return;
+  }
+
+  if (!newData) {
+    quarterToEdit.courses.splice(courseIndex, 1);
+    return;
+  }
+
+  quarterToEdit.courses[courseIndex] = newData;
+}
+
 // Traversing the revision stack
 function getRevisionStack(history: RoadmapRevision[], start: number, end: number): RevisionStack {
   // Track number of positions changed
@@ -143,8 +173,29 @@ function updatePlannerFromRevisionStack(planners: RoadmapPlan[], stack: Revision
       case 'quarter': {
         return applyQuarterEdit(planners, edit.plannerId, edit.startYear, edit[oldKey], edit[newKey]);
       }
+      case 'course': {
+        return applyCourseEdit(
+          planners,
+          edit.plannerId,
+          edit.startYear,
+          edit.quarterName,
+          edit.courseIndex,
+          edit[oldKey],
+          edit[newKey],
+        );
+      }
     }
   });
+}
+
+function hasSameSavedCourses(before: SavedPlannerQuarterData['courses'], after: SavedPlannerQuarterData['courses']) {
+  return (
+    before.length === after.length &&
+    before.every(
+      (course, index) =>
+        course.courseId === after[index]?.courseId && course.userChosenUnits === after[index]?.userChosenUnits,
+    )
+  );
 }
 
 /**
@@ -227,11 +278,7 @@ function comparePlannerQuarterPair(
 ) {
   if (!before) return;
 
-  /** @todo update logic here after adding support for variable units */
-  const hasSameCourses =
-    before.courses.every((course, index) => course === after.courses[index]) &&
-    after.courses.every((course, index) => course === before.courses[index]);
-  if (hasSameCourses) return;
+  if (hasSameSavedCourses(before.courses, after.courses)) return;
 
   const quarterUpdate = { name: after.name, courses: after.courses };
   plannerDiffs.updatedQuarters.push({ plannerId, startYear, data: quarterUpdate });
@@ -262,7 +309,10 @@ function comparePlannerYearPair(
   );
 
   if (before && before.name !== after.name) {
-    const yearUpdate = { name: after.name, startYear: after.startYear };
+    const yearUpdate = { name: after.name, startYear: after.startYear, collapsed: after.collapsed };
+    plannerDiffs.updatedYears.push({ data: yearUpdate, plannerId });
+  } else if (before && before.collapsed !== after.collapsed) {
+    const yearUpdate = { name: after.name, startYear: after.startYear, collapsed: after.collapsed };
     plannerDiffs.updatedYears.push({ data: yearUpdate, plannerId });
   }
 
