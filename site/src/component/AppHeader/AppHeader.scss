@@ -32,6 +32,16 @@
   .header-button {
     font-size: 12.25px;
     letter-spacing: 0;
+
+    @media (max-width: globals.$mobile-cutoff) {
+      &.MuiIconButton-root {
+        margin-right: 4px;
+      }
+
+      .MuiSvgIcon-root {
+        font-size: 20px;
+      }
+    }
   }
 
   &.mobile {
