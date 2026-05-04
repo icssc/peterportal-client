@@ -98,11 +98,14 @@
     font-size: 1.25em;
   }
 
-  .MuiAutocomplete-root {
-    width: 200px;
-  }
-  .MuiInputBase-root {
-    width: 200px;
+  .gradedist-filter {
+    .MuiAutocomplete-root {
+      width: 200px;
+    }
+
+    .MuiInputBase-root {
+      width: 200px;
+    }
   }
 }
 
