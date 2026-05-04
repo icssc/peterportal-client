@@ -10,7 +10,6 @@ import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
 import { CustomCourse } from '../../../types/types';
 import { removeCustomCourseFromRoadmap } from '../../../store/slices/roadmapSlice';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
-import { pluralize } from '../../../helpers/util';
 import trpc from '../../../trpc';
 
 interface CustomCourseCardProps {
@@ -104,13 +103,6 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
       e.preventDefault();
       void commitSave();
     }
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      setNewName(course.courseName);
-      setNewUnits(course.units);
-      setNewDescription(course.description);
-      setEditing(false);
-    }
   };
 
   if (inRoadmap) {
@@ -120,30 +112,32 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
           <DragIndicatorIcon />
         </div>
 
-        <div className="course-card-top">
-          <span className="name">{course.courseName}</span>
+        <div className="custom-card__main">
+          <div className="course-card-top">
+            <span className="name">{course.courseName}</span>
 
-          <span className="units">
-            <>{course.units} units</>
-          </span>
+            <span className="units">
+              <>{course.units} units</>
+            </span>
 
-          <IconButton className="course-delete-btn" onClick={removeCourseAt} aria-label="delete">
-            <DeleteOutlineIcon className="course-delete-icon" />
-          </IconButton>
+            <IconButton className="course-delete-btn" onClick={removeCourseAt} aria-label="delete">
+              <DeleteOutlineIcon className="course-delete-icon" />
+            </IconButton>
+          </div>
+          <div className="course-description course-description--body">{course.description}</div>
         </div>
-        <div className="course-description">{course.description}</div>
       </div>
     );
   }
 
   return (
-    <div className={'custom-card' + (!editing ? ' custom-card--view' : '')}>
+    <div className="custom-card">
       <div className="course-drag-handle">
         <DragIndicatorIcon />
       </div>
 
       {editing ? (
-        <>
+        <div className="custom-card__main">
           <div className="course-card-top">
             <span className="name">
               <input
@@ -195,31 +189,26 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               onClick={(e) => e.stopPropagation()}
             />
           </div>
-        </>
+        </div>
       ) : (
-        <>
+        <div className="custom-card__main">
           <div className="course-card-top">
-            <span className="name name--display">{course.courseName.trim() ? course.courseName : 'Course'}</span>
-            <div className="course-card-meta">
-              <span className="units-display">
-                {course.units} {pluralize(course.units, 'units', 'unit')}
-              </span>
-              <IconButton className="course-edit-btn" onClick={handleStartEdit} aria-label="Edit custom card">
-                <ModeEditIcon />
-              </IconButton>
-              <IconButton className="course-delete-btn" onClick={(e) => void onDelete(e)} aria-label="delete">
-                <DeleteOutlineIcon className="course-delete-icon" />
-              </IconButton>
-            </div>
+            <span className="name">{course.courseName}</span>
+
+            <span className="units">
+              <>{course.units} units</>
+            </span>
+
+            <IconButton className="course-edit-btn" onClick={handleStartEdit} aria-label="Edit custom card">
+              <ModeEditIcon />
+            </IconButton>
+
+            <IconButton className="course-delete-btn" onClick={(e) => void onDelete(e)} aria-label="delete">
+              <DeleteOutlineIcon className="course-delete-icon" />
+            </IconButton>
           </div>
-          <div className="course-description course-description--view">
-            {course.description.trim() ? (
-              course.description
-            ) : (
-              <span className="description-placeholder">Description</span>
-            )}
-          </div>
-        </>
+          <div className="course-description course-description--body">{course.description}</div>
+        </div>
       )}
     </div>
   );
