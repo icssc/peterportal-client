@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { GE_TITLE_MAP } from '../../../helpers/courseRequirements';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
+import { TextField } from '@mui/material';
 
 interface GEInputProps {
   value: number;
@@ -36,15 +37,18 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
   };
 
   return (
-    <input
+    <TextField
       className="ge-input"
-      type="number"
-      min="0"
-      step={valueType === 'numberOfCourses' ? '1' : 'any'}
       inputMode={valueType === 'numberOfCourses' ? 'numeric' : 'decimal'}
       defaultValue={value}
       onKeyDown={handleKeyDown}
       onBlur={onBlur}
+      slotProps={{
+        htmlInput: {
+          min: 0,
+          step: valueType === 'numberOfCourses' ? '1' : 'any',
+        },
+      }}
     />
   );
 };
