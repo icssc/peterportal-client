@@ -9,6 +9,10 @@
   background-color: var(--mui-palette-background-default);
   overscroll-behavior: contain;
 
+  @media (max-width: 345) {
+    padding-top: 100px;
+  }
+
   .result-page-section {
     margin-inline: auto;
   }
@@ -33,11 +37,23 @@
     gap: 4px;
 
     button {
-      margin-block: -4px;
+      padding-block: 4px;
+    }
+
+    .preview-buttons {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      @media (max-width: 345) {
+        gap: 5px;
+      }
     }
   }
 
   .preview-title {
+    min-width: 30%;
     margin-block: 0;
     margin-right: auto;
   }

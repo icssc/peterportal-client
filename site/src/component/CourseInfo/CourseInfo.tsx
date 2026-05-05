@@ -5,7 +5,7 @@ import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -15,17 +15,33 @@ import { getAggregateGradeData, GradesAggregate } from '../../helpers/gradeDist.
 interface CourseProp {
   course: CourseGQLData;
   disabled?: boolean;
+  includeLabel?: boolean;
   clampDescription?: number;
 }
 
-export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false }) => {
+export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false, includeLabel = false }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
   const courseIsSaved = isCourseSaved(course);
-  return (
-    <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
-      {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-    </IconButton>
-  );
+  if (includeLabel) {
+    return (
+      <Button
+        variant="contained"
+        color="inherit"
+        startIcon={courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+        size="small"
+        disableElevation
+        onClick={() => toggleSavedCourse(course)}
+      >
+        Save
+      </Button>
+    );
+  } else {
+    return (
+      <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
+        {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+      </IconButton>
+    );
+  }
 };
 
 export const CourseSynopsis: FC<CourseProp> = ({ course, clampDescription = 0 }) => {

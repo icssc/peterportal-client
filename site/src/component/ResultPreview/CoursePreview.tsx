@@ -125,17 +125,19 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<IosShareIcon />}
-          size="small"
-          disableElevation
-          onClick={copyCourseLink}
-        >
-          Share
-        </Button>
-        <CourseBookmarkButton course={courseData} disabled={isLoading} />
+        <div className="preview-buttons">
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<IosShareIcon />}
+            size="small"
+            disableElevation
+            onClick={copyCourseLink}
+          >
+            Share
+          </Button>
+          <CourseBookmarkButton course={courseData} disabled={isLoading} includeLabel={true} />
+        </div>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
         <CoursePreviewContent data={courseData} />
