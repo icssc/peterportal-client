@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -27,6 +27,7 @@ const MajorSelector: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
+  const hasFetchedSelectedMajors = useRef(false);
   const [defaultPairs, setDefaultPairs] = useState<MajorSpecializationPair[]>([]);
 
   const [majorsLoading, setMajorsLoading] = useState(false);
@@ -100,16 +101,14 @@ const MajorSelector: FC = () => {
 
   useEffect(() => {
     if (!majors.length || !isLoggedIn) return;
-    if (selectedMajors.length) return;
+    if (hasFetchedSelectedMajors.current) return;
+    hasFetchedSelectedMajors.current = true;
 
     setMajorsLoading(true);
 
     trpc.programs.getSavedMajorSpecPairs
       .query()
       .then((pairs) => {
-        const currentMajorIds = selectedMajors.map((m) => m.major.id);
-        currentMajorIds.forEach((id) => dispatch(removeMajor(id)));
-
         for (const pair of pairs) {
           const foundMajor = majors.find((m) => m.id === pair.majorId);
           if (!foundMajor) continue;
@@ -120,7 +119,7 @@ const MajorSelector: FC = () => {
       .finally(() => {
         setMajorsLoading(false);
       });
-  }, [dispatch, majors, isLoggedIn, selectedMajors]);
+  }, [dispatch, majors, isLoggedIn]);
 
   const majorSelectOptions: MajorOption[] = majors.map((m) => ({
     value: m,
