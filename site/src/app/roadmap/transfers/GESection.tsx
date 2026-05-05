@@ -39,7 +39,7 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
   return (
     <TextField
       className="ge-input"
-      inputMode={valueType === 'numberOfCourses' ? 'numeric' : 'decimal'}
+      type="number"
       defaultValue={value}
       onKeyDown={handleKeyDown}
       onBlur={onBlur}
@@ -47,6 +47,7 @@ const GEInput: FC<GEInputProps> = ({ value, handleUpdate, valueType }) => {
         htmlInput: {
           min: 0,
           step: valueType === 'numberOfCourses' ? '1' : 'any',
+          inputMode: valueType === 'numberOfCourses' ? 'numeric' : 'decimal',
         },
       }}
     />
