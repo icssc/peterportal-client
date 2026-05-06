@@ -14,9 +14,8 @@ import { IconButton } from '@mui/material';
 import { useIsMobile } from '../../helpers/util';
 import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
-
 import SaveButton from './SaveButton';
-import ExportButton from './Export';
+import ExportButton from './ExportButton';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
