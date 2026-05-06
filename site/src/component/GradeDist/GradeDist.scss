@@ -20,10 +20,14 @@
   width: 100%;
 }
 .gradedist-filter {
-  .MuiInputBase-root .MuiInputBase-input {
-    // @todo: try to get rid of this, likely through a variant
-    background-color: var(--mui-palette-overlay-overlay1);
-    width: 150px;
+  .MuiInputBase-root {
+    width: 200px;
+    .MuiInputBase-input {
+      width: 150px;
+    }
+  }
+  .MuiAutocomplete-root {
+    width: 200px;
   }
 }
 

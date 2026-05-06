@@ -16,6 +16,7 @@ import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
 import { usePathname } from 'next/navigation';
 
 import SaveButton from './SaveButton';
+import ExportButton from './Export';
 
 const AppHeader: FC = () => {
   const dispatch = useAppDispatch();
@@ -40,7 +41,7 @@ const AppHeader: FC = () => {
             </IconButton>
           </div>
           <div className="fullscreen-search-row">
-            <SearchModule index="courses" />
+            <SearchModule index="courses" autoFocusInput />
           </div>
         </div>
       </header>
@@ -61,6 +62,7 @@ const AppHeader: FC = () => {
                 <SearchIcon sx={{ fontSize: 20 }} />
               </IconButton>
             )}
+            <ExportButton />
             <SaveButton />
           </>
         )}

@@ -98,6 +98,7 @@ export const plannerYear = pgTable(
       .notNull(),
     startYear: integer('start_year').notNull(),
     name: text('name').notNull(),
+    collapsed: boolean('collapsed').default(false).notNull(),
   },
   (table) => [primaryKey({ columns: [table.plannerId, table.startYear] })],
 );
@@ -242,6 +243,17 @@ export const savedCourse = pgTable(
       .references(() => user.id)
       .notNull(),
     courseId: text('course_id').notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
+);
+
+export const courseNotes = pgTable(
+  'course_notes',
+  {
+    userId: integer('user_id').references(() => user.id),
+    courseId: text('course_id').notNull(),
+    content: text('content'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
 );

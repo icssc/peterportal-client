@@ -100,6 +100,7 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
 
 interface ShowSavedProps {
   showSavedCoursesOnEmpty?: boolean;
+  autoFocusSearch?: boolean;
 }
 
 export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
@@ -141,7 +142,7 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   );
 };
 
-const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocusSearch = false }) => {
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
@@ -163,7 +164,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
 
   return (
     <>
-      <SearchModule />
+      <SearchModule autoFocusInput={autoFocusSearch} />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
       {showCourseFilters && <SearchFilters />}
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (

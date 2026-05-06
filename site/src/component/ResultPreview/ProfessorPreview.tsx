@@ -7,7 +7,7 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms, unionTerms } from '../../helpers/util';
 import { ProfessorGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
@@ -74,17 +74,16 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   );
 };
 
-const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void }> = ({
+const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void; showBack: boolean }> = ({
   netid,
   onClose,
   onBack,
+  showBack,
 }) => {
   netid = netid.replace(/\s/g, '');
   const professorData = useProfessorData(netid);
   const isLoading = false;
   const dispatch = useAppDispatch();
-  const previews = useAppSelector((state) => state.preview.previewStack);
-  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyProfLink = () => {
     const url = new URL('/planner/instructor/' + netid, location.origin).toString();
@@ -115,8 +114,8 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
             <CloseIcon />
           </IconButton>
         </Tooltip>
-        {previews.length > 1 && (
-          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
+        {showBack && (
+          <Tooltip title="Go Back">
             <IconButton onClick={onBack}>
               <BackIcon />
             </IconButton>

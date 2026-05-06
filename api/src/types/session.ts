@@ -26,5 +26,11 @@ declare module 'express-session' {
      * PKCE code verifier for OAuth flow
      */
     codeVerifier?: string;
+    /**
+     * redirect_uri used in the /authorize request; must match on the token
+     * exchange. Persisted so the native iOS flow (which uses a dedicated
+     * `/callback/native` URI) exchanges against the same URI it advertised.
+     */
+    oauthRedirectUri?: string;
   }
 }

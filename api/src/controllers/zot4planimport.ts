@@ -142,6 +142,7 @@ const convertIntoSavedPlanner = (
     converted.content.push({
       startYear: startYear + i,
       name: 'Year ' + (i + 1),
+      collapsed: false,
       quarters: quartersList,
     });
   }

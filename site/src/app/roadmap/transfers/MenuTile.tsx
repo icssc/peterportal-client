@@ -21,6 +21,12 @@ export interface MenuTileProps {
 }
 
 const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteFn, headerItems, unread, onClick }) => {
+  const handleUnitsChange = (value: number | undefined) => {
+    if (value !== undefined && setUnits) {
+      setUnits(value);
+    }
+  };
+
   return (
     <ClickableDiv className="menu-tile" onClick={onClick}>
       <UnreadDot show={unread ?? false} displayFullNewText={true} />
@@ -30,7 +36,13 @@ const MenuTile: FC<MenuTileProps> = ({ children, title, units, setUnits, deleteF
         </div>
         <hr />
         {units !== undefined && (
-          <UnitsContainer units={units} setUnits={setUnits} minUnits={0} maxUnits={undefined} source="MenuTile" />
+          <UnitsContainer
+            units={units}
+            setUnits={setUnits ? handleUnitsChange : undefined}
+            minUnits={0}
+            maxUnits={undefined}
+            source="MenuTile"
+          />
         )}
         {deleteFn && (
           <IconButton className="delete-btn" onClick={deleteFn}>
