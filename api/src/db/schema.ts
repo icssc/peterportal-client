@@ -249,6 +249,17 @@ export const savedCourse = pgTable(
   (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
 );
 
+export const courseNotes = pgTable(
+  'course_notes',
+  {
+    userId: integer('user_id').references(() => user.id),
+    courseId: text('course_id').notNull(),
+    content: text('content'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.courseId] })],
+);
+
 export const zot4PlanImports = pgTable(
   'zot4plan_imports',
   {
