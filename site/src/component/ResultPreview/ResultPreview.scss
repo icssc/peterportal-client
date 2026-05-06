@@ -52,30 +52,6 @@
     background-color: var(--mui-palette-Button-inheritContainedBg);
   }
 
-  .preview-arrow-nav {
-    position: sticky;
-    flex-direction: column;
-    bottom: 20px;
-    display: none;
-    align-items: center;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: 20px;
-    padding: 4px;
-    border-radius: 999px;
-    background-color: var(--mui-palette-primary-main);
-
-    &.Mui-disabled {
-      color: rgba(255, 255, 255, 0.4);
-    }
-  }
-
-  .preview-arrow-divider {
-    height: 1px;
-    width: 20px;
-    background-color: rgba(255, 255, 255, 0.4);
-  }
-
   .preview-nav-button.MuiButton-root {
     margin: 0;
     border-radius: 8px;
@@ -109,25 +85,63 @@
     margin-bottom: 32px;
   }
 
-  @container (min-width: 480px) {
-    .preview-arrow-nav {
-      right: 40px;
-      bottom: 40px;
-      padding: 8px;
-    }
-  }
-
   @container (max-width: 940px) {
-    .preview-nav-bar {
-      display: none;
-    }
-
-    .preview-arrow-nav {
-      display: flex;
-    }
-
     .preview-title {
       margin-right: auto;
+    }
+
+    .preview-nav-bar {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      z-index: 999;
+    }
+
+    .preview-nav-button.MuiButton-root {
+      border-radius: 999px;
+
+      .MuiButton-startIcon {
+        margin: 0;
+      }
+
+      > span:not(.MuiButton-icon) {
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+      }
+    }
+    @container (max-width: 433px) {
+      .preview-nav-bar {
+        right: auto;
+        bottom: 20px;
+        padding: 4px;
+        gap: 4px;
+      }
+
+      .preview-nav-button.MuiButton-root {
+        min-width: 40px;
+        padding: 10px;
+      }
+    }
+
+    @container (min-width: 434px) and (max-width: 940px) {
+      .preview-nav-bar {
+        right: auto;
+        bottom: 30px;
+        padding: 6px;
+        gap: 6px;
+        @media (min-width: 802px) {
+          // layout expands to preview and sidebar
+          left: calc((100vw - 367px) / 2 + 367px); // center based on preview container width only
+        }
+      }
+
+      .preview-nav-button.MuiButton-root {
+        min-width: 45px;
+        padding: 12px;
+      }
     }
   }
 }

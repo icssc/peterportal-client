@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 
 const previewLinks = [
@@ -14,7 +12,7 @@ const previewLinks = [
   { id: 'preview-reviews', label: 'Reviews', icon: <RateReviewIcon /> },
 ];
 
-const useActivePreviewSection = () => {
+const PreviewNavBar = () => {
   const [activeSection, setActiveSection] = useState(previewLinks[0].id);
 
   useEffect(() => {
@@ -40,41 +38,6 @@ const useActivePreviewSection = () => {
     scrollContainer.addEventListener('scroll', updateActiveSection);
     return () => scrollContainer.removeEventListener('scroll', updateActiveSection);
   }, []);
-
-  return activeSection;
-};
-
-export const PreviewArrowNav = () => {
-  const activeSection = useActivePreviewSection();
-  const activeIndex = previewLinks.findIndex((link) => link.id === activeSection);
-
-  const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  return (
-    <div className="preview-arrow-nav">
-      <IconButton
-        disabled={activeIndex <= 0}
-        disableRipple={true}
-        onClick={() => scrollToSection(previewLinks[activeIndex - 1].id)}
-      >
-        <KeyboardArrowUpIcon />
-      </IconButton>
-      <div className="preview-arrow-divider" />
-      <IconButton
-        disabled={activeIndex >= previewLinks.length - 1}
-        disableRipple={true}
-        onClick={() => scrollToSection(previewLinks[activeIndex + 1].id)}
-      >
-        <KeyboardArrowDownIcon />
-      </IconButton>
-    </div>
-  );
-};
-
-const PreviewNavBar = () => {
-  const activeSection = useActivePreviewSection();
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
