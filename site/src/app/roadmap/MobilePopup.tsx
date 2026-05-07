@@ -16,35 +16,48 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
   const isMobile = useIsMobile();
   const overlayRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const touchStartY = useRef(0);
+  const popupTouchStartY = useRef(0);
+  const overlayTouchStartY = useRef(0);
 
   useEffect(() => {
     const element = popupRef.current;
     const overlay = overlayRef.current;
+    let isScrolling: boolean = false;
+
     if (!element) return;
 
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
+      if (element.scrollTop !== 0) {
+        isScrolling = true;
+      }
+      popupTouchStartY.current = e.touches[0].clientY;
       element.style.transition = 'none';
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches[0].clientY - touchStartY.current > 400 && element.scrollTop === 0) {
+      if (e.changedTouches[0].clientY - popupTouchStartY.current > 400 && !isScrolling) {
         onClose();
       }
       element.style.transform = '';
       element.style.transition = '';
+      isScrolling = false;
     };
 
     const handleTouchMovePopup = (e: TouchEvent) => {
-      const delta = e.touches[0].clientY - touchStartY.current;
-      if (delta > 0 && element.scrollTop === 0) {
-        element.style.transform = `translateY(${delta}px)`;
+      const delta = e.touches[0].clientY - popupTouchStartY.current;
+      if (!isScrolling) {
+        e.preventDefault();
+        element.style.transform = delta > 0 ? `translateY(${delta}px)` : 'translateY(0)';
       }
     };
 
+    const handleOverLayTouchStart = (e: TouchEvent) => {
+      overlayTouchStartY.current = e.touches[0].clientY;
+      element.style.transition = 'none';
+    };
+
     const handleOverlayTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches[0].clientY - touchStartY.current > 50) {
+      if (e.changedTouches[0].clientY - overlayTouchStartY.current > 50) {
         onClose();
       }
       element.style.transform = '';
@@ -52,7 +65,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     };
 
     const handleOverlayTouchMove = (e: TouchEvent) => {
-      const delta = e.touches[0].clientY - touchStartY.current;
+      const delta = e.touches[0].clientY - overlayTouchStartY.current;
       if (delta > 0) {
         element.style.transform = `translateY(${delta}px)`;
       }
@@ -60,19 +73,19 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
 
     element?.addEventListener('touchstart', handleTouchStart);
     element?.addEventListener('touchend', handleTouchEnd);
-    element?.addEventListener('touchmove', handleTouchMovePopup);
+    element?.addEventListener('touchmove', handleTouchMovePopup, { passive: false });
 
-    overlay?.addEventListener('touchstart', handleTouchStart);
+    overlay?.addEventListener('touchstart', handleOverLayTouchStart);
     overlay?.addEventListener('touchend', handleOverlayTouchEnd);
     overlay?.addEventListener('touchmove', handleOverlayTouchMove);
 
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handleTouchMovePopup);
-      element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchend', handleOverlayTouchEnd);
-      element.removeEventListener('touchmove', handleOverlayTouchMove);
+      element.removeEventListener('touchmove', handleTouchMovePopup, { passive: false } as EventListenerOptions);
+      overlay?.removeEventListener('touchstart', handleOverLayTouchStart);
+      overlay?.removeEventListener('touchend', handleOverlayTouchEnd);
+      overlay?.removeEventListener('touchmove', handleOverlayTouchMove);
     };
   }, [show, onClose]);
 
