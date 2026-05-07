@@ -44,7 +44,6 @@
 
     .reviewcard-author {
       display: flex;
-      gap: 0;
 
       .reviewcard-author-name {
         font-weight: 500;
@@ -85,7 +84,6 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: left;
   gap: 10px;
 
   .rating {
@@ -189,7 +187,6 @@
     .upvote,
     .downvote {
       display: flex;
-      gap: 0px;
       border-radius: 3px;
       border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
       padding: 0 4px;
