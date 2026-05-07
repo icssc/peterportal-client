@@ -22,11 +22,12 @@
   }
 
   .course-info-warning {
-    .warning-primary {
+    .warning-primary,
+    .warning-secondary {
       font-size: 14px;
       gap: 5px;
 
-      .warning-primary-icon {
+      .warning-icon {
         font-size: 16px;
       }
     }
