@@ -80,15 +80,6 @@
   gap: 1rem;
 }
 
-.reviewcard-footer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: auto;
-  color: var(--mui-palette-text-secondary);
-}
-
 // Rating boxes (quality and difficulty)
 .reviewcard-ratings {
   text-align: center;
@@ -187,8 +178,7 @@
 }
 
 .reviewcard-footer {
-  display: flex;
-  justify-content: flex-end;
+  color: var(--mui-palette-text-secondary);
 
   .reviewcard-voting {
     display: flex;
