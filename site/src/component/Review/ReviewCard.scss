@@ -4,8 +4,6 @@
   gap: 1rem;
   background-color: var(--mui-palette-overlay-overlay2);
   padding: 12px 20px 16px 20px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   font-size: 14px;
 
   &.MuiCard-root {
@@ -90,7 +88,6 @@
     border-radius: var(--mui-shape-borderRadiusLg);
     width: 56px;
     height: 56px;
-    border-radius: 8px;
     padding: 12px;
     display: flex;
     flex-direction: column;
