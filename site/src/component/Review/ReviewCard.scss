@@ -39,6 +39,7 @@
     display: flex;
     justify-content: space-between;
     padding-top: 8px;
+    align-items: flex-start;
 
     .reviewcard-author {
       display: flex;
@@ -54,6 +55,7 @@
     .reviewcard-date {
       font-size: 12px;
       color: var(--mui-palette-text-secondary);
+      white-space: nowrap;
     }
   }
 
