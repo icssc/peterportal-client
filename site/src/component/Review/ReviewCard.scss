@@ -129,18 +129,14 @@
 }
 
 .reviewcard-author {
-  margin: 0;
   display: flex;
   justify-content: left;
   gap: 0 4px;
   flex-wrap: wrap;
 }
-.reviewcard-author-name {
-  margin: 0;
-}
+
 .reviewcard-author-verified,
 .reviewcard-author-author {
-  margin: 0;
   display: flex;
   margin-left: 2px;
 
