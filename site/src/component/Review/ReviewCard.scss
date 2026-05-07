@@ -152,13 +152,9 @@
 .reviewcard-footer-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-end;
+  // gap: 8px;
   margin-top: auto;
-
-  .reviewcard-footer {
-    margin-left: auto;
-  }
 }
 
 .reviewcard-tags {
@@ -174,41 +170,36 @@
 
 .reviewcard-footer {
   color: var(--mui-palette-text-secondary);
+  margin-left: auto;
 
-  .reviewcard-voting {
+  .upvote,
+  .downvote {
     display: flex;
-    gap: 8px;
-    margin-right: 0;
+    border-radius: 3px;
+    border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
+    padding: 0 4px;
+    cursor: pointer;
 
-    .upvote,
-    .downvote {
-      display: flex;
-      border-radius: 3px;
-      border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
-      padding: 0 4px;
-      cursor: pointer;
+    .vote-count {
+      font-weight: 700;
+      font-size: 12px;
+    }
 
-      .vote-count {
-        font-weight: 700;
-        font-size: 12px;
-      }
+    .MuiIconButton-root {
+      padding: 2px;
+      color: var(--mui-palette-text-secondary);
 
-      .MuiIconButton-root {
-        padding: 2px;
-        color: var(--mui-palette-text-secondary);
-
-        .MuiSvgIcon-root {
-          font-size: 14px;
-        }
-
-        &:hover {
-          background-color: transparent;
-        }
+      .MuiSvgIcon-root {
+        font-size: 14px;
       }
 
       &:hover {
-        background-color: color-mix(in srgb, var(--mui-palette-text-secondary) 10%, transparent);
+        background-color: transparent;
       }
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--mui-palette-text-secondary) 10%, transparent);
     }
   }
 }
