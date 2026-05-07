@@ -40,12 +40,10 @@
   .reviewcard-header-bottom {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding-top: 8px;
 
     .reviewcard-author {
       display: flex;
-      align-items: center;
       gap: 0;
 
       .reviewcard-author-name {
@@ -146,7 +144,6 @@
   display: flex;
   flex-direction: row;
   justify-content: left;
-  align-items: center;
   gap: 0 4px;
   flex-wrap: wrap;
 }
@@ -187,25 +184,21 @@
   display: flex;
   flex-direction: row;
   gap: 8px;
-  align-items: center;
 }
 
 .reviewcard-footer {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
 
   .reviewcard-voting {
     display: flex;
     flex-direction: row;
     gap: 8px;
-    align-items: center;
     margin-right: 0;
 
     .upvote,
     .downvote {
       display: flex;
-      align-items: center;
       gap: 0px;
       border-radius: 3px;
       border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
