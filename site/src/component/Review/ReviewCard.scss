@@ -131,7 +131,6 @@
 .reviewcard-author {
   margin: 0;
   display: flex;
-  flex-direction: row;
   justify-content: left;
   gap: 0 4px;
   flex-wrap: wrap;
@@ -152,7 +151,6 @@
 
 .reviewcard-footer-row {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
@@ -171,7 +169,6 @@
 
 .reviewcard-voting-buttons {
   display: flex;
-  flex-direction: row;
   gap: 8px;
 }
 
@@ -180,7 +177,6 @@
 
   .reviewcard-voting {
     display: flex;
-    flex-direction: row;
     gap: 8px;
     margin-right: 0;
 
