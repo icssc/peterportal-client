@@ -42,6 +42,7 @@
 
     .reviewcard-author {
       display: flex;
+      gap: 0 4px;
 
       .reviewcard-author-name {
         font-weight: 500;
@@ -125,15 +126,7 @@
   }
 }
 
-.reviewcard-author {
-  display: flex;
-  justify-content: left;
-  gap: 0 4px;
-  flex-wrap: wrap;
-}
-
-.reviewcard-author-verified,
-.reviewcard-author-author {
+.reviewcard-author-icon {
   display: flex;
   margin-left: 2px;
 
@@ -146,7 +139,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  // gap: 8px;
   margin-top: auto;
 }
 

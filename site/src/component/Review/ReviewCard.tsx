@@ -352,8 +352,8 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
         <div className="reviewcard-header-bottom">
           <div className="reviewcard-author">
             <span className="reviewcard-author-name">{review.userDisplay}</span>
-            {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
-            {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
+            {review.verified && <div className="reviewcard-author-icon">{verifiedIcon}</div>}
+            {review.authored && <div className="reviewcard-author-icon">{authorIcon}</div>}
           </div>
           <span className="reviewcard-date">
             {displayReviewDate(review.createdAt)}
