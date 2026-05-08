@@ -12,8 +12,6 @@ import {
   QuarterMismatchText,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { useClearedCoursesUntil } from '../../hooks/planner';
-import { getMissingPrerequisites } from '../../helpers/planner';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
@@ -22,9 +20,6 @@ interface CoursePopoverProps {
 }
 
 const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch }) => {
-  const courseId = typeof course === 'string' ? '' : `${course.department} ${course.courseNumber}`;
-  const clearedCourses = useClearedCoursesUntil(courseId);
-
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -33,7 +28,6 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarte
     );
   }
 
-  requiredCourses = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
