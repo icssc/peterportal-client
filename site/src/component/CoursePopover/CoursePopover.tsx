@@ -9,15 +9,17 @@ import {
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
+  QuarterMismatchText,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
+  quarterMismatch?: string;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch }) => {
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -44,6 +46,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
+      <QuarterMismatchText quarterMismatch={quarterMismatch} />
     </div>
   );
 };

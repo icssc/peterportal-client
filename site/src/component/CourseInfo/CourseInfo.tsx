@@ -61,7 +61,7 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
   return (
     <div className="course-info-warning">
       <div className="warning-primary">
-        <WarningAmberIcon className="warning-primary-icon" />
+        <WarningAmberIcon className="warning-icon" />
         Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
       </div>
       <div className="warning-hint-italics">
@@ -82,5 +82,19 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
         </div>
       )}
     </>
+  );
+};
+
+export const QuarterMismatchText: FC<{ quarterMismatch?: string }> = ({ quarterMismatch }) => {
+  if (!quarterMismatch) return;
+
+  return (
+    <div className="course-info-warning">
+      <br />
+      <div className="warning-secondary">
+        <WarningAmberIcon className="warning-icon" />
+        Typically not offered in {quarterMismatch}
+      </div>
+    </div>
   );
 };
