@@ -143,6 +143,7 @@
 .reviewcard-voting-buttons {
   display: flex;
   gap: 8px;
+  margin-left: 12px;
 }
 
 .reviewcard-footer {
@@ -188,6 +189,7 @@
 
   .MuiMenuItem-root {
     font-size: 14px;
+    min-height: unset;
   }
 }
 
