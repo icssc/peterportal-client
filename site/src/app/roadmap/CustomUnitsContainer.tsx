@@ -4,7 +4,7 @@ import { FC, FormEvent, useState } from 'react';
 
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import CheckIcon from '@mui/icons-material/Check';
-import { IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 
 interface UnitsContainerProps {
   units: number | undefined;
@@ -43,16 +43,20 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, ma
   return (
     <form onSubmit={handleSubmit}>
       {/* eslint-disable jsx-a11y/no-autofocus */}
-      <input
+      <TextField
         className="units-input"
         type="number"
         placeholder={maxUnits !== undefined ? `${minUnits}-${maxUnits}` : 'Units'}
         name="units"
         defaultValue={units}
-        min={minUnits ? minUnits : '0'}
-        max={maxUnits ? maxUnits : undefined}
-        step="any"
         autoFocus
+        slotProps={{
+          htmlInput: {
+            min: minUnits ? minUnits : '0',
+            max: maxUnits ? maxUnits : undefined,
+            step: 'any',
+          },
+        }}
       />
       {/* eslint-enable jsx-a11y/no-autofocus */}
       <IconButton type="submit">
