@@ -24,11 +24,13 @@ interface CourseNameAndInfoProps {
   openPopoverLeft?: boolean;
   requiredCourses?: string[];
   quarterMismatch?: string;
+  notRecentlyOffered?: boolean;
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
 }
 export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
-  const { data, openPopoverLeft, requiredCourses, quarterMismatch, popupListener, alwaysCollapse } = props;
+  const { data, openPopoverLeft, requiredCourses, quarterMismatch, notRecentlyOffered, popupListener, alwaysCollapse } =
+    props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
@@ -48,7 +50,12 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
   };
 
   const popoverContent = (
-    <CoursePopover course={data} requiredCourses={requiredCourses} quarterMismatch={quarterMismatch} />
+    <CoursePopover
+      course={data}
+      requiredCourses={requiredCourses}
+      quarterMismatch={quarterMismatch}
+      notRecentlyOffered={notRecentlyOffered}
+    />
   );
 
   return (
@@ -66,6 +73,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         <span className="warning-container">
           {requiredCourses && <WarningAmberIcon />}
           {quarterMismatch && <WarningAmberIcon className="warning-secondary" />}
+          {notRecentlyOffered && <WarningAmberIcon className="warning-tertiary" />}
         </span>
       </span>
     </OverlayTrigger>
@@ -75,6 +83,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 interface CourseProps {
   requiredCourses?: string[];
   quarterMismatch?: string;
+  notRecentlyOffered?: boolean;
   onDelete?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
@@ -84,7 +93,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, quarterMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
+  const { requiredCourses, quarterMismatch, notRecentlyOffered, onDelete, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -125,7 +134,10 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
-            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses, quarterMismatch }} />
+            <CourseNameAndInfo
+              data={props.data}
+              {...{ openPopoverLeft, requiredCourses, quarterMismatch, notRecentlyOffered }}
+            />
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {isInRoadmap && minUnits !== maxUnits && (

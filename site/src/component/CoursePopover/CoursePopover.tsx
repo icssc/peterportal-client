@@ -7,6 +7,7 @@ import {
   CourseBookmarkButton,
   CourseSynopsis,
   IncompletePrerequisiteText,
+  NotRecentlyOfferedText,
   PrerequisiteText,
   PreviousOfferingsRow,
   QuarterMismatchText,
@@ -17,9 +18,10 @@ interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
   quarterMismatch?: string;
+  notRecentlyOffered?: boolean;
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch, notRecentlyOffered }) => {
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -47,6 +49,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarte
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
       <QuarterMismatchText quarterMismatch={quarterMismatch} />
+      <NotRecentlyOfferedText notRecentlyOffered={notRecentlyOffered} />
     </div>
   );
 };

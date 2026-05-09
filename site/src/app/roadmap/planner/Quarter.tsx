@@ -220,7 +220,15 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               break;
             }
           }
-          const quarterMismatch = mismatch ? quarterTitle : undefined;
+          const notRecentlyOffered =
+            mismatch &&
+            !course.terms.some((term) => {
+              for (let i = 0; i <= searchPrevYears; i++) {
+                if (term.startsWith(`${termYear - i} `)) return true;
+              }
+              return false;
+            });
+          const quarterMismatch = mismatch && !notRecentlyOffered ? quarterTitle : undefined;
 
           return (
             // addMode="drag" somehow fixes the issue with tapping a course after adding on mobile
@@ -233,6 +241,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
               }}
               requiredCourses={requiredCourses}
               quarterMismatch={quarterMismatch}
+              notRecentlyOffered={notRecentlyOffered}
               onDelete={() => removeCourseAt(index)}
               addMode="drag"
               openPopoverLeft

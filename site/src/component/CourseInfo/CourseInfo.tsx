@@ -98,3 +98,17 @@ export const QuarterMismatchText: FC<{ quarterMismatch?: string }> = ({ quarterM
     </div>
   );
 };
+
+export const NotRecentlyOfferedText: FC<{ notRecentlyOffered?: boolean }> = ({ notRecentlyOffered }) => {
+  if (!notRecentlyOffered) return;
+
+  return (
+    <div className="course-info-warning">
+      <br />
+      <div className="warning-tertiary">
+        <WarningAmberIcon className="warning-icon" />
+        Not offered in recent years
+      </div>
+    </div>
+  );
+};
