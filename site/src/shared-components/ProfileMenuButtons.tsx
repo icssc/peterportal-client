@@ -1,11 +1,11 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Stack } from '@mui/material';
 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Apple as AppleIcon, Google as GoogleIcon } from '@mui/icons-material';
 import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
-import { UserMetadata } from '@peterportal/types';
+import type { UserMetadata } from '@peterportal/types';
 
 interface ProfileMenuButtonsProps {
   user: UserMetadata | null;
@@ -15,16 +15,28 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
   if (!user) {
     return (
       <>
-        <Button
-          className="header-button"
-          variant="text"
-          size="medium"
-          startIcon={<AccountCircleIcon />}
-          color="inherit"
-          href="/planner/api/users/auth/google"
-        >
-          Sign In
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button
+            className="header-button"
+            variant="text"
+            size="medium"
+            startIcon={<GoogleIcon />}
+            color="inherit"
+            href="/planner/api/users/auth/google?provider=google"
+          >
+            Sign In with Google
+          </Button>
+          <Button
+            className="header-button"
+            variant="text"
+            size="medium"
+            startIcon={<AppleIcon />}
+            color="inherit"
+            href="/planner/api/users/auth/google?provider=apple"
+          >
+            Sign In with Apple
+          </Button>
+        </Stack>
         <IconButton onClick={handleOpen} color="inherit">
           <MenuIcon />
         </IconButton>

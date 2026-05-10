@@ -7,7 +7,7 @@ import './Profile.scss';
 import Link from 'next/link';
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Apple as AppleIcon, Google as GoogleIcon } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -219,14 +219,32 @@ const AuthButton = () => {
           </ListItemButton>
         </ListItem>
       ) : (
-        <ListItem>
-          <ListItemButton href="/planner/api/users/auth/google" className="profile-popover-link" component="a">
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary="SIGN IN" />
-          </ListItemButton>
-        </ListItem>
+        <>
+          <ListItem>
+            <ListItemButton
+              href="/planner/api/users/auth/google?provider=google"
+              className="profile-popover-link"
+              component="a"
+            >
+              <ListItemIcon>
+                <GoogleIcon />
+              </ListItemIcon>
+              <ListItemText primary="SIGN IN WITH GOOGLE" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton
+              href="/planner/api/users/auth/google?provider=apple"
+              className="profile-popover-link"
+              component="a"
+            >
+              <ListItemIcon>
+                <AppleIcon />
+              </ListItemIcon>
+              <ListItemText primary="SIGN IN WITH APPLE" />
+            </ListItemButton>
+          </ListItem>
+        </>
       )}
     </List>
   );

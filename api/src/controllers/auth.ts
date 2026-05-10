@@ -129,7 +129,11 @@ router.get('/google', async (req, res) => {
       ['openid', 'profile', 'email'],
     );
 
-    // Support prompt=none for silent SSO
+    const provider = req.query.provider;
+    if (provider === 'apple' || provider === 'google') {
+      authUrl.searchParams.set('provider', provider);
+    }
+
     if (req.query.prompt === 'none') {
       authUrl.searchParams.set('prompt', 'none');
     }
