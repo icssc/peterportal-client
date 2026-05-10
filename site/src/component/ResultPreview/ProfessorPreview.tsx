@@ -7,7 +7,7 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms, unionTerms } from '../../helpers/util';
 import { ProfessorGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 
@@ -17,6 +17,7 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
 import { useProfessorData } from '../../hooks/professorReviews';
+import PreviewNavBar from './PreviewNavBar';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -48,6 +49,7 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   return (
     <div className="preview-body">
       <SideInfo
+        id="preview-details"
         className="professor-summary"
         searchType="instructor"
         name={data.name}
@@ -57,32 +59,31 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
         professor={data}
       />
 
-      <ResultPageSection title="📊 Grade Distribution">
+      <ResultPageSection id="preview-grades" title="📊 Grade Distribution">
         <GradeDist professor={data} />
       </ResultPageSection>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
+      <ResultPageSection id="preview-schedule" title="🗓️ Schedule of Classes">
         <Schedule professorIDs={data.shortenedNames} termsOffered={unionTerms(data.courses)} />
       </ResultPageSection>
 
-      <ResultPageSection title="💬 Reviews">
+      <ResultPageSection id="preview-reviews" title="💬 Reviews">
         <Review professor={data} terms={sortTerms(getProfessorTerms(data))} />
       </ResultPageSection>
     </div>
   );
 };
 
-const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void }> = ({
+const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => void; showBack: boolean }> = ({
   netid,
   onClose,
   onBack,
+  showBack,
 }) => {
   netid = netid.replace(/\s/g, '');
   const professorData = useProfessorData(netid);
   const isLoading = false;
   const dispatch = useAppDispatch();
-  const previews = useAppSelector((state) => state.preview.previewStack);
-  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyProfLink = () => {
     const url = new URL('/planner/instructor/' + netid, location.origin).toString();
@@ -113,14 +114,15 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
             <CloseIcon />
           </IconButton>
         </Tooltip>
-        {previews.length > 1 && (
-          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
+        {showBack && (
+          <Tooltip title="Go Back">
             <IconButton onClick={onBack}>
               <BackIcon />
             </IconButton>
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
+        <PreviewNavBar />
         <Button
           variant="contained"
           color="inherit"

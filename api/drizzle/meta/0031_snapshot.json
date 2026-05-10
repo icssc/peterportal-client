@@ -1,76 +1,9 @@
 {
-  "id": "55713a5b-37e9-4b8b-b031-7a525fed0f78",
+  "id": "c02e5fd5-2dac-4461-8bb7-1f36ef7db36d",
   "prevId": "58a55613-eb11-4de3-97c2-b464cf9f637c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.account": {
-      "name": "account",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "provider": {
-          "name": "provider",
-          "type": "provider",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "provider_account_id": {
-          "name": "provider_account_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "account_user_id_user_id_fk": {
-          "name": "account_user_id_user_id_fk",
-          "tableFrom": "account",
-          "tableTo": "user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "account_user_id_provider_pk": {
-          "name": "account_user_id_provider_pk",
-          "columns": ["user_id", "provider"]
-        }
-      },
-      "uniqueConstraints": {
-        "unique_provider_account_id": {
-          "name": "unique_provider_account_id",
-          "nullsNotDistinct": false,
-          "columns": ["provider_account_id"]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.completed_marker_requirement": {
       "name": "completed_marker_requirement",
       "schema": "",
@@ -104,6 +37,59 @@
         "completed_marker_requirement_user_id_marker_name_pk": {
           "name": "completed_marker_requirement_user_id_marker_name_pk",
           "columns": ["user_id", "marker_name"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.course_notes": {
+      "name": "course_notes",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "course_notes_user_id_user_id_fk": {
+          "name": "course_notes_user_id_user_id_fk",
+          "tableFrom": "course_notes",
+          "tableTo": "user",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "course_notes_user_id_course_id_pk": {
+          "name": "course_notes_user_id_course_id_pk",
+          "columns": ["user_id", "course_id"]
         }
       },
       "uniqueConstraints": {},
@@ -1552,13 +1538,7 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {
-    "public.provider": {
-      "name": "provider",
-      "schema": "public",
-      "values": ["GOOGLE", "APPLE"]
-    }
-  },
+  "enums": {},
   "schemas": {},
   "sequences": {},
   "roles": {},

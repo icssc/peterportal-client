@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useState } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
+import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 
 function updateSelectedMinors(minorIds: string[]) {
   trpc.programs.saveSelectedMinor.mutate({ minorIds });
@@ -21,6 +22,7 @@ const MinorSelector: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const minors = useAppSelector((state) => state.courseRequirements.minorList);
   const selectedMinors = useAppSelector((state) => state.courseRequirements.selectedMinors);
+  const hasFetchedSelectedMinors = useRef(false);
 
   const [minorsLoading, setMinorsLoading] = useState(false);
 
@@ -75,9 +77,11 @@ const MinorSelector: FC = () => {
 
   useEffect(() => {
     if (!minors.length || !isLoggedIn) return;
-    if (selectedMinors.length) return;
+    if (hasFetchedSelectedMinors.current) return;
+    hasFetchedSelectedMinors.current = true;
 
     setMinorsLoading(true);
+
     trpc.programs.getSavedMinors
       .query()
       .then((minorIds) => {
@@ -90,12 +94,17 @@ const MinorSelector: FC = () => {
       .finally(() => {
         setMinorsLoading(false);
       });
-  }, [dispatch, minors, isLoggedIn, selectedMinors.length]);
+  }, [dispatch, minors, isLoggedIn]);
 
   const minorSelectOptions: MinorOption[] = minors.map((m) => ({
     value: m,
     label: `${m.name}`,
   }));
+
+  const minorAbbreviations = useMemo(() => mapAbbreviations(minors), [minors]);
+
+  const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) =>
+    filterOptionsWithAbbreviations(options, state, minorAbbreviations);
 
   return (
     <>
@@ -107,6 +116,7 @@ const MinorSelector: FC = () => {
         getOptionLabel={(option) => option.label}
         getOptionKey={(option) => option.value.id}
         isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        filterOptions={filterMinorOptions}
         loading={minorsLoading}
         disabled={minorsLoading}
         disableClearable

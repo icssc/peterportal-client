@@ -1,4 +1,4 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect, useRef } from 'react';
 import './SearchModule.scss';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -14,16 +14,23 @@ const SEARCH_TIMEOUT_MS = 300;
 
 interface SearchModuleProps {
   index?: SearchIndex;
+  autoFocusInput?: boolean;
 }
 
-const SearchModule: FC<SearchModuleProps> = () => {
+const SearchModule: FC<SearchModuleProps> = ({ autoFocusInput = false }) => {
   const dispatch = useAppDispatch();
   const index = useAppSelector((state) => state.search.viewIndex);
   const search = useAppSelector((state) => state.search[index]);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const [searchQuery, setSearchQuery] = useState('');
   const [pendingRequest, setPendingRequest] = useState<number | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   useSearchTrigger();
+
+  useEffect(() => {
+    if (!autoFocusInput) return;
+    searchInputRef.current?.focus();
+  }, [autoFocusInput]);
 
   const searchImmediately = (query: string) => {
     if (pendingRequest) clearTimeout(pendingRequest);
@@ -64,6 +71,7 @@ const SearchModule: FC<SearchModuleProps> = () => {
         variant="outlined"
         className="search-bar"
         aria-label="search"
+        inputRef={searchInputRef}
         type="text"
         placeholder={placeholder}
         onChange={(e) => searchAfterTimeout(e.target.value)}

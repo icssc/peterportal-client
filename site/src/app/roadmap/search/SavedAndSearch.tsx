@@ -4,6 +4,7 @@ import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
 import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../../types/types';
+import { useGetCoursesInSameQuarter } from '../../../hooks/sameQuarterCourses';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
@@ -47,7 +48,13 @@ interface CourseResultsContainerProps {
 const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> = ({ course, addMode }) => {
   const courseId = `${course.department} ${course.courseNumber}`;
   const clearedCourses = useClearedCoursesUntil(courseId);
-  const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
+  const coursesInCurrentQuarter = useGetCoursesInSameQuarter(courseId);
+
+  const missingPrerequisites = getMissingPrerequisites(
+    clearedCourses,
+    course.prerequisiteTree,
+    coursesInCurrentQuarter,
+  );
 
   return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} />;
 };
@@ -100,6 +107,7 @@ const ProfessorResultsContainer: FC<ProfessorResultsContainerProps> = ({ searchR
 
 interface ShowSavedProps {
   showSavedCoursesOnEmpty?: boolean;
+  autoFocusSearch?: boolean;
 }
 
 export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
@@ -141,7 +149,7 @@ export const ResultsHeader: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) =
   );
 };
 
-const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
+const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocusSearch = false }) => {
   const showSavedCourses = useAppSelector((state) => !!showSavedCoursesOnEmpty && state.roadmap.showSavedCourses);
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
@@ -163,7 +171,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty }) => {
 
   return (
     <>
-      <SearchModule />
+      <SearchModule autoFocusInput={autoFocusSearch} />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
       {showCourseFilters && <SearchFilters />}
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
