@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import './CoursePopover.scss';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
@@ -7,7 +8,6 @@ import {
   CourseBookmarkButton,
   CourseSynopsis,
   IncompletePrerequisiteText,
-  NotRecentlyOfferedText,
   PrerequisiteText,
   PreviousOfferingsRow,
   QuarterMismatchText,
@@ -17,11 +17,10 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  quarterMismatch?: string;
-  notRecentlyOffered?: boolean;
+  termMismatch?: QuarterName | 'RecentYears';
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch, notRecentlyOffered }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, termMismatch }) => {
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -48,8 +47,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarte
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
-      <QuarterMismatchText quarterMismatch={quarterMismatch} />
-      <NotRecentlyOfferedText notRecentlyOffered={notRecentlyOffered} />
+      <QuarterMismatchText termMismatch={termMismatch} />
     </div>
   );
 };
