@@ -67,9 +67,9 @@ interface CourseTileProps {
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
   /** Preloaded terms for quarter filter dimming */
-  preloadedTerms?: string[];
+  terms?: string[];
 }
-const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0, preloadedTerms }) => {
+const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0, terms }) => {
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -113,7 +113,6 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = isMobile ? tapProps : {};
-  const terms = preloadedTerms ?? (typeof courseData !== 'string' ? courseData.terms : undefined);
   const isDimmed =
     quarterFilters.length > 0 && terms !== undefined && !courseMatchesQuarterFilter(terms, quarterFilters);
   const className = `program-course-tile${isMobile ? ' mobile' : ''}${loading ? ' loading' : ''}${completedBy ? ' completed' : ''}${isDimmed ? ' quarter-filter-dimmed' : ''}`;
@@ -183,7 +182,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
           key={c}
           completedBy={c in takenCourseIDs ? (takenCourseIDs[c].transferType ?? 'roadmap') : null}
           dragTimestamp={timestamps[i]}
-          preloadedTerms={courseTermsMap[c]}
+          terms={courseTermsMap[c]}
         />
       ))}
     </ReactSortable>
