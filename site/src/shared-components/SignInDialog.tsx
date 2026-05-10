@@ -18,15 +18,14 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
       PaperProps={{
         sx: {
           width: 'fit-content',
-          minWidth: 320,
-          borderRadius: '0.75rem',
-          padding: '0.5rem',
+          borderRadius: '0.5rem',
+          padding: '1rem',
         },
       }}
     >
       <DialogTitle sx={{ textAlign: 'center', fontWeight: 600 }}>Sign In</DialogTitle>
       <DialogContent>
-        <Stack spacing={1.5}>
+        <Stack spacing={1}>
           <Button
             href="/planner/api/users/auth/google?provider=google"
             startIcon={<GoogleIcon />}

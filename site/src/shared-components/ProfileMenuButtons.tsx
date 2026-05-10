@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 
 import { Button, IconButton } from '@mui/material';
 import Image from 'next/image';
+import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import type { UserMetadata } from '@peterportal/types';
 import SignInDialog from './SignInDialog';
@@ -21,6 +22,7 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
           variant="text"
           size="medium"
           color="inherit"
+          startIcon={<LoginIcon />}
           onClick={() => setSignInOpen(true)}
         >
           Sign In
