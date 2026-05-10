@@ -1,5 +1,5 @@
 import './ProgramRequirementsList.scss';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { createContext, FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import {
   COMPLETE_ALL_TEXT,
@@ -47,6 +47,20 @@ import MenuTile from '../transfers/MenuTile';
 import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
+const CourseTermsContext = createContext<Record<string, string[]>>({});
+
+function collectCourseIDs(requirements: ProgramRequirement[]): string[] {
+  const ids: string[] = [];
+  for (const req of requirements) {
+    if (req.requirementType === 'Course' || req.requirementType === 'Unit') {
+      ids.push(...req.courses);
+    } else if (req.requirementType === 'Group') {
+      ids.push(...collectCourseIDs(req.requirements));
+    }
+  }
+  return ids;
+}
+
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
 }
@@ -66,10 +80,10 @@ interface CourseTileProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
-  /** Preloaded terms for quarter filter dimming */
-  terms?: string[];
 }
-const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0, terms }) => {
+const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0 }) => {
+  const courseTermsMap = useContext(CourseTermsContext);
+  const terms = courseTermsMap[courseID];
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
@@ -145,21 +159,6 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
-  const [courseTermsMap, setCourseTermsMap] = useState<Record<string, string[]>>({});
-
-  useEffect(() => {
-    const uncached = courses.filter((course) => !(course in courseTermsMap));
-    if (uncached.length === 0) return;
-    trpc.courses.batch.mutate({ courses: uncached }).then((data) => {
-      setCourseTermsMap((prev) => {
-        const next = { ...prev };
-        for (const [id, course] of Object.entries(data)) {
-          next[id] = course.terms;
-        }
-        return next;
-      });
-    });
-  }, [courses]);
 
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();
@@ -182,7 +181,6 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
           key={c}
           completedBy={c in takenCourseIDs ? (takenCourseIDs[c].transferType ?? 'roadmap') : null}
           dragTimestamp={timestamps[i]}
-          terms={courseTermsMap[c]}
         />
       ))}
     </ReactSortable>
@@ -572,6 +570,22 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
 }) => {
   const formattedRequirements = formatRequirements(requirements, skipCollapseSingletons);
   const transferredCourses = useTransferredCredits().courses;
+
+  const [courseTermsMap, setCourseTermsMap] = useState<Record<string, string[]>>({});
+  const fetchedIDs = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    const allCourseIDs = collectCourseIDs(requirements);
+    const uncached = allCourseIDs.filter((id) => !fetchedIDs.current.has(id));
+    if (uncached.length === 0) return;
+    uncached.forEach((id) => fetchedIDs.current.add(id));
+    trpc.courses.batch.mutate({ courses: uncached }).then((data) => {
+      setCourseTermsMap((prev) => {
+        const next = { ...prev };
+        for (const [id, course] of Object.entries(data)) next[id] = course.terms;
+        return next;
+      });
+    });
+  }, [requirements]);
   const roadmapPlans = useAppSelector((state) => state.roadmap.plans);
   const roadmapPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
   const yearPlans = roadmapPlans[roadmapPlanIndex].content.yearPlans;
@@ -593,17 +607,19 @@ const ProgramRequirementsList: FC<RequireCourseListProps> = ({
   );
 
   return (
-    <div className="program-requirements">
-      {/* key is ok because we don't reorder these */}
-      {formattedRequirements.map((r, i) => (
-        <ProgramRequirementDisplay
-          requirement={r}
-          key={i}
-          storeKey={`${storeKeyPrefix}-${i}`}
-          takenCourseIDs={takenCourseSet}
-        />
-      ))}
-    </div>
+    <CourseTermsContext.Provider value={courseTermsMap}>
+      <div className="program-requirements">
+        {/* key is ok because we don't reorder these */}
+        {formattedRequirements.map((r, i) => (
+          <ProgramRequirementDisplay
+            requirement={r}
+            key={i}
+            storeKey={`${storeKeyPrefix}-${i}`}
+            takenCourseIDs={takenCourseSet}
+          />
+        ))}
+      </div>
+    </CourseTermsContext.Provider>
   );
 };
 
