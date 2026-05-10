@@ -50,7 +50,7 @@ const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> =
   const courseId = `${course.department} ${course.courseNumber}`;
   const clearedCourses = useClearedCoursesUntil(courseId);
   const coursesInCurrentQuarter = useGetCoursesInSameQuarter(courseId);
-  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
+  const quarterFilters = useAppSelector((state) => state.filters.quarterFilters);
 
   const missingPrerequisites = getMissingPrerequisites(
     clearedCourses,

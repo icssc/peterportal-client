@@ -3,7 +3,7 @@ import './QuarterFilterBar.scss';
 import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { QuarterFilterName } from '../../helpers/quarterFilter';
-import { toggleQuarterFilter } from '../../store/slices/searchSlice';
+import { toggleQuarterFilter } from '../../store/slices/filtersSlice';
 
 const QUARTERS: { name: QuarterFilterName; emoji: string }[] = [
   { name: 'Fall', emoji: '🍂' },
@@ -14,7 +14,7 @@ const QUARTERS: { name: QuarterFilterName; emoji: string }[] = [
 
 const QuarterFilterBar: FC = () => {
   const dispatch = useAppDispatch();
-  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
+  const quarterFilters = useAppSelector((state) => state.filters.quarterFilters);
 
   return (
     <div className="quarter-filter-bar">

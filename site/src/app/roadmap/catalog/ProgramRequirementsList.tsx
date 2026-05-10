@@ -75,7 +75,7 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
   const isMobile = useIsMobile();
   const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
-  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
+  const quarterFilters = useAppSelector((state) => state.filters.quarterFilters);
 
   const loadFullData = useCallback(async () => {
     if (typeof courseData !== 'string') return courseData;
