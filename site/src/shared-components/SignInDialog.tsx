@@ -19,10 +19,9 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
       fullScreen
       PaperProps={{
         sx: {
-          width: 'fit-content',
+          width: '526px',
           height: 'fit-content',
           borderRadius: '0.25rem',
-          width: '526px',
           fontWeight: 500,
         },
       }}
