@@ -14,6 +14,8 @@ interface SearchData {
 
 type SearchOperationType = 'none' | 'newQuery' | 'newFilters' | 'newPage';
 
+export type QuarterFilterName = 'Fall' | 'Winter' | 'Spring' | 'Summer';
+
 export const searchSlice = createSlice({
   name: 'search',
   initialState: {
@@ -29,6 +31,7 @@ export const searchSlice = createSlice({
     courseLevels: [] as string[],
     courseGeCategories: [] as string[],
     courseDepartments: [] as string[],
+    quarterFilters: [] as QuarterFilterName[],
     instructors: {
       query: '',
       lastQuery: '',
@@ -86,6 +89,15 @@ export const searchSlice = createSlice({
     setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {
       state.viewIndex = action.payload;
     },
+    toggleQuarterFilter: (state, action: PayloadAction<QuarterFilterName>) => {
+      const quarter = action.payload;
+      const idx = state.quarterFilters.indexOf(quarter);
+      if (idx === -1) {
+        state.quarterFilters.push(quarter);
+      } else {
+        state.quarterFilters.splice(idx, 1);
+      }
+    },
   },
 });
 
@@ -98,7 +110,14 @@ export const selectCourseFilters = createSelector(
 
 export type SearchCourseFilters = ReturnType<typeof selectCourseFilters>;
 
-export const { setQuery, setPageNumber, setCourseFilters, setFirstPageResults, setNewPageResults, setSearchViewIndex } =
-  searchSlice.actions;
+export const {
+  setQuery,
+  setPageNumber,
+  setCourseFilters,
+  setFirstPageResults,
+  setNewPageResults,
+  setSearchViewIndex,
+  toggleQuarterFilter,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

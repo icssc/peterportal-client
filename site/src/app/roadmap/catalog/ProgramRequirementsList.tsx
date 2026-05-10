@@ -40,6 +40,7 @@ import { useTransferredCredits, TransferredCourseWithType } from '../../../hooks
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { Badge, Checkbox, Collapse } from '@mui/material';
+import { courseMatchesQuarterFilter } from '../../../helpers/quarterFilter';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import MenuTile from '../transfers/MenuTile';
@@ -65,13 +66,16 @@ interface CourseTileProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
   /** The timestamp at which the course data is requested to load */
   dragTimestamp?: number;
+  /** Preloaded terms for quarter filter dimming */
+  preloadedTerms?: string[];
 }
-const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0 }) => {
+const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp = 0, preloadedTerms }) => {
   const [courseData, setCourseData] = useState<string | CourseGQLData>(courseID);
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
   const clearedCourses = useClearedCourses();
   const dispatch = useAppDispatch();
+  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
 
   const loadFullData = useCallback(async () => {
     if (typeof courseData !== 'string') return courseData;
@@ -109,7 +113,10 @@ const CourseTile: FC<CourseTileProps> = ({ courseID, completedBy, dragTimestamp 
 
   const tapProps = { onClick: insertCourseOnClick, role: 'button', tabIndex: 0 };
   const tappableCourseProps = isMobile ? tapProps : {};
-  const className = `program-course-tile${isMobile ? ' mobile' : ''}${loading ? ' loading' : ''}${completedBy ? ' completed' : ''}`;
+  const terms = preloadedTerms ?? (typeof courseData !== 'string' ? courseData.terms : undefined);
+  const isDimmed =
+    quarterFilters.length > 0 && terms !== undefined && !courseMatchesQuarterFilter(terms, quarterFilters);
+  const className = `program-course-tile${isMobile ? ' mobile' : ''}${loading ? ' loading' : ''}${completedBy ? ' completed' : ''}${isDimmed ? ' quarter-filter-dimmed' : ''}`;
   let fontSize: string | undefined;
 
   if (courseID.length > 10) {
@@ -139,6 +146,23 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
+  const [courseTermsMap, setCourseTermsMap] = useState<Record<string, string[]>>({});
+  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
+
+  useEffect(() => {
+    if (quarterFilters.length === 0) return;
+    const uncached = courses.filter((c) => !(c in courseTermsMap));
+    if (uncached.length === 0) return;
+    trpc.courses.batch.mutate({ courses: uncached }).then((data) => {
+      setCourseTermsMap((prev) => {
+        const next = { ...prev };
+        for (const [id, course] of Object.entries(data)) {
+          next[id] = course.terms;
+        }
+        return next;
+      });
+    });
+  }, [courses, quarterFilters.length]);
 
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();
@@ -161,6 +185,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
           key={c}
           completedBy={c in takenCourseIDs ? (takenCourseIDs[c].transferType ?? 'roadmap') : null}
           dragTimestamp={timestamps[i]}
+          preloadedTerms={courseTermsMap[c]}
         />
       ))}
     </ReactSortable>
