@@ -82,7 +82,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       })
       .onConflictDoNothing();
 
-    return existingUser;
+    return dbUser;
   });
 
   req.session.userId = userData.id;
