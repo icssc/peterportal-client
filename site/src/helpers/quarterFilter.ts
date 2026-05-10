@@ -1,4 +1,4 @@
-import { QuarterFilterName } from '../store/slices/searchSlice';
+export type QuarterFilterName = 'Fall' | 'Winter' | 'Spring' | 'Summer';
 
 const searchPrevYears = 2;
 

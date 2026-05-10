@@ -147,11 +147,9 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   const dispatch = useAppDispatch();
   const [timestamps, setTimestamps] = useState<number[]>(new Array(courses.length).fill(0));
   const [courseTermsMap, setCourseTermsMap] = useState<Record<string, string[]>>({});
-  const quarterFilters = useAppSelector((state) => state.search.quarterFilters);
 
   useEffect(() => {
-    if (quarterFilters.length === 0) return;
-    const uncached = courses.filter((c) => !(c in courseTermsMap));
+    const uncached = courses.filter((course) => !(course in courseTermsMap));
     if (uncached.length === 0) return;
     trpc.courses.batch.mutate({ courses: uncached }).then((data) => {
       setCourseTermsMap((prev) => {
@@ -162,7 +160,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
         return next;
       });
     });
-  }, [courses, quarterFilters.length]);
+  }, [courses]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();

@@ -3,6 +3,7 @@ import { SearchIndex, SearchResultData } from '../../types/types';
 import { FilterOptions } from '../../helpers/searchFilters';
 import { RootState } from '../store';
 import { shouldResetFilters } from '../../helpers/search';
+import { QuarterFilterName } from '../../helpers/quarterFilter';
 
 interface SearchData {
   query: string;
@@ -13,8 +14,6 @@ interface SearchData {
 }
 
 type SearchOperationType = 'none' | 'newQuery' | 'newFilters' | 'newPage';
-
-export type QuarterFilterName = 'Fall' | 'Winter' | 'Spring' | 'Summer';
 
 export const searchSlice = createSlice({
   name: 'search',
