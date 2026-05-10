@@ -214,6 +214,14 @@
     color: inherit;
   }
 
+  &.quarter-filter-dimmed {
+    opacity: 0.35;
+
+    a {
+      text-decoration: line-through;
+    }
+  }
+
   &.completed {
     background-color: var(--mui-palette-overlay-overlay2);
     outline: 1.5px solid var(--mui-palette-text-secondary);

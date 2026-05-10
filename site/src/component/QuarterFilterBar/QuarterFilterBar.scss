@@ -1,0 +1,43 @@
+.quarter-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 6px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+  background-color: var(--mui-palette-background-paper);
+  flex-shrink: 0;
+
+  .quarter-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--mui-palette-divider);
+    border-radius: 16px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--mui-palette-text-secondary);
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: var(--mui-palette-action-hover);
+    }
+
+    &.active {
+      background-color: var(--mui-palette-primary-main);
+      color: var(--mui-palette-primary-contrastText);
+      border-color: var(--mui-palette-primary-main);
+    }
+
+    .quarter-emoji {
+      font-size: 15px;
+      line-height: 1;
+    }
+  }
+}

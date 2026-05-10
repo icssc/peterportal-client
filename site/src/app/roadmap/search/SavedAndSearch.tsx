@@ -10,6 +10,7 @@ import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
+import { courseMatchesQuarterFilter } from '../../../helpers/quarterFilter';
 import Course from '../planner/Course';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import NoResults from '../../../component/NoResults/NoResults';
@@ -49,6 +50,7 @@ const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> =
   const courseId = `${course.department} ${course.courseNumber}`;
   const clearedCourses = useClearedCoursesUntil(courseId);
   const coursesInCurrentQuarter = useGetCoursesInSameQuarter(courseId);
+  const quarterFilters = useAppSelector((state) => state.filters.quarterFilters);
 
   const missingPrerequisites = getMissingPrerequisites(
     clearedCourses,
@@ -56,7 +58,9 @@ const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> =
     coursesInCurrentQuarter,
   );
 
-  return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} />;
+  const isDimmed = quarterFilters.length > 0 && !courseMatchesQuarterFilter(course.terms, quarterFilters);
+
+  return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} dimmed={isDimmed} />;
 };
 
 const CourseResultsContainer: FC<CourseResultsContainerProps> = ({ searchResults }) => {

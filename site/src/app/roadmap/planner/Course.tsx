@@ -80,11 +80,12 @@ interface CourseProps {
   addMode?: 'tap' | 'drag';
   data: PlannerCourseData;
   onSetVariableUnits?: (units: number | undefined) => void;
+  dimmed?: boolean;
 }
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, quarterMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
+  const { requiredCourses, quarterMismatch, onDelete, openPopoverLeft, onSetVariableUnits, dimmed } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -115,7 +116,10 @@ const Course: FC<CourseProps> = (props) => {
   }, [userChosenUnits]);
 
   return (
-    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+    <div
+      className={`course ${isInRoadmap ? 'roadmap-course' : ''}${dimmed ? ' course-dimmed' : ''}`}
+      {...tappableCourseProps}
+    >
       {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />

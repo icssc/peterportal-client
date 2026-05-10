@@ -13,6 +13,7 @@ import { useHasUnreadTransfers } from '../../../hooks/transferCredits';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { clearUnreadTransfers } from '../../../store/slices/transferCreditsSlice';
 import { setSelectedSidebarTab } from '../../../store/slices/roadmapSlice';
+import QuarterFilterBar from '../../../component/QuarterFilterBar/QuarterFilterBar';
 
 const DesktopRoadmapSidebar = () => {
   const selectedIndex = useAppSelector((state) => state.roadmap.selectedSidebarTab);
@@ -50,6 +51,7 @@ const DesktopRoadmapSidebar = () => {
         <Tab icon={<SearchIcon />} iconPosition="start" label="Search" />
       </Tabs>
 
+      {(selectedIndex === 1 || selectedIndex === 2) && <QuarterFilterBar />}
       <div className="sidebar-content" id="sidebarScrollContainer">
         {selectedIndex === 0 && <TransferCreditsMenu />}
         {selectedIndex === 1 && <CourseCatalog />}

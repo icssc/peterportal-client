@@ -154,6 +154,14 @@
   }
 }
 
+.course.course-dimmed {
+  opacity: 0.4;
+
+  .name {
+    text-decoration: line-through;
+  }
+}
+
 .course.sortable-fallback {
   height: fit-content !important;
   animation: course-fade-in 0.2s forwards;
