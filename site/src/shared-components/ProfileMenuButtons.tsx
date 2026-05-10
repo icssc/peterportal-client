@@ -1,45 +1,34 @@
-import type { FC } from 'react';
+import { FC, useState } from 'react';
 
-import { Button, IconButton, Stack } from '@mui/material';
-
-import { Apple as AppleIcon, Google as GoogleIcon } from '@mui/icons-material';
+import { Button, IconButton } from '@mui/material';
 import Image from 'next/image';
 import MenuIcon from '@mui/icons-material/Menu';
 import type { UserMetadata } from '@peterportal/types';
+import SignInDialog from './SignInDialog';
 
 interface ProfileMenuButtonsProps {
   user: UserMetadata | null;
   handleOpen: (event: React.MouseEvent<HTMLElement>) => void;
 }
 const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) => {
+  const [signInOpen, setSignInOpen] = useState(false);
+
   if (!user) {
     return (
       <>
-        <Stack direction="row" spacing={1}>
-          <Button
-            className="header-button"
-            variant="text"
-            size="medium"
-            startIcon={<GoogleIcon />}
-            color="inherit"
-            href="/planner/api/users/auth/google?provider=google"
-          >
-            Sign In with Google
-          </Button>
-          <Button
-            className="header-button"
-            variant="text"
-            size="medium"
-            startIcon={<AppleIcon />}
-            color="inherit"
-            href="/planner/api/users/auth/google?provider=apple"
-          >
-            Sign In with Apple
-          </Button>
-        </Stack>
+        <Button
+          className="header-button"
+          variant="text"
+          size="medium"
+          color="inherit"
+          onClick={() => setSignInOpen(true)}
+        >
+          Sign In
+        </Button>
         <IconButton onClick={handleOpen} color="inherit">
           <MenuIcon />
         </IconButton>
+        <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       </>
     );
   }

@@ -7,7 +7,7 @@ import './Profile.scss';
 import Link from 'next/link';
 
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import { Apple as AppleIcon, Google as GoogleIcon } from '@mui/icons-material';
+import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -28,6 +28,7 @@ import { useIsMobile } from '../../helpers/util';
 import { FEEDBACK_FORM_URL } from '../../helpers/constants';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import ProfileMenuButtons from '../../shared-components/ProfileMenuButtons';
+import SignInDialog from '../../shared-components/SignInDialog';
 import AboutDialog from './AboutDialog';
 
 interface AdminProfileLinksProps {
@@ -206,47 +207,33 @@ const ExternalLinksRow = () => {
 
 const AuthButton = () => {
   const isLoggedIn = useIsLoggedIn();
+  const [signInOpen, setSignInOpen] = useState(false);
 
   return (
-    <List className="profile-popover-links profile-menu-links">
-      {isLoggedIn ? (
-        <ListItem>
-          <ListItemButton href="/planner/api/users/auth/logout" className="profile-popover-link" component="a">
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary="LOG OUT" />
-          </ListItemButton>
-        </ListItem>
-      ) : (
-        <>
+    <>
+      <List className="profile-popover-links profile-menu-links">
+        {isLoggedIn ? (
           <ListItem>
-            <ListItemButton
-              href="/planner/api/users/auth/google?provider=google"
-              className="profile-popover-link"
-              component="a"
-            >
+            <ListItemButton href="/planner/api/users/auth/logout" className="profile-popover-link" component="a">
               <ListItemIcon>
-                <GoogleIcon />
+                <LogoutIcon />
               </ListItemIcon>
-              <ListItemText primary="SIGN IN WITH GOOGLE" />
+              <ListItemText primary="LOG OUT" />
             </ListItemButton>
           </ListItem>
+        ) : (
           <ListItem>
-            <ListItemButton
-              href="/planner/api/users/auth/google?provider=apple"
-              className="profile-popover-link"
-              component="a"
-            >
+            <ListItemButton className="profile-popover-link" onClick={() => setSignInOpen(true)}>
               <ListItemIcon>
-                <AppleIcon />
+                <LoginIcon />
               </ListItemIcon>
-              <ListItemText primary="SIGN IN WITH APPLE" />
+              <ListItemText primary="SIGN IN" />
             </ListItemButton>
           </ListItem>
-        </>
-      )}
-    </List>
+        )}
+      </List>
+      <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
+    </>
   );
 };
 

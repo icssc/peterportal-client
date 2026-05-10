@@ -49,20 +49,20 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
    * or using a raw SQL query
    */
   const userData = await db.transaction(async (tx) => {
-    let [existingUser] = await tx.select().from(user).where(eq(user.email, email));
+    let [dbUser] = await tx.select().from(user).where(eq(user.email, email));
 
-    if (existingUser) {
+    if (dbUser) {
       await tx
         .update(user)
         .set({
-          googleId: sub,
-          name: name || existingUser.name,
-          picture: picture || existingUser.picture,
+          ...(provider === 'GOOGLE' && { googleId: sub }),
+          name: name || dbUser.name,
+          picture: picture || dbUser.picture,
         })
-        .where(eq(user.id, existingUser.id));
-      existingUser = { ...existingUser, name: name || existingUser.name };
+        .where(eq(user.id, dbUser.id));
+      dbUser = { ...dbUser, name: name || dbUser.name };
     } else {
-      [existingUser] = await tx
+      [dbUser] = await tx
         .insert(user)
         .values({
           googleId: sub,
@@ -76,7 +76,7 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
     await tx
       .insert(account)
       .values({
-        userId: existingUser.id,
+        userId: dbUser.id,
         provider,
         providerAccountId: sub,
       })
