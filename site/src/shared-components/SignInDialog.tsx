@@ -21,13 +21,15 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
         sx: {
           width: 'fit-content',
           height: 'fit-content',
-          borderRadius: '0.5rem',
+          borderRadius: '0.25rem',
+          width: '526px',
+          fontWeight: 500,
         },
       }}
       sx={{ padding: '1rem' }}
     >
       <DialogContent>
-        <Stack spacing={1}>
+        <Stack spacing={2}>
           <Button
             href="/planner/api/users/auth/google?provider=google"
             startIcon={<GoogleIcon />}
