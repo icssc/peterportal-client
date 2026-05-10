@@ -6,6 +6,7 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   real,
@@ -28,6 +29,28 @@ export const user = pgTable(
     currentPlanIndex: integer('current_plan_index').notNull().default(0),
   },
   (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
+);
+
+export const providerEnum = pgEnum('provider', ['GOOGLE', 'APPLE']);
+
+export const account = pgTable(
+  'account',
+  {
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    provider: providerEnum('provider').notNull(),
+    providerAccountId: text('provider_account_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.provider] }),
+    unique('unique_provider_account_id').on(table.providerAccountId),
+  ],
 );
 
 export const report = pgTable(
