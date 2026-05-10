@@ -159,7 +159,7 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
         return next;
       });
     });
-  }, [courses]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [courses]);
 
   const setDraggedItem = async (event: SortableEvent) => {
     timestamps[event.oldIndex!] = Date.now();
