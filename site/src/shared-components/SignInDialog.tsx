@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, Stack } from '@mui/material';
 import { Apple as AppleIcon, Google as GoogleIcon } from '@mui/icons-material';
 import ThemeContext from '../style/theme-context';
 
@@ -15,15 +15,17 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
     <Dialog
       open={open}
       onClose={onClose}
+      maxWidth="xl"
+      fullScreen
       PaperProps={{
         sx: {
           width: 'fit-content',
+          height: 'fit-content',
           borderRadius: '0.5rem',
-          padding: '1rem',
         },
       }}
+      sx={{ padding: '1rem' }}
     >
-      <DialogTitle sx={{ textAlign: 'center', fontWeight: 600 }}>Sign In</DialogTitle>
       <DialogContent>
         <Stack spacing={1}>
           <Button
@@ -33,6 +35,7 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
             variant="contained"
             size="large"
             fullWidth
+            sx={{ fontSize: '11.25px' }}
           >
             Sign in with Google
           </Button>
@@ -48,12 +51,18 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
               '&:hover': {
                 backgroundColor: darkMode ? '#e0e0e0' : '#333',
               },
+              fontSize: '11.25px',
             }}
           >
             Sign in with Apple
           </Button>
         </Stack>
       </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="inherit" variant="text" sx={{ fontSize: '10.5px' }}>
+          Cancel
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
