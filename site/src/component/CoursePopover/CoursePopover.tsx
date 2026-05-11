@@ -10,7 +10,7 @@ import {
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
-  QuarterMismatchText,
+  TermMismatchText,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
@@ -47,7 +47,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, termMi
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
-      <QuarterMismatchText termMismatch={termMismatch} />
+      <TermMismatchText termMismatch={termMismatch} />
     </div>
   );
 };

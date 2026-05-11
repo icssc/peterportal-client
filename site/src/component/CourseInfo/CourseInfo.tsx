@@ -87,7 +87,7 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
   );
 };
 
-export const QuarterMismatchText: FC<{ termMismatch?: QuarterName | 'RecentYears' }> = ({ termMismatch }) => {
+export const TermMismatchText: FC<{ termMismatch?: QuarterName | 'RecentYears' }> = ({ termMismatch }) => {
   if (!termMismatch) return;
 
   const text =
