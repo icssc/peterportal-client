@@ -6,6 +6,7 @@ import CoursePopover from '../../../component/CoursePopover/CoursePopover';
 import OverlayTrigger from '../../../component/OverlayTrigger/OverlayTrigger';
 
 import { useIsMobile, pluralize, formatGEsTag, shortenCourseLevel } from '../../../helpers/util';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData, PlannerCourseData } from '../../../types/types';
 import { setActiveCourse, setShowAddCourse, setActiveMissingPrerequisites } from '../../../store/slices/roadmapSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -23,12 +24,12 @@ interface CourseNameAndInfoProps {
   popupListener?: (open: boolean) => void;
   openPopoverLeft?: boolean;
   requiredCourses?: string[];
-  quarterMismatch?: string;
+  termMismatch?: QuarterName | 'RecentYears';
   /** Whether to always collapse whitespace in the course name */
   alwaysCollapse?: boolean;
 }
 export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
-  const { data, openPopoverLeft, requiredCourses, quarterMismatch, popupListener, alwaysCollapse } = props;
+  const { data, openPopoverLeft, requiredCourses, termMismatch, popupListener, alwaysCollapse } = props;
   const { department, courseNumber } = typeof data === 'string' ? { department: data, courseNumber: '' } : data;
 
   const showSearch = useAppSelector((state) => state.roadmap.showMobileCatalog);
@@ -47,9 +48,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
     router.push(`?course=${encodeURIComponent(courseKey)}`);
   };
 
-  const popoverContent = (
-    <CoursePopover course={data} requiredCourses={requiredCourses} quarterMismatch={quarterMismatch} />
-  );
+  const popoverContent = <CoursePopover course={data} requiredCourses={requiredCourses} termMismatch={termMismatch} />;
 
   return (
     <OverlayTrigger
@@ -65,7 +64,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
         </Link>
         <span className="warning-container">
           {requiredCourses && <WarningAmberIcon />}
-          {quarterMismatch && <WarningAmberIcon className="warning-secondary" />}
+          {termMismatch && <WarningAmberIcon className="warning-secondary" />}
         </span>
       </span>
     </OverlayTrigger>
@@ -74,7 +73,7 @@ export const CourseNameAndInfo: React.FC<CourseNameAndInfoProps> = (props) => {
 
 interface CourseProps {
   requiredCourses?: string[];
-  quarterMismatch?: string;
+  termMismatch?: QuarterName | 'RecentYears';
   onDelete?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
@@ -84,7 +83,7 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, quarterMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
+  const { requiredCourses, termMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
   const isMobile = useIsMobile();
@@ -125,7 +124,7 @@ const Course: FC<CourseProps> = (props) => {
       <div className="course-card-top">
         <div className="course-and-info">
           <span className={`${requiredCourses ? 'missing-prereq' : ''}`}>
-            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses, quarterMismatch }} />
+            <CourseNameAndInfo data={props.data} {...{ openPopoverLeft, requiredCourses, termMismatch }} />
           </span>
           {isInRoadmap && minUnits === maxUnits && <span className="units">{defaultUnitsText}</span>}
           {isInRoadmap && minUnits !== maxUnits && (
