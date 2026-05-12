@@ -25,7 +25,8 @@ function getMajorSpecializations(majorId: string) {
 }
 
 function getCoursesForMajor(programId: string, specId: string | undefined) {
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId: specId });
+  const specializationId = specId === noSpecId ? undefined : specId;
+  return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId });
 }
 
 // gets courses that are from major's specialization. Shouldn't be needed as
