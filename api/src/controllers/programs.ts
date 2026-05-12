@@ -57,12 +57,19 @@ const programsRouter = router({
     return response;
   }),
   getRequiredCourses: publicProcedure
-    .input(z.object({ type: z.enum(programTypeNames), programId: z.string() }))
+    .input(z.object({ type: z.enum(programTypeNames), programId: z.string(), specializationId: z.string().optional() }))
     .query(async ({ input }) => {
-      const url = `${process.env.PUBLIC_API_URL}programs/${input.type}?programId=${input.programId}`;
+      let url = `${process.env.PUBLIC_API_URL}programs/${input.type}?programId=${input.programId}`;
+      if (input.type === 'major' && input.specializationId) {
+        url += `&specializationId=${input.specializationId}`;
+      }
+      console.log('new url: ' + url);
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
-        .then((res) => res.data.requirements as ProgramRequirement[]);
+        .then((res) => {
+          console.log('API response:', res);
+          return res.data.requirements as ProgramRequirement[];
+        });
       return response;
     }),
   getRequiredCoursesUgrad: publicProcedure

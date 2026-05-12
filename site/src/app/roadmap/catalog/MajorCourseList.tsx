@@ -24,10 +24,12 @@ function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
 
-function getCoursesForMajor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId });
+function getCoursesForMajor(programId: string, specId: string | undefined) {
+  return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId: specId });
 }
 
+// gets courses that are from major's specialization. Shouldn't be needed as
+// getCoursesForMajor() will be given the spec id and will return courses from there.
 function getCoursesForSpecialization(programId?: string | null) {
   if (!programId || programId === noSpecId) return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
@@ -72,12 +74,15 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   }, [dispatch, major.id]);
 
   const fetchRequirements = useCallback(
-    async (majorId: string, specId?: string | null) => {
+    async (majorId: string, specId?: string) => {
       setResultsLoading(true);
 
       try {
-        const requirements = await getCoursesForMajor(majorId);
+        // if no spec is inputted, specId should be undefined
+        const requirements = await getCoursesForMajor(majorId, specId);
         requirements.push(...(await getCoursesForSpecialization(specId)));
+        // BS-0K6 (ACM's majorId for reference)
+        console.log('specid: ' + (specId ? specId : 'nothin'));
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -89,7 +94,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const loadSpecRequirements = useCallback(async () => {
     if (!hasSpecs) {
       if (majorWithSpec.requirements.length > 0) return;
-      else return await fetchRequirements(major.id, null);
+      else return await fetchRequirements(major.id);
     }
     if (!selectedSpecId && !selectedSpec?.id) return;
     if (selectedSpecId === selectedSpec?.id) return;
@@ -102,7 +107,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       await fetchRequirements(major.id, foundSpec?.id);
     } else if (selectedSpecId === noSpecId) {
       dispatch(setSpecialization({ majorId: major.id, specialization: noSpec }));
-      await fetchRequirements(major.id, null);
+      await fetchRequirements(major.id);
     }
   }, [
     dispatch,
