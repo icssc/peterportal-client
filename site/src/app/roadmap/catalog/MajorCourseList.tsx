@@ -29,8 +29,6 @@ function getCoursesForMajor(programId: string, specId: string | undefined) {
   return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId });
 }
 
-// gets courses that are from major's specialization. Shouldn't be needed as
-// getCoursesForMajor() will be given the spec id and will return courses from there.
 function getCoursesForSpecialization(programId?: string | null) {
   if (!programId || programId === noSpecId) return [];
   return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
@@ -79,11 +77,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       setResultsLoading(true);
 
       try {
-        // if no spec is inputted, specId should be undefined
         const requirements = await getCoursesForMajor(majorId, specId);
         requirements.push(...(await getCoursesForSpecialization(specId)));
         // BS-0K6 (ACM's majorId for reference)
-        console.log('specid: ' + (specId ? specId : 'nothin'));
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
         setResultsLoading(false);

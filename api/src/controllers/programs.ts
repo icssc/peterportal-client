@@ -63,11 +63,9 @@ const programsRouter = router({
       if (input.type === 'major' && input.specializationId) {
         url += `&specializationId=${input.specializationId}`;
       }
-      console.log('new url: ' + url);
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
         .then((res) => {
-          console.log('API response:', res);
           return res.data.requirements as ProgramRequirement[];
         });
       return response;
