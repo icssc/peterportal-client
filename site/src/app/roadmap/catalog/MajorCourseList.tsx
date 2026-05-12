@@ -142,6 +142,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   );
 
   const toggleExpand = () => setOpen(!open);
+  const selectedSpecOption = specOptions.find(
+    (s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id),
+  );
 
   return (
     <div className="major-section">
@@ -155,7 +158,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
             className="specialization-select"
             disableClearable
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id))}
+            value={selectedSpecOption}
+            inputValue={selectedSpecOption?.label ?? ''}
+            filterOptions={(options) => options}
             onChange={(_event, option) => handleSpecializationChange(option)}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
