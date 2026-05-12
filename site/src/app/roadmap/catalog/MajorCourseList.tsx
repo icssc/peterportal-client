@@ -79,7 +79,6 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       try {
         const requirements = await getCoursesForMajor(majorId, specId);
         requirements.push(...(await getCoursesForSpecialization(specId)));
-        // BS-0K6 (ACM's majorId for reference)
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
         setResultsLoading(false);
