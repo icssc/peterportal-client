@@ -112,7 +112,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
           <DragIndicatorIcon />
         </div>
 
-        <div className="custom-card__main">
+        <div className="main">
           <div className="course-card-top">
             <span className="name">{course.courseName}</span>
 
@@ -124,7 +124,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               <DeleteOutlineIcon className="course-delete-icon" />
             </IconButton>
           </div>
-          <div className="course-description course-description--body">{course.description}</div>
+          <div className="course-description description-body">{course.description}</div>
         </div>
       </div>
     );
@@ -137,7 +137,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
       </div>
 
       {editing ? (
-        <div className="custom-card__main">
+        <div className="main">
           <div className="course-card-top">
             <span className="name">
               <input
@@ -191,7 +191,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
           </div>
         </div>
       ) : (
-        <div className="custom-card__main">
+        <div className="main">
           <div className="course-card-top">
             <span className="name">{course.courseName}</span>
 
@@ -207,7 +207,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               <DeleteOutlineIcon className="course-delete-icon" />
             </IconButton>
           </div>
-          <div className="course-description course-description--body">{course.description}</div>
+          <div className="course-description description-body">{course.description}</div>
         </div>
       )}
     </div>

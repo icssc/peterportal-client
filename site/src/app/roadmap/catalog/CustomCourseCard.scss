@@ -35,7 +35,7 @@
     }
   }
 
-  &__main {
+  .main {
     flex: 1 1 auto;
     min-width: 0;
     display: grid;
@@ -59,7 +59,7 @@
     min-width: 0;
   }
 
-  .course-description--body {
+  .description-body {
     font-size: 14px;
   }
 
