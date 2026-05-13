@@ -1,22 +1,15 @@
 .custom-card {
-  box-shadow: 0 0 2px 0 #60616680;
   background: var(--mui-palette-overlay-overlay1);
-  border: 1px solid var(--border-secondary);
-  margin-left: -1px;
-  margin-right: -1px;
+  border: 1px solid var(--mui-palette-divider);
   height: 73px;
   font-size: 16px;
   padding: 12px;
   position: relative;
   color: var(--mui-palette-secondary-main);
 
-  display: grid;
-  grid-template-areas:
-    'A B'
-    'A C';
-  grid-template-columns: min-content auto;
-  grid-template-rows: 1fr 1fr;
-  align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 
   .title {
     font-size: 14px;
@@ -26,12 +19,11 @@
   }
 
   .course-drag-handle {
-    grid-area: A;
-    align-self: center;
+    flex: 0 0 auto;
+    width: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     position: relative;
     left: -6px;
     cursor: grab;
@@ -41,6 +33,17 @@
     &:active {
       cursor: grabbing;
     }
+  }
+
+  .main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    grid-template-areas:
+      'B'
+      'C';
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
   }
 
   .course-card-top {
@@ -54,6 +57,10 @@
   .course-description {
     grid-area: C;
     min-width: 0;
+  }
+
+  .description-body {
+    font-size: 14px;
   }
 
   .name {
@@ -96,5 +103,9 @@
     .MuiSvgIcon-root {
       font-size: 20px;
     }
+  }
+
+  .course-edit-btn.MuiIconButton-root .MuiSvgIcon-root {
+    font-size: 18px;
   }
 }
