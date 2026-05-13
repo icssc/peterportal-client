@@ -62,7 +62,11 @@ const programsRouter = router({
       const url = `${process.env.PUBLIC_API_URL}programs/${input.type}?programId=${input.programId}`;
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
-        .then((res) => res.data.requirements as ProgramRequirement[]);
+        .then((res) => {
+          const schoolRequirements = (res.data.schoolRequirements?.requirements as ProgramRequirement[]) ?? [];
+          const majorRequirements = res.data.requirements as ProgramRequirement[];
+          return [...schoolRequirements, ...majorRequirements];
+        });
       return response;
     }),
   getRequiredCoursesUgrad: publicProcedure
