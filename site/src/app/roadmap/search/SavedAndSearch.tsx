@@ -167,13 +167,14 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocus
     : 'Start typing in the search bar to search for courses or instructors...';
 
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
-  const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
+  const filtersDisabled = hasQuery && viewIndex === 'instructors';
+  const filtersDisabledReason = filtersDisabled ? 'Filters apply to course results only.' : undefined;
 
   return (
     <>
       <SearchModule autoFocusInput={autoFocusSearch} />
+      <SearchFilters disabled={filtersDisabled} disabledReason={filtersDisabledReason} addTopPadding={!showHeader} />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
-      {showCourseFilters && <SearchFilters />}
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
       ) : searchResults.length === 0 ? (
