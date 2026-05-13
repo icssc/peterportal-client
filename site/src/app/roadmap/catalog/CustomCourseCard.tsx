@@ -1,7 +1,7 @@
 import './CustomCourseCard.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import CheckIcon from '@mui/icons-material/Check';
@@ -140,7 +140,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
         <div className="main">
           <div className="course-card-top">
             <span className="name">
-              <input
+              <TextField
                 className="name-input"
                 value={newName ?? ''}
                 placeholder="Course"
@@ -151,18 +151,22 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
             </span>
 
             <span className="units">
-              <input
+              <TextField
                 className="units-input"
                 type="number"
-                min="0"
                 value={Number.isFinite(newUnits) ? newUnits : ''}
                 placeholder="Units"
                 onChange={(e) => {
-                  const v = e.target.valueAsNumber;
+                  const v = Number(e.target.value);
                   setNewUnits(Number.isFinite(v) ? v : NaN);
                 }}
                 onKeyDown={handleKeyDownEdit}
                 onClick={(e) => e.stopPropagation()}
+                slotProps={{
+                  htmlInput: {
+                    min: 0,
+                  },
+                }}
               />
             </span>
 
@@ -180,7 +184,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
             </IconButton>
           </div>
           <div className="course-description">
-            <input
+            <TextField
               className="description-input"
               value={newDescription ?? ''}
               placeholder="Description"

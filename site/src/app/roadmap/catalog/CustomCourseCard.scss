@@ -84,15 +84,13 @@
     margin-right: 2px;
   }
 
-  .units-input[type='number']::-webkit-outer-spin-button,
-  .units-input[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  .MuiInputBase-root {
+    height: 20px;
   }
 
-  .units-input[type='number'] {
-    appearance: textfield;
-    -moz-appearance: textfield;
+  .MuiInputBase-input {
+    padding: 4px;
+    font-size: 14px;
   }
 
   button.MuiIconButton-root {
