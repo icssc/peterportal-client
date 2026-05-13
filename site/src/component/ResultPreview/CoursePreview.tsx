@@ -125,8 +125,8 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
+        <PreviewNavBar />
         <div className="preview-buttons">
-          <PreviewNavBar />
           <Button
             variant="contained"
             color="inherit"

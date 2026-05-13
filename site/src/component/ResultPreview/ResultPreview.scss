@@ -10,7 +10,7 @@
   overscroll-behavior: contain;
   container-type: inline-size;
 
-  @media (max-width: 345) {
+  @media (max-width: 360px) {
     padding-top: 100px;
   }
 
@@ -29,7 +29,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: globals.$roadmap-toolbar-height;
+    min-height: globals.$roadmap-toolbar-height;
     border-width: 0 0 2px 0;
     border-radius: 0;
     display: flex;
@@ -47,15 +47,18 @@
       flex-wrap: wrap;
       gap: 10px;
 
-      @media (max-width: 345) {
+      @media (max-width: 360px) {
         gap: 5px;
       }
     }
   }
 
   .preview-title {
-    min-width: 30%;
     margin-block: 0;
+
+    @media (max-width: 360px) {
+      min-width: 40%;
+    }
   }
 
   .preview-nav-bar {
