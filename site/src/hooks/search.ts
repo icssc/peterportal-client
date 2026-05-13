@@ -116,13 +116,28 @@ export function useSearchTrigger() {
 
   useEffect(() => {
     if (inProgressSearch !== 'newFilters') return;
+    if (!searchState.query) return;
 
-    performSearch(visibleSearchIdx, searchState.query, 0, courseFilters, regenerateAbortSignal())
-      .then((data) => {
-        handleFirstPageResults(visibleSearchIdx, data);
+    const signal = regenerateAbortSignal();
+    const searches = [performSearch('courses', searchState.query, 0, courseFilters, signal)];
+    if (!showMobileCatalog) {
+      const instructorSearch = performSearch('instructors', searchState.query, 0, courseFilters, signal);
+      searches.push(instructorSearch);
+    }
+
+    Promise.all(searches)
+      .then(([courseRes, profRes]) => {
+        profRes ??= { count: 0, results: [], totalRank: 0 };
+        handleFirstPageResults('courses', courseRes);
+        handleFirstPageResults('instructors', profRes);
+        const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
+        const eitherHasResults = courseRes.count > 0 || profRes.count > 0;
+        if (showMobileCatalog || eitherHasResults) {
+          dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'instructors'));
+        }
       })
       .catch(handleSearchError);
-  }, [courseFilters, handleFirstPageResults, inProgressSearch, searchState.query, visibleSearchIdx]);
+  }, [courseFilters, dispatch, handleFirstPageResults, inProgressSearch, searchState.query, showMobileCatalog]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newPage') return;

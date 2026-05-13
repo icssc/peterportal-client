@@ -29,7 +29,11 @@ function briefLabel(selected: string[], defaultLabel: string) {
   return `${selected[0]} +${selected.length - 1}`;
 }
 
-function DepartmentSelect() {
+interface DepartmentSelectProps {
+  disabled?: boolean;
+}
+
+function DepartmentSelect({ disabled }: DepartmentSelectProps) {
   const departments = useAppSelector((state) => state.departments.departments);
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
@@ -57,8 +61,9 @@ function DepartmentSelect() {
 
   // Cannot use refs because refs can't be used as hook dependencies
   useEffect(() => {
+    if (disabled) return;
     inputEl?.focus();
-  }, [inputEl]);
+  }, [disabled, inputEl]);
 
   const paperProps = {
     className: 'search-filters-menu departments-menu',
@@ -70,6 +75,7 @@ function DepartmentSelect() {
       displayEmpty
       multiple
       value={selectedFilters.departments}
+      disabled={disabled}
       MenuProps={{
         ...menuProps,
         slotProps: { paper: paperProps },
@@ -83,6 +89,7 @@ function DepartmentSelect() {
         className="dept-input"
         variant="filled"
         placeholder="Enter a department..."
+        disabled={disabled}
         onKeyDown={handleTextKeydown}
         defaultValue={deptFilterText}
         value={deptFilterText}
@@ -104,7 +111,13 @@ function DepartmentSelect() {
   );
 }
 
-const SearchFilters: FC = () => {
+interface SearchFiltersProps {
+  disabled?: boolean;
+  disabledReason?: string;
+  addTopPadding?: boolean;
+}
+
+const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReason, addTopPadding = false }) => {
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
 
@@ -134,8 +147,12 @@ const SearchFilters: FC = () => {
     });
   };
 
+  const filterClassName = ['filter-group'];
+  if (disabled) filterClassName.push('is-disabled');
+  if (addTopPadding) filterClassName.push('has-top-padding');
+
   return (
-    <div className="filter-group">
+    <div className={filterClassName.join(' ')}>
       <FormControl className="filter-form-control">
         <Select
           size="xsmall"
@@ -143,6 +160,7 @@ const SearchFilters: FC = () => {
           value={selectedFilters.levels}
           onChange={handleLevelSelection}
           displayEmpty
+          disabled={disabled}
           className={selectedFilters.levels.length > 0 ? 'has-selection' : ''}
           renderValue={(selected) => briefLabel(selected, 'Level')}
           MenuProps={menuProps}
@@ -162,6 +180,7 @@ const SearchFilters: FC = () => {
           value={selectedFilters.geCategories}
           onChange={handleGeCategorySelection}
           displayEmpty
+          disabled={disabled}
           className={selectedFilters.geCategories.length > 0 ? 'has-selection' : ''}
           renderValue={(selected) => briefLabel(selected, 'GE')}
           MenuProps={menuProps}
@@ -174,7 +193,8 @@ const SearchFilters: FC = () => {
           ))}
         </Select>
       </FormControl>
-      <DepartmentSelect />
+      <DepartmentSelect disabled={disabled} />
+      {disabled && disabledReason && <p className="filters-disabled-reason">{disabledReason}</p>}
     </div>
   );
 };

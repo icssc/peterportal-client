@@ -41,7 +41,10 @@ export const searchSlice = createSlice({
     // Things that will trigger a new search
     setQuery: (state, action: PayloadAction<string>) => {
       state.courses.query = state.instructors.query = action.payload;
-      if (!action.payload) return;
+      if (!action.payload) {
+        state.inProgressSearchOperation = 'none';
+        return;
+      }
 
       if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {
         state.courseDepartments = [];
@@ -56,7 +59,7 @@ export const searchSlice = createSlice({
       state.courseDepartments = departments;
       state.courseGeCategories = geCategories;
       state.courseLevels = levels;
-      state.inProgressSearchOperation = 'newFilters';
+      state.inProgressSearchOperation = state.courses.query ? 'newFilters' : 'none';
     },
     setPageNumber: (state, action: PayloadAction<number>) => {
       state[state.viewIndex].pageNumber = action.payload;
