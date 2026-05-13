@@ -64,6 +64,7 @@ const AppProvider: FC<AppProviderProps> = ({ children, user }) => {
     user,
     theme: user?.theme ?? 'system',
     isAdmin: user?.isAdmin ?? false,
+    autosaveEnabled: false,
   });
 
   return <Provider store={store}>{appContent}</Provider>;

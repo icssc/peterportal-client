@@ -27,4 +27,5 @@ export interface UserSliceState {
   user: UserMetadata | null;
   theme: Theme | null;
   isAdmin: boolean;
+  autosaveEnabled: boolean;
 }
