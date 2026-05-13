@@ -44,6 +44,8 @@ export const reviewData = reviewSubmission.omit({ anonymous: true }).extend({
   userId: z.number(),
   userDisplay: z.string(),
   verified: z.boolean(),
+  upvotes: z.number(),
+  downvotes: z.number(),
   score: z.number(),
   userVote: z.number(),
   createdAt: z.string(),
@@ -60,7 +62,10 @@ export const reviewInput = z.object({
 });
 export type ReviewInput = z.infer<typeof reviewInput>;
 
-export type FeaturedReviewData = Omit<ReviewData, 'score' | 'userVote' | 'userDisplay' | 'authored'>;
+export type FeaturedReviewData = Omit<
+  ReviewData,
+  'upvotes' | 'downvotes' | 'score' | 'userVote' | 'userDisplay' | 'authored'
+>;
 
 export const featuredQuery = z.object({
   type: z.enum(['course', 'professor']),
