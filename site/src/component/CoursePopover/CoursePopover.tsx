@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import './CoursePopover.scss';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
@@ -9,20 +10,17 @@ import {
   IncompletePrerequisiteText,
   PrerequisiteText,
   PreviousOfferingsRow,
+  TermMismatchText,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { useClearedCoursesUntil } from '../../hooks/planner';
-import { getMissingPrerequisites } from '../../helpers/planner';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
+  termMismatch?: QuarterName | 'RecentYears';
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
-  const courseId = typeof course === 'string' ? '' : `${course.department} ${course.courseNumber}`;
-  const clearedCourses = useClearedCoursesUntil(courseId);
-
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, termMismatch }) => {
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -31,7 +29,6 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
     );
   }
 
-  requiredCourses = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
   const { department, courseNumber, minUnits, maxUnits } = course;
 
   return (
@@ -50,6 +47,7 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses }) => {
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
       <PreviousOfferingsRow course={course} />
+      <TermMismatchText termMismatch={termMismatch} />
     </div>
   );
 };

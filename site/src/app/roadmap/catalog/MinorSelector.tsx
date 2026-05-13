@@ -1,13 +1,13 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
-import { normalizeMajorName, comboboxTheme } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import { addMinor, removeMinor, setMinorList, MinorRequirements } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import ThemeContext from '../../../style/theme-context';
 import { MinorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MinorCourseList from './MinorCourseList';
+import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 
 function updateSelectedMinors(minorIds: string[]) {
   trpc.programs.saveSelectedMinor.mutate({ minorIds });
@@ -19,10 +19,10 @@ interface MinorOption {
 }
 
 const MinorSelector: FC = () => {
-  const isDark = useContext(ThemeContext).darkMode;
   const isLoggedIn = useIsLoggedIn();
   const minors = useAppSelector((state) => state.courseRequirements.minorList);
   const selectedMinors = useAppSelector((state) => state.courseRequirements.selectedMinors);
+  const hasFetchedSelectedMinors = useRef(false);
 
   const [minorsLoading, setMinorsLoading] = useState(false);
 
@@ -55,7 +55,7 @@ const MinorSelector: FC = () => {
   );
 
   const handleMinorChange = useCallback(
-    (selections: readonly MinorOption[] | null) => {
+    (_event: unknown, selections: MinorOption[] | null) => {
       const newMinors = selections?.map((s) => s.value) || [];
       const currentMinorIds = selectedMinors.map((m) => m.minor.id);
 
@@ -77,9 +77,11 @@ const MinorSelector: FC = () => {
 
   useEffect(() => {
     if (!minors.length || !isLoggedIn) return;
-    if (selectedMinors.length) return;
+    if (hasFetchedSelectedMinors.current) return;
+    hasFetchedSelectedMinors.current = true;
 
     setMinorsLoading(true);
+
     trpc.programs.getSavedMinors
       .query()
       .then((minorIds) => {
@@ -92,26 +94,41 @@ const MinorSelector: FC = () => {
       .finally(() => {
         setMinorsLoading(false);
       });
-  }, [dispatch, minors, isLoggedIn, selectedMinors.length]);
+  }, [dispatch, minors, isLoggedIn]);
 
   const minorSelectOptions: MinorOption[] = minors.map((m) => ({
     value: m,
     label: `${m.name}`,
   }));
 
+  const minorAbbreviations = useMemo(() => mapAbbreviations(minors), [minors]);
+
+  const filterMinorOptions = (options: MinorOption[], state: FilterOptionsState<MinorOption>) =>
+    filterOptionsWithAbbreviations(options, state, minorAbbreviations);
+
   return (
     <>
-      <Select
-        isMulti
+      <Autocomplete
+        multiple
         options={minorSelectOptions}
-        value={selectedMinors.map((m) => minorSelectOptions.find((o) => o.value.id === m.minor.id)!)}
-        isDisabled={minorsLoading}
-        isLoading={minorsLoading}
+        value={selectedMinors.map((m) => minorSelectOptions.find((o) => o.value.id === m.minor.id)!).filter(Boolean)}
         onChange={handleMinorChange}
-        className="ppc-combobox"
-        classNamePrefix="ppc-combobox"
-        placeholder="Select minors..."
-        theme={(t) => comboboxTheme(t, isDark)}
+        getOptionLabel={(option) => option.label}
+        getOptionKey={(option) => option.value.id}
+        isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+        filterOptions={filterMinorOptions}
+        loading={minorsLoading}
+        disabled={minorsLoading}
+        disableClearable
+        className="minor-select"
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            size="small"
+            placeholder={selectedMinors.length === 0 ? 'Select minors...' : undefined}
+          />
+        )}
       />
       {selectedMinors.map((data) => (
         <MinorCourseList key={data.minor.id} minorReqs={data} />

@@ -1,9 +1,7 @@
 import './MajorCourseList.scss';
-import { FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import Select from 'react-select';
+import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import ThemeContext from '../../../style/theme-context';
-import { comboboxTheme, normalizeMajorName } from '../../../helpers/courseRequirements';
+import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -17,7 +15,7 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { Autocomplete, Collapse, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
@@ -43,7 +41,6 @@ interface MajorCourseListProps {
 
 const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
   const storeKeyPrefix = `major-${majorWithSpec.major.id}`;
-  const isDark = useContext(ThemeContext).darkMode;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
@@ -130,19 +127,22 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
-      const updatedSpec = data?.value || null;
+      const updatedSpec = data?.value ?? null;
       if (updatedSpec?.id === selectedSpecId) return;
 
       setResultsLoading(true);
-      onSpecializationChange(major.id, data?.value ?? null);
+      onSpecializationChange(major.id, updatedSpec);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setSpecialization({ majorId: major.id, specialization: updatedSpec }));
-      await fetchRequirements(major.id, updatedSpec?.id || null);
+      await fetchRequirements(major.id, updatedSpec?.id);
     },
     [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
   );
 
   const toggleExpand = () => setOpen(!open);
+  const selectedSpecOption = specOptions.find(
+    (s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id),
+  );
 
   return (
     <div className="major-section">
@@ -152,16 +152,21 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         {hasSpecs && (
-          <Select
+          <Autocomplete
+            className="specialization-select"
+            disableClearable
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpecId)) ?? null}
-            isDisabled={specsLoading}
-            isLoading={specsLoading}
-            onChange={handleSpecializationChange}
-            className="ppc-combobox"
-            classNamePrefix="ppc-combobox"
-            placeholder="Select a specialization..."
-            theme={(t) => comboboxTheme(t, isDark)}
+            value={selectedSpecOption}
+            inputValue={selectedSpecOption?.label ?? ''}
+            filterOptions={(options) => options}
+            onChange={(_event, option) => handleSpecializationChange(option)}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
+            disabled={specsLoading}
+            loading={specsLoading}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" size="small" placeholder="Select a specialization..." />
+            )}
           />
         )}
         {hasSpecs && !majorWithSpec.selectedSpec ? (

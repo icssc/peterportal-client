@@ -1,9 +1,11 @@
-import express, { Request, Response } from 'express';
 import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic';
-import { db } from '../db';
-import { user } from '../db/schema';
-import { createOIDCClient } from '../config/oidc';
+import { eq } from 'drizzle-orm';
+import express, { type Request, type Response } from 'express';
 import { SESSION_LENGTH } from '../config/constants';
+import { buildRedirectUri, createOIDCClient } from '../config/oidc';
+import { db } from '../db';
+import { account, user, type providerEnum } from '../db/schema';
+import { isNativeIosApp } from '../helpers/platform';
 
 const router = express.Router();
 
@@ -22,15 +24,21 @@ interface OIDCUserInfo {
   picture?: string;
 }
 
-/**
- * Called after successful authentication
- * Matches user by email and updates/creates user record
- * @param userInfo OIDC user information
- * @param req Express Request Object
- * @param res Express Response Object
- */
+function providerFromSub(sub: string): (typeof providerEnum.enumValues)[number] {
+  const prefix = sub.split('_')[0];
+  switch (prefix) {
+    case 'google':
+      return 'GOOGLE';
+    case 'apple':
+      return 'APPLE';
+    default:
+      throw new Error(`Unknown provider prefix in sub: ${sub}`);
+  }
+}
+
 async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response) {
   const { sub, email, name, picture } = userInfo;
+  const provider = providerFromSub(sub);
 
   /**
    * TODO: Some legacy user accounts do not have an email associated, but do have a google id.
@@ -40,33 +48,50 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
    * Possible methods include updating a user based on google id, then manually inserting if no such user exists,
    * or using a raw SQL query
    */
-  const userData = await db
-    .insert(user)
-    .values({
-      googleId: sub,
-      name: name ?? '',
-      email,
-      picture: picture ?? '',
-    })
-    .onConflictDoUpdate({
-      target: [user.email],
-      set: {
-        googleId: sub,
-        name: name ?? '',
-        email,
-        picture: picture ?? '',
-      },
-    })
-    .returning();
+  const userData = await db.transaction(async (tx) => {
+    let [dbUser] = await tx.select().from(user).where(eq(user.email, email));
 
-  req.session.userId = userData[0].id;
-  req.session.userName = userData[0].name;
+    if (dbUser) {
+      await tx
+        .update(user)
+        .set({
+          ...(provider === 'GOOGLE' && { googleId: sub }),
+          name: name || dbUser.name,
+          picture: picture || dbUser.picture,
+        })
+        .where(eq(user.id, dbUser.id));
+      dbUser = { ...dbUser, name: name || dbUser.name };
+    } else {
+      [dbUser] = await tx
+        .insert(user)
+        .values({
+          googleId: sub,
+          name: name ?? '',
+          email,
+          picture: picture ?? '',
+        })
+        .returning();
+    }
+
+    await tx
+      .insert(account)
+      .values({
+        userId: dbUser.id,
+        provider,
+        providerAccountId: sub,
+      })
+      .onConflictDoNothing();
+
+    return dbUser;
+  });
+
+  req.session.userId = userData.id;
+  req.session.userName = userData.name;
   const allowedUsers = JSON.parse(process.env.ADMIN_EMAILS ?? '[]');
-  if (allowedUsers.includes(userData[0].email)) {
+  if (allowedUsers.includes(userData.email)) {
     req.session.isAdmin = true;
   }
 
-  // Set shared SSO cookie for cross-app sign-in
   const isLocalhost = req.hostname === 'localhost';
   res.cookie('icssc_logged_in', '1', {
     path: '/',
@@ -76,23 +101,24 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
     secure: !isLocalhost,
   });
 
-  // redirect browser to the page they came from
   const returnTo = req.session.returnTo ?? '/';
   delete req.session.returnTo;
-  res.redirect(returnTo!);
+  res.redirect(returnTo);
 }
 
 /**
  * Initiate authentication with OIDC
  */
-router.get('/google', async function (req, res) {
+router.get('/google', async (req, res) => {
   try {
-    const oidcClient = createOIDCClient();
+    const redirectUri = buildRedirectUri(isNativeIosApp(req));
+    const oidcClient = createOIDCClient(redirectUri);
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
 
     req.session.oauthState = state;
     req.session.codeVerifier = codeVerifier;
+    req.session.oauthRedirectUri = redirectUri;
     req.session.returnTo = req.headers.referer;
 
     const authUrl = oidcClient.createAuthorizationURLWithPKCE(
@@ -103,7 +129,11 @@ router.get('/google', async function (req, res) {
       ['openid', 'profile', 'email'],
     );
 
-    // Support prompt=none for silent SSO
+    const provider = req.query.provider;
+    if (provider === 'apple' || provider === 'google') {
+      authUrl.searchParams.set('provider', provider);
+    }
+
     if (req.query.prompt === 'none') {
       authUrl.searchParams.set('prompt', 'none');
     }
@@ -118,7 +148,7 @@ router.get('/google', async function (req, res) {
 /**
  * Callback for OIDC authentication
  */
-router.get('/google/callback', async function (req, res) {
+router.get('/google/callback', async (req, res) => {
   const returnTo = req.session.returnTo ?? '/planner';
 
   // Handle error=login_required from silent SSO attempt
@@ -140,10 +170,13 @@ router.get('/google/callback', async function (req, res) {
       return;
     }
 
+    const redirectUri = req.session.oauthRedirectUri ?? buildRedirectUri(isNativeIosApp(req));
+
     delete req.session.oauthState;
     delete req.session.codeVerifier;
+    delete req.session.oauthRedirectUri;
 
-    const oidcClient = createOIDCClient();
+    const oidcClient = createOIDCClient(redirectUri);
     const tokens = await oidcClient.validateAuthorizationCode(
       `${process.env.OIDC_ISSUER_URL}/token`,
       code,
@@ -180,10 +213,28 @@ router.get('/google/callback', async function (req, res) {
 });
 
 /**
+ * Fallback for the native-only callback path.
+ *
+ * In the normal native flow, ASWebAuthenticationSession captures the callback
+ * URL via AASA before any network request is made, and the iOS wrapper rewrites
+ * `/callback/native` → `/callback` before loading it in the WKWebView. The
+ * server should therefore never see this path.
+ *
+ * This route exists as a safety net for the narrow window where AASA has not
+ * yet propagated (fresh install, Apple CDN cache miss on iOS 17.4+): the flow
+ * still recovers gracefully inside the WKWebView instead of 404ing.
+ */
+router.get('/google/callback/native', (req, res) => {
+  const queryIndex = req.originalUrl.indexOf('?');
+  const query = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : '';
+  res.redirect(302, `/planner/api/users/auth/google/callback${query}`);
+});
+
+/**
  * Endpoint to logout
  */
-router.get('/logout', function (req, res) {
-  req.session.destroy(function (err) {
+router.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
     if (err) console.error(err);
     // clear the user cookie
     res.clearCookie('user');

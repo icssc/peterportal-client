@@ -10,13 +10,15 @@ import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
 import { sortTerms } from '../../helpers/util';
-import { getProfessorTerms } from '../../helpers/reviews';
+import { getProfessorTerms, formatQuarter, displayReviewDate } from '../../helpers/reviews';
 import { useProfessorData } from '../../hooks/professorReviews';
 
-import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import {
   Button,
   IconButton,
@@ -27,11 +29,15 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
+  Menu,
+  MenuItem,
+  Divider,
 } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { createTooltipOffset } from '../../helpers/slotProps';
-import { addPreview } from '../../store/slices/previewSlice';
-import { useCurrentPreview } from '../../hooks/preview';
+import { useRouter } from 'next/navigation';
 import ReviewForm from '../ReviewForm/ReviewForm';
 
 interface AuthorEditButtonsProps {
@@ -40,14 +46,25 @@ interface AuthorEditButtonsProps {
   professor?: ProfessorGQLData;
 }
 
-const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reportFormOpen, setReportFormOpen] = useState(false);
+  const open = Boolean(anchorEl);
 
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
+
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const deleteReview = async (reviewId: number) => {
     await trpc.reviews.delete.mutate({ id: reviewId });
@@ -57,6 +74,7 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
 
   const openReviewForm = () => {
     setShowReviewForm(true);
+    handleMenuClose();
     document.body.style.overflow = 'hidden';
   };
 
@@ -65,14 +83,31 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
     document.body.style.overflow = 'visible';
   };
 
+  const openReportForm = () => {
+    setReportFormOpen(true);
+    handleMenuClose();
+  };
+
   return (
     <>
-      <IconButton onClick={openReviewForm}>
-        <EditIcon />
+      <IconButton onClick={handleMenuOpen}>
+        <MoreVertIcon />
       </IconButton>
-      <IconButton onClick={() => setShowDeleteModal(true)}>
-        <DeleteOutlineIcon />
-      </IconButton>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} className="review-menu">
+        <MenuItem onClick={openReportForm}>Report</MenuItem>
+        {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
+        {review.authored && (
+          <MenuItem
+            onClick={() => {
+              setShowDeleteModal(true);
+              handleMenuClose();
+            }}
+          >
+            Delete
+          </MenuItem>
+        )}
+      </Menu>
+
       <Dialog open={showDeleteModal} onClose={() => setShowDeleteModal(false)} fullWidth>
         <DialogTitle>Delete Review</DialogTitle>
         <DialogContent>
@@ -89,6 +124,7 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
           </Button>
         </DialogActions>
       </Dialog>
+
       <ReviewForm
         course={course}
         professor={professor}
@@ -97,6 +133,13 @@ const AuthorEditButtons: FC<AuthorEditButtonsProps> = ({ review, course, profess
         open={showReviewForm}
         editing
         terms={sortedTerms}
+      />
+
+      <ReportForm
+        showForm={reportFormOpen}
+        reviewId={review.id}
+        reviewContent={review.content}
+        closeForm={() => setReportFormOpen(false)}
       />
     </>
   );
@@ -109,14 +152,14 @@ interface ReviewCardProps {
   children?: ReactNode;
 }
 
-const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }) => {
+const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
   const dispatch = useAppDispatch();
   const reviewData = useAppSelector(selectReviews);
   const isLoggedIn = useIsLoggedIn();
   const [identifier, setIdentifier] = useState<ReactNode>(null);
   const [loadingIdentifier, setLoadingIdentifier] = useState<boolean>(true);
-  const [reportFormOpen, setReportFormOpen] = useState<boolean>(false);
   const profCache = useProfessorData(review.professorId);
+  const router = useRouter();
 
   const fetchCourseAndProfName = useCallback(async () => {
     let profName: string | undefined = undefined;
@@ -151,18 +194,19 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   }, [review.courseId, profCache]);
 
-  const currentPreview = useCurrentPreview();
+  const pathname = usePathname();
+  const isStandalonePage = pathname !== '/' && pathname !== '/planner';
   const handleLinkClick = useCallback(
     (event: React.MouseEvent, id: string) => {
-      if (!currentPreview) return;
+      if (isStandalonePage) return;
       event.preventDefault();
       if (course) {
-        dispatch(addPreview({ type: 'instructor', id }));
+        router.push(`?instructor=${encodeURIComponent(id)}`);
       } else {
-        dispatch(addPreview({ type: 'course', id }));
+        router.push(`?course=${encodeURIComponent(id)}`);
       }
     },
-    [currentPreview, course, dispatch],
+    [isStandalonePage, course, router],
   );
 
   useEffect(() => {
@@ -178,24 +222,32 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const foundCourse = professor.courses[review.courseId];
         const courseName = foundCourse ? `${foundCourse.department} ${foundCourse.courseNumber}` : review.courseId;
         const courseLink = (
-          <Link
-            href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
-            onClick={(e) => handleLinkClick(e, review.courseId)}
-          >
-            {courseName}
-          </Link>
+          <span>
+            <Link
+              href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}
+              onClick={(e) => handleLinkClick(e, review.courseId)}
+            >
+              {courseName}
+            </Link>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(courseLink);
       } else if (course) {
         const foundProf = course.instructors[review.professorId];
         const profName = foundProf ? `${foundProf.name}` : review.professorId;
         const profLink = (
-          <Link
-            href={{ pathname: `/instructor/${review.professorId}` }}
-            onClick={(e) => handleLinkClick(e, review.professorId)}
-          >
-            {profName}
-          </Link>
+          <span>
+            <Link
+              href={{ pathname: `/instructor/${review.professorId}` }}
+              onClick={(e) => handleLinkClick(e, review.professorId)}
+            >
+              {profName}
+            </Link>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(profLink);
       } else {
@@ -203,11 +255,13 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
         const courseName = foundCourseAndProfName?.courseName ?? review.courseId;
         const profName = foundCourseAndProfName?.profName ?? review.professorId;
         const courseAndProfLink = (
-          <div>
+          <span>
             <Link href={{ pathname: `/course/${encodeURIComponent(review.courseId)}` }}>{courseName}</Link>
             {' • '}
             <Link href={{ pathname: `/instructor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
-          </div>
+            {' • '}
+            {formatQuarter(review.quarter)}
+          </span>
         );
         setIdentifier(courseAndProfLink);
       }
@@ -215,7 +269,16 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     };
 
     getIdentifier();
-  }, [course, review.courseId, professor, review.professorId, fetchCourseAndProfName, profCache, handleLinkClick]);
+  }, [
+    course,
+    review.courseId,
+    review.quarter,
+    professor,
+    review.professorId,
+    fetchCourseAndProfName,
+    profCache,
+    handleLinkClick,
+  ]);
 
   const updateScore = (newUserVote: number) => {
     dispatch(
@@ -255,13 +318,6 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
     }
   };
 
-  const openReportForm = () => {
-    setReportFormOpen(true);
-  };
-
-  const upvoteClassname = review.userVote === 1 ? 'upvote colored-upvote' : 'upvote';
-  const downvoteClassname = review.userVote === -1 ? 'downvote colored-downvote' : 'downvote';
-
   const tooltipProps = {
     placement: 'top' as const,
     slotProps: createTooltipOffset(0, -10),
@@ -286,110 +342,84 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor, children }
   return (
     <Card variant="outlined" className="reviewcard">
       <div className="reviewcard-header">
-        <h3 className="reviewcard-identifier">
-          {loadingIdentifier ? <Skeleton variant="text" animation="wave" width={210} /> : identifier}
-        </h3>
-        <div className="edit-buttons">
-          {!children && review.authored && <AuthorEditButtons review={review} course={course} professor={professor} />}
-          {children}
+        <div className="reviewcard-header-top">
+          <h3 className="reviewcard-identifier">
+            {loadingIdentifier ? <Skeleton variant="text" animation="wave" width={210} /> : identifier}
+          </h3>
+          <ThreeDotsMenu review={review} course={course} professor={professor} />
+        </div>
+        <Divider />
+        <div className="reviewcard-header-bottom">
+          <div className="reviewcard-author">
+            <span className="reviewcard-author-name">{review.userDisplay}</span>
+            {review.verified && <div className="reviewcard-author-icon">{verifiedIcon}</div>}
+            {review.authored && <div className="reviewcard-author-icon">{authorIcon}</div>}
+          </div>
+          <span className="reviewcard-date">
+            {displayReviewDate(review.createdAt)}
+            {review.updatedAt && (
+              <span className="subtext edit-time"> (edited {displayReviewDate(review.updatedAt)})</span>
+            )}
+          </span>
         </div>
       </div>
 
       <div className="reviewcard-content">
         <div className="reviewcard-ratings">
-          <div className={'r' + Math.floor(review.rating).toString() + ' rating'}>
+          <div className="rating rating-quality">
             <div className="rating-label">Quality</div>
             <div className="rating-value">{review.rating}</div>
           </div>
-          <div className={'r' + (6 - Math.floor(review.difficulty)).toString() + ' rating'}>
+          <div className="rating rating-difficulty">
             <div className="rating-label">Difficulty</div>
             <div className="rating-value">{review.difficulty}</div>
           </div>
         </div>
         <div className="reviewcard-info">
-          <div className="reviewcard-details">
-            <div className="reviewcard-detail">
-              <p>
-                <b>Posted on:</b>
-                {' ' +
-                  new Date(review.createdAt).toLocaleString('default', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                {review.updatedAt && (
-                  <span className="subtext edit-time"> (edited {new Date().toLocaleDateString()})</span>
-                )}
-              </p>
-              <div className="reviewcard-author">
-                <b>Posted by:</b>
-                <p className="reviewcard-author-name">{review.userDisplay}</p>
-                {review.verified && <div className="reviewcard-author-verified">{verifiedIcon}</div>}
-                {review.authored && <div className="reviewcard-author-author">{authorIcon}</div>}
-              </div>
-              <p>
-                <b>Quarter:</b> {review.quarter}
-              </p>
-            </div>
-            <div className="reviewcard-detail">
-              <p>
-                <b>Grade:</b> {review.gradeReceived ?? 'Prefer not to say'}
-              </p>
-              <p>
-                <b>Would Take Again:</b> {review.takeAgain ? 'Yes' : 'No'}
-              </p>
-            </div>
-          </div>
+          <p>
+            Grade: <b>{review.gradeReceived ?? 'Prefer not to say'}</b>
+          </p>
           <p className="review-content">{review.content || <i>This review has no additional content</i>}</p>
         </div>
       </div>
-      {tags.length > 0 && (
-        <div className="reviewcard-tags">
-          {tags.map((tag) => (
-            <Chip size="small" color="primary" key={tag} label={tag} />
-          ))}
-        </div>
-      )}
-      <div className="reviewcard-footer" id={review.id.toString()}>
-        <div className="reviewcard-voting">
-          <p className="reviewcard-voting-question">Helpful?</p>
+      <div className="reviewcard-footer-row">
+        {tags.length > 0 && (
+          <div className="reviewcard-tags">
+            {tags.map((tag) => (
+              <Chip size="small" key={tag} label={tag} />
+            ))}
+          </div>
+        )}
+        <div className="reviewcard-footer" id={review.id.toString()}>
           <div className="reviewcard-voting-buttons">
             <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-              <span>
-                <button
-                  className={upvoteClassname}
+              <span className={`upvote${review.userVote === 1 ? ' colored-vote' : ''}`}>
+                <span className="vote-count">{review.score > 0 ? review.score : 0}</span>
+                <IconButton
                   onClick={upvote}
                   disabled={!isLoggedIn}
-                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                  size="small"
+                  style={{ color: review.userVote === 1 ? 'var(--mui-palette-secondary-main)' : undefined }}
                 >
-                  &#9650;
-                </button>
+                  {review.userVote === 1 ? <ThumbUpIcon /> : <ThumbUpOffAltIcon />}
+                </IconButton>
               </span>
             </Tooltip>
-            <p className="reviewcard-voting-count">{review.score}</p>
             <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
-              <span>
-                <button
-                  className={downvoteClassname}
+              <span className={`downvote${review.userVote === -1 ? ' colored-vote' : ''}`}>
+                <span className="vote-count">{review.score < 0 ? Math.abs(review.score) : 0}</span>
+                <IconButton
                   onClick={downvote}
                   disabled={!isLoggedIn}
-                  style={!isLoggedIn ? { pointerEvents: 'none' } : {}}
+                  size="small"
+                  style={{ color: review.userVote === -1 ? 'var(--mui-palette-secondary-main)' : undefined }}
                 >
-                  &#9660;
-                </button>
+                  {review.userVote === -1 ? <ThumbDownIcon /> : <ThumbDownOffAltIcon />}
+                </IconButton>
               </span>
             </Tooltip>
           </div>
         </div>
-        <button className="add-report-button" onClick={openReportForm}>
-          Report...
-        </button>
-        <ReportForm
-          showForm={reportFormOpen}
-          reviewId={review.id}
-          reviewContent={review.content}
-          closeForm={() => setReportFormOpen(false)}
-        />
       </div>
     </Card>
   );
