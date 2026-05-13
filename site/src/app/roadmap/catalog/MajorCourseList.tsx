@@ -24,8 +24,9 @@ function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
 
-function getCoursesForMajor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId });
+function getCoursesForMajor(programId: string, specId: string | undefined) {
+  const specializationId = specId === noSpecId ? undefined : specId;
+  return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId });
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
@@ -72,11 +73,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   }, [dispatch, major.id]);
 
   const fetchRequirements = useCallback(
-    async (majorId: string, specId?: string | null) => {
+    async (majorId: string, specId?: string) => {
       setResultsLoading(true);
 
       try {
-        const requirements = await getCoursesForMajor(majorId);
+        const requirements = await getCoursesForMajor(majorId, specId);
         requirements.push(...(await getCoursesForSpecialization(specId)));
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
@@ -89,7 +90,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const loadSpecRequirements = useCallback(async () => {
     if (!hasSpecs) {
       if (majorWithSpec.requirements.length > 0) return;
-      else return await fetchRequirements(major.id, null);
+      else return await fetchRequirements(major.id);
     }
     if (!selectedSpecId && !selectedSpec?.id) return;
     if (selectedSpecId === selectedSpec?.id) return;
@@ -102,7 +103,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       await fetchRequirements(major.id, foundSpec?.id);
     } else if (selectedSpecId === noSpecId) {
       dispatch(setSpecialization({ majorId: major.id, specialization: noSpec }));
-      await fetchRequirements(major.id, null);
+      await fetchRequirements(major.id);
     }
   }, [
     dispatch,
@@ -140,6 +141,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   );
 
   const toggleExpand = () => setOpen(!open);
+  const selectedSpecOption = specOptions.find(
+    (s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id),
+  );
 
   return (
     <div className="major-section">
@@ -153,7 +157,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
             className="specialization-select"
             disableClearable
             options={specOptions}
-            value={specOptions.find((s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id))}
+            value={selectedSpecOption}
+            inputValue={selectedSpecOption?.label ?? ''}
+            filterOptions={(options) => options}
             onChange={(_event, option) => handleSpecializationChange(option)}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.value.id === value.value.id}
