@@ -51,22 +51,13 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
     popupListener?.(false);
   };
 
-  const handleUnhover = (e: React.MouseEvent) => {
-    const relatedTarget = e.relatedTarget as Node | null;
-    const popoverContent = document.querySelector('.hoverable-popover');
-
-    if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
-      hidePopover();
-    }
-  };
-
   const clonedChild = React.cloneElement(children, {
     onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
       showPopover(e);
       children.props.onMouseEnter?.(e);
     },
     onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
-      handleUnhover(e);
+      hidePopover();
       children.props.onMouseLeave?.(e);
     },
   });
@@ -85,7 +76,6 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
         slotProps={{
           paper: {
             className: 'hoverable-popover',
-            onMouseLeave: hidePopover,
           },
         }}
       >
