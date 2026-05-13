@@ -9,7 +9,8 @@
   flex-direction: column;
   flex-shrink: 0;
   overflow: auto;
-  border-radius: 8px 8px 0 0;
+  overscroll-behavior: contain;
+  border-radius: 16px 16px 0 0;
 
   // prevents child element z index escaping (i.e. any child of this element
   // may not appear above any element outside of the .program-requirements element)
