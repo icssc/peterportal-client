@@ -37,20 +37,15 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
     setNewDescription(course.description);
   }, [course.courseName, course.units, course.description, course.id, editing, inRoadmap]);
 
-  const onDelete = useCallback(
-    async (e?: React.MouseEvent) => {
-      e?.stopPropagation();
-      if (isLoggedIn) {
-        await trpc.customCourses.deleteCustomCard.mutate(course.id);
-      }
-      dispatch(removeCustomCourse(course.id));
-      dispatch(removeCustomCourseFromRoadmap(course.id));
-    },
-    [dispatch, course.id, isLoggedIn],
-  );
+  const onDelete = useCallback(async () => {
+    if (isLoggedIn) {
+      await trpc.customCourses.deleteCustomCard.mutate(course.id);
+    }
+    dispatch(removeCustomCourse(course.id));
+    dispatch(removeCustomCourseFromRoadmap(course.id));
+  }, [dispatch, course.id, isLoggedIn]);
 
-  const handleStartEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleStartEdit = () => {
     setNewName(course.courseName);
     setNewUnits(course.units);
     setNewDescription(course.description);
@@ -93,8 +88,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
     }
   };
 
-  const handleSaveClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleSaveClick = () => {
     void commitSave();
   };
 
@@ -146,7 +140,6 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
                 placeholder="Course"
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={handleKeyDownEdit}
-                onClick={(e) => e.stopPropagation()}
               />
             </span>
 
@@ -161,7 +154,6 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
                   setNewUnits(Number.isFinite(v) ? v : NaN);
                 }}
                 onKeyDown={handleKeyDownEdit}
-                onClick={(e) => e.stopPropagation()}
                 slotProps={{
                   htmlInput: {
                     min: 0,
@@ -179,7 +171,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               <CheckIcon />
             </IconButton>
 
-            <IconButton className="course-delete-btn" onClick={(e) => void onDelete(e)} aria-label="delete">
+            <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
               <DeleteOutlineIcon className="course-delete-icon" />
             </IconButton>
           </div>
@@ -190,7 +182,6 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               placeholder="Description"
               onChange={(e) => setNewDescription(e.target.value)}
               onKeyDown={handleKeyDownEdit}
-              onClick={(e) => e.stopPropagation()}
             />
           </div>
         </div>
@@ -207,7 +198,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               <ModeEditIcon />
             </IconButton>
 
-            <IconButton className="course-delete-btn" onClick={(e) => void onDelete(e)} aria-label="delete">
+            <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
               <DeleteOutlineIcon className="course-delete-icon" />
             </IconButton>
           </div>
