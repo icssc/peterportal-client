@@ -22,8 +22,9 @@ interface CustomCourseCardProps {
 export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpdate, inRoadmap, removeCourseAt }) => {
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
+  const hasEmptyTitle = !course.courseName.trim();
 
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(!inRoadmap && hasEmptyTitle);
   const [saving, setSaving] = useState(false);
 
   const [newName, setNewName] = useState<string>(course.courseName);
@@ -137,7 +138,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
               <TextField
                 className="name-input"
                 value={newName ?? ''}
-                placeholder="Course"
+                placeholder="Title"
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={handleKeyDownEdit}
               />
