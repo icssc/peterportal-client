@@ -4,12 +4,13 @@ import Twemoji from 'react-twemoji';
 
 interface ResultPageSectionProps {
   title: string;
+  id?: string;
   children: ReactNode;
 }
 
-export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children }) => {
+export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, id, children }) => {
   return (
-    <div className="result-page-section">
+    <div className="result-page-section" id={id}>
       <h2>{title}</h2>
       {children}
     </div>

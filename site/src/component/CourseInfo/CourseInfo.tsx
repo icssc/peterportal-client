@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData } from '../../types/types';
+import { quarterDisplayNames } from '../../helpers/planner';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
@@ -79,7 +81,7 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
   return (
     <div className="course-info-warning">
       <div className="warning-primary">
-        <WarningAmberIcon className="warning-primary-icon" />
+        <WarningAmberIcon className="warning-icon" />
         Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
       </div>
       <div className="warning-hint-italics">
@@ -128,5 +130,24 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
         </div>
       )}
     </>
+  );
+};
+
+export const TermMismatchText: FC<{ termMismatch?: QuarterName | 'RecentYears' }> = ({ termMismatch }) => {
+  if (!termMismatch) return;
+
+  const text =
+    termMismatch === 'RecentYears'
+      ? 'Not offered in recent years'
+      : `Typically not offered in ${quarterDisplayNames[termMismatch]}`;
+
+  return (
+    <div className="course-info-warning">
+      <br />
+      <div className="warning-secondary">
+        <WarningAmberIcon className="warning-icon" />
+        {text}
+      </div>
+    </div>
   );
 };

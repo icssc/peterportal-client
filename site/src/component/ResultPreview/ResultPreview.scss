@@ -8,6 +8,7 @@
   z-index: 10;
   background-color: var(--mui-palette-background-default);
   overscroll-behavior: contain;
+  container-type: inline-size;
 
   @media (max-width: 345) {
     padding-top: 100px;
@@ -28,7 +29,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    min-height: globals.$roadmap-toolbar-height;
+    height: globals.$roadmap-toolbar-height;
     border-width: 0 0 2px 0;
     border-radius: 0;
     display: flex;
@@ -55,7 +56,32 @@
   .preview-title {
     min-width: 30%;
     margin-block: 0;
-    margin-right: auto;
+  }
+
+  .preview-nav-bar {
+    display: flex;
+    gap: 7px;
+    margin-inline: auto;
+    padding: 5px;
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    background-color: var(--mui-palette-Button-inheritContainedBg);
+  }
+
+  .preview-nav-button.MuiButton-root {
+    margin: 0;
+    border-radius: 8px;
+    background-color: var(--mui-palette-background-paper);
+    font-weight: 700;
+    text-transform: capitalize;
+
+    &:hover {
+      background-color: var(--mui-palette-background-paper);
+    }
+
+    &.active {
+      color: var(--mui-palette-secondary-main);
+    }
   }
 
   // Target the Twemoji wrapper since we can't add a class name to it
@@ -73,5 +99,65 @@
     margin-inline: auto;
     max-width: 1000px;
     margin-bottom: 32px;
+  }
+
+  @container (max-width: 940px) {
+    .preview-title {
+      margin-right: auto;
+    }
+
+    .preview-nav-bar {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      z-index: 999;
+    }
+
+    .preview-nav-button.MuiButton-root {
+      border-radius: 999px;
+
+      .MuiButton-startIcon {
+        margin: 0;
+      }
+
+      > span:not(.MuiButton-icon) {
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+      }
+    }
+    @container (max-width: 433px) {
+      .preview-nav-bar {
+        right: auto;
+        bottom: 20px;
+        padding: 4px;
+        gap: 4px;
+      }
+
+      .preview-nav-button.MuiButton-root {
+        min-width: 40px;
+        padding: 10px;
+      }
+    }
+
+    @container (min-width: 434px) and (max-width: 940px) {
+      .preview-nav-bar {
+        right: auto;
+        bottom: 30px;
+        padding: 6px;
+        gap: 6px;
+        @media (min-width: 802px) {
+          // layout expands to preview and sidebar
+          left: calc((100vw - 367px) / 2 + 367px); // center based on preview container width only
+        }
+      }
+
+      .preview-nav-button.MuiButton-root {
+        min-width: 45px;
+        padding: 12px;
+      }
+    }
   }
 }
