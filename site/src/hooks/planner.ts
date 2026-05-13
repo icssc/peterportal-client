@@ -65,6 +65,7 @@ export function useSaveRoadmap() {
   const revisions = useAppSelector((state) => state.roadmap.revisions);
   const currIdx = useAppSelector((state) => state.roadmap.currentRevisionIndex);
   const lastSaveIdx = useAppSelector((state) => state.roadmap.savedRevisionIndex);
+  const currentPlanIndex = useAppSelector((state) => state.roadmap.currentPlanIndex);
 
   const handler = async ({ silent = false } = {}) => {
     dispatch(setSaveInProgress(true));
@@ -74,7 +75,7 @@ export function useSaveRoadmap() {
     const collapsedPrevious = collapseAllPlanners(lastSavedRoadmapPlans);
     const collapsedCurrent = collapseAllPlanners(planners);
 
-    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent);
+    const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, currentPlanIndex);
 
     if (result.success && !isLoggedIn && !localStorage.getItem('shownLocalSaveToast')) {
       localStorage.setItem('shownLocalSaveToast', 'true');
