@@ -56,6 +56,10 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
       showPopover(e);
       children.props.onMouseEnter?.(e);
     },
+    onMouseOver: (e: React.MouseEvent<HTMLElement>) => {
+      showPopover(e);
+      children.props.onMouseEnter?.(e);
+    },
     onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
       hidePopover();
       children.props.onMouseLeave?.(e);
@@ -76,6 +80,9 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
         slotProps={{
           paper: {
             className: 'hoverable-popover',
+            sx: {
+              pointerEvents: 'none',
+            },
           },
         }}
       >
