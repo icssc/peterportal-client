@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@opentelemetry/auto-instrumentations-node": "0.58.0",
+    "@paralleldrive/cuid2": "^3.3.0",
     "@trpc/server": "^10.45.2",
     "@vendia/serverless-express": "^4.12.6",
     "arctic": "^3.7.0",

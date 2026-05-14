@@ -1,4 +1,6 @@
 import { sql } from 'drizzle-orm';
+import { createId } from '@paralleldrive/cuid2';
+
 import {
   boolean,
   check,
@@ -107,7 +109,7 @@ export const planner = pgTable(
       .references(() => user.id)
       .notNull(),
     name: text('name').notNull(),
-    shareId: text('share_id'),
+    shareId: text('share_id').$defaultFn(createId),
     chc: text('chc'),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
