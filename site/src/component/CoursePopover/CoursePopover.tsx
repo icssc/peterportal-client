@@ -5,10 +5,10 @@ import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
-  CourseBookmarkButton,
   CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  AverageGPAText,
   PreviousOfferingsRow,
   TermMismatchText,
 } from '../CourseInfo/CourseInfo';
@@ -39,13 +39,13 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, termMi
           ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
         </span>
         <div className="spacer" />
-        <CourseBookmarkButton course={course} />
       </div>
       <br />
-      <CourseSynopsis course={course} />
-      <PrerequisiteText course={course} />
+      <CourseSynopsis course={course} clampDescription={4} />
+      <PrerequisiteText course={course} clampDescription={4} />
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+      <AverageGPAText course={course} />
       <PreviousOfferingsRow course={course} />
       <TermMismatchText termMismatch={termMismatch} />
     </div>
