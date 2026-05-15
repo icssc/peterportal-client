@@ -1,5 +1,7 @@
 import { FC } from 'react';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData } from '../../types/types';
+import { quarterDisplayNames } from '../../helpers/planner';
 import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
@@ -91,15 +93,20 @@ export const PreviousOfferingsRow: FC<CourseProp> = ({ course }) => {
   );
 };
 
-export const QuarterMismatchText: FC<{ quarterMismatch?: string }> = ({ quarterMismatch }) => {
-  if (!quarterMismatch) return;
+export const TermMismatchText: FC<{ termMismatch?: QuarterName | 'RecentYears' }> = ({ termMismatch }) => {
+  if (!termMismatch) return;
+
+  const text =
+    termMismatch === 'RecentYears'
+      ? 'Not offered in recent years'
+      : `Typically not offered in ${quarterDisplayNames[termMismatch]}`;
 
   return (
     <div className="course-info-warning">
       <br />
       <div className="warning-secondary">
         <WarningAmberIcon className="warning-icon" />
-        Typically not offered in {quarterMismatch}
+        {text}
       </div>
     </div>
   );
