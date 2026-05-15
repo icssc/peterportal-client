@@ -508,16 +508,17 @@ const validateAndPrerequisite = ({ prerequisite, ...input }: ValidationInput<Pre
 };
 
 const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
-  const required: Set<string> = new Set();
+  const required: string[] = [];
   if (!prerequisite.OR) throw new Error('Expected OR prerequisite');
 
   for (const nested of prerequisite.OR) {
     const missing = validatePrerequisites({ prerequisite: nested, ...input });
     if (missing.size === 0) return new Set<string>(); // one is complete; return early
-    missing.forEach((course) => required.add(course));
+    missing.forEach((course) => required.push(course));
   }
 
-  return required;
+  const unique = [...new Set(required)];
+  return new Set([unique.join('|')]);
 };
 
 /**

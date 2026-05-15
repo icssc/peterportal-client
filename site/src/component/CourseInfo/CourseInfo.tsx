@@ -62,7 +62,13 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
     <div className="course-info-warning">
       <div className="warning-primary">
         <WarningAmberIcon className="warning-icon" />
-        Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
+        Prerequisite{pluralize(requiredCourses.length)} Not Met:{' '}
+        {requiredCourses
+          .map((courseGroup) => {
+            const courses: string[] = courseGroup.split('|');
+            return courses.length > 1 ? `(${courses.join(' or ')})` : courseGroup;
+          })
+          .join(', ')}
       </div>
       <div className="warning-hint-italics">
         Already completed? Click the "Credits" tab in the sidebar to add{' '}
