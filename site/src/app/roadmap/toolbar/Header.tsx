@@ -73,7 +73,7 @@ const Header: FC<HeaderProps> = ({ courseCount, unitCount }) => {
                 variant="contained"
                 color="inherit"
                 size={buttonSize}
-                disableElevation
+                // disableElevation
                 className="header-btn"
                 startIcon={<SwapHorizOutlinedIcon />}
                 onClick={toggleTransfers}

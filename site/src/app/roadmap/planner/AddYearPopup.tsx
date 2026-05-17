@@ -70,7 +70,7 @@ const AddYearPopup: FC<AddYearProps> = ({ buttonSize }) => {
         variant="contained"
         color="inherit"
         size={buttonSize}
-        disableElevation
+        // disableElevation
         className="header-btn"
         onClick={() => setShowModal(true)}
         startIcon={<AddIcon />}
