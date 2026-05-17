@@ -27,15 +27,12 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     if (!element) return;
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (element.scrollTop !== 0) {
-        isScrolling = true;
-      }
       popupTouchStartY.current = e.touches[0].clientY;
       element.style.transition = 'none';
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (e.changedTouches[0].clientY - popupTouchStartY.current > 400 && !isScrolling) {
+      if (e.changedTouches[0].clientY - popupTouchStartY.current > 200 && !isScrolling) {
         onClose();
       }
       element.style.transform = '';
@@ -45,13 +42,16 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
 
     const handleTouchMovePopup = (e: TouchEvent) => {
       const delta = e.touches[0].clientY - popupTouchStartY.current;
-      if (!isScrolling) {
+      if (element.scrollTop !== 0) {
+        isScrolling = true;
+      }
+      if (!isScrolling && delta > 0) {
         e.preventDefault();
-        element.style.transform = delta > 0 ? `translateY(${delta}px)` : 'translateY(0)';
+        element.style.transform = `translateY(${delta}px)`;
       }
     };
 
-    const handleOverLayTouchStart = (e: TouchEvent) => {
+    const handleOverlayTouchStart = (e: TouchEvent) => {
       overlayTouchStartY.current = e.touches[0].clientY;
       element.style.transition = 'none';
     };
@@ -75,7 +75,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     element?.addEventListener('touchend', handleTouchEnd);
     element?.addEventListener('touchmove', handleTouchMovePopup, { passive: false });
 
-    overlay?.addEventListener('touchstart', handleOverLayTouchStart);
+    overlay?.addEventListener('touchstart', handleOverlayTouchStart);
     overlay?.addEventListener('touchend', handleOverlayTouchEnd);
     overlay?.addEventListener('touchmove', handleOverlayTouchMove);
 
@@ -83,7 +83,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchend', handleTouchEnd);
       element.removeEventListener('touchmove', handleTouchMovePopup, { passive: false } as EventListenerOptions);
-      overlay?.removeEventListener('touchstart', handleOverLayTouchStart);
+      overlay?.removeEventListener('touchstart', handleOverlayTouchStart);
       overlay?.removeEventListener('touchend', handleOverlayTouchEnd);
       overlay?.removeEventListener('touchmove', handleOverlayTouchMove);
     };
