@@ -3,6 +3,7 @@ import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
 
 import ThemeContext from '../../style/theme-context';
 import { GradesRaw } from '@peterportal/types';
+import { getAggregateGradeData } from '../../helpers/gradeDist.ts';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
 
@@ -25,71 +26,49 @@ export default class Chart extends Component<ChartProps> {
   getClassData = (): BarDatum[] => {
     const { professor, quarter, course } = this.props;
 
-    let gradeACount = 0,
-      gradeBCount = 0,
-      gradeCCount = 0,
-      gradeDCount = 0,
-      gradeFCount = 0,
-      gradePCount = 0,
-      gradeNPCount = 0;
-
-    this.props.gradeData.forEach((data) => {
-      const quarterMatch = quarter === 'ALL' || data.quarter + ' ' + data.year === quarter;
-      const profMatch = professor === 'ALL' || data.instructors.includes(this.props.professor ?? '');
-      const courseMatch = course === 'ALL' || data.department + ' ' + data.courseNumber === this.props.course;
-
-      if (quarterMatch && (profMatch || courseMatch)) {
-        gradeACount += data.gradeACount;
-        gradeBCount += data.gradeBCount;
-        gradeCCount += data.gradeCCount;
-        gradeDCount += data.gradeDCount;
-        gradeFCount += data.gradeFCount;
-        gradePCount += data.gradePCount;
-        gradeNPCount += data.gradeNPCount;
-      }
-    });
+    const aggregateGradeData = getAggregateGradeData(this.props.gradeData, professor, quarter, course);
 
     return [
       {
         id: 'A',
         label: 'A',
-        A: gradeACount,
+        A: aggregateGradeData.gradeACount,
         color: getCssVariable('--mui-palette-chart-blue'),
       },
       {
         id: 'B',
         label: 'B',
-        B: gradeBCount,
+        B: aggregateGradeData.gradeBCount,
         color: getCssVariable('--mui-palette-chart-green'),
       },
       {
         id: 'C',
         label: 'C',
-        C: gradeCCount,
+        C: aggregateGradeData.gradeCCount,
         color: getCssVariable('--mui-palette-chart-yellow'),
       },
       {
         id: 'D',
         label: 'D',
-        D: gradeDCount,
+        D: aggregateGradeData.gradeDCount,
         color: getCssVariable('--mui-palette-chart-orange'),
       },
       {
         id: 'F',
         label: 'F',
-        F: gradeFCount,
+        F: aggregateGradeData.gradeFCount,
         color: getCssVariable('--mui-palette-chart-red'),
       },
       {
         id: 'P',
         label: 'P',
-        P: gradePCount,
+        P: aggregateGradeData.gradePCount,
         color: getCssVariable('--mui-palette-chart-pass'),
       },
       {
         id: 'NP',
         label: 'NP',
-        NP: gradeNPCount,
+        NP: aggregateGradeData.gradeNPCount,
         color: getCssVariable('--mui-palette-chart-noPass'),
       },
     ];
