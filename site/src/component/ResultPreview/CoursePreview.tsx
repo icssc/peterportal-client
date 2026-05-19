@@ -1,8 +1,9 @@
 import './ResultPreview.scss';
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
+import Materials from '../Materials/Materials';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms } from '../../helpers/util';
@@ -12,7 +13,6 @@ import { CourseGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
-import trpc from '../../trpc';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
@@ -21,7 +21,6 @@ import PreviewNavBar from './PreviewNavBar';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
-import { CourseMaterialsAAPIResponse } from '@peterportal/types';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -50,30 +49,8 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
-  const [materials, setMaterials] = useState<CourseMaterialsAAPIResponse | null>(null);
-  const [materialsLoading, setMaterialsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
-      return;
-    }
-    const getMaterials = async () => {
-      const res = await trpc.courseMaterials.get.query({
-        department: data.department,
-        courseNumber: data.courseNumber,
-      });
-      setMaterials(res);
-      setMaterialsLoading(false);
-    };
-    getMaterials();
-  }, [data.department, data.courseNumber]);
-
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
-  }
-
-  if (!materialsLoading) {
-    console.log(materials);
   }
 
   return (
@@ -88,6 +65,14 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
 
       <ResultPageSection id="preview-schedule" title="🗓️ Schedule of Classes">
         <Schedule
+          key={data.id}
+          courseID={data.department + ' ' + data.courseNumber}
+          termsOffered={sortTerms(data.terms)}
+        />
+      </ResultPageSection>
+
+      <ResultPageSection id="preview-materials" title="📘 Low-Cost Materials">
+        <Materials
           key={data.id}
           courseID={data.department + ' ' + data.courseNumber}
           termsOffered={sortTerms(data.terms)}

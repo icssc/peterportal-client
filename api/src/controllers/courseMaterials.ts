@@ -19,7 +19,7 @@ const CourseMaterialsRouter = router({
         .then((res) => res.json())
         .then((res) => {
           if (!res?.ok) return [];
-          return (res.data as CourseMaterialsAAPIResponse[]) ?? [];
+          return (res.data as CourseMaterialsAAPIResponse) ?? [];
         });
       return response;
     }),

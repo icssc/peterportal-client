@@ -3,12 +3,14 @@ import { Button } from '@mui/material';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import BookIcon from '@mui/icons-material/Book';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 
 const previewLinks = [
   { id: 'preview-details', label: 'Details', icon: <ArticleOutlinedIcon /> },
   { id: 'preview-grades', label: 'Grades', icon: <BarChartIcon /> },
   { id: 'preview-schedule', label: 'Schedule', icon: <CalendarTodayIcon /> },
+  { id: 'preview-materials', label: 'Materials', icon: <BookIcon /> },
   { id: 'preview-reviews', label: 'Reviews', icon: <RateReviewIcon /> },
 ];
 
