@@ -44,6 +44,8 @@ export const LOADING_COURSE_PLACEHOLDER: CourseGQLData = {
   instructors: {},
   prerequisites: {},
   dependents: {},
+  repeatabilityTimes: null,
+  repeatabilityType: null,
 };
 export const GE_TITLE_MAP: Record<GEName, GETitle> = {
   'GE-1A': 'GE Ia: Lower Division Writing',
