@@ -22,4 +22,8 @@
     @include globals.bottom-button();
     z-index: 1;
   }
+
+  &.dragging button.fixed {
+    visibility: hidden;
+  }
 }

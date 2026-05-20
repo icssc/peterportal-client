@@ -37,6 +37,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
       }
       element.style.transform = '';
       element.style.transition = '';
+      element.classList.remove('dragging');
       isScrolling = false;
     };
 
@@ -47,6 +48,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
       }
       if (!isScrolling && delta > 0) {
         e.preventDefault();
+        element.classList.add('dragging');
         element.style.transform = `translateY(${delta}px)`;
       }
     };
@@ -62,11 +64,13 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
       }
       element.style.transform = '';
       element.style.transition = '';
+      element.classList.remove('dragging');
     };
 
     const handleOverlayTouchMove = (e: TouchEvent) => {
       const delta = e.touches[0].clientY - overlayTouchStartY.current;
       if (delta > 0) {
+        element.classList.add('dragging');
         element.style.transform = `translateY(${delta}px)`;
       }
     };
