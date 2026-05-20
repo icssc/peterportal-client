@@ -158,6 +158,38 @@
   gap: 8px;
 }
 
+.department-course-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.department-course-group {
+  background: var(--mui-palette-overlay-overlay3);
+  border-radius: 8px;
+
+  .department-course-group-courses {
+    padding: 10px;
+  }
+}
+
+.department-course-group-header {
+  display: flex;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 6px 8px 6px 12px;
+  background: var(--mui-palette-overlay-overlay2);
+  font-size: 14px;
+  cursor: pointer;
+
+  .department-course-group-summary {
+    display: flex;
+    align-items: center;
+    color: var(--mui-palette-text-secondary);
+    font-size: 12px;
+  }
+}
+
 .marker-requirement {
   position: relative;
 
@@ -247,6 +279,14 @@
 }
 
 [data-theme='dark'] {
+  .department-course-group {
+    background: var(--mui-palette-overlay-overlay2);
+  }
+
+  .department-course-group-header {
+    background: var(--mui-palette-overlay-overlay3);
+  }
+
   .program-course-tile.completed {
     background-color: #343a40;
   }
