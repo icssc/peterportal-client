@@ -33,10 +33,10 @@ const Materials: FC<MaterialsProps> = (props) => {
   const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
 
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
-  const [selectedQuarter, setSelectedQuarter] = useState<string>('');
+  const [selectedQuarter, setSelectedQuarter] = useState<string | null>(null);
 
   const [materialsData, setMaterialsData] = useState<MaterialsData>(null!);
-  const [terms, setTerms] = useState<string[]>([]);
+  const [terms, setTerms] = useState<string[]>(null!);
 
   const fetchMaterialsFromAPI = useCallback(async () => {
     const res = await trpc.courseMaterials.get.query({
@@ -78,7 +78,7 @@ const Materials: FC<MaterialsProps> = (props) => {
   }, [fetchMaterialsFromAPI]);
 
   useEffect(() => {
-    if (terms.length > 0 && !selectedQuarter) {
+    if (terms && terms.length > 0 && !selectedQuarter) {
       setSelectedQuarter(terms[0]);
     }
   }, [terms]);
@@ -139,7 +139,7 @@ const Materials: FC<MaterialsProps> = (props) => {
     );
   };
 
-  if (!materialsData || selectedQuarter === '') {
+  if (!materialsData || !terms) {
     return <p> Loading Materials..</p>;
   } else if (terms.length <= 0) {
     return (
