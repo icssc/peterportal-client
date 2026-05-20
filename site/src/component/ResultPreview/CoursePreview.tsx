@@ -72,11 +72,7 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
       </ResultPageSection>
 
       <ResultPageSection id="preview-materials" title="📘 Low-Cost Materials">
-        <Materials
-          key={data.id}
-          courseID={data.department + ' ' + data.courseNumber}
-          termsOffered={sortTerms(data.terms)}
-        />
+        <Materials key={data.id} courseID={data.department + ' ' + data.courseNumber} />
       </ResultPageSection>
 
       <ResultPageSection id="preview-reviews" title="💬 Reviews">

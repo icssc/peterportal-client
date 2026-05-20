@@ -1,4 +1,5 @@
-.library-link {
+.library-link,
+.offering-alert {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -13,6 +14,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
+  margin-top: 32px;
 }
 
 .materials-quarter {
@@ -22,6 +24,20 @@
   min-width: 100%;
   margin-top: 16px;
   font-size: 14px;
+
+  th,
+  .data-col {
+    padding: 4px 20px 4px 0;
+    white-space: pre;
+
+    &:first-child {
+      padding-left: 10px;
+    }
+
+    a {
+      text-decoration: underline;
+    }
+  }
 
   th,
   .data-col,

@@ -12,7 +12,6 @@ import Link from 'next/link';
 
 interface MaterialsProps {
   courseID: string;
-  termsOffered?: string[];
 }
 
 export interface MaterialsEntry {
@@ -30,15 +29,19 @@ export type MaterialsData = Record<string, MaterialsEntry[]>;
 const Materials: FC<MaterialsProps> = (props) => {
   const courseIDSplit = props.courseID.split(' ');
   const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
-  const courseNumber = courseIDSplit[courseIDSplit.length - 1];
+  const number = courseIDSplit[courseIDSplit.length - 1];
+  const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
 
-  const [materialsData, setMaterialsData] = useState<MaterialsData | null>(null);
-  const [terms, setTerms] = useState<string[] | null>(null);
+  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
+  const [selectedQuarter, setSelectedQuarter] = useState<string>('');
+
+  const [materialsData, setMaterialsData] = useState<MaterialsData>(null!);
+  const [terms, setTerms] = useState<string[]>([]);
 
   const fetchMaterialsFromAPI = useCallback(async () => {
     const res = await trpc.courseMaterials.get.query({
       department: department,
-      courseNumber: courseNumber,
+      number: number,
     });
 
     try {
@@ -59,6 +62,7 @@ const Materials: FC<MaterialsProps> = (props) => {
         }
         data[term].push(entry);
       });
+
       setMaterialsData(data);
       setTerms(Object.keys(data ?? {}));
     } catch (error) {
@@ -67,14 +71,17 @@ const Materials: FC<MaterialsProps> = (props) => {
         setTerms([]);
       }
     }
-  }, [department, courseNumber]);
+  }, [department, number]);
 
   useEffect(() => {
     fetchMaterialsFromAPI();
   }, [fetchMaterialsFromAPI]);
 
-  const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
-  const [selectedQuarter, setSelectedQuarter] = useState(terms ? terms[0] : currentQuarter);
+  useEffect(() => {
+    if (terms.length > 0 && !selectedQuarter) {
+      setSelectedQuarter(terms[0]);
+    }
+  }, [terms]);
 
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -85,19 +92,9 @@ const Materials: FC<MaterialsProps> = (props) => {
   };
 
   const materials = useMemo(() => {
-    if (!materialsData || selectedQuarter === '') return [];
+    if (!materialsData || !selectedQuarter) return [];
     return materialsData[selectedQuarter] ?? [];
   }, [materialsData, selectedQuarter]);
-
-  if (terms && terms.length <= 0) {
-    return (
-      <div className="materials-no-data">
-        <i>
-          No material data is available for {department} {courseNumber}.
-        </i>
-      </div>
-    );
-  }
 
   const renderData = (data: MaterialsEntry, index: number) => {
     const clicktoCopy = (event: React.MouseEvent<HTMLElement>, sectionCode: string) => {
@@ -142,8 +139,30 @@ const Materials: FC<MaterialsProps> = (props) => {
     );
   };
 
-  if (!materials) {
+  if (!materialsData || selectedQuarter === '') {
     return <p> Loading Materials..</p>;
+  } else if (terms.length <= 0) {
+    return (
+      <div>
+        <div className="library-link">
+          <InfoOutlineIcon fontSize="small" />
+          <p>
+            <i>
+              Detailed information is available on the{' '}
+              <Link href={libraryLink} rel="noopener noreferrer" target="_blank">
+                UC Irvine Libraries website
+              </Link>
+              .
+            </i>
+          </p>
+        </div>
+        <div className="materials-no-data">
+          <i>
+            No material data is available for {department} {number}.
+          </i>
+        </div>
+      </div>
+    );
   } else {
     const materialElements: JSX.Element[] = [];
 
@@ -152,12 +171,7 @@ const Materials: FC<MaterialsProps> = (props) => {
       materialElements.push(renderData(material, i));
     });
 
-    const termOptions =
-      props.termsOffered?.map((term) => {
-        return { text: term, value: term };
-      }) ?? [];
-
-    const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
+    const isOffered = terms[0] === currentQuarter;
 
     return (
       <div>
@@ -174,19 +188,28 @@ const Materials: FC<MaterialsProps> = (props) => {
           </p>
         </div>
 
+        {!isOffered && (
+          <div className="offering-alert">
+            <InfoOutlineIcon fontSize="small" />
+            <p>
+              <i>Not offered in {currentQuarter}.</i>
+            </p>
+          </div>
+        )}
+
         <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleClose} />
 
-        {props.termsOffered ? (
+        {terms ? (
           <Select
-            value={selectedQuarter ?? currentQuarter}
+            value={selectedQuarter}
             onChange={(e) => setSelectedQuarter(e.target.value)}
             renderValue={() => {
               return selectedQuarter;
             }}
           >
-            {termOptions.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value}>
-                {opt.text}
+            {terms.map((opt) => (
+              <MenuItem key={opt} value={opt}>
+                {opt}
               </MenuItem>
             ))}
           </Select>
