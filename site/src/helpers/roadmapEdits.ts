@@ -245,3 +245,32 @@ export function modifyVariableCourseUnit(
 
   return createRevision(edits);
 }
+
+export function modifyCourseOptionalState(
+  plannerId: number,
+  startYear: number,
+  quarterName: QuarterName,
+  courseIndex: number,
+  course: PlannerCourseData,
+  isOptional: boolean,
+) {
+  const nextOptional = isOptional ? true : undefined;
+  const edits: PlannerCourseEdit[] = [];
+
+  if (course.isOptional !== nextOptional) {
+    edits.push({
+      type: 'course',
+      plannerId,
+      startYear,
+      quarterName,
+      courseIndex,
+      before: course,
+      after: {
+        ...course,
+        isOptional: nextOptional,
+      },
+    });
+  }
+
+  return createRevision(edits);
+}

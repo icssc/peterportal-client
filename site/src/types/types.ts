@@ -37,6 +37,7 @@ export interface PlannerQuarterData {
 
 export interface PlannerCourseData extends CourseGQLData {
   userChosenUnits?: number;
+  isOptional?: boolean;
 }
 
 export type PlannerQuarterCourse = PlannerCourseData | CustomCourse;

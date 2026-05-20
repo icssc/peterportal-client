@@ -14,6 +14,8 @@ import { IconButton } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import UnitsContainer from '../CustomUnitsContainer';
 import { CourseBookmarkButton, CourseSynopsis } from '../../../component/CourseInfo/CourseInfo';
 import Link from 'next/link';
@@ -75,6 +77,7 @@ interface CourseProps {
   requiredCourses?: string[];
   termMismatch?: QuarterName | 'RecentYears';
   onDelete?: () => void;
+  onToggleOptional?: () => void;
   openPopoverLeft?: boolean;
   addMode?: 'tap' | 'drag';
   data: PlannerCourseData;
@@ -83,9 +86,10 @@ interface CourseProps {
 
 const Course: FC<CourseProps> = (props) => {
   const { title, courseLevel, minUnits, maxUnits, terms, geList, userChosenUnits } = props.data;
-  const { requiredCourses, termMismatch, onDelete, openPopoverLeft, onSetVariableUnits } = props;
+  const { requiredCourses, termMismatch, onDelete, onToggleOptional, openPopoverLeft, onSetVariableUnits } = props;
 
   const isInRoadmap = !!onDelete;
+  const isOptional = !!props.data.isOptional;
   const isMobile = useIsMobile();
 
   const formattedCourseLevel = shortenCourseLevel(courseLevel);
@@ -114,7 +118,10 @@ const Course: FC<CourseProps> = (props) => {
   }, [userChosenUnits]);
 
   return (
-    <div className={`course ${isInRoadmap ? 'roadmap-course' : ''}`} {...tappableCourseProps}>
+    <div
+      className={`course ${isInRoadmap ? 'roadmap-course' : ''} ${isOptional ? 'optional-course' : ''}`}
+      {...tappableCourseProps}
+    >
       {(!isMobile || isInRoadmap) && (
         <div className="course-drag-handle">
           <DragIndicatorIcon />
@@ -140,9 +147,34 @@ const Course: FC<CourseProps> = (props) => {
           )}
         </div>
         {isInRoadmap ? (
-          <IconButton className="course-delete-btn" onClick={onDelete} aria-label="delete">
-            <DeleteOutlineIcon className="course-delete-icon" />
-          </IconButton>
+          <div className="course-actions">
+            <IconButton
+              className="course-optional-btn"
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggleOptional?.();
+              }}
+              aria-label={isOptional ? 'mark as required' : 'mark as optional'}
+              title={isOptional ? 'Mark as required' : 'Mark as optional'}
+            >
+              {isOptional ? (
+                <VisibilityOffIcon className="course-optional-icon" />
+              ) : (
+                <VisibilityIcon className="course-optional-icon" />
+              )}
+            </IconButton>
+            <IconButton
+              className="course-delete-btn"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete?.();
+              }}
+              aria-label="delete"
+              title="Delete"
+            >
+              <DeleteOutlineIcon className="course-delete-icon" />
+            </IconButton>
+          </div>
         ) : (
           <CourseBookmarkButton course={props.data} />
         )}

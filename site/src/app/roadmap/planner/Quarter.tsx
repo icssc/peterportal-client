@@ -12,7 +12,7 @@ import {
   setActiveCustomCourse,
   showMobileCatalog,
 } from '../../../store/slices/roadmapSlice';
-import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
+import { CourseIdentifier, PlannerCourseData, PlannerQuarterData } from '../../../types/types';
 import { isCustomCourse } from '../../../helpers/customCourses';
 import './Quarter.scss';
 
@@ -28,6 +28,7 @@ import {
   modifyQuarterCourse,
   reorderQuarterCourse,
   modifyVariableCourseUnit,
+  modifyCourseOptionalState,
 } from '../../../helpers/roadmapEdits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 
@@ -106,6 +107,18 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     if (!courseToReorder) return;
     const quarterToChange = { startYear, quarter: data, courseIndex: event.newIndex! };
     const revision = reorderQuarterCourse(currentPlan.id, courseToReorder, event.oldIndex!, quarterToChange);
+    dispatch(reviseRoadmap(revision));
+  };
+
+  const toggleCourseOptional = (courseIndex: number, course: PlannerCourseData) => {
+    const revision = modifyCourseOptionalState(
+      currentPlan.id,
+      startYear,
+      data.name,
+      courseIndex,
+      course,
+      !course.isOptional,
+    );
     dispatch(reviseRoadmap(revision));
   };
 
@@ -238,6 +251,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
                 const revision = modifyVariableCourseUnit(currentPlan.id, startYear, data.name, index, course, units);
                 if (revision.edits.length > 0) dispatch(reviseRoadmap(revision));
               }}
+              onToggleOptional={() => toggleCourseOptional(index, course)}
               requiredCourses={requiredCourses}
               termMismatch={termMismatch}
               onDelete={() => removeCourseAt(index)}

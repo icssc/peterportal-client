@@ -12,6 +12,7 @@ export const chcVariant = z.enum(['', 'CHC4', 'CHC2']);
 const savedPlannerCourseData = z.object({
   courseId: z.string(),
   userChosenUnits: z.number().optional(),
+  isOptional: z.boolean().optional(),
 });
 export type SavedPlannerCourseData = z.infer<typeof savedPlannerCourseData>;
 

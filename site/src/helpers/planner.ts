@@ -120,6 +120,7 @@ export const collapsePlanner = (planner: PlannerData): SavedPlannerYearData[] =>
         return {
           courseId: course.id,
           userChosenUnits: course.userChosenUnits,
+          isOptional: course.isOptional,
         };
       });
       savedYear.quarters.push(savedQuarter);
@@ -183,8 +184,9 @@ export const expandPlanner = async (savedPlanner: SavedPlannerYearData[]): Promi
               return placeholder;
             }
             return {
-              userChosenUnits: course.userChosenUnits,
               ...courseLookup[course.courseId],
+              userChosenUnits: course.userChosenUnits,
+              isOptional: course.isOptional,
             };
           });
 

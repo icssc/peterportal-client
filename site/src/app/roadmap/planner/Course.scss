@@ -6,6 +6,7 @@
   font-size: 16px;
   padding: 12px;
   position: relative;
+  overflow: hidden;
   margin: 4px;
 
   display: grid;
@@ -50,6 +51,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .course-actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-right: -6px;
   }
 
   .title {
@@ -131,9 +139,37 @@
     }
 
     .course-drag-handle,
+    .course-optional-btn,
     .course-edit-btn,
     .course-delete-btn {
       color: inherit;
+    }
+
+    .course-optional-icon {
+      color: var(--mui-palette-secondary-main);
+    }
+
+    &.optional-course {
+      opacity: 0.78;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          -45deg,
+          transparent 0,
+          transparent 12px,
+          rgba(255, 255, 255, 0.06) 12px,
+          rgba(255, 255, 255, 0.06) 18px
+        );
+      }
+
+      > * {
+        position: relative;
+        z-index: 1;
+      }
     }
   }
 }
