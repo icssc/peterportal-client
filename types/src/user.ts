@@ -21,6 +21,7 @@ export interface UserData extends UserMetadata {
   isAdmin: boolean;
   lastRoadmapEditAt?: string;
   currentPlanIndex?: number;
+  autoSaveEnabled: boolean;
 }
 
 export interface UserSliceState {

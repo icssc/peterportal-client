@@ -32,6 +32,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setAutosaveEnabled } from '../../store/slices/userSlice';
+import trpc from '../../trpc';
 import Image from 'next/image';
 import TabSelector, { TabOption } from '../../app/roadmap/sidebar/TabSelector';
 import { Theme, UserMetadata } from '@peterportal/types';
@@ -166,10 +167,16 @@ const ExperimentalFeaturesMenu = () => {
   const dispatch = useAppDispatch();
   const autosaveEnabled = useAppSelector((state) => state.user.autosaveEnabled);
 
+  const handleToggle = () => {
+    const next = !autosaveEnabled;
+    dispatch(setAutosaveEnabled(next));
+    trpc.users.setAutoSave.mutate({ autoSaveEnabled: next });
+  };
+
   return (
     <List className="profile-popover-links experimental-features">
       <ListItem>
-        <ListItemButton className="profile-popover-link" onClick={() => dispatch(setAutosaveEnabled(!autosaveEnabled))}>
+        <ListItemButton className="profile-popover-link" onClick={handleToggle}>
           <ListItemText primary="Autosave" />
           <ListItemIcon>
             <Switch checked={autosaveEnabled} />
