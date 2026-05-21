@@ -125,12 +125,17 @@
 
   .result-page-title {
     display: flex;
+    align-items: center;
     justify-content: space-between;
 
     .materials-indicator {
       display: flex;
-      gap: 8px;
+      gap: 5px;
       color: var(--mui-palette-success-light);
+
+      p {
+        margin-top: 2px;
+      }
 
       a {
         color: inherit;

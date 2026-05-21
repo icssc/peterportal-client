@@ -14,7 +14,7 @@ import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
-import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import MaterialsIcon from '../../helpers/courseMaterials';
 import Toast, { ToastSeverity } from '../../helpers/toast';
 import Link from 'next/link';
 import { parseRestrictions } from '../../helpers/schedule';
@@ -115,7 +115,6 @@ const Schedule: FC<ScheduleProps> = (props) => {
     }
   }, [selectedQuarter, fetchScheduleDataFromAPI]);
 
-  const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
   const materialsMsg = 'Low cost materials';
 
   const renderData = (courseID: string, section: Section, index: number) => {
@@ -157,9 +156,9 @@ const Schedule: FC<ScheduleProps> = (props) => {
           <td className="data-col">
             {materialsData.has(section.instructors.join()) && (
               <Tooltip title={materialsMsg}>
-                <Link href={libraryLink} rel="noopener noreferrer" target="_blank">
-                  <ArrowCircleDownIcon className="materials-indicator" />
-                </Link>
+                <div>
+                  <MaterialsIcon />
+                </div>
               </Tooltip>
             )}
           </td>
