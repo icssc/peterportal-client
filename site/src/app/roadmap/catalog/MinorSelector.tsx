@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
 import trpc from '../../../trpc';
 import { normalizeMajorName } from '../../../helpers/courseRequirements';
@@ -22,6 +22,7 @@ const MinorSelector: FC = () => {
   const isLoggedIn = useIsLoggedIn();
   const minors = useAppSelector((state) => state.courseRequirements.minorList);
   const selectedMinors = useAppSelector((state) => state.courseRequirements.selectedMinors);
+  const hasFetchedSelectedMinors = useRef(false);
 
   const [minorsLoading, setMinorsLoading] = useState(false);
 
@@ -76,9 +77,11 @@ const MinorSelector: FC = () => {
 
   useEffect(() => {
     if (!minors.length || !isLoggedIn) return;
-    if (selectedMinors.length) return;
+    if (hasFetchedSelectedMinors.current) return;
+    hasFetchedSelectedMinors.current = true;
 
     setMinorsLoading(true);
+
     trpc.programs.getSavedMinors
       .query()
       .then((minorIds) => {
@@ -91,7 +94,7 @@ const MinorSelector: FC = () => {
       .finally(() => {
         setMinorsLoading(false);
       });
-  }, [dispatch, minors, isLoggedIn, selectedMinors.length]);
+  }, [dispatch, minors, isLoggedIn]);
 
   const minorSelectOptions: MinorOption[] = minors.map((m) => ({
     value: m,

@@ -44,6 +44,7 @@ const SaveButton: FC = () => {
       disabled={saveDisabled}
       onClick={handleSave}
       color="inherit"
+      aria-label="Save"
     >
       Save
     </Button>

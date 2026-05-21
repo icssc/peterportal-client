@@ -4,6 +4,7 @@ import SearchModule from '../../../component/SearchModule/SearchModule';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { useSavedCourses } from '../../../hooks/savedCourses';
 import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../../types/types';
+import { useGetCoursesInSameQuarter } from '../../../hooks/sameQuarterCourses';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
@@ -47,7 +48,13 @@ interface CourseResultsContainerProps {
 const CourseResultItem: FC<{ course: CourseGQLData; addMode: 'tap' | 'drag' }> = ({ course, addMode }) => {
   const courseId = `${course.department} ${course.courseNumber}`;
   const clearedCourses = useClearedCoursesUntil(courseId);
-  const missingPrerequisites = getMissingPrerequisites(clearedCourses, course.prerequisiteTree);
+  const coursesInCurrentQuarter = useGetCoursesInSameQuarter(courseId);
+
+  const missingPrerequisites = getMissingPrerequisites(
+    clearedCourses,
+    course.prerequisiteTree,
+    coursesInCurrentQuarter,
+  );
 
   return <Course data={course} addMode={addMode} requiredCourses={missingPrerequisites} />;
 };

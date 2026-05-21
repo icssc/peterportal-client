@@ -1,5 +1,5 @@
 import './ResultPreview.scss';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect, useCallback, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -11,11 +11,14 @@ import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
+import PreviewNavBar from './PreviewNavBar';
+import trpc from '../../trpc';
 
+import MaterialsIcon from '../../helpers/courseMaterials';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
@@ -47,21 +50,44 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
+  const [hasMaterials, setHasMaterials] = useState<boolean>(false);
+
+  const fetchMaterialsDataFromAPI = useCallback(async () => {
+    const apiResponseMaterials = await trpc.courseMaterials.get.query({
+      department: data.department,
+      number: data.courseNumber,
+    });
+    setHasMaterials(apiResponseMaterials.length > 0);
+  }, [data.department, data.courseNumber]);
+
+  useEffect(() => {
+    if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
+      return;
+    }
+    setHasMaterials(false);
+    fetchMaterialsDataFromAPI();
+  }, [fetchMaterialsDataFromAPI, data.id]);
+
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
 
+  let materialsComponent = null;
+  if (hasMaterials) {
+    materialsComponent = <MaterialsIcon showLabel={true} />;
+  }
+
   return (
     <div className="preview-body">
-      <ResultPageSection title={data.title}>
+      <ResultPageSection id="preview-details" title={data.title} indicator={materialsComponent}>
         <CourseSummary course={data} />
       </ResultPageSection>
 
-      <ResultPageSection title="📊 Grade Distribution">
+      <ResultPageSection id="preview-grades" title="📊 Grade Distribution">
         <GradeDist course={data} />
       </ResultPageSection>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
+      <ResultPageSection id="preview-schedule" title="🗓️ Schedule of Classes">
         <Schedule
           key={data.id}
           courseID={data.department + ' ' + data.courseNumber}
@@ -69,24 +95,23 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
         />
       </ResultPageSection>
 
-      <ResultPageSection title="💬 Reviews">
+      <ResultPageSection id="preview-reviews" title="💬 Reviews">
         <Review key={data.id} course={data} terms={sortTerms(data.terms)} />
       </ResultPageSection>
     </div>
   );
 };
 
-const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => void }> = ({
+const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => void; showBack: boolean }> = ({
   courseId,
   onClose,
   onBack,
+  showBack,
 }) => {
   courseId = courseId.replace(/\s/g, '');
   const courseData = useCourseData(courseId);
   const isLoading = courseData.id === LOADING_COURSE_PLACEHOLDER.id;
   const dispatch = useAppDispatch();
-  const previews = useAppSelector((state) => state.preview.previewStack);
-  const previousPreview = previews.length > 1 ? previews[previews.length - 2] : null;
 
   const copyCourseLink = () => {
     const url = new URL('/planner/course/' + encodeURIComponent(courseId), location.origin).toString();
@@ -117,25 +142,28 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
             <CloseIcon />
           </IconButton>
         </Tooltip>
-        {previews.length > 1 && (
-          <Tooltip title={previousPreview ? `Back to ${previousPreview.id}` : 'Go Back'}>
+        {showBack && (
+          <Tooltip title="Go Back">
             <IconButton onClick={onBack}>
               <BackIcon />
             </IconButton>
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<IosShareIcon />}
-          size="small"
-          disableElevation
-          onClick={copyCourseLink}
-        >
-          Share
-        </Button>
-        <CourseBookmarkButton course={courseData} disabled={isLoading} />
+        <PreviewNavBar />
+        <div className="preview-buttons">
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<IosShareIcon />}
+            size="small"
+            disableElevation
+            onClick={copyCourseLink}
+          >
+            Share
+          </Button>
+          <CourseBookmarkButton course={courseData} disabled={isLoading} includeLabel={true} />
+        </div>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
         <CoursePreviewContent data={courseData} />

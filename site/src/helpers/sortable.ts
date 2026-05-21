@@ -11,7 +11,7 @@ const baseSortable: SortableOptions = {
 export const quarterSortable: SortableOptions & Partial<ReactSortableProps<PlannerQuarterCourse>> = {
   ...baseSortable,
   setList: () => {},
-  handle: '.course-drag-handle, .course-mobile-drag-handle',
+  handle: '.course-drag-handle',
   group: { name: 'courses' },
 };
 

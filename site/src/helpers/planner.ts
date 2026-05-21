@@ -536,11 +536,15 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   return new Set();
 };
 
-export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisite: PrerequisiteTree) => {
+export const getMissingPrerequisites = (
+  clearedCourses: Set<string>,
+  prerequisite: PrerequisiteTree,
+  takingCourses: Set<string> = new Set<string>(),
+) => {
   const input = {
     prerequisite,
     taken: clearedCourses,
-    taking: new Set<string>(),
+    taking: takingCourses,
   };
 
   const missingPrerequisites = Array.from(validatePrerequisites(input));
