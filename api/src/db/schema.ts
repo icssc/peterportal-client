@@ -27,6 +27,7 @@ export const user = pgTable(
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
     currentPlanIndex: integer('current_plan_index').notNull().default(0),
+    autoSaveEnabled: boolean('auto_save_enabled').notNull().default(false),
   },
   (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
 );
