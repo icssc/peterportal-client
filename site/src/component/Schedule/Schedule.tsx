@@ -115,7 +115,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
     }
   }, [selectedQuarter, fetchScheduleDataFromAPI]);
 
-  const materialsMsg = 'Low cost materials';
+  const materialsMsg = 'Low-cost materials';
 
   const renderData = (courseID: string, section: Section, index: number) => {
     if (!section.status) section.status = 'FULL';
