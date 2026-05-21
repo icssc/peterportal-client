@@ -2,30 +2,44 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SouthOutlinedIcon from '@mui/icons-material/SouthOutlined';
 import Link from 'next/link';
 
-export default function MaterialsIcon() {
-  const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
+interface MaterialsIconParams {
+  showLabel?: boolean;
+}
 
-  const iconStyle: React.CSSProperties = {
-    position: 'relative',
-    width: 24,
-    height: 24,
-    flexShrink: 0,
-    color: 'var(--mui-palette-success-light)',
-  };
+const iconStyle: React.CSSProperties = {
+  position: 'relative',
+  width: 16,
+  height: 16,
+  flexShrink: 0,
+  color: 'var(--mui-palette-success-light)',
+  transform: 'translateY(-2px)',
+};
 
+const labelStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '10px',
+  color: 'var(--mui-palette-success-light)',
+  textDecoration: 'none',
+  marginBottom: '16px',
+};
+
+const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
+
+export default function MaterialsIcon({ showLabel = false }: MaterialsIconParams) {
   return (
-    <Link href={libraryLink} rel="noopener noreferrer" target="_blank">
+    <Link href={libraryLink} rel="noopener noreferrer" target="_blank" style={labelStyle}>
       <div className="materials-icon" style={iconStyle}>
         <AttachMoneyIcon />
         <SouthOutlinedIcon
           sx={{
-            fontSize: '15px',
+            fontSize: '13px',
             position: 'absolute',
-            bottom: '-4px',
-            right: '-2px',
+            bottom: '-12px',
+            right: '-9px',
           }}
         />
       </div>
+      {showLabel && <p style={{ margin: 0 }}>Low-Cost Materials</p>}
     </Link>
   );
 }

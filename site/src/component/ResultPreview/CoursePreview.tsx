@@ -64,8 +64,9 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
     if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
       return;
     }
+    setHasMaterials(false);
     fetchMaterialsDataFromAPI();
-  }, [fetchMaterialsDataFromAPI]);
+  }, [fetchMaterialsDataFromAPI, data.id]);
 
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
@@ -73,12 +74,7 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
 
   let materialsComponent = null;
   if (hasMaterials) {
-    materialsComponent = (
-      <div className="materials-indicator">
-        <MaterialsIcon />
-        <p>Low cost materials</p>
-      </div>
-    );
+    materialsComponent = <MaterialsIcon showLabel={true} />;
   }
 
   return (
