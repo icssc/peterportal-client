@@ -3,7 +3,6 @@ import { FC, ReactNode, useEffect } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
-import Materials from '../Materials/Materials';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { checkModalOpen, sortTerms } from '../../helpers/util';
@@ -69,10 +68,6 @@ const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
           courseID={data.department + ' ' + data.courseNumber}
           termsOffered={sortTerms(data.terms)}
         />
-      </ResultPageSection>
-
-      <ResultPageSection id="preview-materials" title="📘 Low-Cost Materials">
-        <Materials key={data.id} courseID={data.department + ' ' + data.courseNumber} />
       </ResultPageSection>
 
       <ResultPageSection id="preview-reviews" title="💬 Reviews">

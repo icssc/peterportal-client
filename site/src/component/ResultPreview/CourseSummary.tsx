@@ -1,25 +1,20 @@
 import './CourseSummary.scss';
-import { FC, useEffect, useCallback, useState } from 'react';
+import { FC, useState } from 'react';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
 import { CourseGQLData } from '../../types/types';
 import { CoursePreview, PrerequisiteNode } from '@peterportal/types';
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip } from '@mui/material';
 import { useClearedCoursesUntil } from '../../hooks/planner';
 import { getMissingPrerequisites } from '../../helpers/planner';
-import trpc from '../../trpc';
 
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import { addDelimiter, getCourseTags } from '../../helpers/util';
 import PrereqTree from '../PrereqTree/PrereqTree';
 
-const CourseTags: FC<{ course: CourseGQLData; hasMaterials?: boolean }> = ({ course, hasMaterials = false }) => {
+const CourseTags: FC<{ course: CourseGQLData }> = ({ course }) => {
   const tags = getCourseTags(course);
-  if (hasMaterials) {
-    tags.push('Low-Cost Materials Available');
-  }
   return (
     <div className="course-tags">
       {tags.map((tag) => (
@@ -196,26 +191,12 @@ const PrerequisiteTreeDialog: FC<{ course: CourseGQLData }> = ({ course }) => {
 };
 
 const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
-  const [hasMaterials, setHasMaterials] = useState<boolean>(false);
-
-  const fetchMaterialsDataFromAPI = useCallback(async () => {
-    const apiResponseMaterials = await trpc.courseMaterials.get.query({
-      department: course.department,
-      number: course.courseNumber,
-    });
-    setHasMaterials(apiResponseMaterials.length > 0);
-  }, [course.department, course.courseNumber]);
-
-  useEffect(() => {
-    fetchMaterialsDataFromAPI();
-  }, [fetchMaterialsDataFromAPI]);
-
   const courseId = `${course.department} ${course.courseNumber}`;
   const clearedCourses = useClearedCoursesUntil(courseId);
   return (
     <div className="course-summary">
       <p>{course.description}</p>
-      <CourseTags course={course} hasMaterials={hasMaterials} />
+      <CourseTags course={course} />
       <div className="summary-columns">
         <div className="summary-column">
           <RecentOfferingsTable terms={course.terms} size="wide" />
@@ -230,14 +211,6 @@ const CourseSummary: FC<{ course: CourseGQLData }> = ({ course }) => {
             dependents={Object.values(course.dependents)}
           />
           <PrerequisiteTreeDialog course={course} />
-          {hasMaterials && (
-            <div className="materials-alert">
-              <InfoOutlineIcon fontSize="small" />
-              <p>
-                <i>Some offerings of this course use low-cost materials</i>
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
