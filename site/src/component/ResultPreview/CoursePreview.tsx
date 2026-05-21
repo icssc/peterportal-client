@@ -1,5 +1,5 @@
 import './ResultPreview.scss';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect, useCallback, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -9,14 +9,16 @@ import { checkModalOpen, sortTerms } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
-import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
+import { Button, IconButton, Paper, Tooltip, useMediaQuery, Link } from '@mui/material';
 import { CourseBookmarkButton } from '../CourseInfo/CourseInfo';
 import { useAppDispatch } from '../../store/hooks';
 import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 import PreviewNavBar from './PreviewNavBar';
+import trpc from '../../trpc';
 
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
@@ -48,13 +50,43 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
+  const [hasMaterials, setHasMaterials] = useState<boolean>(false);
+
+  const fetchMaterialsDataFromAPI = useCallback(async () => {
+    const apiResponseMaterials = await trpc.courseMaterials.get.query({
+      department: data.department,
+      number: data.courseNumber,
+    });
+    setHasMaterials(apiResponseMaterials.length > 0);
+  }, [data.department, data.courseNumber]);
+
+  useEffect(() => {
+    if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
+      return;
+    }
+    fetchMaterialsDataFromAPI();
+  }, [fetchMaterialsDataFromAPI]);
+
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
 
+  let materialsComponent = null;
+  if (hasMaterials) {
+    const libraryLink = 'https://www.lib.uci.edu/affordable-initiatives/course-materials';
+    materialsComponent = (
+      <div className="materials-indicator">
+        <Link href={libraryLink} rel="noopener noreferrer" target="_blank">
+          <ArrowCircleDownIcon />
+        </Link>
+        <p>Low cost materials</p>
+      </div>
+    );
+  }
+
   return (
     <div className="preview-body">
-      <ResultPageSection id="preview-details" title={data.title}>
+      <ResultPageSection id="preview-details" title={data.title} indicator={materialsComponent}>
         <CourseSummary course={data} />
       </ResultPageSection>
 

@@ -123,6 +123,21 @@
     }
   }
 
+  .result-page-title {
+    display: flex;
+    justify-content: space-between;
+
+    .materials-indicator {
+      display: flex;
+      gap: 8px;
+      color: var(--mui-palette-success-light);
+
+      a {
+        color: inherit;
+      }
+    }
+  }
+
   .twemoji {
     width: 1.25em;
   }
