@@ -232,6 +232,13 @@
       "when": 1778410132845,
       "tag": "0032_sad_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1779238803896,
+      "tag": "0033_freezing_network",
+      "breakpoints": true
     }
   ]
 }
