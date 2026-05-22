@@ -9,8 +9,14 @@
     padding-top: 8px;
   }
 
-  &.is-disabled {
-    .filters-disabled-reason {
+  // Dim the controls to signal filters apply to course (not the shown instructor) results, while
+  // keeping them interactive so users can still change filters from the instructor view.
+  &.is-dimmed {
+    .MuiInputBase-root {
+      opacity: 0.5;
+    }
+
+    .filters-hint {
       color: var(--mui-palette-text-secondary);
     }
   }
@@ -30,7 +36,7 @@
     }
   }
 
-  .filters-disabled-reason {
+  .filters-hint {
     font-size: 12px;
     margin: 0;
     width: 100%;

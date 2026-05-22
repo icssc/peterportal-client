@@ -29,11 +29,7 @@ function briefLabel(selected: string[], defaultLabel: string) {
   return `${selected[0]} +${selected.length - 1}`;
 }
 
-interface DepartmentSelectProps {
-  disabled?: boolean;
-}
-
-function DepartmentSelect({ disabled }: DepartmentSelectProps) {
+function DepartmentSelect() {
   const departments = useAppSelector((state) => state.departments.departments);
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
@@ -61,9 +57,8 @@ function DepartmentSelect({ disabled }: DepartmentSelectProps) {
 
   // Cannot use refs because refs can't be used as hook dependencies
   useEffect(() => {
-    if (disabled) return;
     inputEl?.focus();
-  }, [disabled, inputEl]);
+  }, [inputEl]);
 
   const paperProps = {
     className: 'search-filters-menu departments-menu',
@@ -75,7 +70,6 @@ function DepartmentSelect({ disabled }: DepartmentSelectProps) {
       displayEmpty
       multiple
       value={selectedFilters.departments}
-      disabled={disabled}
       MenuProps={{
         ...menuProps,
         slotProps: { paper: paperProps },
@@ -89,7 +83,6 @@ function DepartmentSelect({ disabled }: DepartmentSelectProps) {
         className="dept-input"
         variant="filled"
         placeholder="Enter a department..."
-        disabled={disabled}
         onKeyDown={handleTextKeydown}
         defaultValue={deptFilterText}
         value={deptFilterText}
@@ -112,12 +105,14 @@ function DepartmentSelect({ disabled }: DepartmentSelectProps) {
 }
 
 interface SearchFiltersProps {
-  disabled?: boolean;
-  disabledReason?: string;
+  /** Visually dims the filters to signal they don't affect the currently shown (instructor) results. */
+  dimmed?: boolean;
+  /** Explainer rendered under the filters while dimmed. */
+  hint?: string;
   addTopPadding?: boolean;
 }
 
-const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReason, addTopPadding = false }) => {
+const SearchFilters: FC<SearchFiltersProps> = ({ dimmed = false, hint, addTopPadding = false }) => {
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
 
@@ -148,7 +143,7 @@ const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReaso
   };
 
   const filterClassName = ['filter-group'];
-  if (disabled) filterClassName.push('is-disabled');
+  if (dimmed) filterClassName.push('is-dimmed');
   if (addTopPadding) filterClassName.push('has-top-padding');
 
   return (
@@ -160,7 +155,6 @@ const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReaso
           value={selectedFilters.levels}
           onChange={handleLevelSelection}
           displayEmpty
-          disabled={disabled}
           className={selectedFilters.levels.length > 0 ? 'has-selection' : ''}
           renderValue={(selected) => briefLabel(selected, 'Level')}
           MenuProps={menuProps}
@@ -180,7 +174,6 @@ const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReaso
           value={selectedFilters.geCategories}
           onChange={handleGeCategorySelection}
           displayEmpty
-          disabled={disabled}
           className={selectedFilters.geCategories.length > 0 ? 'has-selection' : ''}
           renderValue={(selected) => briefLabel(selected, 'GE')}
           MenuProps={menuProps}
@@ -193,8 +186,8 @@ const SearchFilters: FC<SearchFiltersProps> = ({ disabled = false, disabledReaso
           ))}
         </Select>
       </FormControl>
-      <DepartmentSelect disabled={disabled} />
-      {disabled && disabledReason && <p className="filters-disabled-reason">{disabledReason}</p>}
+      <DepartmentSelect />
+      {dimmed && hint && <p className="filters-hint">{hint}</p>}
     </div>
   );
 };
