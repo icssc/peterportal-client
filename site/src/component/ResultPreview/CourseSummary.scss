@@ -62,4 +62,14 @@
     margin-bottom: 16px;
     flex-wrap: wrap;
   }
+
+  .materials-alert {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 18px;
+    p {
+      margin: 0px;
+    }
+  }
 }

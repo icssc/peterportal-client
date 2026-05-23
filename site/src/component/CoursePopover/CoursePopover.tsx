@@ -1,25 +1,26 @@
 import { FC } from 'react';
 import './CoursePopover.scss';
+import { QuarterName } from '@peterportal/types';
 import { CourseGQLData } from '../../types/types';
 import { pluralize } from '../../helpers/util';
 import {
   CorequisiteText,
-  CourseBookmarkButton,
   CourseSynopsis,
   IncompletePrerequisiteText,
   PrerequisiteText,
+  AverageGPAText,
   PreviousOfferingsRow,
-  QuarterMismatchText,
+  TermMismatchText,
 } from '../CourseInfo/CourseInfo';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface CoursePopoverProps {
   course: CourseGQLData | string;
   requiredCourses?: string[];
-  quarterMismatch?: string;
+  termMismatch?: QuarterName | 'RecentYears';
 }
 
-const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarterMismatch }) => {
+const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, termMismatch }) => {
   if (typeof course === 'string') {
     return (
       <div className="course-popover">
@@ -38,15 +39,15 @@ const CoursePopover: FC<CoursePopoverProps> = ({ course, requiredCourses, quarte
           ({minUnits === maxUnits ? minUnits : `${minUnits}-${maxUnits}`} {pluralize(maxUnits, 'units', 'unit')})
         </span>
         <div className="spacer" />
-        <CourseBookmarkButton course={course} />
       </div>
       <br />
-      <CourseSynopsis course={course} />
-      <PrerequisiteText course={course} />
+      <CourseSynopsis course={course} clampDescription={4} />
+      <PrerequisiteText course={course} clampDescription={4} />
       <CorequisiteText course={course} />
       <IncompletePrerequisiteText requiredCourses={requiredCourses} />
+      <AverageGPAText course={course} />
       <PreviousOfferingsRow course={course} />
-      <QuarterMismatchText quarterMismatch={quarterMismatch} />
+      <TermMismatchText termMismatch={termMismatch} />
     </div>
   );
 };

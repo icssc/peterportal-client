@@ -1,7 +1,7 @@
 import './CustomCourseCard.scss';
 import { FC, useCallback, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useAppDispatch } from '../../../store/hooks';
 import { removeCustomCourse } from '../../../store/slices/customCourseSlice';
@@ -71,7 +71,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
       <div className="course-card-top">
         <span className="name">
           {!inRoadmap ? (
-            <input
+            <TextField
               className="name-input"
               value={newName ?? ''}
               placeholder="Course"
@@ -86,18 +86,22 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
 
         <span className="units">
           {!inRoadmap ? (
-            <input
+            <TextField
               className="units-input"
               type="number"
-              min="0"
               value={Number.isFinite(newUnits) ? newUnits : ''}
               placeholder="Units"
               onChange={(e) => {
-                const v = e.target.valueAsNumber;
+                const v = Number(e.target.value);
                 setNewUnits(Number.isFinite(v) ? v : NaN);
               }}
               onKeyDown={handleKeyDown}
               onBlur={onBlur}
+              slotProps={{
+                htmlInput: {
+                  min: 0,
+                },
+              }}
             />
           ) : (
             <>{course.units} units</>
@@ -110,7 +114,7 @@ export const CustomCourseCard: FC<CustomCourseCardProps> = ({ course, handleUpda
       </div>
       <div className="course-description">
         {!inRoadmap ? (
-          <input
+          <TextField
             className="description-input"
             value={newDescription ?? ''}
             placeholder="Description"
