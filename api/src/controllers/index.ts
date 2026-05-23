@@ -6,6 +6,7 @@ import reportsRouter from './reports';
 import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
 import courseRequirementsRouter from './courseRequirements';
+import courseMaterialsRouter from './courseMaterials';
 import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
 import transferCreditsRouter from './transferCredits';
@@ -21,6 +22,7 @@ export const appRouter = router({
   external: externalAppRouter,
   courses: coursesRouter,
   courseRequirements: courseRequirementsRouter,
+  courseMaterials: courseMaterialsRouter,
   professors: professorsRouter,
   programs: programsRouter,
   roadmaps: roadmapsRouter,
