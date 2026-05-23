@@ -36,38 +36,28 @@ export const courseNotesRouter = router({
       const courseId = input.courseId;
       const content = input.content;
 
-      if (
-        !(
-          await db
-            .select()
-            .from(courseNotes)
-            .where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)))
-        ).length
-      ) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'No notes found for this course' });
-      }
-
-      await db
+      const result = await db
         .update(courseNotes)
         .set({ content: content })
-        .where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)));
+        .where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)))
+        .returning();
+
+      if (!result.length) {
+        throw new TRPCError({ code: 'NOT_FOUND' });
+      }
     }),
 
   delete: userProcedure.input(z.object({ courseId: z.string() })).mutation(async ({ ctx, input }) => {
     const userId = ctx.session.userId;
     const courseId = input.courseId;
 
-    if (
-      !(
-        await db
-          .select()
-          .from(courseNotes)
-          .where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)))
-      ).length
-    ) {
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'No notes to delete' });
-    }
+    const result = await db
+      .delete(courseNotes)
+      .where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)))
+      .returning();
 
-    await db.delete(courseNotes).where(and(eq(courseNotes.userId, userId!), eq(courseNotes.courseId, courseId)));
+    if (!result.length) {
+      throw new TRPCError({ code: 'NOT_FOUND' });
+    }
   }),
 });
