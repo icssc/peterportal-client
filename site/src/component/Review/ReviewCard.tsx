@@ -285,9 +285,12 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
       setReviews(
         reviewData.map((otherReview) => {
           if (otherReview.id === review.id) {
+            const prevVote = otherReview.userVote!;
             return {
               ...otherReview,
-              score: otherReview.score + (newUserVote - otherReview.userVote!),
+              score: otherReview.score + (newUserVote - prevVote),
+              upvotes: otherReview.upvotes + (newUserVote === 1 ? 1 : 0) - (prevVote === 1 ? 1 : 0),
+              downvotes: otherReview.downvotes + (newUserVote === -1 ? 1 : 0) - (prevVote === -1 ? 1 : 0),
               userVote: newUserVote,
             };
           } else {
@@ -394,7 +397,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
           <div className="reviewcard-voting-buttons">
             <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
               <span className={`upvote${review.userVote === 1 ? ' colored-vote' : ''}`}>
-                <span className="vote-count">{review.score > 0 ? review.score : 0}</span>
+                <span className="vote-count">{review.upvotes}</span>
                 <IconButton
                   onClick={upvote}
                   disabled={!isLoggedIn}
@@ -407,7 +410,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
             </Tooltip>
             <Tooltip title="You must be logged in to vote" open={isLoggedIn ? false : undefined}>
               <span className={`downvote${review.userVote === -1 ? ' colored-vote' : ''}`}>
-                <span className="vote-count">{review.score < 0 ? Math.abs(review.score) : 0}</span>
+                <span className="vote-count">{review.downvotes}</span>
                 <IconButton
                   onClick={downvote}
                   disabled={!isLoggedIn}
