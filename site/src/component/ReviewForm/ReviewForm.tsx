@@ -34,14 +34,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
-import { ProfessorGQLData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   open: boolean;
   handleClose: () => void;
   editing?: boolean;
   reviewToEdit?: ReviewData;
-  professorData?: ProfessorGQLData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({
@@ -52,7 +50,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   professor: professorProp,
   course: courseProp,
   terms: termsProp,
-  professorData,
 }) => {
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
@@ -85,19 +82,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [professorTermsMap, setProfessorTermsMap] = useState<Record<string, string[]>>({});
   const [availableTermsForProfessor, setAvailableTermsForProfessor] = useState<string[]>([]);
   const [professorCourseTermsMap, setProfessorCourseTermsMap] = useState<Record<string, string[]>>({});
-
-  useEffect(() => {
-    if (!professorProp && reviewToEdit) {
-      searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
-        if (instructor) {
-          const instrTerms = sortTerms(getProfessorTerms(instructor));
-          setTerms(instrTerms);
-          setInstructorName(instructor.name);
-          setInstructor(reviewToEdit.professorId);
-        }
-      });
-    }
-  }, [courseProp, professorProp, reviewToEdit]);
 
   // on initial load, fetch instructor/course terms
   useEffect(() => {
@@ -163,6 +147,19 @@ const ReviewForm: FC<ReviewFormProps> = ({
         }),
       );
     }
+
+    // editing in course context - pre-select the instructor and fetch their terms
+    if (reviewToEdit && courseProp && !professorProp) {
+      setInstructor(reviewToEdit.professorId);
+      searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
+        if (instructor) {
+          const instrTerms = sortTerms(getProfessorTerms(instructor));
+          setTerms(instrTerms);
+          setInstructorName(instructor.name);
+          setInstructor(reviewToEdit.professorId);
+        }
+      });
+    }
   }, [courseProp, professorProp, reviewToEdit]);
 
   // when instructor, course, or their terms data changes, determine which terms to show in the dropdown
@@ -203,17 +200,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
 
     setAvailableTermsForProfessor(termsToUse);
-  }, [
-    instructor,
-    course,
-    courseProp,
-    professorProp,
-    professorData,
-    professorTermsMap,
-    professorCourseTermsMap,
-    terms,
-    reviewToEdit,
-  ]);
+  }, [instructor, course, courseProp, professorProp, professorTermsMap, professorCourseTermsMap, terms, reviewToEdit]);
 
   // clear quarter when year changes
   useEffect(() => {
