@@ -14,6 +14,7 @@ import {
 } from '../../../store/slices/roadmapSlice';
 import { CourseIdentifier, PlannerQuarterData } from '../../../types/types';
 import { isCustomCourse } from '../../../helpers/customCourses';
+import { useAnimatedHeight } from '../../../hooks/useAnimatedHeight';
 import './Quarter.scss';
 
 import Course from './Course';
@@ -44,6 +45,7 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
     (state) => state.roadmap.plans[state.roadmap.currentPlanIndex].content.invalidCourses,
   );
   const quarterContainerRef = useRef<HTMLDivElement>(null);
+  useAnimatedHeight(quarterContainerRef);
   const isMobile = useIsMobile();
   const [moveCourseTrigger, setMoveCourseTrigger] = useState<CourseIdentifier | null>(null);
   const activeCourseLoading = useAppSelector((state) => state.roadmap.activeCourseLoading);
