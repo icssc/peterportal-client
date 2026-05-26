@@ -3,6 +3,7 @@ import { FilterOptions, stringifySearchFilters } from '../helpers/searchFilters'
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectCourseFilters,
+  searchOperationFailed,
   setFirstPageResults,
   setNewPageResults,
   setSearchViewIndex,
@@ -77,7 +78,11 @@ export function useSearchTrigger() {
   };
 
   const handleSearchError = (error: unknown) => {
-    if (error instanceof Error && error.name !== 'AbortError') console.error('Search error:', error);
+    // Aborts are expected when a newer search supersedes this one; that newer search owns the
+    // in-progress flag, so leave it alone. Any other failure must clear the loading state.
+    if (error instanceof Error && error.name === 'AbortError') return;
+    console.error('Search error:', error);
+    dispatch(searchOperationFailed());
   };
 
   const handleFirstPageResults = useCallback(
@@ -130,10 +135,12 @@ export function useSearchTrigger() {
         profRes ??= { count: 0, results: [], totalRank: 0 };
         handleFirstPageResults('courses', courseRes);
         handleFirstPageResults('instructors', profRes);
-        const showCoursesFirst = showMobileCatalog || courseRes.totalRank > profRes.totalRank;
+        // Filters only narrow courses, so a filter change should keep the user on the course
+        // results they're refining. Only fall back to instructors when no course matches.
+        const showCourses = showMobileCatalog || courseRes.count > 0;
         const eitherHasResults = courseRes.count > 0 || profRes.count > 0;
         if (showMobileCatalog || eitherHasResults) {
-          dispatch(setSearchViewIndex(showCoursesFirst ? 'courses' : 'instructors'));
+          dispatch(setSearchViewIndex(showCourses ? 'courses' : 'instructors'));
         }
       })
       .catch(handleSearchError);

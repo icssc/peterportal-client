@@ -2,11 +2,9 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SearchIndex, SearchResultData } from '../../types/types';
 import { FilterOptions } from '../../helpers/searchFilters';
 import { RootState } from '../store';
-import { shouldResetFilters } from '../../helpers/search';
 
 interface SearchData {
   query: string;
-  lastQuery: string;
   pageNumber: number;
   results: SearchResultData;
   count: number;
@@ -21,7 +19,6 @@ export const searchSlice = createSlice({
     viewIndex: 'courses' as SearchIndex,
     courses: {
       query: '',
-      lastQuery: '',
       pageNumber: 0,
       results: [],
       count: 0,
@@ -31,7 +28,6 @@ export const searchSlice = createSlice({
     courseDepartments: [] as string[],
     instructors: {
       query: '',
-      lastQuery: '',
       pageNumber: 0,
       results: [],
       count: 0,
@@ -44,12 +40,6 @@ export const searchSlice = createSlice({
       if (!action.payload) {
         state.inProgressSearchOperation = 'none';
         return;
-      }
-
-      if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {
-        state.courseDepartments = [];
-        state.courseGeCategories = [];
-        state.courseLevels = [];
       }
 
       state.inProgressSearchOperation = 'newQuery';
@@ -75,7 +65,6 @@ export const searchSlice = createSlice({
       state[index].results = action.payload.results;
       state[index].count = action.payload.count;
       state[index].pageNumber = 0;
-      state[index].lastQuery = state[index].query;
     },
     setNewPageResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchResultData }>) => {
       state.inProgressSearchOperation = 'none';
@@ -84,6 +73,11 @@ export const searchSlice = createSlice({
         ...state[index].results,
         ...action.payload.results,
       ] as (typeof state)[typeof index]['results'];
+    },
+    // A search that failed (network error, API error — not an abort) must clear the in-progress
+    // flag, otherwise the results pane is stuck showing a loading spinner indefinitely.
+    searchOperationFailed: (state) => {
+      state.inProgressSearchOperation = 'none';
     },
     // Viewing
     setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {
@@ -101,7 +95,14 @@ export const selectCourseFilters = createSelector(
 
 export type SearchCourseFilters = ReturnType<typeof selectCourseFilters>;
 
-export const { setQuery, setPageNumber, setCourseFilters, setFirstPageResults, setNewPageResults, setSearchViewIndex } =
-  searchSlice.actions;
+export const {
+  setQuery,
+  setPageNumber,
+  setCourseFilters,
+  setFirstPageResults,
+  setNewPageResults,
+  searchOperationFailed,
+  setSearchViewIndex,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;
