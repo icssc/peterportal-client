@@ -60,8 +60,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
   professorData,
 }) => {
-  console.log('reviewToEdit:', reviewToEdit); // ADD THIS
-  console.log('yearTakenDefault, quarterTakenDefault:', reviewToEdit?.quarter.split(' ') ?? ['', '']); // AND THIS
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
   const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
@@ -92,6 +90,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [showFormErrors, setShowFormErrors] = useState(false);
   const [professorTermsMap, setProfessorTermsMap] = useState<Record<string, string[]>>({});
   const [availableTermsForProfessor, setAvailableTermsForProfessor] = useState<string[]>([]);
+  const [professorCourseTermsMap, setProfessorCourseTermsMap] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
@@ -109,48 +108,87 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
 
   useEffect(() => {
-    if (!courseProp && !reviewToEdit) return; // Exit if no context at all
-
-    const courseToFetch = courseProp?.id || reviewToEdit?.courseId;
-    if (!courseToFetch) return;
-
-    // build a map of ucinetid -> available terms for this course
     const termsMap: Record<string, string[]> = {};
+    const courseTermsMap: Record<string, string[]> = {};
+    const promises: Promise<void>[] = [];
 
-    // Get instructors to fetch: from course or just the review's instructor
-    const instructorsToFetch = courseProp ? Object.keys(courseProp.instructors) : [reviewToEdit?.professorId];
-
-    Promise.all(
-      instructorsToFetch.map(async (ucinetid) => {
-        try {
-          const professorData = await searchAPIResult('instructor', ucinetid);
-          if (professorData?.courses[courseToFetch]?.terms) {
-            const terms = professorData.courses[courseToFetch].terms;
-            const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
-            termsMap[ucinetid] = termsArray;
-          }
-        } catch (e) {
-          console.error(`Failed to fetch instructor ${ucinetid}:`, e);
-        }
-      }),
-    ).then(() => {
-      setProfessorTermsMap(termsMap);
-    });
-  }, [courseProp, reviewToEdit]);
-
-  useEffect(() => {
-    if (!instructor || !course) {
-      setAvailableTermsForProfessor(terms);
-      return;
+    // course context — fetch all instructors' terms for this course
+    if (courseProp) {
+      promises.push(
+        Promise.all(
+          Object.keys(courseProp.instructors).map(async (ucinetid) => {
+            try {
+              const professorData = await searchAPIResult('instructor', ucinetid);
+              if (professorData?.courses[courseProp.id]?.terms) {
+                const terms = professorData.courses[courseProp.id].terms;
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                termsMap[ucinetid] = termsArray;
+              }
+            } catch (e) {
+              console.error(`Failed to fetch instructor ${ucinetid}:`, e);
+            }
+          }),
+        ).then(() => setProfessorTermsMap(termsMap)),
+      );
     }
 
-    // get the selected instructor's terms for this course
-    const instructorTerms = professorData
-      ? getTermsForInstructor(professorData, course)
-      : (professorTermsMap[instructor] ?? []);
+    // professor context — fetch all courses' terms for this professor
+    if (professorProp) {
+      promises.push(
+        Promise.all(
+          Object.keys(professorProp.courses).map(async (courseId) => {
+            try {
+              const professorData = await searchAPIResult('instructor', professorProp.ucinetid);
+              if (professorData?.courses[courseId]?.terms) {
+                const terms = professorData.courses[courseId].terms;
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                courseTermsMap[courseId] = termsArray;
+              }
+            } catch (e) {
+              console.error(`Failed to fetch course ${courseId} terms:`, e);
+            }
+          }),
+        ).then(() => setProfessorCourseTermsMap(courseTermsMap)),
+      );
+    }
 
-    setAvailableTermsForProfessor(instructorTerms);
-  }, [instructor, course, professorData, professorTermsMap, terms]);
+    // editing without context — fetch the review's instructor's terms
+    if (reviewToEdit && !courseProp && !professorProp) {
+      promises.push(
+        searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
+          if (instructor) {
+            const instrTerms = sortTerms(getProfessorTerms(instructor));
+            setTerms(instrTerms);
+            setYearTaken(reviewToEdit.quarter.split(' ')[0]);
+            setQuarterTaken(reviewToEdit.quarter.split(' ')[1]);
+            setInstructorName(instructor.name);
+          }
+        }),
+      );
+    }
+  }, [courseProp, professorProp, reviewToEdit]);
+
+  // when instructor, course, or their terms data changes, determine which terms to show in the dropdown
+  useEffect(() => {
+    let termsToUse: string[] = [];
+
+    // course context: instructor is selected
+    if (courseProp && instructor) {
+      termsToUse = professorData
+        ? getTermsForInstructor(professorData, courseProp.id)
+        : (professorTermsMap[instructor] ?? []);
+    }
+    // professor context: course is selected
+    else if (professorProp && course) {
+      termsToUse = professorCourseTermsMap[course] ?? [];
+    }
+    // fallback
+    else {
+      termsToUse = terms;
+    }
+
+    setAvailableTermsForProfessor(termsToUse);
+  }, [instructor, course, courseProp, professorProp, professorData, professorTermsMap, professorCourseTermsMap, terms]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
