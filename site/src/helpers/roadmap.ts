@@ -35,6 +35,16 @@ export const createEmptyPlan = () => ({
 
 // Applying "revisions" to the roadmap
 
+export function applyPlannerOrderEdit(planners: RoadmapPlan[], orderedIds: number[]) {
+  orderedIds.forEach((id, targetIndex) => {
+    const currentIndex = planners.findIndex((p) => p.id === id);
+    if (currentIndex !== targetIndex) {
+      const [planner] = planners.splice(currentIndex, 1);
+      planners.splice(targetIndex, 0, planner);
+    }
+  });
+}
+
 export function applyFullPlannerEdit(
   plans: RoadmapPlan[],
   oldData: FullPlannerChangeData,
@@ -184,6 +194,8 @@ function updatePlannerFromRevisionStack(planners: RoadmapPlan[], stack: Revision
           edit[newKey],
         );
       }
+      case 'plannerOrder':
+        return applyPlannerOrderEdit(planners, edit[newKey]);
     }
   });
 }

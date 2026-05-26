@@ -52,7 +52,13 @@ export interface PlannerCourseEdit {
   after: PlannerCourseChangeData;
 }
 
-export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit | PlannerCourseEdit;
+export interface PlannerOrderEdit {
+  type: 'plannerOrder';
+  before: number[];
+  after: number[];
+}
+
+export type RoadmapEdit = PlannerEdit | PlannerYearEdit | PlannerQuarterEdit | PlannerCourseEdit | PlannerOrderEdit;
 
 export interface RoadmapRevision {
   timestamp: number;

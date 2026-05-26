@@ -109,23 +109,29 @@ export const roadmapSlice = createSlice({
     // Modifying the Roadmap
 
     reviseRoadmap: (state, action: PayloadAction<RoadmapRevision>) => {
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       const currentIndex = state.currentRevisionIndex;
       state.revisions.splice(currentIndex + 1, state.revisions.length, action.payload);
       restoreRevision(state.plans, state.revisions, currentIndex, currentIndex + 1);
       state.currentRevisionIndex++;
+      const newIdx = state.plans.findIndex((p) => p.id === currentPlannerId);
+      state.currentPlanIndex = newIdx !== -1 ? newIdx : Math.min(state.currentPlanIndex, state.plans.length - 1);
     },
     undoRoadmapRevision: (state) => {
       if (state.currentRevisionIndex <= 0) return;
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex - 1);
       state.currentRevisionIndex--;
-      if (state.currentPlanIndex > state.plans.length - 1) {
-        state.currentPlanIndex = state.plans.length - 1;
-      }
+      const newIdx = state.plans.findIndex((p) => p.id === currentPlannerId);
+      state.currentPlanIndex = newIdx !== -1 ? newIdx : Math.min(state.currentPlanIndex, state.plans.length - 1);
     },
     redoRoadmapRevision: (state) => {
       if (state.currentRevisionIndex >= state.revisions.length - 1) return;
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
+      const newIdx = state.plans.findIndex((p) => p.id === currentPlannerId);
+      state.currentPlanIndex = newIdx !== -1 ? newIdx : Math.min(state.currentPlanIndex, state.plans.length - 1);
     },
     setSavedRevisionIndex: (state, action: PayloadAction<number>) => {
       state.savedRevisionIndex = action.payload;
