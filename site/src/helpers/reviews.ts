@@ -13,19 +13,6 @@ export function getQuarters(terms: string[], yearTaken: string): string[] {
   return [...new Set(terms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1]))];
 }
 
-/* 
-Get available terms for a specific instructor teaching a specific course
-*/
-export function getTermsForInstructor(
-  professorGQLData: ProfessorGQLData | null | undefined,
-  courseId: string,
-): string[] {
-  if (!professorGQLData || !professorGQLData.courses[courseId]) {
-    return [];
-  }
-  return professorGQLData.courses[courseId].terms ?? [];
-}
-
 export function getReviewHeadingName(
   reviewToEdit: ReviewData | undefined,
   course: CourseGQLData | undefined,

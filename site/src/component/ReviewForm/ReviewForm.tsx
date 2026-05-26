@@ -29,13 +29,7 @@ import {
   TextField,
 } from '@mui/material';
 import './ReviewForm.scss';
-import {
-  getProfessorTerms,
-  getQuarters,
-  getReviewHeadingName,
-  getYears,
-  getTermsForInstructor,
-} from '../../helpers/reviews';
+import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears } from '../../helpers/reviews';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
@@ -97,16 +91,15 @@ const ReviewForm: FC<ReviewFormProps> = ({
       searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
         if (instructor) {
           const instrTerms = sortTerms(getProfessorTerms(instructor));
-
           setTerms(instrTerms);
-          setYearTaken(yearTakenDefault);
-          setQuarterTaken(quarterTakenDefault);
           setInstructorName(instructor.name);
+          setInstructor(reviewToEdit.professorId);
         }
       });
     }
-  }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
+  }, [courseProp, professorProp, reviewToEdit]);
 
+  // on initial load, fetch instructor/course terms
   useEffect(() => {
     const termsMap: Record<string, string[]> = {};
     const courseTermsMap: Record<string, string[]> = {};
@@ -159,9 +152,13 @@ const ReviewForm: FC<ReviewFormProps> = ({
           if (instructor) {
             const instrTerms = sortTerms(getProfessorTerms(instructor));
             setTerms(instrTerms);
-            setYearTaken(reviewToEdit.quarter.split(' ')[0]);
-            setQuarterTaken(reviewToEdit.quarter.split(' ')[1]);
             setInstructorName(instructor.name);
+            // Also populate professorTermsMap for this specific course
+            if (instructor?.courses[reviewToEdit.courseId]?.terms) {
+              const courseTerms = instructor.courses[reviewToEdit.courseId].terms;
+              const termsArray = Array.isArray(courseTerms) ? courseTerms : courseTerms.split(',').map((t) => t.trim());
+              setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
+            }
           }
         }),
       );
@@ -174,13 +171,31 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     // course context: instructor is selected
     if (courseProp && instructor) {
-      termsToUse = professorData
-        ? getTermsForInstructor(professorData, courseProp.id)
-        : (professorTermsMap[instructor] ?? []);
+      const allTerms = new Set<string>();
+      Object.values(professorTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
     }
     // professor context: course is selected
     else if (professorProp && course) {
-      termsToUse = professorCourseTermsMap[course] ?? [];
+      // get all unique terms across all of professor's courses
+      const allTerms = new Set<string>();
+      Object.values(professorCourseTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
+    }
+    // course context but NO instructor selected yet — show all terms from all instructors in that course
+    else if (courseProp && !instructor && Object.keys(professorTermsMap).length > 0) {
+      const allTerms = new Set<string>();
+      Object.values(professorTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
+    } else if (reviewToEdit && !courseProp && !professorProp) {
+      // personal context: show only terms for this specific instructor + course
+      termsToUse = professorTermsMap[reviewToEdit.professorId] ?? [];
     }
     // fallback
     else {
@@ -188,7 +203,60 @@ const ReviewForm: FC<ReviewFormProps> = ({
     }
 
     setAvailableTermsForProfessor(termsToUse);
-  }, [instructor, course, courseProp, professorProp, professorData, professorTermsMap, professorCourseTermsMap, terms]);
+  }, [
+    instructor,
+    course,
+    courseProp,
+    professorProp,
+    professorData,
+    professorTermsMap,
+    professorCourseTermsMap,
+    terms,
+    reviewToEdit,
+  ]);
+
+  // clear quarter when year changes
+  useEffect(() => {
+    if (yearTaken && availableTermsForProfessor.length > 0) {
+      const validQuarters = getQuarters(availableTermsForProfessor, yearTaken);
+      if (!validQuarters.includes(quarterTaken)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [yearTaken, availableTermsForProfessor, quarterTaken]);
+
+  // clear instructor/course when year changes
+  useEffect(() => {
+    if (courseProp && instructor && yearTaken) {
+      const taughtInYear = (professorTermsMap[instructor] ?? []).some((term) => term.startsWith(yearTaken));
+      if (!taughtInYear) {
+        setInstructor('');
+      }
+    }
+
+    if (professorProp && course && yearTaken && Object.keys(professorCourseTermsMap).length > 0) {
+      const taughtInYear = (professorCourseTermsMap[course] ?? []).some((term) => term.startsWith(yearTaken));
+      if (!taughtInYear) {
+        setCourse('');
+      }
+    }
+  }, [yearTaken, instructor, professorTermsMap, courseProp, course, professorCourseTermsMap, professorProp]);
+
+  // restrict year/quarter in personal context
+  useEffect(() => {
+    if (reviewToEdit && !courseProp && !professorProp && Object.keys(professorTermsMap).length > 0) {
+      // get terms for the specific instructor + course combo
+      const instructorCourseTerms = professorTermsMap[reviewToEdit.professorId] ?? [];
+
+      if (yearTaken && !instructorCourseTerms.some((term) => term.startsWith(yearTaken))) {
+        setYearTaken('');
+      }
+
+      if (yearTaken && quarterTaken && !instructorCourseTerms.includes(`${yearTaken} ${quarterTaken}`)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [yearTaken, quarterTaken, reviewToEdit, courseProp, professorProp, professorTermsMap]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
@@ -329,21 +397,27 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <MenuItem disabled value="">
           Select course
         </MenuItem>
-        {Object.keys(professorProp?.courses).map((courseID) => {
-          const name =
-            professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
-          const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
-          return (
-            <MenuItem
-              key={courseID}
-              value={courseID}
-              title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
-              disabled={alreadyReviewed}
-            >
-              {name}
-            </MenuItem>
-          );
-        })}
+        {Object.keys(professorProp?.courses)
+          .filter((courseID) => {
+            if (!yearTaken || !quarterTaken) return true; // Show all if no term selected
+            const courseTerms = professorCourseTermsMap[courseID] ?? [];
+            return courseTerms.includes(`${yearTaken} ${quarterTaken}`);
+          })
+          .map((courseID) => {
+            const name =
+              professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
+            const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
+            return (
+              <MenuItem
+                key={courseID}
+                value={courseID}
+                title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
+                disabled={alreadyReviewed}
+              >
+                {name}
+              </MenuItem>
+            );
+          })}
       </Select>
     </FormControl>
   );
