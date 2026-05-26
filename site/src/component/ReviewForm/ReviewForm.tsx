@@ -60,6 +60,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
   terms: termsProp,
   professorData,
 }) => {
+  console.log('reviewToEdit:', reviewToEdit); // ADD THIS
+  console.log('yearTakenDefault, quarterTakenDefault:', reviewToEdit?.quarter.split(' ') ?? ['', '']); // AND THIS
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
   const reviewHeadingName = getReviewHeadingName(reviewToEdit, courseProp, professorProp);
@@ -107,18 +109,23 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
 
   useEffect(() => {
-    if (!courseProp) return;
+    if (!courseProp && !reviewToEdit) return; // Exit if no context at all
+
+    const courseToFetch = courseProp?.id || reviewToEdit?.courseId;
+    if (!courseToFetch) return;
 
     // build a map of ucinetid -> available terms for this course
     const termsMap: Record<string, string[]> = {};
 
-    // fetch each instructor's data
+    // Get instructors to fetch: from course or just the review's instructor
+    const instructorsToFetch = courseProp ? Object.keys(courseProp.instructors) : [reviewToEdit?.professorId];
+
     Promise.all(
-      Object.keys(courseProp.instructors).map(async (ucinetid) => {
+      instructorsToFetch.map(async (ucinetid) => {
         try {
           const professorData = await searchAPIResult('instructor', ucinetid);
-          if (professorData?.courses[courseProp.id]?.terms) {
-            const terms = professorData.courses[courseProp.id].terms;
+          if (professorData?.courses[courseToFetch]?.terms) {
+            const terms = professorData.courses[courseToFetch].terms;
             const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
             termsMap[ucinetid] = termsArray;
           }
@@ -129,7 +136,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
     ).then(() => {
       setProfessorTermsMap(termsMap);
     });
-  }, [courseProp]);
+  }, [courseProp, reviewToEdit]);
 
   useEffect(() => {
     if (!instructor || !course) {
@@ -144,17 +151,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
     setAvailableTermsForProfessor(instructorTerms);
   }, [instructor, course, professorData, professorTermsMap, terms]);
-
-  useEffect(() => {
-    if (yearTaken) {
-      const validQuarters = getQuarters(availableTermsForProfessor, yearTaken);
-
-      // If current quarter is not in valid quarters, clear it
-      if (!validQuarters.includes(quarterTaken)) {
-        setQuarterTaken('');
-      }
-    }
-  }, [yearTaken, quarterTaken, availableTermsForProfessor]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
