@@ -29,7 +29,13 @@ import {
   TextField,
 } from '@mui/material';
 import './ReviewForm.scss';
-import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears, getTermsForInstructor } from '../../helpers/reviews';
+import {
+  getProfessorTerms,
+  getQuarters,
+  getReviewHeadingName,
+  getYears,
+  getTermsForInstructor,
+} from '../../helpers/reviews';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
@@ -99,6 +105,45 @@ const ReviewForm: FC<ReviewFormProps> = ({
       });
     }
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
+
+  useEffect(() => {
+    if (!courseProp) return;
+
+    // build a map of ucinetid -> available terms for this course
+    const termsMap: Record<string, string[]> = {};
+
+    // fetch each instructor's data
+    Promise.all(
+      Object.keys(courseProp.instructors).map(async (ucinetid) => {
+        try {
+          const professorData = await searchAPIResult('instructor', ucinetid);
+          if (professorData?.courses[courseProp.id]?.terms) {
+            const terms = professorData.courses[courseProp.id].terms;
+            const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+            termsMap[ucinetid] = termsArray;
+          }
+        } catch (e) {
+          console.error(`Failed to fetch instructor ${ucinetid}:`, e);
+        }
+      }),
+    ).then(() => {
+      setProfessorTermsMap(termsMap);
+    });
+  }, [courseProp]);
+
+  useEffect(() => {
+    if (!instructor || !course) {
+      setAvailableTermsForProfessor(terms);
+      return;
+    }
+
+    // get the selected instructor's terms for this course
+    const instructorTerms = professorData
+      ? getTermsForInstructor(professorData, course)
+      : (professorTermsMap[instructor] ?? []);
+
+    setAvailableTermsForProfessor(instructorTerms);
+  }, [instructor, course, professorData, professorTermsMap, terms]);
 
   useEffect(() => {
     if (!courseProp) return;
