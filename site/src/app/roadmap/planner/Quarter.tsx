@@ -159,7 +159,6 @@ const Quarter: FC<QuarterProps> = ({ yearIndex, quarterIndex, data }) => {
             size="small"
             variant="contained"
             color="inherit"
-            disableElevation
           >
             Add Course
           </Button>
