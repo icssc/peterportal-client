@@ -29,17 +29,19 @@ import {
   TextField,
 } from '@mui/material';
 import './ReviewForm.scss';
-import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears } from '../../helpers/reviews';
+import { getProfessorTerms, getQuarters, getReviewHeadingName, getYears, getTermsForInstructor } from '../../helpers/reviews';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
+import { ProfessorGQLData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   open: boolean;
   handleClose: () => void;
   editing?: boolean;
   reviewToEdit?: ReviewData;
+  professorData?: ProfessorGQLData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({
@@ -50,6 +52,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   professor: professorProp,
   course: courseProp,
   terms: termsProp,
+  professorData,
 }) => {
   const dispatch = useAppDispatch();
   const reviews = useAppSelector((state) => state.review.reviews);
@@ -59,9 +62,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [instructorName, setInstructorName] = useState(professorProp?.name ?? '');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [years, setYears] = useState(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarters, setQuarters] = useState(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [instructor, setInstructor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -81,20 +82,16 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   const [submitting, setSubmitting] = useState(false);
   const [showFormErrors, setShowFormErrors] = useState(false);
+  const [professorTermsMap, setProfessorTermsMap] = useState<Record<string, string[]>>({});
+  const [availableTermsForProfessor, setAvailableTermsForProfessor] = useState<string[]>([]);
 
   useEffect(() => {
     if (!professorProp && reviewToEdit) {
       searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
         if (instructor) {
           const instrTerms = sortTerms(getProfessorTerms(instructor));
-          const newYears = [...new Set(instrTerms.map((t) => t.split(' ')[0]))];
-          const newQuarters = [
-            ...new Set(instrTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
-          ];
 
           setTerms(instrTerms);
-          setYears(newYears);
-          setQuarters(newQuarters);
           setYearTaken(yearTakenDefault);
           setQuarterTaken(quarterTakenDefault);
           setInstructorName(instructor.name);
@@ -104,15 +101,43 @@ const ReviewForm: FC<ReviewFormProps> = ({
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
 
   useEffect(() => {
-    if (yearTaken) {
-      const newQuarters = getQuarters(terms, yearTaken);
-      setQuarters(newQuarters);
+    if (!courseProp) return;
 
-      if (!newQuarters.includes(quarterTaken)) {
-        setQuarterTaken('');
-      }
+    // build a map of ucinetid -> available terms for this course
+    const termsMap: Record<string, string[]> = {};
+
+    // fetch each instructor's data
+    Promise.all(
+      Object.keys(courseProp.instructors).map(async (ucinetid) => {
+        try {
+          const professorData = await searchAPIResult('instructor', ucinetid);
+          if (professorData?.courses[courseProp.id]?.terms) {
+            const terms = professorData.courses[courseProp.id].terms;
+            const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+            termsMap[ucinetid] = termsArray;
+          }
+        } catch (e) {
+          console.error(`Failed to fetch instructor ${ucinetid}:`, e);
+        }
+      }),
+    ).then(() => {
+      setProfessorTermsMap(termsMap);
+    });
+  }, [courseProp]);
+
+  useEffect(() => {
+    if (!instructor || !course) {
+      setAvailableTermsForProfessor(terms);
+      return;
     }
-  }, [yearTaken, terms, quarterTaken]);
+
+    // get the selected instructor's terms for this course
+    const instructorTerms = professorData
+      ? getTermsForInstructor(professorData, course)
+      : (professorTermsMap[instructor] ?? []);
+
+    setAvailableTermsForProfessor(instructorTerms);
+  }, [instructor, course, professorData, professorTermsMap, terms]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
@@ -211,12 +236,23 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
           const alreadyReviewed = alreadyReviewedCourseInstr(courseProp?.id, ucinetid);
+          // check if this instructor taught in the selected term
+          const taughtInSelectedTerm =
+            yearTaken && quarterTaken
+              ? (professorTermsMap[ucinetid] ?? []).includes(`${yearTaken} ${quarterTaken}`)
+              : true; // If no term selected yet, show all
           return (
             <MenuItem
               key={ucinetid}
               value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this instructor' : undefined}
-              disabled={alreadyReviewed}
+              title={
+                alreadyReviewed
+                  ? 'You have already reviewed this instructor'
+                  : !taughtInSelectedTerm
+                    ? 'This instructor did not teach this course in the selected term'
+                    : undefined
+              }
+              disabled={alreadyReviewed || !taughtInSelectedTerm}
             >
               {name}
             </MenuItem>
@@ -274,7 +310,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem disabled value="">
               Select year
             </MenuItem>
-            {years?.map((term) => (
+            {getYears(availableTermsForProfessor).map((term) => (
               <MenuItem key={term} value={term}>
                 {term}
               </MenuItem>
@@ -293,7 +329,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem disabled value="">
               Select quarter
             </MenuItem>
-            {quarters?.map((quarter) => (
+            {getQuarters(availableTermsForProfessor, yearTaken).map((quarter) => (
               <MenuItem key={quarter} value={quarter}>
                 {quarter}
               </MenuItem>
