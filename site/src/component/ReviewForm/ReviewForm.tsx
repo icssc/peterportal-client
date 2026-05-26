@@ -18,7 +18,7 @@ import trpc from '../../trpc';
 import Select2 from 'react-select';
 import { comboboxTheme } from '../../helpers/courseRequirements';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { getProfessorTerms, getYears, getQuarters } from '../../helpers/reviews';
+import { getProfessorTerms, getYears, getQuarters, getTermsForInstructor } from '../../helpers/reviews';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import {
   Button,
@@ -38,12 +38,14 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { ProfessorGQLData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   closeForm: () => void;
   show: boolean;
   editing?: boolean;
   reviewToEdit?: ReviewData;
+  professorData?: ProfessorGQLData;
 }
 
 const ReviewForm: FC<ReviewFormProps> = ({
@@ -54,6 +56,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   professor: professorProp,
   course: courseProp,
   terms: termsProp,
+  professorData,
 }) => {
   const dispatch = useAppDispatch();
   const { darkMode } = useContext(ThemeContext);
@@ -62,9 +65,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [terms, setTerms] = useState<string[]>(termsProp ?? []);
   const [professorName, setProfessorName] = useState(professorProp?.name ?? '');
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [years, setYears] = useState<string[]>(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarters, setQuarters] = useState<string[]>(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [professor, setProfessor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -80,6 +81,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [showFormErrors, setShowFormErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [professorTermsMap, setProfessorTermsMap] = useState<Record<string, string[]>>({});
+  const [availableTermsForProfessor, setAvailableTermsForProfessor] = useState<string[]>([]);
 
   // if no professor prop is provided when editing a review, we manually fetch the terms and names of the professor
   useEffect(() => {
@@ -87,14 +90,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
       searchAPIResult('instructor', reviewToEdit.professorId).then((professor) => {
         if (professor) {
           const profTerms = sortTerms(getProfessorTerms(professor));
-          const newYears = [...new Set(profTerms.map((t) => t.split(' ')[0]))];
-          const newQuarters = [
-            ...new Set(profTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
-          ];
 
           setTerms(profTerms);
-          setYears(newYears);
-          setQuarters(newQuarters);
           setYearTaken(yearTakenDefault);
           setQuarterTaken(quarterTakenDefault);
           setProfessorName(professor.name);
@@ -102,18 +99,6 @@ const ReviewForm: FC<ReviewFormProps> = ({
       });
     }
   }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
-
-  // when a year or quarter is selected, update the valid quarters accordingly
-  useEffect(() => {
-    if (yearTaken) {
-      const newQuarters = getQuarters(terms, yearTaken);
-      setQuarters(newQuarters);
-
-      if (!newQuarters.includes(quarterTaken)) {
-        setQuarterTaken('');
-      }
-    }
-  }, [yearTaken, terms, quarterTaken]);
 
   useEffect(() => {
     if (show) {
@@ -131,6 +116,45 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // we do not want closeForm to be a dependency, would cause unexpected behavior since the closeForm function is different on each render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
+
+  useEffect(() => {
+    if (!courseProp) return;
+
+    // build a map of ucinetid -> available terms for this course
+    const termsMap: Record<string, string[]> = {};
+
+    // fetch each instructor's data
+    Promise.all(
+      Object.keys(courseProp.instructors).map(async (ucinetid) => {
+        try {
+          const professorData = await searchAPIResult('instructor', ucinetid);
+          if (professorData?.courses[courseProp.id]?.terms) {
+            const terms = professorData.courses[courseProp.id].terms;
+            const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+            termsMap[ucinetid] = termsArray;
+          }
+        } catch (e) {
+          console.error(`Failed to fetch instructor ${ucinetid}:`, e);
+        }
+      }),
+    ).then(() => {
+      setProfessorTermsMap(termsMap);
+    });
+  }, [courseProp]);
+
+  useEffect(() => {
+    if (!professor || !course) {
+      setAvailableTermsForProfessor(terms);
+      return;
+    }
+
+    // get the selected instructor's terms for this course
+    const instructorTerms = professorData
+      ? getTermsForInstructor(professorData, course)
+      : (professorTermsMap[professor] ?? []);
+
+    setAvailableTermsForProfessor(instructorTerms);
+  }, [professor, course, professorData, professorTermsMap, terms]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
@@ -234,12 +258,23 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
           const alreadyReviewed = alreadyReviewedCourseProf(courseProp?.id, ucinetid);
+          // check if this instructor taught in the selected term
+          const taughtInSelectedTerm =
+            yearTaken && quarterTaken
+              ? (professorTermsMap[ucinetid] ?? []).includes(`${yearTaken} ${quarterTaken}`)
+              : true; // If no term selected yet, show all
           return (
             <MenuItem
               key={ucinetid}
               value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this instructor' : undefined}
-              disabled={alreadyReviewed}
+              title={
+                alreadyReviewed
+                  ? 'You have already reviewed this instructor'
+                  : !taughtInSelectedTerm
+                    ? 'This instructor did not teach this course in the selected term'
+                    : undefined
+              }
+              disabled={alreadyReviewed || !taughtInSelectedTerm}
             >
               {name}
             </MenuItem>
@@ -317,7 +352,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 <MenuItem disabled value="">
                   Select
                 </MenuItem>
-                {years?.map((term) => (
+                {getYears(availableTermsForProfessor).map((term) => (
                   <MenuItem key={term} value={term}>
                     {term}
                   </MenuItem>
@@ -338,7 +373,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
                 <MenuItem disabled value="">
                   Select
                 </MenuItem>
-                {quarters?.map((term) => (
+                {getQuarters(availableTermsForProfessor, yearTaken).map((term) => (
                   <MenuItem key={term} value={term}>
                     {term}
                   </MenuItem>
