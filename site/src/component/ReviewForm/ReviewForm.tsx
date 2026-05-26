@@ -59,9 +59,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
   const [instructorName, setInstructorName] = useState(professorProp?.name ?? '');
   const [anonymous, setAnonymous] = useState(reviewToEdit?.userDisplay === anonymousName);
   const [yearTakenDefault, quarterTakenDefault] = reviewToEdit?.quarter.split(' ') ?? ['', ''];
-  const [years, setYears] = useState(termsProp ? getYears(termsProp) : []);
   const [yearTaken, setYearTaken] = useState(yearTakenDefault);
-  const [quarters, setQuarters] = useState(termsProp ? getQuarters(termsProp, yearTaken) : []);
   const [quarterTaken, setQuarterTaken] = useState(quarterTakenDefault);
   const [instructor, setInstructor] = useState(professorProp?.ucinetid ?? reviewToEdit?.professorId ?? '');
   const [course, setCourse] = useState(courseProp?.id ?? reviewToEdit?.courseId ?? '');
@@ -81,38 +79,171 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   const [submitting, setSubmitting] = useState(false);
   const [showFormErrors, setShowFormErrors] = useState(false);
+  const [professorTermsMap, setProfessorTermsMap] = useState<Record<string, string[]>>({});
+  const [availableTermsForProfessor, setAvailableTermsForProfessor] = useState<string[]>([]);
+  const [professorCourseTermsMap, setProfessorCourseTermsMap] = useState<Record<string, string[]>>({});
 
+  // on initial load, fetch instructor/course terms
   useEffect(() => {
-    if (!professorProp && reviewToEdit) {
+    const termsMap: Record<string, string[]> = {};
+    const courseTermsMap: Record<string, string[]> = {};
+    const promises: Promise<void>[] = [];
+
+    // course context — fetch all instructors' terms for this course
+    if (courseProp) {
+      promises.push(
+        Promise.all(
+          Object.keys(courseProp.instructors).map(async (ucinetid) => {
+            try {
+              const professorData = await searchAPIResult('instructor', ucinetid);
+              if (professorData?.courses[courseProp.id]?.terms) {
+                const terms = professorData.courses[courseProp.id].terms;
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                termsMap[ucinetid] = termsArray;
+              }
+            } catch (e) {
+              console.error(`Failed to fetch instructor ${ucinetid}:`, e);
+            }
+          }),
+        ).then(() => setProfessorTermsMap(termsMap)),
+      );
+    }
+
+    // professor context — fetch all courses' terms for this professor
+    if (professorProp) {
+      promises.push(
+        Promise.all(
+          Object.keys(professorProp.courses).map(async (courseId) => {
+            try {
+              const professorData = await searchAPIResult('instructor', professorProp.ucinetid);
+              if (professorData?.courses[courseId]?.terms) {
+                const terms = professorData.courses[courseId].terms;
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                courseTermsMap[courseId] = termsArray;
+              }
+            } catch (e) {
+              console.error(`Failed to fetch course ${courseId} terms:`, e);
+            }
+          }),
+        ).then(() => setProfessorCourseTermsMap(courseTermsMap)),
+      );
+    }
+
+    // editing without context — fetch the review's instructor's terms
+    if (reviewToEdit && !courseProp && !professorProp) {
+      promises.push(
+        searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
+          if (instructor) {
+            const instrTerms = sortTerms(getProfessorTerms(instructor));
+            setTerms(instrTerms);
+            setInstructorName(instructor.name);
+            // Also populate professorTermsMap for this specific course
+            if (instructor?.courses[reviewToEdit.courseId]?.terms) {
+              const courseTerms = instructor.courses[reviewToEdit.courseId].terms;
+              const termsArray = Array.isArray(courseTerms) ? courseTerms : courseTerms.split(',').map((t) => t.trim());
+              setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
+            }
+          }
+        }),
+      );
+    }
+
+    // editing in course context - pre-select the instructor and fetch their terms
+    if (reviewToEdit && courseProp && !professorProp) {
+      setInstructor(reviewToEdit.professorId);
       searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
         if (instructor) {
           const instrTerms = sortTerms(getProfessorTerms(instructor));
-          const newYears = [...new Set(instrTerms.map((t) => t.split(' ')[0]))];
-          const newQuarters = [
-            ...new Set(instrTerms.filter((t) => t.startsWith(yearTaken)).map((t) => t.split(' ')[1])),
-          ];
-
           setTerms(instrTerms);
-          setYears(newYears);
-          setQuarters(newQuarters);
-          setYearTaken(yearTakenDefault);
-          setQuarterTaken(quarterTakenDefault);
           setInstructorName(instructor.name);
+          setInstructor(reviewToEdit.professorId);
         }
       });
     }
-  }, [courseProp, professorProp, quarterTakenDefault, reviewToEdit, yearTaken, yearTakenDefault]);
+  }, [courseProp, professorProp, reviewToEdit]);
 
+  // when instructor, course, or their terms data changes, determine which terms to show in the dropdown
   useEffect(() => {
-    if (yearTaken) {
-      const newQuarters = getQuarters(terms, yearTaken);
-      setQuarters(newQuarters);
+    let termsToUse: string[] = [];
 
-      if (!newQuarters.includes(quarterTaken)) {
+    // course context: instructor is selected
+    if (courseProp && instructor) {
+      const allTerms = new Set<string>();
+      Object.values(professorTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
+    }
+    // professor context: course is selected
+    else if (professorProp && course) {
+      // get all unique terms across all of professor's courses
+      const allTerms = new Set<string>();
+      Object.values(professorCourseTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
+    }
+    // course context but NO instructor selected yet — show all terms from all instructors in that course
+    else if (courseProp && !instructor && Object.keys(professorTermsMap).length > 0) {
+      const allTerms = new Set<string>();
+      Object.values(professorTermsMap).forEach((terms) => {
+        terms.forEach((term) => allTerms.add(term));
+      });
+      termsToUse = Array.from(allTerms).sort();
+    } else if (reviewToEdit && !courseProp && !professorProp) {
+      // personal context: show only terms for this specific instructor + course
+      termsToUse = professorTermsMap[reviewToEdit.professorId] ?? [];
+    }
+    // fallback
+    else {
+      termsToUse = terms;
+    }
+
+    setAvailableTermsForProfessor(termsToUse);
+  }, [instructor, course, courseProp, professorProp, professorTermsMap, professorCourseTermsMap, terms, reviewToEdit]);
+
+  // clear quarter when year changes
+  useEffect(() => {
+    if (yearTaken && availableTermsForProfessor.length > 0) {
+      const validQuarters = getQuarters(availableTermsForProfessor, yearTaken);
+      if (!validQuarters.includes(quarterTaken)) {
         setQuarterTaken('');
       }
     }
-  }, [yearTaken, terms, quarterTaken]);
+  }, [yearTaken, availableTermsForProfessor, quarterTaken]);
+
+  // clear instructor/course when year changes
+  useEffect(() => {
+    if (courseProp && instructor && yearTaken) {
+      const taughtInYear = (professorTermsMap[instructor] ?? []).some((term) => term.startsWith(yearTaken));
+      if (!taughtInYear) {
+        setInstructor('');
+      }
+    }
+
+    if (professorProp && course && yearTaken && Object.keys(professorCourseTermsMap).length > 0) {
+      const taughtInYear = (professorCourseTermsMap[course] ?? []).some((term) => term.startsWith(yearTaken));
+      if (!taughtInYear) {
+        setCourse('');
+      }
+    }
+  }, [yearTaken, instructor, professorTermsMap, courseProp, course, professorCourseTermsMap, professorProp]);
+
+  // restrict year/quarter in personal context
+  useEffect(() => {
+    if (reviewToEdit && !courseProp && !professorProp && Object.keys(professorTermsMap).length > 0) {
+      // get terms for the specific instructor + course combo
+      const instructorCourseTerms = professorTermsMap[reviewToEdit.professorId] ?? [];
+
+      if (yearTaken && !instructorCourseTerms.some((term) => term.startsWith(yearTaken))) {
+        setYearTaken('');
+      }
+
+      if (yearTaken && quarterTaken && !instructorCourseTerms.includes(`${yearTaken} ${quarterTaken}`)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [yearTaken, quarterTaken, reviewToEdit, courseProp, professorProp, professorTermsMap]);
 
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
@@ -211,12 +342,25 @@ const ReviewForm: FC<ReviewFormProps> = ({
         {Object.keys(courseProp?.instructors).map((ucinetid) => {
           const name = courseProp?.instructors[ucinetid].name;
           const alreadyReviewed = alreadyReviewedCourseInstr(courseProp?.id, ucinetid);
+          // check if this instructor taught in the selected term
+          const taughtInSelectedTerm =
+            yearTaken && quarterTaken
+              ? (professorTermsMap[ucinetid] ?? []).includes(`${yearTaken} ${quarterTaken}`)
+              : yearTaken
+                ? (professorTermsMap[ucinetid] ?? []).some((term) => term.startsWith(yearTaken)) // Filter by year only
+                : true; // If no year selected yet, show all
           return (
             <MenuItem
               key={ucinetid}
               value={ucinetid}
-              title={alreadyReviewed ? 'You have already reviewed this instructor' : undefined}
-              disabled={alreadyReviewed}
+              title={
+                alreadyReviewed
+                  ? 'You have already reviewed this instructor'
+                  : !taughtInSelectedTerm
+                    ? 'This instructor did not teach this course in the selected term'
+                    : undefined
+              }
+              disabled={alreadyReviewed || !taughtInSelectedTerm}
             >
               {name}
             </MenuItem>
@@ -240,21 +384,27 @@ const ReviewForm: FC<ReviewFormProps> = ({
         <MenuItem disabled value="">
           Select course
         </MenuItem>
-        {Object.keys(professorProp?.courses).map((courseID) => {
-          const name =
-            professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
-          const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
-          return (
-            <MenuItem
-              key={courseID}
-              value={courseID}
-              title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
-              disabled={alreadyReviewed}
-            >
-              {name}
-            </MenuItem>
-          );
-        })}
+        {Object.keys(professorProp?.courses)
+          .filter((courseID) => {
+            if (!yearTaken || !quarterTaken) return true; // Show all if no term selected
+            const courseTerms = professorCourseTermsMap[courseID] ?? [];
+            return courseTerms.includes(`${yearTaken} ${quarterTaken}`);
+          })
+          .map((courseID) => {
+            const name =
+              professorProp?.courses[courseID].department + ' ' + professorProp?.courses[courseID].courseNumber;
+            const alreadyReviewed = alreadyReviewedCourseInstr(courseID, professorProp?.ucinetid);
+            return (
+              <MenuItem
+                key={courseID}
+                value={courseID}
+                title={alreadyReviewed ? 'You have already reviewed this course' : undefined}
+                disabled={alreadyReviewed}
+              >
+                {name}
+              </MenuItem>
+            );
+          })}
       </Select>
     </FormControl>
   );
@@ -274,7 +424,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem disabled value="">
               Select year
             </MenuItem>
-            {years?.map((term) => (
+            {getYears(availableTermsForProfessor).map((term) => (
               <MenuItem key={term} value={term}>
                 {term}
               </MenuItem>
@@ -293,7 +443,7 @@ const ReviewForm: FC<ReviewFormProps> = ({
             <MenuItem disabled value="">
               Select quarter
             </MenuItem>
-            {quarters?.map((quarter) => (
+            {getQuarters(availableTermsForProfessor, yearTaken).map((quarter) => (
               <MenuItem key={quarter} value={quarter}>
                 {quarter}
               </MenuItem>
