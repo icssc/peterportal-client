@@ -184,6 +184,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setAvailableTermsForProfessor(instructorTerms);
   }, [instructor, course, professorData, professorTermsMap, terms]);
 
+  useEffect(() => {
+    if (yearTaken) {
+      const validQuarters = getQuarters(availableTermsForProfessor, yearTaken);
+
+      // If current quarter is not in valid quarters, clear it
+      if (!validQuarters.includes(quarterTaken)) {
+        setQuarterTaken('');
+      }
+    }
+  }, [yearTaken, quarterTaken, availableTermsForProfessor]);
+
   const resetForm = () => {
     setYearTaken(yearTakenDefault);
     setQuarterTaken(quarterTakenDefault);
@@ -285,7 +296,9 @@ const ReviewForm: FC<ReviewFormProps> = ({
           const taughtInSelectedTerm =
             yearTaken && quarterTaken
               ? (professorTermsMap[ucinetid] ?? []).includes(`${yearTaken} ${quarterTaken}`)
-              : true; // If no term selected yet, show all
+              : yearTaken
+                ? (professorTermsMap[ucinetid] ?? []).some((term) => term.startsWith(yearTaken)) // Filter by year only
+                : true; // If no year selected yet, show all
           return (
             <MenuItem
               key={ucinetid}
