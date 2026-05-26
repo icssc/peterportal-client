@@ -66,7 +66,9 @@ const programsRouter = router({
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
         .then((res) => {
-          return res.data.requirements as ProgramRequirement[];
+          const schoolRequirements = (res.data.schoolRequirements?.requirements as ProgramRequirement[]) ?? [];
+          const majorRequirements = res.data.requirements as ProgramRequirement[];
+          return [...schoolRequirements, ...majorRequirements];
         });
       return response;
     }),
