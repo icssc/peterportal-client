@@ -6,12 +6,16 @@ interface ResultPageSectionProps {
   title: string;
   id?: string;
   children: ReactNode;
+  indicator?: ReactNode;
 }
 
-export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, id, children }) => {
+export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, id, children, indicator }) => {
   return (
     <div className="result-page-section" id={id}>
-      <h2>{title}</h2>
+      <div className="result-page-title">
+        <h2>{title}</h2>
+        {indicator}
+      </div>
       {children}
     </div>
   );
