@@ -10,6 +10,8 @@ const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
 enum TourStepName {
   welcome = 'welcome',
   year = 'year',
+  firstYearIntro = 'firstYearIntro',
+  nonFirstYearImport = 'nonFirstYearImport',
 }
 
 type TutorialBranch = 'firstYear' | 'nonFirstYear' | null;
@@ -287,36 +289,35 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
       },
       content: <YearBranchStepContent />,
     },
+    firstYearIntro: {
+      selector: '#nonexistent',
+      position: 'center',
+      styles: {
+        popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
+      },
+      content: <FirstYearBranchStepContent />,
+    },
+    nonFirstYearImport: {
+      selector: '#nonexistent',
+      position: 'center',
+      styles: {
+        popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
+      },
+      content: <NonFirstYearBranchStepContent />,
+    },
   };
 }
 
 export function stepsFactory(branch: TutorialBranch = null): Array<StepType> {
+  const namedSteps = namedStepsFactory();
+
   if (branch === 'firstYear') {
-    return [
-      {
-        selector: '#nonexistent',
-        position: 'center',
-        styles: {
-          popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
-        },
-        content: <FirstYearBranchStepContent />,
-      },
-    ];
+    return [namedSteps.firstYearIntro];
   }
 
   if (branch === 'nonFirstYear') {
-    return [
-      {
-        selector: '#nonexistent',
-        position: 'center',
-        styles: {
-          popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
-        },
-        content: <NonFirstYearBranchStepContent />,
-      },
-    ];
+    return [namedSteps.nonFirstYearImport];
   }
 
-  const namedSteps = namedStepsFactory();
   return [namedSteps.welcome, namedSteps.year];
 }
