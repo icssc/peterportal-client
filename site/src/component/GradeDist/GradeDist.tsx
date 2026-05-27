@@ -1,6 +1,5 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import Chart from './Chart';
-import Pie from './Pie';
 import './GradeDist.scss';
 
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
@@ -243,11 +242,6 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
               <Chart {...graphProps} />
-            </div>
-          )}
-          {((props.minify && chartType == 'pie') || !props.minify) && (
-            <div className={'grade_distribution_chart-container pie'}>
-              <Pie {...graphProps} />
             </div>
           )}
         </div>
