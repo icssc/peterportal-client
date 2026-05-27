@@ -1,11 +1,10 @@
-import { Component } from 'react';
-import { ResponsiveBar, BarTooltipProps, BarDatum } from '@nivo/bar';
-
+import { useContext } from 'react';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import ThemeContext from '../../style/theme-context';
 import { GradesRaw } from '@peterportal/types';
 import { getAggregateGradeData } from '../../helpers/gradeDist.ts';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
-import { getChartTheme, getCssVariable } from '../../helpers/styling.ts';
+import { getCssVariable } from '../../helpers/styling.ts';
 
 interface ChartProps {
   gradeData: GradesRaw;
@@ -14,127 +13,47 @@ interface ChartProps {
   course?: string;
 }
 
-export default class Chart extends Component<ChartProps> {
-  /*
-   * Initialize the grade distribution chart on the webpage.
-   */
+const GRADE_COLORS: Record<string, string> = {
+  A: '--mui-palette-chart-blue',
+  B: '--mui-palette-chart-green',
+  C: '--mui-palette-chart-yellow',
+  D: '--mui-palette-chart-orange',
+  F: '--mui-palette-chart-red',
+  P: '--mui-palette-chart-pass',
+  NP: '--mui-palette-chart-noPass',
+};
 
-  /*
-   * Create an array of objects to feed into the chart.
-   * @return an array of JSON objects detailing the grades for each class
-   */
-  getClassData = (): BarDatum[] => {
-    const { professor, quarter, course } = this.props;
+export default function Chart({ gradeData, quarter, professor, course }: ChartProps) {
+  const { darkMode } = useContext(ThemeContext);
 
-    const aggregateGradeData = getAggregateGradeData(this.props.gradeData, professor, quarter, course);
+  const aggregateGradeData = getAggregateGradeData(gradeData, professor, quarter, course);
 
-    return [
-      {
-        id: 'A',
-        label: 'A',
-        A: aggregateGradeData.gradeACount,
-        color: getCssVariable('--mui-palette-chart-blue'),
-      },
-      {
-        id: 'B',
-        label: 'B',
-        B: aggregateGradeData.gradeBCount,
-        color: getCssVariable('--mui-palette-chart-green'),
-      },
-      {
-        id: 'C',
-        label: 'C',
-        C: aggregateGradeData.gradeCCount,
-        color: getCssVariable('--mui-palette-chart-yellow'),
-      },
-      {
-        id: 'D',
-        label: 'D',
-        D: aggregateGradeData.gradeDCount,
-        color: getCssVariable('--mui-palette-chart-orange'),
-      },
-      {
-        id: 'F',
-        label: 'F',
-        F: aggregateGradeData.gradeFCount,
-        color: getCssVariable('--mui-palette-chart-red'),
-      },
-      {
-        id: 'P',
-        label: 'P',
-        P: aggregateGradeData.gradePCount,
-        color: getCssVariable('--mui-palette-chart-pass'),
-      },
-      {
-        id: 'NP',
-        label: 'NP',
-        NP: aggregateGradeData.gradeNPCount,
-        color: getCssVariable('--mui-palette-chart-noPass'),
-      },
-    ];
-  };
+  const data = [
+    { grade: 'A', count: aggregateGradeData.gradeACount, fill: getCssVariable(GRADE_COLORS.A) },
+    { grade: 'B', count: aggregateGradeData.gradeBCount, fill: getCssVariable(GRADE_COLORS.B) },
+    { grade: 'C', count: aggregateGradeData.gradeCCount, fill: getCssVariable(GRADE_COLORS.C) },
+    { grade: 'D', count: aggregateGradeData.gradeDCount, fill: getCssVariable(GRADE_COLORS.D) },
+    { grade: 'F', count: aggregateGradeData.gradeFCount, fill: getCssVariable(GRADE_COLORS.F) },
+    { grade: 'P', count: aggregateGradeData.gradePCount, fill: getCssVariable(GRADE_COLORS.P) },
+    { grade: 'NP', count: aggregateGradeData.gradeNPCount, fill: getCssVariable(GRADE_COLORS.NP) },
+  ];
 
-  /*
-   * Indicate how the tooltip should look like when users hover over the bar
-   * Code is slightly modified from: https://codesandbox.io/s/nivo-scatterplot-
-   * vs-bar-custom-tooltip-7u6qg?file=/src/index.js:1193-1265
-   * @param event an event object recording the mouse movement, etc.
-   * @return a JSX block styling the chart
-   */
-  styleTooltip = (props: BarTooltipProps<BarDatum>) => {
-    return <ChartTooltip label={props.label} value={props.data[props.label]} />;
-  };
-
-  /*
-   * Display the grade distribution chart.
-   * @return a JSX block rendering the chart
-   */
-  render() {
-    const gradeDistribution = this.getClassData();
-
-    // greatestCount calculates the upper bound of the graph (i.e. the greatest number of students in a single grade)
-    const greatestCount = gradeDistribution.reduce(
-      (max, grade) => ((grade[grade.id] as number) > max ? (grade[grade.id] as number) : max),
-      0,
-    );
-
-    // The base marginX is 30, with increments of 5 added on for every order of magnitude greater than 100 to accomadate for larger axis labels (1,000, 10,000, etc)
-    // For example, if greatestCount is 5173 it is (when rounding down (i.e. floor)), one magnitude (calculated with log_10) greater than 100, therefore we add one increment of 5px to our base marginX of 30px
-    // Math.max() ensures that we're not finding the log of a non-positive number
-    const marginX = 30 + 5 * Math.floor(Math.log10(Math.max(100, greatestCount) / 100));
-
-    return (
-      <>
-        <ThemeContext.Consumer>
-          {({ darkMode }) => (
-            <ResponsiveBar
-              data={gradeDistribution}
-              keys={['A', 'B', 'C', 'D', 'F', 'P', 'NP']}
-              indexBy="label"
-              margin={{
-                top: 50,
-                right: marginX,
-                bottom: 50,
-                left: marginX,
-              }}
-              layout="vertical"
-              axisBottom={{
-                tickSize: 10,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Grade',
-                legendPosition: 'middle',
-                legendOffset: 36,
-              }}
-              enableLabel={false}
-              colors={gradeDistribution.map((grade) => String(grade.color))}
-              theme={getChartTheme(darkMode)}
-              tooltipLabel={(datum) => String(datum.id)}
-              tooltip={this.styleTooltip}
-            />
-          )}
-        </ThemeContext.Consumer>
-      </>
-    );
-  }
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart data={data} margin={{ top: 50, right: 30, bottom: 50, left: 30 }}>
+        <XAxis dataKey="grade" />
+        <Tooltip
+          cursor={{ fill: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+          content={({ active, payload }) => {
+            if (!active || !payload?.length) return null;
+            const { grade, count } = payload[0].payload;
+            return <ChartTooltip label={grade} value={count} />;
+          }}
+        />
+        <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+          <LabelList dataKey="count" position="top" fill={getCssVariable('--mui-palette-text-secondary')} />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
 }
