@@ -8,6 +8,9 @@ const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
 
 enum TourStepName {
   welcome = 'welcome',
+  year = 'year',
+  yearOne = 'yearOne',
+  yearTwo = 'yearTwo',
 }
 
 const tourStepNames = Object.values(TourStepName);
@@ -29,7 +32,7 @@ function markTourHasRun() {
 type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
 
 interface TutorialStepContentProps {
-  title: ReactNode;
+  title?: ReactNode;
   description: ReactNode;
   primaryLabel: string;
   primaryAction?: TutorialButtonAction;
@@ -138,7 +141,7 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
             </>
           }
           primaryLabel="YES"
-          primaryAction="close"
+          primaryAction="next"
           secondaryLabel="NO"
           secondaryAction="close"
           onPrimaryClick={markTourHasRun}
@@ -148,6 +151,26 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
       actionAfter: () => {
         markTourHasRun();
       },
+    },
+
+    year: {
+      selector: '#nonexistent',
+      position: 'center',
+      content: (
+        <TutorialStepContent
+          description={
+            <>
+              Is this your 1st year at
+              <br />
+              UCI?
+            </>
+          }
+          primaryLabel="YES"
+          primaryAction="next"
+          secondaryLabel="NO"
+          secondaryAction="close"
+        />
+      ),
     },
   };
 }
