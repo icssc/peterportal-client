@@ -8,6 +8,10 @@ const AppTourProvider: FC<PropsWithChildren> = ({ children }) => {
     <TourProvider
       steps={[]}
       padding={5}
+      showBadge={false}
+      showNavigation={false}
+      showDots={false}
+      showPrevNextButtons={false}
       styles={{
         maskArea: (base) => ({
           ...base,
@@ -19,9 +23,10 @@ const AppTourProvider: FC<PropsWithChildren> = ({ children }) => {
         }),
         popover: (base) => ({
           ...base,
-          background: '#fff',
-          color: 'black',
-          borderRadius: 5,
+          background: 'var(--mui-palette-overlay-overlay3)',
+          color: 'var(--mui-palette-text-primary)',
+          border: '2px solid rgba(184, 184, 184, 0.5)', // temporary color
+          borderRadius: 13,
           boxShadow: '0 0 10px #000',
           padding: 20,
           paddingTop: 40,
