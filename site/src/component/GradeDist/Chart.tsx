@@ -5,6 +5,7 @@ import { GradesRaw } from '@peterportal/types';
 import { getAggregateGradeData } from '../../helpers/gradeDist.ts';
 import ChartTooltip from '../ChartTooltip/ChartTooltip.tsx';
 import { getCssVariable } from '../../helpers/styling.ts';
+import './Chart.scss';
 
 interface ChartProps {
   gradeData: GradesRaw;
