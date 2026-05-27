@@ -5,8 +5,9 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
 import CommonFeedback from './CommonFeedback';
+import { getAggregateGradeData } from '../../helpers/gradeDist';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -229,6 +230,29 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </div>
   );
 
+  interface AverageGPACardProps {
+    gpa: string;
+    letterGrade: string;
+  }
+
+  const AverageGPACard: FC<AverageGPACardProps> = (props) => {
+    return (
+      <Card variant="outlined" className="avg-gpa-card">
+        <CardContent>
+          <Typography className="avg-gpa">Avg GPA</Typography>
+          <div className="grade-row">
+            <Typography className="gpa" fontSize={24}>
+              {props.gpa}
+            </Typography>
+            <Typography className="letter-grade" fontSize={24}>
+              {props.letterGrade}
+            </Typography>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   if (gradeDistData?.length) {
     const graphProps = {
       gradeData: gradeDistData,
@@ -236,9 +260,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       course: currentCourse,
       professor: currentProf,
     };
+    const aggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, currentQuarter, currentCourse);
+
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
+        <AverageGPACard gpa={aggregateGradeData.averageGPA} letterGrade={aggregateGradeData.averageGrade} />
         <div className="chart-container">
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>
