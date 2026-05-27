@@ -27,6 +27,7 @@ export const user = pgTable(
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
     currentPlanIndex: integer('current_plan_index').notNull().default(0),
     autoSaveEnabled: boolean('auto_save_enabled').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [unique('unique_email').on(table.email)],
 );
@@ -109,6 +110,11 @@ export const planner = pgTable(
     name: text('name').notNull(),
     shareId: text('share_id'),
     chc: text('chc'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
   },
   (table) => [index('planners_user_id_idx').on(table.userId)],
 );

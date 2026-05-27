@@ -1,5 +1,5 @@
 {
-  "id": "eacfd4cf-dbfa-4d53-aa88-33aa541958c3",
+  "id": "dbffe096-e525-4e1a-9809-c9d84d8bd0f3",
   "prevId": "53196699-3ac5-4e78-96b7-0b40481c492e",
   "version": "7",
   "dialect": "postgresql",
@@ -366,6 +366,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -1332,6 +1346,12 @@
             "cycle": false
           }
         },
+        "google_id": {
+          "name": "google_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -1375,12 +1395,24 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "unique_google_id": {
+          "name": "unique_google_id",
+          "nullsNotDistinct": false,
+          "columns": ["google_id"]
+        },
         "unique_email": {
           "name": "unique_email",
           "nullsNotDistinct": false,
