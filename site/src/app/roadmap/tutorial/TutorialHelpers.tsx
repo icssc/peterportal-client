@@ -2,15 +2,14 @@
 
 import { StepType } from '@reactour/tour';
 import { useTour } from '@reactour/tour';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { basePopoverStyle } from './AppTourProvider';
 
 const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
 
 enum TourStepName {
   welcome = 'welcome',
   year = 'year',
-  yearOne = 'yearOne',
-  yearTwo = 'yearTwo',
 }
 
 const tourStepNames = Object.values(TourStepName);
@@ -30,8 +29,28 @@ function markTourHasRun() {
 }
 
 type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
+type TutorialVariant = 'welcome' | 'step';
+
+export const variantPopoverStyle: Record<TutorialVariant, React.CSSProperties> = {
+  welcome: {
+    width: 366,
+    height: 240,
+    borderRadius: 13,
+    border: '2px solid rgba(184, 184, 184, 0.5)',
+    padding: '28px 24px 42px 24px',
+    gap: 10,
+    boxSizing: 'border-box',
+  },
+  step: {
+    borderRadius: 10,
+    border: '1px solid rgba(184, 184, 184, 0.5)',
+    padding: '28px 40px 30px 40px',
+    boxSizing: 'border-box',
+  },
+};
 
 interface TutorialStepContentProps {
+  variant?: TutorialVariant;
   title?: ReactNode;
   description: ReactNode;
   primaryLabel: string;
@@ -43,6 +62,7 @@ interface TutorialStepContentProps {
 }
 
 function TutorialStepContent({
+  variant = 'step',
   title,
   description,
   primaryLabel,
@@ -68,7 +88,7 @@ function TutorialStepContent({
   const buttonStyle = {
     border: 'none',
     borderRadius: 8,
-    padding: '9px 18px',
+    padding: '8px 22px',
     fontFamily: 'Roboto, sans-serif',
     fontWeight: 500,
     fontStyle: 'normal',
@@ -79,15 +99,36 @@ function TutorialStepContent({
     color: '#ffffff',
     background: 'var(--mui-palette-primary-main)',
     cursor: 'pointer',
+    boxShadow: `
+      0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 5px 0px rgba(0, 0, 0, 0.12)
+    `,
   };
 
+  const isWelcome = variant === 'welcome';
+
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800 }}>{title}</h2>
-      <p style={{ marginTop: 12, marginBottom: 24, fontSize: 20, fontWeight: 500, color: 'rgba(184, 184, 184, 0.5)' }}>
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}>
+      {title && <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800 }}>{title}</h2>}
+      <p
+        style={{
+          margin: 0,
+          fontSize: 20,
+          fontWeight: 500,
+          color: isWelcome ? 'rgba(184, 184, 184, 1)' : 'rgba(255, 255, 255, 1)',
+          flexGrow: 1,
+        }}
+      >
         {description}
       </p>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 18 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: isWelcome ? 18 : 40,
+        }}
+      >
         <button
           type="button"
           style={buttonStyle}
@@ -128,10 +169,14 @@ export function tourShouldRun(): boolean {
 function namedStepsFactory(): Record<TourStepName, StepType> {
   return {
     welcome: {
-      selector: '#nonexistent', // no selector so dims everything
+      selector: '#nonexistent',
       position: 'center',
+      styles: {
+        popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.welcome }),
+      },
       content: (
         <TutorialStepContent
+          variant="welcome"
           title="Welcome to Planner!"
           description={
             <>
@@ -156,8 +201,12 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
     year: {
       selector: '#nonexistent',
       position: 'center',
+      styles: {
+        popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
+      },
       content: (
         <TutorialStepContent
+          variant="step"
           description={
             <>
               Is this your 1st year at
