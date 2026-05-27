@@ -20,4 +20,11 @@
       justify-content: space-between;
     }
   }
+
+  .view-more-btn {
+    margin-top: 20px;
+    color: var(--mui-palette-text-secondary);
+    cursor: pointer;
+    text-align: center;
+  }
 }

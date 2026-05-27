@@ -4,6 +4,7 @@ import trpc from '../../trpc';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { LinearProgress } from '@mui/material';
 import './CommonFeedback.scss';
+import ClickableDiv from '../ClickableDiv/ClickableDiv';
 
 interface CommonFeedbackProps {
   course?: CourseGQLData;
@@ -12,6 +13,7 @@ interface CommonFeedbackProps {
 
 const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
   const [reviews, setReviews] = useState<ReviewData[]>([]);
+  const [showAll, setShowAll] = useState(false);
 
   const fetchReviews = useCallback(async () => {
     const params: { courseId?: string; professorId?: string } = {};
@@ -35,6 +37,8 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
 
   const maxCount = tagStats[0]?.count ?? 1;
 
+  const visibleStats = showAll ? tagStats : tagStats.slice(0, 3);
+
   return (
     <div className="common-feedback">
       <div className="common-feedback-header">
@@ -42,7 +46,7 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
         <p className="num-reviews">{reviews.length} reviews</p>
       </div>
       <div className="common-feedback-bars">
-        {tagStats.map(({ label, count }) => (
+        {visibleStats.map(({ label, count }) => (
           <div key={label} className="common-feedback-bar">
             <div className="bar-label">
               <p>{label}</p>
@@ -52,6 +56,11 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
           </div>
         ))}
       </div>
+      {tagStats.length > 3 && (
+        <ClickableDiv className="view-more-btn" onClick={() => setShowAll((prev) => !prev)}>
+          {showAll ? 'View less' : 'View more'}
+        </ClickableDiv>
+      )}
     </div>
   );
 };
