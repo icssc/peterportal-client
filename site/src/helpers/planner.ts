@@ -523,7 +523,7 @@ const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<Prer
 
 /**
  * Returns the set of prerequisites of a course that need to be taken but are missing
- * @returns A set of all the prerequisites that are missing
+ * @returns A set of all the prerequisites that are missing, with "or" groups seperated by '|'
  */
 const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
   // base case is just a course
