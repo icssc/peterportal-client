@@ -12,7 +12,7 @@ enum TourStepName {
   year = 'year',
 }
 
-const tourStepNames = Object.values(TourStepName);
+type TutorialBranch = 'firstYear' | 'nonFirstYear' | null;
 
 function setLocalStorageTourHasRun(value: 'true' | 'false') {
   if (typeof window === 'undefined') return;
@@ -156,6 +156,87 @@ function TutorialStepContent({
   );
 }
 
+function YearBranchStepContent() {
+  const { setSteps, setCurrentStep } = useTour();
+
+  const chooseBranch = (branch: Exclude<TutorialBranch, null>) => {
+    if (!setSteps || !setCurrentStep) return;
+    setSteps(stepsFactory(branch));
+    setCurrentStep(0);
+  };
+
+  return (
+    <TutorialStepContent
+      variant="step"
+      description={
+        <>
+          Is this your 1st year at
+          <br />
+          UCI?
+        </>
+      }
+      primaryLabel="YES"
+      secondaryLabel="NO"
+      onPrimaryClick={() => chooseBranch('firstYear')}
+      onSecondaryClick={() => chooseBranch('nonFirstYear')}
+    />
+  );
+}
+
+function FirstYearBranchStepContent() {
+  const { setSteps, setCurrentStep } = useTour();
+
+  const returnToBranchQuestion = () => {
+    if (!setSteps || !setCurrentStep) return;
+    setSteps(stepsFactory());
+    setCurrentStep(1); //goes back to parent branch
+  };
+
+  return (
+    <TutorialStepContent
+      variant="step"
+      description={
+        <>
+          If you have any transfer
+          <br />
+          credits, add them here!
+        </>
+      }
+      primaryLabel="BACK"
+      onPrimaryClick={returnToBranchQuestion}
+      secondaryLabel="NEXT"
+      secondaryAction="close"
+    />
+  );
+}
+
+function NonFirstYearBranchStepContent() {
+  const { setSteps, setCurrentStep } = useTour();
+
+  const returnToBranchQuestion = () => {
+    if (!setSteps || !setCurrentStep) return;
+    setSteps(stepsFactory());
+    setCurrentStep(1);
+  };
+
+  return (
+    <TutorialStepContent
+      variant="step"
+      description={
+        <>
+          Would you like to import
+          <br />
+          your previous year?
+        </>
+      }
+      primaryLabel="BACK" // should be yes
+      onPrimaryClick={returnToBranchQuestion} // should jump to import branch
+      secondaryLabel="NEXT" // should be no
+      secondaryAction="close" // should be next
+    />
+  );
+}
+
 export function tourShouldRun(): boolean {
   if (typeof window === 'undefined') return false;
   return !(
@@ -204,27 +285,38 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
       styles: {
         popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
       },
-      content: (
-        <TutorialStepContent
-          variant="step"
-          description={
-            <>
-              Is this your 1st year at
-              <br />
-              UCI?
-            </>
-          }
-          primaryLabel="YES"
-          primaryAction="next"
-          secondaryLabel="NO"
-          secondaryAction="close"
-        />
-      ),
+      content: <YearBranchStepContent />,
     },
   };
 }
 
-export function stepsFactory(): Array<StepType> {
+export function stepsFactory(branch: TutorialBranch = null): Array<StepType> {
+  if (branch === 'firstYear') {
+    return [
+      {
+        selector: '#nonexistent',
+        position: 'center',
+        styles: {
+          popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
+        },
+        content: <FirstYearBranchStepContent />,
+      },
+    ];
+  }
+
+  if (branch === 'nonFirstYear') {
+    return [
+      {
+        selector: '#nonexistent',
+        position: 'center',
+        styles: {
+          popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
+        },
+        content: <NonFirstYearBranchStepContent />,
+      },
+    ];
+  }
+
   const namedSteps = namedStepsFactory();
-  return tourStepNames.map((key: TourStepName) => namedSteps[key]);
+  return [namedSteps.welcome, namedSteps.year];
 }
