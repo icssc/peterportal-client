@@ -97,8 +97,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             try {
               const professorData = await searchAPIResult('instructor', ucinetid);
               if (professorData?.courses[courseProp.id]?.terms) {
-                const terms = professorData.courses[courseProp.id].terms;
-                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                const terms = professorData.courses[courseProp.id].terms as string | string[];
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t: string) => t.trim());
                 termsMap[ucinetid] = termsArray;
               }
             } catch (e) {
