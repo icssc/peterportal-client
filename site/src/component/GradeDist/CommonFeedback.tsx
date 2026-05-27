@@ -40,6 +40,7 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
 
   const visibleStats = showAll ? tagStats : tagStats.slice(0, 3);
 
+  //@todo: loading skeleton
   return (
     <div className="common-feedback">
       <div className="common-feedback-header">
