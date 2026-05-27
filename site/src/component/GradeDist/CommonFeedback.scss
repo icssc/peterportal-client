@@ -19,6 +19,12 @@
       display: flex;
       justify-content: space-between;
     }
+
+    .MuiLinearProgress-root {
+      height: 10px;
+      border-radius: 5px;
+      background-color: var(--mui-palette-overlay-overlay2);
+    }
   }
 
   .view-more-btn {

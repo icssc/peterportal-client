@@ -53,7 +53,7 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
               <p>{label}</p>
               <p>{count}</p>
             </div>
-            <LinearProgress variant="determinate" value={(count / maxCount) * 100} />
+            <LinearProgress color="primary" variant="determinate" value={(count / maxCount) * 100} />
           </div>
         ))}
       </div>
