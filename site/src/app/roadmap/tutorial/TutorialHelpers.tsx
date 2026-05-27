@@ -10,7 +10,7 @@ const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
 enum TourStepName {
   welcome = 'welcome',
   year = 'year',
-  firstYearIntro = 'firstYearIntro',
+  firstYearTransfer = 'firstYearTransfer',
   nonFirstYearImport = 'nonFirstYearImport',
 }
 
@@ -289,9 +289,9 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
       },
       content: <YearBranchStepContent />,
     },
-    firstYearIntro: {
-      selector: '#nonexistent',
-      position: 'center',
+    firstYearTransfer: {
+      selector: '#credits-tab',
+      position: 'right',
       styles: {
         popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
       },
@@ -312,7 +312,7 @@ export function stepsFactory(branch: TutorialBranch = null): Array<StepType> {
   const namedSteps = namedStepsFactory();
 
   if (branch === 'firstYear') {
-    return [namedSteps.firstYearIntro];
+    return [namedSteps.firstYearTransfer];
   }
 
   if (branch === 'nonFirstYear') {

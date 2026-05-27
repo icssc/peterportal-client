@@ -38,6 +38,7 @@ const DesktopRoadmapSidebar = () => {
         variant="fullWidth"
       >
         <Tab
+          id="credits-tab"
           icon={<SwapHorizOutlinedIcon />}
           iconPosition="start"
           label={
