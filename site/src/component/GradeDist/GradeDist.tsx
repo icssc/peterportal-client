@@ -246,7 +246,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             </div>
           )}
         </div>
-        <CommonFeedback />
+        <CommonFeedback course={props.course} professor={props.professor} />
       </div>
     );
   } else if (gradeDistData == null) {

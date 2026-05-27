@@ -25,6 +25,7 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
 
   useEffect(() => {
     setReviews([]);
+    setShowAll(false);
     fetchReviews();
   }, [fetchReviews]);
 
