@@ -9,8 +9,6 @@
     padding-top: 8px;
   }
 
-  // Dim the controls to signal filters apply to course (not the shown instructor) results, while
-  // keeping them interactive so users can still change filters from the instructor view.
   &.is-dimmed {
     .MuiInputBase-root {
       opacity: 0.5;

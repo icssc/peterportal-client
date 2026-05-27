@@ -77,13 +77,16 @@ export function useSearchTrigger() {
     return abortController.signal;
   };
 
-  const handleSearchError = (error: unknown) => {
-    // Aborts are expected when a newer search supersedes this one; that newer search owns the
-    // in-progress flag, so leave it alone. Any other failure must clear the loading state.
-    if (error instanceof Error && error.name === 'AbortError') return;
-    console.error('Search error:', error);
-    dispatch(searchOperationFailed());
-  };
+  const handleSearchError = useCallback(
+    (error: unknown) => {
+      // Aborts are expected when a newer search supersedes this one; that newer search owns the
+      // in-progress flag, so leave it alone. Any other failure must clear the loading state.
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error('Search error:', error);
+      dispatch(searchOperationFailed());
+    },
+    [dispatch],
+  );
 
   const handleFirstPageResults = useCallback(
     (index: SearchIndex, data: SearchResponseData) => {
@@ -117,7 +120,15 @@ export function useSearchTrigger() {
         }
       })
       .catch(handleSearchError);
-  }, [handleFirstPageResults, inProgressSearch, searchState.query, courseFilters, showMobileCatalog, dispatch]);
+  }, [
+    handleFirstPageResults,
+    handleSearchError,
+    inProgressSearch,
+    searchState.query,
+    courseFilters,
+    showMobileCatalog,
+    dispatch,
+  ]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newFilters') return;
@@ -144,7 +155,15 @@ export function useSearchTrigger() {
         }
       })
       .catch(handleSearchError);
-  }, [courseFilters, dispatch, handleFirstPageResults, inProgressSearch, searchState.query, showMobileCatalog]);
+  }, [
+    courseFilters,
+    dispatch,
+    handleFirstPageResults,
+    handleSearchError,
+    inProgressSearch,
+    searchState.query,
+    showMobileCatalog,
+  ]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newPage') return;
@@ -154,5 +173,13 @@ export function useSearchTrigger() {
         dispatch(setNewPageResults({ index: visibleSearchIdx, results: data.results }));
       })
       .catch(handleSearchError);
-  }, [courseFilters, dispatch, inProgressSearch, searchState.pageNumber, searchState.query, visibleSearchIdx]);
+  }, [
+    courseFilters,
+    dispatch,
+    handleSearchError,
+    inProgressSearch,
+    searchState.pageNumber,
+    searchState.query,
+    visibleSearchIdx,
+  ]);
 }

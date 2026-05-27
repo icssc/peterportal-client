@@ -74,12 +74,12 @@ export const searchSlice = createSlice({
         ...action.payload.results,
       ] as (typeof state)[typeof index]['results'];
     },
-    // A search that failed (network error, API error — not an abort) must clear the in-progress
-    // flag, otherwise the results pane is stuck showing a loading spinner indefinitely.
+
+    // Aborts are expected when a new search overrides the previous one
     searchOperationFailed: (state) => {
       state.inProgressSearchOperation = 'none';
     },
-    // Viewing
+
     setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {
       state.viewIndex = action.payload;
     },
