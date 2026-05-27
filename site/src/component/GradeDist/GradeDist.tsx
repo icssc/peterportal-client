@@ -6,6 +6,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
+import CommonFeedback from './CommonFeedback';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -245,6 +246,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             </div>
           )}
         </div>
+        <CommonFeedback />
       </div>
     );
   } else if (gradeDistData == null) {

@@ -1,0 +1,23 @@
+.common-feedback {
+  width: 100%;
+
+  .common-feedback-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .num-reviews {
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .common-feedback-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
