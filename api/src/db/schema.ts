@@ -20,7 +20,6 @@ export const user = pgTable(
   'user',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    googleId: text('google_id').notNull(),
     name: text('name').notNull(),
     email: text('email').notNull(),
     picture: text('picture').notNull(),
@@ -30,7 +29,7 @@ export const user = pgTable(
     autoSaveEnabled: boolean('auto_save_enabled').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
+  (table) => [unique('unique_email').on(table.email)],
 );
 
 export const providerEnum = pgEnum('provider', ['GOOGLE', 'APPLE']);
