@@ -55,7 +55,6 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       await tx
         .update(user)
         .set({
-          ...(provider === 'GOOGLE' && { googleId: sub }),
           name: name || dbUser.name,
           picture: picture || dbUser.picture,
         })
@@ -65,7 +64,6 @@ async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response)
       [dbUser] = await tx
         .insert(user)
         .values({
-          googleId: sub,
           name: name ?? '',
           email,
           picture: picture ?? '',

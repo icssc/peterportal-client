@@ -239,6 +239,20 @@
       "when": 1779238803896,
       "tag": "0033_freezing_network",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1779659997654,
+      "tag": "0034_tan_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1779840300579,
+      "tag": "0035_fair_norrin_radd",
+      "breakpoints": true
     }
   ]
 }
