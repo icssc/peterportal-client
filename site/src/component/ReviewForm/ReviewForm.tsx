@@ -117,8 +117,8 @@ const ReviewForm: FC<ReviewFormProps> = ({
             try {
               const professorData = await searchAPIResult('instructor', professorProp.ucinetid);
               if (professorData?.courses[courseId]?.terms) {
-                const terms = professorData.courses[courseId].terms;
-                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t) => t.trim());
+                const terms = professorData.courses[courseId].terms as string | string[];
+                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t: string) => t.trim());
                 courseTermsMap[courseId] = termsArray;
               }
             } catch (e) {
@@ -139,8 +139,11 @@ const ReviewForm: FC<ReviewFormProps> = ({
             setInstructorName(instructor.name);
             // Also populate professorTermsMap for this specific course
             if (instructor?.courses[reviewToEdit.courseId]?.terms) {
-              const courseTerms = instructor.courses[reviewToEdit.courseId].terms;
-              const termsArray = Array.isArray(courseTerms) ? courseTerms : courseTerms.split(',').map((t) => t.trim());
+              const courseTerms = instructor.courses[reviewToEdit.courseId].terms as string | string[];
+              const termsArray = Array.isArray(courseTerms)
+                ? courseTerms
+                : courseTerms.split(',').map((t: string) => t.trim());
+              setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
               setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
             }
           }
