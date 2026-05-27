@@ -123,6 +123,12 @@
     }
   }
 
+  .result-page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .twemoji {
     width: 1.25em;
   }
