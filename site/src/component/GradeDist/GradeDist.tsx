@@ -10,7 +10,7 @@ import MostUsedTags from './MostUsedTags';
 import { getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
-import { getAvgRating } from '../../helpers/reviews';
+import { getAvgDifficulty, getAvgRating } from '../../helpers/reviews';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -319,11 +319,30 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       </Card>
     );
 
+    const currentAvgDifficulty = getAvgDifficulty(filteredReviews);
+
+    const avgDifficultyCard = (
+      <Card variant="outlined" className="avg-gpa-card">
+        <CardContent>
+          <Typography className="avg-gpa">Average Difficulty</Typography>
+          <div className="grade-row">
+            <Typography className="gpa" fontSize={32}>
+              {currentAvgDifficulty ?? '—'}
+            </Typography>
+            <Typography className="letter-grade" fontSize={20}>
+              / 5
+            </Typography>
+          </div>
+        </CardContent>
+      </Card>
+    );
+
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
         {averageGPACard}
         {averageQualityCard}
+        {avgDifficultyCard}
         <div className="chart-container">
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>

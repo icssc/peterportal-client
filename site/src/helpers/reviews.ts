@@ -46,6 +46,8 @@ export function displayReviewDate(date: string | Date): string {
   });
 }
 
-export function getAvgRating(reviews: ReviewData[]): string | null {
-  return reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(2) : null;
-}
+const avgField = (reviews: ReviewData[], field: 'rating' | 'difficulty'): string | null =>
+  reviews.length ? (reviews.reduce((sum, r) => sum + r[field], 0) / reviews.length).toFixed(2) : null;
+
+export const getAvgRating = (reviews: ReviewData[]) => avgField(reviews, 'rating');
+export const getAvgDifficulty = (reviews: ReviewData[]) => avgField(reviews, 'difficulty');
