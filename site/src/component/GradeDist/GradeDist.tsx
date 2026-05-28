@@ -6,7 +6,7 @@ import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Autocomplete, Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
-import CommonFeedback from './CommonFeedback';
+import MostUsedTags from './MostUsedTags';
 import { getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
@@ -331,7 +331,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             </div>
           )}
         </div>
-        <CommonFeedback reviews={reviews} />
+        <MostUsedTags reviews={reviews} />
       </div>
     );
   } else if (gradeDistData == null) {

@@ -1,7 +1,7 @@
 import { ReviewData, ReviewTags } from '@peterportal/types';
 import { FC, useState } from 'react';
 import { LinearProgress } from '@mui/material';
-import './CommonFeedback.scss';
+import './MostUsedTags.scss';
 import ClickableDiv from '../ClickableDiv/ClickableDiv';
 
 interface CommonFeedbackProps {
@@ -24,19 +24,19 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ reviews }) => {
 
   //@todo: loading skeleton
   return (
-    <div className="common-feedback">
-      <div className="common-feedback-header">
-        <h2>Common Feedback</h2>
+    <div className="most-used-tags">
+      <div className="most-used-tags-header">
+        <h2>Most Used Tags</h2>
         <p className="num-reviews">{reviews.length} reviews</p>
       </div>
-      <div className="common-feedback-bars">
+      <div className="most-used-tags-bars">
         {visibleStats.map(({ label, count }) => (
-          <div key={label} className="common-feedback-bar">
+          <div key={label} className="most-used-tags-bar">
             <div className="bar-label">
               <p>{label}</p>
               <p>{count}</p>
             </div>
-            <LinearProgress color="primary" variant="determinate" value={(count / maxCount) * 100} />
+            <LinearProgress color="secondary" variant="determinate" value={(count / maxCount) * 100} />
           </div>
         ))}
       </div>

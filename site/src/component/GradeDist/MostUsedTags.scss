@@ -1,7 +1,7 @@
-.common-feedback {
+.most-used-tags {
   width: 100%;
 
-  .common-feedback-header {
+  .most-used-tags-header {
     display: flex;
     justify-content: space-between;
   }
@@ -10,7 +10,7 @@
     color: var(--mui-palette-text-secondary);
   }
 
-  .common-feedback-bars {
+  .most-used-tags-bars {
     display: flex;
     flex-direction: column;
     gap: 12px;
