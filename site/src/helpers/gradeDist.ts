@@ -83,3 +83,9 @@ export function getAggregateGradeData(
 
   return classGradeData;
 }
+
+export const getDiffAndColor = (current: string | null, last: string | null) => {
+  const diff = current && last ? parseFloat(current) - parseFloat(last) : 0;
+  const color = diff > 0 ? 'success.main' : diff < 0 ? 'error.main' : 'text.primary';
+  return { diff, color };
+};

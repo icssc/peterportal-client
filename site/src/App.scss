@@ -145,3 +145,14 @@ svg {
   width: 100%;
   overflow: auto;
 }
+
+.recharts-wrapper:focus,
+.recharts-wrapper *:focus {
+  outline: none;
+}
+
+/* keep outline for users navigating with a keyboard */
+.recharts-wrapper:focus-visible,
+.recharts-wrapper *:focus-visible {
+  outline: revert;
+}
