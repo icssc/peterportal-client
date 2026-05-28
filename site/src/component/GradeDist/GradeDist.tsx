@@ -8,6 +8,7 @@ import trpc from '../../trpc';
 import { Autocomplete, Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
 import CommonFeedback from './CommonFeedback';
 import { getAggregateGradeData } from '../../helpers/gradeDist';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -53,14 +54,13 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   const [gradeDistData, setGradeDistData] = useState<GradesRaw>();
   const [chartType, setChartType] = useState<ChartTypes>('bar');
-  const [currentQuarter, setCurrentQuarter] = useState('');
+  const [lastQuarter, setLastQuarter] = useState('');
+  const [selectedQuarter, setSelectedQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
   const [profEntries, setProfEntries] = useState<Entry[]>();
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
-
-  console.log(currentQuarter);
 
   const fetchGradeData = useCallback(() => {
     fetchGradeDistData(props)
@@ -159,7 +159,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         }
       }),
     );
-    setCurrentQuarter(result[0].value);
+    setSelectedQuarter(result[0].value);
+    setLastQuarter(result[1].value);
   }, [currentCourse, currentProf, gradeDistData]);
 
   // update list of quarters when new professor/course is chosen
@@ -176,7 +177,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const selectedQuarterName = quarterEntries?.find((q) => q.value === selectedQuarter)?.text ?? 'Quarter';
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -213,8 +214,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
       <div className="gradedist-filter">
         <Select
-          value={currentQuarter}
-          onChange={(e) => setCurrentQuarter(e.target.value)}
+          value={selectedQuarter}
+          onChange={(e) => setSelectedQuarter(e.target.value)}
           renderValue={() => {
             return selectedQuarterName;
           }}
@@ -232,42 +233,49 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </div>
   );
 
-  interface AverageGPACardProps {
-    gpa: string;
-    letterGrade: string;
-  }
-
-  const AverageGPACard: FC<AverageGPACardProps> = (props) => {
-    return (
-      <Card variant="outlined" className="avg-gpa-card">
-        <CardContent>
-          <Typography className="avg-gpa">Avg GPA</Typography>
-          <div className="grade-row">
-            <Typography className="gpa" fontSize={24}>
-              {props.gpa}
-            </Typography>
-            <Typography className="letter-grade" fontSize={24}>
-              {props.letterGrade}
-            </Typography>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
   if (gradeDistData?.length) {
     const graphProps = {
       gradeData: gradeDistData,
-      quarter: currentQuarter,
+      quarter: selectedQuarter,
       course: currentCourse,
       professor: currentProf,
     };
-    const aggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, currentQuarter, currentCourse);
+    const aggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, selectedQuarter, currentCourse);
+    const lastQuarterAggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, lastQuarter, currentCourse);
+    const gpaDiff = parseFloat(aggregateGradeData.averageGPA) - parseFloat(lastQuarterAggregateGradeData.averageGPA);
+    const gpaColor = gpaDiff > 0 ? 'success.main' : gpaDiff < 0 ? 'error.main' : 'text.primary';
+
+    const averageGPACard = (
+      <Card variant="outlined" className="avg-gpa-card">
+        <CardContent>
+          <Typography className="avg-gpa">Average GPA</Typography>
+          <div className="grade-row">
+            <Typography className="gpa" fontSize={32}>
+              {aggregateGradeData.averageGPA}
+            </Typography>
+            <Typography className="letter-grade" fontSize={20}>
+              {aggregateGradeData.averageGrade}
+            </Typography>
+          </div>
+          <span className="gpa-change-row">
+            <Typography color={gpaColor}>
+              {gpaDiff > 0 ? (
+                <ArrowUpward fontSize="inherit" />
+              ) : gpaDiff < 0 ? (
+                <ArrowDownward fontSize="inherit" />
+              ) : null}
+              {lastQuarterAggregateGradeData.averageGPA}
+            </Typography>
+            <Typography color="textSecondary">from last quarter</Typography>
+          </span>
+        </CardContent>
+      </Card>
+    );
 
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <AverageGPACard gpa={aggregateGradeData.averageGPA} letterGrade={aggregateGradeData.averageGrade} />
+        {averageGPACard}
         <div className="chart-container">
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <div className={'grade_distribution_chart-container chart'}>

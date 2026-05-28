@@ -89,10 +89,16 @@
   .grade-row {
     display: flex;
     gap: 8px;
+    align-items: center;
 
     .letter-grade {
       color: var(--mui-palette-text-secondary);
     }
+  }
+
+  .gpa-change-row {
+    display: flex;
+    gap: 4px;
   }
 }
 
