@@ -41,7 +41,7 @@ export default function Chart({ gradeData, quarter, professor, course }: ChartPr
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
+      <BarChart data={data}>
         <XAxis dataKey="grade" />
         <Tooltip
           cursor={{ fill: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}

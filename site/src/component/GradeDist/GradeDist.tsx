@@ -340,14 +340,20 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        {averageGPACard}
-        {averageQualityCard}
-        {avgDifficultyCard}
-        <div className="chart-container">
+        <div className="gradedist-content">
+          <div className="gradedist-stats">
+            {averageGPACard}
+            {averageQualityCard}
+            {avgDifficultyCard}
+          </div>
           {((props.minify && chartType == 'bar') || !props.minify) && (
-            <div className={'grade_distribution_chart-container chart'}>
-              <Chart {...graphProps} />
-            </div>
+            <Card variant="outlined" className="grade-dist-chart-card">
+              <CardContent>
+                <div className="grade_distribution_chart-container">
+                  <Chart {...graphProps} />
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
         <MostUsedTags reviews={reviews} />
