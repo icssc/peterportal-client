@@ -1,6 +1,6 @@
 import { ReviewData, ReviewTags } from '@peterportal/types';
 import { FC, useState } from 'react';
-import { LinearProgress } from '@mui/material';
+import { Card, CardContent, LinearProgress } from '@mui/material';
 import './MostUsedTags.scss';
 import ClickableDiv from '../ClickableDiv/ClickableDiv';
 
@@ -29,17 +29,19 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ reviews }) => {
         <h2>Most Used Tags</h2>
         <p className="num-reviews">{reviews.length} reviews</p>
       </div>
-      <div className="most-used-tags-bars">
-        {visibleStats.map(({ label, count }) => (
-          <div key={label} className="most-used-tags-bar">
-            <div className="bar-label">
-              <p>{label}</p>
-              <p>{count}</p>
+      <Card variant="outlined">
+        <CardContent className="most-used-tags-bars">
+          {visibleStats.map(({ label, count }) => (
+            <div key={label} className="most-used-tags-bar">
+              <div className="bar-label">
+                <p>{label}</p>
+                <p>{count}</p>
+              </div>
+              <LinearProgress color="secondary" variant="determinate" value={(count / maxCount) * 100} />
             </div>
-            <LinearProgress color="secondary" variant="determinate" value={(count / maxCount) * 100} />
-          </div>
-        ))}
-      </div>
+          ))}
+        </CardContent>
+      </Card>
       {tagStats.length > 3 && (
         <ClickableDiv className="view-more-btn" onClick={() => setShowAll((prev) => !prev)}>
           {showAll ? 'View less' : 'View more'}

@@ -15,10 +15,6 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 20px;
-    border-radius: 4px;
-    border: 1px solid oklch(from var(--mui-palette-common-onBackground) l c h / 0.23);
-    background-color: var(--mui-palette-overlay-overlay2);
 
     .bar-label {
       display: flex;
@@ -28,7 +24,7 @@
     .MuiLinearProgress-root {
       height: 10px;
       border-radius: 5px;
-      background-color: var(--mui-palette-overlay-overlay2);
+      background-color: var(--mui-palette-background-default);
     }
   }
 
