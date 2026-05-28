@@ -45,3 +45,7 @@ export function displayReviewDate(date: string | Date): string {
     day: '2-digit',
   });
 }
+
+export function getAvgRating(reviews: ReviewData[]): string | null {
+  return reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(2) : null;
+}
