@@ -60,6 +60,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
 
+  console.log(currentQuarter);
+
   const fetchGradeData = useCallback(() => {
     fetchGradeDistData(props)
       .then(setGradeDistData)
