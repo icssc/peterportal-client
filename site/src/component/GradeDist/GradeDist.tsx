@@ -3,7 +3,7 @@ import Chart from './Chart';
 import './GradeDist.scss';
 
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
-import { GradesRaw, QuarterName } from '@peterportal/types';
+import { GradesRaw, QuarterName, ReviewData } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Autocomplete, Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
 import CommonFeedback from './CommonFeedback';
@@ -61,6 +61,21 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+
+  const [reviews, setReviews] = useState<ReviewData[]>([]);
+
+  const fetchReviews = useCallback(async () => {
+    const params: { courseId?: string; professorId?: string } = {};
+    if (props.course) params.courseId = props.course.id;
+    if (props.professor) params.professorId = props.professor.ucinetid;
+    const data = await trpc.reviews.get.query(params);
+    setReviews(data);
+  }, [props.course, props.professor]);
+
+  useEffect(() => {
+    setReviews([]);
+    fetchReviews();
+  }, [fetchReviews]);
 
   const fetchGradeData = useCallback(() => {
     fetchGradeDistData(props)
@@ -283,7 +298,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             </div>
           )}
         </div>
-        <CommonFeedback course={props.course} professor={props.professor} />
+        <CommonFeedback reviews={reviews} />
       </div>
     );
   } else if (gradeDistData == null) {

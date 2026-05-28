@@ -1,33 +1,15 @@
 import { ReviewData, ReviewTags } from '@peterportal/types';
-import { FC, useCallback, useEffect, useState } from 'react';
-import trpc from '../../trpc';
-import { CourseGQLData, ProfessorGQLData } from '../../types/types';
+import { FC, useState } from 'react';
 import { LinearProgress } from '@mui/material';
 import './CommonFeedback.scss';
 import ClickableDiv from '../ClickableDiv/ClickableDiv';
 
 interface CommonFeedbackProps {
-  course?: CourseGQLData;
-  professor?: ProfessorGQLData;
+  reviews: ReviewData[];
 }
 
-const CommonFeedback: FC<CommonFeedbackProps> = ({ course, professor }) => {
-  const [reviews, setReviews] = useState<ReviewData[]>([]);
+const CommonFeedback: FC<CommonFeedbackProps> = ({ reviews }) => {
   const [showAll, setShowAll] = useState(false);
-
-  const fetchReviews = useCallback(async () => {
-    const params: { courseId?: string; professorId?: string } = {};
-    if (course) params.courseId = course.id;
-    if (professor) params.professorId = professor.ucinetid;
-    const data = await trpc.reviews.get.query(params);
-    setReviews(data);
-  }, [course, professor]);
-
-  useEffect(() => {
-    setReviews([]);
-    setShowAll(false);
-    fetchReviews();
-  }, [fetchReviews]);
 
   const tagCounts = new Map<ReviewTags, number>();
   reviews.forEach((review) => review.tags.forEach((tag) => tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1)));
