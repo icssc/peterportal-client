@@ -1,11 +1,13 @@
 import { router } from '../helpers/trpc';
 import coursesRouter from './courses';
+import { courseNotesRouter } from './courseNotes';
 import professorsRouter from './professors';
 import programsRouter from './programs';
 import reportsRouter from './reports';
 import reviewsRouter from './reviews';
 import roadmapsRouter from './roadmap';
 import courseRequirementsRouter from './courseRequirements';
+import courseMaterialsRouter from './courseMaterials';
 import { savedCoursesRouter } from './savedCourses';
 import scheduleRouter from './schedule';
 import transferCreditsRouter from './transferCredits';
@@ -20,7 +22,9 @@ import { customCoursesRouter } from './customCourses';
 export const appRouter = router({
   external: externalAppRouter,
   courses: coursesRouter,
+  courseNotes: courseNotesRouter,
   courseRequirements: courseRequirementsRouter,
+  courseMaterials: courseMaterialsRouter,
   professors: professorsRouter,
   programs: programsRouter,
   roadmaps: roadmapsRouter,

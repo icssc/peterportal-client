@@ -1,5 +1,5 @@
 import './ResultPreview.scss';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect, useCallback, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
@@ -16,7 +16,9 @@ import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 import PreviewNavBar from './PreviewNavBar';
+import trpc from '../../trpc';
 
+import MaterialsIcon from '../../helpers/courseMaterials';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
@@ -48,13 +50,36 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
+  const [hasMaterials, setHasMaterials] = useState<boolean>(false);
+
+  const fetchMaterialsDataFromAPI = useCallback(async () => {
+    const apiResponseMaterials = await trpc.courseMaterials.get.query({
+      department: data.department,
+      number: data.courseNumber,
+    });
+    setHasMaterials(apiResponseMaterials.length > 0);
+  }, [data.department, data.courseNumber]);
+
+  useEffect(() => {
+    if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
+      return;
+    }
+    setHasMaterials(false);
+    fetchMaterialsDataFromAPI();
+  }, [fetchMaterialsDataFromAPI, data.id]);
+
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
 
+  let materialsComponent = null;
+  if (hasMaterials) {
+    materialsComponent = <MaterialsIcon showLabel={true} />;
+  }
+
   return (
     <div className="preview-body">
-      <ResultPageSection id="preview-details" title={data.title}>
+      <ResultPageSection id="preview-details" title={data.title} indicator={materialsComponent}>
         <CourseSummary course={data} />
       </ResultPageSection>
 

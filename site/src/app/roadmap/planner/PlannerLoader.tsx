@@ -78,6 +78,16 @@ const PlannerLoader: FC = () => {
 
   const dispatch = useAppDispatch();
 
+  const getPlanIndexFromQuery = useCallback((plans: { id: number }[]): number | undefined => {
+    if (typeof window === 'undefined') return undefined;
+    const planParam = new URLSearchParams(window.location.search).get('plan');
+    if (!planParam) return undefined;
+    const planId = Number(planParam);
+    if (!Number.isFinite(planId)) return undefined;
+    const planIndex = plans.findIndex((plan) => plan.id === planId);
+    return planIndex >= 0 ? planIndex : undefined;
+  }, []);
+
   const loadLocalTransfers = async () => {
     const courses = await loadTransferredCourses(false);
     const ap = await loadTransferredAPs(false);
@@ -91,10 +101,16 @@ const PlannerLoader: FC = () => {
     async (roadmap: SavedRoadmap) => {
       const plans = await expandAllPlanners(roadmap.planners);
       const timestamp = new Date(roadmap.timestamp ?? Date.now()).getTime();
-      dispatch(setInitialPlannerData({ plans, timestamp, currentPlanIndex: roadmap.currentPlanIndex ?? 0 }));
+      dispatch(
+        setInitialPlannerData({
+          plans,
+          timestamp,
+          currentPlanIndex: getPlanIndexFromQuery(plans) ?? roadmap.currentPlanIndex ?? 0,
+        }),
+      );
       dispatch(setRoadmapLoading(false));
     },
-    [dispatch],
+    [dispatch, getPlanIndexFromQuery],
   );
 
   // save function will update localStorage (thus comparisons above will work) and account roadmap
