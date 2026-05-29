@@ -116,7 +116,10 @@ export const planner = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('planners_user_id_idx').on(table.userId)],
+  (table) => [
+    index('planners_user_id_idx').on(table.userId),
+    unique('unique_planner_user_id_name').on(table.userId, table.name),
+  ],
 );
 
 export const plannerYear = pgTable(
