@@ -6,6 +6,7 @@ import { useSavedCourses } from '../../../hooks/savedCourses';
 import { CourseGQLData, ProfessorGQLData, SearchIndex } from '../../../types/types';
 import { useGetCoursesInSameQuarter } from '../../../hooks/sameQuarterCourses';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
+import { getFiltersHint } from '../../../helpers/search';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
 import { setActiveCourse } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
@@ -154,6 +155,7 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocus
   const showMobileCatalog = useAppSelector((state) => state.roadmap.showMobileCatalog);
   const viewIndex = useAppSelector((state) => (showMobileCatalog ? 'courses' : state.search.viewIndex));
   const results = useAppSelector((state) => state.search[viewIndex].results);
+  const courseCount = useAppSelector((state) => state.search.courses.count);
   const hasQuery = useAppSelector((state) => !!state.search[viewIndex].query);
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
@@ -167,13 +169,14 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocus
     : 'Start typing in the search bar to search for courses or instructors...';
 
   const showHeader = showSavedCoursesOnEmpty || hasQuery;
-  const showCourseFilters = hasQuery && viewIndex === 'courses' && inProgressSearch !== 'newQuery';
+  const filtersDimmed = hasQuery && viewIndex === 'instructors';
+  const filtersHint = getFiltersHint(filtersDimmed, courseCount > 0);
 
   return (
     <>
       <SearchModule autoFocusInput={autoFocusSearch} />
+      <SearchFilters dimmed={filtersDimmed} hint={filtersHint} addTopPadding />
       {showHeader && <ResultsHeader showSavedCoursesOnEmpty />}
-      {showCourseFilters && <SearchFilters />}
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
       ) : searchResults.length === 0 ? (
