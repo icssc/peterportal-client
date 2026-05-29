@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@mui/material';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -14,12 +14,16 @@ const previewLinks = [
 
 const PreviewNavBar = () => {
   const [activeSection, setActiveSection] = useState(previewLinks[0].id);
+  const targetedSectionRef = useRef<string | null>(null);
+  const scrollFallbackRef = useRef<number | null>(null);
 
   useEffect(() => {
     const scrollContainer = document.querySelector('.result-preview > div:last-child');
     if (!scrollContainer) return;
 
     const updateActiveSection = () => {
+      if (targetedSectionRef.current) return;
+
       const containerTop = scrollContainer.getBoundingClientRect().top;
       let currentSection = previewLinks[0];
 
@@ -34,12 +38,36 @@ const PreviewNavBar = () => {
       setActiveSection(currentSection.id);
     };
 
+    const commitTargetedSection = () => {
+      if (!targetedSectionRef.current) return;
+
+      setActiveSection(targetedSectionRef.current);
+      targetedSectionRef.current = null;
+    };
+
     updateActiveSection();
     scrollContainer.addEventListener('scroll', updateActiveSection);
-    return () => scrollContainer.removeEventListener('scroll', updateActiveSection);
+    scrollContainer.addEventListener('scrollend', commitTargetedSection);
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', updateActiveSection);
+      scrollContainer.removeEventListener('scrollend', commitTargetedSection);
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    targetedSectionRef.current = id;
+
+    if (scrollFallbackRef.current) {
+      window.clearTimeout(scrollFallbackRef.current);
+    }
+
+    scrollFallbackRef.current = window.setTimeout(() => {
+      targetedSectionRef.current = null;
+      scrollFallbackRef.current = null;
+    }, 800);
+
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
