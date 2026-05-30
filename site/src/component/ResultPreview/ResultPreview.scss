@@ -67,13 +67,12 @@
     margin-inline: auto;
     padding: 5px;
     border: 1px solid var(--border-primary);
-    border-radius: 8px;
+    border-radius: var(--mui-shape-borderRadius);
     background-color: var(--mui-palette-Button-inheritContainedBg);
   }
 
   .preview-nav-button.MuiButton-root {
     margin: 0;
-    border-radius: 8px;
     background-color: var(--mui-palette-background-paper);
     font-weight: 700;
     text-transform: capitalize;

@@ -1,7 +1,7 @@
 .course {
   box-shadow: 0 0 2px 0 #60616680;
   background: var(--mui-palette-overlay-overlay1);
-  border-radius: 4px;
+  border-radius: var(--mui-shape-borderRadius);
   height: auto;
   font-size: 16px;
   padding: 12px;
