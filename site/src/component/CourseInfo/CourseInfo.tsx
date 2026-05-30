@@ -56,7 +56,7 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false,
     );
   } else {
     return (
-      <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
+      <IconButton className="bookmark-button" onClick={handleToggleSavedCourse} disabled={disabled}>
         {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
       </IconButton>
     );
