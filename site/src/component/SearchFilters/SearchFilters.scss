@@ -5,6 +5,20 @@
   flex-wrap: wrap;
   gap: 8px;
 
+  &.has-top-padding {
+    padding-top: 8px;
+  }
+
+  &.is-dimmed {
+    .MuiInputBase-root {
+      opacity: 0.5;
+    }
+
+    .filters-hint {
+      color: var(--mui-palette-text-secondary);
+    }
+  }
+
   .filter-form-control {
     margin-bottom: 0;
   }
@@ -14,9 +28,16 @@
       background-color: var(--mui-palette-primary-main);
       color: white;
     }
+
     .MuiSvgIcon-root {
       color: white;
     }
+  }
+
+  .filters-hint {
+    font-size: 12px;
+    margin: 0;
+    width: 100%;
   }
 }
 
@@ -53,6 +74,7 @@
     top: 0;
     margin-bottom: 8px;
     z-index: 1;
+
     .MuiInputBase-input {
       background-color: var(--mui-palette-background-paper);
       background-image: var(--Paper-overlay);
