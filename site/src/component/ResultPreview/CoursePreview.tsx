@@ -31,6 +31,7 @@ interface PreviewTitleProps {
 const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }) => {
   const wrapContent = (content: ReactNode) => <p className="preview-title">{content}</p>;
   const shortenText = useMediaQuery('(max-width: 480px)');
+  const hidePreviewingText = useMediaQuery('(min-width: 800px) and (max-width: 860px)');
 
   if (isLoading) {
     const loadingText = shortenText ? 'Loading...' : `Loading ${courseId}...`;
@@ -46,7 +47,12 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
     return wrapContent(formattedCourseId);
   }
 
-  return wrapContent(<>Previewing {formattedCourseId}</>);
+  return wrapContent(
+    <>
+      {!hidePreviewingText && <span>Previewing </span>}
+      {formattedCourseId}
+    </>,
+  );
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
