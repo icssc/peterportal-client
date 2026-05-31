@@ -3,11 +3,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export const catalogYearSlice = createSlice({
   name: 'catalogYear',
   initialState: {
-    catalogYear: '',
+    catalogYear: {} as Record<string, string>,
   },
   reducers: {
-    setCatalogYear: (state, action: PayloadAction<string>) => {
-      state.catalogYear = action.payload;
+    setCatalogYear: (state, action: PayloadAction<{ majorId: string; year: string }>) => {
+      state.catalogYear[action.payload.majorId] = action.payload.year;
     },
   },
 });
