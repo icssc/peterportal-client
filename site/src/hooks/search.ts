@@ -3,6 +3,7 @@ import { FilterOptions, stringifySearchFilters } from '../helpers/searchFilters'
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   selectCourseFilters,
+  searchOperationFailed,
   setFirstPageResults,
   setNewPageResults,
   setSearchViewIndex,
@@ -76,9 +77,16 @@ export function useSearchTrigger() {
     return abortController.signal;
   };
 
-  const handleSearchError = (error: unknown) => {
-    if (error instanceof Error && error.name !== 'AbortError') console.error('Search error:', error);
-  };
+  const handleSearchError = useCallback(
+    (error: unknown) => {
+      // Aborts are expected when a newer search supersedes this one; that newer search owns the
+      // in-progress flag, so leave it alone. Any other failure must clear the loading state.
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error('Search error:', error);
+      dispatch(searchOperationFailed());
+    },
+    [dispatch],
+  );
 
   const handleFirstPageResults = useCallback(
     (index: SearchIndex, data: SearchResponseData) => {
@@ -112,17 +120,50 @@ export function useSearchTrigger() {
         }
       })
       .catch(handleSearchError);
-  }, [handleFirstPageResults, inProgressSearch, searchState.query, courseFilters, showMobileCatalog, dispatch]);
+  }, [
+    handleFirstPageResults,
+    handleSearchError,
+    inProgressSearch,
+    searchState.query,
+    courseFilters,
+    showMobileCatalog,
+    dispatch,
+  ]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newFilters') return;
+    if (!searchState.query) return;
 
-    performSearch(visibleSearchIdx, searchState.query, 0, courseFilters, regenerateAbortSignal())
-      .then((data) => {
-        handleFirstPageResults(visibleSearchIdx, data);
+    const signal = regenerateAbortSignal();
+    const searches = [performSearch('courses', searchState.query, 0, courseFilters, signal)];
+    if (!showMobileCatalog) {
+      const instructorSearch = performSearch('instructors', searchState.query, 0, courseFilters, signal);
+      searches.push(instructorSearch);
+    }
+
+    Promise.all(searches)
+      .then(([courseRes, profRes]) => {
+        profRes ??= { count: 0, results: [], totalRank: 0 };
+        handleFirstPageResults('courses', courseRes);
+        handleFirstPageResults('instructors', profRes);
+        // Filters only narrow courses, so a filter change should keep the user on the course
+        // results they're refining. Only fall back to instructors when no course matches.
+        const showCourses = showMobileCatalog || courseRes.count > 0;
+        const eitherHasResults = courseRes.count > 0 || profRes.count > 0;
+        if (showMobileCatalog || eitherHasResults) {
+          dispatch(setSearchViewIndex(showCourses ? 'courses' : 'instructors'));
+        }
       })
       .catch(handleSearchError);
-  }, [courseFilters, handleFirstPageResults, inProgressSearch, searchState.query, visibleSearchIdx]);
+  }, [
+    courseFilters,
+    dispatch,
+    handleFirstPageResults,
+    handleSearchError,
+    inProgressSearch,
+    searchState.query,
+    showMobileCatalog,
+  ]);
 
   useEffect(() => {
     if (inProgressSearch !== 'newPage') return;
@@ -132,5 +173,13 @@ export function useSearchTrigger() {
         dispatch(setNewPageResults({ index: visibleSearchIdx, results: data.results }));
       })
       .catch(handleSearchError);
-  }, [courseFilters, dispatch, inProgressSearch, searchState.pageNumber, searchState.query, visibleSearchIdx]);
+  }, [
+    courseFilters,
+    dispatch,
+    handleSearchError,
+    inProgressSearch,
+    searchState.pageNumber,
+    searchState.query,
+    visibleSearchIdx,
+  ]);
 }
