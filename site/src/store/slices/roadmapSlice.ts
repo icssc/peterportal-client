@@ -86,6 +86,7 @@ export const roadmapSlice = createSlice({
     toastSeverity: 'info' as ToastSeverity,
     showToast: false,
     selectedSidebarTab: 1,
+    selectedMobileTab: 0,
   },
   reducers: {
     // Roadmap Window State
@@ -248,6 +249,9 @@ export const roadmapSlice = createSlice({
     setSelectedSidebarTab: (state, action: PayloadAction<number>) => {
       state.selectedSidebarTab = action.payload;
     },
+    setSelectedMobileTab: (state, action: PayloadAction<number>) => {
+      state.selectedMobileTab = action.payload;
+    },
   },
 });
 
@@ -278,6 +282,7 @@ export const {
   updateRoadmapCustomCourse,
   removeCustomCourseFromRoadmap,
   setSelectedSidebarTab,
+  setSelectedMobileTab,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
