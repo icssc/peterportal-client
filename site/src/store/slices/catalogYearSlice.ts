@@ -9,9 +9,12 @@ export const catalogYearSlice = createSlice({
     setCatalogYear: (state, action: PayloadAction<{ majorId: string; year: string }>) => {
       state.catalogYear[action.payload.majorId] = action.payload.year;
     },
+    setAllCatalogYears: (state, action: PayloadAction<Record<string, string>>) => {
+      state.catalogYear = action.payload;
+    },
   },
 });
 
-export const { setCatalogYear } = catalogYearSlice.actions;
+export const { setCatalogYear, setAllCatalogYears } = catalogYearSlice.actions;
 
 export default catalogYearSlice.reducer;
