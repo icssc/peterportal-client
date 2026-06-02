@@ -5,7 +5,7 @@ import './GradeDist.scss';
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Autocomplete, Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Autocomplete, Card, CardContent, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import MostUsedTags from './MostUsedTags';
 import { getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
@@ -362,12 +362,42 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       </div>
     );
   } else if (gradeDistData == null) {
-    // null if still fetching, display loading message
+    // null if still fetching, display loading skeletons
+
+    const skeletonStatCard = (
+      <Card variant="outlined" className="avg-gpa-card">
+        <CardContent>
+          <Skeleton width={90} height={20} />
+
+          <div className="grade-row">
+            <Skeleton width={70} height={50} />
+            <Skeleton width={40} height={30} />
+          </div>
+
+          <Skeleton width={120} height={20} />
+        </CardContent>
+      </Card>
+    );
+
+    const skeletonChartCard = (
+      <Card variant="outlined" className="grade-dist-chart-card">
+        <CardContent>
+          <Skeleton variant="rectangular" width="100%" height={300} />
+        </CardContent>
+      </Card>
+    );
+
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>Loading Distribution..</p>
+        <div className="gradedist-content">
+          <div className="gradedist-stats">
+            {skeletonStatCard}
+            {skeletonStatCard}
+            {skeletonStatCard}
+          </div>
+
+          {skeletonChartCard}
         </div>
       </div>
     );
