@@ -48,6 +48,7 @@ import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const DEPARTMENT_GROUPING_COURSE_THRESHOLD = 30;
 const COURSE_ID_DEPARTMENT_OVERRIDES = ['IN4MATX'];
+const DEPARTMENT_MERGE_SUFFIXES = ['H', 'M'];
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -170,13 +171,25 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
   );
 };
 
+function getCourseDepartment(courseID: string) {
+  return (
+    COURSE_ID_DEPARTMENT_OVERRIDES.find((override) => courseID.startsWith(override)) ??
+    courseID.match(/^\D+/)![0].trim()
+  );
+}
+
+function normalizeDepartment(department: string, departments: Set<string>) {
+  const suffix = DEPARTMENT_MERGE_SUFFIXES.find((suffix) => department.endsWith(suffix));
+  const baseDepartment = suffix ? department.slice(0, -suffix.length) : department;
+  return departments.has(baseDepartment) ? baseDepartment : department;
+}
+
 function getDepartmentCourseGroups(courses: string[]) {
   const groups = new Map<string, string[]>();
+  const departments = new Set(courses.map(getCourseDepartment));
 
   courses.forEach((courseID) => {
-    const department =
-      COURSE_ID_DEPARTMENT_OVERRIDES.find((override) => courseID.startsWith(override)) ??
-      courseID.match(/^\D+/)![0].trim();
+    const department = normalizeDepartment(getCourseDepartment(courseID), departments);
     const group = groups.get(department);
     group ? group.push(courseID) : groups.set(department, [courseID]);
   });
