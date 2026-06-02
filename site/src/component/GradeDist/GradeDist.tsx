@@ -264,17 +264,19 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               {aggregateGradeData.averageGrade}
             </Typography>
           </div>
-          <span className="gpa-change-row">
-            <Typography color={gpaColor}>
-              {gpaDiff > 0 ? (
-                <ArrowUpward fontSize="inherit" />
-              ) : gpaDiff < 0 ? (
-                <ArrowDownward fontSize="inherit" />
-              ) : null}
-              {lastQuarterAggregateGradeData.averageGPA}
-            </Typography>
-            <Typography color="textSecondary">from last quarter</Typography>
-          </span>
+          {selectedQuarter !== 'ALL' && (
+            <span className="gpa-change-row">
+              <Typography color={gpaColor}>
+                {gpaDiff > 0 ? (
+                  <ArrowUpward fontSize="inherit" />
+                ) : gpaDiff < 0 ? (
+                  <ArrowDownward fontSize="inherit" />
+                ) : null}
+                {lastQuarterAggregateGradeData.averageGPA}
+              </Typography>
+              <Typography color="textSecondary">from {lastQuarter}</Typography>
+            </span>
+          )}
         </CardContent>
       </Card>
     );
@@ -302,7 +304,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               / 5
             </Typography>
           </div>
-          {lastAvgQuality && (
+          {selectedQuarter !== 'ALL' && lastAvgQuality && (
             <span className="gpa-change-row">
               <Typography color={qualityColor}>
                 {qualityDiff > 0 ? (
@@ -312,7 +314,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
                 ) : null}
                 {lastAvgQuality}
               </Typography>
-              <Typography color="textSecondary">from last quarter</Typography>
+              <Typography color="textSecondary">from {lastQuarter}</Typography>
             </span>
           )}
         </CardContent>
