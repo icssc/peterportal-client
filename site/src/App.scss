@@ -119,11 +119,11 @@ svg {
   tbody tr:nth-child(odd) {
     background-color: var(--mui-palette-overlay-overlay3);
   }
+}
 
-  [data-theme='light'] {
-    tbody tr:nth-child(odd) {
-      background-color: var(--mui-palette-overlay-overlay1);
-    }
+[data-theme='light'] .ppc-table {
+  tbody tr:nth-child(odd) {
+    background-color: var(--mui-palette-overlay-overlay1);
   }
 }
 
