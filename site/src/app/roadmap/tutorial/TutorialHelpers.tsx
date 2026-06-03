@@ -1,5 +1,6 @@
 'use client';
 
+//code cleaning: move all step contents into seperate file, welcome step should have its own content func to keep format the same
 import { StepType } from '@reactour/tour';
 import { useTour } from '@reactour/tour';
 import Image, { StaticImageData } from 'next/image';
@@ -19,6 +20,8 @@ enum TourStepName {
 }
 
 type TutorialBranch = 'firstYear' | 'nonFirstYear';
+type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
+type TutorialVariant = 'welcome' | 'step';
 
 export const TOUR_STEP = {
   welcome: 0,
@@ -47,9 +50,6 @@ function removeTutorialOutline(selector: string) {
 //   if (typeof window === 'undefined') return null;
 //   return localStorage.getItem(ROADMAP_TOUR_HAS_RUN_KEY);
 // }
-
-type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
-type TutorialVariant = 'welcome' | 'step';
 
 export const variantPopoverStyle: Record<TutorialVariant, React.CSSProperties> = {
   welcome: {
