@@ -2,8 +2,11 @@
 
 import { StepType } from '@reactour/tour';
 import { useTour } from '@reactour/tour';
-import React, { ReactNode } from 'react';
+import Image, { StaticImageData } from 'next/image';
+import React, { CSSProperties, ReactNode } from 'react';
+
 import { basePopoverStyle } from './AppTourProvider';
+import { TutorialMascotPosition, tutorialMascots } from './tutorialMascots';
 
 const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
 const TUTORIAL_OUTLINE = 'tutorial-highlight-outline';
@@ -15,17 +18,19 @@ enum TourStepName {
   nonFirstYearImport = 'nonFirstYearImport',
 }
 
-type TutorialBranch = 'firstYear' | 'nonFirstYear' | null;
+type TutorialBranch = 'firstYear' | 'nonFirstYear';
+
+export const TOUR_STEP = {
+  welcome: 0,
+  year: 1,
+  firstYearTransfer: 2,
+  nonFirstYearImport: 3,
+} as const;
 
 function setLocalStorageTourHasRun(value: 'true' | 'false') {
   if (typeof window === 'undefined') return;
   localStorage.setItem(ROADMAP_TOUR_HAS_RUN_KEY, value);
 }
-
-// function getLocalStorageTourHasRun() {
-//   if (typeof window === 'undefined') return null;
-//   return localStorage.getItem(ROADMAP_TOUR_HAS_RUN_KEY);
-// }
 
 function markTourHasRun() {
   setLocalStorageTourHasRun('true');
@@ -37,6 +42,11 @@ function addTutorialOutline(selector: string) {
 function removeTutorialOutline(selector: string) {
   document.querySelector(selector)?.classList.remove(TUTORIAL_OUTLINE);
 }
+
+// function getLocalStorageTourHasRun() {
+//   if (typeof window === 'undefined') return null;
+//   return localStorage.getItem(ROADMAP_TOUR_HAS_RUN_KEY);
+// }
 
 type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
 type TutorialVariant = 'welcome' | 'step';
@@ -50,12 +60,14 @@ export const variantPopoverStyle: Record<TutorialVariant, React.CSSProperties> =
     padding: '28px 24px 42px 24px',
     gap: 10,
     boxSizing: 'border-box',
+    overflow: 'visible',
   },
   step: {
     borderRadius: 10,
     border: '1px solid rgba(184, 184, 184, 0.5)',
     padding: '28px 40px 30px 40px',
     boxSizing: 'border-box',
+    overflow: 'visible',
   },
 };
 
@@ -69,6 +81,9 @@ interface TutorialStepContentProps {
   secondaryAction?: TutorialButtonAction;
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
+  mascot?: StaticImageData;
+  mascotPosition?: TutorialMascotPosition;
+  mascotStyle?: CSSProperties;
 }
 
 function TutorialStepContent({
@@ -81,6 +96,9 @@ function TutorialStepContent({
   secondaryAction = 'none',
   onPrimaryClick,
   onSecondaryClick,
+  mascot,
+  mascotPosition = 'top-center',
+  mascotStyle,
 }: TutorialStepContentProps) {
   const { currentStep, setCurrentStep, setIsOpen } = useTour();
 
@@ -95,84 +113,58 @@ function TutorialStepContent({
     if (action === 'back') setCurrentStep(Math.max(0, currentStep - 1));
   };
 
-  const buttonStyle = {
-    border: 'none',
-    borderRadius: 8,
-    padding: '8px 22px',
-    fontFamily: 'Roboto, sans-serif',
-    fontWeight: 500,
-    fontStyle: 'normal',
-    fontSize: '0.9375rem',
-    lineHeight: '26px',
-    letterSpacing: '0.4px',
-    textTransform: 'uppercase' as const,
-    color: '#ffffff',
-    background: 'var(--mui-palette-primary-main)',
-    cursor: 'pointer',
-    boxShadow: `
-      0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-      0px 1px 5px 0px rgba(0, 0, 0, 0.12)
-    `,
-  };
-
   const isWelcome = variant === 'welcome';
 
   return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 10, height: '100%' }}>
-      {title && <h2 style={{ margin: 0, fontSize: 30, fontWeight: 800 }}>{title}</h2>}
-      <p
-        style={{
-          margin: 0,
-          fontSize: 20,
-          fontWeight: 500,
-          color: isWelcome ? 'rgba(184, 184, 184, 1)' : 'rgba(255, 255, 255, 1)',
-          flexGrow: 1,
-        }}
-      >
-        {description}
-      </p>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: isWelcome ? 18 : 40,
-        }}
-      >
-        <button
-          type="button"
-          style={buttonStyle}
-          onClick={() => {
-            onPrimaryClick?.();
-            runAction(primaryAction);
-          }}
-        >
-          {primaryLabel}
-        </button>
-        {secondaryLabel && (
+    <div className="tutorial-step-content">
+      {mascot && (
+        <Image
+          src={mascot}
+          alt="Peter the anteater"
+          className={`tutorial-mascot tutorial-mascot--${mascotPosition}`}
+          style={mascotStyle}
+          width={mascot.width}
+          height={mascot.height}
+        />
+      )}
+      <div className="tutorial-step-body">
+        {title && <h2 className="tutorial-step-title">{title}</h2>}
+        <p className={`tutorial-step-description tutorial-step-description--${variant}`}>{description}</p>
+        <div className={`tutorial-step-buttons ${isWelcome ? '' : 'tutorial-step-buttons--step'}`}>
           <button
             type="button"
-            style={buttonStyle}
+            className="tutorial-step-button"
             onClick={() => {
-              onSecondaryClick?.();
-              runAction(secondaryAction);
+              onPrimaryClick?.();
+              runAction(primaryAction);
             }}
           >
-            {secondaryLabel}
+            {primaryLabel}
           </button>
-        )}
+          {secondaryLabel && (
+            <button
+              type="button"
+              className="tutorial-step-button"
+              onClick={() => {
+                onSecondaryClick?.();
+                runAction(secondaryAction);
+              }}
+            >
+              {secondaryLabel}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 function YearBranchStepContent() {
-  const { setSteps, setCurrentStep } = useTour();
+  const { setCurrentStep } = useTour();
 
-  const chooseBranch = (branch: Exclude<TutorialBranch, null>) => {
-    if (!setSteps || !setCurrentStep) return;
-    setSteps(stepsFactory(branch));
-    setCurrentStep(0);
+  const chooseBranch = (branch: TutorialBranch) => {
+    if (!setCurrentStep) return;
+    setCurrentStep(branch === 'firstYear' ? TOUR_STEP.firstYearTransfer : TOUR_STEP.nonFirstYearImport);
   };
 
   return (
@@ -187,6 +179,8 @@ function YearBranchStepContent() {
       }
       primaryLabel="YES"
       secondaryLabel="NO"
+      mascot={tutorialMascots.thinking}
+      mascotPosition="bottom-right"
       onPrimaryClick={() => chooseBranch('firstYear')}
       onSecondaryClick={() => chooseBranch('nonFirstYear')}
     />
@@ -194,12 +188,11 @@ function YearBranchStepContent() {
 }
 
 function FirstYearBranchStepContent() {
-  const { setSteps, setCurrentStep } = useTour();
+  const { setCurrentStep } = useTour();
 
   const returnToBranchQuestion = () => {
-    if (!setSteps || !setCurrentStep) return;
-    setSteps(stepsFactory());
-    setCurrentStep(1); //goes back to parent branch
+    if (!setCurrentStep) return;
+    setCurrentStep(TOUR_STEP.year);
   };
 
   return (
@@ -216,17 +209,18 @@ function FirstYearBranchStepContent() {
       onPrimaryClick={returnToBranchQuestion}
       secondaryLabel="NEXT"
       secondaryAction="close"
+      mascot={tutorialMascots.teach}
+      mascotPosition="top-left"
     />
   );
 }
 
 function NonFirstYearBranchStepContent() {
-  const { setSteps, setCurrentStep } = useTour();
+  const { setCurrentStep } = useTour();
 
   const returnToBranchQuestion = () => {
-    if (!setSteps || !setCurrentStep) return;
-    setSteps(stepsFactory());
-    setCurrentStep(1);
+    if (!setCurrentStep) return;
+    setCurrentStep(TOUR_STEP.year);
   };
 
   return (
@@ -243,6 +237,8 @@ function NonFirstYearBranchStepContent() {
       onPrimaryClick={returnToBranchQuestion} // should jump to import branch
       secondaryLabel="NEXT" // should be no
       secondaryAction="close" // should be next
+      mascot={tutorialMascots.thinking}
+      mascotPosition="bottom-left"
     />
   );
 }
@@ -280,6 +276,8 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
           primaryAction="next"
           secondaryLabel="NO"
           secondaryAction="close"
+          mascot={tutorialMascots.over}
+          mascotPosition="top-center"
           onPrimaryClick={markTourHasRun}
           onSecondaryClick={markTourHasRun}
         />
@@ -299,7 +297,7 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
     },
     firstYearTransfer: {
       selector: '#credits-label',
-      position: 'right',
+      position: ({ right, top, height }) => [right + 16, top + height - 16],
       action: () => addTutorialOutline('#credits-label'),
       actionAfter: () => removeTutorialOutline('#credits-label'),
       styles: {
@@ -318,16 +316,7 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
   };
 }
 
-export function stepsFactory(branch: TutorialBranch = null): Array<StepType> {
+export function stepsFactory(): Array<StepType> {
   const namedSteps = namedStepsFactory();
-
-  if (branch === 'firstYear') {
-    return [namedSteps.firstYearTransfer];
-  }
-
-  if (branch === 'nonFirstYear') {
-    return [namedSteps.nonFirstYearImport];
-  }
-
-  return [namedSteps.welcome, namedSteps.year];
+  return [namedSteps.welcome, namedSteps.year, namedSteps.firstYearTransfer, namedSteps.nonFirstYearImport];
 }

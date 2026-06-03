@@ -3,3 +3,116 @@
   outline-offset: 4px;
   border-radius: 3px;
 }
+
+.tutorial-step-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  text-align: center;
+}
+
+.tutorial-mascot {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  width: var(--tutorial-mascot-width, 220px);
+  height: auto;
+}
+
+.tutorial-mascot--top-center {
+  --tutorial-mascot-width: 280px;
+  top: -170px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.tutorial-mascot--top-left {
+  --tutorial-mascot-width: 240px;
+  top: -180px;
+  left: -120px;
+  z-index: -1;
+}
+
+.tutorial-mascot--top-right {
+  --tutorial-mascot-width: 240px;
+  top: -110px;
+  right: -24px;
+  z-index: 2;
+}
+
+.tutorial-mascot--bottom-left {
+  --tutorial-mascot-width: 240px;
+  bottom: -150px;
+  left: -170px;
+  z-index: 0;
+}
+
+.tutorial-mascot--bottom-right {
+  --tutorial-mascot-width: 240px;
+  bottom: -150px;
+  right: -210px;
+  z-index: 0;
+}
+
+.tutorial-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.tutorial-step-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.tutorial-step-description {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.tutorial-step-description--welcome {
+  color: rgba(184, 184, 184, 1);
+}
+
+.tutorial-step-description--step {
+  color: rgba(255, 255, 255, 1);
+}
+
+.tutorial-step-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.tutorial-step-buttons--step {
+  gap: 40px;
+}
+
+.tutorial-step-button {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 0.9375rem;
+  line-height: 26px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: var(--mui-palette-primary-main);
+  cursor: pointer;
+  box-shadow:
+    0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}

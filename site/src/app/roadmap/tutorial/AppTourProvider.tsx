@@ -15,6 +15,7 @@ const AppTourProvider: FC<PropsWithChildren> = ({ children }) => {
     <TourProvider
       steps={[]}
       padding={5}
+      scrollSmooth
       showBadge={false}
       showNavigation={false}
       showDots={false}
@@ -31,6 +32,8 @@ const AppTourProvider: FC<PropsWithChildren> = ({ children }) => {
         popover: (base) => ({
           ...base,
           ...basePopoverStyle,
+          overflow: 'visible',
+          transition: 'transform 0.4s ease',
         }),
       }}
     >
