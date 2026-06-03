@@ -137,6 +137,13 @@ const RoadmapPage: FC = () => {
           <AddCoursePopup />
           <MobileCourseCatalog />
           <MobileCreditsMenu />
+
+          {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
+
+          <MobilePopup show={showPreview} onClose={handleClosePreview}>
+            {resultPreview}
+          </MobilePopup>
+
           <div className={`main-wrapper mobile`} id="mobileScrollContainer">
             {selectedMobileIndex === 0 && <Planner />}
           </div>
