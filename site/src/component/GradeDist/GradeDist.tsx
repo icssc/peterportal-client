@@ -296,7 +296,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           <Typography className="stat-label">Average Quality</Typography>
           <div className="stat-value-row">
             <Typography fontSize={32}>{currentAvgQuality ?? '—'}</Typography>
-            <Typography className="stat-unit" fontSize={20}>
+            <Typography className="stat-unit stat-unit--baseline" fontSize={20}>
               / 5
             </Typography>
           </div>
@@ -325,7 +325,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           <Typography className="stat-label">Average Difficulty</Typography>
           <div className="stat-value-row">
             <Typography fontSize={32}>{currentAvgDifficulty ?? '—'}</Typography>
-            <Typography className="stat-unit" fontSize={20}>
+            <Typography className="stat-unit stat-unit--baseline" fontSize={20}>
               / 5
             </Typography>
           </div>

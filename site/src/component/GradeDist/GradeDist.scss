@@ -83,6 +83,11 @@
 
     .stat-unit {
       color: var(--mui-palette-text-secondary);
+
+      &--baseline {
+        align-self: flex-end;
+        padding-bottom: 4px;
+      }
     }
   }
 
