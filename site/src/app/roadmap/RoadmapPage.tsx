@@ -125,18 +125,10 @@ const RoadmapPage: FC = () => {
 
         {/* Main Planner View or Fullscreen Mobile Search */}
         <div className="main-wrapper" id="mobileScrollContainer">
-          {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
-          {isMobile ? (
-            <>
-              <MobilePopup show={showPreview} onClose={handleClosePreview}>
-                {resultPreview}
-              </MobilePopup>
-            </>
-          ) : (
+          <Planner />
             <Fade in={showPreview} timeout={{ enter: 0, exit: transitionTime }}>
               {resultPreview}
             </Fade>
-          )}
         </div>
       </>
       ) : (
