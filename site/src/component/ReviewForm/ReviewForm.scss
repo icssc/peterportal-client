@@ -138,7 +138,9 @@
 }
 
 [data-theme='light'] .review-form-dialog {
-  .MuiInputBase-root {
+  .MuiInputBase-root,
+  .rating-sliders,
+  .quick-tags .MuiChip-outlined {
     background-color: var(--mui-palette-overlay-overlay1);
   }
 }
