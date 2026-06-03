@@ -135,4 +135,10 @@
       font-size: 12px;
     }
   }
+
+  [data-theme='light'] {
+    .MuiInputBase-root {
+      background-color: var(--mui-palette-overlay-overlay1);
+    }
+  }
 }
