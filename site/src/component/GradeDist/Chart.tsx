@@ -13,29 +13,19 @@ interface ChartProps {
   course?: string;
 }
 
-const GRADE_COLORS: Record<string, string> = {
-  A: '--mui-palette-chart-blue',
-  B: '--mui-palette-chart-green',
-  C: '--mui-palette-chart-yellow',
-  D: '--mui-palette-chart-orange',
-  F: '--mui-palette-chart-red',
-  P: '--mui-palette-chart-pass',
-  NP: '--mui-palette-chart-noPass',
-};
-
 export default function Chart({ gradeData, quarter, professor, course }: ChartProps) {
   const { darkMode } = useContext(ThemeContext);
 
   const aggregateGradeData = getAggregateGradeData(gradeData, professor, quarter, course);
 
   const data = [
-    { grade: 'A', count: aggregateGradeData.gradeACount, fill: getCssVariable(GRADE_COLORS.A) },
-    { grade: 'B', count: aggregateGradeData.gradeBCount, fill: getCssVariable(GRADE_COLORS.B) },
-    { grade: 'C', count: aggregateGradeData.gradeCCount, fill: getCssVariable(GRADE_COLORS.C) },
-    { grade: 'D', count: aggregateGradeData.gradeDCount, fill: getCssVariable(GRADE_COLORS.D) },
-    { grade: 'F', count: aggregateGradeData.gradeFCount, fill: getCssVariable(GRADE_COLORS.F) },
-    { grade: 'P', count: aggregateGradeData.gradePCount, fill: getCssVariable(GRADE_COLORS.P) },
-    { grade: 'NP', count: aggregateGradeData.gradeNPCount, fill: getCssVariable(GRADE_COLORS.NP) },
+    { grade: 'A', count: aggregateGradeData.gradeACount, fill: getCssVariable('--mui-palette-chart-a') },
+    { grade: 'B', count: aggregateGradeData.gradeBCount, fill: getCssVariable('--mui-palette-chart-b') },
+    { grade: 'C', count: aggregateGradeData.gradeCCount, fill: getCssVariable('--mui-palette-chart-c') },
+    { grade: 'D', count: aggregateGradeData.gradeDCount, fill: getCssVariable('--mui-palette-chart-d') },
+    { grade: 'F', count: aggregateGradeData.gradeFCount, fill: getCssVariable('--mui-palette-chart-f') },
+    { grade: 'P', count: aggregateGradeData.gradePCount, fill: getCssVariable('--mui-palette-chart-pass') },
+    { grade: 'NP', count: aggregateGradeData.gradeNPCount, fill: getCssVariable('--mui-palette-chart-noPass') },
   ];
 
   return (
