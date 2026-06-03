@@ -139,6 +139,9 @@ importers:
 
   site:
     dependencies:
+      '@emotion/cache':
+        specifier: ^11.14.0
+        version: 11.14.0
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@18.3.14)(react@18.3.1)
@@ -151,6 +154,9 @@ importers:
       '@mui/material':
         specifier: ^7.3.6
         version: 7.3.6(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mui/material-nextjs':
+        specifier: ^9.0.1
+        version: 9.0.1(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(next@16.1.1(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(react@18.3.1)
       '@nivo/bar':
         specifier: ^0.88.0
         version: 0.88.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -160,6 +166,9 @@ importers:
       '@nivo/pie':
         specifier: ^0.88.0
         version: 0.88.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@reactour/tour':
+        specifier: ^3.8.0
+        version: 3.8.0(react@18.3.1)
       '@reduxjs/toolkit':
         specifier: ^2.4.0
         version: 2.4.0(react-redux@9.1.2(@types/react@18.3.14)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
@@ -625,6 +634,10 @@ packages:
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.29.7':
+    resolution: {integrity: sha512-Nq8OhGWiZIZGV6hLHoyAKLLcJihP/xFeBMGJoUrxTX2psI8dCifzLhZISFb+VWS3wFMRDmCGw5R+dOySCqPLhw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.25.9':
@@ -1702,6 +1715,24 @@ packages:
       '@types/react':
         optional: true
 
+  '@mui/material-nextjs@9.0.1':
+    resolution: {integrity: sha512-kUPGNMOam7bZs4wgjfAEJb/hpNlWTiHcS9+1XVRsEF7I0ImvmVxvb1DMDj3hG3cfq0PggXBSwihzVJe5iFFzwg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@emotion/cache': ^11.11.0
+      '@emotion/react': ^11.11.4
+      '@emotion/server': ^11.11.0
+      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
+      next: ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/cache':
+        optional: true
+      '@emotion/server':
+        optional: true
+      '@types/react':
+        optional: true
+
   '@mui/material@7.3.6':
     resolution: {integrity: sha512-R4DaYF3dgCQCUAkr4wW1w26GHXcf5rCmBRHVBuuvJvaGLmZdD8EjatP80Nz5JCw0KxORAzwftnHzXVnjR8HnFw==}
     engines: {node: '>=14.0.0'}
@@ -2526,6 +2557,26 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
 
+  '@reactour/mask@1.2.0':
+    resolution: {integrity: sha512-XLgBLWfKJybtZjNTSO5lt/SIvRlCZBadB6JfE/hO1ErqURRjYhnv+edC0Ki1haUCqMGFppWk3lwcPCjmK0xNog==}
+    peerDependencies:
+      react: 16.x || 17.x || 18.x || 19.x
+
+  '@reactour/popover@1.3.0':
+    resolution: {integrity: sha512-YdyjSmHPvEeQEcJM4gcGFa5pI/Yf4nZGqwG4JnT+rK1SyUJBIPnm4Gkl/h7/+1g0KCFMkwNwagS3ZiXvZB7ThA==}
+    peerDependencies:
+      react: 16.x || 17.x || 18.x || 19.x
+
+  '@reactour/tour@3.8.0':
+    resolution: {integrity: sha512-KZTFi1pAvoTVKKRdBN5+XCYxXBp4k4Ql/acZcXyPvec8VU24fkMSEeV+v8krfYQpoVcewxIu3gM6xWZZLjxi7w==}
+    peerDependencies:
+      react: 16.x || 17.x || 18.x || 19.x
+
+  '@reactour/utils@0.6.0':
+    resolution: {integrity: sha512-GqaLjQi7MJsgtAKjdiw2Eak1toFkADoLRnm1+HZpaD+yl+DkaHpC1N7JAl+kVOO5I17bWInPA+OFbXjO9Co8Qg==}
+    peerDependencies:
+      react: 16.x || 17.x || 18.x || 19.x
+
   '@redocly/ajv@8.11.2':
     resolution: {integrity: sha512-io1JpnwtIcvojV7QKDUSIuMN/ikdOUd1ReEnUnMKGfDVridQZ31J0MmIuqwuRjWDZfmvr+Q0MqCcfHM2gTivOg==}
 
@@ -2546,6 +2597,11 @@ packages:
         optional: true
       react-redux:
         optional: true
+
+  '@rooks/use-mutation-observer@4.11.2':
+    resolution: {integrity: sha512-vpsdrZdr6TkB1zZJcHx+fR1YC/pHs2BaqcuYiEGjBVbwY5xcC49+h0hAUtQKHth3oJqXfIX/Ng8S7s5HFHdM/A==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   '@sinclair/typebox@0.34.41':
     resolution: {integrity: sha512-6gS8pZzSXdyRHTIqoqSVknxolr1kzfy4/CeDnrzsVz8TTIWUbOBr6gnzOmTYJ3eXQNh4IYHIGi5aIL7sOZ2G/g==}
@@ -5780,6 +5836,9 @@ packages:
   reselect@5.1.0:
     resolution: {integrity: sha512-aw7jcGLDpSgNDyWBQLv2cedml85qd95/iszJjN988zX1t7AVRJi19d9kto5+W7oCfQ94gyo40dVbT6g2k4/kXg==}
 
+  resize-observer-polyfill@1.5.1:
+    resolution: {integrity: sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==}
+
   resolve-cwd@3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
     engines: {node: '>=8'}
@@ -7190,6 +7249,8 @@ snapshots:
 
   '@babel/runtime@7.28.4': {}
 
+  '@babel/runtime@7.29.7': {}
+
   '@babel/template@7.25.9':
     dependencies:
       '@babel/code-frame': 7.26.2
@@ -8102,6 +8163,16 @@ snapshots:
       '@mui/material': 7.3.6(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
     optionalDependencies:
+      '@types/react': 18.3.14
+
+  '@mui/material-nextjs@9.0.1(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(next@16.1.1(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0))(react@18.3.1)':
+    dependencies:
+      '@babel/runtime': 7.29.7
+      '@emotion/react': 11.14.0(@types/react@18.3.14)(react@18.3.1)
+      next: 16.1.1(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0)
+      react: 18.3.1
+    optionalDependencies:
+      '@emotion/cache': 11.14.0
       '@types/react': 18.3.14
 
   '@mui/material@7.3.6(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react@18.3.1))(@types/react@18.3.14)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -9173,6 +9244,29 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
+  '@reactour/mask@1.2.0(react@18.3.1)':
+    dependencies:
+      '@reactour/utils': 0.6.0(react@18.3.1)
+      react: 18.3.1
+
+  '@reactour/popover@1.3.0(react@18.3.1)':
+    dependencies:
+      '@reactour/utils': 0.6.0(react@18.3.1)
+      react: 18.3.1
+
+  '@reactour/tour@3.8.0(react@18.3.1)':
+    dependencies:
+      '@reactour/mask': 1.2.0(react@18.3.1)
+      '@reactour/popover': 1.3.0(react@18.3.1)
+      '@reactour/utils': 0.6.0(react@18.3.1)
+      react: 18.3.1
+
+  '@reactour/utils@0.6.0(react@18.3.1)':
+    dependencies:
+      '@rooks/use-mutation-observer': 4.11.2(react@18.3.1)
+      react: 18.3.1
+      resize-observer-polyfill: 1.5.1
+
   '@redocly/ajv@8.11.2':
     dependencies:
       fast-deep-equal: 3.1.3
@@ -9208,6 +9302,10 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
       react-redux: 9.1.2(@types/react@18.3.14)(react@18.3.1)(redux@5.0.1)
+
+  '@rooks/use-mutation-observer@4.11.2(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
 
   '@sinclair/typebox@0.34.41': {}
 
@@ -10918,7 +11016,7 @@ snapshots:
 
   esbuild-register@3.6.0(esbuild@0.25.9):
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       esbuild: 0.25.9
     transitivePeerDependencies:
       - supports-color
@@ -13101,6 +13199,8 @@ snapshots:
       - supports-color
 
   reselect@5.1.0: {}
+
+  resize-observer-polyfill@1.5.1: {}
 
   resolve-cwd@3.0.0:
     dependencies:

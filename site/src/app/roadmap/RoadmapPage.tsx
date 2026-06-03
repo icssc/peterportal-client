@@ -17,6 +17,8 @@ import MobilePopup from './MobilePopup';
 import { Fade, useTheme } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { usePreviewDepth } from '../../hooks/usePreviewDepth';
+import AppTourProvider from './tutorial/AppTourProvider';
+import { TutorialInitializer } from './tutorial/TutorialInitializer';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -85,29 +87,32 @@ const RoadmapPage: FC = () => {
   );
 
   return (
-    <div className="roadmap-page">
-      {!isMobile && <DesktopRoadmapSidebar />}
+    <AppTourProvider>
+      <TutorialInitializer />
+      <div className="roadmap-page" id="roadmap-page">
+        {!isMobile && <DesktopRoadmapSidebar />}
 
-      {/* Mobile Popup Menus */}
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
-      <AddCoursePopup />
-      <MobileCourseCatalog />
-      <MobileCreditsMenu />
+        {/* Mobile Popup Menus */}
+        <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
+        <AddCoursePopup />
+        <MobileCourseCatalog />
+        <MobileCreditsMenu />
 
-      {/* Main Planner View or Fullscreen Mobile Search */}
-      <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} id="mobileScrollContainer">
-        {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
-        {isMobile ? (
-          <MobilePopup show={showPreview} onClose={handleClosePreview}>
-            {resultPreview}
-          </MobilePopup>
-        ) : (
-          <Fade in={showPreview} timeout={{ enter: 0, exit: transitionTime }}>
-            {resultPreview}
-          </Fade>
-        )}
+        {/* Main Planner View or Fullscreen Mobile Search */}
+        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} id="mobileScrollContainer">
+          {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
+          {isMobile ? (
+            <MobilePopup show={showPreview} onClose={handleClosePreview}>
+              {resultPreview}
+            </MobilePopup>
+          ) : (
+            <Fade in={showPreview} timeout={{ enter: 0, exit: transitionTime }}>
+              {resultPreview}
+            </Fade>
+          )}
+        </div>
       </div>
-    </div>
+    </AppTourProvider>
   );
 };
 

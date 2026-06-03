@@ -24,6 +24,11 @@
     height: globals.$roadmap-toolbar-height;
     margin-block: -1px;
   }
+  .credits-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
 
   .sidebar-content {
     height: 100%;

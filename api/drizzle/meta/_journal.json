@@ -253,6 +253,13 @@
       "when": 1779840300579,
       "tag": "0035_fair_norrin_radd",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1779923641808,
+      "tag": "0036_familiar_diamondback",
+      "breakpoints": true
     }
   ]
 }

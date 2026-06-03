@@ -38,12 +38,13 @@ const DesktopRoadmapSidebar = () => {
         variant="fullWidth"
       >
         <Tab
-          icon={<SwapHorizOutlinedIcon />}
-          iconPosition="start"
           label={
-            <Badge variant="dot" color="error" invisible={!hasUnreadTransfers} className="unread-badge">
-              Credits
-            </Badge>
+            <span id="credits-label" className="credits-label">
+              <SwapHorizOutlinedIcon fontSize="medium" />
+              <Badge variant="dot" color="error" invisible={!hasUnreadTransfers} className="unread-badge">
+                Credits
+              </Badge>
+            </span>
           }
         />
         <Tab icon={<FormatListBulletedIcon />} iconPosition="start" label="Catalog" />
