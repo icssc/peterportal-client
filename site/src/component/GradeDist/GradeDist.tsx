@@ -352,7 +352,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
             </Card>
           )}
         </div>
-        <MostUsedTags reviews={reviews} />
+        {reviews.length > 0 && <MostUsedTags reviews={reviews} />}
       </div>
     );
   } else if (gradeDistData == null) {

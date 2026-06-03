@@ -22,7 +22,6 @@ const CommonFeedback: FC<CommonFeedbackProps> = ({ reviews }) => {
 
   const visibleStats = showAll ? tagStats : tagStats.slice(0, 3);
 
-  //@todo: loading skeleton
   return (
     <div className="most-used-tags">
       <div className="most-used-tags-header">
