@@ -6,6 +6,7 @@ import React, { ReactNode } from 'react';
 import { basePopoverStyle } from './AppTourProvider';
 
 const ROADMAP_TOUR_HAS_RUN_KEY = 'roadmap__tutorial_has_run';
+const TUTORIAL_OUTLINE = 'tutorial-highlight-outline';
 
 enum TourStepName {
   welcome = 'welcome',
@@ -28,6 +29,13 @@ function setLocalStorageTourHasRun(value: 'true' | 'false') {
 
 function markTourHasRun() {
   setLocalStorageTourHasRun('true');
+}
+
+function addTutorialOutline(selector: string) {
+  document.querySelector(selector)?.classList.add(TUTORIAL_OUTLINE);
+}
+function removeTutorialOutline(selector: string) {
+  document.querySelector(selector)?.classList.remove(TUTORIAL_OUTLINE);
 }
 
 type TutorialButtonAction = 'none' | 'close' | 'next' | 'back';
@@ -292,6 +300,8 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
     firstYearTransfer: {
       selector: '#credits-label',
       position: 'right',
+      action: () => addTutorialOutline('#credits-label'),
+      actionAfter: () => removeTutorialOutline('#credits-label'),
       styles: {
         popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
       },

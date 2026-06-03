@@ -2,6 +2,7 @@
 
 import { FC, PropsWithChildren } from 'react';
 import { TourProvider } from '@reactour/tour';
+import './tutorial.scss';
 
 export const basePopoverStyle: React.CSSProperties = {
   backgroundColor: 'var(--mui-palette-overlay-overlay3)',
