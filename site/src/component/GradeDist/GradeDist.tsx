@@ -253,19 +253,17 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     );
 
     const averageGPACard = (
-      <Card variant="outlined" className="avg-gpa-card">
+      <Card variant="outlined" className="stat-card">
         <CardContent>
-          <Typography className="avg-gpa">Average GPA</Typography>
-          <div className="grade-row">
-            <Typography className="gpa" fontSize={32}>
-              {aggregateGradeData.averageGPA}
-            </Typography>
-            <Typography className="letter-grade" fontSize={20}>
+          <Typography className="stat-label">Average GPA</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{aggregateGradeData.averageGPA}</Typography>
+            <Typography className="stat-unit" fontSize={20}>
               {aggregateGradeData.averageGrade}
             </Typography>
           </div>
           {selectedQuarter !== 'ALL' && (
-            <span className="gpa-change-row">
+            <span className="stat-change-row">
               <Typography color={gpaColor}>
                 {gpaDiff > 0 ? (
                   <ArrowUpward fontSize="inherit" />
@@ -293,19 +291,17 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const { diff: qualityDiff, color: qualityColor } = getDiffAndColor(currentAvgQuality, lastAvgQuality);
 
     const averageQualityCard = (
-      <Card variant="outlined" className="avg-gpa-card">
+      <Card variant="outlined" className="stat-card">
         <CardContent>
-          <Typography className="avg-gpa">Average Quality</Typography>
-          <div className="grade-row">
-            <Typography className="gpa" fontSize={32}>
-              {currentAvgQuality ?? '—'}
-            </Typography>
-            <Typography className="letter-grade" fontSize={20}>
+          <Typography className="stat-label">Average Quality</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{currentAvgQuality ?? '—'}</Typography>
+            <Typography className="stat-unit" fontSize={20}>
               / 5
             </Typography>
           </div>
           {selectedQuarter !== 'ALL' && lastAvgQuality && (
-            <span className="gpa-change-row">
+            <span className="stat-change-row">
               <Typography color={qualityColor}>
                 {qualityDiff > 0 ? (
                   <ArrowUpward fontSize="inherit" />
@@ -324,14 +320,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const currentAvgDifficulty = getAvgDifficulty(filteredReviews);
 
     const avgDifficultyCard = (
-      <Card variant="outlined" className="avg-gpa-card">
+      <Card variant="outlined" className="stat-card">
         <CardContent>
-          <Typography className="avg-gpa">Average Difficulty</Typography>
-          <div className="grade-row">
-            <Typography className="gpa" fontSize={32}>
-              {currentAvgDifficulty ?? '—'}
-            </Typography>
-            <Typography className="letter-grade" fontSize={20}>
+          <Typography className="stat-label">Average Difficulty</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{currentAvgDifficulty ?? '—'}</Typography>
+            <Typography className="stat-unit" fontSize={20}>
               / 5
             </Typography>
           </div>
@@ -365,11 +359,11 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     // null if still fetching, display loading skeletons
 
     const skeletonStatCard = (
-      <Card variant="outlined" className="avg-gpa-card">
+      <Card variant="outlined" className="stat-card">
         <CardContent>
           <Skeleton width={90} height={20} />
 
-          <div className="grade-row">
+          <div className="stat-value-row">
             <Skeleton width={70} height={50} />
             <Skeleton width={40} height={30} />
           </div>

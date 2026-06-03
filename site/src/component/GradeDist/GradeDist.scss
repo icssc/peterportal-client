@@ -69,32 +69,26 @@
   }
 }
 
-.avg-gpa-card {
+.stat-card {
   width: 100%;
 
-  .avg-gpa {
+  .stat-label {
     color: var(--mui-palette-text-secondary);
   }
 
-  .grade-row {
+  .stat-value-row {
     display: flex;
     gap: 8px;
     align-items: center;
 
-    .letter-grade {
+    .stat-unit {
       color: var(--mui-palette-text-secondary);
     }
   }
 
-  .gpa-change-row {
+  .stat-change-row {
     display: flex;
     gap: 4px;
-  }
-}
-
-@media only screen and (max-width: 400px) {
-  .pie-text {
-    font-size: 1em;
   }
 }
 
@@ -103,22 +97,5 @@
     width: 100%;
     min-width: unset;
     flex: unset;
-  }
-}
-
-@media only screen and (max-width: 1319px) {
-  .pie-text {
-    font-size: 1.1em;
-  }
-}
-
-@media only screen and (min-device-width: 1320px) and (max-device-width: 1440px) {
-  .pie-text {
-    font-size: 1.2em;
-  }
-}
-@media only screen and (min-device-width: 1441px) and (max-device-width: 1600px) {
-  .pie-text {
-    font-size: 1.3em;
   }
 }
