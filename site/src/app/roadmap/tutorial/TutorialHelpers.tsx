@@ -12,11 +12,6 @@ enum TourStepName {
   year = 'year',
   firstYearTransfer = 'firstYearTransfer',
   nonFirstYearImport = 'nonFirstYearImport',
-  majorSelections = 'majorSelections',
-  dropDowns = 'dropDowns',
-  courseDrag = 'courseDrag',
-  courseTitle = 'courseTitle',
-  courseDetails = 'courseDetails',
 }
 
 type TutorialBranch = 'firstYear' | 'nonFirstYear' | null;
@@ -295,7 +290,7 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
       content: <YearBranchStepContent />,
     },
     firstYearTransfer: {
-      selector: '#credits-tab',
+      selector: '#credits-label',
       position: 'right',
       styles: {
         popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
