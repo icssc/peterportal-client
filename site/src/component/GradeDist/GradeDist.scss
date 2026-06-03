@@ -61,56 +61,11 @@
     box-sizing: border-box;
   }
 
-  .grade_distribution_chart-container {
+  .grade-dist-chart-container {
     width: 100%;
     flex: 1;
     min-height: 300px;
     display: flex;
-  }
-}
-
-#grade-dist-label {
-  margin: '0';
-  width: 100%;
-}
-
-#menu {
-  display: flex;
-  margin: 0;
-}
-
-#chart {
-  display: flex;
-  justify-content: space-evenly;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-.chart {
-  width: 50%;
-}
-
-.pie {
-  width: 50%;
-}
-
-.pie-text {
-  font-size: 1.5em;
-}
-
-.grade-dist-mini {
-  width: 100%;
-
-  #menu {
-    padding-top: 2vh;
-  }
-
-  .chart {
-    width: 80%;
-  }
-
-  .pie {
-    width: 80%;
   }
 }
 
@@ -137,27 +92,17 @@
   }
 }
 
-@media only screen and (max-width: 600px) {
-  #chart {
-    flex-direction: column;
-  }
-
-  .chart {
-    width: 100%;
-  }
-
-  .pie {
-    width: 100%;
-  }
-
-  .pie-text {
-    font-size: 1.25em;
-  }
-}
-
 @media only screen and (max-width: 400px) {
   .pie-text {
     font-size: 1em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .grade-dist-chart-card {
+    width: 100%;
+    min-width: unset;
+    flex: unset;
   }
 }
 
@@ -175,13 +120,5 @@
 @media only screen and (min-device-width: 1441px) and (max-device-width: 1600px) {
   .pie-text {
     font-size: 1.3em;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .grade-dist-chart-card {
-    width: 100%;
-    min-width: unset;
-    flex: unset;
   }
 }

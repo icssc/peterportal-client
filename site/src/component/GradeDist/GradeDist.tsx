@@ -351,7 +351,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
           {((props.minify && chartType == 'bar') || !props.minify) && (
             <Card variant="outlined" className="grade-dist-chart-card">
               <CardContent>
-                <div className="grade_distribution_chart-container">
+                <div className="grade-dist-chart-container">
                   <Chart {...graphProps} />
                 </div>
               </CardContent>
