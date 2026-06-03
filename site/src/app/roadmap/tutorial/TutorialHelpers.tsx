@@ -12,6 +12,11 @@ enum TourStepName {
   year = 'year',
   firstYearTransfer = 'firstYearTransfer',
   nonFirstYearImport = 'nonFirstYearImport',
+  majorSelections = 'majorSelections',
+  dropDowns = 'dropDowns',
+  courseDrag = 'courseDrag',
+  courseTitle = 'courseTitle',
+  courseDetails = 'courseDetails',
 }
 
 type TutorialBranch = 'firstYear' | 'nonFirstYear' | null;
