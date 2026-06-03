@@ -18,7 +18,11 @@ import { Fade, useTheme } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { usePreviewDepth } from '../../hooks/usePreviewDepth';
 import MobileNavbar from './MobileNavbar';
-import { setSelectedMobileTab, setShowMobileFullscreenSearch, showMobileCatalog } from '../../store/slices/roadmapSlice';
+import {
+  setSelectedMobileTab,
+  setShowMobileFullscreenSearch,
+  showMobileCatalog,
+} from '../../store/slices/roadmapSlice';
 import { setShowMobileCreditsMenu } from '../../store/slices/transferCreditsSlice';
 
 const RoadmapPage: FC = () => {
@@ -34,10 +38,13 @@ const RoadmapPage: FC = () => {
   const transitionTime = theme.transitions.duration.shortest;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
+  // const pathname = usePathname();
+  const pathname = usePathname() ?? '/';
 
-  const courseParam = searchParams.get('course');
-  const instructorParam = searchParams.get('instructor');
+  // const courseParam = searchParams.get('course');
+  // const instructorParam = searchParams.get('instructor');
+  const courseParam = searchParams?.get('course');
+  const instructorParam = searchParams?.get('instructor');
   const selectedMobileIndex = useAppSelector((state) => state.roadmap.selectedMobileTab);
 
   const currentPreview = useMemo(() => {
@@ -121,16 +128,16 @@ const RoadmapPage: FC = () => {
         <>
           <DesktopRoadmapSidebar />
 
-        <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
+          <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
 
-        {/* Main Planner View or Fullscreen Mobile Search */}
-        <div className="main-wrapper" id="mobileScrollContainer">
-          <Planner />
+          {/* Main Planner View or Fullscreen Mobile Search */}
+          <div className="main-wrapper" id="mobileScrollContainer">
+            <Planner />
             <Fade in={showPreview} timeout={{ enter: 0, exit: transitionTime }}>
               {resultPreview}
             </Fade>
-        </div>
-      </>
+          </div>
+        </>
       ) : (
         <div>
           <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
@@ -147,10 +154,9 @@ const RoadmapPage: FC = () => {
           <div className={`main-wrapper mobile`} id="mobileScrollContainer">
             {selectedMobileIndex === 0 && <Planner />}
           </div>
-
         </div>
       )}
-      {isMobile && <MobileNavbar selectedMobileIndex={selectedMobileIndex} onTabChange={handleMobileTabChange}/>}
+      {isMobile && <MobileNavbar selectedMobileIndex={selectedMobileIndex} onTabChange={handleMobileTabChange} />}
     </div>
   );
 };
