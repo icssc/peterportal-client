@@ -7,4 +7,10 @@
   width: 100%;
   background-color: var(--mui-palette-background-paper);
   border-top: 1px solid var(--mui-palette-divider);
+
+  .MuiSvgIcon-root {
+    width: 21px;
+    height: 21px;
+    font-size: 21px;
+  }
 }

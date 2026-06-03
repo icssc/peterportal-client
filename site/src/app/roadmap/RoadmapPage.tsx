@@ -9,7 +9,7 @@ import { useIsMobile } from '../../helpers/util';
 import CoursePreview from '../../component/ResultPreview/CoursePreview';
 import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
 import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
-import { setShowToast } from '../../store/slices/roadmapSlice';
+import { hideMobileCatalog, setShowToast } from '../../store/slices/roadmapSlice';
 import Toast from '../../helpers/toast';
 import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
@@ -18,6 +18,8 @@ import { Fade, useTheme } from '@mui/material';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { usePreviewDepth } from '../../hooks/usePreviewDepth';
 import MobileNavbar from './MobileNavbar';
+import { setSelectedMobileTab, setShowMobileFullscreenSearch, showMobileCatalog } from '../../store/slices/roadmapSlice';
+import { setShowMobileCreditsMenu } from '../../store/slices/transferCreditsSlice';
 
 const RoadmapPage: FC = () => {
   const isMobile = useIsMobile();
@@ -87,20 +89,42 @@ const RoadmapPage: FC = () => {
     </div>
   );
 
+  const handleMobileTabChange = (newValue: number) => {
+    dispatch(setSelectedMobileTab(newValue));
+
+    switch (newValue) {
+      case 1:
+        dispatch(setShowMobileCreditsMenu(true));
+        dispatch(hideMobileCatalog());
+        dispatch(setShowMobileFullscreenSearch(false));
+        break;
+      case 2:
+        dispatch(setShowMobileCreditsMenu(false));
+        dispatch(showMobileCatalog({ year: 0, quarter: 0 }));
+        dispatch(setShowMobileFullscreenSearch(false));
+        break;
+      case 3:
+        dispatch(setShowMobileCreditsMenu(false));
+        dispatch(hideMobileCatalog());
+        dispatch(setShowMobileFullscreenSearch(true));
+        break;
+      default:
+        dispatch(setShowMobileCreditsMenu(false));
+        dispatch(hideMobileCatalog());
+        dispatch(setShowMobileFullscreenSearch(false));
+    }
+  };
+
   return (
     <div className="roadmap-page">
-      {isMobile ? (
+      {!isMobile ? (
         <>
-          {!isMobile && <DesktopRoadmapSidebar />}
+          <DesktopRoadmapSidebar />
 
-        {/* Mobile Popup Menus */}
         <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
-        <AddCoursePopup />
-        <MobileCourseCatalog />
-        <MobileCreditsMenu />
 
         {/* Main Planner View or Fullscreen Mobile Search */}
-        <div className={`main-wrapper ${isMobile ? 'mobile' : ''}`} id="mobileScrollContainer">
+        <div className="main-wrapper" id="mobileScrollContainer">
           {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
           {isMobile ? (
             <>
@@ -116,21 +140,18 @@ const RoadmapPage: FC = () => {
         </div>
       </>
       ) : (
-        <div className="roadmap-page">
+        <div>
           <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
           <AddCoursePopup />
           <MobileCourseCatalog />
           <MobileCreditsMenu />
           <div className={`main-wrapper mobile`} id="mobileScrollContainer">
             {selectedMobileIndex === 0 && <Planner />}
-            {selectedMobileIndex === 1 && <MobileCreditsMenu />}
-            {selectedMobileIndex === 2 && <MobileCourseCatalog />}
-            {selectedMobileIndex === 3 && <AddCoursePopup />}
           </div>
 
         </div>
       )}
-      {isMobile && <MobileNavbar selectedMobileIndex={selectedMobileIndex}/>}
+      {isMobile && <MobileNavbar selectedMobileIndex={selectedMobileIndex} onTabChange={handleMobileTabChange}/>}
     </div>
   );
 };
