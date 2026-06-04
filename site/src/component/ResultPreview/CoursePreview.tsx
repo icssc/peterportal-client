@@ -5,7 +5,7 @@ import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { checkModalOpen, sortTerms } from '../../helpers/util';
+import { checkModalOpen, sortTerms, useIsMobile } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
@@ -30,8 +30,10 @@ interface PreviewTitleProps {
 }
 const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }) => {
   const wrapContent = (content: ReactNode) => <p className="preview-title">{content}</p>;
-  const shortenText = useMediaQuery('(max-width: 480px)');
-  const hidePreviewingText = useMediaQuery('(min-width: 800px) and (max-width: 860px)');
+  const isMobile = useIsMobile();
+  const shortenTextMobile = useMediaQuery('(max-width: 480px)');
+  const shortenTextDesktop = useMediaQuery('(max-width: 860px)');
+  const shortenText = isMobile ? shortenTextMobile : shortenTextDesktop;
 
   if (isLoading) {
     const loadingText = shortenText ? 'Loading...' : `Loading ${courseId}...`;
@@ -47,12 +49,7 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
     return wrapContent(formattedCourseId);
   }
 
-  return wrapContent(
-    <>
-      {!hidePreviewingText && <span>Previewing </span>}
-      {formattedCourseId}
-    </>,
-  );
+  return wrapContent(<>Previewing {formattedCourseId}</>);
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
