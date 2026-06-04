@@ -53,11 +53,10 @@ const RoadmapPage: FC = () => {
   const previewDepth = usePreviewDepth();
   const handleCloseToast = () => dispatch(setShowToast(false));
 
-  // handle toast click based on action specified
   const handleToastClick = () => {
     if (toastAction === 'library') {
-      dispatch(setSelectedSidebarTab(1)); // go to CourseCatalog tab
-      dispatch(setSelectedTab('Library')); // go to library within CourseCatalog
+      dispatch(setSelectedSidebarTab(1));
+      dispatch(setSelectedTab('Library'));
     }
   };
 
