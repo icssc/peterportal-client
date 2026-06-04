@@ -8,6 +8,7 @@ import ChangelogModal from '../component/ChangelogModal/ChangelogModal';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
@@ -49,15 +50,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <body> tag opens to avoid an unstyled body tag causing a white flash in dark mode */}
       </head>
       <body>
-        <AppProvider user={user}>
-          <div id="root">
-            <AppHeader />
-            <div className="app-body">
-              <div className="app-content">{children}</div>
-              <ChangelogModal />
+        <AppRouterCacheProvider>
+          <AppProvider user={user}>
+            <div id="root">
+              <AppHeader />
+              <div className="app-body">
+                <div className="app-content">{children}</div>
+                <ChangelogModal />
+              </div>
             </div>
-          </div>
-        </AppProvider>
+          </AppProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
