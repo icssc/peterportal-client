@@ -205,15 +205,50 @@ const ReviewForm: FC<ReviewFormProps> = ({
     setAvailableTermsForProfessor(termsToUse);
   }, [instructor, course, courseProp, professorProp, professorTermsMap, professorCourseTermsMap, terms, reviewToEdit]);
 
-  // clear quarter when year changes
+  // if the instructor or course is invalid for the selected year + quarter, clear the selection and show only valid options
   useEffect(() => {
-    if (yearTaken && availableTermsForProfessor.length > 0) {
+    if (!yearTaken) return;
+
+    // determine valid quarter
+    let newQuarter = quarterTaken;
+    if (availableTermsForProfessor.length > 0) {
       const validQuarters = getQuarters(availableTermsForProfessor, yearTaken);
       if (!validQuarters.includes(quarterTaken)) {
+        newQuarter = '';
         setQuarterTaken('');
       }
     }
-  }, [yearTaken, availableTermsForProfessor, quarterTaken]);
+
+    // course context: if quarter + year selected but instructor doesn't teach in that term, clear instructor selection
+    if (courseProp && instructor) {
+      const taughtInYearQuarter = (professorTermsMap[instructor] ?? []).some(
+        (term) => term.startsWith(yearTaken) && (newQuarter === '' || term.includes(newQuarter)),
+      );
+      if (!taughtInYearQuarter) {
+        setInstructor('');
+      }
+    }
+
+    // professor context: if quarter + year selected but course doesn't have that term for this professor, clear course selection
+    if (professorProp && course && Object.keys(professorCourseTermsMap).length > 0) {
+      const taughtInYearQuarter = (professorCourseTermsMap[course] ?? []).some(
+        (term) => term.startsWith(yearTaken) && (newQuarter === '' || term.includes(newQuarter)),
+      );
+      if (!taughtInYearQuarter) {
+        setCourse('');
+      }
+    }
+  }, [
+    yearTaken,
+    availableTermsForProfessor,
+    instructor,
+    professorTermsMap,
+    courseProp,
+    course,
+    professorCourseTermsMap,
+    professorProp,
+    quarterTaken,
+  ]);
 
   // clear instructor/course when year changes
   useEffect(() => {
