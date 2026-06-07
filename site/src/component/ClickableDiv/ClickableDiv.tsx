@@ -18,6 +18,7 @@ const ClickableDiv = ({ children, className, onClick }: ClickableDivProps) => {
           onClick();
         }
       }}
+      style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       {children}
     </div>

@@ -10,6 +10,10 @@
   overscroll-behavior: contain;
   container-type: inline-size;
 
+  @media (max-width: 360px) {
+    padding-top: 100px;
+  }
+
   .result-page-section {
     margin-inline: auto;
   }
@@ -25,21 +29,36 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: globals.$roadmap-toolbar-height;
+    min-height: globals.$roadmap-toolbar-height;
     border-width: 0 0 2px 0;
     border-radius: 0;
     display: flex;
     align-items: center;
-    padding: 12px 16px 12px 12px;
+    padding: 6px 16px 6px 12px;
     gap: 4px;
 
     button {
-      margin-block: -4px;
+      padding-block: 4px;
+    }
+
+    .preview-buttons {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      @media (max-width: 360px) {
+        gap: 5px;
+      }
     }
   }
 
   .preview-title {
     margin-block: 0;
+
+    @media (max-width: 360px) {
+      min-width: 40%;
+    }
   }
 
   .preview-nav-bar {

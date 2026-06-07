@@ -1,11 +1,11 @@
 import './ResultPreview.scss';
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, ReactNode, useEffect, useCallback, useState } from 'react';
 import { ResultPageSection } from '../ResultPageContent/ResultPageContent';
 import GradeDist from '../GradeDist/GradeDist';
 import Schedule from '../Schedule/Schedule';
 import Review from '../Review/Review';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
-import { checkModalOpen, sortTerms } from '../../helpers/util';
+import { checkModalOpen, sortTerms, useIsMobile } from '../../helpers/util';
 import CourseSummary from './CourseSummary';
 import { LOADING_COURSE_PLACEHOLDER } from '../../helpers/courseRequirements';
 import { CourseGQLData } from '../../types/types';
@@ -16,7 +16,9 @@ import { useCourseData } from '../../hooks/catalog';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
 import Twemoji from 'react-twemoji';
 import PreviewNavBar from './PreviewNavBar';
+import trpc from '../../trpc';
 
+import MaterialsIcon from '../../helpers/courseMaterials';
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
@@ -28,7 +30,10 @@ interface PreviewTitleProps {
 }
 const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }) => {
   const wrapContent = (content: ReactNode) => <p className="preview-title">{content}</p>;
-  const shortenText = useMediaQuery('(max-width: 480px)');
+  const isMobile = useIsMobile();
+  const shortenTextMobile = useMediaQuery('(max-width: 480px)');
+  const shortenTextDesktop = useMediaQuery('(max-width: 860px)');
+  const shortenText = isMobile ? shortenTextMobile : shortenTextDesktop;
 
   if (isLoading) {
     const loadingText = shortenText ? 'Loading...' : `Loading ${courseId}...`;
@@ -48,13 +53,36 @@ const PreviewTitle: FC<PreviewTitleProps> = ({ isLoading, courseId, courseData }
 };
 
 const CoursePreviewContent: FC<{ data: CourseGQLData }> = ({ data }) => {
+  const [hasMaterials, setHasMaterials] = useState<boolean>(false);
+
+  const fetchMaterialsDataFromAPI = useCallback(async () => {
+    const apiResponseMaterials = await trpc.courseMaterials.get.query({
+      department: data.department,
+      number: data.courseNumber,
+    });
+    setHasMaterials(apiResponseMaterials.length > 0);
+  }, [data.department, data.courseNumber]);
+
+  useEffect(() => {
+    if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
+      return;
+    }
+    setHasMaterials(false);
+    fetchMaterialsDataFromAPI();
+  }, [fetchMaterialsDataFromAPI, data.id]);
+
   if (data.id === LOADING_COURSE_PLACEHOLDER.id) {
     return <LoadingSpinner />;
   }
 
+  let materialsComponent = null;
+  if (hasMaterials) {
+    materialsComponent = <MaterialsIcon showLabel={true} />;
+  }
+
   return (
     <div className="preview-body">
-      <ResultPageSection id="preview-details" title={data.title}>
+      <ResultPageSection id="preview-details" title={data.title} indicator={materialsComponent}>
         <CourseSummary course={data} />
       </ResultPageSection>
 
@@ -126,17 +154,19 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
         )}
         <PreviewTitle isLoading={isLoading} courseId={courseId} courseData={courseData} />
         <PreviewNavBar />
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<IosShareIcon />}
-          size="small"
-          disableElevation
-          onClick={copyCourseLink}
-        >
-          Share
-        </Button>
-        <CourseBookmarkButton course={courseData} disabled={isLoading} />
+        <div className="preview-buttons">
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<IosShareIcon />}
+            size="small"
+            disableElevation
+            onClick={copyCourseLink}
+          >
+            Share
+          </Button>
+          <CourseBookmarkButton course={courseData} disabled={isLoading} includeLabel={true} />
+        </div>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
         <CoursePreviewContent data={courseData} />

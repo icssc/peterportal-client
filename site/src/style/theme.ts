@@ -151,7 +151,7 @@ theme = createTheme(theme, {
       variants: [xsmall],
       defaultProps: {
         variant: 'contained',
-        disableElevation: true,
+        disableElevation: false,
       },
     },
     MuiCheckbox: {
