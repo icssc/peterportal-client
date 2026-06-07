@@ -25,12 +25,15 @@
     color: var(--mui-palette-secondary-main);
     pointer-events: none;
 
+    border: 1px solid var(--border-secondary);
+
     .course-info {
       display: contents;
     }
 
-    .course-synopsis {
+    .course-info-clamp {
       margin-bottom: 0;
+      margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
       max-width: 100%;
@@ -38,7 +41,7 @@
       display: block;
     }
 
-    .course-synopsis .title {
+    .course-info-clamp .title {
       font-weight: inherit;
 
       &::after {
@@ -52,7 +55,7 @@
     }
 
     .course-tags,
-    .course-synopsis .description {
+    .course-info-clamp .description {
       display: none;
     }
   }
@@ -125,6 +128,10 @@ div.quarter {
         content: 'Drag courses here to add them to your roadmap';
         max-width: 200px;
       }
+    }
+
+    .program-course-tile {
+      border-radius: 0;
     }
 
     .course {
