@@ -134,13 +134,15 @@ div.quarter {
       border-radius: 0;
     }
 
-    .course {
+    .course,
+    .custom-card {
       border-radius: 0;
       @include dragged-quarter-styles();
     }
   }
 
-  .course {
+  .course,
+  .custom-card {
     margin-block: 0;
     margin-inline: -1px;
   }
