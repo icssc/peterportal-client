@@ -17,7 +17,7 @@ import { isCustomCourse } from '../../../helpers/customCourses';
 import trpc from '../../../trpc';
 import { programRequirementsSortable } from '../../../helpers/sortable';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { useIsMobile } from '../../../helpers/util';
+import { pluralize, useIsMobile } from '../../../helpers/util';
 import {
   setActiveCourse,
   setActiveCourseLoading,
@@ -45,6 +45,10 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import MenuTile from '../transfers/MenuTile';
 import { setShowMobileCreditsMenu } from '../../../store/slices/transferCreditsSlice';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+
+const DEPARTMENT_GROUPING_COURSE_THRESHOLD = 30;
+const COURSE_ID_DEPARTMENT_OVERRIDES = ['IN4MATX'];
+const DEPARTMENT_MERGE_SUFFIXES = ['H', 'M'];
 
 interface SourceOverlayProps {
   completedBy: TransferredCourseWithType['transferType'] | 'roadmap' | null;
@@ -164,6 +168,91 @@ const CourseList: FC<CourseListProps> = ({ courses, takenCourseIDs }) => {
         />
       ))}
     </ReactSortable>
+  );
+};
+
+function getCourseDepartment(courseID: string) {
+  return (
+    COURSE_ID_DEPARTMENT_OVERRIDES.find((override) => courseID.startsWith(override)) ??
+    courseID.match(/^\D+/)![0].trim()
+  );
+}
+
+function normalizeDepartment(department: string, departments: Set<string>) {
+  const suffix = DEPARTMENT_MERGE_SUFFIXES.find((suffix) => department.endsWith(suffix));
+  const baseDepartment = suffix ? department.slice(0, -suffix.length) : department;
+  return departments.has(baseDepartment) ? baseDepartment : department;
+}
+
+function getDepartmentCourseGroups(courses: string[]) {
+  const groups = new Map<string, string[]>();
+  const departments = new Set(courses.map(getCourseDepartment));
+
+  courses.forEach((courseID) => {
+    const department = normalizeDepartment(getCourseDepartment(courseID), departments);
+    const group = groups.get(department);
+    group ? group.push(courseID) : groups.set(department, [courseID]);
+  });
+
+  return Array.from(groups.entries());
+}
+
+interface DepartmentCourseGroupProps {
+  department: string;
+  courses: string[];
+  takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
+}
+const DepartmentCourseGroup: FC<DepartmentCourseGroupProps> = ({ department, courses, takenCourseIDs, storeKey }) => {
+  const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKey] ?? false);
+  const dispatch = useAppDispatch();
+
+  const setOpen = (isOpen: boolean) => {
+    dispatch(setGroupExpanded({ storeKey, expanded: isOpen }));
+  };
+
+  return (
+    <div className="department-course-group">
+      <ClickableDiv className={`department-course-group-header ${open ? 'open' : ''}`} onClick={() => setOpen(!open)}>
+        <b>{department}</b>
+        <div className="department-course-group-summary">
+          <span>
+            {courses.length} {pluralize(courses.length, 'courses', 'course')}
+          </span>
+          <ExpandMore className="expand-requirements" expanded={open} onClick={() => setOpen(!open)} />
+        </div>
+      </ClickableDiv>
+      <Collapse in={open} unmountOnExit>
+        <div className="department-course-group-courses">
+          <CourseList courses={courses} takenCourseIDs={takenCourseIDs} />
+        </div>
+      </Collapse>
+    </div>
+  );
+};
+
+interface RequirementCourseListProps {
+  courses: string[];
+  takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
+}
+const RequirementCourseList: FC<RequirementCourseListProps> = ({ courses, takenCourseIDs, storeKey }) => {
+  if (courses.length <= DEPARTMENT_GROUPING_COURSE_THRESHOLD) {
+    return <CourseList courses={courses} takenCourseIDs={takenCourseIDs} />;
+  }
+
+  return (
+    <div className="department-course-groups">
+      {getDepartmentCourseGroups(courses).map(([department, departmentCourses]) => (
+        <DepartmentCourseGroup
+          key={department}
+          department={department}
+          courses={departmentCourses}
+          takenCourseIDs={takenCourseIDs}
+          storeKey={`${storeKey}-${department}`}
+        />
+      ))}
+    </div>
   );
 };
 
@@ -351,6 +440,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
     label = data.unitCount + ' units';
   }
   const showLabel = data.courses.length > 1 && data.label !== COMPLETE_ALL_TEXT;
+  const groupByDepartment = data.courses.length > DEPARTMENT_GROUPING_COURSE_THRESHOLD;
 
   const className = `group-requirement${complete || overridden ? ' completed' : ''}`;
 
@@ -371,13 +461,16 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
           {showLabel && (
             <p className="requirement-label">
               <b>
-                Complete {label} of the following
+                Complete {label}
+                {groupByDepartment && 'courseCount' in data
+                  ? ` ${pluralize(data.courseCount, 'courses', 'course')}`
+                  : ' of the following'}
                 <CompletionHint data={data} takenCourseIDs={takenCourseIDs} />
               </b>
             </p>
           )}
           {geTransfers.length > 0 && geTransfers.map((ge, i) => <TransferCreditsTile key={i} transferredGE={ge} />)}
-          <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+          <RequirementCourseList courses={data.courses} takenCourseIDs={takenCourseIDs} storeKey={`${storeKey}-dept`} />
         </Collapse>
       </div>
     </GETransferBadge>
@@ -414,8 +507,9 @@ const CompletionHint: FC<CompletionHintProps> = ({ data, takenCourseIDs }) => {
 interface GroupedCourseRequirementProps {
   data: ProgramRequirement<'Course' | 'Unit'>;
   takenCourseIDs: CompletedCourseSet;
+  storeKey: string;
 }
-const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs }) => {
+const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, takenCourseIDs, storeKey }) => {
   const complete = useCompletionCheck(takenCourseIDs, data).done;
   const className = `course-requirement${complete ? ' completed' : ''}`;
 
@@ -428,7 +522,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
             <CompletionHint data={data} takenCourseIDs={takenCourseIDs} />
           </b>
         </p>
-        <CourseList courses={data.courses} takenCourseIDs={takenCourseIDs} />
+        <RequirementCourseList courses={data.courses} takenCourseIDs={takenCourseIDs} storeKey={`${storeKey}-dept`} />
       </div>
     </>
   );
@@ -546,7 +640,7 @@ const ProgramRequirementDisplay: FC<ProgramRequirementDisplayProps> = ({
     case 'Unit':
     case 'Course': {
       return nested ? (
-        <GroupedCourseRequirement data={requirement} takenCourseIDs={takenCourseIDs} />
+        <GroupedCourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
       ) : (
         <CourseRequirement data={requirement} storeKey={storeKey} takenCourseIDs={takenCourseIDs} />
       );
