@@ -26,3 +26,13 @@ h3.results-list-title {
     font-style: italic;
   }
 }
+
+.custom-course-empty-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  button {
+    padding: 8px 14px;
+  }
+}

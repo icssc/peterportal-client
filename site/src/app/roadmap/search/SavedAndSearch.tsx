@@ -8,7 +8,7 @@ import { useGetCoursesInSameQuarter } from '../../../hooks/sameQuarterCourses';
 import { deepCopy, useIsMobile } from '../../../helpers/util';
 import { getFiltersHint } from '../../../helpers/search';
 import { ReactSortable, SortableEvent } from 'react-sortablejs';
-import { setActiveCourse } from '../../../store/slices/roadmapSlice';
+import { setActiveCourse, setSelectedSidebarTab } from '../../../store/slices/roadmapSlice';
 import { getMissingPrerequisites } from '../../../helpers/planner';
 import { courseSearchSortable } from '../../../helpers/sortable';
 import Course from '../planner/Course';
@@ -20,6 +20,8 @@ import { setSearchViewIndex } from '../../../store/slices/searchSlice';
 import SearchFilters from '../../../component/SearchFilters/SearchFilters';
 import InfiniteScrollContainer from '../../../component/InfiniteScrollContainer/InfiniteScrollContainer';
 import ScrollToTopButton from '../../../component/ScrollToTopButton/ScrollToTopButton';
+import { setSelectedTab } from '../../../store/slices/courseRequirementsSlice';
+import Button from '@mui/material/Button';
 
 interface SearchResultsProps {
   viewIndex: SearchIndex;
@@ -160,8 +162,15 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocus
   const inProgressSearch = useAppSelector((state) => state.search.inProgressSearchOperation);
   const { savedCourses } = useSavedCourses();
   const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
 
   const searchResults = showSavedCourses ? savedCourses : results;
+  const showCustomCourseLink = hasQuery && !showSavedCourses && viewIndex === 'courses';
+
+  const openLibrary = () => {
+    dispatch(setSelectedTab('Library'));
+    if (!isMobile) dispatch(setSelectedSidebarTab(1));
+  };
 
   const showCustomPrompt = showSavedCourses || !hasQuery;
   const customPrompt = showSavedCourses
@@ -180,7 +189,16 @@ const SavedAndSearch: FC<ShowSavedProps> = ({ showSavedCoursesOnEmpty, autoFocus
       {inProgressSearch === 'newQuery' || inProgressSearch === 'newFilters' ? (
         <LoadingSpinner />
       ) : searchResults.length === 0 ? (
-        <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
+        <>
+          <NoResults showPrompt={showCustomPrompt} prompt={customPrompt} />
+          {showCustomCourseLink && (
+            <div className="custom-course-empty-action">
+              <Button type="button" onClick={openLibrary}>
+                Add a custom course
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <SearchResults viewIndex={viewIndex} searchResults={searchResults} />
       )}
