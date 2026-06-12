@@ -465,7 +465,7 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
                 {groupByDepartment && 'courseCount' in data
                   ? ` ${pluralize(data.courseCount, 'courses', 'course')}`
                   : ' of the following'}
-                {CompletionHint(data, takenCourseIDs)}
+                <CompletionHint data={data} takenCourseIDs={takenCourseIDs} />
               </b>
             </p>
           )}
