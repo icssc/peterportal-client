@@ -27,7 +27,8 @@ const CourseMaterialsRouter = router({
     .input(z.object({ term: z.string(), department: z.string(), number: z.string() }))
     .query(async ({ input }) => {
       const [year, quarter] = input.term.split(' ');
-      const url = `${process.env.PUBLIC_API_URL}courseMaterials?year=${year}&quarter=${quarter}&department=${encodeURIComponent(input.department)}&courseNumber=${input.number}`;
+      const quarterGeneralized = quarter.includes('Summer') ? 'Summer' : quarter;
+      const url = `${process.env.PUBLIC_API_URL}courseMaterials?year=${year}&quarter=${quarterGeneralized}&department=${encodeURIComponent(input.department)}&courseNumber=${input.number}`;
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
         .then((res) => {
