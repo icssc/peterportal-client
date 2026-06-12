@@ -477,12 +477,31 @@ const CourseRequirement: FC<CourseRequirementProps> = ({ data, takenCourseIDs, s
   );
 };
 
-const CompletionHint = (data: ProgramRequirement<'Course' | 'Unit'>, takenCourseIDs: CompletedCourseSet) => {
+interface CompletionHintProps {
+  data: ProgramRequirement<'Course' | 'Unit'>;
+  takenCourseIDs: CompletedCourseSet;
+}
+
+const CompletionHint: FC<CompletionHintProps> = ({ data, takenCourseIDs }) => {
   const showCourseCount = data.courses.length > 0 && 'courseCount' in data;
   const showUnitCount = 'unitCount' in data && data.unitCount > 0;
   const completedCount = useCompletionCheck(takenCourseIDs, data).completed;
-  if (showCourseCount) return ` • (${completedCount}/${data.courseCount})`;
-  if (showUnitCount) return ` • (${completedCount}/${data.unitCount} units)`;
+
+  if (showCourseCount)
+    return (
+      <>
+        {' '}
+        • ({completedCount}/{data.courseCount})
+      </>
+    );
+  if (showUnitCount)
+    return (
+      <>
+        {' '}
+        • ({completedCount}/{data.unitCount} units)
+      </>
+    );
+  return null;
 };
 
 interface GroupedCourseRequirementProps {
@@ -500,7 +519,7 @@ const GroupedCourseRequirement: FC<GroupedCourseRequirementProps> = ({ data, tak
         <p className="requirement-label">
           <b>
             {data.label}
-            {CompletionHint(data, takenCourseIDs)}
+            <CompletionHint data={data} takenCourseIDs={takenCourseIDs} />
           </b>
         </p>
         <RequirementCourseList courses={data.courses} takenCourseIDs={takenCourseIDs} storeKey={`${storeKey}-dept`} />
