@@ -34,6 +34,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { searchAPIResult, sortTerms } from '../../helpers/util';
 import trpc from '../../trpc';
 import { addReview, editReview, setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/reviewSlice';
+import { ProfessorGQLData } from '../../types/types';
 
 interface ReviewFormProps extends ReviewProps {
   open: boolean;
@@ -85,68 +86,94 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // on initial load, fetch instructor/course terms
   useEffect(() => {
-    const termsMap: Record<string, string[]> = {};
-    const courseTermsMap: Record<string, string[]> = {};
     const promises: Promise<void>[] = [];
+
+    const parseTerms = (terms: string | string[]): string[] => {
+      return Array.isArray(terms) ? terms : terms.split(',').map((t: string) => t.trim());
+    };
+
+    const fetchAndBuildTermsMap = async (
+      keysToIterate: string[],
+      getUcinetid: (key: string) => string,
+      getTermsFromData: (data: ProfessorGQLData, key: string) => string | string[] | undefined,
+      onComplete: (resultMap: Record<string, string[]>) => void,
+      errorLabel: string,
+    ) => {
+      const resultMap: Record<string, string[]> = {};
+
+      await Promise.all(
+        keysToIterate.map(async (key) => {
+          try {
+            const ucinetid = getUcinetid(key);
+            const professorData = await searchAPIResult('instructor', ucinetid);
+            const terms = getTermsFromData(professorData!, key);
+
+            if (terms) {
+              resultMap[key] = parseTerms(terms);
+            }
+          } catch (e) {
+            console.error(`Failed to fetch ${errorLabel} for ${key}:`, e);
+          }
+        }),
+      );
+      onComplete(resultMap);
+    };
+
+    const fetchEditingInstructor = async (
+      instructorId: string,
+      courseId: string | undefined,
+      setters: {
+        setInstructor: (id: string) => void;
+        setTerms: (terms: string[]) => void;
+        setInstructorName: (name: string) => void;
+        setMap: (map: Record<string, string[]>) => void;
+      },
+    ) => {
+      const instructor = await searchAPIResult('instructor', instructorId);
+      if (instructor) {
+        setters.setTerms(sortTerms(getProfessorTerms(instructor)));
+        setters.setInstructorName(instructor.name);
+        setters.setInstructor(instructorId);
+        if (courseId && instructor?.courses[courseId]?.terms) {
+          setters.setMap({ [instructorId]: parseTerms(instructor.courses[courseId].terms as string | string[]) });
+        }
+      }
+    };
 
     // course context — fetch all instructors' terms for this course
     if (courseProp) {
       promises.push(
-        Promise.all(
-          Object.keys(courseProp.instructors).map(async (ucinetid) => {
-            try {
-              const professorData = await searchAPIResult('instructor', ucinetid);
-              if (professorData?.courses[courseProp.id]?.terms) {
-                const terms = professorData.courses[courseProp.id].terms as string | string[];
-                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t: string) => t.trim());
-                termsMap[ucinetid] = termsArray;
-              }
-            } catch (e) {
-              console.error(`Failed to fetch instructor ${ucinetid}:`, e);
-            }
-          }),
-        ).then(() => setProfessorTermsMap(termsMap)),
+        fetchAndBuildTermsMap(
+          Object.keys(courseProp.instructors),
+          (ucinetid) => ucinetid,
+          (data) => data?.courses[courseProp.id]?.terms,
+          setProfessorTermsMap,
+          'instructor',
+        ),
       );
     }
 
     // professor context — fetch all courses' terms for this professor
     if (professorProp) {
       promises.push(
-        Promise.all(
-          Object.keys(professorProp.courses).map(async (courseId) => {
-            try {
-              const professorData = await searchAPIResult('instructor', professorProp.ucinetid);
-              if (professorData?.courses[courseId]?.terms) {
-                const terms = professorData.courses[courseId].terms as string | string[];
-                const termsArray = Array.isArray(terms) ? terms : terms.split(',').map((t: string) => t.trim());
-                courseTermsMap[courseId] = termsArray;
-              }
-            } catch (e) {
-              console.error(`Failed to fetch course ${courseId} terms:`, e);
-            }
-          }),
-        ).then(() => setProfessorCourseTermsMap(courseTermsMap)),
+        fetchAndBuildTermsMap(
+          Object.keys(professorProp.courses),
+          () => professorProp.ucinetid,
+          (data, courseId) => data?.courses[courseId]?.terms,
+          setProfessorCourseTermsMap,
+          'course',
+        ),
       );
     }
 
     // editing without context — fetch the review's instructor's terms
     if (reviewToEdit && !courseProp && !professorProp) {
       promises.push(
-        searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
-          if (instructor) {
-            const instrTerms = sortTerms(getProfessorTerms(instructor));
-            setTerms(instrTerms);
-            setInstructorName(instructor.name);
-            // Also populate professorTermsMap for this specific course
-            if (instructor?.courses[reviewToEdit.courseId]?.terms) {
-              const courseTerms = instructor.courses[reviewToEdit.courseId].terms as string | string[];
-              const termsArray = Array.isArray(courseTerms)
-                ? courseTerms
-                : courseTerms.split(',').map((t: string) => t.trim());
-              setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
-              setProfessorTermsMap({ [reviewToEdit.professorId]: termsArray });
-            }
-          }
+        fetchEditingInstructor(reviewToEdit.professorId, reviewToEdit.courseId, {
+          setInstructor,
+          setTerms,
+          setInstructorName,
+          setMap: setProfessorTermsMap,
         }),
       );
     }
@@ -154,15 +181,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
     // editing in course context - pre-select the instructor and fetch their terms
     if (reviewToEdit && courseProp && !professorProp) {
       setInstructor(reviewToEdit.professorId);
-      searchAPIResult('instructor', reviewToEdit.professorId).then((instructor) => {
-        if (instructor) {
-          const instrTerms = sortTerms(getProfessorTerms(instructor));
-          setTerms(instrTerms);
-          setInstructorName(instructor.name);
-          setInstructor(reviewToEdit.professorId);
-        }
-      });
+      promises.push(
+        fetchEditingInstructor(reviewToEdit.professorId, courseProp.id, {
+          setInstructor,
+          setTerms,
+          setInstructorName,
+          setMap: setProfessorTermsMap,
+        }),
+      );
     }
+
+    Promise.all(promises).catch(console.error);
   }, [courseProp, professorProp, reviewToEdit]);
 
   // when instructor, course, or their terms data changes, determine which terms to show in the dropdown
