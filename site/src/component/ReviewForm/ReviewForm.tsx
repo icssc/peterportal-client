@@ -167,32 +167,17 @@ const ReviewForm: FC<ReviewFormProps> = ({
 
   // when instructor, course, or their terms data changes, determine which terms to show in the dropdown
   useEffect(() => {
-    let termsToUse: string[] = [];
+    const uniqueTermsSorted = (chosenMap: Record<string, string[]>): string[] => {
+      const termsFromMap = Object.values(chosenMap).flat();
+      const allTerms = new Set(termsFromMap);
+      return Array.from(allTerms).sort();
+    };
 
-    // course context: instructor is selected
-    if (courseProp && instructor) {
-      const allTerms = new Set<string>();
-      Object.values(professorTermsMap).forEach((terms) => {
-        terms.forEach((term) => allTerms.add(term));
-      });
-      termsToUse = Array.from(allTerms).sort();
-    }
-    // professor context: course is selected
-    else if (professorProp && course) {
-      // get all unique terms across all of professor's courses
-      const allTerms = new Set<string>();
-      Object.values(professorCourseTermsMap).forEach((terms) => {
-        terms.forEach((term) => allTerms.add(term));
-      });
-      termsToUse = Array.from(allTerms).sort();
-    }
-    // course context but NO instructor selected yet — show all terms from all instructors in that course
-    else if (courseProp && !instructor && Object.keys(professorTermsMap).length > 0) {
-      const allTerms = new Set<string>();
-      Object.values(professorTermsMap).forEach((terms) => {
-        terms.forEach((term) => allTerms.add(term));
-      });
-      termsToUse = Array.from(allTerms).sort();
+    let termsToUse: string[] = [];
+    if (courseProp && (instructor || Object.keys(professorTermsMap).length > 0)) {
+      termsToUse = uniqueTermsSorted(professorTermsMap);
+    } else if (professorProp && course) {
+      termsToUse = uniqueTermsSorted(professorCourseTermsMap);
     } else if (reviewToEdit && !courseProp && !professorProp) {
       // personal context: show only terms for this specific instructor + course
       termsToUse = professorTermsMap[reviewToEdit.professorId] ?? [];
