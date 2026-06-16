@@ -239,6 +239,34 @@
       "when": 1779238803896,
       "tag": "0033_freezing_network",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1779659997654,
+      "tag": "0034_tan_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1779840300579,
+      "tag": "0035_fair_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1779923641808,
+      "tag": "0036_familiar_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1781369759524,
+      "tag": "0037_condemned_major_mapleleaf",
+      "breakpoints": true
     }
   ]
 }

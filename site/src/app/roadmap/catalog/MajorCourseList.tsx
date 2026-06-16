@@ -20,6 +20,15 @@ import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
 
+const loadingSpecValue = {
+  value: {
+    id: 'loading_spec',
+    majorId: '',
+    name: '',
+  },
+  label: 'Loading...',
+};
+
 function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
@@ -157,7 +166,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
             className="specialization-select"
             disableClearable
             options={specOptions}
-            value={selectedSpecOption}
+            value={selectedSpecOption ?? loadingSpecValue}
             inputValue={selectedSpecOption?.label ?? ''}
             filterOptions={(options) => options}
             onChange={(_event, option) => handleSpecializationChange(option)}
