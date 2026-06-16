@@ -9,12 +9,13 @@ import {
   MajorSpecializationPair,
   MinorProgram,
   ProgramRequirement,
+  SavedMinorProgram,
 } from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
-import { planner, userMajor, userMinor } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { planner, userMajor, userMajorCatalogYear, userMinor, userMinorCatalogYear } from '../db/schema';
+import { and, eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
 const programTypeNames = ['major', 'minor', 'specialization'] as const;
@@ -34,13 +35,34 @@ const zodMajorSpecPairSchema = z.object({
     z.object({
       majorId: z.string(),
       specializationId: z.string().optional(),
+      catalogYear: z.number().int().nullable().optional(),
     }),
   ),
 });
 
 const zodMinorProgramSchema = z.object({
   minorIds: z.array(z.string()),
+  catalogYears: z
+    .array(
+      z.object({
+        minorId: z.string(),
+        catalogYear: z.number().int().nullable().optional(),
+      }),
+    )
+    .optional(),
 });
+
+function dedupeCatalogYears<T extends { catalogYear?: number | null }>(
+  rows: T[],
+  getId: (row: T) => string,
+): (T & { catalogYear: number })[] {
+  const byId = new Map<string, T & { catalogYear: number }>();
+  rows.forEach((row) => {
+    if (row.catalogYear == null) return;
+    byId.set(getId(row), { ...row, catalogYear: row.catalogYear });
+  });
+  return [...byId.values()];
+}
 
 const programsRouter = router({
   getMajors: publicProcedure.query(async () => {
@@ -86,24 +108,40 @@ const programsRouter = router({
     if (!userId) return [];
 
     const pairs = await db
-      .select({ majorId: userMajor.majorId, specializationId: userMajor.specializationId })
+      .select({
+        majorId: userMajor.majorId,
+        specializationId: userMajor.specializationId,
+        catalogYear: userMajorCatalogYear.catalogYear,
+      })
       .from(userMajor)
+      .leftJoin(
+        userMajorCatalogYear,
+        and(eq(userMajorCatalogYear.userId, userMajor.userId), eq(userMajorCatalogYear.majorId, userMajor.majorId)),
+      )
       .where(eq(userMajor.userId, userId));
 
     const res = pairs.map((p) => ({
-      ...p,
+      majorId: p.majorId,
       specializationId: p.specializationId ?? undefined,
+      catalogYear: p.catalogYear ?? undefined,
     }));
 
     return res;
   }),
-  getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<MinorProgram[]> => {
+  getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<SavedMinorProgram[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const res = await db.select({ minorId: userMinor.minorId }).from(userMinor).where(eq(userMinor.userId, userId));
+    const res = await db
+      .select({ minorId: userMinor.minorId, catalogYear: userMinorCatalogYear.catalogYear })
+      .from(userMinor)
+      .leftJoin(
+        userMinorCatalogYear,
+        and(eq(userMinorCatalogYear.userId, userMinor.userId), eq(userMinorCatalogYear.minorId, userMinor.minorId)),
+      )
+      .where(eq(userMinor.userId, userId));
 
-    return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
+    return res.map((r) => ({ id: r.minorId, name: '', catalogYear: r.catalogYear ?? undefined }));
   }),
   /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
   saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input, ctx }) => {
@@ -117,11 +155,19 @@ const programsRouter = router({
       majorId: p.majorId,
       specializationId: p.specializationId,
     }));
+    const catalogYearRowsToInsert = dedupeCatalogYears(pairs, (pair) => pair.majorId).map((p) => ({
+      userId,
+      majorId: p.majorId,
+      catalogYear: p.catalogYear,
+    }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMajor).where(eq(userMajor.userId, userId));
       if (rowsToInsert.length) {
         await tx.insert(userMajor).values(rowsToInsert);
+      }
+      if (catalogYearRowsToInsert.length) {
+        await tx.insert(userMajorCatalogYear).values(catalogYearRowsToInsert);
       }
     });
   }),
@@ -130,14 +176,21 @@ const programsRouter = router({
     const userId = ctx.session.userId;
     if (!userId) throw new Error('Unauthorized');
 
-    const { minorIds } = input;
+    const { minorIds, catalogYears = [] } = input;
 
     const rowsToInsert = minorIds.map((minorId) => ({ userId, minorId }));
+    const minorIdsToInsert = new Set(minorIds);
+    const catalogYearRowsToInsert = dedupeCatalogYears(catalogYears, (row) => row.minorId)
+      .filter((row) => minorIdsToInsert.has(row.minorId))
+      .map((row) => ({ userId, minorId: row.minorId, catalogYear: row.catalogYear }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMinor).where(eq(userMinor.userId, userId));
       if (rowsToInsert.length) {
         await tx.insert(userMinor).values(rowsToInsert);
+      }
+      if (catalogYearRowsToInsert.length) {
+        await tx.insert(userMinorCatalogYear).values(catalogYearRowsToInsert);
       }
     });
   }),
