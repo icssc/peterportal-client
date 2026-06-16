@@ -71,6 +71,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     };
 
     const handleOverlayTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
       const delta = e.touches[0].clientY - overlayTouchStartY.current;
       if (delta > 0) {
         element.classList.add('dragging');
