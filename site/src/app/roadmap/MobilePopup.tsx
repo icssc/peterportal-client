@@ -26,6 +26,9 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
 
     if (!element) return;
 
+    // Handle two types of scrolling
+    const scrollContainer = element.getElementsByClassName('popup-scroll').item(0) ?? element;
+
     const handleTouchStart = (e: TouchEvent) => {
       popupTouchStartY.current = e.touches[0].clientY;
       element.style.transition = 'none';
@@ -43,7 +46,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
 
     const handleTouchMovePopup = (e: TouchEvent) => {
       const delta = e.touches[0].clientY - popupTouchStartY.current;
-      if (element.scrollTop !== 0) {
+      if (scrollContainer.scrollTop !== 0) {
         isScrolling = true;
       }
       if (!isScrolling && delta > 0) {

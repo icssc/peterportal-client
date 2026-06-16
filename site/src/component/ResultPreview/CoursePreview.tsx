@@ -168,8 +168,10 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
           <CourseBookmarkButton course={courseData} disabled={isLoading} includeLabel={true} />
         </div>
       </Paper>
-      <Twemoji options={{ className: 'twemoji' }}>
-        <CoursePreviewContent data={courseData} />
+      <Twemoji options={{ className: 'twemoji', id: 'abc' }}>
+        <div className="popup-scroll">
+          <CoursePreviewContent data={courseData} />
+        </div>
       </Twemoji>
     </div>
   );
