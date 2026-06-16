@@ -85,6 +85,7 @@ export const roadmapSlice = createSlice({
     toastMsg: '',
     toastSeverity: 'info' as ToastSeverity,
     showToast: false,
+    toastAction: null as 'library' | null,
     selectedSidebarTab: 1,
   },
   reducers: {
@@ -242,6 +243,9 @@ export const roadmapSlice = createSlice({
         plan.chc = action.payload.chc;
       }
     },
+    setToastAction: (state, action: PayloadAction<'library' | null>) => {
+      state.toastAction = action.payload;
+    },
 
     // Update the planner IDs of newly created planners that still have temporary (negative) IDs
 
@@ -284,6 +288,7 @@ export const {
   updateRoadmapCustomCourse,
   removeCustomCourseFromRoadmap,
   setSelectedSidebarTab,
+  setToastAction,
 } = roadmapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
