@@ -9,7 +9,8 @@ import { useIsMobile } from '../../helpers/util';
 import CoursePreview from '../../component/ResultPreview/CoursePreview';
 import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
 import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
-import { setShowToast } from '../../store/slices/roadmapSlice';
+import { setShowToast, setSelectedSidebarTab } from '../../store/slices/roadmapSlice';
+import { setSelectedTab } from '../../store/slices/courseRequirementsSlice';
 import Toast from '../../helpers/toast';
 import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
@@ -39,6 +40,7 @@ const RoadmapPage: FC = () => {
   const toastMsg = useAppSelector((state) => state.roadmap.toastMsg);
   const toastSeverity = useAppSelector((state) => state.roadmap.toastSeverity);
   const showToast = useAppSelector((state) => state.roadmap.showToast);
+  const toastAction = useAppSelector((state) => state.roadmap.toastAction);
   const showFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
 
   const theme = useTheme();
@@ -64,6 +66,14 @@ const RoadmapPage: FC = () => {
 
   const previewDepth = usePreviewDepth();
   const handleCloseToast = () => dispatch(setShowToast(false));
+
+  const handleToastClick = () => {
+    if (toastAction === 'library') {
+      dispatch(setSelectedSidebarTab(1));
+      dispatch(setSelectedTab('Library'));
+    }
+  };
+
   const fullscreenActive = isMobile && showFullscreenSearch;
 
   const handleClosePreview = () => {
@@ -103,7 +113,13 @@ const RoadmapPage: FC = () => {
       {!isMobile && <DesktopRoadmapSidebar />}
 
       {/* Mobile Popup Menus */}
-      <Toast text={toastMsg} severity={toastSeverity} showToast={showToast} onClose={handleCloseToast} />
+      <Toast
+        text={toastMsg}
+        severity={toastSeverity}
+        showToast={showToast}
+        onClose={handleCloseToast}
+        onClick={handleToastClick}
+      />
       <AddCoursePopup />
       <MobileCourseCatalog />
       <MobileCreditsMenu />
