@@ -29,7 +29,7 @@ type RequirementSchema = components['schemas']['programRequirement'];
 type ReqType = RequirementSchema['requirementType'];
 export type ProgramRequirement<T extends ReqType = ReqType> = RequirementSchema & { requirementType: T };
 
-export interface MajorSpecializationPair {
+export interface SavedMajorProgram {
   majorId: string;
   specializationId?: string;
   catalogYear?: number;

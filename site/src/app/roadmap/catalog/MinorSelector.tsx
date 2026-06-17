@@ -10,7 +10,7 @@ import MinorCourseList from './MinorCourseList';
 import { filterOptionsWithAbbreviations, mapAbbreviations } from '../../../helpers/selector';
 
 function updateSelectedMinors(minorIds: string[]) {
-  trpc.programs.saveSelectedMinor.mutate({ minorIds });
+  trpc.programs.saveSelectedMinor.mutate({ minors: minorIds.map((minorId) => ({ minorId })) });
 }
 
 interface MinorOption {

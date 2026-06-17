@@ -6,7 +6,7 @@ import { publicProcedure, router } from '../helpers/trpc';
 import {
   MajorProgram,
   MajorSpecialization,
-  MajorSpecializationPair,
+  SavedMajorProgram,
   MinorProgram,
   ProgramRequirement,
   SavedMinorProgram,
@@ -30,8 +30,8 @@ const getAPIProgramData = async <T extends ProgramType>(programType: string): Pr
   return response;
 };
 
-const zodMajorSpecPairSchema = z.object({
-  pairs: z.array(
+const zodMajorProgramSchema = z.object({
+  majors: z.array(
     z.object({
       majorId: z.string(),
       specializationId: z.string().optional(),
@@ -41,8 +41,7 @@ const zodMajorSpecPairSchema = z.object({
 });
 
 const zodMinorProgramSchema = z.object({
-  minorIds: z.array(z.string()),
-  catalogYears: z
+  minors: z
     .array(
       z.object({
         minorId: z.string(),
@@ -51,18 +50,6 @@ const zodMinorProgramSchema = z.object({
     )
     .optional(),
 });
-
-function dedupeCatalogYears<T extends { catalogYear?: number | null }>(
-  rows: T[],
-  getId: (row: T) => string,
-): (T & { catalogYear: number })[] {
-  const byId = new Map<string, T & { catalogYear: number }>();
-  rows.forEach((row) => {
-    if (row.catalogYear == null) return;
-    byId.set(getId(row), { ...row, catalogYear: row.catalogYear });
-  });
-  return [...byId.values()];
-}
 
 const programsRouter = router({
   getMajors: publicProcedure.query(async () => {
@@ -103,11 +90,11 @@ const programsRouter = router({
         .then((res) => res.data.requirements as ProgramRequirement[]);
       return response;
     }),
-  getSavedMajorSpecPairs: publicProcedure.query(async ({ ctx }): Promise<MajorSpecializationPair[]> => {
+  getSavedMajors: publicProcedure.query(async ({ ctx }): Promise<SavedMajorProgram[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const pairs = await db
+    const savedMajors = await db
       .select({
         majorId: userMajor.majorId,
         specializationId: userMajor.specializationId,
@@ -120,10 +107,10 @@ const programsRouter = router({
       )
       .where(eq(userMajor.userId, userId));
 
-    const res = pairs.map((p) => ({
-      majorId: p.majorId,
-      specializationId: p.specializationId ?? undefined,
-      catalogYear: p.catalogYear ?? undefined,
+    const res = savedMajors.map((major) => ({
+      majorId: major.majorId,
+      specializationId: major.specializationId ?? undefined,
+      catalogYear: major.catalogYear ?? undefined,
     }));
 
     return res;
@@ -143,23 +130,24 @@ const programsRouter = router({
 
     return res.map((r) => ({ id: r.minorId, name: '', catalogYear: r.catalogYear ?? undefined }));
   }),
-  /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
-  saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input, ctx }) => {
+  saveSelectedMajors: publicProcedure.input(zodMajorProgramSchema).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId;
     if (!userId) throw new Error('Unauthorized');
 
-    const { pairs } = input;
+    const { majors } = input;
 
-    const rowsToInsert = pairs.map((p) => ({
+    const rowsToInsert = majors.map((major) => ({
       userId,
-      majorId: p.majorId,
-      specializationId: p.specializationId,
+      majorId: major.majorId,
+      specializationId: major.specializationId,
     }));
-    const catalogYearRowsToInsert = dedupeCatalogYears(pairs, (pair) => pair.majorId).map((p) => ({
-      userId,
-      majorId: p.majorId,
-      catalogYear: p.catalogYear,
-    }));
+    const catalogYearRowsToInsert = majors
+      .filter((major) => major.catalogYear != null)
+      .map((major) => ({
+        userId,
+        majorId: major.majorId,
+        catalogYear: major.catalogYear!,
+      }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMajor).where(eq(userMajor.userId, userId));
@@ -171,18 +159,16 @@ const programsRouter = router({
       }
     });
   }),
-  /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
   saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId;
     if (!userId) throw new Error('Unauthorized');
 
-    const { minorIds, catalogYears = [] } = input;
+    const { minors = [] } = input;
 
-    const rowsToInsert = minorIds.map((minorId) => ({ userId, minorId }));
-    const minorIdsToInsert = new Set(minorIds);
-    const catalogYearRowsToInsert = dedupeCatalogYears(catalogYears, (row) => row.minorId)
-      .filter((row) => minorIdsToInsert.has(row.minorId))
-      .map((row) => ({ userId, minorId: row.minorId, catalogYear: row.catalogYear }));
+    const rowsToInsert = minors.map((minor) => ({ userId, minorId: minor.minorId }));
+    const catalogYearRowsToInsert = minors
+      .filter((minor) => minor.catalogYear != null)
+      .map((minor) => ({ userId, minorId: minor.minorId, catalogYear: minor.catalogYear! }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMinor).where(eq(userMinor.userId, userId));
