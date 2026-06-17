@@ -32,11 +32,11 @@ export type ProgramRequirement<T extends ReqType = ReqType> = RequirementSchema 
 export interface SavedMajorProgram {
   majorId: string;
   specializationId?: string;
-  catalogYear?: number;
+  catalogYear?: string;
 }
 
 export interface SavedMinorProgram {
   id: string;
   name: string;
-  catalogYear?: number;
+  catalogYear?: string;
 }
