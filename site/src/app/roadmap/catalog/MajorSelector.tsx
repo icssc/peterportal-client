@@ -37,10 +37,16 @@ const MajorSelector: FC = () => {
   // Initial Load Helpers
   const saveInitialMajorList = useCallback(
     (majors: MajorProgram[]) => {
-      for (const m of majors) m.name = normalizeMajorName(m);
-      majors.sort((a, b) => a.name.localeCompare(b.name));
+      // Account for catalog years (2026/06/17). This logic can be removed once API is fixed
+      const uniqueMajors: Record<string, MajorProgram> = {};
+      for (const m of majors) {
+        m.name = normalizeMajorName(m);
+        uniqueMajors[m.id] = m;
+      }
+      const sortedMajors = Object.values(uniqueMajors);
+      sortedMajors.sort((a, b) => a.name.localeCompare(b.name));
       setMajorsLoading(false);
-      dispatch(setMajorList(majors));
+      dispatch(setMajorList(sortedMajors));
     },
     [dispatch],
   );
