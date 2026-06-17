@@ -6,15 +6,16 @@ import { publicProcedure, router } from '../helpers/trpc';
 import {
   MajorProgram,
   MajorSpecialization,
-  MajorSpecializationPair,
+  SavedMajorProgram,
   MinorProgram,
   ProgramRequirement,
+  SavedMinorProgram,
 } from '@peterportal/types';
 import { ANTEATER_API_REQUEST_HEADERS } from '../helpers/headers';
 import { z } from 'zod';
 import { db } from '../db';
-import { planner, userMajor, userMinor } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { planner, userMajor, userMajorCatalogYear, userMinor, userMinorCatalogYear } from '../db/schema';
+import { and, eq } from 'drizzle-orm';
 
 type ProgramType = MajorProgram | MinorProgram | MajorSpecialization;
 const programTypeNames = ['major', 'minor', 'specialization'] as const;
@@ -29,17 +30,25 @@ const getAPIProgramData = async <T extends ProgramType>(programType: string): Pr
   return response;
 };
 
-const zodMajorSpecPairSchema = z.object({
-  pairs: z.array(
+const zodMajorProgramSchema = z.object({
+  majors: z.array(
     z.object({
       majorId: z.string(),
       specializationId: z.string().optional(),
+      catalogYear: z.number().int().nullable().optional(),
     }),
   ),
 });
 
 const zodMinorProgramSchema = z.object({
-  minorIds: z.array(z.string()),
+  minors: z
+    .array(
+      z.object({
+        minorId: z.string(),
+        catalogYear: z.number().int().nullable().optional(),
+      }),
+    )
+    .optional(),
 });
 
 const programsRouter = router({
@@ -81,63 +90,93 @@ const programsRouter = router({
         .then((res) => res.data.requirements as ProgramRequirement[]);
       return response;
     }),
-  getSavedMajorSpecPairs: publicProcedure.query(async ({ ctx }): Promise<MajorSpecializationPair[]> => {
+  getSavedMajors: publicProcedure.query(async ({ ctx }): Promise<SavedMajorProgram[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const pairs = await db
-      .select({ majorId: userMajor.majorId, specializationId: userMajor.specializationId })
+    const savedMajors = await db
+      .select({
+        majorId: userMajor.majorId,
+        specializationId: userMajor.specializationId,
+        catalogYear: userMajorCatalogYear.catalogYear,
+      })
       .from(userMajor)
+      .leftJoin(
+        userMajorCatalogYear,
+        and(eq(userMajorCatalogYear.userId, userMajor.userId), eq(userMajorCatalogYear.majorId, userMajor.majorId)),
+      )
       .where(eq(userMajor.userId, userId));
 
-    const res = pairs.map((p) => ({
-      ...p,
-      specializationId: p.specializationId ?? undefined,
+    const res = savedMajors.map((major) => ({
+      majorId: major.majorId,
+      specializationId: major.specializationId ?? undefined,
+      catalogYear: major.catalogYear ?? undefined,
     }));
 
     return res;
   }),
-  getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<MinorProgram[]> => {
+  getSavedMinors: publicProcedure.query(async ({ ctx }): Promise<SavedMinorProgram[]> => {
     const userId = ctx.session.userId;
     if (!userId) return [];
 
-    const res = await db.select({ minorId: userMinor.minorId }).from(userMinor).where(eq(userMinor.userId, userId));
+    const res = await db
+      .select({ minorId: userMinor.minorId, catalogYear: userMinorCatalogYear.catalogYear })
+      .from(userMinor)
+      .leftJoin(
+        userMinorCatalogYear,
+        and(eq(userMinorCatalogYear.userId, userMinor.userId), eq(userMinorCatalogYear.minorId, userMinor.minorId)),
+      )
+      .where(eq(userMinor.userId, userId));
 
-    return res.map((r) => ({ id: r.minorId, name: '' })) as MinorProgram[];
+    return res.map((r) => ({ id: r.minorId, name: '', catalogYear: r.catalogYear ?? undefined }));
   }),
-  /** @todo when allowing multiple majors, we should instead have operations to add/remove a pair (for add/remove major) and update pair (change major spec) */
-  saveSelectedMajorSpecPair: publicProcedure.input(zodMajorSpecPairSchema).mutation(async ({ input, ctx }) => {
+  saveSelectedMajors: publicProcedure.input(zodMajorProgramSchema).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId;
     if (!userId) throw new Error('Unauthorized');
 
-    const { pairs } = input;
+    const { majors } = input;
 
-    const rowsToInsert = pairs.map((p) => ({
+    const rowsToInsert = majors.map((major) => ({
       userId,
-      majorId: p.majorId,
-      specializationId: p.specializationId,
+      majorId: major.majorId,
+      specializationId: major.specializationId,
     }));
+    const catalogYearRowsToInsert = majors
+      .filter((major) => major.catalogYear != null)
+      .map((major) => ({
+        userId,
+        majorId: major.majorId,
+        catalogYear: major.catalogYear!,
+      }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMajor).where(eq(userMajor.userId, userId));
       if (rowsToInsert.length) {
         await tx.insert(userMajor).values(rowsToInsert);
       }
+      if (catalogYearRowsToInsert.length) {
+        await tx.insert(userMajorCatalogYear).values(catalogYearRowsToInsert);
+      }
     });
   }),
-  /** @todo add `setPlannerMinor` (or similarly named) operation for updating a minor */
   saveSelectedMinor: publicProcedure.input(zodMinorProgramSchema).mutation(async ({ input, ctx }) => {
     const userId = ctx.session.userId;
     if (!userId) throw new Error('Unauthorized');
 
-    const { minorIds } = input;
+    const { minors = [] } = input;
 
-    const rowsToInsert = minorIds.map((minorId) => ({ userId, minorId }));
+    const rowsToInsert = minors.map((minor) => ({ userId, minorId: minor.minorId }));
+    const catalogYearRowsToInsert = minors
+      .filter((minor) => minor.catalogYear != null)
+      .map((minor) => ({ userId, minorId: minor.minorId, catalogYear: minor.catalogYear! }));
 
     await db.transaction(async (tx) => {
       await tx.delete(userMinor).where(eq(userMinor.userId, userId));
       if (rowsToInsert.length) {
         await tx.insert(userMinor).values(rowsToInsert);
+      }
+      if (catalogYearRowsToInsert.length) {
+        await tx.insert(userMinorCatalogYear).values(catalogYearRowsToInsert);
       }
     });
   }),
