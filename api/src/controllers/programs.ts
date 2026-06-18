@@ -35,7 +35,7 @@ const zodMajorProgramSchema = z.object({
     z.object({
       majorId: z.string(),
       specializationId: z.string().optional(),
-      catalogYear: z.number().int().nullable().optional(),
+      catalogYear: z.string().nullable().optional(),
     }),
   ),
 });
@@ -45,7 +45,7 @@ const zodMinorProgramSchema = z.object({
     .array(
       z.object({
         minorId: z.string(),
-        catalogYear: z.number().int().nullable().optional(),
+        catalogYear: z.string().nullable().optional(),
       }),
     )
     .optional(),
