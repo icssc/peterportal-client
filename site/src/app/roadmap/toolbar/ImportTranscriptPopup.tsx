@@ -305,7 +305,6 @@ const ImportTranscriptPopup: FC = () => {
               <div className="transcript-upload">
                 <Button
                   component="label"
-                  role={undefined}
                   variant="outlined"
                   color="secondary"
                   tabIndex={-1}

@@ -7,18 +7,22 @@ interface ClickableDivProps {
 }
 
 const ClickableDiv = ({ children, className, onClick }: ClickableDivProps) => {
+  if (!onClick) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <div
-      className={`${className ?? ''} ${onClick ? 'clickable' : ''}`.trim()}
+      className={`${className ?? ''} clickable`.trim()}
       onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
+      role="button"
+      tabIndex={0}
       onKeyDown={(e) => {
-        if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+        if (e.key === 'Enter' || e.key === ' ') {
           onClick();
         }
       }}
-      style={{ cursor: onClick ? 'pointer' : 'default' }}
+      style={{ cursor: 'pointer' }}
     >
       {children}
     </div>
