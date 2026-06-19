@@ -79,7 +79,7 @@ const programsRouter = router({
       if (input.type === 'major' && input.specializationId) {
         url += `&specializationId=${input.specializationId}`;
       }
-      if (input.type === 'major' && input.catalogYear) {
+      if (input.type !== 'specialization' && input.catalogYear) {
         url += `&catalogYear=${input.catalogYear}`;
       }
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
