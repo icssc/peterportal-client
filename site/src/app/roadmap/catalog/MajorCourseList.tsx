@@ -5,6 +5,7 @@ import { normalizeMajorName } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
+  setMajorCatalogYear,
   setMajorSpecs,
   setRequirements,
   setSpecialization,
@@ -15,10 +16,12 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Autocomplete, Collapse, TextField } from '@mui/material';
+import { Autocomplete, Collapse, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
+
+const DEFAULT_CATALOG_YEAR = '20252026';
 
 const loadingSpecValue = {
   value: {
@@ -33,9 +36,14 @@ function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
 
-function getCoursesForMajor(programId: string, specId: string | undefined) {
+function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear?: string) {
   const specializationId = specId === noSpecId ? undefined : specId;
-  return trpc.programs.getRequiredCourses.query({ type: 'major', programId, specializationId });
+  return trpc.programs.getRequiredCourses.query({
+    type: 'major',
+    programId,
+    specializationId,
+    catalogYear: catalogYear ?? DEFAULT_CATALOG_YEAR,
+  });
 }
 
 function getCoursesForSpecialization(programId?: string | null) {
@@ -47,9 +55,15 @@ interface MajorCourseListProps {
   majorWithSpec: MajorWithSpecialization;
   onSpecializationChange: (majorId: string, spec: MajorSpecialization | null) => void;
   selectedSpecId?: string;
+  onCatalogYearChange: (majorId: string, catalogYear: string | null) => void;
 }
 
-const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializationChange, selectedSpecId }) => {
+const MajorCourseList: FC<MajorCourseListProps> = ({
+  majorWithSpec,
+  onSpecializationChange,
+  selectedSpecId,
+  onCatalogYearChange,
+}) => {
   const storeKeyPrefix = `major-${majorWithSpec.major.id}`;
   const [specsLoading, setSpecsLoading] = useState(false);
   const [resultsLoading, setResultsLoading] = useState(false);
@@ -82,11 +96,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   }, [dispatch, major.id]);
 
   const fetchRequirements = useCallback(
-    async (majorId: string, specId?: string) => {
+    async (majorId: string, specId?: string, catalogYear?: string) => {
       setResultsLoading(true);
 
       try {
-        const requirements = await getCoursesForMajor(majorId, specId);
+        const requirements = await getCoursesForMajor(majorId, specId, catalogYear);
         requirements.push(...(await getCoursesForSpecialization(specId)));
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
@@ -99,7 +113,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
   const loadSpecRequirements = useCallback(async () => {
     if (!hasSpecs) {
       if (majorWithSpec.requirements.length > 0) return;
-      else return await fetchRequirements(major.id);
+      else return await fetchRequirements(major.id, undefined, majorWithSpec.catalogYear ?? undefined);
     }
     if (!selectedSpecId && !selectedSpec?.id) return;
     if (selectedSpecId === selectedSpec?.id) return;
@@ -109,10 +123,10 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
 
     if (foundSpec) {
       dispatch(setSpecialization({ majorId: major.id, specialization: foundSpec }));
-      await fetchRequirements(major.id, foundSpec?.id);
+      await fetchRequirements(major.id, foundSpec?.id, majorWithSpec.catalogYear ?? undefined);
     } else if (selectedSpecId === noSpecId) {
       dispatch(setSpecialization({ majorId: major.id, specialization: noSpec }));
-      await fetchRequirements(major.id);
+      await fetchRequirements(major.id, undefined, majorWithSpec.catalogYear ?? undefined);
     }
   }, [
     dispatch,
@@ -121,6 +135,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     noSpec,
     major.id,
     majorWithSpec.requirements.length,
+    majorWithSpec.catalogYear,
     selectedSpecId,
     selectedSpec?.id,
   ]);
@@ -144,9 +159,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
       onSpecializationChange(major.id, updatedSpec);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setSpecialization({ majorId: major.id, specialization: updatedSpec }));
-      await fetchRequirements(major.id, updatedSpec?.id);
+      await fetchRequirements(major.id, updatedSpec?.id, majorWithSpec.catalogYear ?? undefined);
     },
-    [dispatch, fetchRequirements, major, onSpecializationChange, selectedSpecId],
+    [dispatch, fetchRequirements, major, majorWithSpec.catalogYear, onSpecializationChange, selectedSpecId],
   );
 
   const toggleExpand = () => setOpen(!open);
@@ -154,6 +169,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
     (s) => s.value.id === (majorWithSpec.selectedSpec?.id ?? selectedSpec?.id),
   );
 
+  const handleCatalogYearChange = useCallback(
+    async (event: SelectChangeEvent) => {
+      const newCatalogYear = event.target.value || null;
+      if (newCatalogYear === majorWithSpec.catalogYear) return;
+
+      setResultsLoading(true);
+      onCatalogYearChange(major.id, newCatalogYear);
+      dispatch(setRequirements({ majorId: major.id, requirements: [] }));
+      dispatch(setMajorCatalogYear({ majorId: major.id, catalogYear: newCatalogYear }));
+      await fetchRequirements(major.id, selectedSpec?.id, newCatalogYear ?? undefined);
+    },
+    [dispatch, fetchRequirements, major.id, majorWithSpec.catalogYear, onCatalogYearChange, selectedSpec?.id],
+  );
   return (
     <div className="major-section">
       <ClickableDiv className="header-tab" onClick={toggleExpand}>
@@ -161,6 +189,18 @@ const MajorCourseList: FC<MajorCourseListProps> = ({ majorWithSpec, onSpecializa
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
+        <h5 className="catalog-year-title">Catalog Year</h5>
+        <FormControl className="catalog-year-dropdown" fullWidth>
+          <Select
+            labelId="catalog-year-select-label"
+            id="catalog-year-select"
+            value={majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR}
+            onChange={handleCatalogYearChange}
+          >
+            <MenuItem value="20222023">2022-2023</MenuItem>
+            <MenuItem value="20262027">2026-2027</MenuItem>
+          </Select>
+        </FormControl>
         {hasSpecs && (
           <Autocomplete
             className="specialization-select"

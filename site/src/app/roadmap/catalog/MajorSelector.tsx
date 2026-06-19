@@ -8,6 +8,7 @@ import {
   removeMajor,
   setMajorList,
   MajorWithSpecialization,
+  setMajorCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { MajorProgram, MajorSpecialization, SavedMajorProgram } from '@peterportal/types';
@@ -57,6 +58,7 @@ const MajorSelector: FC = () => {
       const majors: SavedMajorProgram[] = majorsToSave.map((m) => ({
         majorId: m.major.id,
         specializationId: m.selectedSpec?.id,
+        catalogYear: m.catalogYear ?? undefined,
       }));
       updateSelectedMajorAndSpecialization(majors);
     },
@@ -80,6 +82,7 @@ const MajorSelector: FC = () => {
         selectedSpec: selectedMajors.find((m) => m.major.id === major.id)?.selectedSpec || null,
         specializations: selectedMajors.find((m) => m.major.id === major.id)?.specializations || [],
         requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
+        catalogYear: selectedMajors.find((m) => m.major.id === major.id)?.catalogYear || null,
       }));
       saveMajors(updatedMajors);
     },
@@ -101,6 +104,19 @@ const MajorSelector: FC = () => {
     [savedMajors, saveMajors, selectedMajors],
   );
 
+  const handleCatalogYearChange = useCallback(
+    (majorId: string, catalogYear: string | null) => {
+      const updatedMajors = selectedMajors.map((m) => (m.major.id === majorId ? { ...m, catalogYear } : m));
+      setSavedMajors(
+        savedMajors.map((major) =>
+          major.majorId === majorId ? { ...major, catalogYear: catalogYear ?? undefined } : major,
+        ),
+      );
+      saveMajors(updatedMajors);
+    },
+    [savedMajors, saveMajors, selectedMajors],
+  );
+
   useEffect(() => {
     if (!majors.length || !isLoggedIn) return;
     if (hasFetchedSelectedMajors.current) return;
@@ -115,6 +131,7 @@ const MajorSelector: FC = () => {
           const foundMajor = majors.find((m) => m.id === savedMajor.majorId);
           if (!foundMajor) continue;
           dispatch(addMajor(foundMajor));
+          dispatch(setMajorCatalogYear({ majorId: savedMajor.majorId, catalogYear: savedMajor.catalogYear ?? null }));
         }
         setSavedMajors(savedMajors);
       })
@@ -163,6 +180,7 @@ const MajorSelector: FC = () => {
           majorWithSpec={data}
           selectedSpecId={savedMajors.find((major) => major.majorId === data.major.id)?.specializationId}
           onSpecializationChange={handleSpecializationChange}
+          onCatalogYearChange={handleCatalogYearChange}
         />
       ))}
     </>
