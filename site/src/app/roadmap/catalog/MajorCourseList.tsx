@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Autocomplete, Collapse, FormControl, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
@@ -209,6 +210,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         <h5 className="catalog-year-title">Catalog Year</h5>
         <FormControl className="catalog-year-dropdown" fullWidth>
           <Select
+            IconComponent={KeyboardArrowDownIcon}
             labelId="catalog-year-select-label"
             id="catalog-year-select"
             value={majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR}
