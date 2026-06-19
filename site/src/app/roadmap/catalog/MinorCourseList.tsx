@@ -5,24 +5,45 @@ import {
   setMinorRequirements,
   MinorRequirements,
   setGroupExpanded,
+  setMinorCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
-function getCoursesForMinor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
+function getCoursesForMinor(programId: string, catalogYear?: string) {
+  return trpc.programs.getRequiredCourses.query({ type: 'minor', programId, catalogYear });
 }
 
 interface MinorCourseListProps {
   minorReqs: MinorRequirements;
+  onCatalogYearChange: (minorId: string, catalogYear: string | null) => void;
 }
 
-const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
+// default catalog year
+const now = new Date();
+const year = now.getFullYear();
+const month = now.getMonth();
+
+// catalog year increases when SOC is released for the next fall quarter during spring
+const startYear = month >= 4 ? year : year - 1;
+
+const DEFAULT_CATALOG_YEAR = `${startYear}${startYear + 1}`;
+
+const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
+  const startYear = parseInt(DEFAULT_CATALOG_YEAR.slice(0, 4)) - i;
+  const endYear = startYear + 1;
+  return {
+    value: `${startYear}${endYear}`,
+    label: `${startYear}-${endYear}`,
+  };
+});
+
+const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearChange }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
   const [resultsLoading, setResultsLoading] = useState(false);
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
@@ -33,11 +54,11 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const dispatch = useAppDispatch();
 
   const fetchRequirements = useCallback(
-    async (minorId: string) => {
+    async (minorId: string, catalogYear?: string) => {
       setResultsLoading(true);
 
       try {
-        const requirements = await getCoursesForMinor(minorId);
+        const requirements = await getCoursesForMinor(minorId, catalogYear);
         dispatch(setMinorRequirements({ minorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -48,11 +69,25 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   useEffect(() => {
     if (!minorReqs.requirements || minorReqs.requirements.length === 0) {
-      fetchRequirements(minorReqs.minor.id);
+      fetchRequirements(minorReqs.minor.id, minorReqs.catalogYear ?? undefined);
     }
-  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements]);
+  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements, minorReqs.catalogYear]);
 
   const toggleExpand = () => setOpen(!open);
+
+  const handleCatalogYearChange = useCallback(
+    async (event: SelectChangeEvent) => {
+      const newCatalogYear = event.target.value || null;
+      if (newCatalogYear === minorReqs.catalogYear) return;
+
+      setResultsLoading(true);
+      onCatalogYearChange(minorReqs.minor.id, newCatalogYear);
+      dispatch(setMinorRequirements({ minorId: minorReqs.minor.id, requirements: [] }));
+      dispatch(setMinorCatalogYear({ minorId: minorReqs.minor.id, catalogYear: newCatalogYear }));
+      await fetchRequirements(minorReqs.minor.id, newCatalogYear ?? undefined);
+    },
+    [dispatch, fetchRequirements, minorReqs.minor.id, minorReqs.catalogYear, onCatalogYearChange],
+  );
 
   return (
     <div className="major-section">
@@ -61,6 +96,21 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
+        <h5 className="catalog-year-title">Catalog Year</h5>
+        <FormControl className="catalog-year-dropdown" fullWidth>
+          <Select
+            labelId="catalog-year-select-label"
+            id="catalog-year-select"
+            value={minorReqs.catalogYear ?? DEFAULT_CATALOG_YEAR}
+            onChange={handleCatalogYearChange}
+          >
+            {CATALOG_YEAR_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         {resultsLoading ? (
           <LoadingSpinner />
         ) : (
