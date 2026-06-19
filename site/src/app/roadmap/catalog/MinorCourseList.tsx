@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
 import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 function getCoursesForMinor(programId: string, catalogYear?: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId, catalogYear });
@@ -99,6 +100,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
         <h5 className="catalog-year-title">Catalog Year</h5>
         <FormControl className="catalog-year-dropdown" fullWidth>
           <Select
+            IconComponent={KeyboardArrowDownIcon}
             labelId="catalog-year-select-label"
             id="catalog-year-select"
             value={minorReqs.catalogYear ?? DEFAULT_CATALOG_YEAR}
