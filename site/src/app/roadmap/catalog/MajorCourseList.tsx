@@ -21,7 +21,16 @@ import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
 
-const DEFAULT_CATALOG_YEAR = '20252026';
+const DEFAULT_CATALOG_YEAR = '20252026'; // @TODO replace with current year
+
+const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
+  const startYear = parseInt(DEFAULT_CATALOG_YEAR.slice(0, 4)) - i;
+  const endYear = startYear + 1;
+  return {
+    value: `${startYear}${endYear}`,
+    label: `${startYear}-${endYear}`,
+  };
+});
 
 const loadingSpecValue = {
   value: {
@@ -197,8 +206,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
             value={majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR}
             onChange={handleCatalogYearChange}
           >
-            <MenuItem value="20222023">2022-2023</MenuItem>
-            <MenuItem value="20262027">2026-2027</MenuItem>
+            {CATALOG_YEAR_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         {hasSpecs && (
