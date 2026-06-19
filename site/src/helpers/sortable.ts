@@ -42,6 +42,8 @@ export const programRequirementsSortable: SortableOptions & Partial<ReactSortabl
 
 export const planSortable: SortableOptions & Partial<ReactSortableProps<RoadmapPlan>> = {
   animation: 150,
+  forceFallback: false,
+  fallbackOnBody: false,
   fallbackTolerance: 4,
   setList: () => {},
   handle: '.drag-icon',
