@@ -8,6 +8,7 @@ export interface MajorWithSpecialization {
   selectedSpec: MajorSpecialization | null;
   specializations: MajorSpecialization[];
   requirements: ProgramRequirement[];
+  catalogYear: string | null;
 }
 
 type ExpandedGroupsList = { [key: string]: boolean | undefined };
@@ -15,6 +16,7 @@ type ExpandedGroupsList = { [key: string]: boolean | undefined };
 export interface MinorRequirements {
   minor: MinorProgram;
   requirements: ProgramRequirement[];
+  catalogYear: string | null;
 }
 
 const courseRequirementsSlice = createSlice({
@@ -46,6 +48,7 @@ const courseRequirementsSlice = createSlice({
           selectedSpec: null,
           specializations: [],
           requirements: [],
+          catalogYear: null,
         });
         state.expandedGroups[`major-${action.payload.id}`] = true;
       }
@@ -74,6 +77,12 @@ const courseRequirementsSlice = createSlice({
         major.requirements = action.payload.requirements;
       }
     },
+    setMajorCatalogYear: (state, action: PayloadAction<{ majorId: string; catalogYear: string | null }>) => {
+      const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
+      if (major) {
+        major.catalogYear = action.payload.catalogYear;
+      }
+    },
     setMinorRequirements: (state, action: PayloadAction<{ minorId: string; requirements: ProgramRequirement[] }>) => {
       const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
       if (minor) {
@@ -88,12 +97,19 @@ const courseRequirementsSlice = createSlice({
         state.selectedMinors.push({
           minor: action.payload,
           requirements: [],
+          catalogYear: null,
         });
         state.expandedGroups[`minor-${action.payload.id}`] = true;
       }
     },
     removeMinor: (state, action: PayloadAction<string>) => {
       state.selectedMinors = state.selectedMinors.filter((m) => m.minor.id !== action.payload);
+    },
+    setMinorCatalogYear: (state, action: PayloadAction<{ minorId: string; catalogYear: string | null }>) => {
+      const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
+      if (minor) {
+        minor.catalogYear = action.payload.catalogYear;
+      }
     },
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
       state.geRequirements = action.payload;
@@ -139,9 +155,11 @@ export const {
   setSpecialization,
   setMajorSpecs,
   setRequirements,
+  setMajorCatalogYear,
   setMinorList,
   addMinor,
   removeMinor,
+  setMinorCatalogYear,
   setMinorRequirements,
   setGERequirements,
   setMarkerComplete,
