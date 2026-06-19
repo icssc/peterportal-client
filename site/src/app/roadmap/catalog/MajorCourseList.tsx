@@ -21,7 +21,15 @@ import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 
 const noSpecId = 'NO_SPEC';
 
-const DEFAULT_CATALOG_YEAR = '20252026'; // @TODO replace with current year
+// default catalog year
+const now = new Date();
+const year = now.getFullYear();
+const month = now.getMonth();
+
+// catalog year increases when SOC is released for the next fall quarter during spring
+const startYear = month >= 4 ? year : year - 1;
+
+const DEFAULT_CATALOG_YEAR = `${startYear}${startYear + 1}`;
 
 const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
   const startYear = parseInt(DEFAULT_CATALOG_YEAR.slice(0, 4)) - i;
