@@ -70,12 +70,14 @@ const Schedule: FC<ScheduleProps> = (props) => {
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number });
-      apiResponseMaterials = await trpc.courseMaterials.getTermDeptNum.query({
-        term: selectedQuarter,
-        department,
-        number,
-      });
+      [apiResponse, apiResponseMaterials] = await Promise.all([
+        trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number }),
+        trpc.courseMaterials.getTermDeptNum.query({
+          term: selectedQuarter,
+          department,
+          number,
+        }),
+      ]);
     } else if (props.professorIDs) {
       apiResponse = await Promise.all(
         props.professorIDs.map((professor) => trpc.schedule.getTermProf.query({ term: selectedQuarter, professor })),
