@@ -32,6 +32,8 @@ import {
 } from '../types/types';
 import { isCustomCourse } from './customCourses';
 import trpc from '../trpc';
+import posthog from 'posthog-js';
+import { analyticsEnum, logAnalytics } from './analytics';
 import { LocalTransferSaveKey, saveLocalTransfers } from './transferCredits';
 import { compareRoadmaps } from './roadmap';
 
@@ -378,6 +380,10 @@ export const saveRoadmap = async (
 ) => {
   if (!isLoggedIn) {
     saveLocalRoadmap(planners, currentPlanIndex);
+    logAnalytics(posthog, {
+      category: analyticsEnum.roadmap,
+      action: analyticsEnum.roadmap.actions.SAVE_LOGGED_OUT,
+    });
     return { success: true };
   } else {
     const roadmap: SavedRoadmap = {
