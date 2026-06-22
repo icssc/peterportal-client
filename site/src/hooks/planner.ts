@@ -98,7 +98,9 @@ export function useSaveRoadmap() {
       dispatch(updateTempPlannerIds(result.plannerIdLookup));
     }
     dispatch(setSaveInProgress(false));
-    dispatch(setSavedRevisionIndex(currIdx));
+    if (result.success) {
+      dispatch(setSavedRevisionIndex(currIdx));
+    }
 
     return result;
   };
