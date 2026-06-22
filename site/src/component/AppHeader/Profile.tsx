@@ -171,7 +171,11 @@ const ExperimentalFeaturesMenu = () => {
   const handleToggle = () => {
     const next = !autosaveEnabled;
     dispatch(setAutosaveEnabled(next));
-    if (isLoggedIn) trpc.users.setAutoSave.mutate({ autoSaveEnabled: next });
+    if (isLoggedIn) {
+      trpc.users.setAutoSave.mutate({ autoSaveEnabled: next });
+    } else {
+      localStorage.setItem('autosaveEnabled', String(next));
+    }
   };
 
   return (
