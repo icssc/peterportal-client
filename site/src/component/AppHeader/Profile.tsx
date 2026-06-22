@@ -166,20 +166,21 @@ const ProfileThemeMenu = () => {
 const ExperimentalFeaturesMenu = () => {
   const dispatch = useAppDispatch();
   const autosaveEnabled = useAppSelector((state) => state.user.autosaveEnabled);
+  const isLoggedIn = useIsLoggedIn();
 
   const handleToggle = () => {
     const next = !autosaveEnabled;
     dispatch(setAutosaveEnabled(next));
-    trpc.users.setAutoSave.mutate({ autoSaveEnabled: next });
+    if (isLoggedIn) trpc.users.setAutoSave.mutate({ autoSaveEnabled: next });
   };
 
   return (
     <List className="profile-popover-links experimental-features">
       <ListItem>
-        <ListItemButton className="profile-popover-link" onClick={handleToggle}>
+        <ListItemButton className="profile-popover-link">
           <ListItemText primary="Autosave" />
           <ListItemIcon>
-            <Switch checked={autosaveEnabled} />
+            <Switch checked={autosaveEnabled} onChange={handleToggle} inputProps={{ 'aria-label': 'Autosave' }} />
           </ListItemIcon>
         </ListItemButton>
       </ListItem>
