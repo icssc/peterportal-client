@@ -51,3 +51,14 @@
     padding-top: 8px;
   }
 }
+
+.catalog-year-tooltip {
+  &#{&} {
+    font-size: 0.75rem;
+    border-radius: 8px;
+    padding: 8px;
+    max-width: 230px;
+    text-align: left;
+    margin-top: 8px;
+  }
+}

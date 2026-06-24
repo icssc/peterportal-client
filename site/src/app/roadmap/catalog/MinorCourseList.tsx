@@ -12,7 +12,7 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
@@ -97,7 +97,18 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <h5 className="catalog-year-title">Catalog Year</h5>
+        <Tooltip
+          title="Major, minor, and GE requirements from a specific catalog year"
+          placement="bottom-start"
+          slotProps={{
+            tooltip: { className: 'catalog-year-tooltip' },
+            popper: {
+              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
+            },
+          }}
+        >
+          <h5 className="catalog-year-title">Catalog Year</h5>
+        </Tooltip>
         <FormControl className="catalog-year-dropdown" fullWidth>
           <Select
             IconComponent={KeyboardArrowDownIcon}
