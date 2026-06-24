@@ -1,6 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
+import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR } from '../../../helpers/courseRequirements';
 import {
   setMinorRequirements,
   MinorRequirements,
@@ -24,25 +25,6 @@ interface MinorCourseListProps {
   minorReqs: MinorRequirements;
   onCatalogYearChange: (minorId: string, catalogYear: string | null) => void;
 }
-
-// default catalog year
-const now = new Date();
-const year = now.getFullYear();
-const month = now.getMonth();
-
-// catalog year increases when SOC is released for the next fall quarter during spring
-const startYear = month >= 4 ? year : year - 1;
-
-const DEFAULT_CATALOG_YEAR = `${startYear}${startYear + 1}`;
-
-const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
-  const startYear = parseInt(DEFAULT_CATALOG_YEAR.slice(0, 4)) - i;
-  const endYear = startYear + 1;
-  return {
-    value: `${startYear}${endYear}`,
-    label: `${startYear}-${endYear}`,
-  };
-});
 
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearChange }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
