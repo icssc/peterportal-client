@@ -68,7 +68,7 @@ const CHCRequirements: FC = () => {
         displayEmpty
         value={selection}
         onChange={(event) => handleSelectionChange(event.target.value as ChcTrackSelection)}
-        className="ppc-combobox"
+        sx={{ marginBottom: '12px' }}
       >
         <MenuItem key="" value="">
           Not Enrolled in Campuswide Honors
