@@ -114,15 +114,16 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
 
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
+      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
       setResultsLoading(true);
       dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: null })); // reset fallback year on each fetch
 
       try {
-        const result = await getCoursesForMajor(majorId, specId, catalogYear);
+        const result = await getCoursesForMajor(majorId, specId, effectiveCatalogYear);
         const { requirements, catalogYear: returnedYear } = result;
 
         // If API resolved to a different year than requested, set fallback
-        if (catalogYear && returnedYear && returnedYear !== catalogYear) {
+        if (returnedYear && returnedYear !== effectiveCatalogYear) {
           dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: returnedYear }));
         }
 
@@ -246,11 +247,12 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
           <div className="catalog-year-warning">
             <WarningAmberIcon className="warning-icon" />
             <p className="catalog-year-warning-text">
-              {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
-              {formatCatalogYear(fallbackCatalogYear)}.
+              {formatCatalogYear(majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR)} requirements are not yet publicly
+              available. Currently showing {formatCatalogYear(fallbackCatalogYear)}.
             </p>
           </div>
         )}
+        {/* <p>{fallbackCatalogYear} hi hi {DEFAULT_CATALOG_YEAR}</p> */}
 
         {hasSpecs && (
           <Autocomplete
