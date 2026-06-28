@@ -121,7 +121,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
             <WarningAmberIcon className="warning-icon" />
             <p className="catalog-year-warning-text">
               {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
-              {formatCatalogYear(fallbackCatalogYear)}
+              {formatCatalogYear(fallbackCatalogYear)}.
             </p>
           </div>
         )}
