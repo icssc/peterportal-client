@@ -12,6 +12,7 @@ import {
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
@@ -54,9 +55,10 @@ function getCoursesForMajor(programId: string, specId: string | undefined, catal
   });
 }
 
-function getCoursesForSpecialization(programId?: string | null) {
+async function getCoursesForSpecialization(programId?: string | null) {
   if (!programId || programId === noSpecId) return [];
-  return trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
+  const result = await trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
+  return result.requirements;
 }
 
 interface MajorCourseListProps {
@@ -84,6 +86,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
   const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
+  const [fallbackCatalogYear, setFallbackCatalogYear] = useState<string | null>(null);
 
   if (specOptions.length > 0 && !major.specializationRequired) {
     specOptions.unshift({ value: noSpec, label: noSpec.name });
@@ -106,10 +109,19 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
       setResultsLoading(true);
+      setFallbackCatalogYear(null); // reset on each fetch
 
       try {
-        const requirements = await getCoursesForMajor(majorId, specId, catalogYear);
-        requirements.push(...(await getCoursesForSpecialization(specId)));
+        const result = await getCoursesForMajor(majorId, specId, catalogYear);
+        const { requirements, catalogYear: returnedYear } = result;
+
+        // If the API resolved to a different year than requested, it fell back
+        if (catalogYear && returnedYear && returnedYear !== catalogYear) {
+          setFallbackCatalogYear(returnedYear);
+        }
+
+        const specRequirements = await getCoursesForSpecialization(specId); // now returns array
+        requirements.push(...specRequirements);
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -224,6 +236,16 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
             ))}
           </Select>
         </FormControl>
+        {fallbackCatalogYear && !resultsLoading && (
+          <div className="catalog-year-warning">
+            <WarningAmberIcon className="warning-icon" />
+            <p className="catalog-year-warning-text">
+              {`${DEFAULT_CATALOG_YEAR.slice(0, 4)}-${DEFAULT_CATALOG_YEAR.slice(4)}`} requirements are not yet publicly
+              available. Currently showing {`${fallbackCatalogYear.slice(0, 4)}-${fallbackCatalogYear.slice(4)}`}
+            </p>
+          </div>
+        )}
+
         {hasSpecs && (
           <Autocomplete
             className="specialization-select"

@@ -62,3 +62,22 @@
     margin-top: 8px;
   }
 }
+
+.catalog-year-warning {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: -6px;
+  margin-bottom: 8px;
+
+  .warning-icon {
+    color: var(--mui-palette-warning-main);
+    font-size: 1.4rem;
+  }
+
+  .catalog-year-warning-text {
+    color: var(--mui-palette-warning-main);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+}

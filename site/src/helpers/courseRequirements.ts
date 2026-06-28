@@ -60,6 +60,24 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
   'GE-8': 'GE VIII: International/Global Issues',
 };
 
+/** Default Catalog Year Constant */
+const now = new Date();
+const year = now.getFullYear();
+const month = now.getMonth();
+
+const startYear = month >= 4 ? year : year - 1; // catalog year increases when SOC is released for the next fall quarter during spring
+
+export const DEFAULT_CATALOG_YEAR = `${startYear}${startYear + 1}`;
+
+// options for catalog year dropdown
+export const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
+  const optionStartYear = startYear - i;
+  return {
+    value: `${optionStartYear}${optionStartYear + 1}`,
+    label: `${optionStartYear}-${optionStartYear + 1}`,
+  };
+});
+
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
 
@@ -395,21 +413,3 @@ export async function saveOverriddenRequirement(
     localStorage.setItem(`roadmap__savedRequirements__${plannerId}`, JSON.stringify([...overriddenRequirements]));
   }
 }
-
-// default catalog year
-const now = new Date();
-const year = now.getFullYear();
-const month = now.getMonth();
-
-const startYear = month >= 4 ? year : year - 1; // catalog year increases when SOC is released for the next fall quarter during spring
-
-export const DEFAULT_CATALOG_YEAR = `${startYear}${startYear + 1}`;
-
-// options for catalog year dropdown
-export const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
-  const optionStartYear = startYear - i;
-  return {
-    value: `${optionStartYear}${optionStartYear + 1}`,
-    label: `${optionStartYear}-${optionStartYear + 1}`,
-  };
-});
