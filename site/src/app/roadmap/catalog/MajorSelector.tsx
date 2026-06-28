@@ -83,6 +83,7 @@ const MajorSelector: FC = () => {
         specializations: selectedMajors.find((m) => m.major.id === major.id)?.specializations || [],
         requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
         catalogYear: selectedMajors.find((m) => m.major.id === major.id)?.catalogYear || null,
+        fallbackCatalogYear: selectedMajors.find((m) => m.major.id === major.id)?.fallbackCatalogYear || null,
       }));
       saveMajors(updatedMajors);
     },

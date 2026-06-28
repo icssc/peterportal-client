@@ -85,6 +85,7 @@ const MinorSelector: FC = () => {
         minor,
         requirements: selectedMinors.find((m) => m.minor.id === minor.id)?.requirements || [],
         catalogYear: selectedMinors.find((m) => m.minor.id === minor.id)?.catalogYear || null,
+        fallbackCatalogYear: selectedMinors.find((m) => m.minor.id === minor.id)?.fallbackCatalogYear || null,
       }));
       saveMinors(updatedMinors);
     },
