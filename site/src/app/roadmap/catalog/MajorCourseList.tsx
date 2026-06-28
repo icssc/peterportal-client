@@ -1,7 +1,12 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { normalizeMajorName, CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR } from '../../../helpers/courseRequirements';
+import {
+  normalizeMajorName,
+  CATALOG_YEAR_OPTIONS,
+  DEFAULT_CATALOG_YEAR,
+  formatCatalogYear,
+} from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -109,18 +114,18 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
       setResultsLoading(true);
-      setFallbackCatalogYear(null); // reset on each fetch
+      setFallbackCatalogYear(null); // reset fallback year on each fetch
 
       try {
         const result = await getCoursesForMajor(majorId, specId, catalogYear);
         const { requirements, catalogYear: returnedYear } = result;
 
-        // If the API resolved to a different year than requested, it fell back
+        // If API resolved to a different year than requested, set fallback
         if (catalogYear && returnedYear && returnedYear !== catalogYear) {
           setFallbackCatalogYear(returnedYear);
         }
 
-        const specRequirements = await getCoursesForSpecialization(specId); // now returns array
+        const specRequirements = await getCoursesForSpecialization(specId);
         requirements.push(...specRequirements);
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
@@ -240,8 +245,8 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
           <div className="catalog-year-warning">
             <WarningAmberIcon className="warning-icon" />
             <p className="catalog-year-warning-text">
-              {`${DEFAULT_CATALOG_YEAR.slice(0, 4)}-${DEFAULT_CATALOG_YEAR.slice(4)}`} requirements are not yet publicly
-              available. Currently showing {`${fallbackCatalogYear.slice(0, 4)}-${fallbackCatalogYear.slice(4)}`}
+              {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
+              {formatCatalogYear(fallbackCatalogYear)}
             </p>
           </div>
         )}
