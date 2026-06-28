@@ -9,6 +9,7 @@ export interface MajorWithSpecialization {
   specializations: MajorSpecialization[];
   requirements: ProgramRequirement[];
   catalogYear: string | null;
+  fallbackCatalogYear: string | null;
 }
 
 type ExpandedGroupsList = { [key: string]: boolean | undefined };
@@ -17,6 +18,7 @@ export interface MinorRequirements {
   minor: MinorProgram;
   requirements: ProgramRequirement[];
   catalogYear: string | null;
+  fallbackCatalogYear: string | null;
 }
 
 const courseRequirementsSlice = createSlice({
@@ -49,6 +51,7 @@ const courseRequirementsSlice = createSlice({
           specializations: [],
           requirements: [],
           catalogYear: null,
+          fallbackCatalogYear: null,
         });
         state.expandedGroups[`major-${action.payload.id}`] = true;
       }
@@ -83,6 +86,15 @@ const courseRequirementsSlice = createSlice({
         major.catalogYear = action.payload.catalogYear;
       }
     },
+    setMajorFallbackCatalogYear: (
+      state,
+      action: PayloadAction<{ majorId: string; fallbackCatalogYear: string | null }>,
+    ) => {
+      const major = state.selectedMajors.find((m) => m.major.id === action.payload.majorId);
+      if (major) {
+        major.fallbackCatalogYear = action.payload.fallbackCatalogYear;
+      }
+    },
     setMinorRequirements: (state, action: PayloadAction<{ minorId: string; requirements: ProgramRequirement[] }>) => {
       const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
       if (minor) {
@@ -98,6 +110,7 @@ const courseRequirementsSlice = createSlice({
           minor: action.payload,
           requirements: [],
           catalogYear: null,
+          fallbackCatalogYear: null,
         });
         state.expandedGroups[`minor-${action.payload.id}`] = true;
       }
@@ -109,6 +122,15 @@ const courseRequirementsSlice = createSlice({
       const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
       if (minor) {
         minor.catalogYear = action.payload.catalogYear;
+      }
+    },
+    setMinorFallbackCatalogYear: (
+      state,
+      action: PayloadAction<{ minorId: string; fallbackCatalogYear: string | null }>,
+    ) => {
+      const minor = state.selectedMinors.find((m) => m.minor.id === action.payload.minorId);
+      if (minor) {
+        minor.fallbackCatalogYear = action.payload.fallbackCatalogYear;
       }
     },
     setGERequirements: (state, action: PayloadAction<ProgramRequirement[]>) => {
@@ -156,10 +178,12 @@ export const {
   setMajorSpecs,
   setRequirements,
   setMajorCatalogYear,
+  setMajorFallbackCatalogYear,
   setMinorList,
   addMinor,
   removeMinor,
   setMinorCatalogYear,
+  setMinorFallbackCatalogYear,
   setMinorRequirements,
   setGERequirements,
   setMarkerComplete,

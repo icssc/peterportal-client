@@ -11,6 +11,7 @@ import {
   MajorWithSpecialization,
   setGroupExpanded,
   setMajorCatalogYear,
+  setMajorFallbackCatalogYear,
   setMajorSpecs,
   setRequirements,
   setSpecialization,
@@ -91,7 +92,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   const hasSpecs = major.specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
   const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
-  const [fallbackCatalogYear, setFallbackCatalogYear] = useState<string | null>(null);
+  const fallbackCatalogYear = majorWithSpec.fallbackCatalogYear ?? null;
 
   if (specOptions.length > 0 && !major.specializationRequired) {
     specOptions.unshift({ value: noSpec, label: noSpec.name });
@@ -114,7 +115,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
       setResultsLoading(true);
-      setFallbackCatalogYear(null); // reset fallback year on each fetch
+      dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: null })); // reset fallback year on each fetch
 
       try {
         const result = await getCoursesForMajor(majorId, specId, catalogYear);
@@ -122,7 +123,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
 
         // If API resolved to a different year than requested, set fallback
         if (catalogYear && returnedYear && returnedYear !== catalogYear) {
-          setFallbackCatalogYear(returnedYear);
+          dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: returnedYear }));
         }
 
         const specRequirements = await getCoursesForSpecialization(specId);
