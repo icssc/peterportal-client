@@ -87,7 +87,10 @@ const programsRouter = router({
         .then((res) => {
           const schoolRequirements = (res.data.schoolRequirements?.requirements as ProgramRequirement[]) ?? [];
           const majorRequirements = res.data.requirements as ProgramRequirement[];
-          return [...schoolRequirements, ...majorRequirements];
+          return {
+            requirements: [...schoolRequirements, ...majorRequirements],
+            catalogYear: res.data.catalogYear as string | undefined,
+          };
         });
       return response;
     }),
