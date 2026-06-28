@@ -66,18 +66,31 @@ const programsRouter = router({
     return response;
   }),
   getRequiredCourses: publicProcedure
-    .input(z.object({ type: z.enum(programTypeNames), programId: z.string(), specializationId: z.string().optional() }))
+    .input(
+      z.object({
+        type: z.enum(programTypeNames),
+        programId: z.string(),
+        specializationId: z.string().optional(),
+        catalogYear: z.string().optional(),
+      }),
+    )
     .query(async ({ input }) => {
       let url = `${process.env.PUBLIC_API_URL}programs/${input.type}?programId=${input.programId}`;
       if (input.type === 'major' && input.specializationId) {
         url += `&specializationId=${input.specializationId}`;
+      }
+      if (input.type !== 'specialization' && input.catalogYear) {
+        url += `&catalogYear=${input.catalogYear}`;
       }
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
         .then((res) => res.json())
         .then((res) => {
           const schoolRequirements = (res.data.schoolRequirements?.requirements as ProgramRequirement[]) ?? [];
           const majorRequirements = res.data.requirements as ProgramRequirement[];
-          return [...schoolRequirements, ...majorRequirements];
+          return {
+            requirements: [...schoolRequirements, ...majorRequirements],
+            catalogYear: res.data.catalogYear as string | undefined,
+          };
         });
       return response;
     }),
