@@ -1,7 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR } from '../../../helpers/courseRequirements';
+import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
 import {
   setMinorRequirements,
   MinorRequirements,
@@ -9,6 +9,7 @@ import {
   setMinorCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
@@ -29,6 +30,7 @@ interface MinorCourseListProps {
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearChange }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
   const [resultsLoading, setResultsLoading] = useState(false);
+  const [fallbackCatalogYear, setFallbackCatalogYear] = useState<string | null>(null);
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKeyPrefix, expanded: isOpen }));
@@ -39,9 +41,16 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
   const fetchRequirements = useCallback(
     async (minorId: string, catalogYear?: string) => {
       setResultsLoading(true);
+      setFallbackCatalogYear(null);
 
       try {
-        const requirements = await getCoursesForMinor(minorId, catalogYear);
+        const result = await getCoursesForMinor(minorId, catalogYear);
+        const { requirements, catalogYear: returnedYear } = result;
+
+        if (catalogYear && returnedYear && returnedYear !== catalogYear) {
+          setFallbackCatalogYear(returnedYear);
+        }
+
         dispatch(setMinorRequirements({ minorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -106,6 +115,15 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
             ))}
           </Select>
         </FormControl>
+        {fallbackCatalogYear && !resultsLoading && (
+          <div className="catalog-year-warning">
+            <WarningAmberIcon className="warning-icon" />
+            <p className="catalog-year-warning-text">
+              {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
+              {formatCatalogYear(fallbackCatalogYear)}
+            </p>
+          </div>
+        )}
         {resultsLoading ? (
           <LoadingSpinner />
         ) : (
