@@ -7,6 +7,7 @@ import {
   MinorRequirements,
   setGroupExpanded,
   setMinorCatalogYear,
+  setMinorFallbackCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -30,7 +31,7 @@ interface MinorCourseListProps {
 const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearChange }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
   const [resultsLoading, setResultsLoading] = useState(false);
-  const [fallbackCatalogYear, setFallbackCatalogYear] = useState<string | null>(null);
+  const fallbackCatalogYear = minorReqs.fallbackCatalogYear ?? null;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKeyPrefix, expanded: isOpen }));
@@ -41,14 +42,14 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
   const fetchRequirements = useCallback(
     async (minorId: string, catalogYear?: string) => {
       setResultsLoading(true);
-      setFallbackCatalogYear(null);
+      dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: null }));
 
       try {
         const result = await getCoursesForMinor(minorId, catalogYear);
         const { requirements, catalogYear: returnedYear } = result;
 
         if (catalogYear && returnedYear && returnedYear !== catalogYear) {
-          setFallbackCatalogYear(returnedYear);
+          dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: returnedYear }));
         }
 
         dispatch(setMinorRequirements({ minorId, requirements }));
