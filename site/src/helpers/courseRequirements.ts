@@ -78,6 +78,9 @@ export const CATALOG_YEAR_OPTIONS = Array.from({ length: 5 }, (_, i) => {
   };
 });
 
+// catalog year formatter for output
+export const formatCatalogYear = (year: string) => `${year.slice(0, 4)}-${year.slice(4)}`;
+
 /** A RegEx for GE labels in Degree Requirements */
 const GE_LABEL_REGEX = /^\d courses? category ([iv]+[ab]?)$|^([iv]+[ab]?)\. (\w.*)/i;
 
