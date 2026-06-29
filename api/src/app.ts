@@ -96,7 +96,7 @@ app.use('/planner/api', expressRouter);
 /**
  * Error Handler
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line no-unused-vars
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: 'Internal Serverless Error', err });
