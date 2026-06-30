@@ -113,7 +113,7 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
         <MenuItem onClick={openReportForm}>Report</MenuItem>
         {isAdmin && isAdminVerifyPage && <MenuItem onClick={() => verifyReview(review.id!)}>Admin: Verify</MenuItem>}
         {isAdmin && isAdminVerifyPage && (
-          <MenuItem onClick={() => adminDeleteReview(review.id!)}>Admin: Delete</MenuItem>
+          <MenuItem onClick={() => adminDeleteReview(review.id)}>Admin: Delete</MenuItem>
         )}
         {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
         {review.authored && (
@@ -139,7 +139,7 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
           <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button color="error" onClick={() => deleteReview(review.id!)}>
+          <Button color="error" onClick={() => deleteReview(review.id)}>
             Delete
           </Button>
         </DialogActions>
