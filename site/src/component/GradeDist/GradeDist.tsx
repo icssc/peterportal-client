@@ -304,19 +304,23 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               / 5
             </Typography>
           </div>
-          {currentAvgQuality && selectedQuarter !== 'ALL' && selectedQuarter !== lastQuarter && lastAvgQuality && (
-            <span className="stat-change-row">
-              <Typography color={qualityColor}>
-                {qualityDiff > 0 ? (
-                  <ArrowUpward fontSize="inherit" />
-                ) : qualityDiff < 0 ? (
-                  <ArrowDownward fontSize="inherit" />
-                ) : null}
-                {formattedQualityDiff}
-              </Typography>
-              <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
-            </span>
-          )}
+          {currentAvgQuality &&
+            qualityDiff !== 0 &&
+            selectedQuarter !== 'ALL' &&
+            selectedQuarter !== lastQuarter &&
+            lastAvgQuality && (
+              <span className="stat-change-row">
+                <Typography color={qualityColor}>
+                  {qualityDiff > 0 ? (
+                    <ArrowUpward fontSize="inherit" />
+                  ) : qualityDiff < 0 ? (
+                    <ArrowDownward fontSize="inherit" />
+                  ) : null}
+                  {formattedQualityDiff}
+                </Typography>
+                <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
+              </span>
+            )}
         </CardContent>
       </Card>
     );

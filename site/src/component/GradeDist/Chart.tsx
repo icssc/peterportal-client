@@ -30,7 +30,7 @@ export default function Chart({ gradeData, quarter, professor, course }: ChartPr
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data}>
+      <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
         <XAxis dataKey="grade" />
         <Tooltip
           cursor={{ fill: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
@@ -39,6 +39,7 @@ export default function Chart({ gradeData, quarter, professor, course }: ChartPr
             const { grade, count } = payload[0].payload;
             return <ChartTooltip label={grade} value={count} />;
           }}
+          isAnimationActive={false}
         />
         <Bar dataKey="count" radius={[8, 8, 0, 0]}>
           <LabelList dataKey="count" position="top" fill={getCssVariable('--mui-palette-text-secondary')} />
