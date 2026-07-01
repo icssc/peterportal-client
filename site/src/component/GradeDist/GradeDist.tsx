@@ -7,7 +7,7 @@ import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Autocomplete, Card, CardContent, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import MostUsedTags from './MostUsedTags';
-import { getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
+import { formatLastQuarter, getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
 import { getAvgDifficulty, getAvgRating } from '../../helpers/reviews';
@@ -252,6 +252,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       lastQuarterAggregateGradeData.averageGPA,
     );
 
+    const formattedLastQuarter = formatLastQuarter(lastQuarter);
+    const formattedGpaDiff = Math.abs(gpaDiff).toFixed(1);
+
     const averageGPACard = (
       <Card variant="outlined" className="stat-card">
         <CardContent>
@@ -262,7 +265,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               {aggregateGradeData.averageGrade}
             </Typography>
           </div>
-          {selectedQuarter !== 'ALL' && (
+          {selectedQuarter !== 'ALL' && selectedQuarter !== lastQuarter && (
             <span className="stat-change-row">
               <Typography color={gpaColor}>
                 {gpaDiff > 0 ? (
@@ -270,9 +273,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
                 ) : gpaDiff < 0 ? (
                   <ArrowDownward fontSize="inherit" />
                 ) : null}
-                {lastQuarterAggregateGradeData.averageGPA}
+                {formattedGpaDiff}
               </Typography>
-              <Typography color="textSecondary">from {lastQuarter}</Typography>
+              <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
             </span>
           )}
         </CardContent>
@@ -289,6 +292,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     const lastAvgQuality = getAvgRating(lastQuarterReviews);
 
     const { diff: qualityDiff, color: qualityColor } = getDiffAndColor(currentAvgQuality, lastAvgQuality);
+    const formattedQualityDiff = Math.abs(qualityDiff).toFixed(2);
 
     const averageQualityCard = (
       <Card variant="outlined" className="stat-card">
@@ -300,7 +304,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
               / 5
             </Typography>
           </div>
-          {selectedQuarter !== 'ALL' && lastAvgQuality && (
+          {currentAvgQuality && selectedQuarter !== 'ALL' && selectedQuarter !== lastQuarter && lastAvgQuality && (
             <span className="stat-change-row">
               <Typography color={qualityColor}>
                 {qualityDiff > 0 ? (
@@ -308,9 +312,9 @@ const GradeDist: FC<GradeDistProps> = (props) => {
                 ) : qualityDiff < 0 ? (
                   <ArrowDownward fontSize="inherit" />
                 ) : null}
-                {lastAvgQuality}
+                {formattedQualityDiff}
               </Typography>
-              <Typography color="textSecondary">from {lastQuarter}</Typography>
+              <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
             </span>
           )}
         </CardContent>
