@@ -23,7 +23,8 @@ const SaveButton: FC = () => {
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       if (event.key.toLowerCase() !== 's') return;
-      if (!event.ctrlKey && !event.metaKey) return;
+      if (event.ctrlKey === event.metaKey) return;
+      if (event.altKey || event.shiftKey) return;
 
       event.preventDefault();
       if (event.repeat) return;

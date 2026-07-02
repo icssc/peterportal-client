@@ -260,6 +260,20 @@
       "when": 1779923641808,
       "tag": "0036_familiar_diamondback",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1781369759524,
+      "tag": "0037_condemned_major_mapleleaf",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1781739961663,
+      "tag": "0038_premium_jack_murdock",
+      "breakpoints": true
     }
   ]
 }
