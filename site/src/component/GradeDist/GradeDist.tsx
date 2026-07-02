@@ -1,12 +1,16 @@
 import { FC, useState, useEffect, useCallback } from 'react';
 import Chart from './Chart';
-import Pie from './Pie';
 import './GradeDist.scss';
 
 import { CourseGQLData, ProfessorGQLData } from '../../types/types';
 import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
-import { Autocomplete, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Card, CardContent, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
+import MostUsedTags from './MostUsedTags';
+import { formatLastQuarter, getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { useAppSelector } from '../../store/hooks';
+import { getAvgDifficulty, getAvgRating } from '../../helpers/reviews';
 
 interface GradeDistProps {
   course?: CourseGQLData;
@@ -52,12 +56,15 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
   const [gradeDistData, setGradeDistData] = useState<GradesRaw>();
   const [chartType, setChartType] = useState<ChartTypes>('bar');
-  const [currentQuarter, setCurrentQuarter] = useState('');
+  const [lastQuarter, setLastQuarter] = useState('');
+  const [selectedQuarter, setSelectedQuarter] = useState('');
   const [currentProf, setCurrentProf] = useState('');
   const [profEntries, setProfEntries] = useState<Entry[]>();
   const [currentCourse, setCurrentCourse] = useState('');
   const [courseEntries, setCourseEntries] = useState<Entry[]>();
   const [quarterEntries, setQuarterEntries] = useState<Entry[]>();
+
+  const reviews = useAppSelector((state) => state.review.reviews);
 
   const fetchGradeData = useCallback(() => {
     fetchGradeDistData(props)
@@ -156,7 +163,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         }
       }),
     );
-    setCurrentQuarter(result[0].value);
+    setSelectedQuarter(result[0].value);
+    setLastQuarter(result[1].value);
   }, [currentCourse, currentProf, gradeDistData]);
 
   // update list of quarters when new professor/course is chosen
@@ -173,7 +181,12 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     else setCurrentCourse(value!);
   };
 
-  const selectedQuarterName = quarterEntries?.find((q) => q.value === currentQuarter)?.text ?? 'Quarter';
+  const selectedQuarterName = quarterEntries?.find((q) => q.value === selectedQuarter)?.text ?? 'Quarter';
+  const gradeDistReady =
+    !!gradeDistData?.length &&
+    !!quarterEntries?.length &&
+    !!selectedQuarter &&
+    (selectedQuarter === 'ALL' || !!lastQuarter);
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -210,8 +223,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
       <div className="gradedist-filter">
         <Select
-          value={currentQuarter}
-          onChange={(e) => setCurrentQuarter(e.target.value)}
+          value={selectedQuarter}
+          onChange={(e) => setSelectedQuarter(e.target.value)}
           renderValue={() => {
             return selectedQuarterName;
           }}
@@ -229,38 +242,184 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </div>
   );
 
-  if (gradeDistData?.length) {
+  if (gradeDistReady) {
     const graphProps = {
       gradeData: gradeDistData,
-      quarter: currentQuarter,
+      quarter: selectedQuarter,
       course: currentCourse,
       professor: currentProf,
     };
+    const aggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, selectedQuarter, currentCourse);
+    const lastQuarterAggregateGradeData = getAggregateGradeData(gradeDistData, currentProf, lastQuarter, currentCourse);
+
+    const { diff: gpaDiff, color: gpaColor } = getDiffAndColor(
+      aggregateGradeData.averageGPA,
+      lastQuarterAggregateGradeData.averageGPA,
+    );
+
+    const formattedLastQuarter = formatLastQuarter(lastQuarter);
+    const formattedGpaDiff = Math.abs(gpaDiff).toFixed(1);
+
+    const averageGPACard = (
+      <Card variant="outlined" className="stat-card">
+        <CardContent>
+          <Typography className="stat-label">Average GPA</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{aggregateGradeData.averageGPA}</Typography>
+            <Typography className="stat-unit" fontSize={20}>
+              {aggregateGradeData.averageGrade}
+            </Typography>
+          </div>
+          {selectedQuarter !== 'ALL' && selectedQuarter !== lastQuarter && (
+            <span className="stat-change-row">
+              <Typography color={gpaColor}>
+                {gpaDiff > 0 ? (
+                  <ArrowUpward fontSize="inherit" />
+                ) : gpaDiff < 0 ? (
+                  <ArrowDownward fontSize="inherit" />
+                ) : null}
+                {formattedGpaDiff}
+              </Typography>
+              <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
+            </span>
+          )}
+        </CardContent>
+      </Card>
+    );
+
+    const filteredReviews =
+      selectedQuarter === 'ALL'
+        ? reviews
+        : reviews.filter((r) => r.quarter === selectedQuarter.split(' ').reverse().join(' '));
+    const lastQuarterReviews = reviews.filter((r) => r.quarter === lastQuarter.split(' ').reverse().join(' '));
+
+    const currentAvgQuality = getAvgRating(filteredReviews);
+    const lastAvgQuality = getAvgRating(lastQuarterReviews);
+
+    const { diff: qualityDiff, color: qualityColor } = getDiffAndColor(currentAvgQuality, lastAvgQuality);
+    const formattedQualityDiff = Math.abs(qualityDiff).toFixed(2);
+
+    const averageQualityCard = (
+      <Card variant="outlined" className="stat-card">
+        <CardContent>
+          <Typography className="stat-label">Average Quality</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{currentAvgQuality ?? '—'}</Typography>
+            <Typography className="stat-unit stat-unit--baseline" fontSize={20}>
+              / 5
+            </Typography>
+          </div>
+          {currentAvgQuality &&
+            qualityDiff !== 0 &&
+            selectedQuarter !== 'ALL' &&
+            selectedQuarter !== lastQuarter &&
+            lastAvgQuality && (
+              <span className="stat-change-row">
+                <Typography color={qualityColor}>
+                  {qualityDiff > 0 ? (
+                    <ArrowUpward fontSize="inherit" />
+                  ) : qualityDiff < 0 ? (
+                    <ArrowDownward fontSize="inherit" />
+                  ) : null}
+                  {formattedQualityDiff}
+                </Typography>
+                <Typography color="textSecondary">from {formattedLastQuarter}</Typography>
+              </span>
+            )}
+        </CardContent>
+      </Card>
+    );
+
+    const currentAvgDifficulty = getAvgDifficulty(filteredReviews);
+
+    const avgDifficultyCard = (
+      <Card variant="outlined" className="stat-card">
+        <CardContent>
+          <Typography className="stat-label">Average Difficulty</Typography>
+          <div className="stat-value-row">
+            <Typography fontSize={32}>{currentAvgDifficulty ?? '—'}</Typography>
+            <Typography className="stat-unit stat-unit--baseline" fontSize={20}>
+              / 5
+            </Typography>
+          </div>
+        </CardContent>
+      </Card>
+    );
+
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <div className="chart-container">
+        <div className="gradedist-content">
+          <div className="gradedist-stats">
+            {averageGPACard}
+            {averageQualityCard}
+            {avgDifficultyCard}
+          </div>
           {((props.minify && chartType == 'bar') || !props.minify) && (
-            <div className={'grade_distribution_chart-container chart'}>
-              <Chart {...graphProps} />
-            </div>
-          )}
-          {((props.minify && chartType == 'pie') || !props.minify) && (
-            <div className={'grade_distribution_chart-container pie'}>
-              <Pie {...graphProps} />
-            </div>
+            <Card variant="outlined" className="grade-dist-chart-card">
+              <CardContent>
+                <div className="grade-dist-chart-container">
+                  <Chart {...graphProps} />
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
+        {reviews.length > 0 && <MostUsedTags reviews={reviews} />}
       </div>
     );
-  } else if (gradeDistData == null) {
-    // null if still fetching, display loading message
+  } else if (gradeDistData == null || !gradeDistReady) {
+    // null if still fetching, display loading skeletons
+
+    const skeletonStatCard = (
+      <Card variant="outlined" className="stat-card">
+        <CardContent>
+          <Skeleton width={90} height={20} />
+
+          <div className="stat-value-row">
+            <Skeleton width={70} height={50} />
+            <Skeleton width={40} height={30} />
+          </div>
+
+          <Skeleton width={120} height={20} />
+        </CardContent>
+      </Card>
+    );
+
+    const skeletonChartCard = (
+      <Card variant="outlined" className="grade-dist-chart-card">
+        <CardContent>
+          <Skeleton variant="rectangular" width="100%" height={300} />
+          <Skeleton variant="rectangular" width="100%" height={12} style={{ marginTop: 12, borderRadius: 999 }} />
+        </CardContent>
+      </Card>
+    );
+
+    const skeletonTagsCard = (
+      <Card variant="outlined" className="most-used-tags">
+        <CardContent>
+          <Skeleton width={140} height={28} />
+          <Skeleton width={96} height={18} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} />
+        </CardContent>
+      </Card>
+    );
+
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>Loading Distribution..</p>
+        <div className="gradedist-content">
+          <div className="gradedist-stats">
+            {skeletonStatCard}
+            {skeletonStatCard}
+            {skeletonStatCard}
+          </div>
+
+          {skeletonChartCard}
         </div>
+        {skeletonTagsCard}
       </div>
     );
   } else {
