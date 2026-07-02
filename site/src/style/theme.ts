@@ -8,12 +8,12 @@ const sharedTokens = {
     midGray: '#8d8d8d',
   },
   chart: {
-    a: '#2196F3',
-    b: '#4AA4BD',
-    c: '#4ABDA6',
-    d: '#F5BD63',
-    f: '#FF6B3A',
-    pass: '#7BC665',
+    a: '#0C7CD5',
+    b: '#388499',
+    c: '#35927F',
+    d: '#A86C0B',
+    f: '#DB3600',
+    pass: '#498E34',
     noPass: '#E15065',
   },
   success: {

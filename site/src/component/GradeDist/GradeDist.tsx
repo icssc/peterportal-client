@@ -182,6 +182,11 @@ const GradeDist: FC<GradeDistProps> = (props) => {
   };
 
   const selectedQuarterName = quarterEntries?.find((q) => q.value === selectedQuarter)?.text ?? 'Quarter';
+  const gradeDistReady =
+    !!gradeDistData?.length &&
+    !!quarterEntries?.length &&
+    !!selectedQuarter &&
+    (selectedQuarter === 'ALL' || !!lastQuarter);
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -237,7 +242,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     </div>
   );
 
-  if (gradeDistData?.length) {
+  if (gradeDistReady) {
     const graphProps = {
       gradeData: gradeDistData,
       quarter: selectedQuarter,
@@ -363,7 +368,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         {reviews.length > 0 && <MostUsedTags reviews={reviews} />}
       </div>
     );
-  } else if (gradeDistData == null) {
+  } else if (gradeDistData == null || !gradeDistReady) {
     // null if still fetching, display loading skeletons
 
     const skeletonStatCard = (
