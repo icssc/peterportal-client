@@ -385,6 +385,19 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       <Card variant="outlined" className="grade-dist-chart-card">
         <CardContent>
           <Skeleton variant="rectangular" width="100%" height={300} />
+          <Skeleton variant="rectangular" width="100%" height={12} style={{ marginTop: 12, borderRadius: 999 }} />
+        </CardContent>
+      </Card>
+    );
+
+    const skeletonTagsCard = (
+      <Card variant="outlined" className="most-used-tags">
+        <CardContent>
+          <Skeleton width={140} height={28} />
+          <Skeleton width={96} height={18} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} style={{ marginBottom: 12 }} />
+          <Skeleton variant="rectangular" width="100%" height={54} />
         </CardContent>
       </Card>
     );
@@ -401,6 +414,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
 
           {skeletonChartCard}
         </div>
+        {skeletonTagsCard}
       </div>
     );
   } else {
