@@ -1,5 +1,6 @@
 import { ReactSortableProps, SortableOptions } from 'react-sortablejs';
 import { CourseGQLData, CustomCourse, PlannerQuarterCourse } from '../types/types';
+import { RoadmapPlan } from '../types/roadmap';
 
 const baseSortable: SortableOptions = {
   animation: 150,
@@ -37,4 +38,13 @@ export const programRequirementsSortable: SortableOptions & Partial<ReactSortabl
   sort: false,
   revertOnSpill: true,
   group: { name: 'courses', pull: 'clone', put: false },
+};
+
+export const planSortable: SortableOptions & Partial<ReactSortableProps<RoadmapPlan>> = {
+  animation: 150,
+  forceFallback: false,
+  fallbackOnBody: false,
+  fallbackTolerance: 4,
+  setList: () => {},
+  handle: '.drag-icon',
 };

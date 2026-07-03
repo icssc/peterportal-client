@@ -41,14 +41,15 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
 
   const fetchRequirements = useCallback(
     async (minorId: string, catalogYear?: string) => {
+      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
       setResultsLoading(true);
       dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: null }));
 
       try {
-        const result = await getCoursesForMinor(minorId, catalogYear);
+        const result = await getCoursesForMinor(minorId, effectiveCatalogYear);
         const { requirements, catalogYear: returnedYear } = result;
 
-        if (catalogYear && returnedYear && returnedYear !== catalogYear) {
+        if (returnedYear && returnedYear !== effectiveCatalogYear) {
           dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: returnedYear }));
         }
 
