@@ -14,7 +14,6 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 .sort-dropdown,
 .filter-dropdown {
@@ -37,6 +36,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 /*
