@@ -202,6 +202,18 @@ const Review: FC<ReviewProps> = (props) => {
                 label="Show verified reviews only"
               />
             </div>
+
+            <Tooltip
+              title="You must be logged in to leave a review"
+              placement="top"
+              open={isLoggedIn ? false : undefined}
+            >
+              <span className="add-review-button">
+                <Button onClick={openReviewForm} disabled={!isLoggedIn}>
+                  <AddIcon /> Add Review
+                </Button>
+              </span>
+            </Tooltip>
           </div>
 
           {sortedReviews.length !== 0 && (
@@ -211,7 +223,7 @@ const Review: FC<ReviewProps> = (props) => {
               ))}
             </div>
           )}
-          <Tooltip
+          {/* <Tooltip
             title="You must be logged in to leave a review"
             placement="top"
             open={isLoggedIn ? false : undefined}
@@ -221,7 +233,7 @@ const Review: FC<ReviewProps> = (props) => {
                 <AddIcon /> Add Review
               </Button>
             </span>
-          </Tooltip>
+          </Tooltip> */}
         </div>
         <ReviewForm open={showForm} handleClose={closeForm} {...props} />
       </>
