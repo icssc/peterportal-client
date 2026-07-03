@@ -96,6 +96,10 @@
     @media (max-width: globals.$mobile-cutoff) {
       padding: 16px;
     }
+
+    @container (max-width: 940px) {
+      padding-bottom: calc(var(--preview-nav-height, 0px) + 72px);
+    }
   }
 
   .professor-summary {
