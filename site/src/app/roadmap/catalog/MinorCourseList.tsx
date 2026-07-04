@@ -91,7 +91,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <Tooltip
-          title="Major, minor, and GE requirements from a specific catalog year"
+          title="Minor requirements from a specific catalog year"
           placement="bottom-start"
           slotProps={{
             tooltip: { className: 'catalog-year-tooltip' },

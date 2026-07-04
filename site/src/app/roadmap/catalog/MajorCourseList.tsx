@@ -217,7 +217,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
         <Tooltip
-          title="Major, minor, and GE requirements from a specific catalog year"
+          title="Major requirements from a specific catalog year"
           placement="bottom-start"
           slotProps={{
             tooltip: { className: 'catalog-year-tooltip' },
@@ -225,6 +225,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
               modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
             },
           }}
+          disableInteractive
         >
           <h5 className="catalog-year-title">Catalog Year</h5>
         </Tooltip>
@@ -252,8 +253,6 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
             </p>
           </div>
         )}
-        {/* <p>{fallbackCatalogYear} hi hi {DEFAULT_CATALOG_YEAR}</p> */}
-
         {hasSpecs && (
           <Autocomplete
             className="specialization-select"
