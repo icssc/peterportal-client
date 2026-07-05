@@ -1,4 +1,5 @@
 @use '../../globals.scss';
+$show-navbar-cutoff: 940px;
 
 .result-preview {
   position: absolute;
@@ -97,7 +98,7 @@
       padding: 16px;
     }
 
-    @container (max-width: 940px) {
+    @container (max-width: #{$show-navbar-cutoff}) {
       padding-bottom: calc(var(--preview-nav-height, 0px) + 96px);
     }
   }
@@ -108,7 +109,7 @@
     margin-bottom: 32px;
   }
 
-  @container (max-width: 940px) {
+  @container (max-width: #{$show-navbar-cutoff}) {
     .preview-title {
       margin-right: auto;
     }
