@@ -1,30 +1,37 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
+import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
 import {
   setMinorRequirements,
   MinorRequirements,
   setGroupExpanded,
+  setMinorCatalogYear,
+  setMinorFallbackCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse } from '@mui/material';
+import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-function getCoursesForMinor(programId: string) {
-  return trpc.programs.getRequiredCourses.query({ type: 'minor', programId });
+function getCoursesForMinor(programId: string, catalogYear?: string) {
+  return trpc.programs.getRequiredCourses.query({ type: 'minor', programId, catalogYear });
 }
 
 interface MinorCourseListProps {
   minorReqs: MinorRequirements;
+  onCatalogYearChange: (minorId: string, catalogYear: string | null) => void;
 }
 
-const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
+const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearChange }) => {
   const storeKeyPrefix = `minor-${minorReqs.minor.id}`;
   const [resultsLoading, setResultsLoading] = useState(false);
+  const fallbackCatalogYear = minorReqs.fallbackCatalogYear ?? null;
   const open = useAppSelector((state) => state.courseRequirements.expandedGroups[storeKeyPrefix] ?? false);
   const setOpen = (isOpen: boolean) => {
     dispatch(setGroupExpanded({ storeKey: storeKeyPrefix, expanded: isOpen }));
@@ -33,11 +40,19 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
   const dispatch = useAppDispatch();
 
   const fetchRequirements = useCallback(
-    async (minorId: string) => {
+    async (minorId: string, catalogYear?: string) => {
+      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
       setResultsLoading(true);
+      dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: null }));
 
       try {
-        const requirements = await getCoursesForMinor(minorId);
+        const result = await getCoursesForMinor(minorId, effectiveCatalogYear);
+        const { requirements, catalogYear: returnedYear } = result;
+
+        if (returnedYear && returnedYear !== effectiveCatalogYear) {
+          dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: returnedYear }));
+        }
+
         dispatch(setMinorRequirements({ minorId, requirements }));
       } finally {
         setResultsLoading(false);
@@ -48,11 +63,25 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
 
   useEffect(() => {
     if (!minorReqs.requirements || minorReqs.requirements.length === 0) {
-      fetchRequirements(minorReqs.minor.id);
+      fetchRequirements(minorReqs.minor.id, minorReqs.catalogYear ?? undefined);
     }
-  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements]);
+  }, [fetchRequirements, minorReqs.minor.id, minorReqs.requirements, minorReqs.catalogYear]);
 
   const toggleExpand = () => setOpen(!open);
+
+  const handleCatalogYearChange = useCallback(
+    async (event: SelectChangeEvent) => {
+      const newCatalogYear = event.target.value || null;
+      if (newCatalogYear === minorReqs.catalogYear) return;
+
+      setResultsLoading(true);
+      onCatalogYearChange(minorReqs.minor.id, newCatalogYear);
+      dispatch(setMinorRequirements({ minorId: minorReqs.minor.id, requirements: [] }));
+      dispatch(setMinorCatalogYear({ minorId: minorReqs.minor.id, catalogYear: newCatalogYear }));
+      await fetchRequirements(minorReqs.minor.id, newCatalogYear ?? undefined);
+    },
+    [dispatch, fetchRequirements, minorReqs.minor.id, minorReqs.catalogYear, onCatalogYearChange],
+  );
 
   return (
     <div className="major-section">
@@ -61,6 +90,42 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs }) => {
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
+        <Tooltip
+          title="Minor requirements from a specific catalog year"
+          placement="bottom-start"
+          slotProps={{
+            tooltip: { className: 'catalog-year-tooltip' },
+            popper: {
+              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
+            },
+          }}
+        >
+          <h5 className="catalog-year-title">Catalog Year</h5>
+        </Tooltip>
+        <FormControl className="catalog-year-dropdown" fullWidth>
+          <Select
+            IconComponent={KeyboardArrowDownIcon}
+            labelId="catalog-year-select-label"
+            id="catalog-year-select"
+            value={minorReqs.catalogYear ?? DEFAULT_CATALOG_YEAR}
+            onChange={handleCatalogYearChange}
+          >
+            {CATALOG_YEAR_OPTIONS.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {fallbackCatalogYear && !resultsLoading && (
+          <div className="catalog-year-warning">
+            <WarningAmberIcon className="warning-icon" />
+            <p className="catalog-year-warning-text">
+              {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
+              {formatCatalogYear(fallbackCatalogYear)}.
+            </p>
+          </div>
+        )}
         {resultsLoading ? (
           <LoadingSpinner />
         ) : (
