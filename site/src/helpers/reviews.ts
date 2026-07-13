@@ -27,17 +27,6 @@ export function getReviewHeadingName(
   }
 }
 
-export function formatQuarter(quarter: string): string {
-  const [year, term] = quarter.split(' ');
-  const termMap: Record<string, string> = {
-    Fall: 'F',
-    Winter: 'W',
-    Spring: 'Sp',
-    Summer: 'Su',
-  };
-  return `${termMap[term] ?? term}${year.slice(-2)}`;
-}
-
 export function displayReviewDate(date: string | Date): string {
   return new Date(date).toLocaleString('default', {
     year: 'numeric',

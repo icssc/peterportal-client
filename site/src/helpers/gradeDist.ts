@@ -89,25 +89,3 @@ export const getDiffAndColor = (current: string | null, last: string | null) => 
   const color = diff > 0 ? 'success.main' : diff < 0 ? 'error.main' : 'text.primary';
   return { diff, color };
 };
-
-// ex: Winter 2026 -> W26
-export const formatLastQuarter = (term: string | null | undefined) => {
-  if (!term) return '';
-
-  const termMap: Record<string, string> = {
-    Fall: 'F',
-    Winter: 'W',
-    Spring: 'Sp',
-    Summer: 'Su',
-  };
-
-  const [firstPart, secondPart] = term.split(' ');
-  if (!firstPart || !secondPart) return term;
-
-  const quarter = termMap[firstPart] ? firstPart : termMap[secondPart] ? secondPart : null;
-  const year = termMap[firstPart] ? secondPart : termMap[secondPart] ? firstPart : null;
-
-  if (!quarter || !year) return term;
-
-  return `${termMap[quarter]}${year.slice(-2)}`;
-};

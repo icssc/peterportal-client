@@ -7,7 +7,8 @@ import { GradesRaw, QuarterName } from '@peterportal/types';
 import trpc from '../../trpc';
 import { Autocomplete, Card, CardContent, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import MostUsedTags from './MostUsedTags';
-import { formatLastQuarter, getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
+import { getAggregateGradeData, getDiffAndColor } from '../../helpers/gradeDist';
+import { shortenQuarter } from '../../helpers/util';
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
 import { getAvgDifficulty, getAvgRating } from '../../helpers/reviews';
@@ -259,7 +260,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
       lastQuarterAggregateGradeData.averageGPA,
     );
 
-    const formattedLastQuarter = formatLastQuarter(lastQuarter);
+    const formattedLastQuarter = shortenQuarter(lastQuarter);
     const formattedGpaDiff = Math.abs(gpaDiff).toFixed(1);
 
     const averageGPACard = (
