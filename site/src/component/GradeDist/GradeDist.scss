@@ -111,57 +111,59 @@
   }
 }
 
-@media only screen and (max-width: 600px) {
-  .gradedist-menu {
-    flex-direction: column;
-    gap: 12px;
-  }
+@container (max-width: 600px) {
+  .gradedist-module-container {
+    .gradedist-menu {
+      flex-direction: column;
+      gap: 12px;
+    }
 
-  .gradedist-filter {
-    width: 100%;
-
-    .MuiInputBase-root {
+    .gradedist-filter {
       width: 100%;
 
-      .MuiInputBase-input {
+      .MuiInputBase-root {
+        width: 100%;
+
+        .MuiInputBase-input {
+          width: 100%;
+        }
+      }
+
+      .MuiAutocomplete-root {
         width: 100%;
       }
     }
 
-    .MuiAutocomplete-root {
-      width: 100%;
+    .gradedist-content {
+      height: auto;
     }
-  }
 
-  .gradedist-content {
-    height: auto;
-  }
+    .gradedist-stats {
+      height: auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
 
-  .gradedist-stats {
-    height: auto;
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
+    .gradedist-stats .stat-card:first-child {
+      grid-column: 1 / -1;
+    }
 
-  .gradedist-stats .stat-card:first-child {
-    grid-column: 1 / -1;
-  }
+    .gradedist-stats .stat-card {
+      min-height: 112px;
+    }
 
-  .gradedist-stats .stat-card {
-    min-height: 112px;
-  }
+    .grade-dist-chart-card {
+      width: 100%;
+      min-width: unset;
+      flex: unset;
+      height: auto;
+      min-height: 280px;
 
-  .grade-dist-chart-card {
-    width: 100%;
-    min-width: unset;
-    flex: unset;
-    height: auto;
-    min-height: 280px;
-
-    .grade-dist-chart-container {
-      min-height: 220px;
+      .grade-dist-chart-container {
+        min-height: 220px;
+      }
     }
   }
 }
