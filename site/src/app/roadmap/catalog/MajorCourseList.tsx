@@ -1,12 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import {
-  normalizeMajorName,
-  CATALOG_YEAR_OPTIONS,
-  DEFAULT_CATALOG_YEAR,
-  formatCatalogYear,
-} from '../../../helpers/courseRequirements';
+import { normalizeMajorName, DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -23,18 +18,9 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import {
-  Autocomplete,
-  Collapse,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Tooltip,
-} from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Autocomplete, Collapse, SelectChangeEvent, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+import CatalogYears from './CatalogYears';
 
 const noSpecId = 'NO_SPEC';
 
@@ -216,34 +202,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <Tooltip
-          title="Major requirements from a specific catalog year"
-          placement="bottom-start"
-          slotProps={{
-            tooltip: { className: 'catalog-year-tooltip' },
-            popper: {
-              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
-            },
-          }}
-          disableInteractive
-        >
-          <h5 className="catalog-year-title">Catalog Year</h5>
-        </Tooltip>
-        <FormControl className="catalog-year-dropdown" fullWidth>
-          <Select
-            IconComponent={KeyboardArrowDownIcon}
-            labelId="catalog-year-select-label"
-            id="catalog-year-select"
-            value={majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR}
-            onChange={handleCatalogYearChange}
-          >
-            {CATALOG_YEAR_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CatalogYears catalogYear={majorWithSpec.catalogYear} tab="Major" onChange={handleCatalogYearChange} />
         {fallbackCatalogYear && !resultsLoading && (
           <div className="catalog-year-warning">
             <WarningAmberIcon className="warning-icon" />

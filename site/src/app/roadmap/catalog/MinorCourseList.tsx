@@ -1,7 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
+import { DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
 import {
   setMinorRequirements,
   MinorRequirements,
@@ -15,9 +15,9 @@ import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse, FormControl, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import { Collapse, SelectChangeEvent } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import CatalogYears from './CatalogYears';
 
 function getCoursesForMinor(programId: string, catalogYear?: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId, catalogYear });
@@ -90,33 +90,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <Tooltip
-          title="Minor requirements from a specific catalog year"
-          placement="bottom-start"
-          slotProps={{
-            tooltip: { className: 'catalog-year-tooltip' },
-            popper: {
-              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
-            },
-          }}
-        >
-          <h5 className="catalog-year-title">Catalog Year</h5>
-        </Tooltip>
-        <FormControl className="catalog-year-dropdown" fullWidth>
-          <Select
-            IconComponent={KeyboardArrowDownIcon}
-            labelId="catalog-year-select-label"
-            id="catalog-year-select"
-            value={minorReqs.catalogYear ?? DEFAULT_CATALOG_YEAR}
-            onChange={handleCatalogYearChange}
-          >
-            {CATALOG_YEAR_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CatalogYears catalogYear={minorReqs.catalogYear} tab="Minor" onChange={handleCatalogYearChange} />
         {fallbackCatalogYear && !resultsLoading && (
           <div className="catalog-year-warning">
             <WarningAmberIcon className="warning-icon" />

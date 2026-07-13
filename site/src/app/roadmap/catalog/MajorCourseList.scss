@@ -39,11 +39,6 @@
     margin-bottom: 12;
   }
 
-  .catalog-year-title {
-    display: inline-block;
-    width: fit-content;
-  }
-
   .program-requirements {
     gap: 12px;
   }
@@ -54,35 +49,5 @@
 
   .MuiCollapse-wrapperInner > :first-child {
     padding-top: 8px;
-  }
-}
-
-.catalog-year-tooltip {
-  &#{&} {
-    font-size: 0.75rem;
-    border-radius: 8px;
-    padding: 8px;
-    max-width: 230px;
-    text-align: left;
-    margin-top: 8px;
-  }
-}
-
-.catalog-year-warning {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: -6px;
-  margin-bottom: 8px;
-
-  .warning-icon {
-    color: var(--mui-palette-warning-main);
-    font-size: 1.4rem;
-  }
-
-  .catalog-year-warning-text {
-    color: var(--mui-palette-warning-main);
-    font-size: 0.85rem;
-    margin: 0;
   }
 }
