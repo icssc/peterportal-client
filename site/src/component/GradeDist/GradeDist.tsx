@@ -187,6 +187,8 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     !!quarterEntries?.length &&
     !!selectedQuarter &&
     (selectedQuarter === 'ALL' || !!lastQuarter);
+  const failed = gradeDistData && gradeDistData.length === 0;
+  const stillFetching = !gradeDistReady && !failed;
 
   const optionsRow = (
     <div className="gradedist-menu">
@@ -368,9 +370,7 @@ const GradeDist: FC<GradeDistProps> = (props) => {
         {reviews.length > 0 && <MostUsedTags reviews={reviews} />}
       </div>
     );
-  } else if (gradeDistData == null || !gradeDistReady) {
-    // null if still fetching, display loading skeletons
-
+  } else if (stillFetching) {
     const skeletonStatCard = (
       <Card variant="outlined" className="stat-card">
         <CardContent>
@@ -427,8 +427,10 @@ const GradeDist: FC<GradeDistProps> = (props) => {
     return (
       <div className={`gradedist-module-container ${props.minify ? 'grade-dist-mini' : ''}`}>
         {optionsRow}
-        <div style={{ height: 400, textAlign: 'center' }}>
-          <p>Error: could not retrieve grade distribution data.</p>
+        <div className="gradedist-failed">
+          <p>
+            Grade distribution data is not available for this course. The course may not have been offered recently.
+          </p>
         </div>
       </div>
     );
