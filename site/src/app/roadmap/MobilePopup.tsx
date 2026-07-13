@@ -90,7 +90,7 @@ const MobilePopup: FC<MobilePopupProps> = ({ show, onClose, className, id, child
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
       element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handleTouchMovePopup, { passive: false } as EventListenerOptions);
+      element.removeEventListener('touchmove', handleTouchMovePopup);
       overlay?.removeEventListener('touchstart', handleOverlayTouchStart);
       overlay?.removeEventListener('touchend', handleOverlayTouchEnd);
       overlay?.removeEventListener('touchmove', handleOverlayTouchMove);
