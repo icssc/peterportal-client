@@ -42,7 +42,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, ma
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* eslint-disable jsx-a11y/no-autofocus */}
+      {/* oxlint-disable jsx-a11y/no-autofocus */}
       <TextField
         className="units-input"
         type="number"
@@ -58,7 +58,7 @@ const UnitsContainer: FC<UnitsContainerProps> = ({ units, setUnits, minUnits, ma
           },
         }}
       />
-      {/* eslint-enable jsx-a11y/no-autofocus */}
+      {/* oxlint-enable jsx-a11y/no-autofocus */}
       <IconButton type="submit">
         <CheckIcon />
       </IconButton>
