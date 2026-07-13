@@ -30,7 +30,7 @@ const lightPalette: PaletteOptions = {
   overlay: {
     overlay1: '#fff',
     overlay2: '#f5f6fc',
-    overlay3: '#fff',
+    overlay3: '#ebecf2',
   },
   background: {
     default: '#f5f6fc',

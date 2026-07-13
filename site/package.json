@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.6",
+    "@mui/material-nextjs": "^9.0.1",
     "@nivo/bar": "^0.88.0",
     "@nivo/core": "^0.88.0",
     "@nivo/pie": "^0.88.0",
@@ -34,7 +36,7 @@
     "dev": "next dev",
     "build": "next build",
     "typegen": "next typegen",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives && tsc --noEmit",
+    "lint": "oxlint . --report-unused-disable-directives && tsc --noEmit",
     "test": "jest"
   },
   "browserslist": {
@@ -50,7 +52,6 @@
     ]
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^15.4.5",
     "@peterportal/types": "workspace:*",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -61,17 +62,10 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-transition-group": "^4.4.11",
     "@types/react-twemoji": "^0.4.3",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "esbuild": "^0.25.9",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.14",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.1",
+    "oxlint": "1.70.0",
     "sass": "^1.82.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"

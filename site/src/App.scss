@@ -121,6 +121,12 @@ svg {
   }
 }
 
+[data-theme='light'] .ppc-table {
+  tbody tr:nth-child(odd) {
+    background-color: var(--mui-palette-overlay-overlay1);
+  }
+}
+
 .ui-overlay {
   position: fixed;
   inset: 0;

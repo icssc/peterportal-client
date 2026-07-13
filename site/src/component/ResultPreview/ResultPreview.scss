@@ -1,4 +1,5 @@
 @use '../../globals.scss';
+$show-navbar-cutoff: 940px;
 
 .result-preview {
   position: absolute;
@@ -34,7 +35,7 @@
     border-radius: 0;
     display: flex;
     align-items: center;
-    padding: 12px 16px 12px 12px;
+    padding: 6px 16px 6px 12px;
     gap: 4px;
 
     button {
@@ -95,6 +96,10 @@
     @media (max-width: globals.$mobile-cutoff) {
       padding: 16px;
     }
+
+    @container (max-width: #{$show-navbar-cutoff}) {
+      padding-bottom: calc(var(--preview-nav-height, 0px) + 96px);
+    }
   }
 
   .professor-summary {
@@ -103,7 +108,7 @@
     margin-bottom: 32px;
   }
 
-  @container (max-width: 940px) {
+  @container (max-width: #{$show-navbar-cutoff}) {
     .preview-title {
       margin-right: auto;
     }

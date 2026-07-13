@@ -377,6 +377,38 @@ export const completedMarkerRequirement = pgTable(
   (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
 );
 
+export const userMajorCatalogYear = pgTable(
+  'user_major_catalog_year',
+  {
+    userId: integer('user_id').notNull(),
+    majorId: text('major_id').notNull(),
+    catalogYear: text('catalog_year'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.majorId] }),
+    foreignKey({
+      columns: [table.userId, table.majorId],
+      foreignColumns: [userMajor.userId, userMajor.majorId],
+    }).onDelete('cascade'),
+  ],
+);
+
+export const userMinorCatalogYear = pgTable(
+  'user_minor_catalog_year',
+  {
+    userId: integer('user_id').notNull(),
+    minorId: text('minor_id').notNull(),
+    catalogYear: text('catalog_year'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.minorId] }),
+    foreignKey({
+      columns: [table.userId, table.minorId],
+      foreignColumns: [userMinor.userId, userMinor.minorId],
+    }).onDelete('cascade'),
+  ],
+);
+
 export const override = pgTable(
   'override',
   {
