@@ -58,6 +58,10 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
+  const pathname = usePathname();
+  const isAdmin = useAppSelector((state) => state.user.isAdmin);
+  const isAdminVerifyPage = pathname === '/admin/verify';
+
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
@@ -88,6 +92,18 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
     handleMenuClose();
   };
 
+  const verifyReview = async (reviewId: number) => {
+    await trpc.reviews.verify.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    handleMenuClose();
+  };
+
+  const adminDeleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    handleMenuClose();
+  };
+
   return (
     <>
       <IconButton onClick={handleMenuOpen}>
@@ -95,6 +111,10 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
       </IconButton>
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} className="review-menu">
         <MenuItem onClick={openReportForm}>Report</MenuItem>
+        {isAdmin && isAdminVerifyPage && <MenuItem onClick={() => verifyReview(review.id!)}>Admin: Verify</MenuItem>}
+        {isAdmin && isAdminVerifyPage && (
+          <MenuItem onClick={() => adminDeleteReview(review.id)}>Admin: Delete</MenuItem>
+        )}
         {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
         {review.authored && (
           <MenuItem
@@ -119,7 +139,7 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
           <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button color="error" onClick={() => deleteReview(review.id!)}>
+          <Button color="error" onClick={() => deleteReview(review.id)}>
             Delete
           </Button>
         </DialogActions>
