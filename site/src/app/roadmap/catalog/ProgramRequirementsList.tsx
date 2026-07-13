@@ -191,7 +191,11 @@ function getDepartmentCourseGroups(courses: string[]) {
   courses.forEach((courseID) => {
     const department = normalizeDepartment(getCourseDepartment(courseID), departments);
     const group = groups.get(department);
-    group ? group.push(courseID) : groups.set(department, [courseID]);
+    if (group) {
+      group.push(courseID);
+    } else {
+      groups.set(department, [courseID]);
+    }
   });
 
   return Array.from(groups.entries());
@@ -576,7 +580,7 @@ const GroupRequirement: FC<GroupRequirementProps> = ({ data, takenCourseIDs, sto
             Complete <b>{data.requirementCount}</b> of the following series:
           </p>
 
-          {/** If there are multiple GE transfer categories that apply to fulfill this group, 
+          {/** If there are multiple GE transfer categories that apply to fulfill this group,
           labels should be displayed to differentiate the multiple tiles*/}
           {geTransfers.length > 0 &&
             geTransfers.map((ge, i) => (
