@@ -1,49 +1,93 @@
 import './CatalogYears.scss';
 
-import { FC } from 'react';
-import { CATALOG_YEAR_OPTIONS, DEFAULT_CATALOG_YEAR } from '../../../helpers/courseRequirements';
+import { FC, useState } from 'react';
+import { getCatalogYearDefaults, formatCatalogYear } from '../../../helpers/courseRequirements';
 
-import { FormControl, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import { MenuItem, Select, Tooltip, IconButton } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import CheckIcon from '@mui/icons-material/Check';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface CatalogYearsProps {
   catalogYear: string | null;
-  tab: 'Major' | 'Minor';
-  onChange: (event: SelectChangeEvent) => Promise<void>;
+  tab: 'major' | 'minor';
+  onChange: (newCatalogYear: string) => Promise<void>;
 }
 
 const CatalogYears: FC<CatalogYearsProps> = ({ catalogYear, tab, onChange }) => {
+  const { defaultCatalogYear, catalogYearOptions } = getCatalogYearDefaults();
+
+  const [editing, setEditing] = useState(false);
+  const [selected, setSelected] = useState(catalogYear ?? defaultCatalogYear);
+
+  const selectedDisp = formatCatalogYear(selected);
+
+  const pressEditButton = () => {
+    if (editing) {
+      onChange(selected);
+      setEditing(false);
+    } else {
+      setEditing(true);
+    }
+  };
+
   return (
-    <>
-      <Tooltip
-        title={`${tab} requirements from a specific catalog year`}
-        placement="bottom-start"
-        slotProps={{
-          tooltip: { className: 'catalog-year-tooltip' },
-          popper: {
-            modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
-          },
-        }}
-        disableInteractive
-      >
-        <h5 className="catalog-year-title">Catalog Year</h5>
-      </Tooltip>
-      <FormControl className="catalog-year-dropdown" fullWidth>
+    <div className="catalog-years">
+      {!editing && (
+        <Tooltip
+          title={`The catalog year these requirements are from. Likely the year you entered UCI or declared this ${tab}`}
+          placement="bottom-start"
+          slotProps={{
+            tooltip: { className: 'catalog-year-tooltip' },
+            popper: {
+              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
+            },
+          }}
+          disableInteractive
+        >
+          <span className="catalog-year-title">{selectedDisp}</span>
+        </Tooltip>
+      )}
+      {editing && (
         <Select
+          size="xsmall"
           IconComponent={KeyboardArrowDownIcon}
           labelId="catalog-year-select-label"
           id="catalog-year-select"
-          value={catalogYear ?? DEFAULT_CATALOG_YEAR}
-          onChange={onChange}
+          value={selected}
+          onChange={(event) => setSelected(event.target.value)}
         >
-          {CATALOG_YEAR_OPTIONS.map((option) => (
+          {catalogYearOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}
             </MenuItem>
           ))}
         </Select>
-      </FormControl>
-    </>
+      )}
+      <IconButton className="edit-btn" onClick={pressEditButton} aria-label="Edit custom card">
+        {editing ? <CheckIcon className="confirm" /> : <ModeEditIcon />}
+      </IconButton>
+    </div>
+  );
+};
+
+interface CatalogYearWarningProps {
+  catalogYear: string | null;
+  fallback: string;
+}
+
+export const CatalogYearWarning: FC<CatalogYearWarningProps> = ({ catalogYear, fallback }) => {
+  const { defaultCatalogYear } = getCatalogYearDefaults();
+
+  return (
+    <div className="catalog-year-warning">
+      <WarningAmberIcon className="warning-icon" />
+      <p className="catalog-year-warning-text">
+        {formatCatalogYear(catalogYear ?? defaultCatalogYear)} requirements are not yet publicly available. Currently
+        showing {formatCatalogYear(fallback)}.
+      </p>
+    </div>
   );
 };
 

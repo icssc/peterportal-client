@@ -1,7 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
+import { getCatalogYearDefaults } from '../../../helpers/courseRequirements';
 import {
   setMinorRequirements,
   MinorRequirements,
@@ -10,14 +10,13 @@ import {
   setMinorFallbackCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Collapse, SelectChangeEvent } from '@mui/material';
+import { Collapse } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
-import CatalogYears from './CatalogYears';
+import CatalogYears, { CatalogYearWarning } from './CatalogYears';
 
 function getCoursesForMinor(programId: string, catalogYear?: string) {
   return trpc.programs.getRequiredCourses.query({ type: 'minor', programId, catalogYear });
@@ -39,9 +38,11 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
 
   const dispatch = useAppDispatch();
 
+  const { defaultCatalogYear } = getCatalogYearDefaults();
+
   const fetchRequirements = useCallback(
     async (minorId: string, catalogYear?: string) => {
-      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
+      const effectiveCatalogYear = catalogYear ?? defaultCatalogYear;
       setResultsLoading(true);
       dispatch(setMinorFallbackCatalogYear({ minorId, fallbackCatalogYear: null }));
 
@@ -58,7 +59,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
         setResultsLoading(false);
       }
     },
-    [dispatch],
+    [dispatch, defaultCatalogYear],
   );
 
   useEffect(() => {
@@ -70,8 +71,7 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
   const toggleExpand = () => setOpen(!open);
 
   const handleCatalogYearChange = useCallback(
-    async (event: SelectChangeEvent) => {
-      const newCatalogYear = event.target.value || null;
+    async (newCatalogYear: string) => {
       if (newCatalogYear === minorReqs.catalogYear) return;
 
       setResultsLoading(true);
@@ -90,15 +90,9 @@ const MinorCourseList: FC<MinorCourseListProps> = ({ minorReqs, onCatalogYearCha
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <CatalogYears catalogYear={minorReqs.catalogYear} tab="Minor" onChange={handleCatalogYearChange} />
+        <CatalogYears catalogYear={minorReqs.catalogYear} tab="minor" onChange={handleCatalogYearChange} />
         {fallbackCatalogYear && !resultsLoading && (
-          <div className="catalog-year-warning">
-            <WarningAmberIcon className="warning-icon" />
-            <p className="catalog-year-warning-text">
-              {formatCatalogYear(DEFAULT_CATALOG_YEAR)} requirements are not yet publicly available. Currently showing{' '}
-              {formatCatalogYear(fallbackCatalogYear)}.
-            </p>
-          </div>
+          <CatalogYearWarning fallback={fallbackCatalogYear} catalogYear={minorReqs.catalogYear} />
         )}
         {resultsLoading ? (
           <LoadingSpinner />

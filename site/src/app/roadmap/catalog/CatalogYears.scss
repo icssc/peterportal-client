@@ -1,6 +1,17 @@
+div.catalog-years {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 8px;
+  padding-top: 4px;
+}
+
 .catalog-year-title {
   display: inline-block;
   width: fit-content;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--mui-palette-text-secondary);
 }
 
 .catalog-year-tooltip {
@@ -8,7 +19,7 @@
     font-size: 0.75rem;
     border-radius: 8px;
     padding: 8px;
-    max-width: 230px;
+    max-width: 260px;
     text-align: left;
     margin-top: 8px;
   }
@@ -30,5 +41,21 @@
     color: var(--mui-palette-warning-main);
     font-size: 0.85rem;
     margin: 0;
+  }
+}
+
+.edit-btn.MuiIconButton-root {
+  width: 24px;
+  height: 24px;
+  margin: -8px 0;
+  margin-right: -4px;
+  color: var(--mui-palette-text-secondary);
+
+  .confirm {
+    color: var(--mui-palette-secondary-main);
+  }
+
+  .MuiSvgIcon-root {
+    font-size: 20px;
   }
 }

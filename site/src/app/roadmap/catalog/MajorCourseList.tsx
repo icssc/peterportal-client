@@ -1,7 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import { normalizeMajorName, DEFAULT_CATALOG_YEAR, formatCatalogYear } from '../../../helpers/courseRequirements';
+import { normalizeMajorName, getCatalogYearDefaults } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -13,14 +13,13 @@ import {
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import { Autocomplete, Collapse, SelectChangeEvent, TextField } from '@mui/material';
+import { Autocomplete, Collapse, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
-import CatalogYears from './CatalogYears';
+import CatalogYears, { CatalogYearWarning } from './CatalogYears';
 
 const noSpecId = 'NO_SPEC';
 
@@ -43,7 +42,7 @@ function getCoursesForMajor(programId: string, specId: string | undefined, catal
     type: 'major',
     programId,
     specializationId,
-    catalogYear: catalogYear ?? DEFAULT_CATALOG_YEAR,
+    catalogYear: catalogYear ?? getCatalogYearDefaults().defaultCatalogYear,
   });
 }
 
@@ -98,9 +97,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
     }
   }, [dispatch, major.id]);
 
+  const { defaultCatalogYear } = getCatalogYearDefaults();
+
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
-      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
+      const effectiveCatalogYear = catalogYear ?? defaultCatalogYear;
       setResultsLoading(true);
       dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: null })); // reset fallback year on each fetch
 
@@ -120,7 +121,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         setResultsLoading(false);
       }
     },
-    [dispatch],
+    [dispatch, defaultCatalogYear],
   );
 
   const loadSpecRequirements = useCallback(async () => {
@@ -183,8 +184,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   );
 
   const handleCatalogYearChange = useCallback(
-    async (event: SelectChangeEvent) => {
-      const newCatalogYear = event.target.value || null;
+    async (newCatalogYear: string) => {
       if (newCatalogYear === majorWithSpec.catalogYear) return;
 
       setResultsLoading(true);
@@ -202,15 +202,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <CatalogYears catalogYear={majorWithSpec.catalogYear} tab="Major" onChange={handleCatalogYearChange} />
+        <CatalogYears catalogYear={majorWithSpec.catalogYear} tab="major" onChange={handleCatalogYearChange} />
         {fallbackCatalogYear && !resultsLoading && (
-          <div className="catalog-year-warning">
-            <WarningAmberIcon className="warning-icon" />
-            <p className="catalog-year-warning-text">
-              {formatCatalogYear(majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR)} requirements are not yet publicly
-              available. Currently showing {formatCatalogYear(fallbackCatalogYear)}.
-            </p>
-          </div>
+          <CatalogYearWarning fallback={fallbackCatalogYear} catalogYear={majorWithSpec.catalogYear} />
         )}
         {hasSpecs && (
           <Autocomplete
