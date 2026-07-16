@@ -65,8 +65,12 @@ const CatalogYears: FC<CatalogYearsProps> = ({ catalogYear, tab, onChange }) => 
           ))}
         </Select>
       )}
-      <IconButton className="edit-btn" onClick={pressEditButton} aria-label="Edit custom card">
-        {editing ? <CheckIcon className="confirm" /> : <ModeEditIcon />}
+      <IconButton
+        className={editing ? 'confirm-btn' : 'edit-btn'}
+        onClick={pressEditButton}
+        aria-label="Edit catalog year"
+      >
+        {editing ? <CheckIcon /> : <ModeEditIcon />}
       </IconButton>
     </div>
   );

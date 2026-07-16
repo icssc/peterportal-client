@@ -36,13 +36,13 @@ function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
 
-function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear?: string) {
+function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear: string) {
   const specializationId = specId === noSpecId ? undefined : specId;
   return trpc.programs.getRequiredCourses.query({
     type: 'major',
     programId,
     specializationId,
-    catalogYear: catalogYear ?? getCatalogYearDefaults().defaultCatalogYear,
+    catalogYear: catalogYear,
   });
 }
 

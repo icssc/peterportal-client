@@ -17,11 +17,8 @@ div.catalog-years {
 .catalog-year-tooltip {
   &#{&} {
     font-size: 0.75rem;
-    border-radius: 8px;
     padding: 8px;
     max-width: 260px;
-    text-align: left;
-    margin-top: 8px;
   }
 }
 
@@ -44,14 +41,15 @@ div.catalog-years {
   }
 }
 
-.edit-btn.MuiIconButton-root {
+.edit-btn.MuiIconButton-root,
+.confirm-btn.MuiIconButton-root {
   width: 24px;
   height: 24px;
   margin: -8px 0;
   margin-right: -4px;
   color: var(--mui-palette-text-secondary);
 
-  .confirm {
+  &.confirm-btn {
     color: var(--mui-palette-secondary-main);
   }
 
