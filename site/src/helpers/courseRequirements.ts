@@ -62,7 +62,6 @@ export const GE_TITLE_MAP: Record<GEName, GETitle> = {
 
 export const formatCatalogYear = (year: string) => `${year.slice(0, 4)}-${year.slice(4)}`;
 
-/** Default Catalog Year Constant */
 export function getCatalogYearDefaults() {
   const now = new Date();
   const year = now.getFullYear();
