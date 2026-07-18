@@ -1,10 +1,12 @@
 .tab-selector {
   width: 100%;
+  overflow: hidden;
 
   .tab-button {
     width: 100%;
     font-weight: bold;
     text-transform: none;
+    border-radius: 0px;
 
     &.selected {
       background-color: var(--mui-palette-primary-main);
