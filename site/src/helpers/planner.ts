@@ -378,6 +378,7 @@ export const saveRoadmap = async (
 ) => {
   if (!isLoggedIn) {
     saveLocalRoadmap(planners, currentPlanIndex);
+    await new Promise<void>((resolve) => setTimeout(resolve, 400));
     return { success: true };
   } else {
     const roadmap: SavedRoadmap = {
