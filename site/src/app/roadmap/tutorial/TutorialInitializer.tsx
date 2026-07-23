@@ -2,7 +2,8 @@
 
 import { useTour } from '@reactour/tour';
 import { useEffect } from 'react';
-import { stepsFactory, tourShouldRun } from './TutorialHelpers';
+import { stepsFactory } from './TutorialSteps';
+import { tourShouldRun } from './tutorialConfig';
 
 export function TutorialInitializer() {
   const { setSteps, setCurrentStep, setIsOpen } = useTour();
