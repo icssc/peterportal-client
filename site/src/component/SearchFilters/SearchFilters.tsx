@@ -104,7 +104,15 @@ function DepartmentSelect() {
   );
 }
 
-const SearchFilters: FC = () => {
+interface SearchFiltersProps {
+  /** Visually dims the filters to signal they don't affect the currently shown (instructor) results. */
+  dimmed?: boolean;
+  /** Explainer rendered under the filters while dimmed. */
+  hint?: string;
+  addTopPadding?: boolean;
+}
+
+const SearchFilters: FC<SearchFiltersProps> = ({ dimmed = false, hint, addTopPadding = false }) => {
   const selectedFilters = useAppSelector(selectCourseFilters);
   const dispatch = useAppDispatch();
 
@@ -134,8 +142,12 @@ const SearchFilters: FC = () => {
     });
   };
 
+  const filterClassName = ['filter-group'];
+  if (dimmed) filterClassName.push('is-dimmed');
+  if (addTopPadding) filterClassName.push('has-top-padding');
+
   return (
-    <div className="filter-group">
+    <div className={filterClassName.join(' ')}>
       <FormControl className="filter-form-control">
         <Select
           size="xsmall"
@@ -175,6 +187,7 @@ const SearchFilters: FC = () => {
         </Select>
       </FormControl>
       <DepartmentSelect />
+      {dimmed && hint && <p className="filters-hint">{hint}</p>}
     </div>
   );
 };
