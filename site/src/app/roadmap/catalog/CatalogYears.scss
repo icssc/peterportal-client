@@ -4,6 +4,10 @@ div.catalog-years {
   gap: 4px;
   padding-bottom: 8px;
   padding-top: 4px;
+
+  .MuiInputBase-root {
+    font-size: 13px;
+  }
 }
 
 .catalog-year-title {
