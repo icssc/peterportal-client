@@ -7,11 +7,11 @@ declare module '@mui/material/styles' {
   }
 
   interface ColorScale {
-    red: string;
-    orange: string;
-    yellow: string;
-    green: string;
-    blue: string;
+    a: string;
+    b: string;
+    c: string;
+    d: string;
+    f: string;
   }
 
   type ChartColorScale = ColorScale & { pass: string; noPass: string };
