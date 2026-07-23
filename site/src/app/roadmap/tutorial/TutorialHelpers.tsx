@@ -39,17 +39,27 @@ function markTourHasRun() {
   setLocalStorageTourHasRun('true');
 }
 
+// function getLocalStorageTourHasRun() {
+//   if (typeof window === 'undefined') return null;
+//   return localStorage.getItem(ROADMAP_TOUR_HAS_RUN_KEY);
+// }
+
+export function tourShouldRun(): boolean {
+  if (typeof window === 'undefined') return false;
+  return !(
+    // commented out for testing purposes
+
+    // getLocalStorageTourHasRun() === 'true' ||
+    window.matchMedia('(max-width: 799px)').matches
+  );
+}
+
 function addTutorialOutline(selector: string) {
   document.querySelector(selector)?.classList.add(TUTORIAL_OUTLINE);
 }
 function removeTutorialOutline(selector: string) {
   document.querySelector(selector)?.classList.remove(TUTORIAL_OUTLINE);
 }
-
-// function getLocalStorageTourHasRun() {
-//   if (typeof window === 'undefined') return null;
-//   return localStorage.getItem(ROADMAP_TOUR_HAS_RUN_KEY);
-// }
 
 export const variantPopoverStyle: Record<TutorialVariant, React.CSSProperties> = {
   welcome: {
@@ -243,16 +253,6 @@ function NonFirstYearBranchStepContent() {
   );
 }
 
-export function tourShouldRun(): boolean {
-  if (typeof window === 'undefined') return false;
-  return !(
-    // commented out for testing purposes
-
-    // getLocalStorageTourHasRun() === 'true' ||
-    window.matchMedia('(max-width: 799px)').matches
-  );
-}
-
 function namedStepsFactory(): Record<TourStepName, StepType> {
   return {
     welcome: {
@@ -288,12 +288,12 @@ function namedStepsFactory(): Record<TourStepName, StepType> {
     },
 
     year: {
-      selector: '#nonexistent',
-      position: 'center',
+      selector: '#nonexistent', // control the highlighted button
+      position: 'center', // control the position of the popover
       styles: {
         popover: (base) => ({ ...base, ...basePopoverStyle, ...variantPopoverStyle.step }),
       },
-      content: <YearBranchStepContent />,
+      content: <YearBranchStepContent />, // popover content
     },
     firstYearTransfer: {
       selector: '#credits-label',
