@@ -36,7 +36,7 @@ const CatalogYears: FC<CatalogYearsProps> = ({ catalogYear, tab, onChange }) => 
     <div className="catalog-years">
       {!editing && (
         <Tooltip
-          title={`The catalog year these requirements are from. Likely the year you entered UCI or declared this ${tab}`}
+          title={`The catalog year these requirements are from. Likely the year you entered UCI or declared this ${tab}.`}
           placement="bottom-start"
           slotProps={{
             tooltip: { className: 'catalog-year-tooltip' },
