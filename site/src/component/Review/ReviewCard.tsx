@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { sortTerms } from '../../helpers/util';
-import { getProfessorTerms, formatQuarter, displayReviewDate } from '../../helpers/reviews';
+import { sortTerms, shortenQuarter } from '../../helpers/util';
+import { getProfessorTerms, displayReviewDate } from '../../helpers/reviews';
 import { useProfessorData } from '../../hooks/professorReviews';
 
 import PersonIcon from '@mui/icons-material/Person';
@@ -58,6 +58,10 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
 
   const sortedTerms: string[] = sortTerms(course?.terms || (professor ? getProfessorTerms(professor) : []));
 
+  const pathname = usePathname();
+  const isAdmin = useAppSelector((state) => state.user.isAdmin);
+  const isAdminVerifyPage = pathname === '/admin/verify';
+
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
@@ -88,6 +92,18 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
     handleMenuClose();
   };
 
+  const verifyReview = async (reviewId: number) => {
+    await trpc.reviews.verify.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    handleMenuClose();
+  };
+
+  const adminDeleteReview = async (reviewId: number) => {
+    await trpc.reviews.delete.mutate({ id: reviewId });
+    dispatch(setReviews(reviewData.filter((review) => review.id !== reviewId)));
+    handleMenuClose();
+  };
+
   return (
     <>
       <IconButton onClick={handleMenuOpen}>
@@ -95,6 +111,10 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
       </IconButton>
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} className="review-menu">
         <MenuItem onClick={openReportForm}>Report</MenuItem>
+        {isAdmin && isAdminVerifyPage && <MenuItem onClick={() => verifyReview(review.id!)}>Admin: Verify</MenuItem>}
+        {isAdmin && isAdminVerifyPage && (
+          <MenuItem onClick={() => adminDeleteReview(review.id)}>Admin: Delete</MenuItem>
+        )}
         {review.authored && <MenuItem onClick={openReviewForm}>Edit</MenuItem>}
         {review.authored && (
           <MenuItem
@@ -119,7 +139,7 @@ const ThreeDotsMenu: FC<AuthorEditButtonsProps> = ({ review, course, professor }
           <Button color="inherit" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button color="error" onClick={() => deleteReview(review.id!)}>
+          <Button color="error" onClick={() => deleteReview(review.id)}>
             Delete
           </Button>
         </DialogActions>
@@ -230,7 +250,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               {courseName}
             </Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(courseLink);
@@ -246,7 +266,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               {profName}
             </Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(profLink);
@@ -260,7 +280,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
             {' • '}
             <Link href={{ pathname: `/instructor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(courseAndProfLink);

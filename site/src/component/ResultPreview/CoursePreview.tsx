@@ -169,7 +169,9 @@ const CoursePreview: FC<{ courseId: string; onClose: () => void; onBack: () => v
         </div>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
-        <CoursePreviewContent data={courseData} />
+        <div className="popup-scroll">
+          <CoursePreviewContent data={courseData} />
+        </div>
       </Twemoji>
     </div>
   );

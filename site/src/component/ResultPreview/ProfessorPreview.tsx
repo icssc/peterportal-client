@@ -135,7 +135,9 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
         </Button>
       </Paper>
       <Twemoji options={{ className: 'twemoji' }}>
-        <ProfessorPreviewContent data={professorData} />
+        <div className="popup-scroll">
+          <ProfessorPreviewContent data={professorData} />
+        </div>
       </Twemoji>
     </div>
   );
