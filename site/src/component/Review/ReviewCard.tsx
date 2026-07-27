@@ -9,8 +9,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 import { ReviewData } from '@peterportal/types';
 import { useIsLoggedIn } from '../../hooks/isLoggedIn';
-import { sortTerms } from '../../helpers/util';
-import { getProfessorTerms, formatQuarter, displayReviewDate } from '../../helpers/reviews';
+import { sortTerms, shortenQuarter } from '../../helpers/util';
+import { getProfessorTerms, displayReviewDate } from '../../helpers/reviews';
 import { useProfessorData } from '../../hooks/professorReviews';
 
 import PersonIcon from '@mui/icons-material/Person';
@@ -250,7 +250,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               {courseName}
             </Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(courseLink);
@@ -266,7 +266,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
               {profName}
             </Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(profLink);
@@ -280,7 +280,7 @@ const ReviewCard: FC<ReviewCardProps> = ({ review, course, professor }) => {
             {' • '}
             <Link href={{ pathname: `/instructor/${review.professorId}` }}>{profName ?? review.professorId}</Link>
             {' • '}
-            {formatQuarter(review.quarter)}
+            {shortenQuarter(review.quarter, true)}
           </span>
         );
         setIdentifier(courseAndProfLink);

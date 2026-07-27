@@ -88,8 +88,7 @@ $show-navbar-cutoff: 940px;
     }
   }
 
-  // Target the Twemoji wrapper since we can't add a class name to it
-  > div:last-child {
+  .popup-scroll {
     height: 100%;
     overflow: auto;
     padding: 24px;
