@@ -44,7 +44,11 @@ export function useSavedCourses() {
 
   const toggleSavedCourse = useCallback(
     (course: CourseGQLData) => {
-      isCourseSaved(course) ? unsaveCourse(course) : saveCourse(course);
+      if (isCourseSaved(course)) {
+        unsaveCourse(course);
+      } else {
+        saveCourse(course);
+      }
     },
     [saveCourse, unsaveCourse, isCourseSaved],
   );

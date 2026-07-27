@@ -52,6 +52,11 @@ interface SetActiveCustomCoursePayload {
   courseIndex?: number;
 }
 
+const findValidIndex = (plans: RoadmapPlan[], currentPlannerId: number, currentPlanIndex: number): number => {
+  const newIdx = plans.findIndex((p) => p.id === currentPlannerId);
+  return newIdx !== -1 ? newIdx : Math.min(currentPlanIndex, plans.length - 1);
+};
+
 export const roadmapSlice = createSlice({
   name: 'roadmap',
   initialState: {
@@ -110,23 +115,26 @@ export const roadmapSlice = createSlice({
     // Modifying the Roadmap
 
     reviseRoadmap: (state, action: PayloadAction<RoadmapRevision>) => {
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       const currentIndex = state.currentRevisionIndex;
       state.revisions.splice(currentIndex + 1, state.revisions.length, action.payload);
       restoreRevision(state.plans, state.revisions, currentIndex, currentIndex + 1);
       state.currentRevisionIndex++;
+      state.currentPlanIndex = findValidIndex(state.plans, currentPlannerId, state.currentPlanIndex);
     },
     undoRoadmapRevision: (state) => {
       if (state.currentRevisionIndex <= 0) return;
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex - 1);
       state.currentRevisionIndex--;
-      if (state.currentPlanIndex > state.plans.length - 1) {
-        state.currentPlanIndex = state.plans.length - 1;
-      }
+      state.currentPlanIndex = findValidIndex(state.plans, currentPlannerId, state.currentPlanIndex);
     },
     redoRoadmapRevision: (state) => {
       if (state.currentRevisionIndex >= state.revisions.length - 1) return;
+      const currentPlannerId = state.plans[state.currentPlanIndex]?.id;
       restoreRevision(state.plans, state.revisions, state.currentRevisionIndex, state.currentRevisionIndex + 1);
       state.currentRevisionIndex++;
+      state.currentPlanIndex = findValidIndex(state.plans, currentPlannerId, state.currentPlanIndex);
     },
     setSavedRevisionIndex: (state, action: PayloadAction<number>) => {
       state.savedRevisionIndex = action.payload;

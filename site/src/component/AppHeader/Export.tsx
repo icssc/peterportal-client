@@ -350,8 +350,21 @@ const ExportDialog = ({ showModal, setShowModal }: ExportDialogProps) => {
       setSaving(false);
     }
 
+    const courseIds =
+      selectedYear.quarters
+        .find((q) => q.name === selectedQuarterName)
+        ?.courses.filter((c) => !isCustomCourse(c))
+        .map((c) => c.id) ?? [];
+
+    if (courseIds.length === 0) {
+      dispatch(setToastMsg('This quarter has no courses to export.'));
+      dispatch(setToastSeverity('info'));
+      dispatch(setShowToast(true));
+      return;
+    }
+
     const url = new URL('/', window.location.origin);
-    url.searchParams.set('importRoadmap', String(plannerIdToUse));
+    url.searchParams.set('courseIds', courseIds.join(','));
     url.searchParams.set('term', `${parseInt(selectedYearStart, 10) + quarterYearOffsets[quarterName]} ${quarterName}`);
 
     window.location.assign(url.toString());

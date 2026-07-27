@@ -1,4 +1,5 @@
 @use '../../globals.scss';
+$show-navbar-cutoff: 940px;
 
 .result-preview {
   position: absolute;
@@ -87,14 +88,17 @@
     }
   }
 
-  // Target the Twemoji wrapper since we can't add a class name to it
-  > div:last-child {
+  .popup-scroll {
     height: 100%;
     overflow: auto;
     padding: 24px;
 
     @media (max-width: globals.$mobile-cutoff) {
       padding: 16px;
+    }
+
+    @container (max-width: #{$show-navbar-cutoff}) {
+      padding-bottom: calc(var(--preview-nav-height, 0px) + 96px);
     }
   }
 
@@ -104,7 +108,7 @@
     margin-bottom: 32px;
   }
 
-  @container (max-width: 940px) {
+  @container (max-width: #{$show-navbar-cutoff}) {
     .preview-title {
       margin-right: auto;
     }

@@ -11,6 +11,8 @@ import {
   setToastSeverity,
   setShowToast,
 } from '../../../store/slices/roadmapSlice';
+import { ReactSortable, SortableEvent } from 'react-sortablejs';
+import { planSortable } from '../../../helpers/sortable';
 import './RoadmapMultiplan.scss';
 import { makeUniquePlanName } from '../../../helpers/planner';
 import ImportTranscriptPopup from './ImportTranscriptPopup';
@@ -18,6 +20,7 @@ import ImportZot4PlanPopup from './ImportZot4PlanPopup';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import AddIcon from '@mui/icons-material/Add';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import {
@@ -35,7 +38,7 @@ import {
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { RoadmapPlan } from '../../../types/roadmap';
-import { addPlanner, deletePlanner, updatePlannerName } from '../../../helpers/roadmapEdits';
+import { addPlanner, deletePlanner, reorderPlannersRevision, updatePlannerName } from '../../../helpers/roadmapEdits';
 import { deepCopy } from '../../../helpers/util';
 import { theme } from '../../../style/theme';
 
@@ -57,6 +60,7 @@ const RoadmapSelectableItem: FC<RoadmapSelectableItemProps> = ({
 }) => {
   return (
     <div className="select-item">
+      <DragIndicatorIcon className="drag-icon" />
       <Button variant="text" className="planner-name-btn" onClick={clickHandler}>
         {plan.name}
       </Button>
@@ -93,7 +97,10 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
   const { name } = allPlans[currentPlanIndex];
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const allPlansCopy = allPlans.map((p) => ({ ...p }));
 
   const duplicatePlan = (plan: RoadmapPlan) => {
     const newName = makeUniquePlanName(plan.name, allPlans);
@@ -122,28 +129,42 @@ const MultiplanDropdown: FC<MultiplanDropdownProps> = ({
         anchorReference="anchorEl"
         anchorEl={containerRef.current}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        onClose={() => setShowDropdown(false)}
+        onClose={() => {
+          if (!isDragging) setShowDropdown(false);
+        }}
       >
-        {allPlans.map((plan, index) => (
-          <RoadmapSelectableItem
-            key={plan.name}
-            plan={plan}
-            index={index}
-            clickHandler={() => {
-              dispatch(setPlanIndex(index));
-              setShowDropdown(false);
-            }}
-            editHandler={() => {
-              setEditIndex(index);
-              setNewPlanName(allPlans[index].name);
-            }}
-            duplicateHandler={() => duplicatePlan(plan)}
-            deleteHandler={() => {
-              setDeleteIndex(index);
-              setNewPlanName(allPlans[index].name);
-            }}
-          />
-        ))}
+        <ReactSortable
+          list={allPlansCopy}
+          onStart={() => setIsDragging(true)}
+          onEnd={(event: SortableEvent) => {
+            setIsDragging(false);
+            if (event.oldIndex !== event.newIndex) {
+              dispatch(reviseRoadmap(reorderPlannersRevision(allPlans, event.oldIndex!, event.newIndex!)));
+            }
+          }}
+          {...planSortable}
+        >
+          {allPlans.map((plan, index) => (
+            <RoadmapSelectableItem
+              key={plan.id}
+              plan={plan}
+              index={index}
+              clickHandler={() => {
+                dispatch(setPlanIndex(index));
+                setShowDropdown(false);
+              }}
+              editHandler={() => {
+                setEditIndex(index);
+                setNewPlanName(allPlans[index].name);
+              }}
+              duplicateHandler={() => duplicatePlan(plan)}
+              deleteHandler={() => {
+                setDeleteIndex(index);
+                setNewPlanName(allPlans[index].name);
+              }}
+            />
+          ))}
+        </ReactSortable>
         <div className="separator-label">
           Add or Import Roadmap
           <hr />

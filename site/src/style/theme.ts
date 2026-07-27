@@ -8,13 +8,13 @@ const sharedTokens = {
     midGray: '#8d8d8d',
   },
   chart: {
-    blue: '#5babe1',
-    red: '#e7966d',
-    orange: '#ecad6d',
-    yellow: '#f5d77f',
-    green: '#87c587',
-    pass: '#4ab486',
-    noPass: '#e36436',
+    a: '#0C7CD5',
+    b: '#388499',
+    c: '#35927F',
+    d: '#A86C0B',
+    f: '#DB3600',
+    pass: '#498E34',
+    noPass: '#E15065',
   },
   success: {
     main: 'green',
@@ -40,9 +40,6 @@ const lightPalette: PaletteOptions = {
     primary: '#212529',
     secondary: '#606166',
   },
-  reviews: {
-    ...sharedTokens.chart,
-  },
   error: {
     main: '#ce0000',
   },
@@ -66,13 +63,6 @@ const darkPalette: PaletteOptions = {
   text: {
     primary: '#fff',
     secondary: '#99999f',
-  },
-  reviews: {
-    blue: '#41779b',
-    green: '#295629',
-    red: '#b7523e',
-    yellow: '#c49e3e',
-    orange: '#c47e38',
   },
   error: {
     main: '#ff3333',

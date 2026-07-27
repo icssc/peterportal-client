@@ -382,7 +382,7 @@ export const userMajorCatalogYear = pgTable(
   {
     userId: integer('user_id').notNull(),
     majorId: text('major_id').notNull(),
-    catalogYear: integer('catalog_year'),
+    catalogYear: text('catalog_year'),
   },
   (table) => [
     primaryKey({ columns: [table.userId, table.majorId] }),
@@ -398,7 +398,7 @@ export const userMinorCatalogYear = pgTable(
   {
     userId: integer('user_id').notNull(),
     minorId: text('minor_id').notNull(),
-    catalogYear: integer('catalog_year'),
+    catalogYear: text('catalog_year'),
   },
   (table) => [
     primaryKey({ columns: [table.userId, table.minorId] }),
