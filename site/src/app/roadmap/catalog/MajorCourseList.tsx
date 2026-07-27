@@ -1,12 +1,7 @@
 import './MajorCourseList.scss';
 import { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import ProgramRequirementsList from './ProgramRequirementsList';
-import {
-  normalizeMajorName,
-  CATALOG_YEAR_OPTIONS,
-  DEFAULT_CATALOG_YEAR,
-  formatCatalogYear,
-} from '../../../helpers/courseRequirements';
+import { normalizeMajorName, getCatalogYearDefaults } from '../../../helpers/courseRequirements';
 import {
   MajorWithSpecialization,
   setGroupExpanded,
@@ -18,23 +13,13 @@ import {
 } from '../../../store/slices/courseRequirementsSlice';
 import { MajorSpecialization } from '@peterportal/types';
 import LoadingSpinner from '../../../component/LoadingSpinner/LoadingSpinner';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import trpc from '../../../trpc';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 import { ExpandMore } from '../../../component/ExpandMore/ExpandMore';
-import {
-  Autocomplete,
-  Collapse,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Tooltip,
-} from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Autocomplete, Collapse, TextField } from '@mui/material';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+import CatalogYears, { CatalogYearWarning } from './CatalogYears';
 
 const noSpecId = 'NO_SPEC';
 
@@ -51,13 +36,13 @@ function getMajorSpecializations(majorId: string) {
   return trpc.programs.getSpecializations.query({ major: majorId });
 }
 
-function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear?: string) {
+function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear: string) {
   const specializationId = specId === noSpecId ? undefined : specId;
   return trpc.programs.getRequiredCourses.query({
     type: 'major',
     programId,
     specializationId,
-    catalogYear: catalogYear ?? DEFAULT_CATALOG_YEAR,
+    catalogYear: catalogYear,
   });
 }
 
@@ -112,9 +97,11 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
     }
   }, [dispatch, major.id]);
 
+  const { defaultCatalogYear } = getCatalogYearDefaults();
+
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
-      const effectiveCatalogYear = catalogYear ?? DEFAULT_CATALOG_YEAR;
+      const effectiveCatalogYear = catalogYear ?? defaultCatalogYear;
       setResultsLoading(true);
       dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: null })); // reset fallback year on each fetch
 
@@ -134,7 +121,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         setResultsLoading(false);
       }
     },
-    [dispatch],
+    [dispatch, defaultCatalogYear],
   );
 
   const loadSpecRequirements = useCallback(async () => {
@@ -197,8 +184,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   );
 
   const handleCatalogYearChange = useCallback(
-    async (event: SelectChangeEvent) => {
-      const newCatalogYear = event.target.value || null;
+    async (newCatalogYear: string) => {
       if (newCatalogYear === majorWithSpec.catalogYear) return;
 
       setResultsLoading(true);
@@ -216,42 +202,9 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
         <ExpandMore className="expand-requirements" expanded={open} onClick={toggleExpand} />
       </ClickableDiv>
       <Collapse in={open} unmountOnExit>
-        <Tooltip
-          title="Major requirements from a specific catalog year"
-          placement="bottom-start"
-          slotProps={{
-            tooltip: { className: 'catalog-year-tooltip' },
-            popper: {
-              modifiers: [{ name: 'offset', options: { offset: [0, -8] } }],
-            },
-          }}
-          disableInteractive
-        >
-          <h5 className="catalog-year-title">Catalog Year</h5>
-        </Tooltip>
-        <FormControl className="catalog-year-dropdown" fullWidth>
-          <Select
-            IconComponent={KeyboardArrowDownIcon}
-            labelId="catalog-year-select-label"
-            id="catalog-year-select"
-            value={majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR}
-            onChange={handleCatalogYearChange}
-          >
-            {CATALOG_YEAR_OPTIONS.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <CatalogYears catalogYear={majorWithSpec.catalogYear} tab="major" onChange={handleCatalogYearChange} />
         {fallbackCatalogYear && !resultsLoading && (
-          <div className="catalog-year-warning">
-            <WarningAmberIcon className="warning-icon" />
-            <p className="catalog-year-warning-text">
-              {formatCatalogYear(majorWithSpec.catalogYear ?? DEFAULT_CATALOG_YEAR)} requirements are not yet publicly
-              available. Currently showing {formatCatalogYear(fallbackCatalogYear)}.
-            </p>
-          </div>
+          <CatalogYearWarning fallback={fallbackCatalogYear} catalogYear={majorWithSpec.catalogYear} />
         )}
         {hasSpecs && (
           <Autocomplete
