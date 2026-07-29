@@ -170,3 +170,17 @@ export function addDelimiter(items: ReactNode[], between: ReactNode, last?: Reac
 export function checkModalOpen() {
   return !!document.querySelector('body > :is(.MuiModal-root)');
 }
+
+/** Given a quarter (term + year) name like 'Winter 2026', shortens it to the 'W26' format */
+export function shortenQuarter(quarter: string, yearFirst?: boolean): string {
+  const [first, second] = quarter.split(' ');
+  const term = yearFirst ? second : first;
+  const year = yearFirst ? first : second;
+  const termMap: Record<string, string> = {
+    Fall: 'F',
+    Winter: 'W',
+    Spring: 'Sp',
+    Summer: 'Su',
+  };
+  return `${termMap[term] ?? term}${year.slice(-2)}`;
+}

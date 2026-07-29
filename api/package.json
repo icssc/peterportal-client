@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec tsx ./src/app.ts",
     "build": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && tsc --noEmit",
+    "lint": "oxlint . --report-unused-disable-directives --deny-warnings && tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"
@@ -35,12 +35,9 @@
     "@types/express-session": "^1.18.1",
     "@types/morgan": "^1.9.9",
     "@types/pg": "^8.11.10",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "drizzle-kit": "^0.29.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.0",
     "nodemon": "^3.1.7",
+    "oxlint": "1.70.0",
     "tsx": "^4.19.2",
     "typescript": "^5.5.4"
   }

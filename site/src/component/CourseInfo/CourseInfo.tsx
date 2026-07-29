@@ -6,6 +6,8 @@ import { useSavedCourses } from '../../hooks/savedCourses';
 import { pluralize } from '../../helpers/util';
 import './CourseInfo.scss';
 import RecentOfferingsTable from '../RecentOfferingsTable/RecentOfferingsTable';
+import { useAppDispatch } from '../../store/hooks';
+import { setToastMsg, setToastSeverity, setShowToast, setToastAction } from '../../store/slices/roadmapSlice';
 
 import { Button, IconButton } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -23,7 +25,22 @@ interface CourseProp {
 
 export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false, includeLabel = false }) => {
   const { isCourseSaved, toggleSavedCourse } = useSavedCourses();
+  const dispatch = useAppDispatch();
   const courseIsSaved = isCourseSaved(course);
+
+  const handleToggleSavedCourse = () => {
+    const wasSaved = isCourseSaved(course);
+    toggleSavedCourse(course);
+
+    // show toast only when saving a course
+    if (!wasSaved) {
+      dispatch(setToastMsg("Saved to your Catalog's Library"));
+      dispatch(setToastSeverity('success'));
+      dispatch(setToastAction('library'));
+      dispatch(setShowToast(true));
+    }
+  };
+
   if (includeLabel) {
     return (
       <Button
@@ -32,14 +49,14 @@ export const CourseBookmarkButton: FC<CourseProp> = ({ course, disabled = false,
         startIcon={courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
         size="small"
         disableElevation
-        onClick={() => toggleSavedCourse(course)}
+        onClick={handleToggleSavedCourse}
       >
         Save
       </Button>
     );
   } else {
     return (
-      <IconButton className="bookmark-button" onClick={() => toggleSavedCourse(course)} disabled={disabled}>
+      <IconButton className="bookmark-button" onClick={handleToggleSavedCourse} disabled={disabled}>
         {courseIsSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
       </IconButton>
     );
@@ -82,7 +99,13 @@ export const IncompletePrerequisiteText: FC<{ requiredCourses?: string[] }> = ({
     <div className="course-info-warning">
       <div className="warning-primary">
         <WarningAmberIcon className="warning-icon" />
-        Prerequisite{pluralize(requiredCourses.length)} Not Met: {requiredCourses.join(', ')}
+        Prerequisite{pluralize(requiredCourses.length)} Not Met:{' '}
+        {requiredCourses
+          .map((courseGroup) => {
+            const courses: string[] = courseGroup.split('|');
+            return courses.length > 1 ? `(${courses.join(' or ')})` : courseGroup;
+          })
+          .join(', ')}
       </div>
       <div className="warning-hint-italics">
         Already completed? Click the "Credits" tab in the sidebar to add{' '}

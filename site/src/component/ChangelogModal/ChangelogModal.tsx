@@ -7,13 +7,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 
 const CUSTOM_TITLE = 'PeterPortal is now AntAlmanac Planner!'; // If ommitted, defaults to "What's New – {Month} {Year}"
 const DESCRIPTION = (
-  <p>
+  <>
     AntAlmanac and PeterPortal are now unified into the ultimate course planning app. Learn more in our{' '}
     <Link href="https://docs.icssc.club/docs/about/antalmanac/merge" target="_blank">
       blog post
     </Link>
     !
-  </p>
+  </>
 );
 const LAST_UPDATED = '01/30/2026';
 

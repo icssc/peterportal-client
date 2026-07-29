@@ -5,6 +5,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import Slide from '@mui/material/Slide';
+import ClickableDiv from '../component/ClickableDiv/ClickableDiv';
 
 export type ToastSeverity = 'error' | 'success' | 'info';
 
@@ -13,6 +14,7 @@ interface ToastProps {
   severity: ToastSeverity;
   showToast: boolean;
   onClose: () => void;
+  onClick?: () => void;
 }
 
 const iconSx = {
@@ -26,7 +28,7 @@ const iconMap: Record<ToastSeverity, () => JSX.Element> = {
   info: () => <InfoIcon sx={iconSx} />,
 };
 
-const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
+const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose, onClick }) => {
   let backgroundColor;
   switch (severity) {
     case 'error':
@@ -54,10 +56,10 @@ const Toast: FC<ToastProps> = ({ text, severity, showToast, onClose }) => {
     >
       <SnackbarContent
         message={
-          <>
+          <ClickableDiv onClick={onClick}>
             {iconMap[severity]()}
             {text}
-          </>
+          </ClickableDiv>
         }
         sx={{
           backgroundColor,

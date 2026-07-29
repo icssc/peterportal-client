@@ -1,6 +1,7 @@
 import { QuarterName } from '@peterportal/types';
 import {
   PlannerEdit,
+  PlannerOrderEdit,
   PlannerQuarterEdit,
   PlannerYearEdit,
   PlannerCourseEdit,
@@ -25,6 +26,15 @@ function createInverseRevision(revision: RoadmapRevision) {
   });
   revision.edits.reverse();
   return revision;
+}
+
+export function reorderPlannersRevision(planners: RoadmapPlan[], oldIndex: number, newIndex: number) {
+  const before = planners.map((p) => p.id);
+  const after = [...before];
+  const [moved] = after.splice(oldIndex, 1);
+  after.splice(newIndex, 0, moved);
+  const edit: PlannerOrderEdit = { type: 'plannerOrder', before, after };
+  return createRevision([edit]);
 }
 
 export function addPlanner(id: number, name: string, yearPlans: PlannerYearData[]) {

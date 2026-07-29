@@ -9,7 +9,7 @@ import { useIsMobile } from '../../helpers/util';
 import CoursePreview from '../../component/ResultPreview/CoursePreview';
 import DesktopRoadmapSidebar from './sidebar/DesktopRoadmapSidebar';
 import { MobileCreditsMenu } from './transfers/MobileCreditsMenu';
-import { hideMobileCatalog, setShowToast } from '../../store/slices/roadmapSlice';
+import { setShowToast, hideMobileCatalog } from '../../store/slices/roadmapSlice';
 import Toast from '../../helpers/toast';
 import ProfessorPreview from '../../component/ResultPreview/ProfessorPreview';
 import MobileSearchMenu from '../../component/MobileSearchMenu/MobileSearchMenu';
@@ -38,11 +38,7 @@ const RoadmapPage: FC = () => {
   const transitionTime = theme.transitions.duration.shortest;
   const router = useRouter();
   const searchParams = useSearchParams();
-  // const pathname = usePathname();
   const pathname = usePathname() ?? '/';
-
-  // const courseParam = searchParams.get('course');
-  // const instructorParam = searchParams.get('instructor');
   const courseParam = searchParams?.get('course');
   const instructorParam = searchParams?.get('instructor');
   const selectedMobileIndex = useAppSelector((state) => state.roadmap.selectedMobileTab);
@@ -62,6 +58,7 @@ const RoadmapPage: FC = () => {
 
   const previewDepth = usePreviewDepth();
   const handleCloseToast = () => dispatch(setShowToast(false));
+
   const fullscreenActive = isMobile && showFullscreenSearch;
 
   const handleClosePreview = () => {
