@@ -120,7 +120,7 @@ const RoadmapPage: FC = () => {
   };
 
   return (
-    <div className="roadmap-page">
+    <div className={`roadmap-page ${isMobile ? 'mobile' : ''}`}>
       {!isMobile ? (
         <>
           <DesktopRoadmapSidebar />
@@ -142,7 +142,7 @@ const RoadmapPage: FC = () => {
           <MobileCourseCatalog />
           <MobileCreditsMenu />
 
-          {fullscreenActive ? <MobileSearchMenu /> : <Planner />}
+          {fullscreenActive && <MobileSearchMenu />}
 
           <MobilePopup show={showPreview} onClose={handleClosePreview}>
             {resultPreview}
