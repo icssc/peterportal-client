@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
 
-import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
@@ -25,9 +24,6 @@ const AppHeader: FC = () => {
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isRoadmapPage = usePathname() == '/';
 
-  const showFullscreenSearch = () => {
-    dispatch(setShowMobileFullscreenSearch(true));
-  };
   const closeFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(false));
     dispatch(setSelectedMobileTab(0));
@@ -60,11 +56,6 @@ const AppHeader: FC = () => {
         {/* Search */}
         {isRoadmapPage && (
           <>
-            {isMobile && (
-              <IconButton onClick={showFullscreenSearch} color="inherit">
-                <SearchIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            )}
             <ExportButton />
             <SaveButton />
           </>
