@@ -11,6 +11,10 @@
     --mobile-navbar-height: calc(52px + env(safe-area-inset-bottom, 0px));
     padding-bottom: var(--mobile-navbar-height);
     box-sizing: border-box;
+
+    > {
+      width: 100%;
+    }
   }
 
   .main-wrapper {
@@ -22,11 +26,6 @@
 
   .main-wrapper.mobile {
     width: 100%;
-
-    @media (max-width: globals.$mobile-cutoff) {
-      width: 100vw;
-      min-width: 100vw;
-    }
   }
 
   /* fullscreen search overlay */
