@@ -22,6 +22,11 @@
 
   .main-wrapper.mobile {
     width: 100%;
+
+    @media (max-width: globals.$mobile-cutoff) {
+      width: 100vw;
+      min-width: 100vw;
+    }
   }
 
   /* fullscreen search overlay */
