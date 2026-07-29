@@ -12,7 +12,8 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
 import { useIsMobile } from '../../helpers/util';
-import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { setSelectedMobileTab, setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { setShowMobileCreditsMenu } from '../../store/slices/transferCreditsSlice';
 import { usePathname } from 'next/navigation';
 
 import SaveButton from './SaveButton';
@@ -29,6 +30,8 @@ const AppHeader: FC = () => {
   };
   const closeFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(false));
+    dispatch(setSelectedMobileTab(0));
+    dispatch(setShowMobileCreditsMenu(false));
   };
 
   if (isMobile && isShowFullscreenSearch && isRoadmapPage)
