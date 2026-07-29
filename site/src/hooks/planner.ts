@@ -77,21 +77,19 @@ export function useSaveRoadmap() {
 
     const result = await saveRoadmap(isLoggedIn, collapsedPrevious, collapsedCurrent, currentPlanIndex);
 
-    if (result.success && !isLoggedIn && !localStorage.getItem('shownLocalSaveToast')) {
+    if (!result.success) {
+      dispatch(setToastMsg('Unable to save roadmap to your account'));
+      dispatch(setToastSeverity('error'));
+      dispatch(setShowToast(true));
+    } else if (!isLoggedIn && !localStorage.getItem('shownLocalSaveToast')) {
       localStorage.setItem('shownLocalSaveToast', 'true');
       dispatch(setToastMsg('Roadmap saved locally! Log in to save it to your account'));
       dispatch(setToastSeverity('success'));
       dispatch(setShowToast(true));
-    } else if (!silent) {
-      if (result.success && isLoggedIn) {
-        dispatch(setToastMsg('Roadmap saved to your account!'));
-        dispatch(setToastSeverity('success'));
-        dispatch(setShowToast(true));
-      } else if (!result.success) {
-        dispatch(setToastMsg('Unable to save roadmap to your account'));
-        dispatch(setToastSeverity('error'));
-        dispatch(setShowToast(true));
-      }
+    } else if (!silent && isLoggedIn) {
+      dispatch(setToastMsg('Roadmap saved to your account!'));
+      dispatch(setToastSeverity('success'));
+      dispatch(setShowToast(true));
     }
 
     if (result.success && result.plannerIdLookup) {
