@@ -12,6 +12,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@opentelemetry/auto-instrumentations-node": "0.58.0",
     "@trpc/server": "^10.45.2",
     "@vendia/serverless-express": "^4.12.6",
@@ -24,7 +25,7 @@
     "express-session": "^1.18.1",
     "morgan": "^1.10.0",
     "pg": "^8.13.1",
-    "zod": "^3.23.8"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@peterportal/types": "workspace:*",

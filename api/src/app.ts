@@ -21,6 +21,7 @@ import authRouter from './controllers/auth';
 import { SESSION_LENGTH } from './config/constants';
 import { createContext } from './helpers/trpc';
 import { appRouter } from './controllers';
+import { createMcpRouter, mountMcpWellKnown } from './controllers/mcp';
 
 // instantiate app
 const app = express();
@@ -83,6 +84,7 @@ app.use(function (req, res, next) {
 // Enable custom routes
 const expressRouter = express.Router();
 expressRouter.use('/users/auth', authRouter);
+expressRouter.use('/mcp', createMcpRouter());
 expressRouter.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
@@ -90,6 +92,9 @@ expressRouter.use(
     createContext,
   }),
 );
+
+// OAuth discovery documents at the origin root (see mountMcpWellKnown).
+mountMcpWellKnown(app);
 
 app.use('/planner/api', expressRouter);
 

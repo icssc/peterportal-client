@@ -7,6 +7,17 @@ import { OAuth2Client } from 'arctic';
 export const REDIRECT_URI_PATH_WEB = '/planner/api/users/auth/google/callback';
 export const REDIRECT_URI_PATH_NATIVE = '/planner/api/users/auth/google/callback/native';
 
+/**
+ * Redirect URI for the MCP OAuth flow's Google round-trip. The MCP server bounces the
+ * browser to Google with this as the redirect, then resumes the OAuth flow in the callback.
+ * Must be registered with the Google OAuth client / OIDC provider. See `api/src/mcp/`.
+ */
+export const REDIRECT_URI_PATH_MCP = '/planner/api/mcp/auth/google/callback';
+
+export function buildMcpRedirectUri(): string {
+  return (process.env.PRODUCTION_DOMAIN ?? '') + REDIRECT_URI_PATH_MCP;
+}
+
 export function buildRedirectUri(native = false): string {
   const path = native ? REDIRECT_URI_PATH_NATIVE : REDIRECT_URI_PATH_WEB;
   return (process.env.PRODUCTION_DOMAIN ?? '') + path;

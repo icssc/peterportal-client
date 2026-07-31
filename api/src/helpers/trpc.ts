@@ -8,7 +8,7 @@ export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOpti
   res,
 });
 
-type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = Awaited<ReturnType<typeof createContext>>;
 const trpc = initTRPC.context<Context>().create();
 export const router = trpc.router;
 export const publicProcedure = trpc.procedure;

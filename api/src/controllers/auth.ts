@@ -1,11 +1,9 @@
 import { CodeChallengeMethod, generateCodeVerifier, generateState } from 'arctic';
-import { eq } from 'drizzle-orm';
 import express, { type Request, type Response } from 'express';
 import { SESSION_LENGTH } from '../config/constants';
 import { buildRedirectUri, createOIDCClient } from '../config/oidc';
-import { db } from '../db';
-import { account, user, type providerEnum } from '../db/schema';
 import { isNativeIosApp } from '../helpers/platform';
+import { upsertOidcUser, type OidcUserInfo } from '../helpers/users';
 
 const router = express.Router();
 
@@ -17,71 +15,8 @@ function clearSharedCookie(req: Request, res: Response) {
   });
 }
 
-interface OIDCUserInfo {
-  sub: string;
-  email: string;
-  name?: string;
-  picture?: string;
-}
-
-function providerFromSub(sub: string): (typeof providerEnum.enumValues)[number] {
-  const prefix = sub.split('_')[0];
-  switch (prefix) {
-    case 'google':
-      return 'GOOGLE';
-    case 'apple':
-      return 'APPLE';
-    default:
-      throw new Error(`Unknown provider prefix in sub: ${sub}`);
-  }
-}
-
-async function successLogin(userInfo: OIDCUserInfo, req: Request, res: Response) {
-  const { sub, email, name, picture } = userInfo;
-  const provider = providerFromSub(sub);
-
-  /**
-   * TODO: Some legacy user accounts do not have an email associated, but do have a google id.
-   *
-   * We would like to handle this case gracefully, by handling conflicts on google id OR email.
-   * At the time of writing (2025-12-07), Drizzle does not have such a mechanism.
-   * Possible methods include updating a user based on google id, then manually inserting if no such user exists,
-   * or using a raw SQL query
-   */
-  const userData = await db.transaction(async (tx) => {
-    let [dbUser] = await tx.select().from(user).where(eq(user.email, email));
-
-    if (dbUser) {
-      await tx
-        .update(user)
-        .set({
-          name: name || dbUser.name,
-          picture: picture || dbUser.picture,
-        })
-        .where(eq(user.id, dbUser.id));
-      dbUser = { ...dbUser, name: name || dbUser.name };
-    } else {
-      [dbUser] = await tx
-        .insert(user)
-        .values({
-          name: name ?? '',
-          email,
-          picture: picture ?? '',
-        })
-        .returning();
-    }
-
-    await tx
-      .insert(account)
-      .values({
-        userId: dbUser.id,
-        provider,
-        providerAccountId: sub,
-      })
-      .onConflictDoNothing();
-
-    return dbUser;
-  });
+async function successLogin(userInfo: OidcUserInfo, req: Request, res: Response) {
+  const userData = await upsertOidcUser(userInfo);
 
   req.session.userId = userData.id;
   req.session.userName = userData.name;
@@ -194,7 +129,7 @@ router.get('/google/callback', async (req, res) => {
       return;
     }
 
-    const userInfo: OIDCUserInfo = await userInfoResponse.json();
+    const userInfo: OidcUserInfo = await userInfoResponse.json();
 
     if (!userInfo.email) {
       console.error('Email not provided by OIDC provider');
