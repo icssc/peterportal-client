@@ -37,7 +37,7 @@ AntAlmanac Planner is a web application designed to aid UCI students with course
 
 ### Backend
 - [Anteater API](https://github.com/icssc/anteater-api) - API maintained by ICSSC for retrieving UCI data.
-- [Express](https://expressjs.com/) - Minimalist backend framework for Node.js.
+- [Next.js Route Handlers](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) - Server routes for Planner auth and API traffic.
 - [tRPC](https://trpc.io/) - Library for type-safe APIs.
 - [PostgreSQL](https://www.postgresql.org/) - Relational database for storing user data and planners.
 - [Drizzle ORM](https://orm.drizzle.team/) - High-performance type-safe SQL-like access layer.
@@ -128,11 +128,11 @@ git checkout -b [branch name]
 
 1. Open a terminal in the root directory of the repo.
 
-2. Run `pnpm run dev` to start both the backend Express server and frontend Next.js dev server
+2. Run `pnpm run dev` to start the Next.js dev server for Planner
 
 3. Visit the link printed to the console by Next.js!
 
-Optionally, you can run the site/api separately by changing into their respective directories in two different terminal windows and running `pnpm run dev`
+Optionally, you can run package-level checks in the `site` and `api` workspaces separately while developing route handlers and shared API code.
 
 # Where Does the Data Come From?
 
