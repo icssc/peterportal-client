@@ -22,7 +22,7 @@ const professorsRouter = router({
   /**
    * Anteater API proxy for batch professor data
    */
-  batch: publicProcedure.input(z.object({ professors: z.array(z.string()) })).mutation(async ({ input }) => {
+  batchGet: publicProcedure.input(z.object({ professors: z.array(z.string()) })).mutation(async ({ input }) => {
     if (input.professors.length == 0) {
       return {};
     } else {
