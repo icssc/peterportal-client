@@ -62,8 +62,8 @@ export async function searchAPIResults<T extends SearchIndex>(
 ): Promise<T extends 'courses' ? BatchCourseData : BatchProfessorData> {
   const data =
     index === 'courses'
-      ? await trpc.courses.batchGet.mutate({ courses: names })
-      : await trpc.professors.batchGet.mutate({ professors: names });
+      ? await trpc.courses.batch.mutate({ courses: names })
+      : await trpc.professors.batch.mutate({ professors: names });
 
   const transformed: BatchCourseData | BatchProfessorData = {};
   for (const id in data) {
