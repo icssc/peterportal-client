@@ -54,6 +54,15 @@ function deserializeSession(value: string): SessionData | null {
   }
 }
 
+type CookieOptions = {
+  requestUrl: string;
+  maxAge?: number;
+  value?: string;
+  httpOnly?: boolean;
+  sameSite?: 'Lax';
+  secure?: boolean;
+};
+
 function parseCookies(cookieHeader: string | null) {
   return Object.fromEntries(
     (cookieHeader ?? '')
@@ -78,6 +87,22 @@ function cookieDomain(requestUrl: string) {
   return isLocalhost(requestUrl) ? undefined : 'antalmanac.com';
 }
 
+function createCookie(name: string, options: CookieOptions) {
+  const domain = cookieDomain(options.requestUrl);
+  const attributes = [
+    `${name}=${options.value ?? ''}`,
+    'Path=/',
+    ...(options.maxAge !== undefined ? [`Max-Age=${options.maxAge}`] : []),
+  ];
+
+  if (options.httpOnly) attributes.push('HttpOnly');
+  if (options.sameSite) attributes.push(`SameSite=${options.sameSite}`);
+  if (options.secure ?? !isLocalhost(options.requestUrl)) attributes.push('Secure');
+  if (domain) attributes.push(`Domain=${domain}`);
+
+  return attributes.join('; ');
+}
+
 export function getSessionFromRequest(request: Request): SessionData {
   const cookies = parseCookies(request.headers.get('cookie'));
   const rawSession = cookies[SESSION_COOKIE_NAME];
@@ -90,61 +115,39 @@ export function getSessionFromRequest(request: Request): SessionData {
 }
 
 export function createSessionCookie(requestUrl: string, session: SessionData) {
-  const domain = cookieDomain(requestUrl);
-  const attributes = [
-    `${SESSION_COOKIE_NAME}=${serializeSession(session)}`,
-    'Path=/',
-    `Max-Age=${COOKIE_MAX_AGE_SECONDS}`,
-    'HttpOnly',
-    'SameSite=Lax',
-    ...(isLocalhost(requestUrl) ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
-
-  return attributes.join('; ');
+  return createCookie(SESSION_COOKIE_NAME, {
+    requestUrl,
+    value: serializeSession(session),
+    maxAge: COOKIE_MAX_AGE_SECONDS,
+    httpOnly: true,
+    sameSite: 'Lax',
+  });
 }
 
 export function clearSessionCookie(requestUrl: string) {
-  const domain = cookieDomain(requestUrl);
-  const attributes = [
-    `${SESSION_COOKIE_NAME}=`,
-    'Path=/',
-    'Max-Age=0',
-    'HttpOnly',
-    'SameSite=Lax',
-    ...(isLocalhost(requestUrl) ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
-
-  return attributes.join('; ');
+  return createCookie(SESSION_COOKIE_NAME, {
+    requestUrl,
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: 'Lax',
+  });
 }
 
 export function createLoggedInCookie(requestUrl: string) {
-  const domain = cookieDomain(requestUrl);
-  const attributes = [
-    `${LOGGED_IN_COOKIE_NAME}=1`,
-    'Path=/',
-    `Max-Age=${COOKIE_MAX_AGE_SECONDS}`,
-    'SameSite=Lax',
-    ...(isLocalhost(requestUrl) ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
-
-  return attributes.join('; ');
+  return createCookie(LOGGED_IN_COOKIE_NAME, {
+    requestUrl,
+    value: '1',
+    maxAge: COOKIE_MAX_AGE_SECONDS,
+    sameSite: 'Lax',
+  });
 }
 
 export function clearLoggedInCookie(requestUrl: string) {
-  const domain = cookieDomain(requestUrl);
-  const attributes = [
-    `${LOGGED_IN_COOKIE_NAME}=`,
-    'Path=/',
-    'Max-Age=0',
-    'SameSite=Lax',
-    ...(isLocalhost(requestUrl) ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
-
-  return attributes.join('; ');
+  return createCookie(LOGGED_IN_COOKIE_NAME, {
+    requestUrl,
+    maxAge: 0,
+    sameSite: 'Lax',
+  });
 }
 
 export function appendCookies(headers: Headers, cookies: string[]) {
