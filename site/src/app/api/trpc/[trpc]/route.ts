@@ -1,1 +1,1 @@
-export { GET, POST } from '../../../../../../api/src/next/trpc';
+export { GET, POST } from '@api/next/trpc';

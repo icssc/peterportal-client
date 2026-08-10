@@ -1,1 +1,1 @@
-export { GET } from '../../../../../../../api/src/next/auth';
+export { GET } from '@api/next/auth';
