@@ -132,8 +132,6 @@ git checkout -b [branch name]
 
 3. Visit the link printed to the console by Next.js!
 
-Optionally, you can run package-level checks in the `site` and `api` workspaces separately while developing route handlers and shared API code.
-
 # Where Does the Data Come From?
 
 We consolidate our data directly from official UCI sources such as: UCI Catalogue, UCI Public Records Office, and UCI WebReg (courtesy of [Anteater API](https://github.com/icssc/anteater-api)).
