@@ -79,9 +79,11 @@ function createNextJsApplication(router: sst.aws.Router) {
     environment: {
       DATABASE_URL: process.env.DATABASE_URL!,
       SESSION_SECRET: process.env.SESSION_SECRET!,
+      PUBLIC_API_URL: process.env.PUBLIC_API_URL!,
       OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID!,
       OIDC_ISSUER_URL: process.env.OIDC_ISSUER_URL!,
       ADMIN_EMAILS: process.env.ADMIN_EMAILS!,
+      NODE_ENV: process.env.NODE_ENV ?? 'staging',
       ANTEATER_API_KEY: process.env.ANTEATER_API_KEY!,
       EXTERNAL_USER_READ_SECRET: process.env.EXTERNAL_USER_READ_SECRET!,
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
