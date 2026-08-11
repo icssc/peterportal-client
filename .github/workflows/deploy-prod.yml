@@ -39,7 +39,6 @@ jobs:
         run: pnpm sst deploy --stage prod
         env:
           DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-          NODE_ENV: production
 
           PUBLIC_API_URL: ${{ secrets.PUBLIC_API_URL }}
           SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
