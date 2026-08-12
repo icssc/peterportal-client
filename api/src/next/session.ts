@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 
 import type { SessionData } from '../types/session';
 
-const SESSION_COOKIE_NAME = 'pp_session';
+const SESSION_COOKIE_NAME = 'planner_session';
 const LOGGED_IN_COOKIE_NAME = 'icssc_logged_in';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
