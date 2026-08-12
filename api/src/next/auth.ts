@@ -32,10 +32,10 @@ function providerFromSub(sub: string): (typeof providerEnum.enumValues)[number] 
   }
 }
 
-function responseWithCookies(location: string, cookies: string[], status = 302) {
+function responseWithCookies(location: string, cookies: string[]) {
   const headers = new Headers({ Location: location });
   appendCookies(headers, cookies);
-  return new Response(null, { status, headers });
+  return new Response(null, { status: 302, headers });
 }
 
 function clearSharedCookie(requestUrl: string) {
