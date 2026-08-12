@@ -24,7 +24,7 @@ function createOrGetRouter() {
       domain: getDomainConfig(),
       transform: {
         cachePolicy(_, opts) {
-          opts.id = '92d18877-845e-47e7-97e6-895382b1bf7c';
+          opts.id = AWSPolicyId.CachingDisabled;
         },
       },
     });
@@ -88,7 +88,7 @@ function createNextJsApplication(router: sst.aws.Router) {
       NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY!,
       NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
     },
-    cachePolicy: AWSPolicyId.OrgNextjsCachePolicy,
+    cachePolicy: $app.stage === 'prod' ? AWSPolicyId.OrgNextjsCachePolicy : AWSPolicyId.CachingDisabled,
     path: './site',
   });
 }

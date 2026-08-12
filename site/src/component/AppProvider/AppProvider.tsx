@@ -5,6 +5,7 @@ import { generateStore } from '../../store/store';
 import { Provider } from 'react-redux';
 import { PostHogProvider } from 'posthog-js/react';
 import AppThemeProvider from '../AppThemeProvider/AppThemeProvider';
+import ChunkErrorHandler from '../ChunkErrorHandler/ChunkErrorHandler';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { useLoadSavedCourses } from '../../hooks/savedCourses';
 import { useSetSchedule } from '../../hooks/schedule';
@@ -50,6 +51,7 @@ interface AppProviderProps extends PropsWithChildren {
 const AppProvider: FC<AppProviderProps> = ({ children, user }) => {
   const baseContent = (
     <>
+      <ChunkErrorHandler />
       <UserDataLoader />
       <AutoSignIn />
       <AppThemeProvider>
