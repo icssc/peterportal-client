@@ -521,8 +521,7 @@ const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<Prer
   return new Set([unique.join('|')]);
 };
 
-const isEmptyPrerequisiteTree = (prerequisite: PrerequisiteTree) =>
-  Object.keys(prerequisite as Record<string, unknown>).length === 0;
+const isEmptyPrerequisiteTree = (prerequisite: PrerequisiteTree) => Object.keys(prerequisite).length === 0;
 
 /**
  * Returns the set of prerequisites of a course that need to be taken but are missing
@@ -532,13 +531,10 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   // base case is just a course
   if ('prereqType' in prerequisite) return validateCoursePrerequisite({ prerequisite, ...input });
 
-  // some prereq nodes are plain tree objects with no prereqType
-  const prerequisiteTree = prerequisite as PrerequisiteTree;
+  if (prerequisite.AND) return validateAndPrerequisite({ prerequisite, ...input });
+  if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
 
-  if (prerequisiteTree.AND) return validateAndPrerequisite({ prerequisite: prerequisiteTree, ...input });
-  if (prerequisiteTree.OR) return validateOrPrerequisite({ prerequisite: prerequisiteTree, ...input });
-
-  if (isEmptyPrerequisiteTree(prerequisiteTree)) return new Set();
+  if (isEmptyPrerequisiteTree(prerequisite)) return new Set();
 
   // should never reach here
   console.warn('unrecognized prerequisite structure');
