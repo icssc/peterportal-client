@@ -38,28 +38,21 @@ function responseWithCookies(location: string, cookies: string[]) {
   return new Response(null, { status: 302, headers });
 }
 
-function clearSharedCookie(requestUrl: string) {
+function domainSpecificAttributes(requestUrl: string) {
   const domain = new URL(requestUrl).hostname === 'localhost' ? undefined : 'antalmanac.com';
-  const attributes = [
-    'icssc_logged_in=',
-    'Path=/',
-    'Max-Age=0',
-    ...(new URL(requestUrl).hostname === 'localhost' ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
+  const secure = new URL(requestUrl).hostname === 'localhost' ? [] : ['Secure'];
+  const domainAttr = domain ? [`Domain=${domain}`] : [];
+
+  return [...secure, ...domainAttr];
+}
+
+function clearSharedCookie(requestUrl: string) {
+  const attributes = ['icssc_logged_in=', 'Path=/', 'Max-Age=0', ...domainSpecificAttributes(requestUrl)];
   return attributes.join('; ');
 }
 
 function clearUserCookie(requestUrl: string) {
-  const domain = new URL(requestUrl).hostname === 'localhost' ? undefined : 'antalmanac.com';
-  const attributes = [
-    'user=',
-    'Path=/',
-    'Max-Age=0',
-    'SameSite=Lax',
-    ...(new URL(requestUrl).hostname === 'localhost' ? [] : ['Secure']),
-    ...(domain ? [`Domain=${domain}`] : []),
-  ];
+  const attributes = ['user=', 'Path=/', 'Max-Age=0', 'SameSite=Lax', ...domainSpecificAttributes(requestUrl)];
   return attributes.join('; ');
 }
 
