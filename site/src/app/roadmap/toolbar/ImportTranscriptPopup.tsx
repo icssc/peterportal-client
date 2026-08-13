@@ -17,6 +17,8 @@ import {
 import { useTransferredCredits } from '../../../hooks/transferCredits';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
+import { usePostHog } from 'posthog-js/react';
+import { analyticsEnum, logAnalytics } from '../../../helpers/analytics';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -199,6 +201,7 @@ const ImportTranscriptPopup: FC = () => {
   const [fileLabel, setFileLabel] = useState('');
   const [busy, setBusy] = useState(false);
   const isLoggedIn = useIsLoggedIn();
+  const postHog = usePostHog();
   const nextPlanTempId = useAppSelector(getNextPlannerTempId);
 
   const currentAps = useTransferredCredits().ap;
@@ -265,6 +268,11 @@ const ImportTranscriptPopup: FC = () => {
       const revision = addPlanner(nextPlanTempId, planName, Object.values(years));
       dispatch(reviseRoadmap(revision));
       dispatch(setPlanIndex(allPlanData.length));
+
+      logAnalytics(postHog, {
+        category: analyticsEnum.transcript,
+        action: analyticsEnum.transcript.actions.IMPORT,
+      });
 
       setShowModal(false);
       setFile(null);

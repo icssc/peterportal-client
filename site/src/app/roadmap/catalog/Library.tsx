@@ -15,6 +15,8 @@ import { setActiveCustomCourse, updateRoadmapCustomCourse } from '../../../store
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import trpc from '../../../trpc';
 import ClickableDiv from '../../../component/ClickableDiv/ClickableDiv';
+import { usePostHog } from 'posthog-js/react';
+import { analyticsEnum, logAnalytics } from '../../../helpers/analytics';
 
 const SavedCourses = () => {
   const [open, setOpen] = useState(true);
@@ -39,14 +41,19 @@ const CustomCourses = () => {
   const toggleExpand = () => setOpen(!open);
   const dispatch = useAppDispatch();
   const isLoggedIn = useIsLoggedIn();
+  const postHog = usePostHog();
   const userCustomCourses = useAppSelector((state) => state.customCourses.userCustomCourses);
   const customCoursesCopy = deepCopy(userCustomCourses);
 
   const addCard = useCallback(() => {
-    trpc.customCourses.addCustomCard
-      .mutate({ name: '', description: '', units: 0 })
-      .then((id) => dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' })));
-  }, [dispatch]);
+    trpc.customCourses.addCustomCard.mutate({ name: '', description: '', units: 0 }).then((id) => {
+      dispatch(addCustomCourse({ id, courseName: '', units: 0, description: '' }));
+      logAnalytics(postHog, {
+        category: analyticsEnum.customCards,
+        action: analyticsEnum.customCards.actions.CREATE_CARD,
+      });
+    });
+  }, [dispatch, postHog]);
 
   const handleUpdate = (course: CustomCourse) => {
     dispatch(updateCustomCourse({ ...course }));
