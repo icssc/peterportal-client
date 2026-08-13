@@ -7,12 +7,12 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import Profile from './Profile';
 import SearchModule from '../SearchModule/SearchModule';
 
-import SearchIcon from '@mui/icons-material/Search';
 import ArrowLeftIcon from '@mui/icons-material/ArrowBack';
 import { IconButton } from '@mui/material';
 
 import { useIsMobile } from '../../helpers/util';
-import { setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { setSelectedMobileTab, setShowMobileFullscreenSearch } from '../../store/slices/roadmapSlice';
+import { setShowMobileCreditsMenu } from '../../store/slices/transferCreditsSlice';
 import { usePathname } from 'next/navigation';
 
 import SaveButton from './SaveButton';
@@ -24,11 +24,10 @@ const AppHeader: FC = () => {
   const isShowFullscreenSearch = useAppSelector((state) => state.roadmap.showMobileFullscreenSearch);
   const isRoadmapPage = usePathname() == '/';
 
-  const showFullscreenSearch = () => {
-    dispatch(setShowMobileFullscreenSearch(true));
-  };
   const closeFullscreenSearch = () => {
     dispatch(setShowMobileFullscreenSearch(false));
+    dispatch(setSelectedMobileTab(0));
+    dispatch(setShowMobileCreditsMenu(false));
   };
 
   if (isMobile && isShowFullscreenSearch && isRoadmapPage)
@@ -57,11 +56,6 @@ const AppHeader: FC = () => {
         {/* Search */}
         {isRoadmapPage && (
           <>
-            {isMobile && (
-              <IconButton onClick={showFullscreenSearch} color="inherit">
-                <SearchIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            )}
             <ExportButton />
             <SaveButton />
           </>
