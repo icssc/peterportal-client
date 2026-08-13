@@ -9,7 +9,7 @@
 .custom-courses {
   gap: 4px;
   .section-content .custom-card {
-    border: 0px;
+    border-width: 2px;
     border-radius: 8px;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -55,7 +55,7 @@
 .custom-courses {
   .section-content {
     .add-card-button {
-      box-shadow: 0 0 2px 0 #60616680;
+      border: 2px solid var(--mui-palette-divider);
       background: var(--mui-palette-overlay-overlay1);
       border-radius: 8px;
       height: auto;
@@ -64,10 +64,12 @@
       position: relative;
       color: var(--mui-palette-divider);
       align-items: center;
-      border: 1px solid transparent;
 
+      svg {
+        color: var(--mui-palette-text-secondary);
+      }
       &:hover {
-        outline: 1px solid var(--mui-palette-divider);
+        border-color: var(--mui-palette-text-secondary);
         cursor: pointer;
       }
     }

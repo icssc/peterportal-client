@@ -4,9 +4,15 @@ import { Popover } from '@mui/material';
 import './OverlayTrigger.scss';
 import { useAppSelector } from '../../store/hooks';
 
+type OverlayTriggerChildProps = {
+  onMouseEnter?: React.MouseEventHandler<HTMLElement>;
+  onMouseOver?: React.MouseEventHandler<HTMLElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLElement>;
+};
+
 interface OverlayTriggerProps {
   popoverContent: ReactNode;
-  children: React.ReactElement;
+  children: React.ReactElement<OverlayTriggerChildProps>;
   popupListener?: (open: boolean) => void;
   disabled?: boolean;
   anchor: 'bottom' | 'left' | 'right';
@@ -51,23 +57,20 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
     popupListener?.(false);
   };
 
-  const handleUnhover = (e: React.MouseEvent) => {
-    const relatedTarget = e.relatedTarget as Node | null;
-    const popoverContent = document.querySelector('.hoverable-popover');
-
-    if (!popoverContent || !relatedTarget || !popoverContent.contains(relatedTarget)) {
-      hidePopover();
-    }
-  };
+  const { onMouseEnter, onMouseOver, onMouseLeave } = children.props;
 
   const clonedChild = React.cloneElement(children, {
-    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
+    onMouseEnter: (e) => {
       showPopover(e);
-      children.props.onMouseEnter?.(e);
+      onMouseEnter?.(e);
     },
-    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => {
-      handleUnhover(e);
-      children.props.onMouseLeave?.(e);
+    onMouseOver: (e) => {
+      showPopover(e);
+      onMouseOver?.(e);
+    },
+    onMouseLeave: (e) => {
+      hidePopover();
+      onMouseLeave?.(e);
     },
   });
 
@@ -85,7 +88,9 @@ const OverlayTrigger: FC<OverlayTriggerProps> = ({
         slotProps={{
           paper: {
             className: 'hoverable-popover',
-            onMouseLeave: hidePopover,
+            sx: {
+              pointerEvents: 'none',
+            },
           },
         }}
       >

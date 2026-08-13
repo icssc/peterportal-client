@@ -9,14 +9,17 @@ import { ProfessorGQLData } from '../../types/types';
 import { Button, IconButton, Paper, Tooltip, useMediaQuery } from '@mui/material';
 import { useAppDispatch } from '../../store/hooks';
 import { setToastMsg, setToastSeverity, setShowToast } from '../../store/slices/roadmapSlice';
-import Twemoji from 'react-twemoji';
 
 import CloseIcon from '@mui/icons-material/Close';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import { getProfessorTerms } from '../../helpers/reviews';
 import SideInfo from '../SideInfo/SideInfo';
 import { useProfessorData } from '../../hooks/professorReviews';
+import PreviewNavBar from './PreviewNavBar';
 
 interface PreviewTitleProps {
   isLoading: boolean;
@@ -48,6 +51,7 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
   return (
     <div className="preview-body">
       <SideInfo
+        id="preview-details"
         className="professor-summary"
         searchType="instructor"
         name={data.name}
@@ -57,15 +61,15 @@ const ProfessorPreviewContent: FC<{ data: ProfessorGQLData | null }> = ({ data }
         professor={data}
       />
 
-      <ResultPageSection title="📊 Grade Distribution">
+      <ResultPageSection id="preview-grades" icon={<BarChartIcon />} title="Grade Distribution">
         <GradeDist professor={data} />
       </ResultPageSection>
 
-      <ResultPageSection title="🗓️ Schedule of Classes">
+      <ResultPageSection id="preview-schedule" icon={<CalendarTodayIcon />} title="Schedule of Classes">
         <Schedule professorIDs={data.shortenedNames} termsOffered={unionTerms(data.courses)} />
       </ResultPageSection>
 
-      <ResultPageSection title="💬 Reviews">
+      <ResultPageSection id="preview-reviews" icon={<RateReviewIcon />} title="Reviews">
         <Review professor={data} terms={sortTerms(getProfessorTerms(data))} />
       </ResultPageSection>
     </div>
@@ -120,6 +124,7 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
           </Tooltip>
         )}
         <PreviewTitle isLoading={isLoading} netId={netid} professorData={professorData} />
+        <PreviewNavBar />
         <Button
           variant="contained"
           color="inherit"
@@ -131,9 +136,9 @@ const ProfessorPreview: FC<{ netid: string; onClose: () => void; onBack: () => v
           Share
         </Button>
       </Paper>
-      <Twemoji options={{ className: 'twemoji' }}>
+      <div className="popup-scroll">
         <ProfessorPreviewContent data={professorData} />
-      </Twemoji>
+      </div>
     </div>
   );
 };

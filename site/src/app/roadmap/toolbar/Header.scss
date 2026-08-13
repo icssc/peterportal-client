@@ -60,7 +60,7 @@
       border-radius: 4px;
       padding: 4px 8px 4px 10px;
       border: none;
-      box-shadow: none;
+      box-shadow: var(--mui-shadows-2);
       min-width: auto;
 
       &[disabled] {

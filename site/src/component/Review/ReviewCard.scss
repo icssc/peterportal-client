@@ -3,9 +3,7 @@
   flex-direction: column;
   gap: 1rem;
   background-color: var(--mui-palette-overlay-overlay2);
-  padding: 16px 20px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  padding: 12px 20px 16px 20px;
   font-size: 14px;
 
   &.MuiCard-root {
@@ -16,31 +14,55 @@
 
 .reviewcard-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
 
-  .reviewcard-identifier {
-    font-weight: bold;
-    font-size: 20px;
-    margin: 0;
-    a {
-      color: var(--mui-palette-text-primary);
+  .reviewcard-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+
+    .MuiIconButton-root {
+      color: var(--mui-palette-text-secondary);
     }
-    word-break: break-word;
+
+    .reviewcard-identifier {
+      font-size: 18px;
+      margin: 0;
+      a {
+        color: var(--mui-palette-text-primary);
+      }
+    }
   }
 
-  .edit-buttons {
+  .reviewcard-header-bottom {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-right: -8px;
-    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+
+    .reviewcard-author {
+      display: flex;
+      gap: 0 4px;
+
+      .reviewcard-author-name {
+        font-weight: 500;
+        font-size: 12px;
+        color: var(--mui-palette-text-secondary);
+      }
+    }
+
+    .reviewcard-date {
+      font-size: 12px;
+      color: var(--mui-palette-text-secondary);
+    }
   }
 
   @media (max-width: 500px) {
-    flex-direction: column;
-    gap: 10px;
+    .reviewcard-header-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
   }
 }
 
@@ -49,72 +71,47 @@
   gap: 1rem;
 }
 
-.reviewcard-footer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: auto;
-  color: var(--mui-palette-text-secondary);
-}
-
 // Rating boxes (quality and difficulty)
 .reviewcard-ratings {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: left;
   gap: 10px;
 
   .rating {
     border-radius: var(--mui-shape-borderRadiusLg);
-    width: 72px;
-    height: 72px;
+    width: 56px;
+    height: 56px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
+    gap: 2px;
+  }
+
+  .rating-quality {
+    background-color: var(--mui-palette-primary-main);
+  }
+
+  .rating-difficulty {
+    background-color: var(--mui-palette-secondary-main);
   }
   .rating-label {
-    line-height: 1rem;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 10px;
+    line-height: 100%;
   }
   .rating-value {
-    line-height: 33px;
-    font-size: 36px;
-  }
-  // color scheme for numerical ratings
-  // reversed for difficulty so 1 => r5, etc.
-  .r1 {
-    background-color: var(--mui-palette-reviews-red);
-  }
-  .r2 {
-    background-color: var(--mui-palette-reviews-orange);
-  }
-  .r3 {
-    background-color: var(--mui-palette-reviews-yellow);
-  }
-  .r4 {
-    background-color: var(--mui-palette-reviews-green);
-  }
-  .r5 {
-    background-color: var(--mui-palette-reviews-blue);
+    font-size: 30px;
+    line-height: 100%;
   }
 }
 
 .reviewcard-info {
-  width: 100%;
-  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  .author-bottom {
-    font-size: 13px;
-    color: var(--mui-palette-text-secondary);
-  }
 
   .review-content {
     // font alignment
@@ -122,51 +119,7 @@
   }
 }
 
-.reviewcard-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 16px;
-  padding-block: 2.5px;
-}
-.reviewcard-detail {
-  display: flex;
-  flex-direction: column;
-  width: fit-content;
-  justify-content: flex-start;
-  gap: 2px;
-
-  p {
-    margin: 0;
-  }
-
-  span.edit-time {
-    color: var(--mui-palette-misc-midGray);
-    white-space: nowrap;
-  }
-
-  @media (min-width: 500px) {
-    min-width: 170px;
-    &:first-child {
-      min-width: 250px;
-    }
-  }
-}
-
-.reviewcard-author {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  gap: 0 4px;
-  flex-wrap: wrap;
-}
-.reviewcard-author-name {
-  margin: 0;
-}
-.reviewcard-author-verified,
-.reviewcard-author-author {
-  margin: 0;
+.reviewcard-author-icon {
   display: flex;
   margin-left: 2px;
 
@@ -175,57 +128,69 @@
   }
 }
 
+.reviewcard-footer-row {
+  display: flex;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
 .reviewcard-tags {
   display: flex;
-  flex-direction: row;
-  justify-content: left;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
-.reviewcard-voting {
+.reviewcard-voting-buttons {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: bold;
-  height: 20px;
+  gap: 8px;
+  margin-left: 12px;
+}
 
-  * {
-    margin: 0px;
-  }
+.reviewcard-footer {
+  color: var(--mui-palette-text-secondary);
+  margin-left: auto;
 
-  .reviewcard-voting-buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.25rem;
-  }
   .upvote,
   .downvote {
-    padding: 0px;
-    border: none;
-    height: fit-content;
-    background-color: transparent;
-    transition: 0.25s;
-    font-size: 20px;
-  }
-  .colored-upvote {
-    color: var(--mui-palette-primary-main);
-  }
-  .colored-downvote {
-    color: var(--mui-palette-error-main);
+    display: flex;
+    border-radius: 3px;
+    border: 1px solid color-mix(in srgb, var(--mui-palette-text-secondary) 40%, transparent);
+    padding: 0 4px;
+    cursor: pointer;
+
+    .vote-count {
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .MuiIconButton-root {
+      padding: 2px;
+      color: var(--mui-palette-text-secondary);
+
+      .MuiSvgIcon-root {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
+
+    &:hover {
+      background-color: color-mix(in srgb, var(--mui-palette-text-secondary) 10%, transparent);
+    }
   }
 }
 
-.add-report-button {
-  border: none;
-  background-color: transparent;
-  text-decoration: underline;
-  padding: 0;
-}
-.add-report-button:hover {
-  color: var(--mui-palette-text-primary);
+.review-menu {
+  .MuiList-root {
+    padding: 4px 0;
+  }
+
+  .MuiMenuItem-root {
+    font-size: 14px;
+    min-height: unset;
+  }
 }
 
 // screen width is less than or equal to 599px
@@ -235,8 +200,5 @@
   }
   .reviewcard-ratings {
     flex-direction: row;
-  }
-  .reviewcard-details {
-    flex-direction: column;
   }
 }

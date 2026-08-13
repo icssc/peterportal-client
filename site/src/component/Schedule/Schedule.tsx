@@ -2,13 +2,19 @@ import { FC, useState, useEffect, useCallback } from 'react';
 import './Schedule.scss';
 import { Chip, LinearProgress, Tooltip } from '@mui/material';
 
-import { WebsocAPIResponse, WebsocAPIResponse as WebsocResponse, WebsocSection as Section } from '@peterportal/types';
+import {
+  WebsocAPIResponse,
+  WebsocAPIResponse as WebsocResponse,
+  WebsocSection as Section,
+  CourseMaterialsAAPIResponse,
+} from '@peterportal/types';
 import { hourMinuteTo12HourString } from '../../helpers/util';
 import { useAppSelector } from '../../store/hooks';
 import trpc from '../../trpc';
 
 import { MenuItem, Select } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
+import MaterialsIcon from '../../helpers/courseMaterials';
 import Toast, { ToastSeverity } from '../../helpers/toast';
 import Link from 'next/link';
 import { parseRestrictions } from '../../helpers/schedule';
@@ -22,6 +28,8 @@ interface ScheduleProps {
 interface ScheduleData {
   [key: string]: Section[];
 }
+
+type MaterialsData = Set<string>;
 
 const mergeWebsocAPIResponses = (responses: WebsocAPIResponse[]) => ({
   schools: responses.flatMap((response) => response.schools),
@@ -42,6 +50,7 @@ function getMeetingsString(section: Section) {
 const Schedule: FC<ScheduleProps> = (props) => {
   // For fetching data from API
   const [scheduleData, setScheduleData] = useState<ScheduleData>(null!);
+  const [materialsData, setMaterialsData] = useState<MaterialsData>(null!);
   const currentQuarter = useAppSelector((state) => state.schedule.currentQuarter);
   const [selectedQuarter, setSelectedQuarter] = useState(props?.termsOffered ? props?.termsOffered[0] : currentQuarter);
 
@@ -54,13 +63,21 @@ const Schedule: FC<ScheduleProps> = (props) => {
   };
   const fetchScheduleDataFromAPI = useCallback(async () => {
     let apiResponse!: WebsocResponse;
+    let apiResponseMaterials: CourseMaterialsAAPIResponse | null = null;
 
     if (props.courseID) {
       const courseIDSplit = props.courseID.split(' ');
       const department = courseIDSplit.slice(0, courseIDSplit.length - 1).join(' ');
       const number = courseIDSplit[courseIDSplit.length - 1];
 
-      apiResponse = await trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number });
+      [apiResponse, apiResponseMaterials] = await Promise.all([
+        trpc.schedule.getTermDeptNum.query({ term: selectedQuarter, department, number }),
+        trpc.courseMaterials.getTermDeptNum.query({
+          term: selectedQuarter,
+          department,
+          number,
+        }),
+      ]);
     } else if (props.professorIDs) {
       apiResponse = await Promise.all(
         props.professorIDs.map((professor) => trpc.schedule.getTermProf.query({ term: selectedQuarter, professor })),
@@ -77,10 +94,19 @@ const Schedule: FC<ScheduleProps> = (props) => {
         });
       });
       setScheduleData(data);
+
+      const dataMaterials: MaterialsData = new Set<string>();
+      if (apiResponseMaterials) {
+        apiResponseMaterials.forEach((material) => {
+          dataMaterials.add(material.instructors.join());
+        });
+      }
+      setMaterialsData(dataMaterials);
     } catch (error) {
       // No school/department/course
       if (error instanceof TypeError) {
         setScheduleData({});
+        setMaterialsData(new Set<string>());
       }
     }
   }, [props.courseID, props.professorIDs, selectedQuarter]);
@@ -90,6 +116,8 @@ const Schedule: FC<ScheduleProps> = (props) => {
       fetchScheduleDataFromAPI();
     }
   }, [selectedQuarter, fetchScheduleDataFromAPI]);
+
+  const materialsMsg = 'Low-cost materials';
 
   const renderData = (courseID: string, section: Section, index: number) => {
     if (!section.status) section.status = 'FULL';
@@ -107,7 +135,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     //This function returns the data for a dynamic table after accessing the API
     return (
-      <tr key={index}>
+      <tr key={`${courseID}-${section.sectionCode}-${index}`}>
         {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
         <td className="data-col">
           <Tooltip title="Click to copy section code">
@@ -126,6 +154,17 @@ const Schedule: FC<ScheduleProps> = (props) => {
           Units: {section.units}
         </td>
         <td className="data-col">{section.instructors.join('\n')}</td>
+        {materialsData.size > 0 && (
+          <td className="data-col">
+            {materialsData.has(section.instructors.join()) && (
+              <Tooltip title={materialsMsg}>
+                <div>
+                  <MaterialsIcon />
+                </div>
+              </Tooltip>
+            )}
+          </td>
+        )}
         <td className="data-col">{getMeetingsString(section)}</td>
         <td className="data-col">
           {section.meetings.map((meeting) => (meeting.timeIsTBA ? ['TBA'] : meeting.bldg)).join('\n')}
@@ -178,7 +217,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   if (!scheduleData) {
     return <p> Loading Schedule..</p>;
   } else {
-    const sectionElements: JSX.Element[] = [];
+    const sectionElements: React.JSX.Element[] = [];
     Object.keys(scheduleData).forEach((courseID) => {
       const sortedSections = [...scheduleData[courseID]].sort((a, b) => a.sectionCode.localeCompare(b.sectionCode));
 
@@ -232,6 +271,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
                 <th>Type</th>
                 <th>Section</th>
                 <th>Instructor</th>
+                {materialsData.size > 0 && <th></th>}
                 <th>Time</th>
                 <th>Place</th>
                 <th className="enrollment-col">Enrollment</th>

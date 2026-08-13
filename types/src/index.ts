@@ -1,6 +1,7 @@
 export * from './admin';
 export * from './course';
 export * from './courseRequirements';
+export * from './courseMaterials';
 export * from './grades';
 export * from './professor';
 export * from './roadmap';

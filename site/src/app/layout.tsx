@@ -8,6 +8,7 @@ import ChangelogModal from '../component/ChangelogModal/ChangelogModal';
 
 // Import Global Store
 import AppProvider from '../component/AppProvider/AppProvider';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { createServerSideTrpcCaller } from '../trpc';
 import { headers } from 'next/headers';
 
@@ -43,21 +44,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        {/* oxlint-disable-next-line nextjs/no-sync-scripts */}
         <script src="/planner/theme-script.js"></script>
         {/* This script must run and apply styles to the root HTML element before the
         <body> tag opens to avoid an unstyled body tag causing a white flash in dark mode */}
       </head>
       <body>
-        <AppProvider user={user}>
-          <div id="root">
-            <AppHeader />
-            <div className="app-body">
-              <div className="app-content">{children}</div>
-              <ChangelogModal />
+        <AppRouterCacheProvider>
+          <AppProvider user={user}>
+            <div id="root">
+              <AppHeader />
+              <div className="app-body">
+                <div className="app-content">{children}</div>
+                <ChangelogModal />
+              </div>
             </div>
-          </div>
-        </AppProvider>
+          </AppProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

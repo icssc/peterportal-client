@@ -8,6 +8,7 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   real,
@@ -21,15 +22,38 @@ export const user = pgTable(
   'user',
   {
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-    googleId: text('google_id').notNull(),
     name: text('name').notNull(),
     email: text('email').notNull(),
     picture: text('picture').notNull(),
     theme: text('theme'),
     lastRoadmapEditAt: timestamp('last_roadmap_edit_at'),
     currentPlanIndex: integer('current_plan_index').notNull().default(0),
+    autoSaveEnabled: boolean('auto_save_enabled').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [unique('unique_google_id').on(table.googleId), unique('unique_email').on(table.email)],
+  (table) => [unique('unique_email').on(table.email)],
+);
+
+export const providerEnum = pgEnum('provider', ['GOOGLE', 'APPLE']);
+
+export const account = pgTable(
+  'account',
+  {
+    userId: integer('user_id')
+      .references(() => user.id, { onDelete: 'cascade' })
+      .notNull(),
+    provider: providerEnum('provider').notNull(),
+    providerAccountId: text('provider_account_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.provider] }),
+    unique('unique_provider_account_id').on(table.providerAccountId),
+  ],
 );
 
 export const report = pgTable(
@@ -88,8 +112,16 @@ export const planner = pgTable(
     name: text('name').notNull(),
     shareId: text('share_id').$defaultFn(createId),
     chc: text('chc'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
   },
-  (table) => [index('planners_user_id_idx').on(table.userId)],
+  (table) => [
+    index('planners_user_id_idx').on(table.userId),
+    unique('unique_planner_user_id_name').on(table.userId, table.name),
+  ],
 );
 
 export const plannerYear = pgTable(
@@ -345,6 +377,38 @@ export const completedMarkerRequirement = pgTable(
     markerName: text('marker_name').notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.markerName] })],
+);
+
+export const userMajorCatalogYear = pgTable(
+  'user_major_catalog_year',
+  {
+    userId: integer('user_id').notNull(),
+    majorId: text('major_id').notNull(),
+    catalogYear: text('catalog_year'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.majorId] }),
+    foreignKey({
+      columns: [table.userId, table.majorId],
+      foreignColumns: [userMajor.userId, userMajor.majorId],
+    }).onDelete('cascade'),
+  ],
+);
+
+export const userMinorCatalogYear = pgTable(
+  'user_minor_catalog_year',
+  {
+    userId: integer('user_id').notNull(),
+    minorId: text('minor_id').notNull(),
+    catalogYear: text('catalog_year'),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.minorId] }),
+    foreignKey({
+      columns: [table.userId, table.minorId],
+      foreignColumns: [userMinor.userId, userMinor.minorId],
+    }).onDelete('cascade'),
+  ],
 );
 
 export const override = pgTable(

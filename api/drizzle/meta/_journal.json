@@ -225,6 +225,55 @@
       "when": 1777941575376,
       "tag": "0031_flaky_trish_tilby",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1778410132845,
+      "tag": "0032_sad_bug",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1779238803896,
+      "tag": "0033_freezing_network",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1779659997654,
+      "tag": "0034_tan_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1779840300579,
+      "tag": "0035_fair_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1779923641808,
+      "tag": "0036_familiar_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1781369759524,
+      "tag": "0037_condemned_major_mapleleaf",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1781739961663,
+      "tag": "0038_premium_jack_murdock",
+      "breakpoints": true
     }
   ]
 }

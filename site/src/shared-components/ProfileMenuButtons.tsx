@@ -1,17 +1,19 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { Button, IconButton } from '@mui/material';
-
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Image from 'next/image';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
-import { UserMetadata } from '@peterportal/types';
+import type { UserMetadata } from '@peterportal/types';
+import SignInDialog from './SignInDialog';
 
 interface ProfileMenuButtonsProps {
   user: UserMetadata | null;
   handleOpen: (event: React.MouseEvent<HTMLElement>) => void;
 }
 const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) => {
+  const [signInOpen, setSignInOpen] = useState(false);
+
   if (!user) {
     return (
       <>
@@ -19,15 +21,16 @@ const ProfileMenuButtons: FC<ProfileMenuButtonsProps> = ({ user, handleOpen }) =
           className="header-button"
           variant="text"
           size="medium"
-          startIcon={<AccountCircleIcon />}
           color="inherit"
-          href="/planner/api/users/auth/google"
+          startIcon={<AccountCircle />}
+          onClick={() => setSignInOpen(true)}
         >
           Sign In
         </Button>
         <IconButton onClick={handleOpen} color="inherit">
           <MenuIcon />
         </IconButton>
+        <SignInDialog open={signInOpen} onClose={() => setSignInOpen(false)} />
       </>
     );
   }

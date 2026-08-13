@@ -54,6 +54,8 @@ async function getReviews(
   const results = await db
     .select({
       review: review,
+      upvotes: sql`COALESCE(SUM(CASE WHEN ${vote.vote} = 1 THEN 1 ELSE 0 END), 0)`.mapWith(Number),
+      downvotes: sql`COALESCE(SUM(CASE WHEN ${vote.vote} = -1 THEN 1 ELSE 0 END), 0)`.mapWith(Number),
       score: sql`COALESCE(SUM(${vote.vote}), 0)`.mapWith(Number),
       userDisplay: user.name,
       userVote: sql`COALESCE(${userVoteSubquery.userVote}, 0)`.mapWith(Number),
@@ -75,9 +77,11 @@ async function getReviews(
     .orderBy(desc(sql`COALESCE(SUM(${vote.vote}), 0)`), desc(review.createdAt));
 
   if (results) {
-    return results.map(({ review, score, userDisplay, userVote }) =>
+    return results.map(({ review, upvotes, downvotes, score, userDisplay, userVote }) =>
       datesToStrings({
         ...review,
+        upvotes,
+        downvotes,
         score,
         userDisplay: review.anonymous && !isAdminView ? anonymousName : userDisplay!,
         userVote: userVote,
@@ -132,6 +136,8 @@ const reviewsRouter = router({
     return datesToStrings({
       ...addedReview,
       userDisplay: input.anonymous ? anonymousName : userName,
+      upvotes: 0,
+      downvotes: 0,
       score: 0,
       userVote: 0,
       authored: true,

@@ -2,11 +2,9 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SearchIndex, SearchResultData } from '../../types/types';
 import { FilterOptions } from '../../helpers/searchFilters';
 import { RootState } from '../store';
-import { shouldResetFilters } from '../../helpers/search';
 
 interface SearchData {
   query: string;
-  lastQuery: string;
   pageNumber: number;
   results: SearchResultData;
   count: number;
@@ -21,7 +19,6 @@ export const searchSlice = createSlice({
     viewIndex: 'courses' as SearchIndex,
     courses: {
       query: '',
-      lastQuery: '',
       pageNumber: 0,
       results: [],
       count: 0,
@@ -31,7 +28,6 @@ export const searchSlice = createSlice({
     courseDepartments: [] as string[],
     instructors: {
       query: '',
-      lastQuery: '',
       pageNumber: 0,
       results: [],
       count: 0,
@@ -41,12 +37,9 @@ export const searchSlice = createSlice({
     // Things that will trigger a new search
     setQuery: (state, action: PayloadAction<string>) => {
       state.courses.query = state.instructors.query = action.payload;
-      if (!action.payload) return;
-
-      if (shouldResetFilters(state.courses.lastQuery, state.courses.query)) {
-        state.courseDepartments = [];
-        state.courseGeCategories = [];
-        state.courseLevels = [];
+      if (!action.payload) {
+        state.inProgressSearchOperation = 'none';
+        return;
       }
 
       state.inProgressSearchOperation = 'newQuery';
@@ -56,7 +49,7 @@ export const searchSlice = createSlice({
       state.courseDepartments = departments;
       state.courseGeCategories = geCategories;
       state.courseLevels = levels;
-      state.inProgressSearchOperation = 'newFilters';
+      state.inProgressSearchOperation = state.courses.query ? 'newFilters' : 'none';
     },
     setPageNumber: (state, action: PayloadAction<number>) => {
       state[state.viewIndex].pageNumber = action.payload;
@@ -72,7 +65,6 @@ export const searchSlice = createSlice({
       state[index].results = action.payload.results;
       state[index].count = action.payload.count;
       state[index].pageNumber = 0;
-      state[index].lastQuery = state[index].query;
     },
     setNewPageResults: (state, action: PayloadAction<{ index: SearchIndex; results: SearchResultData }>) => {
       state.inProgressSearchOperation = 'none';
@@ -82,7 +74,12 @@ export const searchSlice = createSlice({
         ...action.payload.results,
       ] as (typeof state)[typeof index]['results'];
     },
-    // Viewing
+
+    // Aborts are expected when a new search overrides the previous one
+    searchOperationFailed: (state) => {
+      state.inProgressSearchOperation = 'none';
+    },
+
     setSearchViewIndex: (state, action: PayloadAction<SearchIndex>) => {
       state.viewIndex = action.payload;
     },
@@ -98,7 +95,14 @@ export const selectCourseFilters = createSelector(
 
 export type SearchCourseFilters = ReturnType<typeof selectCourseFilters>;
 
-export const { setQuery, setPageNumber, setCourseFilters, setFirstPageResults, setNewPageResults, setSearchViewIndex } =
-  searchSlice.actions;
+export const {
+  setQuery,
+  setPageNumber,
+  setCourseFilters,
+  setFirstPageResults,
+  setNewPageResults,
+  searchOperationFailed,
+  setSearchViewIndex,
+} = searchSlice.actions;
 
 export default searchSlice.reducer;

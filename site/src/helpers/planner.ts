@@ -508,21 +508,24 @@ const validateAndPrerequisite = ({ prerequisite, ...input }: ValidationInput<Pre
 };
 
 const validateOrPrerequisite = ({ prerequisite, ...input }: ValidationInput<PrerequisiteTree>) => {
-  const required: Set<string> = new Set();
+  const required: string[] = [];
   if (!prerequisite.OR) throw new Error('Expected OR prerequisite');
 
   for (const nested of prerequisite.OR) {
     const missing = validatePrerequisites({ prerequisite: nested, ...input });
     if (missing.size === 0) return new Set<string>(); // one is complete; return early
-    missing.forEach((course) => required.add(course));
+    missing.forEach((course) => required.push(course));
   }
 
-  return required;
+  const unique = [...new Set(required)];
+  return new Set([unique.join('|')]);
 };
+
+const isEmptyPrerequisiteTree = (prerequisite: PrerequisiteTree) => Object.keys(prerequisite).length === 0;
 
 /**
  * Returns the set of prerequisites of a course that need to be taken but are missing
- * @returns A set of all the prerequisites that are missing
+ * @returns A set of all the prerequisites that are missing, with "or" groups seperated by '|'
  */
 const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<PrerequisiteNode>): Set<string> => {
   // base case is just a course
@@ -531,16 +534,22 @@ const validatePrerequisites = ({ prerequisite, ...input }: ValidationInput<Prere
   if (prerequisite.AND) return validateAndPrerequisite({ prerequisite, ...input });
   if (prerequisite.OR) return validateOrPrerequisite({ prerequisite, ...input });
 
+  if (isEmptyPrerequisiteTree(prerequisite)) return new Set();
+
   // should never reach here
   console.warn('unrecognized prerequisite structure');
   return new Set();
 };
 
-export const getMissingPrerequisites = (clearedCourses: Set<string>, prerequisite: PrerequisiteTree) => {
+export const getMissingPrerequisites = (
+  clearedCourses: Set<string>,
+  prerequisite: PrerequisiteTree,
+  takingCourses: Set<string> = new Set<string>(),
+) => {
   const input = {
     prerequisite,
     taken: clearedCourses,
-    taking: new Set<string>(),
+    taking: takingCourses,
   };
 
   const missingPrerequisites = Array.from(validatePrerequisites(input));

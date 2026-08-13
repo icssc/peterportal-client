@@ -1,16 +1,24 @@
 import './ResultPageContent.scss';
 import { FC, ReactNode } from 'react';
-import Twemoji from 'react-twemoji';
 
 interface ResultPageSectionProps {
   title: string;
+  id?: string;
   children: ReactNode;
+  indicator?: ReactNode;
+  icon?: ReactNode;
 }
 
-export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, children }) => {
+export const ResultPageSection: FC<ResultPageSectionProps> = ({ title, id, icon, children, indicator }) => {
   return (
-    <div className="result-page-section">
-      <h2>{title}</h2>
+    <div className="result-page-section" id={id}>
+      <div className="result-page-title">
+        <h2>
+          {icon}
+          {title}
+        </h2>
+        {indicator}
+      </div>
       {children}
     </div>
   );
@@ -24,9 +32,7 @@ export const ResultPageContent: FC<ResultPageContentProps> = ({ sideInfo, childr
   return (
     <div className="content-wrapper search-result-page">
       {sideInfo}
-      <Twemoji options={{ className: 'twemoji' }}>
-        <div className="result-page-body">{children}</div>
-      </Twemoji>
+      <div className="result-page-body">{children}</div>
     </div>
   );
 };
