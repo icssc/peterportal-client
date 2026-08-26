@@ -76,8 +76,8 @@ export let theme = createTheme({
     dark: { palette: darkPalette },
   },
   shape: {
-    borderRadius: 4,
-    borderRadiusLg: 8,
+    borderRadius: 8,
+    borderRadiusLg: 10,
   },
   spacing: 4,
 });
@@ -304,7 +304,7 @@ theme = createTheme(theme, {
           '& .MuiChip-root': {
             height: 24,
             fontSize: 14,
-            borderRadius: 2,
+            borderRadius: 4,
             maxWidth: 'calc(100% - 93px)',
           },
           '& .MuiChip-root .MuiChip-deleteIcon': {

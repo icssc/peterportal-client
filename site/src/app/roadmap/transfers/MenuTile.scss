@@ -2,7 +2,7 @@
 
 .menu-tile {
   border: 2px solid var(--mui-palette-divider);
-  border-radius: 8px;
+  border-radius: var(--mui-shape-borderRadius);
   padding: 10px 12px;
   position: relative;
   font-size: 12px;

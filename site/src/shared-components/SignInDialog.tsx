@@ -42,7 +42,7 @@ const SignInDialog = ({ open, onClose }: SignInDialogProps) => {
         sx: {
           width: '526px',
           height: 'fit-content',
-          borderRadius: '0.25rem',
+          borderRadius: '8px',
           fontWeight: 500,
         },
       }}
