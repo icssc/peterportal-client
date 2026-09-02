@@ -135,7 +135,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
 
     //This function returns the data for a dynamic table after accessing the API
     return (
-      <tr key={index}>
+      <tr key={`${courseID}-${section.sectionCode}-${index}`}>
         {props.professorIDs?.length && <td className="data-col">{courseID}</td>}
         <td className="data-col">
           <Tooltip title="Click to copy section code">
@@ -217,7 +217,7 @@ const Schedule: FC<ScheduleProps> = (props) => {
   if (!scheduleData) {
     return <p> Loading Schedule..</p>;
   } else {
-    const sectionElements: JSX.Element[] = [];
+    const sectionElements: React.JSX.Element[] = [];
     Object.keys(scheduleData).forEach((courseID) => {
       const sortedSections = [...scheduleData[courseID]].sort((a, b) => a.sectionCode.localeCompare(b.sectionCode));
 
