@@ -8,14 +8,15 @@ import {
   removeMajor,
   setMajorList,
   MajorWithSpecialization,
+  setMajorCatalogYear,
 } from '../../../store/slices/courseRequirementsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { MajorProgram, MajorSpecialization, MajorSpecializationPair } from '@peterportal/types';
+import { MajorProgram, MajorSpecialization, SavedMajorProgram } from '@peterportal/types';
 import { useIsLoggedIn } from '../../../hooks/isLoggedIn';
 import MajorCourseList from './MajorCourseList';
 
-function updateSelectedMajorAndSpecialization(pairs: MajorSpecializationPair[]) {
-  trpc.programs.saveSelectedMajorSpecPair.mutate({ pairs });
+function updateSelectedMajorAndSpecialization(majors: SavedMajorProgram[]) {
+  trpc.programs.saveSelectedMajors.mutate({ majors });
 }
 
 interface MajorOption {
@@ -28,7 +29,7 @@ const MajorSelector: FC = () => {
   const majors = useAppSelector((state) => state.courseRequirements.majorList);
   const selectedMajors = useAppSelector((state) => state.courseRequirements.selectedMajors);
   const hasFetchedSelectedMajors = useRef(false);
-  const [defaultPairs, setDefaultPairs] = useState<MajorSpecializationPair[]>([]);
+  const [savedMajors, setSavedMajors] = useState<SavedMajorProgram[]>([]);
 
   const [majorsLoading, setMajorsLoading] = useState(false);
 
@@ -54,11 +55,12 @@ const MajorSelector: FC = () => {
   const saveMajors = useCallback(
     (majorsToSave: MajorWithSpecialization[]) => {
       if (!isLoggedIn) return;
-      const pairs: MajorSpecializationPair[] = majorsToSave.map((m) => ({
+      const majors: SavedMajorProgram[] = majorsToSave.map((m) => ({
         majorId: m.major.id,
         specializationId: m.selectedSpec?.id,
+        catalogYear: m.catalogYear ?? undefined,
       }));
-      updateSelectedMajorAndSpecialization(pairs);
+      updateSelectedMajorAndSpecialization(majors);
     },
     [isLoggedIn],
   );
@@ -80,6 +82,8 @@ const MajorSelector: FC = () => {
         selectedSpec: selectedMajors.find((m) => m.major.id === major.id)?.selectedSpec || null,
         specializations: selectedMajors.find((m) => m.major.id === major.id)?.specializations || [],
         requirements: selectedMajors.find((m) => m.major.id === major.id)?.requirements || [],
+        catalogYear: selectedMajors.find((m) => m.major.id === major.id)?.catalogYear || null,
+        fallbackCatalogYear: selectedMajors.find((m) => m.major.id === major.id)?.fallbackCatalogYear || null,
       }));
       saveMajors(updatedMajors);
     },
@@ -91,12 +95,27 @@ const MajorSelector: FC = () => {
       const updatedMajors = selectedMajors.map((m) =>
         m.major.id === majorId ? { ...m, selectedSpec: specialization } : m,
       );
-      setDefaultPairs(
-        defaultPairs.map((p) => (p.majorId === majorId ? { ...p, specializationId: specialization?.id } : p)),
+      setSavedMajors(
+        savedMajors.map((major) =>
+          major.majorId === majorId ? { ...major, specializationId: specialization?.id } : major,
+        ),
       );
       saveMajors(updatedMajors);
     },
-    [defaultPairs, saveMajors, selectedMajors],
+    [savedMajors, saveMajors, selectedMajors],
+  );
+
+  const handleCatalogYearChange = useCallback(
+    (majorId: string, catalogYear: string | null) => {
+      const updatedMajors = selectedMajors.map((m) => (m.major.id === majorId ? { ...m, catalogYear } : m));
+      setSavedMajors(
+        savedMajors.map((major) =>
+          major.majorId === majorId ? { ...major, catalogYear: catalogYear ?? undefined } : major,
+        ),
+      );
+      saveMajors(updatedMajors);
+    },
+    [savedMajors, saveMajors, selectedMajors],
   );
 
   useEffect(() => {
@@ -106,15 +125,16 @@ const MajorSelector: FC = () => {
 
     setMajorsLoading(true);
 
-    trpc.programs.getSavedMajorSpecPairs
+    trpc.programs.getSavedMajors
       .query()
-      .then((pairs) => {
-        for (const pair of pairs) {
-          const foundMajor = majors.find((m) => m.id === pair.majorId);
+      .then((savedMajors) => {
+        for (const savedMajor of savedMajors) {
+          const foundMajor = majors.find((m) => m.id === savedMajor.majorId);
           if (!foundMajor) continue;
           dispatch(addMajor(foundMajor));
+          dispatch(setMajorCatalogYear({ majorId: savedMajor.majorId, catalogYear: savedMajor.catalogYear ?? null }));
         }
-        setDefaultPairs(pairs);
+        setSavedMajors(savedMajors);
       })
       .finally(() => {
         setMajorsLoading(false);
@@ -159,8 +179,9 @@ const MajorSelector: FC = () => {
         <MajorCourseList
           key={data.major.id}
           majorWithSpec={data}
-          selectedSpecId={defaultPairs.find((p) => p.majorId === data.major.id)?.specializationId}
+          selectedSpecId={savedMajors.find((major) => major.majorId === data.major.id)?.specializationId}
           onSpecializationChange={handleSpecializationChange}
+          onCatalogYearChange={handleCatalogYearChange}
         />
       ))}
     </>
