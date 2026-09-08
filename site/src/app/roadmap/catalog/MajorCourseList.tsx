@@ -32,8 +32,8 @@ const loadingSpecValue = {
   label: 'Loading...',
 };
 
-function getMajorSpecializations(majorId: string) {
-  return trpc.programs.getSpecializations.query({ major: majorId });
+function getMajorSpecializations(majorId: string, catalogYear: string) {
+  return trpc.programs.getSpecializations.query({ major: majorId, catalogYear });
 }
 
 function getCoursesForMajor(programId: string, specId: string | undefined, catalogYear: string) {
@@ -46,9 +46,9 @@ function getCoursesForMajor(programId: string, specId: string | undefined, catal
   });
 }
 
-async function getCoursesForSpecialization(programId?: string | null) {
+async function getCoursesForSpecialization(programId: string | undefined, catalogYear: string) {
   if (!programId || programId === noSpecId) return [];
-  const result = await trpc.programs.getRequiredCourses.query({ type: 'specialization', programId });
+  const result = await trpc.programs.getRequiredCourses.query({ type: 'specialization', programId, catalogYear });
   return result.requirements;
 }
 
@@ -74,7 +74,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   };
 
   const { major, selectedSpec, specializations } = majorWithSpec;
-  const hasSpecs = major.specializations.length > 0;
+  const hasSpecs = major.specializationRequired || major.specializations.length > 0 || specializations.length > 0;
   const specOptions = specializations.map((s) => ({ value: s, label: s.name }));
   const noSpec = useMemo(() => ({ id: noSpecId, majorId: major.id, name: 'No Specialization' }), [major.id]);
   const fallbackCatalogYear = majorWithSpec.fallbackCatalogYear ?? null;
@@ -84,20 +84,22 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   }
 
   const dispatch = useAppDispatch();
-
-  const loadSpecs = useCallback(async () => {
-    setSpecsLoading(true);
-    try {
-      const specs = await getMajorSpecializations(major.id);
-      specs.forEach((s) => (s.name = normalizeMajorName(s)));
-      specs.sort((a, b) => a.name.localeCompare(b.name));
-      dispatch(setMajorSpecs({ majorId: major.id, specializations: specs }));
-    } finally {
-      setSpecsLoading(false);
-    }
-  }, [dispatch, major.id]);
-
   const { defaultCatalogYear } = getCatalogYearDefaults();
+
+  const loadSpecs = useCallback(
+    async (catalogYear = majorWithSpec.catalogYear ?? defaultCatalogYear) => {
+      setSpecsLoading(true);
+      try {
+        const specs = await getMajorSpecializations(major.id, catalogYear);
+        specs.forEach((s) => (s.name = normalizeMajorName(s)));
+        specs.sort((a, b) => a.name.localeCompare(b.name));
+        dispatch(setMajorSpecs({ majorId: major.id, specializations: specs }));
+      } finally {
+        setSpecsLoading(false);
+      }
+    },
+    [defaultCatalogYear, dispatch, major.id, majorWithSpec.catalogYear],
+  );
 
   const fetchRequirements = useCallback(
     async (majorId: string, specId?: string, catalogYear?: string) => {
@@ -114,7 +116,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
           dispatch(setMajorFallbackCatalogYear({ majorId, fallbackCatalogYear: returnedYear }));
         }
 
-        const specRequirements = await getCoursesForSpecialization(specId);
+        const specRequirements = await getCoursesForSpecialization(specId, effectiveCatalogYear);
         requirements.push(...specRequirements);
         dispatch(setRequirements({ majorId, requirements }));
       } finally {
@@ -132,7 +134,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
     if (!selectedSpecId && !selectedSpec?.id) return;
     if (selectedSpecId === selectedSpec?.id) return;
 
-    const specs = await getMajorSpecializations(major.id);
+    const specs = await getMajorSpecializations(major.id, majorWithSpec.catalogYear ?? defaultCatalogYear);
     const foundSpec = specs.find((s) => s.id === selectedSpecId);
 
     if (foundSpec) {
@@ -150,6 +152,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
     major.id,
     majorWithSpec.requirements.length,
     majorWithSpec.catalogYear,
+    defaultCatalogYear,
     selectedSpecId,
     selectedSpec?.id,
   ]);
@@ -157,11 +160,7 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
   // Initial Loader
   useEffect(() => {
     if (specOptions.length) return;
-    if (hasSpecs && !specOptions.length) {
-      loadSpecs().then(loadSpecRequirements);
-    } else {
-      loadSpecRequirements();
-    }
+    loadSpecs().then(loadSpecRequirements);
   }, [hasSpecs, loadSpecRequirements, specOptions.length, loadSpecs]);
 
   const handleSpecializationChange = useCallback(
@@ -191,9 +190,18 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
       onCatalogYearChange(major.id, newCatalogYear);
       dispatch(setRequirements({ majorId: major.id, requirements: [] }));
       dispatch(setMajorCatalogYear({ majorId: major.id, catalogYear: newCatalogYear }));
+      await loadSpecs(newCatalogYear);
       await fetchRequirements(major.id, selectedSpec?.id, newCatalogYear ?? undefined);
     },
-    [dispatch, fetchRequirements, major.id, majorWithSpec.catalogYear, onCatalogYearChange, selectedSpec?.id],
+    [
+      dispatch,
+      fetchRequirements,
+      loadSpecs,
+      major.id,
+      majorWithSpec.catalogYear,
+      onCatalogYearChange,
+      selectedSpec?.id,
+    ],
   );
   return (
     <div className="major-section">

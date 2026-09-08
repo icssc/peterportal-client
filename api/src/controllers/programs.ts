@@ -58,13 +58,17 @@ const programsRouter = router({
   getMinors: publicProcedure.query(async () => {
     return getAPIProgramData<MinorProgram>('minors');
   }),
-  getSpecializations: publicProcedure.input(z.object({ major: z.string() })).query(async ({ input }) => {
-    const url = `${process.env.PUBLIC_API_URL}programs/specializations?majorId=${input.major}`;
-    const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
-      .then((res) => res.json())
-      .then((res) => res.data as MajorSpecialization[]);
-    return response;
-  }),
+  getSpecializations: publicProcedure
+    .input(z.object({ major: z.string(), catalogYear: z.string().optional() }))
+    .query(async ({ input }) => {
+      const url =
+        `${process.env.PUBLIC_API_URL}programs/specializations?majorId=${input.major}` +
+        (input.catalogYear ? `&catalogYear=${input.catalogYear}` : '');
+      const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
+        .then((res) => res.json())
+        .then((res) => (res.data as MajorSpecialization[] | undefined) ?? []);
+      return response;
+    }),
   getRequiredCourses: publicProcedure
     .input(
       z.object({
@@ -79,7 +83,7 @@ const programsRouter = router({
       if (input.type === 'major' && input.specializationId) {
         url += `&specializationId=${input.specializationId}`;
       }
-      if (input.type !== 'specialization' && input.catalogYear) {
+      if (input.catalogYear) {
         url += `&catalogYear=${input.catalogYear}`;
       }
       const response = await fetch(url, { headers: ANTEATER_API_REQUEST_HEADERS })
