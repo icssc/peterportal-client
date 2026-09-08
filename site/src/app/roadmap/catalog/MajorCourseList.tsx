@@ -159,9 +159,14 @@ const MajorCourseList: FC<MajorCourseListProps> = ({
 
   // Initial Loader
   useEffect(() => {
-    if (specOptions.length) return;
+    if (specOptions.length > 0) {
+      if (selectedSpecId && selectedSpec?.id !== selectedSpecId) {
+        loadSpecRequirements();
+      }
+      return;
+    }
     loadSpecs().then(loadSpecRequirements);
-  }, [hasSpecs, loadSpecRequirements, specOptions.length, loadSpecs]);
+  }, [loadSpecRequirements, loadSpecs, selectedSpecId, selectedSpec?.id, specOptions.length]);
 
   const handleSpecializationChange = useCallback(
     async (data: { value: MajorSpecialization; label: string } | null) => {
