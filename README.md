@@ -1,4 +1,4 @@
-> [!IMPORTANT] ⚠️
+> [!WARNING]
 > This repository is a _public archive_ as of September 2026. AntAlmanac Planner is **still in active development**, but the codebase has been unified under the [AntAlmanac repository](https://github.com/icssc/AntAlmanac).
 > Please feel free to reach out to us on the [ICSSC Projects Discord](https://discord.gg/GzF76D7UhY) if you have any questions or concerns.
 
