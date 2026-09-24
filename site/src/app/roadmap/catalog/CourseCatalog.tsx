@@ -33,11 +33,21 @@ export const CourseCatalog = () => {
     <div className="course-catalog">
       <RequirementsListSelector />
 
-      {selectedCourseList === 'Major' && <MajorSelector />}
-      {selectedCourseList === 'Minor' && <MinorSelector />}
-      {selectedCourseList === 'GE' && <GERequiredCourseList />}
-      {selectedCourseList === 'Library' && <Library />}
-      {selectedCourseList === 'Search' && <SavedAndSearch showSavedCoursesOnEmpty />}
+      <div style={{ display: selectedCourseList === 'Major' ? 'block' : 'none' }}>
+        <MajorSelector />
+      </div>
+      <div style={{ display: selectedCourseList === 'Minor' ? 'block' : 'none' }}>
+        <MinorSelector />
+      </div>
+      <div style={{ display: selectedCourseList === 'GE' ? 'block' : 'none' }}>
+        <GERequiredCourseList />
+      </div>
+      <div style={{ display: selectedCourseList === 'Library' ? 'block' : 'none' }}>
+        <Library />
+      </div>
+      <div style={{ display: selectedCourseList === 'Search' ? 'block' : 'none' }}>
+        <SavedAndSearch showSavedCoursesOnEmpty />
+      </div>
 
       <CloseRoadmapSearchButton />
     </div>

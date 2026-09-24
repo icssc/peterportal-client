@@ -51,9 +51,15 @@ const DesktopRoadmapSidebar = () => {
       </Tabs>
 
       <div className="sidebar-content" id="sidebarScrollContainer">
-        {selectedIndex === 0 && <TransferCreditsMenu />}
-        {selectedIndex === 1 && <CourseCatalog />}
-        {selectedIndex === 2 && <SavedAndSearch autoFocusSearch />}
+        <div style={{ display: selectedIndex === 0 ? 'block' : 'none' }}>
+          <TransferCreditsMenu />
+        </div>
+        <div style={{ display: selectedIndex === 1 ? 'block' : 'none' }}>
+          <CourseCatalog />
+        </div>
+        <div style={{ display: selectedIndex === 2 ? 'block' : 'none' }}>
+          <SavedAndSearch autoFocusSearch />
+        </div>
       </div>
     </div>
   );
