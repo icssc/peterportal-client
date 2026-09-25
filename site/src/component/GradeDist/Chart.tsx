@@ -29,7 +29,7 @@ export default function Chart({ gradeData, quarter, professor, course }: ChartPr
   ];
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 545, height: 380 }}>
       <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 0 }}>
         <XAxis dataKey="grade" />
         <Tooltip
