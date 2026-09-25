@@ -12,7 +12,7 @@ $base-quarter-width: 250px;
 }
 
 div.year {
-  border-radius: 8px;
+  border-radius: var(--mui-shape-borderRadiusLg);
   container: roadmap-year / inline-size;
   background-color: var(--mui-palette-overlay-overlay1);
 
@@ -95,7 +95,7 @@ div.year {
 }
 
 div.quarter-list {
-  border-radius: 8px;
+  border-radius: var(--mui-shape-borderRadiusLg);
   display: grid;
   --min-quarter-width: #{$base-quarter-width};
   grid-template-columns: repeat(auto-fill, minmax(var(--min-quarter-width), 1fr));
