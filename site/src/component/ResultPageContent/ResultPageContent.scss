@@ -48,12 +48,6 @@
         align-items: center;
       }
     }
-
-    .MuiInputBase-root .MuiInputBase-input {
-      // @todo: try to get rid of this, likely through a variant
-      background-color: var(--mui-palette-overlay-overlay2);
-      width: 150px;
-    }
   }
 
   .result-page-body {
