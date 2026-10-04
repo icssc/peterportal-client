@@ -39,11 +39,9 @@ function responseWithCookies(location: string, cookies: string[]) {
 }
 
 function domainSpecificAttributes(requestUrl: string) {
-  const domain = new URL(requestUrl).hostname === 'localhost' ? undefined : 'antalmanac.com';
   const secure = new URL(requestUrl).hostname === 'localhost' ? [] : ['Secure'];
-  const domainAttr = domain ? [`Domain=${domain}`] : [];
 
-  return [...secure, ...domainAttr];
+  return [...secure];
 }
 
 function clearSharedCookie(requestUrl: string) {
