@@ -6,5 +6,5 @@ ARCHIVED_URL_SUBSTRING="icssc/peterportal-client"
 if echo "$CURRENT_URL" | grep -qi "$ARCHIVED_URL_SUBSTRING"; then
   echo "⚠️ This repository is a read-only public archive as of September 2026."
   echo "⚠️ Please find the unified codebase at https://github.com/icssc/AntAlmanac"
-  exit 0
+  exit 1
 fi
